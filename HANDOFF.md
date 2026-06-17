@@ -5,6 +5,25 @@ Estado: **Fase 1 + CLI + notícias + backtesting + sinal calibrado + indicadores
 
 ---
 
+## 0. Integração à plataforma predictor_core (2026-06-16/17)
+
+Sessão de plataforma — o Garimpo virou consumidor do núcleo canônico `predictor_core`
+(vendorizado em `vendor/`, sincronizado por hash). Mudanças:
+
+| Área | Mudança |
+|------|---------|
+| Significância | `analyzers/backtest.py` emite **Spearman com IC95%** (block bootstrap PAREADO via `predictor_core.stats`) — "validado / RUÍDO" em vez de estimativa pontual nua. |
+| Modo B / reprodutibilidade | **carimbo do juiz** (`provider:modelo:hash-do-prompt`) em cada previsão (`ai_insights.judge_signature`), persistido no histórico (coluna `Juiz`). |
+| Cross-check | `score_engine.divergence_flag` — tagueia contradição LLM×indicadores determinísticos (flag-only, **não muta o score**); o backtest **estratifica** alinhadas vs divergentes. |
+| Degradação | `main.py` instrumenta `input_degraded` (notícia/indicador faltando deixou de ser engolido). |
+| Rede unificada | imports de rede agora vêm de `predictor_core.net` (httpx async + retry); `core/retry.py` e `core/http_client.py` **deletados** (duplicata aposentada). |
+| Trava de credenciais | `config.__post_init__` usa `predictor_core.settings.require_secrets` — chave ausente/falsa/`<16 chars` → **crash imediato**. `requirements.lock.txt` cravado. |
+
+**Suíte: 26 testes verdes** (`py -3.12 -m pytest tests/ -q`). O caminho **live nunca
+rodou** (`.env` vazio crasha de propósito — falta colar chaves reais: P0).
+
+---
+
 ## 1. Resumo do que foi feito
 
 Refatoração da Fase 1 (deixar o código limpo, funcional e pronto para o backtesting
