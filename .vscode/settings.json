@@ -1,0 +1,9 @@
+{
+    "python.analysis.extraPaths": [
+        "${workspaceFolder}"
+    ],
+    "python.defaultInterpreterPath": "${workspaceFolder}\\GarimpoInvestimentos\\env\\Scripts\\python.exe",
+    "terminal.integrated.cwd": "${workspaceFolder}",
+    "python.analysis.diagnosticMode": "workspace",
+    "python.analysis.autoImportCompletions": true
+}

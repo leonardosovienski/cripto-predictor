@@ -1,0 +1,7 @@
+httpx
+loguru
+openpyxl
+pydantic
+google-genai
+openai
+python-dotenv

@@ -1,0 +1,30 @@
+# Segredos — VITAL: chaves de API (Gemini/OpenAI/SerpAPI). NUNCA versionar.
+.env
+*.env
+**/.env
+
+# Ambientes virtuais (EDR corporativo quarentena venv — jamais versionar)
+env/
+venv/
+.venv/
+**/env/
+
+# Bytecode / cache
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Saída de runtime na RAIZ (CSVs, cache.json, logs descartáveis).
+# ATENÇÃO: ancorado em '/output/' de propósito — NÃO ignora o PACOTE de código
+# GarimpoInvestimentos/output/ (reporter.py precisa ser rastreado). O bug do
+# .gitignore antigo (ignorava o pacote) teria quebrado o clone.
+/output/
+/logs/
+
+# IDE
+.vs/
+*.pyproj.user
+
+# SO
+.DS_Store
+Thumbs.db
