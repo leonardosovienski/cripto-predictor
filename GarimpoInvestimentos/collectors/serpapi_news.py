@@ -1,6 +1,5 @@
 from GarimpoInvestimentos.config import settings
-from GarimpoInvestimentos.core.http_client import get_http_client
-from GarimpoInvestimentos.core.retry import with_retry
+from predictor_core.net import get_http_client, with_retry
 
 @with_retry()
 async def get_news_snippets(query: str, limit: int = 5) -> list[str]:

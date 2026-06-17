@@ -17,9 +17,9 @@ import csv
 from datetime import datetime, timedelta, timezone
 
 from GarimpoInvestimentos.config import settings
-from GarimpoInvestimentos.core.http_client import get_http_client
+from predictor_core.net import get_http_client
 from GarimpoInvestimentos.core.paths import OUTPUT_DIR
-from GarimpoInvestimentos.core.retry import with_retry
+from predictor_core.net import with_retry
 from predictor_core.stats import spearman_block_ci
 from predictor_core.obs import emit_event
 

@@ -1,6 +1,5 @@
 from pydantic import BaseModel
-from GarimpoInvestimentos.core.http_client import get_http_client
-from GarimpoInvestimentos.core.retry import with_retry
+from predictor_core.net import get_http_client, with_retry
 
 
 class CoinData(BaseModel):

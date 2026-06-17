@@ -12,7 +12,7 @@ import inspect
 import json
 
 from GarimpoInvestimentos.config import settings
-from GarimpoInvestimentos.core.retry import with_retry
+from predictor_core.net import with_retry
 
 _gemini_client = None
 _openai_client = None
