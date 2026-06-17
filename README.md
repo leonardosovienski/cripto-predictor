@@ -9,6 +9,21 @@ backtesting na Fase 2.
 coleta (CoinGecko + SerpAPI) → análise (Gemini) → score → exportação (CSV/XLSX) + histórico
 ```
 
+## Estado atual / Como rodar
+
+Integrado à plataforma **predictor_core** (significância via block bootstrap pareado,
+carimbo do juiz, cross-check flag-only, trava de credenciais). Detalhes no
+[HANDOFF.md](HANDOFF.md) §0. Suíte: `py -3.12 -m pytest tests/ -q` (26 verdes — rodam no
+Python do sistema).
+
+**Rodar AO VIVO** exige chaves reais no `.env` **e** a venv (httpx/pydantic/SDKs do LLM):
+```powershell
+# cole GEMINI_API_KEY / OPENAI_API_KEY / SERP_API_KEY (>=16 chars) em GarimpoInvestimentos\.env
+.\GarimpoInvestimentos\env\Scripts\python.exe -m GarimpoInvestimentos.main --assets bitcoin,ethereum
+.\GarimpoInvestimentos\env\Scripts\python.exe -m GarimpoInvestimentos.analyzers.backtest
+```
+⚠️ Por design (fail-fast): `.env` sem chaves reais **crasha no segundo zero** (trava P0).
+
 ## Estrutura
 
 ```
