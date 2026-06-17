@@ -29,8 +29,8 @@ def _synthetic(n=60):
 
 
 def test_report_emits_toll_passed_and_stratifies(tmp_path, monkeypatch, capsys):
-    monkeypatch.setenv("GEMINI_API_KEY", "dummy")
-    monkeypatch.setenv("SERP_API_KEY", "dummy")
+    monkeypatch.setenv("GEMINI_API_KEY", "GEMINIKEY-0123456789-abcdef")
+    monkeypatch.setenv("SERP_API_KEY", "SERPKEY-0123456789-abcdef")
     monkeypatch.setenv("LLM_PROVIDER", "gemini")
     events = tmp_path / "events.jsonl"
     monkeypatch.setenv("PREDICTOR_EVENTS_PATH", str(events))

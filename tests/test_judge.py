@@ -9,8 +9,8 @@ import importlib
 
 
 def _import_ai(monkeypatch):
-    monkeypatch.setenv("GEMINI_API_KEY", "test-dummy")
-    monkeypatch.setenv("SERP_API_KEY", "test-dummy")
+    monkeypatch.setenv("GEMINI_API_KEY", "GEMINIKEY-0123456789-abcdef")
+    monkeypatch.setenv("SERP_API_KEY", "SERPKEY-0123456789-abcdef")
     monkeypatch.setenv("LLM_PROVIDER", "gemini")
     import GarimpoInvestimentos.analyzers.ai_insights as ai
     return ai

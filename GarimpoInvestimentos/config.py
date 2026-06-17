@@ -38,15 +38,12 @@ class Settings:
     SCORE_HORIZON_DAYS: int = field(default_factory=lambda: int(os.getenv("SCORE_HORIZON_DAYS", "7")))
 
     def __post_init__(self):
-        # SerpAPI é sempre obrigatória; a chave de LLM exigida depende do provedor escolhido.
-        required = {"SERP_API_KEY": self.SERP_API_KEY}
-        if self.LLM_PROVIDER == "openai":
-            required["OPENAI_API_KEY"] = self.OPENAI_API_KEY
-        else:
-            required["GEMINI_API_KEY"] = self.GEMINI_API_KEY
-        missing = [k for k, v in required.items() if not v]
-        if missing:
-            raise ValueError(f"Variáveis obrigatórias ausentes no .env: {', '.join(missing)}")
+        # Trava de governança P0 (predictor_core.settings): chave ausente/FALSA/curta =>
+        # crash imediato, antes de qualquer modelo inicializar. SerpAPI sempre obrigatória;
+        # a de LLM depende do provedor. Strings de mentira ('dummy', etc.) também crasham.
+        from predictor_core.settings import require_secrets
+        provider_key = "OPENAI_API_KEY" if self.LLM_PROVIDER == "openai" else "GEMINI_API_KEY"
+        require_secrets("SERP_API_KEY", provider_key)
 
 
 settings = Settings()
