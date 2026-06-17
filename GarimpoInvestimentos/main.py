@@ -24,6 +24,7 @@ from GarimpoInvestimentos.output.reporter import export_results
 from GarimpoInvestimentos.core.logger import log_start, log_success, log_error
 from GarimpoInvestimentos.core.cache import load_cache, save_cache
 from GarimpoInvestimentos.core.history import append_history
+from predictor_core.obs import emit_event
 
 
 def parse_args():
@@ -73,6 +74,7 @@ async def run():
     print(f"• Cache: {'ativo' if cache_enabled else 'desativado'}")
 
     resultados = []
+    n_degraded = 0
 
     for i, ativo in enumerate(ativos):
         log_start(ativo)
@@ -95,6 +97,7 @@ async def run():
             continue  # pula o ativo; sem dados reais não faz sentido invocar o LLM
 
         # Indicadores técnicos — opcionais; se a série falhar, segue sem eles
+        ind_ok = True
         try:
             series = await get_price_series(ativo, days=200)
             indicadores = compute_indicators(series)
@@ -102,13 +105,27 @@ async def run():
                 hard_data["indicadores"] = indicadores
         except Exception as e:
             log_error(ativo, e)
+            ind_ok = False
 
         # Notícias — fallback para lista vazia; o Gemini ainda analisa com dados de mercado
+        news_ok = True
         try:
             news = await get_news_snippets(ativo)
         except Exception as e:
             log_error(ativo, e)
             news = []
+            news_ok = False
+
+        # Degradação silenciosa INSTRUMENTADA: antes o except engolia a falha e o LLM
+        # pontuava com input empobrecido sem ninguém saber. Agora é contada e EMITIDA
+        # (o evento entra no JSONL — auditável; o cross-check e o backtest podem
+        # estratificar previsões degradadas no futuro).
+        faltando = [k for k, ok in (("indicadores", ind_ok), ("noticias", news_ok)) if not ok]
+        if faltando:
+            n_degraded += 1
+            emit_event("cripto", "input_degraded",
+                       metrics={"n_faltando": len(faltando)},
+                       metadata={"ativo": ativo, "faltando": faltando})
 
         # Análise e score
         try:
@@ -137,6 +154,9 @@ async def run():
         if i < len(ativos) - 1:
             await asyncio.sleep(1)
 
+    if n_degraded:
+        print(f"⚠️  {n_degraded}/{len(ativos)} ativo(s) com input degradado "
+              f"(indicador/notícia faltando) — score do LLM saiu empobrecido; ver events.jsonl.")
     # Cache só é regravado quando habilitado (--no-cache não toca no cache.json)
     if cache_enabled:
         save_cache(cache)
