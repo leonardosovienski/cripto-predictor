@@ -19,7 +19,7 @@ Sessão de plataforma — o Garimpo virou consumidor do núcleo canônico `predi
 | Rede unificada | imports de rede agora vêm de `predictor_core.net` (httpx async + retry); `core/retry.py` e `core/http_client.py` **deletados** (duplicata aposentada). |
 | Trava de credenciais | `config.__post_init__` usa `predictor_core.settings.require_secrets` — chave ausente/falsa/`<16 chars` → **crash imediato**. `requirements.lock.txt` cravado. |
 
-**Suíte: 26 testes verdes** (`py -3.12 -m pytest tests/ -q`). O caminho **live nunca
+**Suíte: 26 testes verdes** (`python -m pytest tests/ -q`). O caminho **live nunca
 rodou** (`.env` vazio crasha de propósito — falta colar chaves reais: P0).
 
 ---

@@ -13,7 +13,7 @@ coleta (CoinGecko + SerpAPI) → análise (Gemini) → score → exportação (C
 
 Integrado à plataforma **predictor_core** (significância via block bootstrap pareado,
 carimbo do juiz, cross-check flag-only, trava de credenciais). Detalhes no
-[HANDOFF.md](HANDOFF.md) §0. Suíte: `py -3.12 -m pytest tests/ -q` (26 verdes — rodam no
+[HANDOFF.md](HANDOFF.md) §0. Suíte: `python -m pytest tests/ -q` (26 verdes — rodam no
 Python do sistema).
 
 **Rodar AO VIVO** exige chaves reais no `.env` **e** a venv (httpx/pydantic/SDKs do LLM):
@@ -63,7 +63,7 @@ scripts/run_daily.ps1               ← roda o pipeline 1×/dia (Agendador do Wi
 
 ## Setup
 
-Pré-requisito: **Python 3.12** (via `py -3.12`).
+Pré-requisito: **Python 3.12** (via `python`).
 
 > A venv já vem criada em `GarimpoInvestimentos\env`. **Só refaça os passos abaixo se
 > ela não existir** (ex.: clone novo). Rode **sempre a partir da raiz**
@@ -72,7 +72,7 @@ Pré-requisito: **Python 3.12** (via `py -3.12`).
 
 ```powershell
 cd C:\Claude\ProjetosPython
-py -3.12 -m venv GarimpoInvestimentos\env
+python -m venv GarimpoInvestimentos\env
 GarimpoInvestimentos\env\Scripts\python.exe -m pip install --upgrade pip
 GarimpoInvestimentos\env\Scripts\python.exe -m pip install -r GarimpoInvestimentos\requirements.txt
 ```

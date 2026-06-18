@@ -1,7 +1,7 @@
 """Pedágio do cripto — Spearman + block bootstrap (significância do score do LLM).
 
 Roda sem .env: importa só core.stats (puro, sem settings/rede). Invoque de
-C:\\Claude\\previsao-cripto:  py -3.12 -m pytest tests/ -q
+C:\\Claude\\previsao-cripto:  python -m pytest tests/ -q
 """
 import random
 
