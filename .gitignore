@@ -21,6 +21,10 @@ __pycache__/
 /output/
 /logs/
 
+# Telemetria de runtime (predictor_core.obs.emit_event grava na cwd por padrão).
+events.jsonl
+*.events.jsonl
+
 # IDE
 .vs/
 *.pyproj.user
