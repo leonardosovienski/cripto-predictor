@@ -5,6 +5,13 @@ Estado: **Fase 1 + CLI + notícias + backtesting + sinal calibrado + indicadores
 
 ---
 
+**Nota de auditoria (2026-06-18):**
+
+- O repositório raiz agora contém `scripts/test-audit-loop.ps1` e `AUDIT_README.md` com o laudo completo.
+- Foi usado `predictor-stocks/check_db.py` (sqlite3) para validar cobertura de 2024 e re-ingest de 2025.
+- Principais resultados: `prices_raw` (2024) completo; `universe_snapshots` em 2025-12-19: 60 tickers; backtest final: H1 não comprovada.
+
+
 ## 0. Integração à plataforma predictor_core (2026-06-16/17)
 
 Sessão de plataforma — o Garimpo virou consumidor do núcleo canônico `predictor_core`
