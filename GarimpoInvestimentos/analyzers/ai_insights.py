@@ -13,6 +13,7 @@ import json
 
 from GarimpoInvestimentos.config import settings
 from predictor_core.net import with_retry
+from predictor_core.obs import emit_event
 
 _gemini_client = None
 _openai_client = None
@@ -124,7 +125,8 @@ async def analyze_asset(asset_name: str, hard_data: dict, news_snippets: list[st
         }
 
     except Exception as e:
-        print(f"⚠️ Erro ao analisar {asset_name}: {e}")
+        emit_event("cripto", "llm_error",
+                   metadata={"ativo": asset_name, "error": str(e)[:200]})
         return {
             "sentiment": "neutro",
             "summary": "erro na análise (fallback aplicado)",
