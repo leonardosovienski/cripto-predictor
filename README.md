@@ -1,3 +1,26 @@
+<!-- ════════════════════════════════════════════════════════════════════
+RECONCILIAÇÃO DE EVIDÊNCIA — 2026-06-19 (corrige drift; fonte: ECOSYSTEM_STATUS.md na raiz)
+Marcas: [V] verificada por execução · [I] inferida · [NV] não verificada.
+
+- [V] Localização canônica: C:\Claude\previsao-cripto (NÃO C:\Claude\ProjetosPython,
+  que não existe mais). Toda menção a ProjetosPython abaixo é DRIFT de caminho.
+- [V] Ambiente: Python 3.14.6 (não 3.12). A venv do pacote roda o pipeline; a venv raiz
+  C:\Claude\.venv roda os testes.
+- [V] Estrutura: core/retry.py e core/http_client.py foram REMOVIDOS (rede migrou para
+  predictor_core.net). A árvore "core/" listada abaixo está desatualizada nesses itens.
+- [V] DEFAULT_ASSETS reais no .env = 22 ativos (o exemplo "bitcoin,ethereum,solana"
+  abaixo é só ilustrativo).
+- [V] Agendamento ATIVO: schtask "GarimpoInvestimentos" (08:00, run_daily.ps1). O exemplo
+  "GarimpoDaily / ProjetosPython" abaixo é DRIFT — não reflete a task registrada.
+- [V] VALIDAÇÃO DE INSTRUMENTO: o score correlaciona +0,68 (Spearman) com o RSI e fraco
+  com trend/momentum — está parcialmente ANCORADO no RSI. A análise do forward test DEVE
+  residualizar o score contra o RSI antes de atribuir poder ao LLM, senão confirma um
+  oscilador reembalado. (ferramenta: score_attribution.py)
+- [I] CoinGecko free tier estoura 429 em rajada → run de 22 ativos pode ter missingness
+  dos últimos; espaçar as chamadas.
+- Status de produção: PESQUISA (operacional, mas validação em t≈0).
+═════════════════════════════════════════════════════════════════════ -->
+
 # GarimpoInvestimentos
 
 Pipeline de análise de criptoativos: coleta dados de mercado e notícias, gera uma

@@ -234,3 +234,26 @@ independência de cwd): ver seção **"Como testar o projeto inteiro"** no `READ
 > 14/06. O `python.exe -m` da venv continua funcionando no novo local; só os atalhos
 > `activate` e `pip.exe` da venv guardam o caminho antigo — use sempre
 > `env\Scripts\python.exe -m pip ...` (ou recrie a venv) se precisar instalar algo.
+
+---
+
+**Reconciliação de evidência (2026-06-19)** — fonte de verdade: `ECOSYSTEM_STATUS.md` na raiz.
+Marcas: [V] verificada por execução nesta sessão · [NV] não verificada.
+
+- [V] **Localização canônica mudou de novo:** o pacote vive agora em
+  `C:\Claude\previsao-cripto\` — `C:\Claude\ProjetosPython\` **não existe mais**. As notas
+  de caminho acima são drift histórico.
+- [V] **Ambiente:** Python 3.14.6 (não 3.12). `core/retry.py` (citado na "rodada 5") foi
+  **removido** — a rede migrou para `predictor_core.net`.
+- [V] **VALIDAÇÃO DE INSTRUMENTO — o achado central:** num corte de 10 ativos (sem
+  notícias), o score correlaciona **+0,68 (Spearman) com o RSI**, e só +0,20/+0,21 com
+  trend/momentum. O score está **parcialmente ancorado no RSI** (~metade da variância de
+  rank). **A análise do forward test DEVE residualizar o score contra o RSI** antes de
+  atribuir qualquer poder ao LLM — senão "confirma" um oscilador reembalado. (ferramenta:
+  `score_attribution.py`)
+- [V] **Agendamento ATIVO:** schtask `GarimpoInvestimentos` (08:00, `run_daily.ps1`,
+  caminho corrigido). Histórico acumulado ≈ 1 previsão → **forward test em t≈0**.
+- [V] **CoinGecko free estoura 429 em rajada** → run de 22 ativos pode perder os últimos;
+  espaçar (~25s).
+- [NV] "Teto Gemini ~20/dia" — herdado, não confirmado nesta sessão (os erros que vi foram
+  `ServerError` transitórios que re-tentaram com sucesso).
