@@ -47,6 +47,15 @@ Python do sistema).
 ```
 ⚠️ Por design (fail-fast): `.env` sem chaves reais **crasha no segundo zero** (trava P0).
 
+**Validação de instrumento — `score_attribution.py`** (quanto do score é só RSI?):
+```powershell
+# corte transversal real: score vs RSI/MACD/SMA por ativo, espaçado p/ não estourar o CoinGecko
+.\GarimpoInvestimentos\env\Scripts\python.exe score_attribution.py
+```
+Saída: concordância direção técnica×LLM + Spearman(score, técnico). Achado registrado:
+score ≈ 40% RSI → a análise do forward test deve **residualizar contra o RSI** antes de
+atribuir poder ao LLM. Suíte de testes (26 verdes): `& "C:\Claude\.venv\Scripts\python.exe" -m pytest tests/ -q`.
+
 ## Estrutura
 
 ```
