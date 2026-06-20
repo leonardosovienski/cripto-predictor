@@ -75,12 +75,19 @@ def _load_rows() -> list[dict]:
                 continue
             if price <= 0:
                 continue
+            def _opt_float(col):
+                try:
+                    return float(r[col])
+                except (KeyError, ValueError, TypeError):
+                    return None
             rows.append({
                 "ativo": (r.get("Ativo") or "").lower(),
                 "score": score,
                 "pred_date": pred_date,
                 "pred_price": price,
                 "divergencia": 1 if str(r.get("Divergencia", "")).strip() in ("1", "True", "true") else 0,
+                # snapshot técnico no instante da previsão (vazio em previsões antigas)
+                "rsi": _opt_float("RSI14"),
             })
     return rows
 
@@ -165,12 +172,40 @@ def _report(enriched: list[dict]) -> None:
                     if rs is not None and los is not None:
                         print(f"      └ {label}: Spearman {rs:+.3f} "
                               f"[IC95% {los:+.3f} a {his:+.3f}] (n={len(sub)})")
+            # RESIDUALIZAÇÃO contra o RSI: regride o score no RSI (OLS 1-regressor, stdlib)
+            # e correlaciona o RESÍDUO com o retorno. Se o resíduo ainda prevê, o LLM agrega
+            # ALÉM do RSI; senão, o "sinal" era o RSI disfarçado de "poder do LLM" (o score
+            # foi medido em ~40% RSI). Exige o RSI salvo na previsão (forward test daqui pra frente).
+            resid_rho = None
+            trip = [(r["score"], r["rsi"], r[key]) for r in enriched
+                    if r.get(key) is not None and r.get("rsi") is not None]
+            if len(trip) >= 4:
+                sc, rs_, rt = [t[0] for t in trip], [t[1] for t in trip], [t[2] for t in trip]
+                m = len(trip)
+                msc, mrsi = sum(sc) / m, sum(rs_) / m
+                vrsi = sum((x - mrsi) ** 2 for x in rs_)
+                if vrsi > 0:
+                    b = sum((s - msc) * (x - mrsi) for s, x in zip(sc, rs_)) / vrsi
+                    a = msc - b * mrsi
+                    resid_pairs = [(s - (a + b * x), y) for s, x, y in zip(sc, rs_, rt)]  # ordem temporal
+                    resid_rho, rlo, rhi = spearman_block_ci(resid_pairs)
+                    if resid_rho is not None and rlo is not None:
+                        vr = "LLM agrega além do RSI" if (rlo > 0 or rhi < 0) else "RUÍDO (era ~RSI)"
+                        print(f"      └ score⊥RSI (residualizado): Spearman {resid_rho:+.3f} "
+                              f"[IC95% {rlo:+.3f} a {rhi:+.3f}] (n={m}) — {vr}")
+                else:
+                    print(f"      └ score⊥RSI: RSI sem variância (n={m}) — não residualizável")
+            else:
+                print("      └ score⊥RSI: aguardando previsões com RSI salvo (forward test).")
             # PAYOFF: o cripto nasce emitindo o evento estruturado do pedágio (Modo B
             # validado). ic_lower nas métricas; a divergência (alucinação?) nos metadados.
+            toll_metrics = {"spearman": round(rho, 4), "ic_lower": round(lo, 4),
+                            "ic_upper": round(hi, 4), "n": n}
+            if resid_rho is not None:
+                toll_metrics["spearman_resid_rsi"] = round(resid_rho, 4)
             emit_event(
                 "cripto", "toll_passed",
-                metrics={"spearman": round(rho, 4), "ic_lower": round(lo, 4),
-                         "ic_upper": round(hi, 4), "n": n},
+                metrics=toll_metrics,
                 metadata={"horizon_days": h, "veredito": veredito,
                           "n_divergentes": len(flagged), "n_alinhadas": len(aligned)})
 

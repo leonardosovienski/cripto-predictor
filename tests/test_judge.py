@@ -72,3 +72,20 @@ def test_history_migrates_old_header_without_data_loss(tmp_path, monkeypatch):
     assert old_row["Juiz"] == "", "linha antiga deveria ter juiz desconhecido (vazio)"
     new_row = next(r for r in rows if r["Ativo"] == "ETHEREUM")
     assert new_row["Juiz"] == "gemini:m:hash12345678"
+
+
+def test_history_persists_technical_snapshot(tmp_path, monkeypatch):
+    """O snapshot técnico (RSI/MACD/SMA/Bollinger) DEVE ser gravado na hora da previsão —
+    é o que permite residualizar o score contra o RSI no backtest. Sem isso, o forward
+    test em t≈0 perde o dado para sempre."""
+    import csv as _csv
+    history = _fresh_history(tmp_path, monkeypatch)
+    history.append_history([{
+        "ativo": "bitcoin", "sentimento": "neutro", "score": 41, "resumo": "x",
+        "data": "2026-06-20 08:00:00", "price_usd": 60000, "judge": "g:m:hash00000000",
+        "rsi_14": 35.6, "macd_histogram": 436.5, "preco_vs_sma50_pct": -8.1,
+        "preco_vs_sma200_pct": -18.1, "bollinger_pct_b": 0.32}])
+    row = next(_csv.DictReader((tmp_path / "garimpo_historico.csv").open(encoding="utf-8-sig")))
+    assert row["RSI14"] == "35.6"
+    assert row["vs_SMA200_pct"] == "-18.1"
+    assert row["MACD_hist"] == "436.5" and row["Bollinger_pctB"] == "0.32"

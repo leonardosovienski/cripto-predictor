@@ -6,8 +6,12 @@ from GarimpoInvestimentos.core.paths import OUTPUT_DIR
 HIST_CSV = str(OUTPUT_DIR / "garimpo_historico.csv")
 
 # "Juiz" = carimbo provider:modelo:hash-do-prompt (reprodutibilidade — impede o
-# backtest de poolar estimadores diferentes). Coluna aditiva; histórico antigo é migrado.
-FIELDNAMES = ["Ativo", "Sentimento", "Score", "Resumo", "Data", "price_usd", "Juiz", "Divergencia"]
+# backtest de poolar estimadores diferentes).
+# Colunas técnicas (RSI14..Bollinger_pctB) = snapshot dos indicadores no instante da
+# previsão, persistido para o backtest RESIDUALIZAR o score contra eles (separar o
+# sinal do LLM do RSI/tendência redescobertos). Tudo aditivo; histórico antigo é migrado.
+FIELDNAMES = ["Ativo", "Sentimento", "Score", "Resumo", "Data", "price_usd", "Juiz", "Divergencia",
+              "RSI14", "MACD_hist", "vs_SMA50_pct", "vs_SMA200_pct", "Bollinger_pctB"]
 
 
 def _ensure_header() -> None:
@@ -61,4 +65,9 @@ def append_history(resultados: list[dict]) -> None:
                 "price_usd":  r.get("price_usd", ""),
                 "Juiz":       r.get("judge", ""),
                 "Divergencia": r.get("divergencia", ""),
+                "RSI14":         r.get("rsi_14", ""),
+                "MACD_hist":     r.get("macd_histogram", ""),
+                "vs_SMA50_pct":  r.get("preco_vs_sma50_pct", ""),
+                "vs_SMA200_pct": r.get("preco_vs_sma200_pct", ""),
+                "Bollinger_pctB": r.get("bollinger_pct_b", ""),
             })

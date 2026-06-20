@@ -131,6 +131,7 @@ async def run():
         try:
             analysis = await analyze_asset(ativo, hard_data, news)
             score = calculate_final_score(analysis)
+            ind = hard_data.get("indicadores", {})
             resultado = {
                 "ativo": ativo,
                 "sentimento": analysis["sentiment"],
@@ -140,7 +141,15 @@ async def run():
                 "price_usd": hard_data.get("price_usd", 0),
                 "judge": judge_signature(),
                 # cross-check flag-only: tagueia contradição LLM-vs-técnico, NÃO muta o score
-                "divergencia": divergence_flag(score, hard_data.get("indicadores", {})),
+                "divergencia": divergence_flag(score, ind),
+                # SNAPSHOT TÉCNICO no instante da previsão — persistido p/ o backtest
+                # RESIDUALIZAR o score contra os técnicos (separar "LLM" de "RSI redescoberto").
+                # Sem guardar agora, o forward test em t≈0 perde o dado para sempre.
+                "rsi_14": ind.get("rsi_14", ""),
+                "macd_histogram": ind.get("macd_histogram", ""),
+                "preco_vs_sma50_pct": ind.get("preco_vs_sma50_pct", ""),
+                "preco_vs_sma200_pct": ind.get("preco_vs_sma200_pct", ""),
+                "bollinger_pct_b": ind.get("bollinger_pct_b", ""),
             }
             resultados.append(resultado)
             cache[ativo] = resultado
