@@ -15,15 +15,16 @@ coleta (CoinGecko + SerpAPI) → indicadores técnicos → análise (Gemini) →
 ## Estado atual
 
 Integrado ao **predictor_core** via `vendor/` (significância por block bootstrap, carimbo
-do juiz, cross-check flag-only, trava de credenciais P0). Suíte: **26 testes verdes**.
+do juiz, cross-check flag-only, trava de credenciais P0). Suíte: **27 testes verdes**.
 Pipeline roda ponta a ponta ao vivo; agendamento diário **ativo**.
 
-**Validação em t≈0:** o forward test mal começou a acumular — sem veredito ainda. E um
-achado de instrumento já registrado: o score correlaciona **+0,68 Spearman (~40% R²) com o
-RSI** e fraco com trend/momentum → está parcialmente ancorado no RSI. **A análise do forward
-test deve residualizar o score contra o RSI** antes de atribuir poder ao LLM (senão confirma
-um oscilador reembalado). Ferramenta: `score_attribution.py`. Classificação: **pesquisa**
-(operacional, mas validação no zero).
+**Validação em t≈0:** o forward test mal começou a acumular — sem veredito ainda. Achado de
+instrumento: o score é **~40% RSI** (Spearman +0,68, n=10) e fraco com trend/momentum.
+**Mitigação JÁ IMPLEMENTADA:** cada previsão agora **persiste o snapshot técnico**
+(RSI/MACD/SMA50/SMA200/Bollinger) no histórico, e o backtest reporta o **Spearman
+RESIDUALIZADO contra o RSI** — se o resíduo ainda prevê, o LLM agrega além do RSI; senão, o
+"sinal" era RSI disfarçado. (medição pontual da atribuição: `score_attribution.py`.)
+Classificação: **pesquisa** (operacional, validação no zero).
 
 ## Ambiente
 
@@ -48,7 +49,7 @@ $py = ".\GarimpoInvestimentos\env\Scripts\python.exe"
 & $py score_attribution.py                                # validação: quanto do score é RSI?
 ```
 
-Testes (26 verdes): `& "C:\Claude\.venv\Scripts\python.exe" -m pytest tests/ -q`.
+Testes (27 verdes): `& "C:\Claude\.venv\Scripts\python.exe" -m pytest tests/ -q`.
 
 ### Opções de CLI
 
@@ -67,7 +68,7 @@ previsao-cripto/                     ← raiz do repositório (rode a partir daq
 ├── pyproject.toml
 ├── vendor/predictor_core/           ← biblioteca core vendorizada (net, stats, obs, settings...)
 ├── score_attribution.py            ← validação de instrumento (score vs técnicos)
-├── tests/                           ← pytest (26 verdes)
+├── tests/                           ← pytest (27 verdes)
 ├── scripts/run_daily.ps1           ← roda o pipeline 1×/dia (Agendador do Windows)
 └── GarimpoInvestimentos/            ← pacote Python
     ├── __init__.py                  ← guard UTF-8 + injeta vendor/ no sys.path
@@ -82,11 +83,11 @@ previsao-cripto/                     ← raiz do repositório (rode a partir daq
     │   ├── ai_insights.py           ← análise via LLM (Gemini ou OpenAI), prompt ancorado, judge_signature
     │   ├── indicators.py            ← RSI, SMA 50/200, MACD, Bollinger (Python puro)
     │   ├── score_engine.py          ← score = opportunity_score do LLM (puro) + divergence_flag
-    │   └── backtest.py              ← Fase 2: D+1/7/30, Spearman+IC (core.stats), estratificação
+    │   └── backtest.py              ← Fase 2: D+1/7/30, Spearman+IC, estratificação, residualização⊥RSI
     ├── core/
     │   ├── paths.py                 ← caminhos fixos de output/ e logs/ (à prova de cwd)
     │   ├── cache.py                 ← cache JSON com TTL UTC (auto-poda no load)
-    │   ├── history.py               ← histórico CSV acumulado, dedup por (Ativo, Data)
+    │   ├── history.py               ← histórico CSV (dedup Ativo+Data) + snapshot técnico p/ residualizar
     │   └── logger.py                ← logging via loguru (logs/garimpo.log)
     └── output/
         └── reporter.py              ← exportação CSV + XLSX com gráfico
@@ -161,14 +162,16 @@ Retry com backoff (`predictor_core.net.with_retry`): `503`/`429` transitório re
   50=incerteza, 100=alta forte nesse prazo).
 - O **`Score` final é esse número puro**; o `sentiment` é só metadado (não multiplica o score).
 - `divergence_flag` tagueia contradição LLM×técnico (só sinaliza, não muta o score).
-- ⚠️ **~40% do score é explicado pelo RSI** (medido, n=10) — ver `score_attribution.py`. O
-  backtest deve controlar/residualizar o RSI antes de atribuir poder ao LLM.
+- ⚠️ **~40% do score é explicado pelo RSI** (medido, n=10). Por isso o snapshot técnico é
+  **persistido em cada previsão** e o backtest **residualiza o score contra o RSI** — só o
+  resíduo pode ser atribuído ao LLM. (medição pontual: `score_attribution.py`.)
 
 ## Saídas (na pasta `output/` da raiz)
 
 - `garimpo_resultados_<timestamp>.csv` / `.xlsx` — relatório da execução (XLSX com gráfico).
 - `garimpo_historico.csv` — histórico acumulado; colunas: `Ativo, Sentimento, Score, Resumo,
-  Data, price_usd, Juiz, Divergencia` (dedup por Ativo+Data; âncora do backtest).
+  Data, price_usd, Juiz, Divergencia, RSI14, MACD_hist, vs_SMA50_pct, vs_SMA200_pct,
+  Bollinger_pctB` (dedup por Ativo+Data; o snapshot técnico permite residualizar o score).
 - `garimpo_backtest.csv` — variações D+1/D+7/D+30 (Fase 2). · `cache.json` — TTL 6h.
 - Logs em `logs/garimpo.log` (rotação 5 MB). · Telemetria em `events.jsonl` (gitignored).
 
@@ -177,5 +180,7 @@ Retry com backoff (`predictor_core.net.with_retry`): `503`/`429` transitório re
 `analyzers/backtest.py` lê o histórico (descartando fallback, dedup), busca o preço real em
 D+1/D+7/D+30 via CoinGecko, e para o horizonte `SCORE_HORIZON_DAYS` calcula Spearman(Score,
 variação) **com IC block bootstrap** (core.stats), estratificado por `divergence_flag`, mais
-acurácia direcional/hit rate/benchmark BTC. ⚠️ Só dá número significativo após **semanas** de
-previsões acumuladas (uma previsão de hoje só tem preço em D+7 daqui a 7 dias).
+acurácia direcional/hit rate/benchmark BTC. **Reporta também o Spearman RESIDUALIZADO contra
+o RSI** (OLS score~RSI; correlação do resíduo com o retorno) — separa o sinal do LLM do RSI
+redescoberto. ⚠️ Só dá número significativo após **semanas** de previsões acumuladas (uma
+previsão de hoje só tem preço em D+7 daqui a 7 dias) **e** com o RSI salvo (a partir de agora).

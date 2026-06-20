@@ -1,16 +1,21 @@
 # HANDOFF — GarimpoInvestimentos (Fase 1 + melhorias)
 
-## Estado atual (topo sempre corrente — atualizado 2026-06-19)
+## Estado atual (topo sempre corrente — atualizado 2026-06-20)
 
 **Fase 1+2 implementadas.** Pipeline (CoinGecko + SerpAPI → indicadores → Gemini → score →
 CSV/XLSX + histórico) roda ao vivo. Consumidor do `predictor_core` via `vendor/` (rede/stats/
-settings/obs; `core/retry.py` e `core/http_client.py` foram **removidos**). **Suíte: 26 verdes**
+settings/obs; `core/retry.py` e `core/http_client.py` foram **removidos**). **Suíte: 27 verdes**
 (`C:\Claude\.venv\Scripts\python.exe -m pytest tests/ -q`; só Python 3.14.6 nesta máquina).
 **Localização canônica:** `C:\Claude\previsao-cripto` (não mais `ProjetosPython`).
 **Agendamento ATIVO:** schtask `GarimpoInvestimentos`, diário 08:00, `run_daily.ps1`.
 **Validação em t≈0:** ~1 previsão acumulada — sem veredito. Achado de instrumento: o score é
-**~40% RSI** (`score_attribution.py`) → residualizar contra RSI antes de atribuir poder ao LLM.
-Gemini num alias flutuante (não pinado) → risco de drift do juiz.
+**~40% RSI** (`score_attribution.py`).
+**MITIGAÇÃO IMPLEMENTADA (2026-06-20):** cada previsão agora **persiste o snapshot técnico**
+(RSI/MACD/SMA50/SMA200/Bollinger — 5 colunas novas no `history.py`, migração aditiva) e o
+`backtest.py` reporta o **Spearman RESIDUALIZADO contra o RSI** (OLS score~RSI; resíduo×retorno) +
+`spearman_resid_rsi` na telemetria. Crítico ter feito agora: o forward test em t≈0 estava
+descartando o RSI diariamente — sem ele a residualização seria impossível depois.
+Gemini num alias flutuante (não pinado) → risco de drift do juiz (pendente: você troca no `.env`).
 
 > O bloco abaixo é o **log datado** (cada entrada foi verdade na sua data — não reescrever).
 > Estado consolidado: `../ECOSYSTEM_STATUS.md`, `../FINAL_CERTIFICATION.md`, `../SESSION_CLOSEOUT_2026-06-19.md`.
