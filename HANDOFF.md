@@ -1,13 +1,30 @@
 # HANDOFF — GarimpoInvestimentos (Fase 1 + melhorias)
 
-Data: 2026-06-14
-Estado: **Fase 1 + CLI + notícias + backtesting + sinal calibrado + indicadores técnicos + LLM multi-provedor + métricas + retry/backoff + agendamento diário (pronto pra acumular dados).**
+## Estado atual (topo sempre corrente — atualizado 2026-06-19)
+
+**Fase 1+2 implementadas.** Pipeline (CoinGecko + SerpAPI → indicadores → Gemini → score →
+CSV/XLSX + histórico) roda ao vivo. Consumidor do `predictor_core` via `vendor/` (rede/stats/
+settings/obs; `core/retry.py` e `core/http_client.py` foram **removidos**). **Suíte: 26 verdes**
+(`C:\Claude\.venv\Scripts\python.exe -m pytest tests/ -q`; só Python 3.14.6 nesta máquina).
+**Localização canônica:** `C:\Claude\previsao-cripto` (não mais `ProjetosPython`).
+**Agendamento ATIVO:** schtask `GarimpoInvestimentos`, diário 08:00, `run_daily.ps1`.
+**Validação em t≈0:** ~1 previsão acumulada — sem veredito. Achado de instrumento: o score é
+**~40% RSI** (`score_attribution.py`) → residualizar contra RSI antes de atribuir poder ao LLM.
+Gemini num alias flutuante (não pinado) → risco de drift do juiz.
+
+> O bloco abaixo é o **log datado** (cada entrada foi verdade na sua data — não reescrever).
+> Estado consolidado: `../ECOSYSTEM_STATUS.md`, `../FINAL_CERTIFICATION.md`, `../SESSION_CLOSEOUT_2026-06-19.md`.
 
 ---
 
+### Log histórico
+
+**Fase 1 (2026-06-14):** CLI + notícias + backtesting + sinal calibrado + indicadores técnicos +
+LLM multi-provedor + métricas + agendamento diário.
+
 **Nota de auditoria (2026-06-18):**
 
-- O repositório raiz agora contém `scripts/test-audit-loop.ps1` e `AUDIT_README.md` com o laudo completo.
+- O repositório raiz contém `scripts/test-audit-loop.ps1` e `AUDIT_README.md` com o laudo completo.
 - Foi usado `predictor-stocks/check_db.py` (sqlite3) para validar cobertura de 2024 e re-ingest de 2025.
 - Principais resultados: `prices_raw` (2024) completo; `universe_snapshots` em 2025-12-19: 60 tickers; backtest final: H1 não comprovada.
 

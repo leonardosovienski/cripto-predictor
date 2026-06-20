@@ -1,164 +1,54 @@
-<!-- ════════════════════════════════════════════════════════════════════
-RECONCILIAÇÃO DE EVIDÊNCIA — 2026-06-19 (corrige drift; fonte: ECOSYSTEM_STATUS.md na raiz)
-Marcas: [V] verificada por execução · [I] inferida · [NV] não verificada.
-
-- [V] Localização canônica: C:\Claude\previsao-cripto (NÃO C:\Claude\ProjetosPython,
-  que não existe mais). Toda menção a ProjetosPython abaixo é DRIFT de caminho.
-- [V] Ambiente: Python 3.14.6 (não 3.12). A venv do pacote roda o pipeline; a venv raiz
-  C:\Claude\.venv roda os testes.
-- [V] Estrutura: core/retry.py e core/http_client.py foram REMOVIDOS (rede migrou para
-  predictor_core.net). A árvore "core/" listada abaixo está desatualizada nesses itens.
-- [V] DEFAULT_ASSETS reais no .env = 22 ativos (o exemplo "bitcoin,ethereum,solana"
-  abaixo é só ilustrativo).
-- [V] Agendamento ATIVO: schtask "GarimpoInvestimentos" (08:00, run_daily.ps1). O exemplo
-  "GarimpoDaily / ProjetosPython" abaixo é DRIFT — não reflete a task registrada.
-- [V] VALIDAÇÃO DE INSTRUMENTO: o score correlaciona +0,68 (Spearman) com o RSI e fraco
-  com trend/momentum — está parcialmente ANCORADO no RSI. A análise do forward test DEVE
-  residualizar o score contra o RSI antes de atribuir poder ao LLM, senão confirma um
-  oscilador reembalado. (ferramenta: score_attribution.py)
-- [I] CoinGecko free tier estoura 429 em rajada → run de 22 ativos pode ter missingness
-  dos últimos; espaçar as chamadas.
-- Status de produção: PESQUISA (operacional, mas validação em t≈0).
-═════════════════════════════════════════════════════════════════════ -->
-
 # GarimpoInvestimentos
 
 Pipeline de análise de criptoativos: coleta dados de mercado e notícias, gera uma
 análise qualitativa com IA (Google Gemini), calcula um score de oportunidade e
-exporta os resultados em CSV/XLSX. Mantém cache e histórico para permitir
-backtesting na Fase 2.
+exporta os resultados em CSV/XLSX. Mantém cache e histórico para o backtesting (Fase 2).
 
 ```
-coleta (CoinGecko + SerpAPI) → análise (Gemini) → score → exportação (CSV/XLSX) + histórico
+coleta (CoinGecko + SerpAPI) → indicadores técnicos → análise (Gemini) → score → CSV/XLSX + histórico
 ```
 
-## Estado atual / Como rodar
+> **Localização canônica:** `C:\Claude\previsao-cripto\` (o pacote é
+> `previsao-cripto\GarimpoInvestimentos\`). Estado consolidado da plataforma em
+> `../ECOSYSTEM_STATUS.md` e `../FINAL_CERTIFICATION.md`.
 
-Integrado à plataforma **predictor_core** (significância via block bootstrap pareado,
-carimbo do juiz, cross-check flag-only, trava de credenciais). Detalhes no
-[HANDOFF.md](HANDOFF.md) §0. Suíte: `python -m pytest tests/ -q` (26 verdes — rodam no
-Python do sistema).
+## Estado atual
 
-**Rodar AO VIVO** exige chaves reais no `.env` **e** a venv (httpx/pydantic/SDKs do LLM):
-```powershell
-# cole GEMINI_API_KEY / OPENAI_API_KEY / SERP_API_KEY (>=16 chars) em GarimpoInvestimentos\.env
-.\GarimpoInvestimentos\env\Scripts\python.exe -m GarimpoInvestimentos.main --assets bitcoin,ethereum
-.\GarimpoInvestimentos\env\Scripts\python.exe -m GarimpoInvestimentos.analyzers.backtest
-```
-⚠️ Por design (fail-fast): `.env` sem chaves reais **crasha no segundo zero** (trava P0).
+Integrado ao **predictor_core** via `vendor/` (significância por block bootstrap, carimbo
+do juiz, cross-check flag-only, trava de credenciais P0). Suíte: **26 testes verdes**.
+Pipeline roda ponta a ponta ao vivo; agendamento diário **ativo**.
 
-**Validação de instrumento — `score_attribution.py`** (quanto do score é só RSI?):
-```powershell
-# corte transversal real: score vs RSI/MACD/SMA por ativo, espaçado p/ não estourar o CoinGecko
-.\GarimpoInvestimentos\env\Scripts\python.exe score_attribution.py
-```
-Saída: concordância direção técnica×LLM + Spearman(score, técnico). Achado registrado:
-score ≈ 40% RSI → a análise do forward test deve **residualizar contra o RSI** antes de
-atribuir poder ao LLM. Suíte de testes (26 verdes): `& "C:\Claude\.venv\Scripts\python.exe" -m pytest tests/ -q`.
+**Validação em t≈0:** o forward test mal começou a acumular — sem veredito ainda. E um
+achado de instrumento já registrado: o score correlaciona **+0,68 Spearman (~40% R²) com o
+RSI** e fraco com trend/momentum → está parcialmente ancorado no RSI. **A análise do forward
+test deve residualizar o score contra o RSI** antes de atribuir poder ao LLM (senão confirma
+um oscilador reembalado). Ferramenta: `score_attribution.py`. Classificação: **pesquisa**
+(operacional, mas validação no zero).
 
-## Estrutura
+## Ambiente
 
-```
-ProjetosPython/                      ← raiz do repositório (rode a partir daqui)
-├── pyproject.toml
-└── GarimpoInvestimentos/            ← pacote Python
-    ├── __init__.py
-    ├── main.py                      ← ponto de entrada
-    ├── config.py                    ← lê chaves do .env + validação de startup
-    ├── .env                         ← suas chaves de API (NÃO versionar)
-    ├── requirements.txt
-    ├── collectors/
-    │   ├── coingecko_api.py         ← dados de mercado (preço, volume, variações)
-    │   └── serpapi_news.py          ← notícias via SerpAPI (Google News)
-    ├── analyzers/
-    │   ├── ai_insights.py           ← análise via LLM (Gemini ou OpenAI), prompt ancorado
-    │   ├── indicators.py            ← RSI, SMA 50/200, MACD, Bollinger (Python puro)
-    │   ├── score_engine.py          ← score final = opportunity_score do LLM (puro, 0-100)
-    │   └── backtest.py              ← Fase 2: D+1/7/30, Spearman, hit rate, Sharpe, benchmark
-    ├── core/
-    │   ├── paths.py                 ← caminhos fixos de output/ e logs/ (à prova de cwd)
-    │   ├── retry.py                 ← retry com backoff p/ chamadas transitórias (503/429)
-    │   ├── cache.py                 ← cache JSON com TTL (UTC, configurável)
-    │   ├── history.py               ← histórico CSV acumulado, dedup por (ativo, data)
-    │   ├── http_client.py           ← cliente httpx async
-    │   └── logger.py                ← logging via loguru (logs/garimpo.log)
-    └── output/
-        └── reporter.py              ← exportação CSV + XLSX com gráfico
+Esta máquina tem **apenas Python 3.14.6**. Dois interpretadores em uso:
+- **venv do pacote** `GarimpoInvestimentos\env\Scripts\python.exe` — roda o **pipeline ao vivo**
+  (tem httpx/pydantic/loguru/openpyxl/SDKs do LLM, mas **não** pytest).
+- **venv raiz** `C:\Claude\.venv\Scripts\python.exe` — roda os **testes** (stack completo).
 
-scripts/run_daily.ps1               ← roda o pipeline 1×/dia (Agendador do Windows)
-```
+`__init__.py` injeta `vendor/` no `sys.path`, então `python -m GarimpoInvestimentos.main`
+resolve o `predictor_core` a partir de `previsao-cripto`.
 
-> **Pacote `output/` vs pasta de dados:** `GarimpoInvestimentos/output/` contém só
-> **código** (`reporter.py`). Os arquivos gerados vão para `output/` e `logs/` na
-> **raiz do projeto**, sempre — o `core/paths.py` ancora esses caminhos via `__file__`,
-> então não importa de qual diretório você execute.
+## Como rodar (ao vivo)
 
-## Setup
-
-Pré-requisito: **Python 3.12** (via `python`).
-
-> A venv já vem criada em `GarimpoInvestimentos\env`. **Só refaça os passos abaixo se
-> ela não existir** (ex.: clone novo). Rode **sempre a partir da raiz**
-> `C:\Claude\ProjetosPython` — note que a venv e o `requirements.txt` ficam dentro de
-> `GarimpoInvestimentos\`, então os caminhos abaixo são relativos à raiz:
+Exige chaves reais no `.env`. ⚠️ Por design (fail-fast), `.env` sem chaves reais **crasha
+no segundo zero** (trava P0). A partir de `C:\Claude\previsao-cripto`:
 
 ```powershell
-cd C:\Claude\ProjetosPython
-python -m venv GarimpoInvestimentos\env
-GarimpoInvestimentos\env\Scripts\python.exe -m pip install --upgrade pip
-GarimpoInvestimentos\env\Scripts\python.exe -m pip install -r GarimpoInvestimentos\requirements.txt
+$py = ".\GarimpoInvestimentos\env\Scripts\python.exe"
+& $py -m GarimpoInvestimentos.main                       # usa DEFAULT_ASSETS do .env (22 ativos)
+& $py -m GarimpoInvestimentos.main --assets bitcoin,solana --no-cache --min-score 70 --summary
+& $py -m GarimpoInvestimentos.analyzers.backtest          # Fase 2 (correlação score×retorno)
+& $py score_attribution.py                                # validação: quanto do score é RSI?
 ```
 
-### Configurar as chaves de API
-
-Edite `GarimpoInvestimentos/.env` com chaves **reais**. `GEMINI_API_KEY` e
-`SERP_API_KEY` são obrigatórias e lidas em tempo de import — se faltarem, o programa
-levanta `ValueError` imediatamente, antes de qualquer requisição. As demais têm
-default:
-
-```
-# Provedor de LLM: "gemini" (default) ou "openai"
-LLM_PROVIDER=gemini
-GEMINI_API_KEY=sua_chave_gemini
-GEMINI_MODEL=gemini-2.5-flash
-# Só necessárias se LLM_PROVIDER=openai (chave de API paga, NÃO é o ChatGPT Plus):
-OPENAI_API_KEY=
-OPENAI_MODEL=gpt-4o-mini
-
-SERP_API_KEY=sua_chave_serpapi
-LIMIAR_SCORE_MINIMO=60          # score (escala 0-100) p/ destacar oportunidades
-DEFAULT_ASSETS=bitcoin,ethereum,solana
-CACHE_TTL_HOURS=6
-ENABLE_CACHE=true
-SCORE_HORIZON_DAYS=7            # horizonte do score; o backtest correlaciona contra ele
-```
-
-Obrigatórias: `SERP_API_KEY` + a chave do provedor escolhido (`GEMINI_API_KEY` **ou**
-`OPENAI_API_KEY`). As outras têm default.
-
-- **Gemini**: https://aistudio.google.com/app/apikey
-- **OpenAI (API paga)**: https://platform.openai.com/api-keys — ⚠️ a assinatura **ChatGPT
-  Plus não dá acesso à API**; é cobrança por token, conta separada.
-- **SerpAPI**: https://serpapi.com/manage-api-key
-- CoinGecko (free tier) **não exige chave**.
-
-> ⚠️ **Não troque de provedor no meio da coleta do backtest.** Um histórico
-> meio-Gemini, meio-OpenAI mistura dois "juízes" com calibrações diferentes e
-> invalida o estudo. Escolha um e mantenha pela janela inteira.
-
-## Como rodar
-
-Sempre a partir da **raiz** (`C:\Claude\ProjetosPython`), como módulo:
-
-```powershell
-cd C:\Claude\ProjetosPython
-```
-
-```powershell
-GarimpoInvestimentos\env\Scripts\python.exe -m GarimpoInvestimentos.main
-```
-
-Sem flags, usa `DEFAULT_ASSETS` do `.env` (`bitcoin,ethereum,solana`).
+Testes (26 verdes): `& "C:\Claude\.venv\Scripts\python.exe" -m pytest tests/ -q`.
 
 ### Opções de CLI
 
@@ -170,157 +60,122 @@ Sem flags, usa `DEFAULT_ASSETS` do `.env` (`bitcoin,ethereum,solana`).
 | `--output-dir <pasta>` | Grava CSV/XLSX/histórico/cache nessa pasta |
 | `--summary` | Ao final, imprime só os ativos com score ≥ limiar |
 
-```powershell
-# exemplo: dois ativos, sem cache, destacando score >= 70, com resumo final
-GarimpoInvestimentos\env\Scripts\python.exe -m GarimpoInvestimentos.main `
-    --assets bitcoin,solana --no-cache --min-score 70 --summary
+## Estrutura
+
+```
+previsao-cripto/                     ← raiz do repositório (rode a partir daqui)
+├── pyproject.toml
+├── vendor/predictor_core/           ← biblioteca core vendorizada (net, stats, obs, settings...)
+├── score_attribution.py            ← validação de instrumento (score vs técnicos)
+├── tests/                           ← pytest (26 verdes)
+├── scripts/run_daily.ps1           ← roda o pipeline 1×/dia (Agendador do Windows)
+└── GarimpoInvestimentos/            ← pacote Python
+    ├── __init__.py                  ← guard UTF-8 + injeta vendor/ no sys.path
+    ├── main.py                      ← ponto de entrada
+    ├── config.py                    ← lê chaves do .env + trava P0 (require_secrets)
+    ├── .env                         ← suas chaves de API (NÃO versionar)
+    ├── requirements.txt
+    ├── collectors/
+    │   ├── coingecko_api.py         ← dados de mercado + série de 200 closes
+    │   └── serpapi_news.py          ← notícias via SerpAPI (Google News)
+    ├── analyzers/
+    │   ├── ai_insights.py           ← análise via LLM (Gemini ou OpenAI), prompt ancorado, judge_signature
+    │   ├── indicators.py            ← RSI, SMA 50/200, MACD, Bollinger (Python puro)
+    │   ├── score_engine.py          ← score = opportunity_score do LLM (puro) + divergence_flag
+    │   └── backtest.py              ← Fase 2: D+1/7/30, Spearman+IC (core.stats), estratificação
+    ├── core/
+    │   ├── paths.py                 ← caminhos fixos de output/ e logs/ (à prova de cwd)
+    │   ├── cache.py                 ← cache JSON com TTL UTC (auto-poda no load)
+    │   ├── history.py               ← histórico CSV acumulado, dedup por (Ativo, Data)
+    │   └── logger.py                ← logging via loguru (logs/garimpo.log)
+    └── output/
+        └── reporter.py              ← exportação CSV + XLSX com gráfico
 ```
 
-### Backtesting (Fase 2)
+> **Rede:** não há mais `core/retry.py` nem `core/http_client.py` — a rede (retry/backoff +
+> cliente httpx) migrou para `predictor_core.net` (`with_retry`, `get_http_client`).
+> **Pacote `output/` vs dados:** `GarimpoInvestimentos/output/` é **código** (`reporter.py`);
+> os arquivos gerados vão para `output/`+`logs/` na **raiz** (ancorados via `core/paths.py`).
 
-Depois de acumular previsões no histórico, avalie o poder preditivo do score:
+## Configurar as chaves de API
 
-```powershell
-GarimpoInvestimentos\env\Scripts\python.exe -m GarimpoInvestimentos.analyzers.backtest
+Edite `GarimpoInvestimentos/.env`. `SERP_API_KEY` + a chave do provedor de LLM são
+obrigatórias (lidas no import; se faltarem ou forem placeholder/<16 chars → `ValueError`
+imediato). As demais têm default:
+
+```
+LLM_PROVIDER=gemini                 # "gemini" (default) ou "openai"
+GEMINI_API_KEY=sua_chave_gemini
+GEMINI_MODEL=gemini-2.5-flash       # ⚠️ alias FLUTUANTE — pine um snapshot datado p/ reprodutibilidade
+OPENAI_API_KEY=                     # só se LLM_PROVIDER=openai (API paga, NÃO é ChatGPT Plus)
+OPENAI_MODEL=gpt-4o-mini
+SERP_API_KEY=sua_chave_serpapi
+LIMIAR_SCORE_MINIMO=60
+DEFAULT_ASSETS=bitcoin,ethereum,solana,binancecoin,ripple,cardano,dogecoin,tron,avalanche-2,chainlink,polkadot,litecoin,bitcoin-cash,stellar,uniswap,cosmos,monero,aave,near,algorand,vechain,filecoin
+CACHE_TTL_HOURS=6
+ENABLE_CACHE=true
+SCORE_HORIZON_DAYS=7
 ```
 
-Gera `output/garimpo_backtest.csv` (preço e variação em D+1/D+7/D+30) e imprime a
-correlação de Spearman entre `Score` e a variação. ⚠️ Só produz números
-significativos depois que tempo suficiente passou desde as previsões (ver Fase 2).
+- Gemini: https://aistudio.google.com/app/apikey · SerpAPI: https://serpapi.com/manage-api-key
+- OpenAI (API paga, ≠ ChatGPT Plus): https://platform.openai.com/api-keys · CoinGecko free **não exige chave**.
 
-## Como testar o projeto inteiro
+> ⚠️ **Não troque de provedor no meio de uma janela de coleta** — mistura dois "juízes" de
+> calibrações diferentes e invalida o backtest. E **pine o `GEMINI_MODEL`** num snapshot
+> datado: o alias flutuante pode mudar de pesos sem mudar a `judge_signature`.
 
-Roteiro de smoke-test. Tudo a partir da raiz; defina um atalho para o Python da venv:
+## Agendamento diário (ATIVO)
 
-```powershell
-cd C:\Claude\ProjetosPython
-$py = ".\GarimpoInvestimentos\env\Scripts\python.exe"
+O backtest só amadurece com **tempo real decorrido**, então o pipeline roda 1×/dia via
+Agendador do Windows. **Já registrado** (status Ready):
+
+```
+Task: GarimpoInvestimentos  →  scripts\run_daily.ps1  →  diário 08:00
+Remover:  schtasks /Delete /TN "GarimpoInvestimentos" /F
 ```
 
-| # | O que valida | Comando | Esperado |
-|---|--------------|---------|----------|
-| 1 | Deps da venv | `& $py -c "import httpx, loguru, openpyxl, pydantic, dotenv; from google import genai; print('deps OK')"` | `deps OK` |
-| 2 | Sintaxe de todos os fontes | `& $py -m compileall -q -x env GarimpoInvestimentos` | sem erros |
-| 3 | Pipeline completo | `& $py -m GarimpoInvestimentos.main` | 3 ativos, "exportados", histórico atualizado |
-| 4 | Cache (rode o #3 de novo) | `& $py -m GarimpoInvestimentos.main` | "🧠 Cache válido — pulando coleta" |
-| 5 | Ajuda da CLI | `& $py -m GarimpoInvestimentos.main --help` | lista as flags |
-| 6 | CLI completa | `& $py -m GarimpoInvestimentos.main --assets bitcoin,solana --no-cache --min-score 70 --summary` | bloco "RESUMO" só com score ≥ 70 |
-| 7 | `--output-dir` | `& $py -m GarimpoInvestimentos.main --assets bitcoin --no-cache --output-dir output\teste` | arquivos em `output\teste\` |
-| 8 | Backtest (Fase 2) | `& $py -m GarimpoInvestimentos.analyzers.backtest` | gera `garimpo_backtest.csv`; hoje reporta "dados insuficientes" |
+`run_daily.ps1` roda o pipeline (22 ativos do `DEFAULT_ASSETS`) e loga em
+`logs/cron_<data>.log`.
 
-### Validar a proteção de startup do `.env` (deve falhar de propósito)
+> **Cota/escala:** o CoinGecko free **rate-limita rajadas** (429) — 22 ativos seguidos podem
+> perder os últimos (missingness sistemática); o `run_daily` espaça as chamadas. O Gemini free
+> também tem cota diária — ao estourar, o ativo cai em fallback (score 50/neutro, evento
+> `llm_error` no `events.jsonl`).
 
-```powershell
-$env:GEMINI_API_KEY=""; $env:SERP_API_KEY=""
-& $py -c "from GarimpoInvestimentos.config import settings"   # espere: ValueError ... ausentes
-Remove-Item Env:\GEMINI_API_KEY, Env:\SERP_API_KEY            # desfaz a sobrescrita
-```
-
-### Conferir as saídas (após rodar o pipeline ao menos uma vez)
-
-```powershell
-Get-Content output\garimpo_historico.csv
-& $py -c "from openpyxl import load_workbook; import glob, os; f=max(glob.glob('output/garimpo_resultados_*.xlsx'), key=os.path.getmtime); ws=load_workbook(f).active; [print(r) for r in ws.iter_rows(max_row=2, values_only=True)]"
-```
-
-O XLSX deve trazer as 6 colunas preenchidas: `Ativo, Sentimento, Score, Resumo, Data, Preço USD`.
-
-### (Opcional) Independência de diretório
-
-```powershell
-cd C:\Claude
-$env:PYTHONPATH = "C:\Claude\ProjetosPython"
-& C:\Claude\ProjetosPython\GarimpoInvestimentos\env\Scripts\python.exe -m GarimpoInvestimentos.main
-# a saída cai em C:\Claude\ProjetosPython\output — NUNCA em C:\Claude
-Remove-Item Env:\PYTHONPATH; cd C:\Claude\ProjetosPython
-```
-
-Ao terminar, limpe os artefatos de teste: `Remove-Item output\teste -Recurse -ErrorAction SilentlyContinue`
-
-## Comportamento e resiliência
-
-O pipeline degrada com elegância — uma falha pontual não derruba a execução:
+## Resiliência
 
 | Etapa | Em caso de falha |
 |-------|------------------|
-| CoinGecko (dados de mercado) | o ativo é **pulado** (sem dados reais não há análise) |
-| SerpAPI (notícias) | segue com `news=[]`; o Gemini ainda analisa pelos dados de mercado |
-| Gemini (análise) | `ai_insights` aplica fallback (`sentimento=neutro`, score base 50) |
+| CoinGecko (mercado) | o ativo é **pulado** (sem dados reais não há análise) |
+| SerpAPI (notícias) | segue com `news=[]`; emite `input_degraded` |
+| Gemini (análise) | fallback (`sentimento=neutro`, score 50) + emite `llm_error` |
 
-> Com chaves placeholder no `.env`, SerpAPI retorna 401 e Gemini retorna 400 — isso
-> é **esperado**, e o resultado sai com a análise de fallback. Para análise real,
-> preencha chaves válidas.
-
-> ⚠️ **Cota do Gemini (free tier): ~20 requisições/dia** no `gemini-2.5-flash`. Como
-> cada ativo = 1 chamada, são ~6 execuções de 3 ativos por dia. Ao estourar, vem
-> `429 RESOURCE_EXHAUSTED` e o ativo cai em fallback (score 50/neutro) — espere o
-> reset diário ou use uma chave paga. `503` é sobrecarga **transitória** (re-rodar resolve).
-
-Rate limiting: `asyncio.sleep(1)` entre ativos (ausente após o último), adequado ao
-free tier da CoinGecko. **Retry com backoff exponencial** (`core/retry.py`) cobre as
-chamadas de CoinGecko/SerpAPI/LLM: um `503`/`429` *transitório* espera e re-tenta em vez
-de virar fallback. Erros não-transitórios (404, chave inválida, **cota diária** esgotada)
-não são reententados — retry não os resolve.
-
-## Agendamento diário (acumular o histórico)
-
-O backtest só amadurece com **tempo real decorrido** — então o quanto antes o pipeline
-rodar todo dia, antes começa a coletar previsões. Use o Agendador de Tarefas do Windows
-(barato, local; nuvem é over-engineering enquanto não há sinal validado).
-
-Já existe o script [`scripts/run_daily.ps1`](scripts/run_daily.ps1) (roda o pipeline e
-loga em `logs/cron_<data>.log`). Registre-o para rodar 1×/dia (ex.: 09:00):
-
-```powershell
-schtasks /Create /TN "GarimpoDaily" `
-  /TR "powershell -NoProfile -ExecutionPolicy Bypass -File C:\Claude\ProjetosPython\scripts\run_daily.ps1" `
-  /SC DAILY /ST 09:00
-```
-
-Para remover: `schtasks /Delete /TN "GarimpoDaily" /F`.
-
-> **Escala vs. cota:** a `DEFAULT_ASSETS` traz ~22 ativos (corte transversal dilui a
-> variância). No **free tier do Gemini (~20 req/dia)** isso estoura — rode com **Gemini
-> API pago** para a lista cheia, ou reduza para ~18 ativos. E **pine o `GEMINI_MODEL`**
-> num snapshot datado para a calibração não derivar durante a coleta.
-
-## Saídas geradas (na pasta `output/` da raiz)
-
-- `garimpo_resultados_<timestamp>.csv` e `.xlsx` — relatório da execução (XLSX com
-  gráfico de barras e formatação condicional por score)
-- `garimpo_historico.csv` — histórico **acumulado** de todas as execuções, com
-  `Data` e `price_usd` (âncora para o backtesting)
-- `garimpo_backtest.csv` — gerado pelo módulo de backtest (variações D+1/D+7/D+30)
-- `cache.json` — cache com TTL configurável (`CACHE_TTL_HOURS`, default 6h)
-
-Logs em `logs/garimpo.log` (rotação a cada 5 MB).
+Retry com backoff (`predictor_core.net.with_retry`): `503`/`429` transitório re-tenta;
+404/chave inválida/cota diária não (retry não resolve).
 
 ## Como o score funciona
 
-- O LLM recebe preço + variações **+ indicadores técnicos** (RSI, SMA 50/200, MACD,
-  Bollinger), calculados em Python (`indicators.py`) e injetados no prompt — ele
-  *interpreta* os números, não os calcula.
-- Devolve `opportunity_score` (0-100) **ancorado ao horizonte** `SCORE_HORIZON_DAYS`
-  (0 = forte queda esperada, 50 = incerteza, 100 = forte alta esperada nesse prazo).
-- O **`Score` final é esse número puro** — o `sentiment` é apenas metadado de exibição/filtro,
-  **não** multiplica o score (isso era dupla contagem e distorcia o sinal).
-- Chamada ao LLM usa temperatura baixa + JSON mode → score mais reprodutível, o que importa
-  para o backtest.
+- O LLM recebe preço + variações **+ indicadores técnicos** (RSI, SMA 50/200, MACD, Bollinger,
+  de `indicators.py`) injetados no prompt — ele *interpreta* os números, não os calcula.
+- Devolve `opportunity_score` (0-100) **ancorado a `SCORE_HORIZON_DAYS`** (0=queda forte,
+  50=incerteza, 100=alta forte nesse prazo).
+- O **`Score` final é esse número puro**; o `sentiment` é só metadado (não multiplica o score).
+- `divergence_flag` tagueia contradição LLM×técnico (só sinaliza, não muta o score).
+- ⚠️ **~40% do score é explicado pelo RSI** (medido, n=10) — ver `score_attribution.py`. O
+  backtest deve controlar/residualizar o RSI antes de atribuir poder ao LLM.
 
-## Fase 2 — backtesting (esqueleto pronto)
+## Saídas (na pasta `output/` da raiz)
 
-`analyzers/backtest.py` já implementa: leitura do histórico (descartando fallback e
-deduplicando por ativo+data), busca do preço real em D+1/D+7/D+30 via CoinGecko, cálculo
-das variações e, para o horizonte `SCORE_HORIZON_DAYS`:
+- `garimpo_resultados_<timestamp>.csv` / `.xlsx` — relatório da execução (XLSX com gráfico).
+- `garimpo_historico.csv` — histórico acumulado; colunas: `Ativo, Sentimento, Score, Resumo,
+  Data, price_usd, Juiz, Divergencia` (dedup por Ativo+Data; âncora do backtest).
+- `garimpo_backtest.csv` — variações D+1/D+7/D+30 (Fase 2). · `cache.json` — TTL 6h.
+- Logs em `logs/garimpo.log` (rotação 5 MB). · Telemetria em `events.jsonl` (gitignored).
 
-- **Spearman** (sem `scipy`) entre `Score` e a variação;
-- **Acurácia direcional** (score>50 acertou a direção?);
-- **Hit rate** dos sinais fortes (score ≥ limiar que fecharam positivos);
-- **Estratégia fictícia** (retorno médio comprando score ≥ limiar) + **Sharpe simplificado**;
-- **Benchmark** Bitcoin buy & hold no mesmo período.
+## Fase 2 — backtesting
 
-⚠️ **O valor só amadurece com o tempo:** a análise do Gemini é point-in-time, então
-uma previsão de hoje só terá preço em D+7 daqui a 7 dias. O backtest só dá correlação
-significativa após acumular previsões reais ao longo de semanas. Se o Spearman ficar
-perto de zero ou negativo, revisar o prompt do Gemini antes de investir em mais
-infraestrutura.
+`analyzers/backtest.py` lê o histórico (descartando fallback, dedup), busca o preço real em
+D+1/D+7/D+30 via CoinGecko, e para o horizonte `SCORE_HORIZON_DAYS` calcula Spearman(Score,
+variação) **com IC block bootstrap** (core.stats), estratificado por `divergence_flag`, mais
+acurácia direcional/hit rate/benchmark BTC. ⚠️ Só dá número significativo após **semanas** de
+previsões acumuladas (uma previsão de hoje só tem preço em D+7 daqui a 7 dias).
