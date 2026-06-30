@@ -179,3 +179,12 @@ class FeatureStore:
             row = wide.setdefault(r["ts"], {"ts": _parse(r["ts"])})
             row[r["feature"]] = float("nan") if r["value"] is None else r["value"]
         return [wide[k] for k in sorted(wide)]
+
+    def latest_features(self, symbol: str, interval: str) -> dict | None:
+        """Linha alinhada mais recente (formato largo) ou None se não houver dados.
+
+        É o ponto de entrada do serving para o pipeline de previsão: devolve preço,
+        sentimento e indicadores já materializados, sem tocar a rede.
+        """
+        rows = self.read_features(symbol, interval)
+        return rows[-1] if rows else None

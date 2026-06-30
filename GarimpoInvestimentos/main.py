@@ -14,17 +14,30 @@ _known, _ = _pre.parse_known_args()
 if _known.output_dir:
     os.environ["GARIMPO_OUTPUT_DIR"] = _known.output_dir
 
-from GarimpoInvestimentos.collectors.coingecko_api import get_coin_data, get_price_series
+from datetime import timedelta
+
 from GarimpoInvestimentos.collectors.serpapi_news import get_news_snippets
 from GarimpoInvestimentos.analyzers.ai_insights import analyze_asset, judge_signature
-from GarimpoInvestimentos.analyzers.indicators import compute_indicators
 from GarimpoInvestimentos.analyzers.score_engine import calculate_final_score, divergence_flag
 from GarimpoInvestimentos.config import settings
 from GarimpoInvestimentos.output.reporter import export_results
 from GarimpoInvestimentos.core.logger import log_start, log_success, log_error
 from GarimpoInvestimentos.core.cache import load_cache, save_cache
 from GarimpoInvestimentos.core.history import append_history
+from GarimpoInvestimentos.core.paths import OUTPUT_DIR
+from GarimpoInvestimentos.dpl import CryptoDataProvider, FeatureStore
+from GarimpoInvestimentos.dpl.feature_engineering import to_hard_data
+from GarimpoInvestimentos.dpl.ingest import ingest_crypto
+from GarimpoInvestimentos.dpl.providers.fear_greed import FearAndGreedProvider
 from predictor_core.obs import emit_event
+
+# A Feature Store é o repositório offline do qual o pipeline lê (serving). A
+# ingestão (rede) popula-o separadamente via `--ingest`.
+FEATURE_STORE_DB = OUTPUT_DIR / "feature_store.db"
+# Histórico diário coletado na ingestão — suficiente para SMA-200 + change_30d.
+INGEST_HISTORY_DAYS = 200
+# Fear & Greed é diário; após 2 dias sem atualizar, o Alignment Engine injeta NaN.
+SIGNAL_STALENESS = {"fear_greed": timedelta(days=2)}
 
 
 def parse_args():
@@ -55,7 +68,35 @@ def parse_args():
         action="store_true",
         help="Ao final, imprime apenas os ativos com score acima do limiar.",
     )
+    parser.add_argument(
+        "--ingest",
+        action="store_true",
+        help="Roda só a INGESTÃO (rede): coleta OHLCV + Fear&Greed, alinha e "
+             "materializa na Feature Store local. O pipeline de análise lê dela.",
+    )
     return parser.parse_args()
+
+
+async def run_ingest(ativos: list[str]) -> None:
+    """Camada de ingestão: única que toca a rede. Popula a Feature Store offline."""
+    facade = CryptoDataProvider()
+    fear_greed = FearAndGreedProvider()
+    print(f"📥 Ingestão → {FEATURE_STORE_DB}")
+    with FeatureStore(FEATURE_STORE_DB) as store:
+        for i, ativo in enumerate(ativos):
+            try:
+                aligned = await ingest_crypto(
+                    store, facade, ativo, interval="1d",
+                    limit=INGEST_HISTORY_DAYS,
+                    signal_providers=[fear_greed],
+                    max_staleness=SIGNAL_STALENESS,
+                )
+                print(f"  ✅ {ativo.upper()} — {len(aligned)} candles alinhados e materializados")
+            except Exception as e:
+                log_error(ativo, e)
+                print(f"  ❌ {ativo.upper()} — falha na ingestão: {e}")
+            if i < len(ativos) - 1:
+                await asyncio.sleep(1)  # rate limiting entre ativos
 
 
 async def run():
@@ -63,6 +104,11 @@ async def run():
     ativos = [asset.strip() for asset in args.assets.split(",") if asset.strip()] if args.assets else settings.DEFAULT_ASSETS
     if not ativos:
         raise ValueError("Nenhum ativo válido informado. Use --assets ou DEFAULT_ASSETS.")
+
+    if args.ingest:
+        await run_ingest(ativos)
+        print("📦 Ingestão concluída. Rode sem --ingest para analisar (offline).")
+        return
 
     score_threshold = args.min_score if args.min_score is not None else settings.LIMIAR_SCORE_MINIMO
     cache_enabled = settings.ENABLE_CACHE and not args.no_cache
@@ -76,6 +122,9 @@ async def run():
     resultados = []
     n_degraded = 0
 
+    # Serving: o pipeline lê dados de mercado já alinhados da Feature Store (offline).
+    store = FeatureStore(FEATURE_STORE_DB)
+
     for i, ativo in enumerate(ativos):
         log_start(ativo)
         print(f"\n🔎 Analisando {ativo.upper()}...")
@@ -88,24 +137,22 @@ async def run():
                 print(f"🏅 {ativo.upper()} está acima do limiar de {score_threshold}.")
             continue
 
-        # Dados de mercado — sem isso não há análise
-        try:
-            coin = await get_coin_data(ativo)
-            hard_data = coin.model_dump()
-        except Exception as e:
-            log_error(ativo, e)
-            continue  # pula o ativo; sem dados reais não faz sentido invocar o LLM
+        # Dados de mercado — lidos da Feature Store (offline). Sem dados não há análise.
+        flat = store.latest_features(ativo, "1d")
+        if not flat:
+            log_error(ativo, RuntimeError(
+                "sem dados na Feature Store — rode `--ingest` antes de analisar"))
+            continue
+        hard_data = to_hard_data(flat)
+        if "price_usd" not in hard_data:
+            log_error(ativo, RuntimeError("Feature Store sem price_usd para o ativo"))
+            continue
 
-        # Indicadores técnicos — opcionais; se a série falhar, segue sem eles
-        ind_ok = True
-        try:
-            series = await get_price_series(ativo, days=200)
-            indicadores = compute_indicators(series)
-            if indicadores:
-                hard_data["indicadores"] = indicadores
-        except Exception as e:
-            log_error(ativo, e)
-            ind_ok = False
+        # Indicadores são features derivadas já materializadas; ausência = série curta.
+        ind_ok = "indicadores" in hard_data
+        if not ind_ok:
+            log_error(ativo, RuntimeError(
+                "indicadores ausentes na Feature Store (histórico insuficiente?)"))
 
         # Notícias — fallback para lista vazia; o Gemini ainda analisa com dados de mercado
         news_ok = True
@@ -153,6 +200,8 @@ async def run():
         # Rate limiting: 1s entre ativos — adequado para CoinGecko free tier com 3 ativos
         if i < len(ativos) - 1:
             await asyncio.sleep(1)
+
+    store.close()
 
     if n_degraded:
         print(f"⚠️  {n_degraded}/{len(ativos)} ativo(s) com input degradado "

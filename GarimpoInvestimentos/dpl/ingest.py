@@ -12,6 +12,7 @@ from predictor_core.obs import emit_event
 
 from GarimpoInvestimentos.dpl.alignment import AlignmentEngine
 from GarimpoInvestimentos.dpl.facade import CryptoDataProvider
+from GarimpoInvestimentos.dpl.feature_engineering import derive_features
 from GarimpoInvestimentos.dpl.feature_store import FeatureStore
 from GarimpoInvestimentos.dpl.signals import SignalProvider
 
@@ -51,9 +52,15 @@ async def ingest_crypto(
                                              "error": type(exc).__name__})
 
     aligned = AlignmentEngine().align(points, signals, max_staleness)
+    # Features derivadas (change_*, indicadores) pertencem ao ÚLTIMO candle —
+    # são calculadas da série inteira e materializadas na linha mais recente.
+    derived = derive_features(points)
+    if aligned and derived:
+        aligned[-1].update(derived)
     n_features = store.write_features(symbol, interval, aligned)
     emit_event(_DOMAIN, "data.materialized",
-               metrics={"n_rows": len(aligned), "n_cells": n_features},
+               metrics={"n_rows": len(aligned), "n_cells": n_features,
+                        "n_derived": len(derived)},
                metadata={"symbol": symbol, "interval": interval,
                          "signals": list(signals)})
     return aligned

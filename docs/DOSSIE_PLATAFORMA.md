@@ -352,7 +352,7 @@ após `max_staleness`.
 - [ ] Circuit Breaker — disjuntor proativo com telemetria
 - [x] Camada de ingestão — pipeline coleta → alinhamento → gravação *(Fase 2)*
 - [x] Camada de serving — consulta offline à Feature Store *(Fase 2)*
-- [ ] Migração do `previsao-cripto` — substituir acesso direto (DPL pronta; wiring no `main.py` pendente)
+- [x] Migração do `previsao-cripto` — `main.py` lê da Feature Store (offline); ingestão via `--ingest` *(Fase 2)*
 - [x] Testes de contrato — provedores retornam `MarketDataPoint` *(Fase 1)*
 - [x] Testes de fallback — simular falha e verificar secundária *(Fase 1)*
 - [x] Testes de integridade temporal — zero lookahead + injeção de NaN por staleness *(Fase 1/2)*

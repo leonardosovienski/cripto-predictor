@@ -5,3 +5,4 @@ pydantic
 google-genai
 openai
 python-dotenv
+ccxt  # DPL Fase 1 — abstração de exchanges (BinanceProvider)

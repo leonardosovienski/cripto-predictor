@@ -14,15 +14,22 @@ coleta (CoinGecko + SerpAPI) → análise (Gemini) → score → exportação (C
 Integrado à plataforma **predictor_core** (significância via block bootstrap pareado,
 carimbo do juiz, cross-check flag-only, trava de credenciais). Detalhes no
 [HANDOFF.md](HANDOFF.md) §0. Arquitetura canônica da plataforma (DPL, Feature Store,
-Alignment Engine, CCXT, ADRs) no [docs/DOSSIE_PLATAFORMA.md](docs/DOSSIE_PLATAFORMA.md). Suíte: `py -3.12 -m pytest tests/ -q` (26 verdes — rodam no
+Alignment Engine, CCXT, ADRs) no [docs/DOSSIE_PLATAFORMA.md](docs/DOSSIE_PLATAFORMA.md). Suíte: `py -3.12 -m pytest tests/ -q` (48 verdes — rodam no
 Python do sistema).
 
 **Rodar AO VIVO** exige chaves reais no `.env` **e** a venv (httpx/pydantic/SDKs do LLM):
 ```powershell
 # cole GEMINI_API_KEY / OPENAI_API_KEY / SERP_API_KEY (>=16 chars) em GarimpoInvestimentos\.env
+# 1) INGESTÃO (rede): popula a Feature Store local (OHLCV + Fear&Greed, já alinhados)
+.\GarimpoInvestimentos\env\Scripts\python.exe -m GarimpoInvestimentos.main --ingest --assets bitcoin,ethereum
+# 2) ANÁLISE (mercado OFFLINE da Feature Store; só notícias/LLM vão à rede)
 .\GarimpoInvestimentos\env\Scripts\python.exe -m GarimpoInvestimentos.main --assets bitcoin,ethereum
 .\GarimpoInvestimentos\env\Scripts\python.exe -m GarimpoInvestimentos.analyzers.backtest
 ```
+A Data Provider Layer (`GarimpoInvestimentos/dpl/`) separa **ingestão** de **serving**:
+o pipeline de análise lê dados de mercado já alinhados de `output/feature_store.db` sem
+tocar APIs de preço. Sem ingestão prévia, o ativo é pulado com aviso.
+
 ⚠️ Por design (fail-fast): `.env` sem chaves reais **crasha no segundo zero** (trava P0).
 
 ## Estrutura
