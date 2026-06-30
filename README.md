@@ -13,7 +13,8 @@ coleta (CoinGecko + SerpAPI) → análise (Gemini) → score → exportação (C
 
 Integrado à plataforma **predictor_core** (significância via block bootstrap pareado,
 carimbo do juiz, cross-check flag-only, trava de credenciais). Detalhes no
-[HANDOFF.md](HANDOFF.md) §0. Suíte: `py -3.12 -m pytest tests/ -q` (26 verdes — rodam no
+[HANDOFF.md](HANDOFF.md) §0. Arquitetura canônica da plataforma (DPL, Feature Store,
+Alignment Engine, CCXT, ADRs) no [docs/DOSSIE_PLATAFORMA.md](docs/DOSSIE_PLATAFORMA.md). Suíte: `py -3.12 -m pytest tests/ -q` (26 verdes — rodam no
 Python do sistema).
 
 **Rodar AO VIVO** exige chaves reais no `.env` **e** a venv (httpx/pydantic/SDKs do LLM):

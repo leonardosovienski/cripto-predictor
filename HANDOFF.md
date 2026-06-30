@@ -8,7 +8,9 @@ Estado: **Fase 1 + CLI + notícias + backtesting + sinal calibrado + indicadores
 ## 0. Integração à plataforma predictor_core (2026-06-16/17)
 
 Sessão de plataforma — o Garimpo virou consumidor do núcleo canônico `predictor_core`
-(vendorizado em `vendor/`, sincronizado por hash). Mudanças:
+(vendorizado em `vendor/`, sincronizado por hash). Visão arquitetural completa da
+plataforma (DPL, Feature Store, Alignment Engine, CCXT, ADRs, backlog) no
+[docs/DOSSIE_PLATAFORMA.md](docs/DOSSIE_PLATAFORMA.md). Mudanças:
 
 | Área | Mudança |
 |------|---------|
