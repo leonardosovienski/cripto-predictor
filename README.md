@@ -21,7 +21,9 @@ Python do sistema).
 ```powershell
 # cole GEMINI_API_KEY / OPENAI_API_KEY / SERP_API_KEY (>=16 chars) em GarimpoInvestimentos\.env
 # 1) INGESTÃO (rede): popula a Feature Store local (OHLCV + Fear&Greed, já alinhados)
+#    --mode fallback (padrão: Binance→CoinGecko) | consensus (mediana Binance+Kraken)
 .\GarimpoInvestimentos\env\Scripts\python.exe -m GarimpoInvestimentos.main --ingest --assets bitcoin,ethereum
+.\GarimpoInvestimentos\env\Scripts\python.exe -m GarimpoInvestimentos.main --ingest --mode consensus --assets bitcoin,ethereum
 # 2) ANÁLISE (mercado OFFLINE da Feature Store; só notícias/LLM vão à rede)
 .\GarimpoInvestimentos\env\Scripts\python.exe -m GarimpoInvestimentos.main --assets bitcoin,ethereum
 .\GarimpoInvestimentos\env\Scripts\python.exe -m GarimpoInvestimentos.analyzers.backtest

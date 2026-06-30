@@ -74,14 +74,31 @@ def parse_args():
         help="Roda só a INGESTÃO (rede): coleta OHLCV + Fear&Greed, alinha e "
              "materializa na Feature Store local. O pipeline de análise lê dela.",
     )
+    parser.add_argument(
+        "--mode",
+        choices=["fallback", "consensus"],
+        default="fallback",
+        help="Política de coleta de preço na ingestão: 'fallback' (sequencial "
+             "Binance→CoinGecko, padrão) ou 'consensus' (mediana Binance+Kraken). "
+             "Só afeta --ingest; o serving é indiferente a quantas fontes geraram o dado.",
+    )
     return parser.parse_args()
 
 
-async def run_ingest(ativos: list[str]) -> None:
-    """Camada de ingestão: única que toca a rede. Popula a Feature Store offline."""
-    facade = CryptoDataProvider()
+# Mapeia o modo de runtime → bloco de configuração do sources.json.
+_MODE_TO_CONFIG = {"fallback": "crypto_price", "consensus": "crypto_price_consensus"}
+
+
+async def run_ingest(ativos: list[str], mode: str = "fallback") -> None:
+    """Camada de ingestão: única que toca a rede. Popula a Feature Store offline.
+
+    `mode` decide a política de preço (fallback sequencial ou consenso multi-fonte) —
+    configuração de runtime, sem reescrita: a fachada instancia o Router certo a
+    partir do bloco correspondente no sources.json.
+    """
+    facade = CryptoDataProvider(config_key=_MODE_TO_CONFIG[mode])
     fear_greed = FearAndGreedProvider()
-    print(f"📥 Ingestão → {FEATURE_STORE_DB}")
+    print(f"📥 Ingestão ({mode}) → {FEATURE_STORE_DB}")
     with FeatureStore(FEATURE_STORE_DB) as store:
         for i, ativo in enumerate(ativos):
             try:
@@ -106,7 +123,7 @@ async def run():
         raise ValueError("Nenhum ativo válido informado. Use --assets ou DEFAULT_ASSETS.")
 
     if args.ingest:
-        await run_ingest(ativos)
+        await run_ingest(ativos, mode=args.mode)
         print("📦 Ingestão concluída. Rode sem --ingest para analisar (offline).")
         return
 

@@ -359,6 +359,7 @@ após `max_staleness`.
 - [x] Testes de integridade temporal — zero lookahead + injeção de NaN por staleness *(Fase 1/2)*
 - [x] Telemetria de dados — eventos `data.fallback`, `data.unavailable`, `data.aggregated`, `circuit.*` *(Fase 1-3)*
 - [x] Política de agregação — chamada paralela + mediana (consensus_median/mean) + TWAP *(Fase 3)*
+- [x] Wire da agregação no domínio — `main.py --ingest --mode fallback|consensus` *(Fase 3)*
 - [ ] `COTAHISTProvider` — parser de arquivo B3
 - [ ] `BCBProvider` — conector para Selic/IPCA
 - [ ] Migração do `predictor-stocks` — DPL + Feature Store
