@@ -419,7 +419,14 @@ quando houver dados/rede.
 | `EventAlignmentEngine` (event-asof, anti-vazamento pré-jogo) | 5 | ✅ | `dpl/events.py` |
 | `EntityMapper` (DE/PARA curado, fuzzy só sugere) | 5 | ✅ | `dpl/entity_mapper.py` |
 | `Martj42Provider` (CSV, canonicaliza, bloqueia não-mapeado) | 5 | ✅ | `dpl/providers/martj42.py` |
-| Sofascore/FBref/Odds/Weather | 5 | ⏳ stubs (rede; PARKED) | `dpl/providers/football_stubs.py` |
+| Sofascore/FBref/Odds/Weather | 5 | ⏳ stubs com contrato testado offline (rede; PARKED) | `dpl/providers/football_stubs.py` |
+| Migração aditiva 0005 (corrige C-04, idempotência) | 4 | ✅ | `dpl/migrations/` |
+| ADR-014 modelo bitemporal (corrige C-05) | 4/5 | ✅ | `docs/ADR-014_modelo_bitemporal.md` |
+| Auditoria arquitetural independente | — | ✅ | `docs/AUDITORIA_DPL.md` |
+
+**Pendências documentadas (dependem de rede/dados reais — auditoria B-1/B-3):** validação
+live da agregação (Binance+Kraken bloqueadas), golden de COTAHIST real, calibração do
+`publish_lag` do BCB, promoção da DPL ao `predictor_core` (ADR-009), fechamento da Fase 0.
 
 **Nota de fidelidade:** o `AlignmentEngine` de séries **não precisou de mudança** para
 point-in-time — modelar cada revisão como um `SignalPoint` com `published_at` próprio faz

@@ -21,7 +21,11 @@ from pathlib import Path
 from predictor_core import infra
 
 from GarimpoInvestimentos.dpl.contracts import MarketDataPoint
+from GarimpoInvestimentos.dpl.migrations import ADDITIVE_MIGRATIONS
 from GarimpoInvestimentos.dpl.signals import SignalPoint
+
+# Versão do schema da Feature Store (base 0001-0004 + aditivas em dpl/migrations/).
+SCHEMA_VERSION = 5
 
 _MIGRATIONS = [
     ("0001_raw_market_data", """
@@ -39,16 +43,17 @@ _MIGRATIONS = [
             PRIMARY KEY (source, symbol, interval, ts)
         );
     """),
+    # NOTA: 0002 mantém o schema ORIGINAL (PK source,name,ts). A evolução para o
+    # schema com vintage/reference_date é feita pela migração ADITIVA 0005 (ver
+    # dpl/migrations/) — nunca alterando esta migração in-place (ADR-017 / auditoria C-04).
     ("0002_raw_signals", """
         CREATE TABLE IF NOT EXISTS raw_signals (
-            source         TEXT NOT NULL,
-            name           TEXT NOT NULL,
-            ts             TEXT NOT NULL,
-            reference_date TEXT,
-            value          REAL NOT NULL,
-            published_at   TEXT NOT NULL,
-            vintage        TEXT NOT NULL DEFAULT '',
-            PRIMARY KEY (source, name, ts, vintage)
+            source       TEXT NOT NULL,
+            name         TEXT NOT NULL,
+            ts           TEXT NOT NULL,
+            value        REAL NOT NULL,
+            published_at TEXT NOT NULL,
+            PRIMARY KEY (source, name, ts)
         );
     """),
     ("0003_features_aligned", """
@@ -87,7 +92,9 @@ def _parse(s: str) -> datetime:
 class FeatureStore:
     def __init__(self, db_path: Path | str):
         self._conn = infra.connect(db_path)
-        infra.run_migrations(self._conn, _MIGRATIONS)
+        # Schema base (0001-0004) + migrações aditivas (0005+, em dpl/migrations/).
+        # run_migrations é idempotente por nome → seguro para DBs em qualquer versão.
+        infra.run_migrations(self._conn, _MIGRATIONS + ADDITIVE_MIGRATIONS)
 
     def close(self) -> None:
         self._conn.close()
