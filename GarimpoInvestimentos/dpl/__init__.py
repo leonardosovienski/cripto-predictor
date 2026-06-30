@@ -15,10 +15,17 @@ from GarimpoInvestimentos.dpl.contracts import (
     DataUnavailableError,
     MarketDataPoint,
 )
+from GarimpoInvestimentos.dpl.entity_mapper import EntityMapper
+from GarimpoInvestimentos.dpl.events import (
+    EventAlignmentEngine,
+    MatchDataProvider,
+    MatchObservation,
+)
 from GarimpoInvestimentos.dpl.facade import CryptoDataProvider
 from GarimpoInvestimentos.dpl.feature_store import FeatureStore
 from GarimpoInvestimentos.dpl.router import AggregationRouter, FallbackRouter
 from GarimpoInvestimentos.dpl.signals import SignalPoint, SignalProvider
+from GarimpoInvestimentos.dpl.stocks import StocksDataProvider, ingest_stocks
 
 __all__ = [
     "DataProvider",
@@ -36,4 +43,12 @@ __all__ = [
     "consensus_median",
     "consensus_mean",
     "twap",
+    # Fase 4 — ações
+    "StocksDataProvider",
+    "ingest_stocks",
+    # Fase 5 — futebol (desenho)
+    "EntityMapper",
+    "EventAlignmentEngine",
+    "MatchObservation",
+    "MatchDataProvider",
 ]

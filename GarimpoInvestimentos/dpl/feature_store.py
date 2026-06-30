@@ -41,12 +41,14 @@ _MIGRATIONS = [
     """),
     ("0002_raw_signals", """
         CREATE TABLE IF NOT EXISTS raw_signals (
-            source       TEXT NOT NULL,
-            name         TEXT NOT NULL,
-            ts           TEXT NOT NULL,
-            value        REAL NOT NULL,
-            published_at TEXT NOT NULL,
-            PRIMARY KEY (source, name, ts)
+            source         TEXT NOT NULL,
+            name           TEXT NOT NULL,
+            ts             TEXT NOT NULL,
+            reference_date TEXT,
+            value          REAL NOT NULL,
+            published_at   TEXT NOT NULL,
+            vintage        TEXT NOT NULL DEFAULT '',
+            PRIMARY KEY (source, name, ts, vintage)
         );
     """),
     ("0003_features_aligned", """
@@ -57,6 +59,18 @@ _MIGRATIONS = [
             feature  TEXT NOT NULL,
             value    REAL,
             PRIMARY KEY (symbol, interval, ts, feature)
+        );
+    """),
+    ("0004_ingestion_provenance", """
+        CREATE TABLE IF NOT EXISTS ingestion_provenance (
+            run_id       TEXT,
+            source       TEXT NOT NULL,
+            entity       TEXT NOT NULL,
+            origin       TEXT,
+            vintage      TEXT,
+            n_rows       INTEGER NOT NULL,
+            ingested_at  TEXT NOT NULL,
+            code_version TEXT
         );
     """),
 ]
@@ -107,19 +121,56 @@ class FeatureStore:
         return len(rows)
 
     def write_signals(self, signals: list[SignalPoint]) -> int:
+        """Upsert de sinais. A PK inclui `vintage`, então revisões (mesmo ts, vintage
+        distinto) COEXISTEM — base do point-in-time. Sem vintage → '' (ex.: Fear&Greed).
+        """
         rows = [
-            (s.source, s.name, _iso(s.timestamp), s.value, _iso(s.published_at))
+            (s.source, s.name, _iso(s.timestamp),
+             _iso(s.reference_date) if s.reference_date else None,
+             s.value, _iso(s.published_at),
+             _iso(s.vintage) if s.vintage else "")
             for s in signals
         ]
         self._conn.executemany(
-            """INSERT INTO raw_signals (source, name, ts, value, published_at)
-               VALUES (?,?,?,?,?)
-               ON CONFLICT(source, name, ts) DO UPDATE SET
-                 value=excluded.value, published_at=excluded.published_at""",
+            """INSERT INTO raw_signals
+               (source, name, ts, reference_date, value, published_at, vintage)
+               VALUES (?,?,?,?,?,?,?)
+               ON CONFLICT(source, name, ts, vintage) DO UPDATE SET
+                 reference_date=excluded.reference_date, value=excluded.value,
+                 published_at=excluded.published_at""",
             rows,
         )
         self._conn.commit()
         return len(rows)
+
+    def read_signals(self, source: str, name: str) -> list[SignalPoint]:
+        """Lê todos os pontos (incl. todas as vintages) de um sinal, ordenados por ts."""
+        cur = self._conn.execute(
+            """SELECT * FROM raw_signals WHERE source=? AND name=? ORDER BY ts, vintage""",
+            (source, name),
+        )
+        return [
+            SignalPoint(
+                name=r["name"], timestamp=_parse(r["ts"]), value=r["value"],
+                source=r["source"], published_at=_parse(r["published_at"]),
+                reference_date=_parse(r["reference_date"]) if r["reference_date"] else None,
+                vintage=_parse(r["vintage"]) if r["vintage"] else None,
+            )
+            for r in cur
+        ]
+
+    def write_provenance(self, *, source: str, entity: str, n_rows: int,
+                         ingested_at, run_id: str | None = None, origin: str | None = None,
+                         vintage=None, code_version: str | None = None) -> None:
+        """Registra a origem de um lote ingerido (auditoria origem→feature→modelo)."""
+        self._conn.execute(
+            """INSERT INTO ingestion_provenance
+               (run_id, source, entity, origin, vintage, n_rows, ingested_at, code_version)
+               VALUES (?,?,?,?,?,?,?,?)""",
+            (run_id, source, entity, origin,
+             _iso(vintage) if vintage else None, n_rows, _iso(ingested_at), code_version),
+        )
+        self._conn.commit()
 
     def write_features(self, symbol: str, interval: str,
                        rows: list[dict]) -> int:
