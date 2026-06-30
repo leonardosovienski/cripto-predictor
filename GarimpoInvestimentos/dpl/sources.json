@@ -1,0 +1,25 @@
+{
+  "_doc": "Manifesto central de fontes da DPL. Ponto único de verdade sobre provedores, ordem de fallback e mapeamento de símbolos. Ver docs/DOSSIE_PLATAFORMA.md §5.10.",
+  "crypto_price": {
+    "policy": "fallback",
+    "order": ["binance", "coingecko"],
+    "providers": {
+      "binance": {
+        "max_staleness_minutes": 5,
+        "symbol_map": {
+          "bitcoin": "BTC/USDT",
+          "ethereum": "ETH/USDT",
+          "solana": "SOL/USDT",
+          "binancecoin": "BNB/USDT",
+          "ripple": "XRP/USDT",
+          "cardano": "ADA/USDT",
+          "dogecoin": "DOGE/USDT"
+        }
+      },
+      "coingecko": {
+        "max_staleness_minutes": 30,
+        "symbol_map": {}
+      }
+    }
+  }
+}

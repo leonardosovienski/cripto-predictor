@@ -334,29 +334,29 @@ após `max_staleness`.
 - [ ] Limpeza do core — commits redteam no repositório git
 - [ ] Teste de versão — `test_version.py` com regex
 - [ ] Smoke tests cross-vendor — CI do core validando contratos com domínios
-- [ ] Contrato `MarketDataPoint` — definição da classe/dataclass
-- [ ] Interface `DataProvider` — classe abstrata
-- [ ] Erro `DataUnavailableError` — exceção padronizada
-- [ ] Integração CCXT — instalação e configuração como dependência do core
-- [ ] `BinanceProvider` — wrapper CCXT para OHLCV + `published_at`
-- [ ] `CoinGeckoProvider` — conector REST (fallback)
+- [x] Contrato `MarketDataPoint` — definição da classe/dataclass *(Fase 1)*
+- [x] Interface `DataProvider` — classe abstrata *(Fase 1)*
+- [x] Erro `DataUnavailableError` — exceção padronizada *(Fase 1)*
+- [x] Integração CCXT — instalado como dependência do domínio (piloto) *(Fase 1)*
+- [x] `BinanceProvider` — wrapper CCXT para OHLCV + `published_at` *(Fase 1)*
+- [x] `CoinGeckoProvider` — conector REST (fallback) *(Fase 1)*
 - [ ] `FearAndGreedProvider` — conector para alternative.me
 - [ ] `AmberdataProvider` (futuro) — fonte de alta frequência
-- [ ] `CryptoDataProvider` — fachada composta com fallback
-- [ ] Router / FallbackRouter — orquestrador de tentativas e políticas
-- [ ] `sources.json` — manifesto central de fontes
-- [ ] Fábrica de provedores — leitura de `sources.json` e instanciação
+- [x] `CryptoDataProvider` — fachada composta com fallback *(Fase 1)*
+- [x] Router / FallbackRouter — orquestrador de tentativas e políticas *(Fase 1)*
+- [x] `sources.json` — manifesto central de fontes *(Fase 1)*
+- [x] Fábrica de provedores — leitura de `sources.json` e instanciação *(Fase 1)*
 - [ ] Desenho ER do SQLite — schema de tabelas brutas e alinhadas
 - [ ] Feature Store (SQLite) — implementação de escrita e leitura
 - [ ] Alignment Engine — Forward Fill + `published_at` + `max_staleness`
 - [ ] Circuit Breaker — disjuntor proativo com telemetria
 - [ ] Camada de ingestão — pipeline coleta → alinhamento → gravação
 - [ ] Camada de serving — consulta offline à Feature Store
-- [ ] Migração do `previsao-cripto` — substituir acesso direto à Binance
-- [ ] Testes de contrato — provedores retornam `MarketDataPoint`
-- [ ] Testes de fallback — simular falha e verificar secundária
-- [ ] Testes de integridade temporal — zero lookahead, validação de `published_at`
-- [ ] Telemetria de dados — eventos `data.fallback`, `data.unavailable`, `data.stale`
+- [ ] Migração do `previsao-cripto` — substituir acesso direto (DPL pronta; wiring no `main.py` pendente)
+- [x] Testes de contrato — provedores retornam `MarketDataPoint` *(Fase 1)*
+- [x] Testes de fallback — simular falha e verificar secundária *(Fase 1)*
+- [x] Testes de integridade temporal — validação de `published_at >= timestamp` *(Fase 1, parcial)*
+- [x] Telemetria de dados — eventos `data.fallback`, `data.unavailable` *(Fase 1; `data.stale` na Fase 2)*
 - [ ] Política de agregação — chamada paralela + mediana/TWAP
 - [ ] `COTAHISTProvider` — parser de arquivo B3
 - [ ] `BCBProvider` — conector para Selic/IPCA
