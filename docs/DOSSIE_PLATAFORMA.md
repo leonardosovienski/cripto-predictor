@@ -340,22 +340,22 @@ após `max_staleness`.
 - [x] Integração CCXT — instalado como dependência do domínio (piloto) *(Fase 1)*
 - [x] `BinanceProvider` — wrapper CCXT para OHLCV + `published_at` *(Fase 1)*
 - [x] `CoinGeckoProvider` — conector REST (fallback) *(Fase 1)*
-- [ ] `FearAndGreedProvider` — conector para alternative.me
+- [x] `FearAndGreedProvider` — conector para alternative.me *(Fase 2)*
 - [ ] `AmberdataProvider` (futuro) — fonte de alta frequência
 - [x] `CryptoDataProvider` — fachada composta com fallback *(Fase 1)*
 - [x] Router / FallbackRouter — orquestrador de tentativas e políticas *(Fase 1)*
 - [x] `sources.json` — manifesto central de fontes *(Fase 1)*
 - [x] Fábrica de provedores — leitura de `sources.json` e instanciação *(Fase 1)*
-- [ ] Desenho ER do SQLite — schema de tabelas brutas e alinhadas
-- [ ] Feature Store (SQLite) — implementação de escrita e leitura
-- [ ] Alignment Engine — Forward Fill + `published_at` + `max_staleness`
+- [x] Desenho ER do SQLite — `raw_market_data` / `raw_signals` / `features_aligned` *(Fase 2)*
+- [x] Feature Store (SQLite) — implementação de escrita e leitura *(Fase 2)*
+- [x] Alignment Engine — Forward Fill + `published_at` + `max_staleness` *(Fase 2)*
 - [ ] Circuit Breaker — disjuntor proativo com telemetria
-- [ ] Camada de ingestão — pipeline coleta → alinhamento → gravação
-- [ ] Camada de serving — consulta offline à Feature Store
+- [x] Camada de ingestão — pipeline coleta → alinhamento → gravação *(Fase 2)*
+- [x] Camada de serving — consulta offline à Feature Store *(Fase 2)*
 - [ ] Migração do `previsao-cripto` — substituir acesso direto (DPL pronta; wiring no `main.py` pendente)
 - [x] Testes de contrato — provedores retornam `MarketDataPoint` *(Fase 1)*
 - [x] Testes de fallback — simular falha e verificar secundária *(Fase 1)*
-- [x] Testes de integridade temporal — validação de `published_at >= timestamp` *(Fase 1, parcial)*
+- [x] Testes de integridade temporal — zero lookahead + injeção de NaN por staleness *(Fase 1/2)*
 - [x] Telemetria de dados — eventos `data.fallback`, `data.unavailable` *(Fase 1; `data.stale` na Fase 2)*
 - [ ] Política de agregação — chamada paralela + mediana/TWAP
 - [ ] `COTAHISTProvider` — parser de arquivo B3
