@@ -134,7 +134,7 @@ responsabilidades e orienta a documentação para desenvolvedores de domínio.
 | `max_staleness` com injeção de NaN após expiração | Não deixar a DPL inventar dados; domínio decide imputação | Honestidade dos sinais, separação de responsabilidades | Modelos precisam lidar com NaN | Confirmada |
 | Feature Store local (SQLite/Parquet) | Economizar rate limits, garantir reprodutibilidade de backtests | Backtests rápidos, independentes de rede, rastreáveis | Requer estratégia de atualização e limpeza | Confirmada |
 | Circuit Breaker proativo com consulta a status endpoints | Proteger APIs e acelerar diagnóstico de falhas | Resiliência operacional, menos requisições desperdiçadas | Depende da existência de endpoints de status | Confirmada |
-| Agregação configurável (`consensus_median`, `twap`) | Imunizar sinal contra anomalias de uma única corretora | Maior estabilidade do dado consolidado | Complexidade de implementação, latência de múltiplas chamadas | Confirmada (evolução futura) |
+| Agregação configurável (`consensus_median`, `twap`) | Imunizar sinal contra anomalias de uma única corretora | Maior estabilidade do dado consolidado | Complexidade de implementação, latência de múltiplas chamadas | Implementada *(Fase 3)* |
 | Separação entre ingestão e serving | Desacoplar atualização do consumo | Domínios só consultam dados prontos, nunca acessam APIs externas | Necessidade de orquestração da ingestão | Confirmada |
 | CCXT como biblioteca base para conectores de exchanges | Padronizar acesso a dezenas de APIs cripto | Manutenção centralizada, atualizações acompanhadas pela comunidade | Dependência externa; é necessário wrappear para não vazar o CCXT ao domínio | Confirmada |
 
@@ -349,15 +349,16 @@ após `max_staleness`.
 - [x] Desenho ER do SQLite — `raw_market_data` / `raw_signals` / `features_aligned` *(Fase 2)*
 - [x] Feature Store (SQLite) — implementação de escrita e leitura *(Fase 2)*
 - [x] Alignment Engine — Forward Fill + `published_at` + `max_staleness` *(Fase 2)*
-- [ ] Circuit Breaker — disjuntor proativo com telemetria
+- [x] Circuit Breaker — disjuntor proativo com telemetria *(Fase 3)*
 - [x] Camada de ingestão — pipeline coleta → alinhamento → gravação *(Fase 2)*
 - [x] Camada de serving — consulta offline à Feature Store *(Fase 2)*
+- [x] `KrakenProvider` (via CCXT) — segunda exchange para consenso *(Fase 3)*
 - [x] Migração do `previsao-cripto` — `main.py` lê da Feature Store (offline); ingestão via `--ingest` *(Fase 2)*
 - [x] Testes de contrato — provedores retornam `MarketDataPoint` *(Fase 1)*
 - [x] Testes de fallback — simular falha e verificar secundária *(Fase 1)*
 - [x] Testes de integridade temporal — zero lookahead + injeção de NaN por staleness *(Fase 1/2)*
-- [x] Telemetria de dados — eventos `data.fallback`, `data.unavailable` *(Fase 1; `data.stale` na Fase 2)*
-- [ ] Política de agregação — chamada paralela + mediana/TWAP
+- [x] Telemetria de dados — eventos `data.fallback`, `data.unavailable`, `data.aggregated`, `circuit.*` *(Fase 1-3)*
+- [x] Política de agregação — chamada paralela + mediana (consensus_median/mean) + TWAP *(Fase 3)*
 - [ ] `COTAHISTProvider` — parser de arquivo B3
 - [ ] `BCBProvider` — conector para Selic/IPCA
 - [ ] Migração do `predictor-stocks` — DPL + Feature Store
@@ -534,8 +535,8 @@ futura, não uma decisão tomada.
 
 | API / Fonte | Papel | Fase | Motivo |
 |---|---|---|---|
-| **Kraken** | Agregação (preço) | Fase 3 | Segunda exchange de alta confiabilidade para o modo consenso (mediana/TWAP). O CCXT já abstrai a Kraken, então o custo de adicionar é baixo. |
-| **Fear & Greed Index** (alternative.me) | Sentimento diário | Fase 2/3 | Validar o Alignment Engine com fusão de granularidades (diário + horário). É a fonte de baixa frequência usada como prova de conceito da fusão temporal. |
+| **Kraken** ✅ *(implementada, Fase 3)* | Agregação (preço) | Fase 3 | Segunda exchange para o modo consenso (mediana). O CCXT já abstrai a Kraken — `KrakenProvider` é subclasse trivial de `CCXTProvider`. |
+| **Fear & Greed Index** (alternative.me) ✅ *(implementada, Fase 2)* | Sentimento diário | Fase 2/3 | Validar o Alignment Engine com fusão de granularidades. Fonte de baixa frequência usada como prova de conceito da fusão temporal. |
 
 ### 13.3 Mencionadas como possibilidades futuras (Eixo 2 — Micro-variáveis)
 

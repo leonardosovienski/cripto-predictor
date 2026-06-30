@@ -7,7 +7,9 @@ contrato `MarketDataPoint` — nunca conhece Binance, CoinGecko ou o CCXT.
 
 Ver docs/DOSSIE_PLATAFORMA.md §5 (componentes) e §7 (plano de fases).
 """
+from GarimpoInvestimentos.dpl.aggregation import consensus_mean, consensus_median, twap
 from GarimpoInvestimentos.dpl.alignment import AlignmentEngine
+from GarimpoInvestimentos.dpl.circuit_breaker import CircuitBreaker, CircuitOpenError
 from GarimpoInvestimentos.dpl.contracts import (
     DataProvider,
     DataUnavailableError,
@@ -15,7 +17,7 @@ from GarimpoInvestimentos.dpl.contracts import (
 )
 from GarimpoInvestimentos.dpl.facade import CryptoDataProvider
 from GarimpoInvestimentos.dpl.feature_store import FeatureStore
-from GarimpoInvestimentos.dpl.router import FallbackRouter
+from GarimpoInvestimentos.dpl.router import AggregationRouter, FallbackRouter
 from GarimpoInvestimentos.dpl.signals import SignalPoint, SignalProvider
 
 __all__ = [
@@ -24,8 +26,14 @@ __all__ = [
     "MarketDataPoint",
     "CryptoDataProvider",
     "FallbackRouter",
+    "AggregationRouter",
     "AlignmentEngine",
     "FeatureStore",
     "SignalPoint",
     "SignalProvider",
+    "CircuitBreaker",
+    "CircuitOpenError",
+    "consensus_median",
+    "consensus_mean",
+    "twap",
 ]

@@ -1,0 +1,80 @@
+"""CCXTProvider — base genérica para conectores de exchange via CCXT.
+
+O CCXT abstrai 100+ exchanges com a mesma API; um conector concreto é só o id da
+exchange + o symbol_map. Binance e Kraken (Fase 3) são subclasses triviais. O CCXT
+é encapsulado AQUI: o domínio nunca o importa. Import lazy → o pacote dpl é
+importável sem ccxt instalado (testes injetam provedores fake).
+"""
+from __future__ import annotations
+
+from datetime import datetime, timezone
+
+from GarimpoInvestimentos.dpl.contracts import DataProvider, MarketDataPoint
+
+_SUPPORTED_INTERVALS = {"1m", "5m", "15m", "1h", "4h", "1d"}
+
+
+class CCXTProvider(DataProvider):
+    #: id da exchange no CCXT (ex.: "binance", "kraken"). Subclasses sobrescrevem.
+    exchange_id: str = "abstract"
+
+    def __init__(self, symbol_map: dict[str, str]):
+        self._symbol_map = symbol_map
+
+    @property
+    def name(self) -> str:
+        return self.exchange_id
+
+    def _client(self):
+        # Instância NOVA por chamada: o cliente async detém uma sessão aiohttp que
+        # precisa ser fechada; reusar uma já fechada quebraria a próxima chamada.
+        import ccxt.async_support as ccxt
+
+        return getattr(ccxt, self.exchange_id)({"enableRateLimit": True})
+
+    def _native_symbol(self, symbol: str) -> str:
+        try:
+            return self._symbol_map[symbol]
+        except KeyError as exc:
+            raise ValueError(
+                f"{self.exchange_id}: símbolo '{symbol}' sem mapeamento em sources.json"
+            ) from exc
+
+    async def fetch_ohlcv(
+        self, symbol: str, interval: str = "1d", limit: int = 1
+    ) -> list[MarketDataPoint]:
+        if interval not in _SUPPORTED_INTERVALS:
+            raise ValueError(f"{self.exchange_id}: intervalo '{interval}' não suportado")
+        pair = self._native_symbol(symbol)
+        client = self._client()
+        try:
+            rows = await client.fetch_ohlcv(pair, timeframe=interval, limit=limit)
+        finally:
+            try:
+                await client.close()
+            except Exception:
+                pass
+        points = []
+        for ts_ms, o, h, l, c, v in rows:
+            ts = datetime.fromtimestamp(ts_ms / 1000, tz=timezone.utc)
+            points.append(MarketDataPoint(
+                symbol=symbol, timestamp=ts, open=float(o), high=float(h),
+                low=float(l), close=float(c), volume=float(v),
+                source=self.name, interval=interval, published_at=ts,
+            ))
+        if not points:
+            raise RuntimeError(f"{self.exchange_id}: resposta vazia para {pair}")
+        return points
+
+    async def health_check(self) -> bool:
+        client = self._client()
+        try:
+            await client.fetch_status()
+            return True
+        except Exception:
+            return False
+        finally:
+            try:
+                await client.close()
+            except Exception:
+                pass

@@ -1,5 +1,5 @@
 {
-  "_doc": "Manifesto central de fontes da DPL. Ponto único de verdade sobre provedores, ordem de fallback e mapeamento de símbolos. Ver docs/DOSSIE_PLATAFORMA.md §5.10.",
+  "_doc": "Manifesto central de fontes da DPL. Ponto único de verdade sobre provedores, ordem, política (fallback|consensus_median|consensus_mean) e mapeamento de símbolos. Ver docs/DOSSIE_PLATAFORMA.md §5.10.",
   "crypto_price": {
     "policy": "fallback",
     "order": ["binance", "coingecko"],
@@ -16,10 +16,26 @@
           "dogecoin": "DOGE/USDT"
         }
       },
+      "kraken": {
+        "max_staleness_minutes": 5,
+        "symbol_map": {
+          "bitcoin": "BTC/USD",
+          "ethereum": "ETH/USD",
+          "solana": "SOL/USD",
+          "ripple": "XRP/USD",
+          "cardano": "ADA/USD",
+          "dogecoin": "DOGE/USD"
+        }
+      },
       "coingecko": {
         "max_staleness_minutes": 30,
         "symbol_map": {}
       }
     }
+  },
+  "crypto_price_consensus": {
+    "_doc": "Modo agregado (Fase 3): consolida Binance + Kraken por mediana ponto-a-ponto, imunizando contra anomalia de uma única exchange. Reusa os providers de crypto_price.",
+    "policy": "consensus_median",
+    "order": ["binance", "kraken"]
   }
 }
