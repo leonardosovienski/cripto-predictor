@@ -519,6 +519,53 @@ futura, não uma decisão tomada.
 
 ---
 
+## 13. Inventário de APIs / Fontes por fase
+
+### 13.1 Em uso (Fase 1 — piloto)
+
+| API / Fonte | Papel | Status |
+|---|---|---|
+| **Binance** (via CCXT) | Preço OHLCV (fonte primária) | Em uso |
+| **CoinGecko** | Preço/mercado (fallback) | Em uso |
+| **SerpAPI** | Notícias (insumo qualitativo) | Em uso |
+| **Gemini** (Google) | LLM / juiz da análise | Em uso |
+
+### 13.2 Planejadas para as fases seguintes (Fase 2/3 — Agregação e Sentimento)
+
+| API / Fonte | Papel | Fase | Motivo |
+|---|---|---|---|
+| **Kraken** | Agregação (preço) | Fase 3 | Segunda exchange de alta confiabilidade para o modo consenso (mediana/TWAP). O CCXT já abstrai a Kraken, então o custo de adicionar é baixo. |
+| **Fear & Greed Index** (alternative.me) | Sentimento diário | Fase 2/3 | Validar o Alignment Engine com fusão de granularidades (diário + horário). É a fonte de baixa frequência usada como prova de conceito da fusão temporal. |
+
+### 13.3 Mencionadas como possibilidades futuras (Eixo 2 — Micro-variáveis)
+
+Estas fontes **não estão no plano imediato**, mas foram citadas como exemplos de como o Eixo 2
+(enriquecimento de features) poderia ser atacado depois que a DPL estiver madura. Não há decisão
+de implementá-las — apenas registro de que são compatíveis com a arquitetura.
+
+| API / Fonte | Tipo de dado | Exemplo de uso |
+|---|---|---|
+| **Amberdata** | Alta frequência (tick data, velas de 1 minuto) | Treinar modelos intraday com mais resolução. |
+| **Glassnode** | On-chain (volume de baleias, taxas de mineradores, fluxo para exchanges) | Features de comportamento da rede que podem anteceder movimentos de preço. |
+| **mempool.space** | On-chain (taxas de transação, congestionamento) | Indicadores de atividade da rede Bitcoin em tempo real. |
+| **CoinMarketCap** | Agregador (preço, volume, market cap) | Alternativa ao CoinGecko como segundo fallback, se necessário. |
+
+### 13.4 O papel do CCXT
+
+O CCXT **não é uma fonte**, mas uma biblioteca que unifica o acesso a mais de 100 exchanges.
+Será usado **dentro dos conectores** para exchanges como Binance e Kraken. O domínio nunca vê o
+CCXT; ele é encapsulado nos provedores concretos.
+
+### 13.5 Resumo por fase
+
+| Fase | APIs adicionadas | Propósito |
+|---|---|---|
+| Fase 1 (piloto) | Binance + CoinGecko | Redundância de preço |
+| Fase 2/3 (sentimento + agregação) | Fear & Greed, Kraken | Fusão temporal e consenso |
+| Futuro (Eixo 2) | Amberdata, Glassnode, etc. | Micro-variáveis on-chain e alta frequência |
+
+---
+
 > **Conclusão:** este dossiê reflete o estado da arte da arquitetura da plataforma,
 > incorporando todo o aprendizado, decisões e componentes discutidos, enriquecido com a adoção
 > do CCXT, a separação explícita das tabelas da Feature Store e o tratamento da Variância Zero.
