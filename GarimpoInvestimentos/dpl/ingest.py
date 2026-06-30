@@ -16,7 +16,10 @@ from GarimpoInvestimentos.dpl.feature_engineering import derive_features
 from GarimpoInvestimentos.dpl.feature_store import FeatureStore
 from GarimpoInvestimentos.dpl.signals import SignalProvider
 
-_DOMAIN = "previsao_cripto"
+# Esta função é crypto-específica (importa CryptoDataProvider), então o default é o
+# domínio cripto — mas continua INJETÁVEL para o futuro ingest genérico não herdar a
+# atribuição errada (mesma regra Core↔Domínio dos routers).
+_DEFAULT_DOMAIN = "previsao_cripto"
 
 
 async def ingest_crypto(
@@ -27,6 +30,7 @@ async def ingest_crypto(
     limit: int = 30,
     signal_providers: list[SignalProvider] | None = None,
     max_staleness: dict[str, timedelta] | None = None,
+    domain: str = _DEFAULT_DOMAIN,
 ) -> list[dict]:
     """Coleta candles (+ sinais), grava bruto, alinha e materializa features.
 
@@ -35,7 +39,7 @@ async def ingest_crypto(
     """
     points = await facade.fetch_ohlcv(symbol, interval=interval, limit=limit)
     store.write_raw(points)
-    emit_event(_DOMAIN, "data.ingested",
+    emit_event(domain, "data.ingested",
                metrics={"n_candles": len(points)},
                metadata={"symbol": symbol, "interval": interval,
                          "source": points[0].source})
@@ -47,7 +51,7 @@ async def ingest_crypto(
             store.write_signals(series)
             signals[sp.name] = series
         except Exception as exc:  # noqa: BLE001 — sinal é opcional; preço não
-            emit_event(_DOMAIN, "data.signal_failed",
+            emit_event(domain, "data.signal_failed",
                        metrics={}, metadata={"signal": sp.name,
                                              "error": type(exc).__name__})
 
@@ -58,7 +62,7 @@ async def ingest_crypto(
     if aligned and derived:
         aligned[-1].update(derived)
     n_features = store.write_features(symbol, interval, aligned)
-    emit_event(_DOMAIN, "data.materialized",
+    emit_event(domain, "data.materialized",
                metrics={"n_rows": len(aligned), "n_cells": n_features,
                         "n_derived": len(derived)},
                metadata={"symbol": symbol, "interval": interval,

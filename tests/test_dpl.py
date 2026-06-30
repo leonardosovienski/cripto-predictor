@@ -121,6 +121,19 @@ def test_router_exige_ao_menos_um_provedor():
         FallbackRouter([])
 
 
+def test_router_emite_telemetria_no_dominio_injetado(tmp_path, monkeypatch):
+    """Core↔Domínio: a camada DPL não hardcoda 'previsao_cripto'. Quando OUTRO
+    domínio (ex.: ações) injeta `domain=`, a telemetria sai atribuída a ELE — nada
+    vaza como cripto. Sem isso, eventos de ações sairiam rotulados de previsao_cripto."""
+    events = tmp_path / "ev.jsonl"
+    monkeypatch.setenv("PREDICTOR_EVENTS_PATH", str(events))
+    router = FallbackRouter([_FailProvider("b3"), _OkProvider("cotahist", 1.0)],
+                            domain="predictor_stocks")
+    asyncio.run(router.fetch_ohlcv("PETR4"))
+    dominios = {e["domain"] for e in read_events(events)}
+    assert dominios == {"predictor_stocks"}  # nenhum evento vazou como 'previsao_cripto'
+
+
 # --- Fachada -----------------------------------------------------------------
 
 def test_fachada_latest_close_delegada_ao_router():

@@ -20,7 +20,10 @@ from typing import Callable
 from predictor_core.obs import emit_event
 
 CLOSED, OPEN, HALF_OPEN = "closed", "open", "half_open"
-_DOMAIN = "previsao_cripto"
+# Default NEUTRO: a DPL é multi-domínio. O dono do domínio (fachada cripto, ingest
+# de ações, etc.) injeta o seu via `domain=` — não se hardcoda um domínio na camada
+# compartilhada, senão a telemetria de ações/futebol sai atribuída ao cripto.
+_DEFAULT_DOMAIN = "dpl"
 
 
 class CircuitOpenError(Exception):
@@ -29,11 +32,13 @@ class CircuitOpenError(Exception):
 
 class CircuitBreaker:
     def __init__(self, name: str, *, failure_threshold: int = 3,
-                 reset_timeout: float = 60.0, clock: Callable[[], float] = time.monotonic):
+                 reset_timeout: float = 60.0, clock: Callable[[], float] = time.monotonic,
+                 domain: str = _DEFAULT_DOMAIN):
         self.name = name
         self._threshold = failure_threshold
         self._reset_timeout = reset_timeout
         self._clock = clock
+        self._domain = domain
         self._state = CLOSED
         self._failures = 0
         self._opened_at = 0.0
@@ -66,6 +71,6 @@ class CircuitBreaker:
             return
         old = self._state
         self._state = new_state
-        emit_event(_DOMAIN, "circuit.transition",
+        emit_event(self._domain, "circuit.transition",
                    metrics={"failures": self._failures},
                    metadata={"breaker": self.name, "from": old, "to": new_state})

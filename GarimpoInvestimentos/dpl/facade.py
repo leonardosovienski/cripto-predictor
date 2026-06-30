@@ -31,6 +31,9 @@ def _load_config(config_path: Path | None = None) -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+_DOMAIN = "previsao_cripto"   # esta fachada É o domínio cripto: injeta seu rótulo na camada DPL
+
+
 def _build_router(config_key: str = "crypto_price", config_path: Path | None = None,
                   with_breakers: bool = True):
     cfg = _load_config(config_path)
@@ -45,12 +48,12 @@ def _build_router(config_key: str = "crypto_price", config_path: Path | None = N
             raise ValueError(f"sources.json: provedor desconhecido '{name}'")
         providers.append(klass(symbol_map=defs.get(name, {}).get("symbol_map", {})))
 
-    breakers = ({p.name: CircuitBreaker(p.name) for p in providers}
+    breakers = ({p.name: CircuitBreaker(p.name, domain=_DOMAIN) for p in providers}
                 if with_breakers else None)
     policy = block.get("policy", "fallback")
     if policy == "fallback":
-        return FallbackRouter(providers, breakers=breakers)
-    return AggregationRouter(providers, policy=policy, breakers=breakers)
+        return FallbackRouter(providers, breakers=breakers, domain=_DOMAIN)
+    return AggregationRouter(providers, policy=policy, breakers=breakers, domain=_DOMAIN)
 
 
 class CryptoDataProvider:
