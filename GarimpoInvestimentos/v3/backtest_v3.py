@@ -521,6 +521,15 @@ def run_wfa(
 
     _log_summary(result)
     _emit_result(result)
+    # Persiste a serie de retornos OOS (bruto/liquido) — insumo do DSR (Risco 2):
+    # o Deflated Sharpe precisa da SERIE, nao dos agregados. Deterministico
+    # (random_state=42 + dados estaticos) => re-execucao reproduz a serie.
+    import json as _json
+    (sym_dir / "wfa_returns.json").write_text(_json.dumps({
+        "symbol": symbol, "kelly_fraction": kelly_fraction,
+        "taker_fee_bps": taker_fee_bps, "slippage_bps": slippage_bps,
+        "net": all_oos_returns, "gross": all_gross_returns,
+    }), encoding="utf-8")
     return result
 
 
