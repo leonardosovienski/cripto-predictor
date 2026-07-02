@@ -22,5 +22,29 @@
     },
     "sharpe": null,
     "notes": "Pipeline pos-merge (ADR DECISAO_MERGE_DPL_DISCOVERY). Em coleta desde 2026-07-01. Estratificada da v1 pelo carimbo Fonte."
+  },
+  {
+    "name": "v3-hmm-funding-oi-fr90",
+    "registered_at": "2026-07-02T00:00:00Z",
+    "params": {
+      "modelo": "GaussianHMM 3 estados (forward causal)",
+      "features": "funding_zscore(90), oi_log_delta, leverage_pressure, log_return_8h, realized_vol_24h",
+      "horizonte_horas": 24,
+      "custos": "taker 10bps + slip 5bps por perna + funding real",
+      "validacao": "WFA IS/OOS por timestamp"
+    },
+    "sharpe": null,
+    "notes": "Baseline V3 (fr_window=90). ETHUSDT: NO-GO em todos os folds (dossie, pre-custos). BTCUSDT re-executado em 2026-07-02 com custos completos — resultado preenche este campo."
+  },
+  {
+    "name": "v3-hmm-funding-oi-fr21",
+    "registered_at": "2026-07-02T00:00:00Z",
+    "params": {
+      "modelo": "GaussianHMM 3 estados (forward causal)",
+      "features": "funding_zscore(21) — pivot de janela",
+      "horizonte_horas": 24
+    },
+    "sharpe": null,
+    "notes": "Pivot de fr_window testado na V3 (CLI documenta baseline=90/pivot=21). Registrado retroativamente: cada janela tentada e uma tentativa que o DSR desconta."
   }
 ]
