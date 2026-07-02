@@ -60,6 +60,7 @@ from pathlib import Path
 
 from predictor_core.obs import emit_event
 from predictor_core.stats import (
+    block_bootstrap_ci,
     max_drawdown,
     probabilistic_sharpe_ratio,
     spearman_block_ci,
@@ -73,6 +74,7 @@ from GarimpoInvestimentos.v3.feature_builder import (
     build_oi_index,
     build_spot_index,
 )
+from GarimpoInvestimentos.v3.costs import CostModel
 from GarimpoInvestimentos.v3.regime_engine import RegimeEngine
 from GarimpoInvestimentos.v3.signal_engine import generate_signal
 
@@ -90,6 +92,7 @@ _STEP_DAYS = 30
 _MS_PER_DAY = 86_400_000
 _MS_PER_8H = 28_800_000
 _DEFAULT_SLIPPAGE_BPS = 5
+_DEFAULT_TAKER_FEE_BPS = 10   # taker por perna (Risco 4 — custos; ver v3/costs.py)
 _DEFAULT_HORIZON_HOURS = 24
 
 _GO_PSR_THRESHOLD = 0.80
@@ -141,6 +144,12 @@ class WFAResult:
     verdict_reason: str
     fr_window: int = 90   # janela do z-score usada (baseline=90, pivot=21)
     kelly_fraction: float = 1.0  # fração de Kelly aplicada
+    # Risco 4 — custos (passo 5.2): bruto vs liquido + IC95 do liquido medio
+    aggregate_gross_return: float = 0.0
+    aggregate_net_return: float = 0.0
+    net_ci_lower: float = 0.0
+    net_ci_upper: float = 0.0
+    taker_fee_bps: float = _DEFAULT_TAKER_FEE_BPS
 
 
 @dataclass
@@ -216,6 +225,7 @@ def _finite(x: float) -> float:
 def run_wfa(
     symbol: str,
     slippage_bps: float = _DEFAULT_SLIPPAGE_BPS,
+    taker_fee_bps: float = _DEFAULT_TAKER_FEE_BPS,
     horizon_hours: int = _DEFAULT_HORIZON_HOURS,
     fr_window: int = 90,
     kelly_fraction: float = 1.0,
@@ -280,6 +290,7 @@ def run_wfa(
 
     folds: list[FoldResult] = []
     all_oos_returns: list[float] = []
+    all_gross_returns: list[float] = []
     all_ic_pairs: list[tuple[float, float]] = []  # (signal_strength, fwd_return)
 
     fold_idx = 0
@@ -347,8 +358,9 @@ def run_wfa(
         # Geração de sinais e cálculo de P&L OOS
         fold_ic_pairs: list[tuple[float, float]] = []
         fold_pnl: list[float] = []
+        fold_gross: list[float] = []
         n_active = 0
-        slippage = slippage_bps / 10_000
+        costs = CostModel(taker_fee_bps=taker_fee_bps, slippage_bps=slippage_bps)
 
         for fv, regime in oos_pairs:
             signal = generate_signal(fv, regime, horizon_hours=horizon_hours)
@@ -361,11 +373,15 @@ def run_wfa(
                 n_active += 1
                 position = signal.direction * signal.strength * kelly_fraction
                 gross = position * fwd
-                net = gross - slippage * abs(position)
+                # Risco 4: liquido de fricção round-trip (taker+slippage × 2 pernas)
+                # e do funding REAL vigente na abertura (long paga f>0; short recebe).
+                net = costs.net_return(gross, position, fv.funding_rate_raw, horizon_hours)
+                fold_gross.append(gross)
                 fold_pnl.append(net)
                 fold_ic_pairs.append((signal.strength * signal.direction, fwd))
             else:
                 # Posição flat: não contribui para P&L mas é contada
+                fold_gross.append(0.0)
                 fold_pnl.append(0.0)
 
         if not fold_ic_pairs:
@@ -415,6 +431,7 @@ def run_wfa(
         )
         folds.append(fold_result)
         all_oos_returns.extend(fold_pnl)
+        all_gross_returns.extend(fold_gross)
         all_ic_pairs.extend(fold_ic_pairs)
 
         logger.info(
@@ -442,6 +459,19 @@ def run_wfa(
         agg_rho, agg_lo = 0.0, 0.0
     agg_psr = _finite(probabilistic_sharpe_ratio(all_oos_returns)) if len(all_oos_returns) >= 3 else 0.0
     agg_dd = max_drawdown(_equity_curve(all_oos_returns))  # equity acumulada
+
+    # Risco 4: bruto vs liquido, com IC95 do retorno LIQUIDO medio (block bootstrap
+    # — mesma lente 2 do pedagio; bloco adaptado a amostras curtas).
+    n_ret = len(all_oos_returns)
+    agg_gross_mean = sum(all_gross_returns) / n_ret if n_ret else 0.0
+    agg_net_mean = sum(all_oos_returns) / n_ret if n_ret else 0.0
+    if n_ret >= 12:
+        _bl = max(1, min(21, n_ret // 3))
+        net_lo, net_hi, _ = block_bootstrap_ci(
+            list(all_oos_returns), lambda u: sum(u) / len(u), block_length=_bl)
+        net_lo, net_hi = _finite(net_lo or 0.0), _finite(net_hi or 0.0)
+    else:
+        net_lo, net_hi = 0.0, 0.0
 
     # Sharpe agregado (série OOS completa)
     if len(all_oos_returns) >= 2:
@@ -482,6 +512,11 @@ def run_wfa(
         verdict_reason=verdict_reason,
         fr_window=fr_window,
         kelly_fraction=kelly_fraction,
+        aggregate_gross_return=agg_gross_mean,
+        aggregate_net_return=agg_net_mean,
+        net_ci_lower=net_lo,
+        net_ci_upper=net_hi,
+        taker_fee_bps=taker_fee_bps,
     )
 
     _log_summary(result)
@@ -505,6 +540,11 @@ def _log_summary(r: WFAResult) -> None:
     logger.info("IC Spearman    : %.4f  CI_lower: %.4f", r.aggregate_ic, r.aggregate_ic_ci_lower)
     logger.info("Max Drawdown   : %.2f%%  (threshold: %.0f%%)", r.aggregate_max_dd * 100, _GO_MAX_DD_THRESHOLD * 100)
     logger.info("Sharpe agregado: %.4f", r.aggregate_sharpe)
+    logger.info("Retorno medio  : bruto %.6f -> LIQUIDO %.6f por sinal "
+                "(fee %sbps + slip + funding real)",
+                r.aggregate_gross_return, r.aggregate_net_return, r.taker_fee_bps)
+    logger.info("IC95 liq. medio: [%.6f, %.6f]%s", r.net_ci_lower, r.net_ci_upper,
+                "  — cruza zero" if r.net_ci_lower <= 0 <= r.net_ci_upper else "")
     logger.info("─" * 60)
     logger.info("VEREDICTO: %s", r.final_verdict)
     logger.info("RAZÃO    : %s", r.verdict_reason)
@@ -624,6 +664,12 @@ def _main() -> None:
     )
     parser.add_argument("--symbol", nargs="+", default=["BTCUSDT"])
     parser.add_argument(
+        "--taker-fee-bps",
+        type=float,
+        default=_DEFAULT_TAKER_FEE_BPS,
+        help="Taxa taker por perna em bps (Risco 4; default 10 = 0,10%%).",
+    )
+    parser.add_argument(
         "--slippage-bps",
         type=float,
         default=_DEFAULT_SLIPPAGE_BPS,
@@ -674,6 +720,7 @@ def _main() -> None:
                     symbol=symbol.upper(),
                     kelly_fractions=args.kelly_fractions,
                     slippage_bps=args.slippage_bps,
+                    taker_fee_bps=args.taker_fee_bps,
                     horizon_hours=args.horizon_hours,
                     fr_window=args.fr_window,
                 )
@@ -681,6 +728,7 @@ def _main() -> None:
                 run_wfa(
                     symbol=symbol.upper(),
                     slippage_bps=args.slippage_bps,
+                    taker_fee_bps=args.taker_fee_bps,
                     horizon_hours=args.horizon_hours,
                     fr_window=args.fr_window,
                     kelly_fraction=args.kelly_fraction,
