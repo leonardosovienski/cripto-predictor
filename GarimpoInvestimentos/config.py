@@ -7,7 +7,10 @@ try:
     # Caminho explícito do .env ao lado deste arquivo — robusto a cwd e ao modo de
     # invocação (python -m, -c, importado por testes). Não depende do frame-walk do dotenv.
     load_dotenv(Path(__file__).with_name(".env"))
-except Exception:
+except ImportError:
+    # dotenv é dependência OPCIONAL: ausente → segue lendo do ambiente já exportado.
+    # Só ImportError é tolerado; um .env corrompido (OSError/ValueError) deve estourar,
+    # não ser engolido — senão a app roda sem credenciais e a falha vira silenciosa.
     pass
 
 

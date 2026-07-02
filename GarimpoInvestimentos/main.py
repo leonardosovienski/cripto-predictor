@@ -1,5 +1,6 @@
 import argparse
 import asyncio
+import logging
 import os
 from datetime import datetime
 
@@ -21,10 +22,14 @@ from GarimpoInvestimentos.analyzers.indicators import compute_indicators
 from GarimpoInvestimentos.analyzers.score_engine import calculate_final_score, divergence_flag
 from GarimpoInvestimentos.config import settings
 from GarimpoInvestimentos.output.reporter import export_results
-from GarimpoInvestimentos.core.logger import log_start, log_success, log_error
-from GarimpoInvestimentos.core.cache import load_cache, save_cache
-from GarimpoInvestimentos.core.history import append_history
+from GarimpoInvestimentos.store.logger import log_start, log_success, log_error, run_logging_setup
+from GarimpoInvestimentos.store.paths import LOGS_DIR
+from GarimpoInvestimentos.store.cache import load_cache, save_cache
+from GarimpoInvestimentos.store.history import append_history
 from predictor_core.obs import emit_event
+
+_DOMAIN = "previsao_cripto"
+_log = logging.getLogger("previsao_cripto")
 
 
 def parse_args():
@@ -58,6 +63,109 @@ def parse_args():
     return parser.parse_args()
 
 
+_FALLBACK_MARKER = "fallback aplicado"
+_GEMINI_QUOTA_ALERT_RATIO = 0.20  # alerta se > 20% dos ativos saírem em fallback LLM
+_MAX_CONCURRENT_REQUESTS = 5      # Semaphore: máx requisições simultâneas ao LLM
+
+
+async def _analyze_ativo(
+    ativo: str,
+    cache: dict,
+    score_threshold: float,
+    sem: asyncio.Semaphore,
+) -> tuple[dict | None, bool, bool]:
+    """
+    Analisa um único ativo com controle de concorrência via Semaphore.
+
+    Retorna: (resultado | None, llm_fallback, degraded_input)
+    - resultado=None  : coleta de dados falhou (ativo pulado)
+    - llm_fallback=True : LLM retornou fallback (cota esgotada ou erro)
+    - degraded_input=True : indicadores ou notícias falharam
+    """
+    log_start(ativo)
+
+    if ativo in cache:
+        _log.info("[cache] %s — pulando coleta.", ativo.upper())
+        resultado = cache[ativo]
+        if resultado.get("score", 0) >= score_threshold:
+            _log.info("[destaque] %s acima do limiar de %s.", ativo.upper(), score_threshold)
+        return resultado, False, False
+
+    # Dados de mercado — sem isso não há análise
+    try:
+        coin = await get_coin_data(ativo)
+        hard_data = coin.model_dump()
+    except Exception as e:
+        log_error(ativo, e)
+        return None, False, False
+
+    # Indicadores técnicos — opcionais
+    ind_ok = True
+    try:
+        series = await get_price_series(ativo, days=200)
+        indicadores = compute_indicators(series)
+        if indicadores:
+            hard_data["indicadores"] = indicadores
+    except Exception as e:
+        log_error(ativo, e)
+        ind_ok = False
+
+    # Notícias — fallback para lista vazia
+    news_ok = True
+    try:
+        news = await get_news_snippets(ativo)
+    except Exception as e:
+        log_error(ativo, e)
+        news = []
+        news_ok = False
+
+    degraded_input = not ind_ok or not news_ok
+    if degraded_input:
+        faltando = [k for k, ok in (("indicadores", ind_ok), ("noticias", news_ok)) if not ok]
+        emit_event(_DOMAIN, "input_degraded",
+                   metrics={"n_faltando": len(faltando)},
+                   metadata={"ativo": ativo, "faltando": faltando})
+
+    # Análise LLM com controle de concorrência
+    llm_fallback = False
+    try:
+        async with sem:
+            analysis = await analyze_asset(ativo, hard_data, news)
+        score = calculate_final_score(analysis)
+        # Detecta fallback do LLM (cota esgotada ou erro de parsing)
+        if _FALLBACK_MARKER in (analysis.get("summary") or ""):
+            llm_fallback = True
+            emit_event(_DOMAIN, "fallback_triggered",
+                       metrics={"score": float(score)},
+                       metadata={"ativo": ativo, "provider": settings.LLM_PROVIDER,
+                                 "fallback_reason": "llm_error_or_quota"})
+        resultado = {
+            "ativo": ativo,
+            "sentimento": analysis["sentiment"],
+            "score": score,
+            "resumo": analysis["summary"],
+            "data": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            "price_usd": hard_data.get("price_usd", 0),
+            "judge": judge_signature(),
+            "divergencia": divergence_flag(score, hard_data.get("indicadores", {})),
+        }
+        cache[ativo] = resultado
+        emit_event(_DOMAIN, "signal",
+                   metrics={"score": float(score)},
+                   metadata={"ativo": ativo, "sentimento": analysis["sentiment"],
+                             "opportunity_score": analysis.get("opportunity_score"),
+                             "judge": resultado["judge"], "data": resultado["data"],
+                             "divergencia": resultado["divergencia"],
+                             "llm_fallback": llm_fallback})
+        log_success(ativo, score)
+        if score >= score_threshold:
+            _log.info("[destaque] %s acima do limiar de %s.", ativo.upper(), score_threshold)
+        return resultado, llm_fallback, degraded_input
+    except Exception as e:
+        log_error(ativo, e)
+        return None, True, degraded_input
+
+
 async def run():
     args = parse_args()
     ativos = [asset.strip() for asset in args.assets.split(",") if asset.strip()] if args.assets else settings.DEFAULT_ASSETS
@@ -66,112 +174,76 @@ async def run():
 
     score_threshold = args.min_score if args.min_score is not None else settings.LIMIAR_SCORE_MINIMO
     cache_enabled = settings.ENABLE_CACHE and not args.no_cache
+
+    run_logging_setup(LOGS_DIR)
     cache = load_cache() if cache_enabled else {}
 
-    print("🚀 Iniciando pipeline de análise de criptoativos")
-    print(f"• Ativos: {', '.join(ativos)}")
-    print(f"• Score mínimo destacado: {score_threshold}")
-    print(f"• Cache: {'ativo' if cache_enabled else 'desativado'}")
+    _log.info("Iniciando pipeline de analise de criptoativos")
+    _log.info("Ativos: %s", ", ".join(ativos))
+    _log.info("Score minimo destacado: %s", score_threshold)
+    _log.info("Cache: %s", "ativo" if cache_enabled else "desativado")
+    emit_event(_DOMAIN, "batch_start",
+               metrics={"n_ativos": float(len(ativos))},
+               metadata={"ativos": ativos, "cache_enabled": cache_enabled,
+                         "score_threshold": score_threshold})
+
+    sem = asyncio.Semaphore(_MAX_CONCURRENT_REQUESTS)
+    tasks = [_analyze_ativo(ativo, cache, score_threshold, sem) for ativo in ativos]
+    outcomes = await asyncio.gather(*tasks)
 
     resultados = []
-    n_degraded = 0
-
-    for i, ativo in enumerate(ativos):
-        log_start(ativo)
-        print(f"\n🔎 Analisando {ativo.upper()}...")
-
-        if ativo in cache:
-            print(f"🧠 Cache válido — pulando coleta para {ativo}.")
-            resultado = cache[ativo]
+    n_degraded_input = 0
+    n_llm_fallback = 0
+    for resultado, llm_fallback, degraded_input in outcomes:
+        if resultado is not None:
             resultados.append(resultado)
-            if resultado.get("score", 0) >= score_threshold:
-                print(f"🏅 {ativo.upper()} está acima do limiar de {score_threshold}.")
-            continue
+        if degraded_input:
+            n_degraded_input += 1
+        if llm_fallback:
+            n_llm_fallback += 1
 
-        # Dados de mercado — sem isso não há análise
-        try:
-            coin = await get_coin_data(ativo)
-            hard_data = coin.model_dump()
-        except Exception as e:
-            log_error(ativo, e)
-            continue  # pula o ativo; sem dados reais não faz sentido invocar o LLM
+    # Alerta de cota LLM: se muitos ativos saíram em fallback, o backtest fica
+    # enviesado com score=50 (incerteza) em vez de análise real.
+    n_analisados = len(ativos)
+    if n_llm_fallback > 0:
+        ratio = n_llm_fallback / n_analisados
+        is_alert = ratio > _GEMINI_QUOTA_ALERT_RATIO
+        emit_event(_DOMAIN, "llm_quota_alert",
+                   metrics={"n_fallback": float(n_llm_fallback),
+                            "n_total": float(n_analisados),
+                            "fallback_ratio": ratio},
+                   metadata={"alerta": is_alert, "provider": settings.LLM_PROVIDER})
+        msg = (f"%d/%d ativos com fallback LLM (score=50 ficticio) — "
+               f"cota esgotada ou erro de API. Ver events.jsonl.")
+        if is_alert:
+            _log.warning("[ALERTA COTA LLM] " + msg, n_llm_fallback, n_analisados)
+        else:
+            _log.info("[aviso LLM] " + msg, n_llm_fallback, n_analisados)
 
-        # Indicadores técnicos — opcionais; se a série falhar, segue sem eles
-        ind_ok = True
-        try:
-            series = await get_price_series(ativo, days=200)
-            indicadores = compute_indicators(series)
-            if indicadores:
-                hard_data["indicadores"] = indicadores
-        except Exception as e:
-            log_error(ativo, e)
-            ind_ok = False
+    if n_degraded_input:
+        _log.warning("[aviso] %d/%d ativo(s) com input degradado "
+                     "(indicador/noticia faltando) — ver events.jsonl.",
+                     n_degraded_input, n_analisados)
 
-        # Notícias — fallback para lista vazia; o Gemini ainda analisa com dados de mercado
-        news_ok = True
-        try:
-            news = await get_news_snippets(ativo)
-        except Exception as e:
-            log_error(ativo, e)
-            news = []
-            news_ok = False
-
-        # Degradação silenciosa INSTRUMENTADA: antes o except engolia a falha e o LLM
-        # pontuava com input empobrecido sem ninguém saber. Agora é contada e EMITIDA
-        # (o evento entra no JSONL — auditável; o cross-check e o backtest podem
-        # estratificar previsões degradadas no futuro).
-        faltando = [k for k, ok in (("indicadores", ind_ok), ("noticias", news_ok)) if not ok]
-        if faltando:
-            n_degraded += 1
-            emit_event("cripto", "input_degraded",
-                       metrics={"n_faltando": len(faltando)},
-                       metadata={"ativo": ativo, "faltando": faltando})
-
-        # Análise e score
-        try:
-            analysis = await analyze_asset(ativo, hard_data, news)
-            score = calculate_final_score(analysis)
-            resultado = {
-                "ativo": ativo,
-                "sentimento": analysis["sentiment"],
-                "score": score,
-                "resumo": analysis["summary"],
-                "data": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                "price_usd": hard_data.get("price_usd", 0),
-                "judge": judge_signature(),
-                # cross-check flag-only: tagueia contradição LLM-vs-técnico, NÃO muta o score
-                "divergencia": divergence_flag(score, hard_data.get("indicadores", {})),
-            }
-            resultados.append(resultado)
-            cache[ativo] = resultado
-            log_success(ativo, score)
-            if score >= score_threshold:
-                print(f"🏅 {ativo.upper()} está acima do limiar de {score_threshold}.")
-        except Exception as e:
-            log_error(ativo, e)
-
-        # Rate limiting: 1s entre ativos — adequado para CoinGecko free tier com 3 ativos
-        if i < len(ativos) - 1:
-            await asyncio.sleep(1)
-
-    if n_degraded:
-        print(f"⚠️  {n_degraded}/{len(ativos)} ativo(s) com input degradado "
-              f"(indicador/notícia faltando) — score do LLM saiu empobrecido; ver events.jsonl.")
-    # Cache só é regravado quando habilitado (--no-cache não toca no cache.json)
     if cache_enabled:
         save_cache(cache)
     export_results(resultados)
     append_history(resultados)
-    print("📊 Histórico atualizado em output/garimpo_historico.csv")
+    _log.info("Historico atualizado em output/garimpo_historico.csv")
+    emit_event(_DOMAIN, "batch_success",
+               metrics={"n_resultados": float(len(resultados)),
+                        "n_llm_fallback": float(n_llm_fallback),
+                        "n_degraded_input": float(n_degraded_input)},
+               metadata={"n_ativos": n_analisados})
 
     if args.summary:
         destaques = [r for r in resultados if r.get("score", 0) >= score_threshold]
-        print(f"\n===== RESUMO (score ≥ {score_threshold}) =====")
+        _log.info("===== RESUMO (score >= %s) =====", score_threshold)
         if destaques:
             for r in sorted(destaques, key=lambda x: x.get("score", 0), reverse=True):
-                print(f"  🏅 {r.get('ativo', '').upper():<10} score {r.get('score', 0)}")
+                _log.info("  %-10s score %s", r.get("ativo", "").upper(), r.get("score", 0))
         else:
-            print("  (nenhum ativo acima do limiar)")
+            _log.info("  (nenhum ativo acima do limiar)")
 
 
 if __name__ == "__main__":

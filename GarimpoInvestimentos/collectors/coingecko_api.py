@@ -1,5 +1,9 @@
+import logging
+
 from pydantic import BaseModel
 from predictor_core.net import get_http_client, with_retry
+
+_log = logging.getLogger("previsao_cripto.coingecko")
 
 
 class CoinData(BaseModel):
@@ -21,7 +25,7 @@ async def get_coin_data(coin_id: str) -> CoinData:
         data = resp.json()
 
     market = data["market_data"]
-    return CoinData(
+    coin = CoinData(
         id=data["id"],
         symbol=data["symbol"],
         price_usd=market["current_price"]["usd"],
@@ -30,6 +34,8 @@ async def get_coin_data(coin_id: str) -> CoinData:
         change_7d=market["price_change_percentage_7d"] or 0.0,
         change_30d=market["price_change_percentage_30d"] or 0.0,
     )
+    _log.debug("coingecko: %s preco=%.2f vol=%.0f", coin_id, coin.price_usd, coin.volume_usd)
+    return coin
 
 
 @with_retry()
@@ -44,4 +50,6 @@ async def get_price_series(coin_id: str, days: int = 200) -> list[float]:
         resp = await client.get(url, params=params)
         resp.raise_for_status()
         data = resp.json()
-    return [point[1] for point in data.get("prices", [])]
+    closes = [point[1] for point in data.get("prices", [])]
+    _log.debug("coingecko: %s serie de %d closes (%d dias pedidos)", coin_id, len(closes), days)
+    return closes

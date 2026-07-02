@@ -1,7 +1,7 @@
 import csv
 import os
 
-from GarimpoInvestimentos.core.paths import OUTPUT_DIR
+from GarimpoInvestimentos.store.paths import OUTPUT_DIR
 
 HIST_CSV = str(OUTPUT_DIR / "garimpo_historico.csv")
 

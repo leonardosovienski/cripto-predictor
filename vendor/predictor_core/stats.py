@@ -80,7 +80,8 @@ def block_bootstrap_ci(
     unidade) E a autocorrelação (entre unidades do bloco). Reamostrar colunas
     separado infla o IC da diferença e fabrica "inconclusivo" falso.
 
-    method='moving'    — Moving Block Bootstrap (blocos fixos de tamanho block_length)
+    method='moving'    — Circular Block Bootstrap (blocos fixos block_length, com
+                          wrap circular (start+j)%n — costura o fim ao início da série)
     method='stationary' — Stationary Bootstrap (comprimentos ~ Geométrica(p=1/block_length),
                           índices circulares conforme Politis & Romano 1994)
 
@@ -107,8 +108,22 @@ def block_bootstrap_ci(
                     break
                 resampled.append(series[(start + j) % n])
         stat = statistic(resampled[:n])
-        if stat is not None:        # reamostra degenerada (ex.: Spearman sem variância) cai fora
+        # Descarta reamostra inválida: None (Spearman sem variância) OU não-finita
+        # (Sharpe/Sortino de bloco constante → ±inf/nan). nan quebra o sort() abaixo
+        # (comparações com nan são False → ordem indefinida → percentil lê posição
+        # arbitrária); ±inf desloca o percentil. Ambos corromperiam o IC em silêncio.
+        if stat is not None and math.isfinite(stat):
             boot_stats.append(stat)
+
+    n_valid = len(boot_stats)
+    if n_valid and n_valid < 0.9 * n_boot:
+        # >10% das reamostras inválidas: a distribuição ficou condicionada a um
+        # subconjunto enviesado (IC mais estreito → significância fabricada). Não
+        # silencie — quem consome o veredito precisa saber que ele é suspeito.
+        logger.warning(
+            "block_bootstrap_ci: %d/%d reamostras inválidas descartadas — "
+            "IC calculado sobre subconjunto condicionado, trate como suspeito",
+            n_boot - n_valid, n_boot)
 
     if not boot_stats:
         return None, None, []
@@ -177,14 +192,25 @@ def sortino(returns: list[float], periods_per_year: int = 252) -> float:
     return (mean / downside_std) * math.sqrt(periods_per_year)
 
 
-def max_drawdown(cum_returns: list[float]) -> float:
-    """Max drawdown sobre série de retornos acumulados (equity curve)."""
+def max_drawdown(equity: list[float]) -> float:
+    """Max drawdown sobre uma EQUITY CURVE (nível acumulado, não retornos crus).
+
+    CONTRATO: `equity` é o nível de capital/preço (ex.: 100, 103, 99...), NÃO uma
+    lista de retornos. Passar retornos crus (que oscilam perto de 0) faz `peak`
+    nunca passar de ~0 e o drawdown colapsar para ~0 silenciosamente — bug medido
+    no previsao-cripto/v3. Para equity que cruza zero ou fica negativa (log-equity,
+    conta alavancada), o drawdown relativo perde sentido; aqui levantamos em vez de
+    devolver 0 enganoso."""
     peak = float("-inf")
     mdd = 0.0
-    for v in cum_returns:
+    for v in equity:
         if v > peak:
             peak = v
-        dd = (peak - v) / peak if peak > 0 else 0.0
+        if peak <= 0:
+            raise ValueError(
+                "max_drawdown: equity <= 0 — recebeu retornos crus em vez de "
+                "equity curve? (drawdown relativo indefinido para nível <= 0)")
+        dd = (peak - v) / peak
         if dd > mdd:
             mdd = dd
     return mdd

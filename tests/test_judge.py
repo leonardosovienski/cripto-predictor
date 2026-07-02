@@ -37,9 +37,9 @@ def test_prompt_hash_stable(monkeypatch):
 
 def _fresh_history(tmp_path, monkeypatch):
     monkeypatch.setenv("GARIMPO_OUTPUT_DIR", str(tmp_path))
-    from GarimpoInvestimentos.core import paths
+    from GarimpoInvestimentos.store import paths
     importlib.reload(paths)
-    from GarimpoInvestimentos.core import history
+    from GarimpoInvestimentos.store import history
     importlib.reload(history)
     return history
 

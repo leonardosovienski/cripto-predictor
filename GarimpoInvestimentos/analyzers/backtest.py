@@ -14,11 +14,16 @@ Uso:
 """
 import asyncio
 import csv
+import logging
 from datetime import datetime, timedelta, timezone
+
+import httpx
+
+logger = logging.getLogger(__name__)
 
 from GarimpoInvestimentos.config import settings
 from predictor_core.net import get_http_client
-from GarimpoInvestimentos.core.paths import OUTPUT_DIR
+from GarimpoInvestimentos.store.paths import OUTPUT_DIR
 from predictor_core.net import with_retry
 from predictor_core.stats import spearman_block_ci
 from predictor_core.obs import emit_event
@@ -49,7 +54,12 @@ async def _price_on(client, coin_id: str, day: datetime) -> float | None:
     """Preço em USD num dia específico; None se não houver dado (após retry de transitórios)."""
     try:
         return await _fetch_price(client, coin_id, day)
-    except Exception:
+    except (httpx.HTTPError, ValueError, KeyError) as exc:
+        # Transitórios já foram re-tentados antes daqui; um miss que chega até aqui é
+        # GAP REAL de dado (ativo/dia sem cotação na CoinGecko). Não em silêncio: cada
+        # ponto perdido enviesa o backtest (selection sobre "quais preços vieram").
+        logger.warning("preço indisponível %s @ %s (%s) — ponto descartado do backtest",
+                       coin_id, day.date(), exc)
         return None
 
 
@@ -168,7 +178,7 @@ def _report(enriched: list[dict]) -> None:
             # PAYOFF: o cripto nasce emitindo o evento estruturado do pedágio (Modo B
             # validado). ic_lower nas métricas; a divergência (alucinação?) nos metadados.
             emit_event(
-                "cripto", "toll_passed",
+                "previsao_cripto", "toll_passed",
                 metrics={"spearman": round(rho, 4), "ic_lower": round(lo, 4),
                          "ic_upper": round(hi, 4), "n": n},
                 metadata={"horizon_days": h, "veredito": veredito,

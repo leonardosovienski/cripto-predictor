@@ -7,6 +7,7 @@
 env/
 venv/
 .venv/
+.venv_v3/
 **/env/
 
 # Bytecode / cache
@@ -28,3 +29,7 @@ __pycache__/
 # SO
 .DS_Store
 Thumbs.db
+
+# dados brutos de mercado (regeneraveis por ingestao) e telemetria local
+data/
+events.jsonl

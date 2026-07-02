@@ -43,13 +43,12 @@ ProjetosPython/                      ← raiz do repositório (rode a partir daq
     │   ├── indicators.py            ← RSI, SMA 50/200, MACD, Bollinger (Python puro)
     │   ├── score_engine.py          ← score final = opportunity_score do LLM (puro, 0-100)
     │   └── backtest.py              ← Fase 2: D+1/7/30, Spearman, hit rate, Sharpe, benchmark
-    ├── core/
+    ├── store/                       ← (ex-`core/`, renomeado p/ não colidir com predictor_core)
     │   ├── paths.py                 ← caminhos fixos de output/ e logs/ (à prova de cwd)
-    │   ├── retry.py                 ← retry com backoff p/ chamadas transitórias (503/429)
     │   ├── cache.py                 ← cache JSON com TTL (UTC, configurável)
     │   ├── history.py               ← histórico CSV acumulado, dedup por (ativo, data)
-    │   ├── http_client.py           ← cliente httpx async
     │   └── logger.py                ← logging via loguru (logs/garimpo.log)
+    │   (retry/backoff e cliente httpx agora vêm de predictor_core.net)
     └── output/
         └── reporter.py              ← exportação CSV + XLSX com gráfico
 
@@ -58,7 +57,7 @@ scripts/run_daily.ps1               ← roda o pipeline 1×/dia (Agendador do Wi
 
 > **Pacote `output/` vs pasta de dados:** `GarimpoInvestimentos/output/` contém só
 > **código** (`reporter.py`). Os arquivos gerados vão para `output/` e `logs/` na
-> **raiz do projeto**, sempre — o `core/paths.py` ancora esses caminhos via `__file__`,
+> **raiz do projeto**, sempre — o `store/paths.py` ancora esses caminhos via `__file__`,
 > então não importa de qual diretório você execute.
 
 ## Setup
@@ -225,7 +224,7 @@ O pipeline degrada com elegância — uma falha pontual não derruba a execuçã
 > reset diário ou use uma chave paga. `503` é sobrecarga **transitória** (re-rodar resolve).
 
 Rate limiting: `asyncio.sleep(1)` entre ativos (ausente após o último), adequado ao
-free tier da CoinGecko. **Retry com backoff exponencial** (`core/retry.py`) cobre as
+free tier da CoinGecko. **Retry com backoff exponencial** (`predictor_core.net.with_retry`) cobre as
 chamadas de CoinGecko/SerpAPI/LLM: um `503`/`429` *transitório* espera e re-tenta em vez
 de virar fallback. Erros não-transitórios (404, chave inválida, **cota diária** esgotada)
 não são reententados — retry não os resolve.
@@ -236,16 +235,23 @@ O backtest só amadurece com **tempo real decorrido** — então o quanto antes 
 rodar todo dia, antes começa a coletar previsões. Use o Agendador de Tarefas do Windows
 (barato, local; nuvem é over-engineering enquanto não há sinal validado).
 
-Já existe o script [`scripts/run_daily.ps1`](scripts/run_daily.ps1) (roda o pipeline e
-loga em `logs/cron_<data>.log`). Registre-o para rodar 1×/dia (ex.: 09:00):
+Já existe o script [`scripts/run_daily.ps1`](scripts/run_daily.ps1) (roda o pipeline da
+Fase 1 e loga em `logs/cron_<data>.log`). Registre-o para rodar 1×/dia (ex.: 09:00) —
+ajuste o caminho para a raiz real do projeto:
 
 ```powershell
 schtasks /Create /TN "GarimpoDaily" `
-  /TR "powershell -NoProfile -ExecutionPolicy Bypass -File C:\Claude\ProjetosPython\scripts\run_daily.ps1" `
+  /TR "powershell -NoProfile -ExecutionPolicy Bypass -File C:\Claude-projetos\Claude\previsao-cripto\scripts\run_daily.ps1" `
   /SC DAILY /ST 09:00
 ```
 
 Para remover: `schtasks /Delete /TN "GarimpoDaily" /F`.
+
+> **V3 (paper trading) tem seu PRÓPRIO agendador:** [`scripts/run_daily_v3.ps1`](scripts/run_daily_v3.ps1)
+> (task `GarimpoV3Daily`, 21:30 local), que faz `vision_ingest` (não-destrutivo) →
+> `pipeline` → `paper_trader` → `paper_report`. NUNCA usa `--force-refresh` (clamparia
+> o OI em 30 dias e destruiria a base do HMM — ver HANDOFF V3.3.1). O script é **ASCII
+> puro de propósito**: acento/em-dash quebram o parse do PowerShell 5.1 (HANDOFF V3.3.2).
 
 > **Escala vs. cota:** a `DEFAULT_ASSETS` traz ~22 ativos (corte transversal dilui a
 > variância). No **free tier do Gemini (~20 req/dia)** isso estoura — rode com **Gemini
@@ -292,3 +298,107 @@ uma previsão de hoje só terá preço em D+7 daqui a 7 dias. O backtest só dá
 significativa após acumular previsões reais ao longo de semanas. Se o Spearman ficar
 perto de zero ou negativo, revisar o prompt do Gemini antes de investir em mais
 infraestrutura.
+
+---
+
+## V3 — Crypto-Predictor (Fase 1: validação de edge mecânico)
+
+Linha de pesquisa **independente** do pipeline LLM acima. Hipótese: o edge real em
+cripto vem de **ineficiências mecânicas** — assimetria de alavancagem forçada (funding
+rate extremo + Open Interest crescendo) contextualizada por **regime de volatilidade**
+(HMM). Sem WebSocket L2, sem notícias: provar primeiro o sinal paramétrico.
+
+```
+funding + OI + spot (Binance Futures REST) → feature_builder (z-score, ΔlogOI,
+leverage_pressure) → regime_engine (HMM 3 estados, Forward causal) → signal_engine
+(-1/0/+1) → backtest_v3 (WFA + PSR + Spearman CI + MaxDD) → veredicto GO/NO-GO
+```
+
+Código em `GarimpoInvestimentos/v3/`. Critério **GO**: PSR > 0.80 **e** IC_CI_lower > 0
+**e** MaxDD < 20%. Caso contrário **NO-GO** (pivota a pesquisa).
+
+### Dependências extras
+```powershell
+& $py -m pip install hmmlearn numpy scikit-learn   # já no requirements.txt
+```
+
+### Fonte de dados: o limite de OI e a "Quarta Via"
+O endpoint REST `futures/data/openInterestHist` da Binance **só serve os últimos ~30
+dias** de Open Interest (start mais antigo → HTTP 400). Isso **inviabiliza** o WFA
+histórico (≥217 dias) — verificado em dados reais: com ~21 dias de OI sobram só ~61
+feature vectors, abaixo do piso de 100 do HMM.
+
+**Solução (sem pagar feed, sem esperar meses): o data lake público `data.binance.vision`.**
+A Binance arquiva anos de funding + OI (dataset `metrics`, 5min) + klines em ZIPs
+gratuitos. O `binance_vision.py` baixa, valida SHA256, parseia e devolve **os mesmos
+dataclasses** dos coletores REST. O `vision_ingest.py` grava nos **mesmos CSVs**, então
+`pipeline` e `backtest_v3` rodam sem qualquer alteração.
+
+| Recurso | REST (live) | Binance Vision (histórico) |
+|---|---|---|
+| Funding rate (8h) | últimos meses | mensal, anos |
+| Spot klines (1h) | anos | mensal, anos |
+| **Open Interest** | **~30 dias** ❌ | **`metrics` 5min, desde ~2021** ✅ |
+
+> O `oi_collector` REST continua existindo para coleta **ao vivo** (clampa em 30d e emite
+> `oi_range_clamped`). Para **backtest histórico**, use sempre o `vision_ingest`.
+
+### Comandos
+```powershell
+cd C:\Claude\ProjetosPython
+$py = ".\GarimpoInvestimentos\env\Scripts\python.exe"
+
+# 0. Data lake: baixa anos de funding+OI+klines do arquivo público (data/v3/<symbol>/)
+& $py -m GarimpoInvestimentos.v3.vision_ingest --symbol BTCUSDT --start-date 2021-01-01 --end-date 2024-12-31
+
+# 1. Features + HMM + sinais (lê os CSVs já gravados pelo ingest)
+& $py -m GarimpoInvestimentos.v3.pipeline --symbol BTCUSDT --start-date 2021-01-01
+
+# 2. Walk-Forward + Go/No-Go (emite wfa_result no events.jsonl)
+& $py -m GarimpoInvestimentos.v3.backtest_v3 --symbol BTCUSDT --slippage-bps 5
+
+# 3. Kelly Sweep — varre frações de position sizing e recomenda a vencedora
+& $py -m GarimpoInvestimentos.v3.backtest_v3 --symbol BTCUSDT --kelly-fractions 1.0 0.5 0.25 0.10
+
+# 4. Paper Trading — registra o sinal corrente com a fração homologada (0.50)
+& $py -m GarimpoInvestimentos.v3.paper_trader --symbol BTCUSDT --start-date 2021-01-01
+```
+> ZIPs ficam cacheados em `data/v3/_vision_cache/` — re-execuções não re-baixam. O OI
+> vem em arquivos **diários** (1 download/dia); um range de anos leva alguns minutos na
+> 1ª vez.
+
+> **Ambiente V3:** use `.venv_v3` (Python **3.13**). O `hmmlearn` não compila no
+> Python 3.14 global (sem MSVC); o 3.13 tem wheel binário. Crie com `py -3.13 -m venv .venv_v3`.
+
+### Kelly Sweep — interpretação dos resultados
+
+O `--kelly-fractions` roda o WFA completo para cada fração e imprime uma tabela:
+
+| Coluna | Significado |
+|---|---|
+| **PSR** | Probabilistic Sharpe Ratio — P(Sharpe real > 0). GO exige ≥ 0.80. |
+| **IC_lower** | Limite inferior do IC95% do Spearman(sinal, retorno). GO exige > 0. |
+| **MaxDD** | Drawdown máximo da curva de equity. GO exige < 20%. |
+| **Sharpe** | Sharpe simplificado da série OOS. |
+| **Veredicto** | GO se as 3 condições passam; senão NO-GO. |
+
+**PSR e IC_lower são invariantes** à fração (o Kelly só escala a exposição). Apenas o
+MaxDD escala. Logo a escolha é **retorno absoluto vs margem de drawdown** — fixe a
+**maior** fração que mantém MaxDD com folga abaixo de 20% (homologado: **0.50**,
+`DEFAULT_KELLY_FRACTION`). A "menor fração vencedora" é degenerada (a menor sempre
+vence, subutilizando o orçamento de risco).
+
+**Resultado homologado (BTCUSDT, 2026-06-27):** Kelly 0.50 → PSR 0.909, IC_lower
++0.0205, MaxDD 10.45% → **GO**. Detalhes no `HANDOFF.md` (Versão V3.2).
+
+### Status de verificação (2026-06-25)
+- ✅ Cadeia pura (feature_builder → signal_engine) testada com todos os caminhos.
+- ✅ HMM (Baum-Welch) + Forward causal + WFA rodados → NO-GO correto em ruído (o juiz
+  estatístico não dá falso positivo).
+- ✅ Coletores REST validados contra a Binance real; `binance_vision` validado (schemas,
+  checksum SHA256, join exato funding×OI).
+- ✅ `feature_builder` otimizado de O(n²) → O(n log n) (bisect) para escala de anos.
+
+**Bugs corrigidos na verificação:** (1) `spearman_block_ci` retorna tupla, não objeto;
+(2) `max_drawdown` espera equity acumulada; (3) warmup do z-score zerava o OOS;
+(4) `period="8h"` inválido no OI hist (→ `"1h"`).

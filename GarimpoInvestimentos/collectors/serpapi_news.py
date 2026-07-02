@@ -1,5 +1,10 @@
+import logging
+
 from GarimpoInvestimentos.config import settings
 from predictor_core.net import get_http_client, with_retry
+
+_log = logging.getLogger("previsao_cripto.serpapi")
+
 
 @with_retry()
 async def get_news_snippets(query: str, limit: int = 5) -> list[str]:
@@ -21,5 +26,9 @@ async def get_news_snippets(query: str, limit: int = 5) -> list[str]:
 
     # SerpAPI pode responder 200 com um campo "error" (cota esgotada, etc.)
     if data.get("error"):
+        _log.warning("serpapi: resposta com erro para %r (%s) — sem noticias",
+                     query, data.get("error"))
         return []
-    return [n.get("title", "") for n in data.get("news_results", [])[:limit]]
+    titles = [n.get("title", "") for n in data.get("news_results", [])[:limit]]
+    _log.debug("serpapi: %d noticias para %r", len(titles), query)
+    return titles
