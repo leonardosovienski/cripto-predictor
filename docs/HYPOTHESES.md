@@ -27,21 +27,26 @@
 - Resultado (2026-07-02): **NO-GO.** Bruto +0,44bps/sinal morre em ~0,53bps de custo
   (BTC líquido −0,09bps, PSR 0,445; ETH PSR 0,051). Kelly-invariante.
 
-### H2 — Janela curta de funding (fr21) melhora a sensibilidade (status: **rodando**)
+### H2 — Janela curta de funding (fr21) melhora a sensibilidade (status: **refutada**)
 - Data do registro: 2026-07-02 (antes do resultado com custos).
 - Hipótese: z-score de 7 dias reage mais rápido a squeezes que o de 30 dias.
 - Configuração: `v3-hmm-funding-oi-fr21`.
 - Critério: idêntico ao H1, líquido de custos.
-- Resultado: (aguardando execução em andamento)
+- Resultado (2026-07-02): **NO-GO.** PSR 0,215; bruto +0,07bps → líquido −0,37bps/sinal;
+  MaxDD 25,8%. Janela curta piora vs fr90 — mais ruído, não mais sensibilidade.
 
-### H3 — Horizonte maior amortiza a fricção (status: **rodando**)
+### H3 — Horizonte maior amortiza a fricção (status: **refutada**)
 - Data do registro: 2026-07-02 (antes do resultado).
 - Hipótese: a fricção é fixa por trade (~30bps round-trip em posição cheia); com
   horizonte 48h o edge por sinal dobra de espaço enquanto o custo fica ~constante
   (funding ×2, fee/slip iguais) → o líquido pode cruzar para positivo.
-- Configuração: `v3-hmm-funding-oi-fr90-h48` (registrar no trials ao concluir).
+- Configuração: `v3-hmm-funding-oi-fr90-h48` (registrada no trials).
 - Critério: idêntico ao H1, líquido de custos.
-- Resultado: (aguardando execução em andamento)
+- Resultado (2026-07-02): **NO-GO — e informativo.** Em 48h o edge bruto VIRA NEGATIVO
+  (−0,35bps → líquido −0,75bps/sinal; PSR 0,192; MaxDD 50,3%). O sinal de funding/OI é
+  de vida CURTA: esticar o horizonte destrói em vez de amortizar. Aprendizado real:
+  qualquer variação futura desta família deve ir na direção OPOSTA (mais convicção e
+  menos trades no MESMO horizonte, não horizontes maiores).
 
 ### H4 — Score do LLM prevê retorno D+7 (status: **rodando — coleta**)
 - Data do registro: formalização em 2026-07-02 (hipótese original do projeto).

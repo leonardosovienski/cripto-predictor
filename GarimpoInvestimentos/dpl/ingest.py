@@ -33,6 +33,7 @@ async def ingest_crypto(
     signal_providers: list[SignalProvider] | None = None,
     max_staleness: dict[str, timedelta] | None = None,
     domain: str = _DEFAULT_DOMAIN,
+    record_provenance: bool = True,
 ) -> list[dict]:
     """Coleta candles (+ sinais), grava bruto, alinha e materializa features.
 
@@ -47,11 +48,12 @@ async def ingest_crypto(
     content_hash = hashlib.sha256(
         "\n".join(f"{p.timestamp.isoformat()},{p.open},{p.high},{p.low},{p.close},{p.volume}"
                   for p in points).encode()).hexdigest()[:16]
-    store.write_provenance(
-        source=points[0].source, entity=symbol, n_rows=len(points),
-        ingested_at=datetime.now(timezone.utc).isoformat(),
-        origin=f"sha256:{content_hash}",
-        code_version=f"predictor_core:{predictor_core.__version__}")
+    if record_provenance:   # wrappers com proveniência própria (ex.: stocks) desligam
+        store.write_provenance(
+            source=points[0].source, entity=symbol, n_rows=len(points),
+            ingested_at=datetime.now(timezone.utc),
+            origin=f"sha256:{content_hash}",
+            code_version=f"predictor_core:{predictor_core.__version__}")
     emit_event(domain, "data.ingested",
                metrics={"n_candles": len(points)},
                metadata={"symbol": symbol, "interval": interval,

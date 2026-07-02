@@ -46,6 +46,7 @@ async def ingest_stocks(store: FeatureStore, facade: StocksDataProvider, symbol:
     aligned = await ingest_crypto(
         store, facade, symbol, interval=interval, limit=limit,
         signal_providers=facade.signal_providers, max_staleness=max_staleness,
+        record_provenance=False,  # proveniência própria (mais rica) logo abaixo
     )
     store.write_provenance(
         source="stocks", entity=symbol, n_rows=len(aligned),

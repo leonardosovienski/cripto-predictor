@@ -45,6 +45,18 @@
       "horizonte_horas": 24
     },
     "sharpe": null,
-    "notes": "Pivot de fr_window testado na V3 (CLI documenta baseline=90/pivot=21). Registrado retroativamente: cada janela tentada e uma tentativa que o DSR desconta."
+    "notes": "H2 REFUTADA 2026-07-02 (com custos): NO-GO. PSR 0.215, bruto +0.07bps -> liquido -0.37bps/sinal, IC_lo Spearman -0.218, MaxDD 25.8%. Janela curta piora vs fr90."
+  },
+  {
+    "name": "v3-hmm-funding-oi-fr90-h48",
+    "registered_at": "2026-07-02T07:00:00Z",
+    "params": {
+      "modelo": "GaussianHMM 3 estados (forward causal)",
+      "features": "funding_zscore(90) + OI",
+      "horizonte_horas": 48,
+      "custos": "taker 10 + slip 5 bps/perna + funding real"
+    },
+    "sharpe": -0.0132,
+    "notes": "H3 REFUTADA 2026-07-02: NO-GO. Horizonte 48h NAO amortiza — o edge bruto VIRA NEGATIVO (-0.35bps -> liquido -0.75bps/sinal), PSR 0.192, MaxDD 50.3%. O sinal e de vida curta; esticar horizonte destroi em vez de amortizar. Pre-registrada em docs/HYPOTHESES.md antes do resultado."
   }
 ]
