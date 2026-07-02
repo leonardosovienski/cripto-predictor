@@ -33,3 +33,4 @@ Thumbs.db
 # dados brutos de mercado (regeneraveis por ingestao) e telemetria local
 data/
 events.jsonl
+tests/_events_test.jsonl
