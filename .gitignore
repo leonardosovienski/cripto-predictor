@@ -28,3 +28,6 @@ __pycache__/
 # SO
 .DS_Store
 Thumbs.db
+
+# telemetria local (predictor_core.obs) — artefato de runtime, nunca versionar
+events.jsonl
