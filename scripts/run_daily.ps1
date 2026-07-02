@@ -1,8 +1,9 @@
-# Executa o pipeline Garimpo uma vez e registra a saída em logs/cron_<data>.log.
-# Pensado para o Agendador de Tarefas do Windows (ver README — seção "Agendamento diário").
-$ErrorActionPreference = "Stop"
+# Coleta diária do GarimpoInvestimentos — o relógio da pesquisa.
+# Fluxo: descoberta+ingestão (rede) → análise offline (LLM) → backtest (veredito).
+# Registrado no Agendador do Windows (ver README). Log em logs/cron_<data>.log.
+$ErrorActionPreference = "Continue"   # uma etapa falhar não pode calar as seguintes
 
-$proj = "C:\Claude\ProjetosPython"
+$proj = "C:\Claude-projetos\Claude\previsao-cripto"
 $py   = Join-Path $proj "GarimpoInvestimentos\env\Scripts\python.exe"
 $logDir = Join-Path $proj "logs"
 if (-not (Test-Path $logDir)) { New-Item -ItemType Directory -Path $logDir | Out-Null }
@@ -10,5 +11,15 @@ $log = Join-Path $logDir ("cron_{0}.log" -f (Get-Date -Format "yyyyMMdd"))
 
 Set-Location $proj
 "==== run $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') ====" | Out-File -FilePath $log -Append -Encoding utf8
-& $py -m GarimpoInvestimentos.main *>> $log
-"==== fim (exit $LASTEXITCODE) ===="                      | Out-File -FilePath $log -Append -Encoding utf8
+
+# 1) Descoberta + ingestão (DPL, fallback; ~10 candidatos = cota LLM free tier)
+& $py -m GarimpoInvestimentos.main --ingest --discover 10 *>> $log
+"---- ingestao: exit $LASTEXITCODE ----" | Out-File -FilePath $log -Append -Encoding utf8
+
+# 2) Análise offline (universo = Feature Store; previsões carimbadas Juiz+Fonte)
+& $py -m GarimpoInvestimentos.main --summary *>> $log
+"---- analise: exit $LASTEXITCODE ----" | Out-File -FilePath $log -Append -Encoding utf8
+
+# 3) Backtest (Spearman+IC95 estratificado por Fonte + DSR; amadurece com o tempo)
+& $py -m GarimpoInvestimentos.analyzers.backtest *>> $log
+"==== fim $(Get-Date -Format 'HH:mm:ss') (exit $LASTEXITCODE) ====" | Out-File -FilePath $log -Append -Encoding utf8

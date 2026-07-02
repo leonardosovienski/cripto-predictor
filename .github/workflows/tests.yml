@@ -1,0 +1,25 @@
+# CI — fecha o risco nº 7 da auditoria (deriva de ambiente: 3.12→3.13→3.14 já
+# ocorreu 2× sem ser pega por automação). A suíte é 100% offline (sem chaves):
+# redomas stubam LLM/rede; hmmlearn é opcional (testes fazem importorskip).
+name: tests
+on:
+  push:
+  pull_request:
+
+jobs:
+  pytest:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-latest]
+        python: ["3.13", "3.14"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - name: deps mínimas da suíte (offline)
+        run: pip install pytest pydantic httpx numpy python-dotenv
+      - name: suíte completa
+        run: pytest tests/ -q

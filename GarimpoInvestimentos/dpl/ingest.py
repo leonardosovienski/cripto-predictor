@@ -6,8 +6,10 @@ Store já materializada. Emite telemetria `data.ingested` / `data.materialized`.
 """
 from __future__ import annotations
 
-from datetime import timedelta
+import hashlib
+from datetime import datetime, timedelta, timezone
 
+import predictor_core
 from predictor_core.obs import emit_event
 
 from GarimpoInvestimentos.dpl.alignment import AlignmentEngine
@@ -39,10 +41,21 @@ async def ingest_crypto(
     """
     points = await facade.fetch_ohlcv(symbol, interval=interval, limit=limit)
     store.write_raw(points)
+    # Proveniência (ADR-015, versão mínima): hash do CONTEÚDO ingerido + versão do
+    # core. A tabela existia desde a migração 0004 mas nunca era populada — sem isso,
+    # "reproduzir o backtest de 6 meses atrás" não tem âncora de dados.
+    content_hash = hashlib.sha256(
+        "\n".join(f"{p.timestamp.isoformat()},{p.open},{p.high},{p.low},{p.close},{p.volume}"
+                  for p in points).encode()).hexdigest()[:16]
+    store.write_provenance(
+        source=points[0].source, entity=symbol, n_rows=len(points),
+        ingested_at=datetime.now(timezone.utc).isoformat(),
+        origin=f"sha256:{content_hash}",
+        code_version=f"predictor_core:{predictor_core.__version__}")
     emit_event(domain, "data.ingested",
                metrics={"n_candles": len(points)},
                metadata={"symbol": symbol, "interval": interval,
-                         "source": points[0].source})
+                         "source": points[0].source, "content_hash": content_hash})
 
     signals: dict[str, list] = {}
     for sp in (signal_providers or []):
