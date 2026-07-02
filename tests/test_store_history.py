@@ -88,6 +88,22 @@ def test_backtest_le_da_store_com_mesmo_resultado_do_loader_csv(tmp_path, monkey
     assert btc["pred_date"].year == 2026 and btc["pred_date"].month == 6
 
 
+def test_analise_persiste_previsao_ANTES_de_fechar_a_store():
+    """Regressão da conferência de 2026-07-02: um store.close() herdado do fluxo
+    pré-passo-4 rodava antes do append_history — a previsão pontuava, exportava
+    e SUMIA em silêncio (sqlite 'Cannot operate on a closed database' engolido).
+    Asserção estrutural sobre o fonte de main.py (importá-lo exige chaves):
+    o append tem que vir antes do close."""
+    from pathlib import Path
+
+    src = (Path(__file__).parent.parent / "GarimpoInvestimentos" / "main.py").read_text(
+        encoding="utf-8")
+    assert "append_history(resultados, store)" in src
+    assert "store.close()" in src
+    assert src.index("append_history(resultados, store)") < src.index("store.close()"), (
+        "store.close() antes do append_history: previsões seriam descartadas em silêncio")
+
+
 def test_report_estratifica_por_fonte(tmp_path, monkeypatch, capsys):
     """A estratificação por Fonte aparece no horizonte principal — a equivalência
     mediu diffs de até 7.8pp nos change_* entre fontes; poolar sem mostrar os

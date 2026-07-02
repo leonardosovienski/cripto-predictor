@@ -266,8 +266,6 @@ async def run():
         if i < len(ativos) - 1:
             await asyncio.sleep(1)
 
-    store.close()
-
     if n_degraded:
         print(f"⚠️  {n_degraded}/{len(ativos)} ativo(s) com input degradado "
               f"(indicador/notícia faltando) — score do LLM saiu empobrecido; ver events.jsonl.")
@@ -275,7 +273,11 @@ async def run():
     if cache_enabled:
         save_cache(cache)
     export_results(resultados)
+    # A store fecha DEPOIS do append: o histórico oficial vive nela (passo 4).
+    # (Um close prematuro aqui já engoliu previsões em silêncio — pego pela
+    # conferência de 2026-07-02; o teste de integração cobre a ordem agora.)
     append_history(resultados, store)
+    store.close()
     print(f"📊 Histórico oficial atualizado na Feature Store ({FEATURE_STORE_DB.name}, tabela predictions)")
 
     if args.summary:
