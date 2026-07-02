@@ -1,4 +1,5 @@
 import csv
+import logging
 from datetime import datetime
 from openpyxl import Workbook
 from openpyxl.styles import Font, Alignment, PatternFill
@@ -7,6 +8,8 @@ from openpyxl.chart import BarChart, Reference
 from openpyxl.chart.label import DataLabelList
 
 from GarimpoInvestimentos.core.paths import OUTPUT_DIR
+
+_log = logging.getLogger("previsao_cripto.reporter")
 
 def export_results(resultados: list[dict]):
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -104,6 +107,5 @@ def export_results(resultados: list[dict]):
 
     wb.save(xlsx_filename)
 
-    print("✅ Resultados exportados com sucesso:")
-    print(f"   • CSV  → {csv_filename}")
-    print(f"   • XLSX → {xlsx_filename} (com gráfico e formatação condicional)")
+    _log.info("Resultados exportados: CSV -> %s", csv_filename)
+    _log.info("Resultados exportados: XLSX -> %s (com grafico e formatacao condicional)", xlsx_filename)

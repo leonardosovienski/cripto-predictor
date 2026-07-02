@@ -10,7 +10,9 @@ import sys
 for _stream in (sys.stdout, sys.stderr):
     try:
         _stream.reconfigure(encoding="utf-8")
-    except Exception:
+    except (AttributeError, ValueError):
+        # best-effort: stream redirecionado (pipe/arquivo) pode não ter reconfigure
+        # ou já estar fechado. Só esses casos são toleráveis — não engolir o resto.
         pass
 
 # Consumidor do predictor_core via vendoring (linhagem idêntica ao stocks): a pasta

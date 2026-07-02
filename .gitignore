@@ -7,6 +7,7 @@
 env/
 venv/
 .venv/
+.venv_v3/
 **/env/
 
 # Bytecode / cache
@@ -31,3 +32,6 @@ Thumbs.db
 
 # telemetria local (predictor_core.obs) — artefato de runtime, nunca versionar
 events.jsonl
+# dados brutos de mercado (regeneraveis por ingestao) e telemetria local
+data/
+tests/_events_test.jsonl

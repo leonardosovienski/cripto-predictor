@@ -232,7 +232,7 @@ async def run():
         faltando = [k for k, ok in (("indicadores", ind_ok), ("noticias", news_ok)) if not ok]
         if faltando:
             n_degraded += 1
-            emit_event("cripto", "input_degraded",
+            emit_event("previsao_cripto", "input_degraded",
                        metrics={"n_faltando": len(faltando)},
                        metadata={"ativo": ativo, "faltando": faltando})
 

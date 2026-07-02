@@ -51,7 +51,7 @@ def test_report_emits_toll_passed_and_stratifies(tmp_path, monkeypatch, capsys):
     assert len(tolls) == 1, f"esperava 1 toll_passed, veio {len(tolls)}"
     e = tolls[0]
     assert set(e.keys()) == set(obs.ENVELOPE_KEYS)            # envelope rígido de 7 chaves
-    assert e["domain"] == "cripto"
+    assert e["domain"] == "previsao_cripto"
     assert {"spearman", "ic_lower", "ic_upper", "n"} <= set(e["metrics"])
     assert -1.0 <= e["metrics"]["ic_lower"] <= 1.0
     assert e["metadata"]["horizon_days"] == 7

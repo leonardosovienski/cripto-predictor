@@ -189,7 +189,7 @@ def _report(enriched: list[dict]) -> None:
             # PAYOFF: o cripto nasce emitindo o evento estruturado do pedágio (Modo B
             # validado). ic_lower nas métricas; a divergência (alucinação?) nos metadados.
             emit_event(
-                "cripto", "toll_passed",
+                "previsao_cripto", "toll_passed",
                 metrics={"spearman": round(rho, 4), "ic_lower": round(lo, 4),
                          "ic_upper": round(hi, 4), "n": n},
                 metadata={"horizon_days": h, "veredito": veredito,

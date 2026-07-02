@@ -1,13 +1,18 @@
 import json
+import logging
 import os
 from datetime import datetime, timezone, timedelta
 from typing import Dict, Any
 
 from GarimpoInvestimentos.config import settings
 from GarimpoInvestimentos.core.paths import OUTPUT_DIR
+from predictor_core.obs import emit_event
+
+logger = logging.getLogger(__name__)
 
 CACHE_PATH = str(OUTPUT_DIR / "cache.json")
 TTL_HOURS = settings.CACHE_TTL_HOURS
+_DOMAIN = "previsao_cripto"
 
 
 def load_cache() -> Dict[str, Any]:
@@ -16,7 +21,12 @@ def load_cache() -> Dict[str, Any]:
     try:
         with open(CACHE_PATH, "r", encoding="utf-8") as f:
             raw = json.load(f)
-    except Exception:
+    except (json.JSONDecodeError, OSError) as exc:
+        logger.warning("cache ilegível em %s (%s) — tratando como vazio", CACHE_PATH, exc)
+        emit_event(_DOMAIN, "cache_integrity",
+                   metrics={},
+                   metadata={"path": CACHE_PATH, "error_type": type(exc).__name__,
+                             "error_msg": str(exc)[:200], "action": "treated_as_empty"})
         return {}
 
     now = datetime.now(timezone.utc)
@@ -31,7 +41,14 @@ def load_cache() -> Dict[str, Any]:
                 cached_at = cached_at.replace(tzinfo=timezone.utc)
             if now - cached_at < timedelta(hours=TTL_HOURS):
                 valid[key] = entry
-        except Exception:
+        except (ValueError, TypeError) as exc:
+            # timestamp malformado nesta entrada: descarta só ela, mas registra —
+            # entrada corrompida silenciosa esconde bug de quem escreveu o cache.
+            logger.warning("entrada de cache %r com cached_at invalido (%s) — ignorada", key, exc)
+            emit_event(_DOMAIN, "cache_integrity",
+                       metrics={},
+                       metadata={"key": key, "error_type": type(exc).__name__,
+                                 "action": "entry_discarded"})
             continue
     return valid
 

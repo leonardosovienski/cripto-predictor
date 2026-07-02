@@ -1,8 +1,11 @@
 httpx
-loguru
 openpyxl
 pydantic
 google-genai
 openai
 python-dotenv
-ccxt  # DPL Fase 1 — abstração de exchanges (BinanceProvider)
+
+# V3 — Fase 1 (regime_engine.py)
+hmmlearn>=0.3.0
+numpy>=1.24.0
+scikit-learn>=1.3.0

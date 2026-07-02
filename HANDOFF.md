@@ -1,7 +1,257 @@
 # HANDOFF — GarimpoInvestimentos (Fase 1 + melhorias)
 
-Data: 2026-06-14
-Estado: **Fase 1 + CLI + notícias + backtesting + sinal calibrado + indicadores técnicos + LLM multi-provedor + métricas + retry/backoff + agendamento diário (pronto pra acumular dados).**
+Data: 2026-06-14 (última rodada: 2026-06-25 — V3 Crypto-Predictor)
+Estado: **Fase 1 + CLI + notícias + backtesting + sinal calibrado + indicadores técnicos + LLM multi-provedor + métricas + retry/backoff + agendamento diário + V3 (edge mecânico: funding/OI/HMM).**
+
+> **NOTA (jun/2026 — Red Team):** o pacote `core/` foi **renomeado para `store/`**
+> (eliminar a colisão de nome com `predictor_core`). Toda referência a `core/X.py` nas
+> entradas históricas abaixo corresponde hoje a **`store/X.py`** — o texto do changelog
+> foi preservado como registro do que aconteceu, não reescrito. Falhas silenciosas
+> (`except Exception`) foram instrumentadas e a Fase-1 passou a emitir o sinal via
+> `predictor_core.obs.emit_event` (paridade de telemetria com o V3).
+
+---
+
+## ⭐ V3.3.2 — Bug do agendador (encoding) + smoke test validado (2026-06-28)
+
+**Incidente:** o agendador `GarimpoV3Daily` rodou em 27/06 21:30 mas **falhou
+(Último resultado: 1) e não criou log** — não havia smoke test de fato.
+
+**Causa-raiz:** `scripts/run_daily_v3.ps1` tinha caracteres não-ASCII (em-dash `—`,
+acentos). O Windows PowerShell 5.1 lê `.ps1` **sem BOM como Windows-1252**; o byte
+`0x94` do em-dash UTF-8 (`E2 80 94`) vira **`"` (aspas)** no 1252, corrompendo o
+balanceamento de aspas/chaves → **erro de parse** → `powershell -File` sai 1 ANTES
+de executar (por isso nenhum log). Diagnosticado com
+`[Parser]::ParseFile(...)` ("`}` de fechamento ausente na linha 30").
+
+**Correção:** script reescrito em **ASCII puro** (0 bytes não-ASCII). Regra
+permanente: **manter `.ps1` sem acentos e sem travessões** (comentário no topo do
+script avisa). Parse confirmado limpo.
+
+**Smoke test validado (28/06):** rodado na invocação idêntica à do schtasks, exit 0.
+- Encanamento end-to-end OK (vision_ingest → pipeline → paper_trader → paper_report).
+- **Catch-up não-destrutivo provado:** funding 4108→**5931**, OI 433k→**616k** (cresceu,
+  não foi clampado — o fix do V3.3.1 segurou).
+- **Sinal corrente:** BTC FLAT @ **73.499** (jun/2026), não mais o cache de out/2024.
+
+**Lição registrada:** os 3 paper trades acumulados são TODOS FLAT — confirma na
+prática que 30 dias com sinal a 2.4% geram ~0–2 trades ativos. **A janela de 30
+dias é smoke test OPERACIONAL, não validação estatística.** A validação do edge já
+é a WFA (29 folds, PSR 0.909); capital pequeno se apoia nela + encanamento limpo,
+não em significância de 2 trades.
+
+> Cross-projeto: nesta mesma sessão, o `wc-predictor-v2` (futebol) teve seu edge
+> **refutado** com a régua open-CLV (sem edge — ver HANDOFF do wc). O investimento
+> de atenção fica no V3, que é o único dos dois que passou no juiz estatístico.
+
+---
+
+## ⭐ VERSÃO V3.3 — Sweep multi-ativo e automação (2026-06-27)
+
+### Resumo
+
+Fechamento para **produção assistida**: lock de dependências limpo, automação do
+feed diário, relatório semanal de paper trading e início da ingestão ETH/SOL.
+
+### Tarefas executadas
+
+| # | Tarefa | Estado |
+|---|--------|--------|
+| 1 | Ingestão histórica ETHUSDT/SOLUSDT (Binance Vision) | 🟡 EM ANDAMENTO (ver abaixo) |
+| 2 | Feed diário automatizado | ✅ `scripts/run_daily_v3.ps1` |
+| 3 | Regeneração do `requirements.lock.txt` (sem loguru) | ✅ |
+| 4 | Relatório de paper trading | ✅ `v3/paper_report.py` |
+| 5 | Integridade do wc-predictor-v2 | ✅ 94/94 |
+
+### Tarefa 3 — Lock regenerado
+
+`requirements.lock.txt` regenerado na `.venv_v3` (Python 3.13.14) com o
+`requirements.txt` COMPLETO instalado (Fase 1 + V3). **loguru removido**;
+confirmadas: google-genai, openai, openpyxl, python-dotenv, hmmlearn, httpx,
+pydantic, numpy, scikit-learn, pandas. (Atenção: congelar só a venv V3 sem as
+deps da Fase 1 truncaria o lock — por isso o `pip install -r requirements.txt`
+ANTES do freeze.)
+
+### Tarefa 2 — Feed diário (`scripts/run_daily_v3.ps1`)
+
+Auto-ancorado (raiz via `$PSScriptRoot`, sem path hardcoded — o `run_daily.ps1`
+da Fase 1 tem path defasado `C:\Claude\ProjetosPython`, **não alterado** por ora).
+
+> 🔴 **BUG corrigido durante a execução:** a 1ª versão usava `pipeline
+> --force-refresh`. Isso é **DESTRUTIVO**: `force_refresh=True` re-coleta OI via
+> `OICollector` REST, que **clampa em 30 dias** (`_MAX_OI_HISTORY_DAYS=30`,
+> limite da Binance) e **sobrescreve** os 433k registros históricos de OI (base
+> de treino do HMM). Corrigido para o fluxo NÃO-destrutivo:
+> **`vision_ingest` (estende histórico do data lake até ontem) → `pipeline` SEM
+> force-refresh (lê CSVs atualizados + modelo treinado) → `paper_trader` →
+> `paper_report`.** A atualização de dados é responsabilidade do `vision_ingest`,
+> nunca do REST. Lag de ~1 dia (data lake), aceitável para horizonte de 24h.
+
+Loga em `logs/v3_daily_<data>.log`.
+
+### Tarefa 4 — Relatório de paper trading (`v3/paper_report.py`)
+
+Lê `data/v3/paper/{symbol}_paper.jsonl`, casa cada posição com o preço D+horizon
+(spot_1h.csv) e computa: P&L acumulado (log), MaxDD corrente (predictor_core.stats),
+hit rate, distribuição por regime/motivo. Emite `paper_report` (domain `v3_paper`).
+8 testes novos (puros, rodam no global).
+
+### Tarefa 5 — wc-predictor-v2
+
+94/94 testes verdes. `prediction` e `status_check` confirmados emitindo em
+execução real (`predict Brazil Argentina`, `status`). `ingest_done` está cabeado
+e compila, mas **não exercido** — rodar o `ingest` toca rede/produção (projeto é
+SHADOW read-only). Verificar numa janela de manutenção dedicada.
+
+### Tarefa 1 — Ingestão + Sweep ETHUSDT: **NO-GO (sem edge)**
+
+ETHUSDT ingerido (funding 4381, OI 324k de **mai/2022**, spot 35k). Sweep rodado
+(26 folds, fr_window=90, frações [1.0, 0.5, 0.25, 0.10]):
+
+| Kelly | PSR | IC | IC_lower | MaxDD | Veredicto |
+|-------|-----|-----|----------|-------|-----------|
+| 1.00 | 0.125 | **−0.113** | −0.353 | 22.61% | ❌ NO-GO |
+| 0.50 | 0.125 | −0.113 | −0.353 | 11.73% | ❌ NO-GO |
+| 0.25 | 0.125 | −0.113 | −0.353 | 5.97% | ❌ NO-GO |
+| 0.10 | 0.125 | −0.113 | −0.353 | 2.41% | ❌ NO-GO |
+
+**Conclusão (crítica):** o ETH **não tem edge** neste período. Diferente do BTC,
+a falha **NÃO é de risco** (MaxDD passa folgado em 0.25/0.10) — é de **sinal**:
+PSR=0.125 (vs BTC 0.909) e **IC NEGATIVO** −0.113 (vs BTC +0.229), IC_lower
+−0.353 (cruza zero). Kelly fracional é **inútil** aqui: ele só escala MaxDD, não
+PSR/IC. Nenhuma fração resgata um edge inexistente.
+
+**Decisão:** ETHUSDT **NÃO homologado**, **NÃO adicionado** ao `$symbols` do feed
+diário. O edge funding/OI-overcrowding é **específico do BTC** nestes regimes.
+Resultado negativo valioso: confirma que o juiz estatístico **não dá falso
+positivo** (coerente com a validação de "NO-GO correto em ruído"). SOLUSDT
+permanece em backlog. BTCUSDT segue como único ativo em produção assistida.
+
+> Ressalva metodológica: a janela do ETH (mai/2022–dez/2024) difere da do BTC
+> (2021–2024) por indisponibilidade de OI no data lake. Ainda assim, IC negativo
+> não é artefato de período — indica ausência de edge, não edge enfraquecido.
+
+### Produção Assistida — início dos 30 dias (autorizado pelo arquiteto)
+
+| Item | Valor |
+|------|-------|
+| **Ativo em produção assistida** | BTCUSDT |
+| **Kelly homologado** | **0.50** (PSR 0.909, IC_lower +0.0205, MaxDD 10.45%) |
+| **Agendador** | Task `GarimpoV3Daily`, Windows Task Scheduler |
+| **Horário** | 21:30 local (UTC-3) = **00:30 UTC** (após fechamento do daily candle) |
+| **Comando** | `powershell -ExecutionPolicy Bypass -NoProfile -File <repo>\scripts\run_daily_v3.ps1` |
+| **1ª execução agendada** | 2026-06-27 21:30 local |
+| **Início oficial dos 30 dias** | **2026-06-28** (1º candle diário com agendador ativo) |
+| **Fim previsto** | **2026-07-28** (avaliação: capital real + design `predictor_core.backtest`) |
+
+Validação manual da cadeia (em cache out/2024): `paper_trade` emitido,
+`paper_report` coerente (trades flat / `no_signal` — esperado até o catch-up de
+dados frescos via `vision_ingest` no 1º run agendado). Acompanhamento semanal via
+`paper_report.py`. **Gatilho de alerta:** MaxDD corrente do paper > 15% → reportar
+imediatamente ao arquiteto.
+
+### Testes (contagem atual)
+
+- **previsao-cripto: 88** (76 portáveis no global + 12 hmmlearn-gated na venv V3).
+- **wc-predictor-v2: 94**.
+
+---
+
+## ⭐ V3.3.1 — Correção de force-refresh destrutivo (2026-06-27)
+
+**Incidente (capturado em revisão, ANTES de ir a produção):** a 1ª versão do
+`scripts/run_daily_v3.ps1` chamava `pipeline --force-refresh` no feed diário.
+
+**Falha latente:** `force_refresh=True` faz o pipeline re-coletar OI via
+`OICollector` REST, que **clampa em 30 dias** (`_MAX_OI_HISTORY_DAYS=30`, limite
+da API Binance, erro -1130 acima disso) e em seguida **`save_oi_csv` sobrescreve**
+`data/v3/{symbol}/oi.csv`. Resultado: os **433k registros históricos de OI
+(2021-2024)** seriam trocados por ~30 dias de REST — **destruindo a base de treino
+do HMM**. O modelo continuaria rodando sobre dados mutilados, emitindo sinais
+espúrios **sem alerta** (falha silenciosa).
+
+**Correção:** fluxo NÃO-destrutivo — a atualização de dados é responsabilidade
+EXCLUSIVA do `vision_ingest` (data lake, append/cache não-destrutivo); o
+`pipeline` no diário roda **sem** `--force-refresh` (lê os CSVs já estendidos +
+carrega o modelo HMM treinado, inferência causal). Ver V3.3 Tarefa 2.
+
+**Lição arquitetural (regra permanente):** *nunca permitir que um comando de
+coleta LIMITADA (REST clampado, amostragem, janela curta) sobrescreva um artefato
+de dados HISTÓRICO COMPLETO.* Coleta incremental/limitada e base histórica devem
+ter caminhos de escrita separados. Onde houver clamp/limite de API, o save deve
+ser append-guarded ou bloqueado contra overwrite de série longa.
+
+---
+
+## ⭐ VERSÃO V3.2 — Kelly Sweep + Paper Trading + Logging Unificado (2026-06-27)
+
+### Resumo executivo
+
+O V3 **passou no Go/No-Go** via position sizing (Kelly fracional), sem tocar no
+modelo. O edge sempre foi real; o único gargalo era risk sizing — resolvido.
+
+### Kelly Sweep — BTCUSDT (homologado)
+
+Comando: `python -m GarimpoInvestimentos.v3.backtest_v3 --symbol BTCUSDT --kelly-fractions 1.0 0.5 0.25 0.10`
+
+Data do sweep: **2026-06-27** | Dados: BTCUSDT 2021-01-01 → 2024-10-01 (29 folds, fr_window=90)
+
+| Kelly | PSR | IC_lower | MaxDD | Veredicto |
+|-------|------|----------|-------|-----------|
+| 1.00 | 0.909 | +0.0205 | 20.14% | ❌ NO-GO |
+| **0.50** | **0.909** | **+0.0205** | **10.45%** | ✅ **GO (homologado)** |
+| 0.25 | 0.909 | +0.0205 | 5.32% | ✅ GO |
+| 0.10 | 0.909 | +0.0205 | 2.15% | ✅ GO |
+
+**Insight-chave:** PSR e IC_lower são **invariantes** sob fracionamento de Kelly
+(o Kelly escala exposição, não o sinal). Só o MaxDD escala — quase linearmente.
+
+**Thresholds aprovados (Go/No-Go):** PSR ≥ 0.80 · IC_lower > 0 · MaxDD < 20%.
+
+**Fração homologada: `DEFAULT_KELLY_FRACTION = 0.50`** (`v3/backtest_v3.py`).
+Critério: maior fração com GO → maximiza retorno absoluto dentro do orçamento de
+risco, com margem confortável (10.45% < 18%). A escolha "menor fração vencedora"
+foi rejeitada por ser degenerada (a menor sempre vence trivialmente, subutilizando
+o orçamento de risco). PSR idêntico em todas → a decisão é retorno absoluto vs DD.
+
+### Paper Trading (`v3/paper_trader.py` — NOVO)
+
+- Domain `v3_paper`; evento `paper_trade` (direction, strength, kelly_fraction,
+  position, ref_price, regime_confidence + metadados).
+- Persiste em `data/v3/paper/{symbol}_paper.jsonl` (append-only).
+- Aplica a fração homologada (0.50) ao sinal MAIS RECENTE do pipeline V3.
+- Uso: `python -m GarimpoInvestimentos.v3.paper_trader --symbol BTCUSDT --start-date 2021-01-01`
+- ⚠️ Para sinal "de hoje" real, o pipeline precisa re-ingerir dados frescos
+  (`--force-refresh`). Hoje o cache do BTC termina em out/2024.
+
+### Logging unificado (Fase 1) — `loguru` REMOVIDO
+
+- `store/logger.py` reescrito: stdlib `logging` + `emit_event`. Zero `print()`.
+- Domain padronizado **`previsao_cripto`** (Fase 1/2). V3 mantém `v3_cripto`;
+  paper trading usa `v3_paper`.
+- Eventos: `pipeline_start/success/error`, `fallback_triggered`, `cache_integrity`,
+  `llm_quota_alert`, `batch_start/success`, `toll_passed`.
+- Collectors e analyzers deixaram de ser silenciosos (logging mínimo adicionado).
+
+### Resiliência (Fase 1)
+
+- `main.py`: `asyncio.gather` + `Semaphore(5)` (paralelismo respeitando rate limit).
+- Alerta de cota LLM: fallback > 20% dos ativos → `llm_quota_alert` + WARNING.
+
+### Ambiente
+
+- **venv V3: `.venv_v3` (Python 3.13.14)** — hmmlearn NÃO compila no 3.14 global
+  (sem MSVC). 3.13 tem wheel binário. `py install 3.13` resolveu.
+- Suíte: **80 testes verdes** na venv V3 (`PYTHONPATH=vendor;. pytest tests/`).
+  68 no global (sem os testes que dependem de hmmlearn).
+
+### Pendências
+
+- **ETHUSDT / SOLUSDT:** sweep não rodou — dados não existem em `data/v3/`.
+  Exigem `python -m GarimpoInvestimentos.v3.pipeline --symbol ETHUSDT SOLUSDT --start-date 2021-01-01`
+  (ingestão via rede Binance Vision).
+- **Feed diário:** automatizar pipeline `--force-refresh` 1×/dia para o paper
+  trading registrar sinais correntes (hoje usa cache até out/2024).
 
 ---
 
@@ -144,6 +394,100 @@ Foco: **ligar o relógio** (tempo é incompressível) e não envenenar o histór
 > paramétrica do modelo já "conhece" o futuro = look-ahead embutido). Forward test é o
 > único caminho limpo para o LLM; replay só vale para o **baseline técnico** (indicadores
 > não têm memória). **Teto free Gemini ~20 req/dia** → lista cheia exige Gemini pago.
+
+---
+
+## 2f. V3 Crypto-Predictor — Fase 1: validação de edge mecânico (2026-06-25)
+
+Linha de pesquisa **nova e independente** do pipeline LLM. Hipótese: edge vem de
+ineficiência mecânica — **funding rate extremo + OI crescendo** (alavancagem forçada)
+condicionado por **regime de volatilidade (HMM)**. Sem WebSocket L2, sem notícias.
+
+**Arquitetura** (`GarimpoInvestimentos/v3/`):
+
+| Arquivo | Papel |
+|---|---|
+| `circuit_breaker.py` | CLOSED/OPEN/HALF_OPEN; propaga `data_quality_score` (1.0/0.5/0.0). |
+| `collectors/funding_collector.py` | Funding rate 8h (Binance fapi), CSV idempotente, `with_retry`+CB. |
+| `collectors/oi_collector.py` | Open Interest (period **`1h`**), clampa em 30d (limite Binance). |
+| `collectors/spot_collector.py` | Klines 1h spot. |
+| `feature_builder.py` | `funding_zscore`, `oi_log_delta`, `leverage_pressure`, `realized_vol_24h`. Nunca interpola. |
+| `regime_engine.py` | GaussianHMM 3 estados; **Forward Algorithm causal à mão** (hmmlearn.predict_proba usa forward-backward = lookahead). |
+| `signal_engine.py` | SignalRecord canônico; short/long/flat; degradado→CRITICAL. |
+| `pipeline.py` | Orquestra coleta→features→HMM→sinais; CLI `--symbol/--start-date`. |
+| `backtest_v3.py` | WFA 180/30/7d + PSR + Spearman CI + MaxDD → veredicto GO/NO-GO. |
+
+**Bugs reais encontrados e corrigidos na verificação** (o backtest quebrava ou produzia
+lixo silencioso antes disso):
+
+| Bug | Sintoma | Fix |
+|---|---|---|
+| `spearman_block_ci` retorna **tupla** `(rho,lo,hi)`, programei contra objeto `.ci_lower` | `AttributeError` no 1º fold | unpack de tupla + None-handling |
+| `max_drawdown` espera **equity acumulada**, passei retornos brutos | `max_drawdown([.01,-.02,.03])=3.0` (300% falso) | `_equity_curve()` composto antes |
+| Warmup do z-score (90 períodos) recomputado por fatia OOS (30d≈90) | **~0 features/fold** | features construídas **uma vez** na série contínua, particionadas por timestamp |
+| `period="8h"` no OI hist | HTTP 400 (-1130) toda chamada | → `"1h"` (alinha exato nos funding times) |
+
+**🔴 LIMITE DURO do REST: OI histórico grátis = ~30 dias.** `openInterestHist` recusa
+start > ~30d (`startTime invalid`). Com z-score consumindo 30d de warmup, sobram **~61
+feature vectors reais**, abaixo do piso de 100 do HMM → Go/No-Go histórico inviável só
+com REST.
+
+**✅ RESOLVIDO — Quarta Via: data lake público `data.binance.vision`.** A Binance arquiva
+anos de funding + OI (dataset **`metrics`**, 5min, desde ~2021) + klines em ZIPs grátis.
+Dois módulos novos:
+
+| Arquivo | Papel |
+|---|---|
+| `collectors/binance_vision.py` | Baixa ZIPs (cache local + verificação **SHA256**), parseia e devolve os MESMOS dataclasses (FundingRecord/OIRecord/KlineRecord). Funding/klines = mensais; OI metrics = diários. |
+| `vision_ingest.py` | CLI que grava nos MESMOS CSVs do caminho REST → `pipeline`/`backtest_v3` rodam sem alteração. |
+
+Schemas reais confirmados (2026-06-25): funding `calc_time(ms)/last_funding_rate` (sem
+mark_price → 0.0); metrics `create_time(str UTC)/sum_open_interest/sum_open_interest_value`;
+klines padrão. Join funding×OI: match exato em ~86% dos ts, resto cai na tolerância ±5min.
+`oi_collector` REST permanece só para coleta **ao vivo**. Decisão do Leo: validar o
+Go/No-Go sobre BTC com janela de anos via Vision **antes** de qualquer infra de WebSocket.
+
+**Perf:** `feature_builder` tinha hotspot O(n²) (re-ordenava o spot a cada ts) — corrigido
+com `bisect` (O(n log n)), necessário para escala de anos do data lake.
+
+### Diário de pesquisa — runs do WFA (Go/No-Go)
+
+| Data | Janela | fr_window | Folds | PSR | IC_CI_lower | MaxDD | Veredicto | Leitura honesta |
+|---|---|---|---|---|---|---|---|---|
+| 2026-06-25 | BTC 2024-01→10 (9m) | 90 | 2 | 1.000 | −0.148 | 0.1% | NO-GO | **INCONCLUSIVO por underpowering** — <10 sinais/OOS, CI [−1,1] degenerado. |
+| 2026-06-25 | BTC 2021→2024 (anos) | **90** | **29** | **0.909** | **+0.021** | **20.14%** | NO-GO (só MaxDD, por 0.14pp) | **EDGE REAL.** IC_lower>0 (não cruza zero) + PSR>0.80. Falha só no risco, na trave. |
+| 2026-06-25 | BTC 2021→2024 (anos) | **21** | **36** | 0.896 | **−0.092** | **12.06%** | NO-GO (só IC) | Pivot baixou MaxDD (20→12%) mas **matou o edge** (IC cruza zero). Janela curta = ruído de spike. |
+
+**Conclusão dos 3 runs:** a tese de alavancagem **sobrevive ao WFA de poder real** — no baseline de
+29 folds (anos, 5bps slippage) o IC_lower ficou **positivo** e o PSR limpou 0.80. As duas configs
+reprovam em critérios **opostos**: fr_window=90 tem edge mas MaxDD=20.14% (0.14pp acima); fr_window=21
+controla risco (12%) mas perde significância. **O pivot de fr_window foi o lever errado** — o edge mora
+na janela longa (funding extremo *sustentado*), e a falha do baseline é de **gestão de risco**, não de
+normalização. Próximo lever: **position sizing** (fractional Kelly 0.25x / vol-targeting) para puxar o
+MaxDD <20% preservando o IC_lower>0. NÃO mexer mais no fr_window.
+
+**Diagnóstico de esparsidade** (727 features): `|z|≥2.0` → só 36 (5%); `|z|≥1.0` → 141 (19%).
+z-score std=1.29 e max=7.66 ⇒ janela de 90 (30d) mistura regimes de funding (não-estacionária).
+
+**Plano aprovado (próximo run, dados 2021→2024):**
+1. Ingestão massiva via Vision (em andamento) — engloba bull 2021 / bear 2022 / recovery 2023-24.
+2. **Baseline:** `backtest_v3 --fr-window 90` (linha de base de longo prazo).
+3. **Pivot:** `backtest_v3 --fr-window 21` (z-score local-estacionário; +gatilhos sem baratear o threshold).
+   - Flag `--fr-window` adicionada ao `backtest_v3` (default 90; thread → `build_feature_vectors`; gravada no `wfa_result`).
+
+**Camada 1 auditada (sem lookahead):** HMM re-treina por fold (`engine=RegimeEngine()` DENTRO do
+loop, `fit()` só no IS); `StandardScaler` fit no IS e só `transform` no OOS; rotulagem bull/bear
+por mean-return do IS; `all_features` construído 1× é seguro (features são rolantes causais);
+purge de 7d entre IS e OOS.
+
+**Validação real (não só syntax):**
+- ✅ Cadeia pura testada (feature_builder→signal_engine, todos os caminhos).
+- ✅ HMM treinado + Forward causal + WFA rodados em dado sintético → **NO-GO correto em
+  ruído** (juiz não dá falso positivo); evento `wfa_result` emitido.
+- ✅ Coletores batem na Binance real: funding=359, OI clampado ~21d, 2877 klines, 61 features.
+- 🔴 Veredicto sobre BTC real bloqueado pelo limite de OI.
+
+**Deps novas** (`requirements.txt`): `hmmlearn`, `numpy`, `scikit-learn` — instaladas neste ambiente.
 
 ---
 
