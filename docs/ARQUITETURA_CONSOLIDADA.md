@@ -42,6 +42,23 @@ auditoria antes de qualquer feature nova): DSR + `trials.json` — ✅ **feito**
 (`analyzers/trials.py`, candidato a promoção ao core; registro semeado com as
 tentativas v1-direct e v2-dpl; fio no backtest com corte 0.95). Passo 3 em execução.
 
+**Atualização passos 4-5 (2026-07-02, mesmo dia):**
+- Passo 3 ✅ **feito** (`6416a71`): indicadores bit-idênticos (bitcoin/kaspa/aave) em
+  candles fechados; `change_*` diverge 0,1–7,8pp (semântico) → estratificação obrigatória.
+- Passo 4 ✅ **feito** (`c6529a0` + plano de reconciliação `08c2dd3`): Feature Store é o
+  histórico OFICIAL (migração 0006 `predictions`, PK ativo+ts); CSV legado absorvido
+  idempotentemente (fonte vazia → `direct`, arquivo congelado); backtest lê da store e
+  **estratifica por Fonte**; 117 verdes; smoke real (3 linhas absorvidas).
+- V3 **resgatada** (`claude/v3-quant-wip` @ `3507809` — estava não-commitada no checkout
+  de main) e evoluída lá: auditoria de look-ahead do HMM ✅ (`0b35566`, Risco 1 fechado,
+  ver [AUDITORIA_HMM.md](AUDITORIA_HMM.md)) + modelo de custos ✅ (`1beea4e`, Risco 4:
+  taker+slippage round-trip e funding real; gate GO/NO-GO agora opera sobre líquido).
+- `trials.json`: 4 tentativas registradas (v1-direct, v2-dpl, v3-fr90, v3-fr21).
+- Passo 5.3 (veredito com custos + DSR): re-execução do WFA de BTC/ETH em andamento —
+  resultado na seção 7. **Achado da telemetria:** o GO histórico de BTC (2026-06-27,
+  PSR 0,909) era PRÉ-custos e pós kelly-sweep (4 avaliações no gate de DD) — o veredito
+  que vale é o líquido, deflacionado.
+
 ## 3. Registro de atribuição (correção do histórico)
 
 - **`--discover`**: implementado pelo assistente de arquitetura (esta linha de sessões),
@@ -60,33 +77,52 @@ tentativas v1-direct e v2-dpl; fio no backtest com corte 0.95). Passo 3 em execu
   existe, mas sem hash de conteúdo nem `code_version` populado; reprodutibilidade
   bit-a-bit ainda não é garantida (ADR-015 pendente).
 
-## 5. Nota consolidada: **5,5/10**
+## 5. Nota consolidada: **6,0/10** (revisada em 2026-07-02; era 5,5)
 
 | Dimensão | Nota | Observação |
 |----------|------|------------|
-| Engenharia de dados | 8,0 | Bitemporal + anti-lookahead testado; proveniência parcial |
-| Engenharia de software | 7,5 | 85 verdes (DPL) + 39 verdes (Garimpo); telemetria; smokes reais |
-| Arquitetura | 7,0 | Camadas claras (coleta/seleção/análise/validação); DPL ainda no domínio (ADR-002 pendente) |
-| Validação estatística | 5,0 | Controle positivo fecha a infalsificabilidade; edge segue não demonstrado |
-| Gestão de risco | 3,0 | Custos e position sizing ausentes |
+| Engenharia de dados | 8,0 | Bitemporal + anti-lookahead testado; histórico oficial na store; proveniência parcial |
+| Engenharia de software | 7,5 | 117 verdes (principal) + 87 (V3); telemetria; smokes reais |
+| Arquitetura | 7,0 | Camadas claras; reconciliação V3 planejada; DPL ainda no domínio (ADR-002) |
+| Validação estatística | 7,0 | Governança completa (controle positivo + DSR + look-ahead auditado + custos); edge NÃO demonstrado — e agora o NO-GO é confiável |
+| Gestão de risco | 5,0 | Custos modelados; gates duros (PSR/IC/DD líquidos); faltam sizing e kill-switch de produção |
 
-## 6. Riscos ainda vivos
+A nota sobe pela **qualidade da resposta**, não pelo resultado: o sistema agora
+responde "não há edge" com validação em que se pode confiar.
 
-1. **Look-ahead no HMM** — atualização: a linha V3 (regime_engine/paper_trader/
-   backtest_v3) foi **localizada não commitada no checkout principal**
-   (`GarimpoInvestimentos/v3/`, ~80 testes coletáveis), junto com refatoração
-   `core/`→`store/` e vendor mais novo. Pendências: (a) consolidar em branch própria
-   antes que se perca; (b) reconciliar com esta linha (colisão real: `core/history.py`
-   daqui × rename `store/` de lá); (c) auditar a decodificação do HMM (filtrada,
-   nunca suavizada full-sample). Até (a)-(c), **promoção desta branch a `main` está
-   bloqueada** — a árvore de `main` não está limpa.
-2. ~~Falta de controle positivo~~ → **fechado** por `e00e776`: pipeline comprovadamente
-   detecta edge sintético (validado, IC>0) e rejeita ruído AR(1) (RUÍDO). Sem essa suíte
-   verde, nenhum veredito do backtest é interpretável.
-3. ~~Múltiplos testes sem correção~~ → **fechado** por `analyzers/trials.py`: DSR
-   (López de Prado 2014) contra E[max SR | N tentativas] + `trials.json` versionado.
-   Regra operacional: **nenhuma feature/config nova sem registrar a tentativa**.
-4. **Custos não modelados**: taxas, funding e slippage ausentes de qualquer veredito;
-   edge bruto ≠ edge líquido.
-5. Herdados da auditoria interna da DPL: consenso nunca fundiu dado real (C-03),
-   equivalência em amostra mínima (C-08), promoção ao core pendente (C-02).
+## 6. Riscos da auditoria original — estado final
+
+1. ~~Look-ahead no HMM~~ → **FECHADO** (`0b35566`, [AUDITORIA_HMM.md](AUDITORIA_HMM.md)):
+   decodificação causal comprovada em 4 camadas + teste de invariância com contraprova.
+2. ~~Falta de controle positivo~~ → **FECHADO** (`e00e776`): pipeline detecta edge
+   sintético e rejeita ruído AR(1); re-executado verde em 2026-07-02.
+3. ~~Múltiplos testes sem correção~~ → **FECHADO** (`ab346d3`): DSR + `trials.json`
+   (4 tentativas). Regra: nenhuma config nova sem registrar a tentativa.
+4. ~~Custos não modelados~~ → **FECHADO** (`1beea4e`): fricção round-trip + funding
+   real; **e o fechamento foi decisivo** — ver seção 7.
+5. Herdados da DPL, ainda abertos: consenso nunca fundiu dado real (C-03), equivalência
+   pendente p/ ETH/SOL (429), promoção ao core (C-02), proveniência com hash (ADR-015).
+
+## 7. Veredito do passo 5.3 (2026-07-02): **NO-GO — e é o primeiro veredito confiável**
+
+WFA da V3 (walk-forward IS/OOS, HMM causal auditado, **líquido de custos**:
+taker 10bps + slippage 5bps por perna + funding real da janela):
+
+| Métrica | BTCUSDT (n=3.958 OOS, 44 folds) | ETHUSDT |
+|---|---|---|
+| Retorno médio/sinal | bruto **+0,44bps** → líquido **−0,09bps** | bruto −0,70bps → líquido −1,11bps |
+| IC95 do líquido médio | [−1,61; +1,43]bps — cruza zero | [−2,64; +0,26]bps — cruza zero |
+| PSR (líquido) | 0,445 | 0,051 |
+| DSR (N=4 tentativas) | **≤ 0,445** (corte: 0,95) | ≪ 0,45 |
+| IC Spearman (sinal, IC95 lo) | −0,086 | −0,353 |
+| MaxDD | 29,0% | 27,0% |
+| **Veredito** | **NO-GO** | **NO-GO** |
+
+Leitura: **os custos comem o edge inteiro** (+0,44bps brutos vs ~0,53bps de custo por
+sinal no BTC). PSR/Spearman são invariantes à fração de Kelly → **nenhum sizing salva**.
+O "GO" histórico de 27/06 (PSR 0,909, kelly-sweep) era artefato de backtest sem custos.
+O que dá confiança ao NO-GO: controle positivo verde (o pipeline TEM poder), HMM sem
+look-ahead, DSR contando as tentativas, dados point-in-time. **Consequência: a hipótese
+funding/OI + HMM, como formulada, está fechada. Produção assistida NÃO autorizada.**
+Próximos passos: pivot de pesquisa (novas hipóteses nascem registradas no trials.json
+e avaliadas líquidas) + coleta diária do pipeline LLM até o backtest ter n.

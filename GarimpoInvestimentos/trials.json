@@ -33,8 +33,8 @@
       "custos": "taker 10bps + slip 5bps por perna + funding real",
       "validacao": "WFA IS/OOS por timestamp"
     },
-    "sharpe": null,
-    "notes": "Baseline V3 (fr_window=90). ETHUSDT: NO-GO em todos os folds (dossie, pre-custos). BTCUSDT re-executado em 2026-07-02 com custos completos — resultado preenche este campo."
+    "sharpe": -0.0022,
+    "notes": "VEREDITO FINAL 2026-07-02 (com custos completos): NO-GO. BTCUSDT n=3958 sinais OOS, bruto +0.44bps/sinal -> liquido -0.09bps/sinal (custos ~0.53bps comem o edge); PSR 0.445, DSR<=0.445, IC_lo Spearman -0.086, MaxDD 29%. ETHUSDT: PSR 0.051, liquido -1.11bps/sinal. PSR e kelly-invariante => nenhuma fracao salva. GO historico de 27/06 (PSR 0.909) era PRE-custos e pos kelly-sweep. Hipotese fechada como formulada."
   },
   {
     "name": "v3-hmm-funding-oi-fr21",
