@@ -22,6 +22,7 @@ from GarimpoInvestimentos.core.paths import OUTPUT_DIR
 from predictor_core.net import with_retry
 from predictor_core.stats import spearman_block_ci
 from predictor_core.obs import emit_event
+from GarimpoInvestimentos.analyzers.trials import load_trials, deflated_sharpe_ratio
 
 HIST_CSV = OUTPUT_DIR / "garimpo_historico.csv"
 BACKTEST_CSV = OUTPUT_DIR / "garimpo_backtest.csv"
@@ -214,6 +215,17 @@ def _metrics(enriched: list[dict], horizon: int) -> None:
             if std:
                 line += f" | Sharpe simpl. {avg / std:.2f}"
         print(line)
+        # DSR: o Sharpe acima contra o MÁXIMO esperado por sorte dado o nº de
+        # configurações já tentadas (trials.json). Sem isso, testar N configs e
+        # reportar a melhor fabrica significância — o desconto que ninguém media.
+        trials = load_trials()
+        if trials and len(rets) >= 3:
+            d = deflated_sharpe_ratio([x / 100 for x in rets],
+                                      [t.get("sharpe") for t in trials])
+            if not (d["dsr"] != d["dsr"]):  # NaN check sem numpy
+                print(f"  DSR (N={d['n_trials']} tentativas registradas): "
+                      f"P(SR > máx-por-sorte) = {d['dsr']:.2f} | SR0 = {d['sr0']:.3f} "
+                      f"— {'passa' if d['dsr'] >= 0.95 else 'NÃO passa'} o corte 0.95")
     else:
         print(f"  Hit rate (score ≥ {threshold}): nenhum sinal forte ainda")
 

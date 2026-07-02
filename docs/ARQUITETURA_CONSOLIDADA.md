@@ -36,6 +36,12 @@ do ADR.**
 | 4 | Trocar CSV → Feature Store como histórico oficial | Pendente — **só após** passos 2-3; backtest estratifica por `Fonte` na transição |
 | 5 | Validação estatística do edge | Controle positivo ✅ **feito** (`e00e776`); restam: auditoria de look-ahead do HMM, Deflated Sharpe, modelo de custos |
 
+**Atualização pós-merge (2026-07-02):** passo 2 ✅ **feito e aprovado** (`e8b2fa3`, 102
+verdes, smoke ao vivo com carimbo `Fonte`). Novo pré-requisito **2b** (condição da
+auditoria antes de qualquer feature nova): DSR + `trials.json` — ✅ **feito**
+(`analyzers/trials.py`, candidato a promoção ao core; registro semeado com as
+tentativas v1-direct e v2-dpl; fio no backtest com corte 0.95). Passo 3 em execução.
+
 ## 3. Registro de atribuição (correção do histórico)
 
 - **`--discover`**: implementado pelo assistente de arquitetura (esta linha de sessões),
@@ -66,13 +72,20 @@ do ADR.**
 
 ## 6. Riscos ainda vivos
 
-1. **Look-ahead no HMM** (repo v2, não auditável daqui): decodificação deve ser filtrada,
-   nunca suavizada full-sample — sem prova disso, nenhum walk-forward de lá é interpretável.
+1. **Look-ahead no HMM** — atualização: a linha V3 (regime_engine/paper_trader/
+   backtest_v3) foi **localizada não commitada no checkout principal**
+   (`GarimpoInvestimentos/v3/`, ~80 testes coletáveis), junto com refatoração
+   `core/`→`store/` e vendor mais novo. Pendências: (a) consolidar em branch própria
+   antes que se perca; (b) reconciliar com esta linha (colisão real: `core/history.py`
+   daqui × rename `store/` de lá); (c) auditar a decodificação do HMM (filtrada,
+   nunca suavizada full-sample). Até (a)-(c), **promoção desta branch a `main` está
+   bloqueada** — a árvore de `main` não está limpa.
 2. ~~Falta de controle positivo~~ → **fechado** por `e00e776`: pipeline comprovadamente
    detecta edge sintético (validado, IC>0) e rejeita ruído AR(1) (RUÍDO). Sem essa suíte
    verde, nenhum veredito do backtest é interpretável.
-3. **Múltiplos testes sem correção**: cada ativo/configuração testada é uma tentativa;
-   falta Deflated Sharpe Ratio + registro de tentativas (`trials`) no pedágio.
+3. ~~Múltiplos testes sem correção~~ → **fechado** por `analyzers/trials.py`: DSR
+   (López de Prado 2014) contra E[max SR | N tentativas] + `trials.json` versionado.
+   Regra operacional: **nenhuma feature/config nova sem registrar a tentativa**.
 4. **Custos não modelados**: taxas, funding e slippage ausentes de qualquer veredito;
    edge bruto ≠ edge líquido.
 5. Herdados da auditoria interna da DPL: consenso nunca fundiu dado real (C-03),

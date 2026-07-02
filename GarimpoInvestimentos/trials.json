@@ -1,0 +1,26 @@
+[
+  {
+    "name": "v1-direct-gemini-h7",
+    "registered_at": "2026-07-02T00:00:00Z",
+    "params": {
+      "fonte": "direct",
+      "juiz": "gemini:gemini-2.5-flash",
+      "horizonte_dias": 7,
+      "input": "LLM + indicadores + noticias (coleta acoplada a rede, pre-DPL)"
+    },
+    "sharpe": null,
+    "notes": "Configuracao original do Garimpo, avaliada de facto nas coletas de junho/2026. Sharpe por-trade ainda sem n para estimar (aguarda maturacao D+7). Registrada retroativamente na criacao do registro — conta como tentativa."
+  },
+  {
+    "name": "v2-dpl-gemini-h7",
+    "registered_at": "2026-07-02T00:00:00Z",
+    "params": {
+      "fonte": "dpl:fallback",
+      "juiz": "gemini:gemini-2.5-flash",
+      "horizonte_dias": 7,
+      "input": "LLM + indicadores + noticias (mercado offline da Feature Store; universo via --discover)"
+    },
+    "sharpe": null,
+    "notes": "Pipeline pos-merge (ADR DECISAO_MERGE_DPL_DISCOVERY). Em coleta desde 2026-07-01. Estratificada da v1 pelo carimbo Fonte."
+  }
+]
