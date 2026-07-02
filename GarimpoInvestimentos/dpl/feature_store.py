@@ -25,7 +25,7 @@ from GarimpoInvestimentos.dpl.migrations import ADDITIVE_MIGRATIONS
 from GarimpoInvestimentos.dpl.signals import SignalPoint
 
 # Versão do schema da Feature Store (base 0001-0004 + aditivas em dpl/migrations/).
-SCHEMA_VERSION = 5
+SCHEMA_VERSION = 6
 
 _MIGRATIONS = [
     ("0001_raw_market_data", """
@@ -246,6 +246,35 @@ class FeatureStore:
         """
         rows = self.read_features(symbol, interval)
         return rows[-1] if rows else None
+
+    # --- Histórico oficial de previsões (passo 4 — aposenta o CSV) -----------
+
+    PREDICTION_FIELDS = ("ativo", "ts", "score", "sentimento", "resumo",
+                         "price_usd", "juiz", "divergencia", "fonte")
+
+    def write_predictions(self, rows: list[dict]) -> int:
+        """Upsert de previsões. PK (ativo, ts): reexecução/cache hit não infla o n
+        do backtest (mesma semântica do dedup do CSV legado)."""
+        data = [tuple(r.get(f) for f in self.PREDICTION_FIELDS) for r in rows]
+        self._conn.executemany(
+            """INSERT INTO predictions
+               (ativo, ts, score, sentimento, resumo, price_usd, juiz, divergencia, fonte)
+               VALUES (?,?,?,?,?,?,?,?,?)
+               ON CONFLICT(ativo, ts) DO UPDATE SET
+                 score=excluded.score, sentimento=excluded.sentimento,
+                 resumo=excluded.resumo, price_usd=excluded.price_usd,
+                 juiz=excluded.juiz, divergencia=excluded.divergencia,
+                 fonte=excluded.fonte""",
+            data,
+        )
+        self._conn.commit()
+        return len(data)
+
+    def read_predictions(self) -> list[dict]:
+        """Todas as previsões em ORDEM TEMPORAL (o block bootstrap depende disso)."""
+        cur = self._conn.execute(
+            "SELECT * FROM predictions ORDER BY ts, ativo")
+        return [dict(r) for r in cur]
 
     def list_symbols(self, interval: str = "1d") -> list[str]:
         """Símbolos com features materializadas — universo default da análise quando

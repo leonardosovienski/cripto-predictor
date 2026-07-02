@@ -44,7 +44,8 @@ def test_revisoes_coexistem_apos_migracao(tmp_path):
 
 
 def test_schema_version_exposto():
-    assert SCHEMA_VERSION == 5
+    # 6 = base 0001-0004 + 0005 (raw_signals bitemporal) + 0006 (predictions, passo 4)
+    assert SCHEMA_VERSION == 6
 
 
 def test_migration_0005_preserva_dados_existentes(tmp_path):

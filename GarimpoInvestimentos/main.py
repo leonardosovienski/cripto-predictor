@@ -24,8 +24,8 @@ from GarimpoInvestimentos.config import settings
 from GarimpoInvestimentos.output.reporter import export_results
 from GarimpoInvestimentos.core.logger import log_start, log_success, log_error
 from GarimpoInvestimentos.core.cache import load_cache, save_cache
-from GarimpoInvestimentos.core.history import append_history
-from GarimpoInvestimentos.core.paths import OUTPUT_DIR
+from GarimpoInvestimentos.core.history import append_history, migrate_csv_to_store
+from GarimpoInvestimentos.core.paths import FEATURE_STORE_DB
 from GarimpoInvestimentos.dpl import CryptoDataProvider, FeatureStore
 from GarimpoInvestimentos.dpl.feature_store import fonte_label
 from GarimpoInvestimentos.dpl.feature_engineering import to_hard_data
@@ -33,9 +33,9 @@ from GarimpoInvestimentos.dpl.ingest import ingest_crypto
 from GarimpoInvestimentos.dpl.providers.fear_greed import FearAndGreedProvider
 from predictor_core.obs import emit_event
 
-# A Feature Store é o repositório offline do qual o pipeline lê (serving). A
-# ingestão (rede) popula-o separadamente via `--ingest`.
-FEATURE_STORE_DB = OUTPUT_DIR / "feature_store.db"
+# A Feature Store (core.paths.FEATURE_STORE_DB) é o repositório offline do qual o
+# pipeline lê (serving) E o histórico oficial de previsões; a ingestão (rede)
+# popula os dados separadamente via `--ingest`.
 # Histórico diário coletado na ingestão — suficiente para SMA-200 + change_30d.
 INGEST_HISTORY_DAYS = 200
 # Fear & Greed é diário; após 2 dias sem atualizar, o Alignment Engine injeta NaN.
@@ -166,6 +166,12 @@ async def run():
     # Serving: o pipeline lê dados de mercado já alinhados da Feature Store (offline).
     store = FeatureStore(FEATURE_STORE_DB)
 
+    # Histórico oficial = Feature Store (passo 4). CSV legado, se existir, é
+    # absorvido aqui (idempotente — upsert por (ativo, ts)); o arquivo não é tocado.
+    n_migrated = migrate_csv_to_store(store)
+    if n_migrated:
+        print(f"🗄️ Histórico legado absorvido na Feature Store: {n_migrated} linha(s) do CSV.")
+
     if ativos is None:
         # Sem --assets: analisa tudo que a Feature Store tem (ADR merge D3).
         ativos = store.list_symbols("1d")
@@ -269,8 +275,8 @@ async def run():
     if cache_enabled:
         save_cache(cache)
     export_results(resultados)
-    append_history(resultados)
-    print("📊 Histórico atualizado em output/garimpo_historico.csv")
+    append_history(resultados, store)
+    print(f"📊 Histórico oficial atualizado na Feature Store ({FEATURE_STORE_DB.name}, tabela predictions)")
 
     if args.summary:
         destaques = [r for r in resultados if r.get("score", 0) >= score_threshold]

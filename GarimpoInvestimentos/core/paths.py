@@ -13,3 +13,7 @@ LOGS_DIR = Path(os.getenv("GARIMPO_LOGS_DIR") or (ROOT / "logs"))
 
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 LOGS_DIR.mkdir(parents=True, exist_ok=True)
+
+# Feature Store: repositório canônico de dados E do histórico de previsões
+# (passo 4 — o garimpo_historico.csv é legado, absorvido por migração única).
+FEATURE_STORE_DB = OUTPUT_DIR / "feature_store.db"

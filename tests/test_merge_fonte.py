@@ -54,33 +54,22 @@ def test_list_symbols_devolve_universo_materializado(tmp_path):
         assert fs.list_symbols("1w") == []
 
 
-# --- D2: coluna Fonte no histórico (com migração de header) ----------------
+# --- D2: carimbo Fonte no histórico oficial (Feature Store, passo 4) --------
 
-def test_append_history_grava_fonte_e_migra_header_antigo(tmp_path, monkeypatch):
+def test_append_history_grava_fonte_na_store(tmp_path):
     from GarimpoInvestimentos.core import history
 
-    hist = tmp_path / "garimpo_historico.csv"
-    monkeypatch.setattr(history, "HIST_CSV", str(hist))
-
-    # 1) arquivo legado SEM a coluna Fonte (header pré-merge)
-    hist.write_text(
-        "﻿Ativo,Sentimento,Score,Resumo,Data,price_usd,Juiz,Divergencia\r\n"
-        "BITCOIN,negativo,25.0,resumo,2026-06-30 02:35:23,59296.8,gemini:x:y,0\r\n",
-        encoding="utf-8",
-    )
-    # 2) nova previsão carimbada
-    history.append_history([{
-        "ativo": "solana", "sentimento": "positivo", "score": 85.0, "resumo": "r",
-        "data": "2026-07-01 23:02:31", "price_usd": 150.0, "judge": "gemini:x:y",
-        "divergencia": 0, "data_source": "dpl:fallback",
-    }])
-
-    import csv
-    rows = list(csv.DictReader(open(hist, newline="", encoding="utf-8-sig")))
-    assert len(rows) == 2
-    legada, nova = rows
-    # linha legada sobreviveu à migração com Fonte vazia (backtest lê como 'direct')
-    assert legada["Ativo"] == "BITCOIN" and legada["Fonte"] == ""
-    assert (legada["Fonte"] or "direct") == "direct"
-    # linha nova nasce carimbada
-    assert nova["Ativo"] == "SOLANA" and nova["Fonte"] == "dpl:fallback"
+    with FeatureStore(tmp_path / "fs.db") as fs:
+        history.append_history([{
+            "ativo": "solana", "sentimento": "positivo", "score": 85.0, "resumo": "r",
+            "data": "2026-07-01 23:02:31", "price_usd": 150.0, "judge": "gemini:x:y",
+            "divergencia": 0, "data_source": "dpl:fallback",
+        }, {
+            # resultado sem carimbo (caminho legado) → backfill 'direct' na escrita
+            "ativo": "bitcoin", "sentimento": "negativo", "score": 25.0, "resumo": "b",
+            "data": "2026-06-30 02:35:23", "price_usd": 59296.8, "judge": "gemini:x:y",
+            "divergencia": 0,
+        }], fs)
+        preds = {p["ativo"]: p for p in fs.read_predictions()}
+    assert preds["SOLANA"]["fonte"] == "dpl:fallback"
+    assert preds["BITCOIN"]["fonte"] == "direct"

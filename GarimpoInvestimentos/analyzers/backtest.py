@@ -18,13 +18,14 @@ from datetime import datetime, timedelta, timezone
 
 from GarimpoInvestimentos.config import settings
 from predictor_core.net import get_http_client
-from GarimpoInvestimentos.core.paths import OUTPUT_DIR
+from GarimpoInvestimentos.core.paths import OUTPUT_DIR, FEATURE_STORE_DB
 from predictor_core.net import with_retry
 from predictor_core.stats import spearman_block_ci
 from predictor_core.obs import emit_event
 from GarimpoInvestimentos.analyzers.trials import load_trials, deflated_sharpe_ratio
+from GarimpoInvestimentos.core.history import migrate_csv_to_store
+from GarimpoInvestimentos.dpl import FeatureStore
 
-HIST_CSV = OUTPUT_DIR / "garimpo_historico.csv"
 BACKTEST_CSV = OUTPUT_DIR / "garimpo_backtest.csv"
 PRIMARY_HORIZON = settings.SCORE_HORIZON_DAYS  # horizonte ao qual o score se refere
 HORIZONS = sorted({1, 7, 30, PRIMARY_HORIZON})
@@ -55,37 +56,37 @@ async def _price_on(client, coin_id: str, day: datetime) -> float | None:
 
 
 def _load_rows() -> list[dict]:
-    """Lê o histórico, descartando linhas de fallback e sem preço/data válidos."""
-    if not HIST_CSV.exists():
-        return []
+    """Lê o histórico OFICIAL (Feature Store, tabela predictions — passo 4),
+    absorvendo antes o CSV legado se existir (idempotente; fonte vazia → 'direct').
+    Descarta linhas de fallback de LLM e sem preço/data válidos. Dedup é estrutural
+    (PK ativo+ts na store)."""
+    with FeatureStore(FEATURE_STORE_DB) as store:
+        n = migrate_csv_to_store(store)
+        if n:
+            print(f"🗄️ Histórico legado absorvido na Feature Store: {n} linha(s) do CSV.")
+        preds = store.read_predictions()
     rows = []
-    seen = set()  # dedup defensivo por (Ativo, Data) — não enviesar o n do Spearman
-    with open(HIST_CSV, newline="", encoding="utf-8-sig") as f:
-        for r in csv.DictReader(f):
-            if FALLBACK_MARKER in (r.get("Resumo") or ""):
-                continue
-            key = (r.get("Ativo", ""), r.get("Data", ""))
-            if key in seen:
-                continue
-            seen.add(key)
-            try:
-                pred_date = datetime.strptime(r["Data"], "%Y-%m-%d %H:%M:%S")
-                price = float(r["price_usd"])
-                score = float(r["Score"])
-            except (KeyError, ValueError, TypeError):
-                continue
-            if price <= 0:
-                continue
-            rows.append({
-                "ativo": (r.get("Ativo") or "").lower(),
-                "score": score,
-                "pred_date": pred_date,
-                "pred_price": price,
-                "divergencia": 1 if str(r.get("Divergencia", "")).strip() in ("1", "True", "true") else 0,
-                # backfill do carimbo Fonte (ADR merge D2): linha pré-carimbo = 'direct'.
-                # Base da estratificação — nunca poolar fontes distintas sem estratificar.
-                "fonte": (r.get("Fonte") or "").strip() or "direct",
-            })
+    for r in preds:
+        if FALLBACK_MARKER in (r.get("resumo") or ""):
+            continue
+        try:
+            pred_date = datetime.strptime(r["ts"], "%Y-%m-%d %H:%M:%S")
+            price = float(r["price_usd"])
+            score = float(r["score"])
+        except (KeyError, ValueError, TypeError):
+            continue
+        if price <= 0:
+            continue
+        rows.append({
+            "ativo": (r.get("ativo") or "").lower(),
+            "score": score,
+            "pred_date": pred_date,
+            "pred_price": price,
+            "divergencia": 1 if r.get("divergencia") else 0,
+            # estratificação obrigatória: a equivalência mediu até 7.8pp de diff
+            # nos change_* entre fontes — poolar sem estratificar contamina o n.
+            "fonte": (r.get("fonte") or "").strip() or "direct",
+        })
     return rows
 
 
@@ -169,6 +170,22 @@ def _report(enriched: list[dict]) -> None:
                     if rs is not None and los is not None:
                         print(f"      └ {label}: Spearman {rs:+.3f} "
                               f"[IC95% {los:+.3f} a {his:+.3f}] (n={len(sub)})")
+            # Estratificação por FONTE de dados (obrigatória — equivalência mediu
+            # até 7.8pp de diff nos change_* entre fontes; fontes distintas =
+            # calibrações distintas do LLM, nunca poolar sem mostrar os estratos).
+            fontes = sorted({r.get("fonte", "direct") for r in enriched})
+            fonte_counts = {}
+            for fonte in fontes:
+                sub = [(r["score"], r[key]) for r in enriched
+                       if r.get(key) is not None and r.get("fonte", "direct") == fonte]
+                fonte_counts[fonte] = len(sub)
+                if len(sub) >= 4:
+                    rs, los, his = spearman_block_ci(sub)
+                    if rs is not None and los is not None:
+                        print(f"      └ fonte={fonte}: Spearman {rs:+.3f} "
+                              f"[IC95% {los:+.3f} a {his:+.3f}] (n={len(sub)})")
+                elif sub:
+                    print(f"      └ fonte={fonte}: n={len(sub)} (insuficiente p/ IC)")
             # PAYOFF: o cripto nasce emitindo o evento estruturado do pedágio (Modo B
             # validado). ic_lower nas métricas; a divergência (alucinação?) nos metadados.
             emit_event(
@@ -176,7 +193,8 @@ def _report(enriched: list[dict]) -> None:
                 metrics={"spearman": round(rho, 4), "ic_lower": round(lo, 4),
                          "ic_upper": round(hi, 4), "n": n},
                 metadata={"horizon_days": h, "veredito": veredito,
-                          "n_divergentes": len(flagged), "n_alinhadas": len(aligned)})
+                          "n_divergentes": len(flagged), "n_alinhadas": len(aligned),
+                          "n_por_fonte": fonte_counts})
 
 
 def _metrics(enriched: list[dict], horizon: int) -> None:

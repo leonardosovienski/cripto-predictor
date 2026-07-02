@@ -7,8 +7,10 @@ nova migração que transforma o estado anterior, garantindo idempotência para 
 qualquer versão.
 """
 from GarimpoInvestimentos.dpl.migrations import _0005_fix_raw_signals as _m0005
+from GarimpoInvestimentos.dpl.migrations import _0006_predictions as _m0006
 
 # Lista ordenada de migrações aditivas (nome, sql), aplicadas após o schema base.
 ADDITIVE_MIGRATIONS = [
     (_m0005.NAME, _m0005.SQL),
+    (_m0006.NAME, _m0006.SQL),
 ]
