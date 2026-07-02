@@ -16,6 +16,7 @@ if _known.output_dir:
 
 from datetime import timedelta
 
+from GarimpoInvestimentos.collectors.discovery import discover_assets
 from GarimpoInvestimentos.collectors.serpapi_news import get_news_snippets
 from GarimpoInvestimentos.analyzers.ai_insights import analyze_asset, judge_signature
 from GarimpoInvestimentos.analyzers.score_engine import calculate_final_score, divergence_flag
@@ -26,6 +27,7 @@ from GarimpoInvestimentos.core.cache import load_cache, save_cache
 from GarimpoInvestimentos.core.history import append_history
 from GarimpoInvestimentos.core.paths import OUTPUT_DIR
 from GarimpoInvestimentos.dpl import CryptoDataProvider, FeatureStore
+from GarimpoInvestimentos.dpl.feature_store import fonte_label
 from GarimpoInvestimentos.dpl.feature_engineering import to_hard_data
 from GarimpoInvestimentos.dpl.ingest import ingest_crypto
 from GarimpoInvestimentos.dpl.providers.fear_greed import FearAndGreedProvider
@@ -44,9 +46,21 @@ def parse_args():
     parser = argparse.ArgumentParser(
         description="Pipeline de análise de criptoativos com cache, histórico e exportação."
     )
-    parser.add_argument(
+    origem = parser.add_mutually_exclusive_group()
+    origem.add_argument(
         "--assets",
         help="Lista de ativos separados por vírgula. Ex: bitcoin,ethereum,solana",
+    )
+    origem.add_argument(
+        "--discover",
+        nargs="?",
+        const=10,
+        type=int,
+        metavar="N",
+        help="Descobre N candidatos no mercado (CoinGecko: momentum 7d/24h + trending; "
+        "filtra stablecoin, wrapped e volume < US$10M) em vez de usar lista fixa. "
+        "N padrão: 10, máx: 20 (cota do LLM free tier). Exige --ingest: descoberta "
+        "é rede; a análise é offline e lê o universo da Feature Store (ADR merge D3).",
     )
     parser.add_argument(
         "--min-score",
@@ -82,7 +96,11 @@ def parse_args():
              "Binance→CoinGecko, padrão) ou 'consensus' (mediana Binance+Kraken). "
              "Só afeta --ingest; o serving é indiferente a quantas fontes geraram o dado.",
     )
-    return parser.parse_args()
+    args = parser.parse_args()
+    if args.discover is not None and not args.ingest:
+        parser.error("--discover exige --ingest (descubra e ingira primeiro; "
+                     "depois rode a análise offline, que lê o universo da Feature Store)")
+    return args
 
 
 # Mapeia o modo de runtime → bloco de configuração do sources.json.
@@ -118,11 +136,25 @@ async def run_ingest(ativos: list[str], mode: str = "fallback") -> None:
 
 async def run():
     args = parse_args()
-    ativos = [asset.strip() for asset in args.assets.split(",") if asset.strip()] if args.assets else settings.DEFAULT_ASSETS
-    if not ativos:
-        raise ValueError("Nenhum ativo válido informado. Use --assets ou DEFAULT_ASSETS.")
+    # Universo (ADR merge D3): --discover (rede, só na ingestão) | --assets | default.
+    # Default difere por modo: ingestão usa DEFAULT_ASSETS; análise lê o que a Feature
+    # Store TEM (o resultado de --ingest --discover fica analisável sem redigitar lista).
+    if args.discover is not None:
+        n = min(args.discover, 20)  # teto: cota free tier do LLM (~20 req/dia)
+        print(f"🔭 Varrendo mercado por {n} candidatos (momentum + trending)...")
+        ativos = await discover_assets(top_n=n)
+        if not ativos:
+            raise ValueError("Descoberta não retornou candidatos (mercado indisponível "
+                             "ou filtros zeraram a lista).")
+    elif args.assets:
+        ativos = [asset.strip() for asset in args.assets.split(",") if asset.strip()]
+    else:
+        ativos = None
 
     if args.ingest:
+        ativos = ativos or settings.DEFAULT_ASSETS
+        if not ativos:
+            raise ValueError("Nenhum ativo válido informado. Use --assets, --discover ou DEFAULT_ASSETS.")
         await run_ingest(ativos, mode=args.mode)
         print("📦 Ingestão concluída. Rode sem --ingest para analisar (offline).")
         return
@@ -131,6 +163,16 @@ async def run():
     cache_enabled = settings.ENABLE_CACHE and not args.no_cache
     cache = load_cache() if cache_enabled else {}
 
+    # Serving: o pipeline lê dados de mercado já alinhados da Feature Store (offline).
+    store = FeatureStore(FEATURE_STORE_DB)
+
+    if ativos is None:
+        # Sem --assets: analisa tudo que a Feature Store tem (ADR merge D3).
+        ativos = store.list_symbols("1d")
+        if not ativos:
+            raise ValueError("Feature Store vazia — rode `--ingest` primeiro (ou use --assets).")
+        print(f"🗃️ Universo da Feature Store: {', '.join(ativos)}")
+
     print("🚀 Iniciando pipeline de análise de criptoativos")
     print(f"• Ativos: {', '.join(ativos)}")
     print(f"• Score mínimo destacado: {score_threshold}")
@@ -138,9 +180,6 @@ async def run():
 
     resultados = []
     n_degraded = 0
-
-    # Serving: o pipeline lê dados de mercado já alinhados da Feature Store (offline).
-    store = FeatureStore(FEATURE_STORE_DB)
 
     for i, ativo in enumerate(ativos):
         log_start(ativo)
@@ -205,6 +244,9 @@ async def run():
                 "judge": judge_signature(),
                 # cross-check flag-only: tagueia contradição LLM-vs-técnico, NÃO muta o score
                 "divergencia": divergence_flag(score, hard_data.get("indicadores", {})),
+                # carimbo Fonte (ADR merge D2): política de dados desta previsão —
+                # o backtest estratifica por ele (trocar fonte = quebra de série).
+                "data_source": fonte_label(store.latest_source(ativo, "1d")),
             }
             resultados.append(resultado)
             cache[ativo] = resultado

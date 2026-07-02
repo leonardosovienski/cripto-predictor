@@ -246,3 +246,37 @@ class FeatureStore:
         """
         rows = self.read_features(symbol, interval)
         return rows[-1] if rows else None
+
+    def list_symbols(self, interval: str = "1d") -> list[str]:
+        """Símbolos com features materializadas — universo default da análise quando
+        não há --assets (ADR do merge, D3)."""
+        cur = self._conn.execute(
+            """SELECT DISTINCT symbol FROM features_aligned
+               WHERE interval=? ORDER BY symbol""",
+            (interval,),
+        )
+        return [r["symbol"] for r in cur]
+
+    def latest_source(self, symbol: str, interval: str = "1d") -> str | None:
+        """`source` do candle bruto mais recente do símbolo — insumo do carimbo
+        Fonte (ADR do merge, D2). None se o símbolo não existe na store."""
+        cur = self._conn.execute(
+            """SELECT source FROM raw_market_data
+               WHERE symbol=? AND interval=? ORDER BY ts DESC LIMIT 1""",
+            (symbol, interval),
+        )
+        row = cur.fetchone()
+        return row["source"] if row else None
+
+
+def fonte_label(source: str | None) -> str:
+    """Carimbo Fonte (ADR do merge, D2) a partir do `source` bruto do candle.
+
+    Valores: 'dpl:consensus' (candle fundido pela agregação), 'dpl:fallback'
+    (candle de um provider único via router) ou 'direct' (sem dado na store —
+    só ocorre em linhas legadas pré-DPL; o backtest lê coluna vazia como direct).
+    O rótulo registra a POLÍTICA; o provider exato fica em raw_market_data.source
+    e na telemetria — não duplicar."""
+    if not source:
+        return "direct"
+    return "dpl:consensus" if source.startswith("consensus") else "dpl:fallback"

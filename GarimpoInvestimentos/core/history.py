@@ -7,7 +7,11 @@ HIST_CSV = str(OUTPUT_DIR / "garimpo_historico.csv")
 
 # "Juiz" = carimbo provider:modelo:hash-do-prompt (reprodutibilidade — impede o
 # backtest de poolar estimadores diferentes). Coluna aditiva; histórico antigo é migrado.
-FIELDNAMES = ["Ativo", "Sentimento", "Score", "Resumo", "Data", "price_usd", "Juiz", "Divergencia"]
+# "Fonte" = carimbo da política de dados (direct | dpl:fallback | dpl:consensus, ADR do
+# merge D2) — mesmo princípio do Juiz: trocar a fonte no meio da série muda o input do
+# LLM (ex.: change_* dia-calendário vs rolling); o backtest estratifica em vez de poolar.
+# Linhas antigas ficam vazias na migração e leem-se como 'direct'.
+FIELDNAMES = ["Ativo", "Sentimento", "Score", "Resumo", "Data", "price_usd", "Juiz", "Divergencia", "Fonte"]
 
 
 def _ensure_header() -> None:
@@ -61,4 +65,5 @@ def append_history(resultados: list[dict]) -> None:
                 "price_usd":  r.get("price_usd", ""),
                 "Juiz":       r.get("judge", ""),
                 "Divergencia": r.get("divergencia", ""),
+                "Fonte":      r.get("data_source", ""),
             })

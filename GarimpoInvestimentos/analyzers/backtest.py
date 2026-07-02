@@ -81,6 +81,9 @@ def _load_rows() -> list[dict]:
                 "pred_date": pred_date,
                 "pred_price": price,
                 "divergencia": 1 if str(r.get("Divergencia", "")).strip() in ("1", "True", "true") else 0,
+                # backfill do carimbo Fonte (ADR merge D2): linha pré-carimbo = 'direct'.
+                # Base da estratificação — nunca poolar fontes distintas sem estratificar.
+                "fonte": (r.get("Fonte") or "").strip() or "direct",
             })
     return rows
 
@@ -117,7 +120,7 @@ async def run():
 
 
 def _write(enriched: list[dict]) -> None:
-    cols = ["ativo", "score", "pred_date", "pred_price",
+    cols = ["ativo", "score", "pred_date", "pred_price", "fonte",
             "price_d1", "var_d1_pct", "price_d7", "var_d7_pct", "price_d30", "var_d30_pct"]
     with open(BACKTEST_CSV, "w", newline="", encoding="utf-8-sig") as f:
         w = csv.DictWriter(f, fieldnames=cols)

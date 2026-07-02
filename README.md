@@ -14,7 +14,7 @@ coleta (CoinGecko + SerpAPI) → análise (Gemini) → score → exportação (C
 Integrado à plataforma **predictor_core** (significância via block bootstrap pareado,
 carimbo do juiz, cross-check flag-only, trava de credenciais). Detalhes no
 [HANDOFF.md](HANDOFF.md) §0. Arquitetura canônica da plataforma (DPL, Feature Store,
-Alignment Engine, CCXT, ADRs) no [docs/DOSSIE_PLATAFORMA.md](docs/DOSSIE_PLATAFORMA.md). Suíte: `py -3.12 -m pytest tests/ -q` (48 verdes — rodam no
+Alignment Engine, CCXT, ADRs) no [docs/DOSSIE_PLATAFORMA.md](docs/DOSSIE_PLATAFORMA.md). Suíte: `py -3.14 -m pytest tests/ -q` (102 verdes — rodam no
 Python do sistema).
 
 **Rodar AO VIVO** exige chaves reais no `.env` **e** a venv (httpx/pydantic/SDKs do LLM):
@@ -24,8 +24,13 @@ Python do sistema).
 #    --mode fallback (padrão: Binance→CoinGecko) | consensus (mediana Binance+Kraken)
 .\GarimpoInvestimentos\env\Scripts\python.exe -m GarimpoInvestimentos.main --ingest --assets bitcoin,ethereum
 .\GarimpoInvestimentos\env\Scripts\python.exe -m GarimpoInvestimentos.main --ingest --mode consensus --assets bitcoin,ethereum
+#    ou DESCOBERTA automática (ADR merge D3): varre o mercado (momentum + trending,
+#    filtra stablecoin/wrapped/ilíquido) e ingere os N melhores — exige --ingest
+.\GarimpoInvestimentos\env\Scripts\python.exe -m GarimpoInvestimentos.main --ingest --discover 10
 # 2) ANÁLISE (mercado OFFLINE da Feature Store; só notícias/LLM vão à rede)
-.\GarimpoInvestimentos\env\Scripts\python.exe -m GarimpoInvestimentos.main --assets bitcoin,ethereum
+#    sem --assets analisa TUDO que está na Feature Store; cada previsão sai com o
+#    carimbo Fonte (direct | dpl:fallback | dpl:consensus) p/ estratificação do backtest
+.\GarimpoInvestimentos\env\Scripts\python.exe -m GarimpoInvestimentos.main --summary
 .\GarimpoInvestimentos\env\Scripts\python.exe -m GarimpoInvestimentos.analyzers.backtest
 ```
 A Data Provider Layer (`GarimpoInvestimentos/dpl/`) separa **ingestão** de **serving**:
