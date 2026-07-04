@@ -4,6 +4,7 @@ pydantic
 google-genai
 openai
 python-dotenv
+ccxt          # providers binance/kraken (DPL --mode consensus); lazy import, mas obrigatório ao vivo
 
 # V3 — Fase 1 (regime_engine.py)
 hmmlearn>=0.3.0
