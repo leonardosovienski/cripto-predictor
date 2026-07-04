@@ -45,6 +45,10 @@ class Settings:
     ENABLE_CACHE: bool = field(default_factory=lambda: parse_bool(os.getenv("ENABLE_CACHE"), True))
     # Horizonte (em dias) ao qual o score do LLM se refere e que o backtest usa como correlação principal.
     SCORE_HORIZON_DAYS: int = field(default_factory=lambda: int(os.getenv("SCORE_HORIZON_DAYS", "7")))
+    # Pausa (segundos) entre análises de ativos — respeita o limite POR MINUTO do LLM.
+    # Gemini free tier ~10 req/min: 7s => ~8,5/min, com folga. Sem isso, um lote de 10+
+    # ativos estoura o limite e cai TODO no fallback (score 50). Baixe p/ 0 se tiver tier pago.
+    LLM_PACING_SECONDS: float = field(default_factory=lambda: float(os.getenv("LLM_PACING_SECONDS", "7")))
 
     def __post_init__(self):
         # Trava de governança P0 (predictor_core.settings): chave ausente/FALSA/curta =>

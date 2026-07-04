@@ -262,9 +262,11 @@ async def run():
         except Exception as e:
             log_error(ativo, e)
 
-        # Rate limiting: 1s entre ativos — adequado para CoinGecko free tier com 3 ativos
+        # Rate limiting: pausa entre ativos para respeitar o limite POR MINUTO do LLM
+        # (Gemini free ~10/min). O gargalo é o LLM, não o CoinGecko — só espaça quem
+        # de fato chamou o modelo (os cacheados dão `continue` antes daqui).
         if i < len(ativos) - 1:
-            await asyncio.sleep(1)
+            await asyncio.sleep(settings.LLM_PACING_SECONDS)
 
     if n_degraded:
         print(f"⚠️  {n_degraded}/{len(ativos)} ativo(s) com input degradado "
