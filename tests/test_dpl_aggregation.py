@@ -129,7 +129,8 @@ def test_breaker_meio_aberto_apos_timeout_e_fecha_no_sucesso():
     cb.record_failure(); cb.record_failure()
     assert cb.state == OPEN
     now["t"] += 31  # passou o timeout
-    assert cb.state == HALF_OPEN and cb.allow()  # libera sondagem
+    # CB unificado (Onda 3): state é getter PURO; allow() dispara OPEN→HALF_OPEN.
+    assert cb.allow() and cb.state == HALF_OPEN  # allow() libera a sondagem e transiciona
     cb.record_success()
     assert cb.state == CLOSED
 
@@ -141,6 +142,6 @@ def test_breaker_reabre_se_sondagem_falha():
     cb.record_failure()
     assert cb.state == OPEN
     now["t"] += 11
-    assert cb.state == HALF_OPEN
+    assert cb.allow() and cb.state == HALF_OPEN  # allow() dispara OPEN→HALF_OPEN
     cb.record_failure()  # falhou a sondagem
     assert cb.state == OPEN
