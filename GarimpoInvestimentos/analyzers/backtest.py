@@ -25,6 +25,7 @@ from predictor_core.obs import emit_event
 from GarimpoInvestimentos.analyzers.trials import load_trials, deflated_sharpe_ratio
 from GarimpoInvestimentos.core.history import migrate_csv_to_store
 from GarimpoInvestimentos.dpl import FeatureStore
+from GarimpoInvestimentos.dpl.providers.coingecko import coingecko_auth_headers
 
 BACKTEST_CSV = OUTPUT_DIR / "garimpo_backtest.csv"
 PRIMARY_HORIZON = settings.SCORE_HORIZON_DAYS  # horizonte ao qual o score se refere
@@ -41,7 +42,7 @@ FALLBACK_MARKER = "fallback aplicado"
 async def _fetch_price(client, coin_id: str, day: datetime) -> float | None:
     url = f"https://api.coingecko.com/api/v3/coins/{coin_id}/history"
     params = {"date": day.strftime("%d-%m-%Y"), "localization": "false"}
-    resp = await client.get(url, params=params)
+    resp = await client.get(url, params=params, headers=coingecko_auth_headers())
     resp.raise_for_status()
     data = resp.json()
     return data.get("market_data", {}).get("current_price", {}).get("usd")

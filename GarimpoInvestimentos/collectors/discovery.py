@@ -11,6 +11,8 @@ exatamente o processo que rodaria em produção.
 """
 from predictor_core.net import get_http_client, with_retry
 
+from GarimpoInvestimentos.dpl.providers.coingecko import coingecko_auth_headers
+
 # Símbolos que nunca são "oportunidade": paridade com fiat (stable) ou espelho de
 # outro ativo (wrapped/staked — redundante com o subjacente, que já é elegível).
 STABLECOIN_SYMBOLS = {
@@ -78,7 +80,7 @@ async def _fetch_markets(per_page: int = 100) -> list[dict]:
         "price_change_percentage": "24h,7d",
     }
     async with get_http_client() as client:
-        resp = await client.get(url, params=params)
+        resp = await client.get(url, params=params, headers=coingecko_auth_headers())
         resp.raise_for_status()
         return resp.json()
 
@@ -87,7 +89,7 @@ async def _fetch_markets(per_page: int = 100) -> list[dict]:
 async def _fetch_trending_ids() -> tuple[str, ...]:
     url = "https://api.coingecko.com/api/v3/search/trending"
     async with get_http_client() as client:
-        resp = await client.get(url)
+        resp = await client.get(url, headers=coingecko_auth_headers())
         resp.raise_for_status()
         data = resp.json()
     return tuple(

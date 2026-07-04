@@ -32,6 +32,12 @@ class Settings:
     # --- Notícias ---
     SERP_API_KEY: str = field(default_factory=lambda: os.getenv("SERP_API_KEY", ""))
 
+    # --- Dados de mercado (opcional) ---
+    # Chave Demo do CoinGecko: sobe o rate limit do free tier (evita 429 na coleta
+    # diária). OPCIONAL — sem ela o endpoint público segue funcionando, só com limite
+    # menor. Não entra na trava P0 (não é obrigatória).
+    COINGECKO_API_KEY: str = field(default_factory=lambda: os.getenv("COINGECKO_API_KEY", ""))
+
     # --- Pipeline ---
     LIMIAR_SCORE_MINIMO: float = field(default_factory=lambda: float(os.getenv("LIMIAR_SCORE_MINIMO", "60")))
     DEFAULT_ASSETS: list[str] = field(default_factory=lambda: [asset.strip() for asset in os.getenv("DEFAULT_ASSETS", "bitcoin,ethereum,solana").split(",") if asset.strip()])

@@ -11,6 +11,7 @@ Para intervalos intradiários usa /ohlc (OHLC real, sem volume).
 """
 from __future__ import annotations
 
+import os
 from datetime import datetime, timezone
 
 from predictor_core.net import get_http_client, with_retry
@@ -19,6 +20,17 @@ from GarimpoInvestimentos.dpl.contracts import DataProvider, MarketDataPoint
 
 # /ohlc (intradiário): days → granularidade automática (1=30min, 7-30=4h).
 _INTERVAL_TO_DAYS = {"1m": 1, "5m": 1, "15m": 1, "1h": 1, "4h": 7}
+
+
+def coingecko_auth_headers() -> dict[str, str]:
+    """Header da chave Demo do CoinGecko, se COINGECKO_API_KEY estiver no ambiente.
+
+    Sobe o rate limit do free tier (evita o 429 que estrangula a coleta diária).
+    Vazio se ausente — o endpoint público continua funcionando, só com limite menor.
+    Lê do env direto (não do config do domínio) p/ a DPL seguir promovível ao core.
+    """
+    key = os.getenv("COINGECKO_API_KEY", "").strip()
+    return {"x-cg-demo-api-key": key} if key else {}
 
 
 class CoinGeckoProvider(DataProvider):
@@ -47,7 +59,7 @@ class CoinGeckoProvider(DataProvider):
         url = f"https://api.coingecko.com/api/v3/coins/{coin_id}/market_chart"
         params = {"vs_currency": "usd", "days": str(days), "interval": "daily"}
         async with get_http_client() as client:
-            resp = await client.get(url, params=params)
+            resp = await client.get(url, params=params, headers=coingecko_auth_headers())
             resp.raise_for_status()
             data = resp.json()
         prices = data.get("prices", [])
@@ -73,7 +85,7 @@ class CoinGeckoProvider(DataProvider):
         url = f"https://api.coingecko.com/api/v3/coins/{coin_id}/ohlc"
         params = {"vs_currency": "usd", "days": str(days)}
         async with get_http_client() as client:
-            resp = await client.get(url, params=params)
+            resp = await client.get(url, params=params, headers=coingecko_auth_headers())
             resp.raise_for_status()
             rows = resp.json()
         if not rows:
@@ -94,7 +106,8 @@ class CoinGeckoProvider(DataProvider):
     async def health_check(self) -> bool:
         try:
             async with get_http_client() as client:
-                resp = await client.get("https://api.coingecko.com/api/v3/ping")
+                resp = await client.get("https://api.coingecko.com/api/v3/ping",
+                                        headers=coingecko_auth_headers())
                 return resp.status_code == 200
         except Exception:
             return False
