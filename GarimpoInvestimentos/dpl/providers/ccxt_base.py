@@ -10,6 +10,7 @@ from __future__ import annotations
 from datetime import datetime, timezone
 
 from GarimpoInvestimentos.dpl.contracts import DataProvider, MarketDataPoint
+from GarimpoInvestimentos.dpl.providers._validation import require_finite
 
 _SUPPORTED_INTERVALS = {"1m", "5m", "15m", "1h", "4h", "1d"}
 
@@ -57,10 +58,13 @@ class CCXTProvider(DataProvider):
         points = []
         for ts_ms, o, h, l, c, v in rows:
             ts = datetime.fromtimestamp(ts_ms / 1000, tz=timezone.utc)
+            kw = {"open": float(o), "high": float(h), "low": float(l),
+                  "close": float(c), "volume": float(v)}
+            for field, val in kw.items():
+                require_finite(val, field=field, provider=self.exchange_id, symbol=symbol)
             points.append(MarketDataPoint(
-                symbol=symbol, timestamp=ts, open=float(o), high=float(h),
-                low=float(l), close=float(c), volume=float(v),
-                source=self.name, interval=interval, published_at=ts,
+                symbol=symbol, timestamp=ts, source=self.name, interval=interval,
+                published_at=ts, **kw,
             ))
         if not points:
             raise RuntimeError(f"{self.exchange_id}: resposta vazia para {pair}")

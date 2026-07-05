@@ -17,6 +17,7 @@ from datetime import datetime, timezone
 from predictor_core.net import get_http_client, with_retry
 
 from GarimpoInvestimentos.dpl.contracts import DataProvider, MarketDataPoint
+from GarimpoInvestimentos.dpl.providers._validation import require_finite
 
 # /ohlc (intradiário): days → granularidade automática (1=30min, 7-30=4h).
 _INTERVAL_TO_DAYS = {"1m": 1, "5m": 1, "15m": 1, "1h": 1, "4h": 7}
@@ -69,12 +70,14 @@ class CoinGeckoProvider(DataProvider):
         points = []
         for ts_ms, price in prices[-limit:]:
             ts = datetime.fromtimestamp(ts_ms / 1000, tz=timezone.utc)
-            c = float(price)
+            c = require_finite(float(price), field="close", provider=self.name, symbol=symbol)
+            vol = require_finite(float(volumes.get(int(ts_ms), 0.0)),
+                                 field="volume", provider=self.name, symbol=symbol)
             points.append(
                 MarketDataPoint(
                     symbol=symbol, timestamp=ts,
                     open=c, high=c, low=c, close=c,  # série de fechamento
-                    volume=float(volumes.get(int(ts_ms), 0.0)),
+                    volume=vol,
                     source=self.name, interval="1d", published_at=ts,
                 )
             )
@@ -93,12 +96,15 @@ class CoinGeckoProvider(DataProvider):
         points = []
         for ts_ms, o, h, l, c in rows[-limit:]:
             ts = datetime.fromtimestamp(ts_ms / 1000, tz=timezone.utc)
+            kw = {"open": float(o), "high": float(h), "low": float(l), "close": float(c)}
+            for field, val in kw.items():
+                require_finite(val, field=field, provider=self.name, symbol=symbol)
             points.append(
                 MarketDataPoint(
                     symbol=symbol, timestamp=ts,
-                    open=float(o), high=float(h), low=float(l), close=float(c),
                     volume=0.0,  # /ohlc não fornece volume
                     source=self.name, interval=interval, published_at=ts,
+                    **kw,
                 )
             )
         return points
