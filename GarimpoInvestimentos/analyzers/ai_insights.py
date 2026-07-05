@@ -101,8 +101,19 @@ def _retry_delay_for_error(exc: Exception, attempt: int) -> float | None:
 
     # Gemini expõe o status HTTP em `.code` (int); OpenAI em `.status_code` (int).
     status = getattr(exc, "status_code", None) or getattr(exc, "code", None)
-    if status not in {429, 500, 502, 503, 504}:
-        return None
+    if status in {429, 500, 502, 503, 504}:
+        pass
+    elif isinstance(exc, (TimeoutError, asyncio.TimeoutError)):
+        pass
+    else:
+        try:
+            import httpx
+            if isinstance(exc, (httpx.TimeoutException, httpx.TransportError)):
+                pass
+            else:
+                return None
+        except Exception:
+            return None
 
     # 1) Retry-After em headers HTTP — caminho da OpenAI (exc.response é httpx.Response).
     response = getattr(exc, "response", None)

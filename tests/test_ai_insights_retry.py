@@ -9,6 +9,7 @@ retentam com o delay do RetryInfo (Gemini) ou do header Retry-After (OpenAI).
 """
 import asyncio
 
+import httpx
 import pytest
 
 from GarimpoInvestimentos.analyzers.ai_insights import (
@@ -21,17 +22,21 @@ class _FakeGeminiError(Exception):
     """Espelha a forma real de google.genai.errors.ClientError: .code (int) e .status
     (string) sempre presentes, .details = corpo JSON inteiro {"error": {...}}."""
 
-    def __init__(self, quota_id: str, retry_delay: str | None = None):
-        self.code = 429
-        self.status = "RESOURCE_EXHAUSTED"
-        details_items = [{"@type": "type.googleapis.com/google.rpc.QuotaFailure",
-                          "violations": [{"quotaId": quota_id}]}]
-        if retry_delay:
-            details_items.append({"@type": "type.googleapis.com/google.rpc.RetryInfo",
-                                   "retryDelay": retry_delay})
-        self.details = {"error": {"code": 429, "status": self.status,
-                                   "message": f"Quota exceeded for {quota_id}",
-                                   "details": details_items}}
+    def __init__(self, quota_id: str | None = None, retry_delay: str | None = None,
+                 *, details: dict | None = None, code: int = 429, status: str = "RESOURCE_EXHAUSTED"):
+        self.code = code
+        self.status = status
+        if details is not None:
+            self.details = details
+        else:
+            details_items = [{"@type": "type.googleapis.com/google.rpc.QuotaFailure",
+                              "violations": [{"quotaId": quota_id}]}]
+            if retry_delay:
+                details_items.append({"@type": "type.googleapis.com/google.rpc.RetryInfo",
+                                       "retryDelay": retry_delay})
+            self.details = {"error": {"code": 429, "status": self.status,
+                                       "message": f"Quota exceeded for {quota_id}",
+                                       "details": details_items}}
         super().__init__(f"{self.code} {self.status}. {self.details}")
 
 
@@ -74,6 +79,24 @@ def test_openai_rate_limit_uses_retry_after_header():
 def test_non_transient_error_no_retry():
     exc = _FakeOpenAIError(400)  # bad request — nunca deve reentrar
     assert _retry_delay_for_error(exc, attempt=1) is None
+
+
+def test_gemini_daily_quota_detected_from_nested_details():
+    details = {"error": {"status": "RESOURCE_EXHAUSTED",
+                          "details": [{"@type": "type.googleapis.com/google.rpc.QuotaFailure",
+                                        "violations": [{"quotaId": "GenerateRequestsPerDayPerProjectPerModel-FreeTier"}]}]}}
+    exc = _FakeGeminiError(details=details)
+    assert _retry_delay_for_error(exc, attempt=1) is None
+
+
+def test_pure_timeout_is_retried_with_backoff():
+    exc = TimeoutError("timed out")
+    assert _retry_delay_for_error(exc, attempt=2) == pytest.approx(4.0)
+
+
+def test_httpx_timeout_is_retried_with_backoff():
+    exc = httpx.ReadTimeout("timed out")
+    assert _retry_delay_for_error(exc, attempt=2) == pytest.approx(4.0)
 
 
 def test_run_with_llm_retry_recovers_after_transient_errors(monkeypatch):
