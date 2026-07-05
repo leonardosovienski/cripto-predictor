@@ -5,6 +5,7 @@ para o LLM *interpretar* (ex.: "RSI=28 → sobrevendido"), em vez de pedir que o
 calcule sobre séries (no que LLMs são ruins). Entrada: lista de closes diários (ordem
 cronológica, mais antigo → mais recente).
 """
+import math
 from typing import Optional
 
 
@@ -82,13 +83,16 @@ def compute_indicators(prices: list[float]) -> dict:
     if r is not None:
         out["rsi_14"] = round(r, 1)
 
+    can_compare = math.isfinite(price) and price > 0
     s50, s200 = sma(prices, 50), sma(prices, 200)
     if s50 is not None:
         out["sma_50"] = round(s50, 4)
-        out["preco_vs_sma50_pct"] = round((price / s50 - 1) * 100, 2)
+        if can_compare and s50 > 0:
+            out["preco_vs_sma50_pct"] = round((price / s50 - 1) * 100, 2)
     if s200 is not None:
         out["sma_200"] = round(s200, 4)
-        out["preco_vs_sma200_pct"] = round((price / s200 - 1) * 100, 2)
+        if can_compare and s200 > 0:
+            out["preco_vs_sma200_pct"] = round((price / s200 - 1) * 100, 2)
 
     line, sig, hist = macd(prices)
     if line is not None:

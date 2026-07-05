@@ -59,3 +59,9 @@ def test_to_hard_data_descarta_nan():
             "change_7d": float("nan")}
     hard = to_hard_data(flat)
     assert "change_7d" not in hard  # NaN não polui o prompt
+
+
+def test_derive_handles_zero_prices_without_division_by_zero():
+    feats = derive_features(_series([0.0] * 60))
+    assert "preco_vs_sma50_pct" not in feats
+    assert "preco_vs_sma200_pct" not in feats

@@ -19,3 +19,7 @@ def test_guard_passes_clean_text():
 
 def test_real_telemetry_has_no_secrets():
     assert_no_secrets_in_events(EVENTS)   # no-op se ausente; falha se algum segredo vazou
+
+
+def test_guard_detects_known_secret_values_in_text():
+    assert find_secrets('token=AIza' + 'A' * 35)

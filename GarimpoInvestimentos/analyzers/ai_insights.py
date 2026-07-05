@@ -13,7 +13,6 @@ import json
 import logging
 
 from GarimpoInvestimentos.config import settings
-from predictor_core.net import with_retry
 
 _log = logging.getLogger("previsao_cripto.ai_insights")
 
@@ -80,31 +79,105 @@ def judge_signature() -> str:
     return f"{settings.LLM_PROVIDER}:{model}:{_PROMPT_HASH}"
 
 
-@with_retry()
+_DAILY_QUOTA_MARKERS = ("perday", "per day", "requestsperday", "generaterequestsperday")
+
+
+def _retry_delay_for_error(exc: Exception, attempt: int) -> float | None:
+    """Segundos de espera antes de re-tentar um erro de LLM; None = desiste (não retry).
+
+    Cota DIÁRIA (RPD) esgotada não vale re-tentar dentro do mesmo run — não vai liberar
+    em segundos. Cota POR MINUTO e 5xx são transitórios e valem retry com backoff.
+
+    Gemini (google.genai.errors.ClientError) devolve o MESMO status 429/"RESOURCE_EXHAUSTED"
+    tanto para limite por minuto quanto por dia — o status sozinho NÃO distingue os dois
+    casos. A distinção só existe no texto (quotaId contém "PerDay" apenas no caso diário;
+    esse texto acaba embutido em str(exc) via exc.details). Por isso a checagem de cota
+    diária usa SÓ o texto, nunca o status — caso contrário todo 429 do Gemini (inclusive os
+    transitórios por minuto) seria tratado como não-retryable, e o retry nunca dispararia.
+    """
+    message = str(exc).lower()
+    if any(marker in message for marker in _DAILY_QUOTA_MARKERS):
+        return None
+
+    # Gemini expõe o status HTTP em `.code` (int); OpenAI em `.status_code` (int).
+    status = getattr(exc, "status_code", None) or getattr(exc, "code", None)
+    if status not in {429, 500, 502, 503, 504}:
+        return None
+
+    # 1) Retry-After em headers HTTP — caminho da OpenAI (exc.response é httpx.Response).
+    response = getattr(exc, "response", None)
+    headers = getattr(response, "headers", None)
+    if headers is not None:
+        retry_after = headers.get("retry-after") or headers.get("Retry-After")
+        if retry_after is not None:
+            try:
+                return float(retry_after)
+            except (TypeError, ValueError):
+                pass
+
+    # 2) RetryInfo embutido no corpo do erro — caminho do Gemini. `exc.details` é o corpo
+    #    JSON inteiro (ex.: {"error": {"details": [...]}}); a lista de itens (RetryInfo,
+    #    QuotaFailure, Help) mora em details["error"]["details"] quando vem "embrulhada"
+    #    no envelope padrão da Google API, ou em details["details"] se já vier desembrulhada.
+    body = getattr(exc, "details", None)
+    if isinstance(body, dict):
+        items = body.get("details") or body.get("error", {}).get("details") or []
+        for item in items:
+            if isinstance(item, dict) and "RetryInfo" in str(item.get("@type", "")):
+                try:
+                    return float(str(item.get("retryDelay", "")).rstrip("s"))
+                except ValueError:
+                    pass
+
+    return min(2.0 * attempt, 30.0)
+
+
+async def _run_with_llm_retry(callable_obj) -> str:
+    base_delay = max(float(settings.LLM_PACING_SECONDS), 0.0)
+    for attempt in range(1, 5):
+        try:
+            return await callable_obj()
+        except Exception as exc:
+            delay = _retry_delay_for_error(exc, attempt)
+            if attempt >= 4 or delay is None:
+                raise
+            sleep_for = max(base_delay, delay)
+            _log.warning("llm retry %d/4 after %s (sleep %.1fs)", attempt, type(exc).__name__, sleep_for)
+            await asyncio.sleep(sleep_for)
+    raise RuntimeError("llm retry loop exhausted")
+
+
 async def _call_gemini(prompt: str) -> str:
     from google.genai import types
     client = _get_gemini()
-    response = await asyncio.to_thread(
-        client.models.generate_content,
-        model=settings.GEMINI_MODEL,
-        contents=prompt,
-        config=types.GenerateContentConfig(temperature=0.2, response_mime_type="application/json"),
-    )
-    return response.text
+
+    async def _invoke() -> str:
+        response = await asyncio.to_thread(
+            client.models.generate_content,
+            model=settings.GEMINI_MODEL,
+            contents=prompt,
+            config=types.GenerateContentConfig(temperature=0.2, response_mime_type="application/json"),
+        )
+        return response.text
+
+    return await _run_with_llm_retry(_invoke)
 
 
-@with_retry()
 async def _call_openai(prompt: str) -> str:
     client = _get_openai()
-    response = await asyncio.to_thread(
-        lambda: client.chat.completions.create(
-            model=settings.OPENAI_MODEL,
-            messages=[{"role": "user", "content": prompt}],
-            temperature=0.2,
-            response_format={"type": "json_object"},
+
+    async def _invoke() -> str:
+        response = await asyncio.to_thread(
+            lambda: client.chat.completions.create(
+                model=settings.OPENAI_MODEL,
+                messages=[{"role": "user", "content": prompt}],
+                temperature=0.2,
+                response_format={"type": "json_object"},
+            )
         )
-    )
-    return response.choices[0].message.content
+        return response.choices[0].message.content
+
+    return await _run_with_llm_retry(_invoke)
 
 
 async def analyze_asset(asset_name: str, hard_data: dict, news_snippets: list[str]):
