@@ -135,10 +135,26 @@ def _retry_delay_for_error(exc: Exception, attempt: int) -> float | None:
         items = body.get("details") or body.get("error", {}).get("details") or []
         for item in items:
             if isinstance(item, dict) and "RetryInfo" in str(item.get("@type", "")):
-                try:
-                    return float(str(item.get("retryDelay", "")).rstrip("s"))
-                except ValueError:
-                    pass
+                retry_delay = item.get("retryDelay")
+                # max(0.0, ...): um retryDelay negativo (nunca visto na API real, mas o
+                # servidor não é uma fonte confiável) não deve virar "retry instantâneo
+                # sem backoff" — sobretudo com LLM_PACING_SECONDS=0 (tier pago), onde o
+                # max(base_delay, delay) em _run_with_llm_retry deixaria de mascarar isso.
+                if isinstance(retry_delay, (int, float)):
+                    return max(0.0, float(retry_delay))
+                if isinstance(retry_delay, str):
+                    value = retry_delay.strip().lower()
+                    if value.endswith("s"):
+                        try:
+                            return max(0.0, float(value[:-1]))
+                        except ValueError:
+                            pass
+                    elif value.endswith("m"):
+                        try:
+                            return max(0.0, float(value[:-1]) * 60.0)
+                        except ValueError:
+                            pass
+                break
 
     return min(2.0 * attempt, 30.0)
 

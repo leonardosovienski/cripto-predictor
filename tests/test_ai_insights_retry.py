@@ -65,6 +65,25 @@ def test_gemini_per_minute_quota_retries_with_retryinfo_delay():
     assert _retry_delay_for_error(exc, attempt=1) == 12.0
 
 
+@pytest.mark.parametrize("raw, expected", [("44s", 44.0), ("0.5s", 0.5), ("1m", 60.0), ("1.5m", 90.0)])
+def test_gemini_retryinfo_delay_parses_seconds_and_minutes(raw, expected):
+    exc = _FakeGeminiError("GenerateRequestsPerMinutePerProjectPerModel-FreeTier", retry_delay=raw)
+    assert _retry_delay_for_error(exc, attempt=1) == pytest.approx(expected)
+
+
+def test_gemini_retryinfo_negative_delay_is_clamped_to_zero():
+    """Servidor não é fonte confiável: um retryDelay negativo não pode virar retry
+    instantâneo sem backoff quando LLM_PACING_SECONDS=0 (tier pago) deixa de mascarar."""
+    exc = _FakeGeminiError("GenerateRequestsPerMinutePerProjectPerModel-FreeTier", retry_delay="-5s")
+    assert _retry_delay_for_error(exc, attempt=1) == 0.0
+
+
+@pytest.mark.parametrize("raw", ["1h", "", "44", "not-a-number"])
+def test_gemini_retryinfo_unsupported_or_malformed_delay_falls_back_to_backoff(raw):
+    exc = _FakeGeminiError("GenerateRequestsPerMinutePerProjectPerModel-FreeTier", retry_delay=raw)
+    assert _retry_delay_for_error(exc, attempt=1) == pytest.approx(2.0)  # min(2.0*1, 30.0)
+
+
 def test_gemini_transient_error_without_retryinfo_falls_back_to_backoff():
     exc = _FakeGeminiError("GenerateRequestsPerMinutePerProjectPerModel-FreeTier")
     delay = _retry_delay_for_error(exc, attempt=2)
