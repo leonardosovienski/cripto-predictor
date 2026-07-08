@@ -25,7 +25,8 @@ from GarimpoInvestimentos.core.paths import OUTPUT_DIR, FEATURE_STORE_DB
 from predictor_core.net import with_retry
 from predictor_core.stats import spearman_block_ci
 from predictor_core.obs import emit_event
-from GarimpoInvestimentos.analyzers.trials import load_trials, deflated_sharpe_ratio
+from GarimpoInvestimentos.analyzers.trials import (
+    load_trials, deflated_sharpe_ratio, register_trial)
 from GarimpoInvestimentos.core.history import migrate_csv_to_store
 from GarimpoInvestimentos.dpl import FeatureStore
 from GarimpoInvestimentos.dpl.providers.coingecko import coingecko_auth_headers
@@ -123,6 +124,7 @@ async def run():
     _write(enriched)
     _report(enriched)
     _metrics(enriched, PRIMARY_HORIZON)
+    close_trial_sharpes(enriched, PRIMARY_HORIZON)
 
 
 def _write(enriched: list[dict]) -> None:
@@ -199,6 +201,50 @@ def _report(enriched: list[dict]) -> None:
                 metadata={"horizon_days": h, "veredito": veredito,
                           "n_divergentes": len(flagged), "n_alinhadas": len(aligned),
                           "n_por_fonte": fonte_counts})
+
+
+def close_trial_sharpes(enriched: list[dict], horizon: int, *,
+                        trials_path=None, threshold: float | None = None
+                        ) -> dict[str, float]:
+    """Fecha o ciclo do Experiment Registry: grava em trials.json o Sharpe
+    POR-TRADE observado de cada estrato de Fonte com n≥3 sinais fortes maduros.
+
+    Antes era manual (as trials v1/v2 aguardavam alguém copiar o número) — e
+    denominador que depende de disciplina humana esquece. A trial casada é a que
+    tem params.fonte == fonte do estrato e params.horizonte_dias == horizon;
+    o Sharpe usa os MESMOS retornos da 'Estratégia' de _metrics (score ≥ limiar),
+    na mesma unidade por-período que o DSR consome. Sem trial casada ou n<3, o
+    estrato é pulado (nunca cria trial nova — criar tentativa é decisão humana).
+    Retorna {name: sharpe} do que foi atualizado."""
+    thr = settings.LIMIAR_SCORE_MINIMO if threshold is None else threshold
+    key = f"var_d{horizon}_pct"
+    trials = load_trials(trials_path)
+    updated: dict[str, float] = {}
+    fontes = {r.get("fonte", "direct") for r in enriched}
+    for fonte in sorted(fontes):
+        rets = [r[key] / 100 for r in enriched
+                if r.get(key) is not None and r.get("fonte", "direct") == fonte
+                and r["score"] >= thr]
+        if len(rets) < 3:
+            continue
+        avg = sum(rets) / len(rets)
+        std = (sum((x - avg) ** 2 for x in rets) / (len(rets) - 1)) ** 0.5
+        if not std:
+            continue
+        sharpe = round(avg / std, 4)
+        for t in trials:
+            p = t.get("params", {})
+            if p.get("fonte") == fonte and p.get("horizonte_dias") == horizon:
+                register_trial(t["name"], params=p, sharpe=sharpe,
+                               notes=t.get("notes", ""), path=trials_path,
+                               **{k: t[k] for k in
+                                  ("features_used", "train_period", "test_period")
+                                  if k in t})
+                updated[t["name"]] = sharpe
+                print(f"📒 trials.json: sharpe por-trade de '{t['name']}' "
+                      f"atualizado → {sharpe:+.4f} (fonte={fonte}, n={len(rets)})")
+                break
+    return updated
 
 
 def _metrics(enriched: list[dict], horizon: int) -> None:

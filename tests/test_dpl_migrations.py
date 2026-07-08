@@ -44,8 +44,9 @@ def test_revisoes_coexistem_apos_migracao(tmp_path):
 
 
 def test_schema_version_exposto():
-    # 6 = base 0001-0004 + 0005 (raw_signals bitemporal) + 0006 (predictions, passo 4)
-    assert SCHEMA_VERSION == 6
+    # 7 = base 0001-0004 + 0005 (raw_signals bitemporal) + 0006 (predictions, passo 4)
+    #   + 0007 (feature_version na PK de features_aligned)
+    assert SCHEMA_VERSION == 7
 
 
 def test_migration_0005_preserva_dados_existentes(tmp_path):
@@ -74,3 +75,29 @@ def test_migration_0005_preserva_dados_existentes(tmp_path):
     conn.close()
     assert row["value"] == 0.40 and row["vintage"] == ""   # dado preservado, sem revisão
     assert "vintage" in pk                                  # schema novo de fato aplicado
+
+
+def test_migration_0007_preserva_features_existentes_como_v1(tmp_path):
+    """Mesmo caminho de risco da 0005, para a 0007: features materializadas num DB
+    PRÉ-existente sobrevivem ao swap de tabela carimbadas como 'v1'."""
+    import sqlite3
+
+    from GarimpoInvestimentos.dpl.migrations._0007_feature_version import SQL
+
+    conn = sqlite3.connect(tmp_path / "legacy.db")
+    conn.row_factory = sqlite3.Row
+    # schema PRÉ-0007 (idêntico à migração 0003) já com uma feature gravada
+    conn.executescript(
+        "CREATE TABLE features_aligned(symbol TEXT, interval TEXT, ts TEXT, "
+        "feature TEXT, value REAL, PRIMARY KEY(symbol, interval, ts, feature));")
+    conn.execute("INSERT INTO features_aligned VALUES('bitcoin','1d','2026-01-10','rsi',30.0)")
+    conn.commit()
+
+    conn.executescript(SQL)   # aplica a 0007 SOBRE dados existentes
+    conn.commit()
+
+    row = conn.execute("SELECT * FROM features_aligned").fetchone()
+    pk = [r["name"] for r in conn.execute("PRAGMA table_info(features_aligned)") if r["pk"]]
+    conn.close()
+    assert row["value"] == 30.0 and row["feature_version"] == "v1"  # histórico vira v1
+    assert "feature_version" in pk                                   # PK evoluída de fato

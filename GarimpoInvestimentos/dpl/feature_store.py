@@ -15,7 +15,7 @@ acessa APIs externas: lê apenas daqui.
 from __future__ import annotations
 
 import math
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 
 from predictor_core import infra
@@ -25,7 +25,15 @@ from GarimpoInvestimentos.dpl.migrations import ADDITIVE_MIGRATIONS
 from GarimpoInvestimentos.dpl.signals import SignalPoint
 
 # Versão do schema da Feature Store (base 0001-0004 + aditivas em dpl/migrations/).
-SCHEMA_VERSION = 6
+SCHEMA_VERSION = 7
+
+# Guard de integridade temporal na INSERÇÃO (auditoria jul/2026) — duas pontas:
+#   published_at <  timestamp            → look-ahead de rotulagem (publicou antes
+#                                          de observar — vazamento na origem);
+#   published_at >  timestamp + este teto → staleness/rotulagem anômala.
+# Teto default folgado (macro BCB mensal publica ~M+1; candles publicam no próprio
+# ts nos providers atuais). Ajustável por instância para domínios de lag maior.
+MAX_PUBLICATION_LAG = timedelta(days=45)
 
 _MIGRATIONS = [
     ("0001_raw_market_data", """
@@ -90,11 +98,27 @@ def _parse(s: str) -> datetime:
 
 
 class FeatureStore:
-    def __init__(self, db_path: Path | str):
+    def __init__(self, db_path: Path | str, *,
+                 max_publication_lag: timedelta = MAX_PUBLICATION_LAG):
         self._conn = infra.connect(db_path)
+        self._max_publication_lag = max_publication_lag
         # Schema base (0001-0004) + migrações aditivas (0005+, em dpl/migrations/).
         # run_migrations é idempotente por nome → seguro para DBs em qualquer versão.
         infra.run_migrations(self._conn, _MIGRATIONS + ADDITIVE_MIGRATIONS)
+
+    def _check_temporal(self, label: str, timestamp: datetime,
+                        published_at: datetime) -> None:
+        """Fail-fast bidirecional (ver MAX_PUBLICATION_LAG). Lança ValueError —
+        dado com carimbo temporal impossível NUNCA entra na store."""
+        if published_at < timestamp:
+            raise ValueError(
+                f"integridade temporal [{label}]: published_at ({published_at}) < "
+                f"timestamp ({timestamp}) — look-ahead de rotulagem na origem")
+        if published_at > timestamp + self._max_publication_lag:
+            raise ValueError(
+                f"integridade temporal [{label}]: published_at ({published_at}) excede "
+                f"timestamp + {self._max_publication_lag} — rotulagem anômala/stale "
+                "(se o lag é legítimo, ajuste max_publication_lag da instância)")
 
     def close(self) -> None:
         self._conn.close()
@@ -109,6 +133,8 @@ class FeatureStore:
 
     def write_raw(self, points: list[MarketDataPoint]) -> int:
         """Upsert idempotente de candles OHLCV. Retorna nº de linhas escritas."""
+        for p in points:
+            self._check_temporal(f"{p.source}/{p.symbol}", p.timestamp, p.published_at)
         rows = [
             (p.source, p.symbol, p.interval, _iso(p.timestamp),
              p.open, p.high, p.low, p.close, p.volume, _iso(p.published_at))
@@ -131,6 +157,8 @@ class FeatureStore:
         """Upsert de sinais. A PK inclui `vintage`, então revisões (mesmo ts, vintage
         distinto) COEXISTEM — base do point-in-time. Sem vintage → '' (ex.: Fear&Greed).
         """
+        for s in signals:
+            self._check_temporal(f"{s.source}/{s.name}", s.timestamp, s.published_at)
         rows = [
             (s.source, s.name, _iso(s.timestamp),
              _iso(s.reference_date) if s.reference_date else None,
@@ -180,9 +208,14 @@ class FeatureStore:
         self._conn.commit()
 
     def write_features(self, symbol: str, interval: str,
-                       rows: list[dict]) -> int:
+                       rows: list[dict], *, feature_version: str = "v1") -> int:
         """Materializa features alinhadas. Cada row: {ts: datetime, <feat>: value}.
         Valores NaN/None viram NULL (serving os reconstrói como NaN).
+
+        `feature_version` (migração 0007): mudar a LÓGICA de cálculo de uma feature
+        exige uma versão nova — versões coexistem na PK, então um backfill com
+        lógica nova nunca sobrescreve o histórico que experimentos passados leram.
+        Reexecutar a MESMA lógica na mesma versão continua sendo upsert idempotente.
         """
         flat = []
         for row in rows:
@@ -192,11 +225,11 @@ class FeatureStore:
                     continue
                 if val is None or (isinstance(val, float) and math.isnan(val)):
                     val = None
-                flat.append((symbol, interval, ts, feat, val))
+                flat.append((symbol, interval, ts, feat, val, feature_version))
         self._conn.executemany(
-            """INSERT INTO features_aligned (symbol, interval, ts, feature, value)
-               VALUES (?,?,?,?,?)
-               ON CONFLICT(symbol, interval, ts, feature) DO UPDATE SET
+            """INSERT INTO features_aligned (symbol, interval, ts, feature, value, feature_version)
+               VALUES (?,?,?,?,?,?)
+               ON CONFLICT(symbol, interval, ts, feature, feature_version) DO UPDATE SET
                  value=excluded.value""",
             flat,
         )
@@ -223,14 +256,16 @@ class FeatureStore:
             for r in self._conn.execute(sql, params)
         ]
 
-    def read_features(self, symbol: str, interval: str) -> list[dict]:
+    def read_features(self, symbol: str, interval: str, *,
+                      feature_version: str = "v1") -> list[dict]:
         """Retorna a matriz alinhada em formato LARGO, ordenada por ts.
         NULL volta como float('nan'). Cada dict: {ts, <feature>: value, ...}.
+        Lê UMA versão de features (default 'v1') — experimentos fixam a sua.
         """
         cur = self._conn.execute(
             """SELECT ts, feature, value FROM features_aligned
-               WHERE symbol=? AND interval=? ORDER BY ts""",
-            (symbol, interval),
+               WHERE symbol=? AND interval=? AND feature_version=? ORDER BY ts""",
+            (symbol, interval, feature_version),
         )
         wide: dict[str, dict] = {}
         for r in cur:

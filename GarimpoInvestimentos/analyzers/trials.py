@@ -42,11 +42,66 @@ def load_trials(path: Path | None = None) -> list[dict]:
     return json.loads(p.read_text(encoding="utf-8"))
 
 
+def validate_trials(trials: list[dict]) -> list[str]:
+    """Schema formal do registro (Experiment Registry). Retorna a lista de
+    violações (vazia = conforme). A suíte falha se trials.json não conformar —
+    o registro só protege o DSR se todo campo for interpretável.
+
+    Obrigatórios: name (str não-vazio, sem espaços — identidade), registered_at
+    (ISO-8601 UTC 'Z'), params (dict NÃO-vazio — a configuração exata), sharpe
+    (None ou número finito, unidade por-período), notes (str).
+    Opcionais tipados: features_used (list[str]), train_period/test_period
+    ([início, fim] ISO-8601).
+    """
+    errs: list[str] = []
+    seen: set[str] = set()
+    for i, t in enumerate(trials):
+        tag = f"trial[{i}]"
+        name = t.get("name")
+        if not isinstance(name, str) or not name or " " in name:
+            errs.append(f"{tag}: name inválido ({name!r}) — str não-vazia sem espaços")
+        elif name in seen:
+            errs.append(f"{tag}: name duplicado ({name!r}) — identidade precisa ser única")
+        else:
+            seen.add(name)
+            tag = f"trial[{name}]"
+        ra = t.get("registered_at", "")
+        try:
+            datetime.strptime(ra, "%Y-%m-%dT%H:%M:%SZ")
+        except (TypeError, ValueError):
+            errs.append(f"{tag}: registered_at inválido ({ra!r}) — use ISO-8601 UTC 'Z'")
+        params = t.get("params")
+        if not isinstance(params, dict) or not params:
+            errs.append(f"{tag}: params precisa ser dict NÃO-vazio (a configuração exata "
+                        "é o que permite ao DSR distinguir tentativas)")
+        sharpe = t.get("sharpe")
+        if sharpe is not None and not (isinstance(sharpe, (int, float))
+                                       and math.isfinite(sharpe)):
+            errs.append(f"{tag}: sharpe inválido ({sharpe!r}) — None ou número finito")
+        if not isinstance(t.get("notes", ""), str):
+            errs.append(f"{tag}: notes precisa ser str")
+        for key in ("train_period", "test_period"):
+            per = t.get(key)
+            if per is not None and not (isinstance(per, list) and len(per) == 2
+                                        and all(isinstance(x, str) for x in per)):
+                errs.append(f"{tag}: {key} inválido — [início, fim] ISO-8601")
+        fu = t.get("features_used")
+        if fu is not None and not (isinstance(fu, list)
+                                   and all(isinstance(x, str) for x in fu)):
+            errs.append(f"{tag}: features_used inválido — list[str]")
+    return errs
+
+
 def register_trial(name: str, *, params: dict, sharpe: float | None = None,
-                   notes: str = "", path: Path | None = None) -> list[dict]:
-    """Registra (ou atualiza) uma tentativa. `name` é a identidade da CONFIGURAÇÃO:
-    reexecutar a mesma configuração não é tentativa nova — atualiza a existente.
-    Retorna a lista completa após a escrita."""
+                   notes: str = "", path: Path | None = None, **extra) -> list[dict]:
+    """Registra (ou atualiza) uma tentativa. `name` é a identidade da CONFIGURAÇÃO.
+
+    Governança de identidade (jul/2026): reexecutar a MESMA configuração atualiza
+    a entrada (sharpe/notes); tentar "atualizar" uma trial existente com `params`
+    DIFERENTES é erro — variação de hiperparâmetro é tentativa NOVA (N+1), e
+    escondê-la num update fabricaria significância que o DSR não desconta.
+    `extra` aceita os campos opcionais do schema (features_used, train_period,
+    test_period). Valida o schema antes de gravar. Retorna a lista completa."""
     p = Path(path or TRIALS_PATH)
     trials = load_trials(p)
     entry = {
@@ -55,14 +110,23 @@ def register_trial(name: str, *, params: dict, sharpe: float | None = None,
         "params": params,
         "sharpe": sharpe,
         "notes": notes,
+        **extra,
     }
     for i, t in enumerate(trials):
         if t.get("name") == name:
+            if t.get("params") != params:
+                raise ValueError(
+                    f"trial '{name}' já existe com params DIFERENTES — variação de "
+                    "configuração é tentativa nova: registre com um name novo (N+1). "
+                    f"registrado={t.get('params')!r} vs proposto={params!r}")
             entry["registered_at"] = t.get("registered_at", entry["registered_at"])
             trials[i] = entry
             break
     else:
         trials.append(entry)
+    errs = validate_trials(trials)
+    if errs:
+        raise ValueError("registro violaria o schema de trials: " + "; ".join(errs))
     p.write_text(json.dumps(trials, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     return trials
 
