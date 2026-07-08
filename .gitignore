@@ -32,6 +32,10 @@ Thumbs.db
 
 # telemetria local (predictor_core.obs) — artefato de runtime, nunca versionar
 events.jsonl
-# dados brutos de mercado (regeneraveis por ingestao) e telemetria local
-data/
+# dados brutos de mercado (regeneraveis por ingestao) e telemetria local.
+# ATENCAO: ancorado em '/data/' de proposito — o padrao nao-ancorado 'data/'
+# ignorava silenciosamente o PACOTE vendor/predictor_core/data/ (codigo),
+# quebrando qualquer clone fresco (22 erros de colecao na suite).
+/data/
+GarimpoInvestimentos/data/
 tests/_events_test.jsonl
