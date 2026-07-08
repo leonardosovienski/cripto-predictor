@@ -1,8 +1,11 @@
-"""Backtesting de performance das previsões (Fase 2 — esqueleto).
+"""Backtesting de performance das previsões.
 
-Lê o histórico (`output/garimpo_historico.csv`), e para cada previsão busca o
+Lê o histórico OFICIAL (Feature Store, tabela `predictions` — o CSV legado é
+absorvido de forma idempotente se existir), e para cada previsão busca o
 preço real do ativo em D+1, D+7 e D+30 via CoinGecko, calcula a variação
-percentual e a correlação de Spearman entre o `Score` do Gemini e a variação.
+percentual e a correlação de Spearman entre o `Score` do LLM e a variação,
+com IC95% (block bootstrap), estratificação por divergência e por Fonte,
+e DSR contra as tentativas registradas em trials.json.
 
 LIMITAÇÃO IMPORTANTE: o valor preditivo só amadurece com o tempo. Uma previsão
 feita hoje só terá preço em D+7 daqui a 7 dias. Logo, este módulo só produz

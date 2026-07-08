@@ -9,6 +9,12 @@ Estado: **Fase 1 + CLI + notícias + backtesting + sinal calibrado + indicadores
 > foi preservado como registro do que aconteceu, não reescrito. Falhas silenciosas
 > (`except Exception`) foram instrumentadas e a Fase-1 passou a emitir o sinal via
 > `predictor_core.obs.emit_event` (paridade de telemetria com o V3).
+>
+> **ERRATA (jul/2026):** o rename `core/`→`store/` foi DESFEITO na reconciliação
+> com o histórico antigo do GitHub (merge `a3404ce`) — a árvore atual usa
+> **`GarimpoInvestimentos/core/`** de novo. A colisão temida era com
+> `predictor_core` (nomes distintos, sem conflito de import real). Referências a
+> `store/X.py` abaixo correspondem hoje a `core/X.py`.
 
 ---
 
