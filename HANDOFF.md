@@ -1,6 +1,6 @@
 # HANDOFF — GarimpoInvestimentos (Fase 1 + melhorias)
 
-Data: 2026-06-14 (última rodada: 2026-06-25 — V3 Crypto-Predictor)
+Data: 2026-06-14 (última rodada: 2026-07-07 — Auditoria + Experiment Registry)
 Estado: **Fase 1 + CLI + notícias + backtesting + sinal calibrado + indicadores técnicos + LLM multi-provedor + métricas + retry/backoff + agendamento diário + V3 (edge mecânico: funding/OI/HMM).**
 
 > **NOTA (jun/2026 — Red Team):** o pacote `core/` foi **renomeado para `store/`**
@@ -15,6 +15,48 @@ Estado: **Fase 1 + CLI + notícias + backtesting + sinal calibrado + indicadores
 > **`GarimpoInvestimentos/core/`** de novo. A colisão temida era com
 > `predictor_core` (nomes distintos, sem conflito de import real). Referências a
 > `store/X.py` abaixo correspondem hoje a `core/X.py`.
+
+---
+
+## ⭐ Rodada 2026-07-07 — Auditoria + Experiment Registry + qualidade de medição
+
+**Bug CRÍTICO corrigido:** a regra não-ancorada `data/` no `.gitignore` engolia o
+pacote `vendor/predictor_core/data/` (o commit `20128f6` referenciava a camada,
+mas ela nunca entrou no git) — **qualquer clone fresco quebrava com 22 erros de
+coleta**; a suíte só passava na máquina do dono (arquivos presentes, untracked).
+Corrigido (`/data/` ancorado + camada commitada do canônico, hashes batem com o
+CORE_MANIFEST) e blindado: `tests/test_repo_hygiene.py` falha se qualquer `.py`
+de código estiver gitignorado ou se arquivo do manifesto estiver untracked.
+Prova: clone limpo → suíte verde.
+
+**Experiment Registry (governança do DSR):** schema formal do `trials.json`
+(`validate_trials`, validado pela suíte contra o arquivo real); mudar `params`
+de trial existente é ERRO — variação de configuração é tentativa NOVA (N+1);
+`close_trial_sharpes` no backtest grava o Sharpe por-trade automaticamente
+quando um estrato de Fonte casa com uma trial e tem n≥3 sinais fortes maduros
+(nunca cria trial — pré-registro segue humano).
+
+**Feature Store (schema 6→8):** guard temporal bidirecional na inserção
+(`published_at < ts` = look-ahead de rotulagem; `> ts+45d` = anomalia; segunda
+cinta — o contrato já barrava o limite inferior); migração **0007**
+`feature_version` na PK de `features_aligned` (lógica nova escreve ao lado,
+nunca por cima; histórico = 'v1'); migração **0008** `input_degradado` nas
+predictions (NULL p/ legado — nunca reinterpretar o passado).
+
+**Qualidade de medição:** backtest mede o preço realizado OFFLINE-FIRST
+(`close_on` na store, preferindo a família de fontes da previsão; CoinGecko só
+como fallback; coluna `medida_d*` carimba a régua); estratificação por input
+degradado no relatório; `series_quality` na ingestão (gaps + saltos >30% viram
+`data.quality_warning` + aviso no console, sem bloquear); previsões carimbadas
+em **UTC** (`utc_stamp`; pré-2026-07-07 são BRT, skew ≤3h documentado).
+
+**Backlog condicional B1–B8** em docs/HYPOTHESES.md (triagem de propostas
+externas; nada consome tentativa; ativação típica: pós-veredicto H4).
+
+Suíte: **201 → 241 verdes** (+40 testes). Nenhuma dependência nova. Auditoria
+externa (LLM sem ler o código) foi triada: achados factualmente errados
+descartados e documentados; Prefect/Docker/L2/Regime-Shift rejeitados por
+complexidade sem benefício.
 
 ---
 
