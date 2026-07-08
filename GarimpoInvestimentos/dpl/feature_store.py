@@ -25,7 +25,7 @@ from GarimpoInvestimentos.dpl.migrations import ADDITIVE_MIGRATIONS
 from GarimpoInvestimentos.dpl.signals import SignalPoint
 
 # Versão do schema da Feature Store (base 0001-0004 + aditivas em dpl/migrations/).
-SCHEMA_VERSION = 7
+SCHEMA_VERSION = 8
 
 # Guard de integridade temporal na INSERÇÃO (auditoria jul/2026) — duas pontas:
 #   published_at <  timestamp            → look-ahead de rotulagem (publicou antes
@@ -285,21 +285,25 @@ class FeatureStore:
     # --- Histórico oficial de previsões (passo 4 — aposenta o CSV) -----------
 
     PREDICTION_FIELDS = ("ativo", "ts", "score", "sentimento", "resumo",
-                         "price_usd", "juiz", "divergencia", "fonte")
+                         "price_usd", "juiz", "divergencia", "fonte",
+                         "input_degradado")
 
     def write_predictions(self, rows: list[dict]) -> int:
         """Upsert de previsões. PK (ativo, ts): reexecução/cache hit não infla o n
-        do backtest (mesma semântica do dedup do CSV legado)."""
+        do backtest (mesma semântica do dedup do CSV legado).
+        `input_degradado` (0008): 1 = LLM pontuou com input empobrecido; 0 =
+        completo; NULL = linha pré-flag (legado) — o backtest estratifica."""
         data = [tuple(r.get(f) for f in self.PREDICTION_FIELDS) for r in rows]
         self._conn.executemany(
             """INSERT INTO predictions
-               (ativo, ts, score, sentimento, resumo, price_usd, juiz, divergencia, fonte)
-               VALUES (?,?,?,?,?,?,?,?,?)
+               (ativo, ts, score, sentimento, resumo, price_usd, juiz, divergencia,
+                fonte, input_degradado)
+               VALUES (?,?,?,?,?,?,?,?,?,?)
                ON CONFLICT(ativo, ts) DO UPDATE SET
                  score=excluded.score, sentimento=excluded.sentimento,
                  resumo=excluded.resumo, price_usd=excluded.price_usd,
                  juiz=excluded.juiz, divergencia=excluded.divergencia,
-                 fonte=excluded.fonte""",
+                 fonte=excluded.fonte, input_degradado=excluded.input_degradado""",
             data,
         )
         self._conn.commit()
@@ -320,6 +324,29 @@ class FeatureStore:
             (interval,),
         )
         return [r["symbol"] for r in cur]
+
+    def close_on(self, symbol: str, interval: str, day: datetime, *,
+                 prefer_consensus: bool = False) -> tuple[float, str] | None:
+        """Fecho do candle bruto do DIA (YYYY-MM-DD) — régua OFFLINE do backtest.
+
+        Motivação (auditoria jul/2026): medir o retorno realizado numa fonte
+        diferente da que gerou a previsão adiciona ruído (a equivalência mediu
+        até 7.8pp de diff entre fontes). Se múltiplas fontes têm o dia, prefere
+        a que casa com a política da previsão (consenso ou provider único).
+        Retorna (close, source) ou None se a store não tem o dia."""
+        cur = self._conn.execute(
+            """SELECT close, source FROM raw_market_data
+               WHERE symbol=? AND interval=? AND substr(ts,1,10)=?""",
+            (symbol, interval, day.strftime("%Y-%m-%d")),
+        )
+        rows = [(r["close"], r["source"]) for r in cur]
+        if not rows:
+            return None
+        # candidatas que casam com a política primeiro; empate → ordem alfabética
+        # de source (determinístico entre execuções).
+        rows.sort(key=lambda cs: (cs[1].startswith("consensus") != prefer_consensus,
+                                  cs[1]))
+        return rows[0]
 
     def latest_source(self, symbol: str, interval: str = "1d") -> str | None:
         """`source` do candle bruto mais recente do símbolo — insumo do carimbo

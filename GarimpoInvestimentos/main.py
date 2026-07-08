@@ -1,7 +1,6 @@
 import argparse
 import asyncio
 import os
-from datetime import datetime
 
 # (O guard de UTF-8 no stdout/stderr para Windows fica em GarimpoInvestimentos/__init__.py,
 #  cobrindo qualquer entry-point do pacote.)
@@ -24,7 +23,7 @@ from GarimpoInvestimentos.config import settings
 from GarimpoInvestimentos.output.reporter import export_results
 from GarimpoInvestimentos.core.logger import log_start, log_success, log_error
 from GarimpoInvestimentos.core.cache import load_cache, save_cache
-from GarimpoInvestimentos.core.history import append_history, migrate_csv_to_store
+from GarimpoInvestimentos.core.history import append_history, migrate_csv_to_store, utc_stamp
 from GarimpoInvestimentos.core.paths import FEATURE_STORE_DB
 from GarimpoInvestimentos.dpl import CryptoDataProvider, FeatureStore
 from GarimpoInvestimentos.dpl.feature_store import fonte_label
@@ -245,7 +244,10 @@ async def run():
                 "sentimento": analysis["sentiment"],
                 "score": score,
                 "resumo": analysis["summary"],
-                "data": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                # UTC (convenção jul/2026 — ver history.utc_stamp): o backtest
+                # compara maturação contra "hoje" UTC; carimbar em local criava
+                # ambiguidade de até 3h.
+                "data": utc_stamp(),
                 "price_usd": hard_data.get("price_usd", 0),
                 "judge": judge_signature(),
                 # cross-check flag-only: tagueia contradição LLM-vs-técnico, NÃO muta o score
@@ -253,6 +255,9 @@ async def run():
                 # carimbo Fonte (ADR merge D2): política de dados desta previsão —
                 # o backtest estratifica por ele (trocar fonte = quebra de série).
                 "data_source": fonte_label(store.latest_source(ativo, "1d")),
+                # 0008: persistido na previsão (antes só ia à telemetria) — o
+                # backtest estratifica previsões com input empobrecido.
+                "input_degradado": 1 if faltando else 0,
             }
             resultados.append(resultado)
             cache[ativo] = resultado

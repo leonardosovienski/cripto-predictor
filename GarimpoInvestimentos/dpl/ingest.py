@@ -10,6 +10,7 @@ import hashlib
 from datetime import datetime, timedelta, timezone
 
 import predictor_core
+from predictor_core.data.quality import detect_jumps
 from predictor_core.obs import emit_event
 
 from GarimpoInvestimentos.dpl.alignment import AlignmentEngine
@@ -22,6 +23,27 @@ from GarimpoInvestimentos.dpl.signals import SignalProvider
 # domínio cripto — mas continua INJETÁVEL para o futuro ingest genérico não herdar a
 # atribuição errada (mesma regra Core↔Domínio dos routers).
 _DEFAULT_DOMAIN = "previsao_cripto"
+
+# |retorno overnight| acima disso é candle suspeito (erro de fonte — cripto não tem
+# split). Calibrado folgado: quedas de 30%+ em 24h existem em cripto, mas são raras
+# o bastante para merecerem um aviso; o dado NÃO é bloqueado, só sinalizado.
+JUMP_THRESHOLD = 0.30
+
+
+def series_quality(points, interval: str = "1d") -> dict:
+    """Qualidade da série OHLCV ingerida: gaps (dias faltantes entre o primeiro e o
+    último candle) e saltos overnight anômalos (predictor_core.data.quality).
+
+    Um candle faltando vira change_7d errado, que vira score errado — em silêncio.
+    Puro (sem rede/banco): a ingestão emite o resultado como telemetria."""
+    pts = sorted(points, key=lambda p: p.timestamp)
+    n_gaps = 0
+    if interval == "1d" and len(pts) >= 2:
+        expected = (pts[-1].timestamp - pts[0].timestamp).days + 1
+        n_gaps = max(0, expected - len(pts))
+    jumps = detect_jumps([p.timestamp.date() for p in pts],
+                         [p.close for p in pts], JUMP_THRESHOLD)
+    return {"n_gaps": n_gaps, "jumps": jumps}
 
 
 async def ingest_crypto(
@@ -58,6 +80,21 @@ async def ingest_crypto(
                metrics={"n_candles": len(points)},
                metadata={"symbol": symbol, "interval": interval,
                          "source": points[0].source, "content_hash": content_hash})
+
+    # Qualidade da série (jul/2026): gap/salto entra na store do mesmo jeito (não
+    # bloqueia — pode ser movimento real), mas NUNCA em silêncio: telemetria + console.
+    q = series_quality(points, interval)
+    if q["n_gaps"] or q["jumps"]:
+        emit_event(domain, "data.quality_warning",
+                   metrics={"n_gaps": q["n_gaps"], "n_jumps": len(q["jumps"])},
+                   metadata={"symbol": symbol, "interval": interval,
+                             "jumps": [(str(d), round(r, 4)) for d, r in q["jumps"]]})
+        avisos = []
+        if q["n_gaps"]:
+            avisos.append(f"{q['n_gaps']} dia(s) faltando na série")
+        if q["jumps"]:
+            avisos.append(f"{len(q['jumps'])} salto(s) overnight >{JUMP_THRESHOLD:.0%}")
+        print(f"  ⚠️  {symbol.upper()}: {'; '.join(avisos)} — ver events.jsonl")
 
     signals: dict[str, list] = {}
     for sp in (signal_providers or []):

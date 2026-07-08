@@ -55,7 +55,7 @@ GarimpoInvestimentos/
 ├── core/                  ← paths, cache, history (store-first), logger
 ├── output/reporter.py     ← exportação CSV/XLSX
 └── trials.json            ← registro VERSIONADO de tentativas (denominador do DSR)
-tests/                     ← 229 testes (offline, sem chaves)
+tests/                     ← 241 testes (offline, sem chaves)
 docs/                      ← ADRs e auditorias (ver HANDOFF)
 vendor/predictor_core/     ← núcleo estatístico vendorizado (NÃO editar local)
 ```
@@ -66,7 +66,7 @@ Pré-requisitos: Python **3.13+** (suíte validada em 3.13.14 e 3.14.6).
 
 ```powershell
 # testes (offline, sem chaves — Python do sistema):
-py -3.14 -m pytest tests/ -q          # 229 verdes
+py -3.14 -m pytest tests/ -q          # 241 verdes
 
 # caminho AO VIVO: venv + chaves reais
 py -3.13 -m venv GarimpoInvestimentos\env

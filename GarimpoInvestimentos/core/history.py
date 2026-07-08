@@ -13,10 +13,21 @@ mediu diffs de até 7.8pp nos change_* entre fontes; o backtest ESTRATIFICA).
 """
 import csv
 import os
+from datetime import datetime, timezone
 
 from GarimpoInvestimentos.core.paths import OUTPUT_DIR
 
 HIST_CSV = str(OUTPUT_DIR / "garimpo_historico.csv")
+
+
+def utc_stamp() -> str:
+    """Timestamp oficial das previsões — UTC, formato do histórico.
+
+    CONVENÇÃO (jul/2026): novas previsões carimbam em UTC; linhas anteriores a
+    2026-07-07 estão em hora LOCAL (BRT, UTC-3) — skew ≤3h na maturação do
+    backtest, inócuo em horizonte de dias, mas registrado aqui para nunca ser
+    reinterpretado em silêncio. O formato não muda (naive, sem sufixo)."""
+    return datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
 
 # Header do CSV legado (leitura de migração; não se escreve mais neste formato).
 LEGACY_FIELDNAMES = ["Ativo", "Sentimento", "Score", "Resumo", "Data",
@@ -37,6 +48,10 @@ def to_prediction_rows(resultados: list[dict]) -> list[dict]:
             "juiz":        r.get("judge", ""),
             "divergencia": 1 if str(r.get("divergencia", "")).strip() in ("1", "True", "true") else 0,
             "fonte":       r.get("data_source", "") or "direct",
+            # 0008: 1 = input empobrecido, 0 = completo. Ausente no dict (fluxos
+            # legados) → None = "não medido", nunca inventar 0.
+            "input_degradado": (None if r.get("input_degradado") is None
+                                else int(bool(r.get("input_degradado")))),
         })
     return rows
 

@@ -60,6 +60,23 @@ async def _price_on(client, coin_id: str, day: datetime) -> float | None:
         return None
 
 
+async def _realized_price(store, client, ativo: str, fonte: str, day: datetime
+                          ) -> tuple[float | None, str | None]:
+    """Preço realizado com régua OFFLINE-FIRST: primeiro a Feature Store (mesma
+    família de fontes da previsão — a equivalência mediu até 7.8pp de diff entre
+    fontes; medir noutra régua adiciona ruído), fallback CoinGecko via rede só
+    quando a store não tem o dia. Retorna (preço, carimbo_da_medição):
+    'store:<source>' | 'coingecko' | None. O sleep de rate limit só acontece
+    quando a rede foi de fato usada."""
+    hit = store.close_on(ativo, "1d", day,
+                         prefer_consensus=(fonte == "dpl:consensus"))
+    if hit:
+        return hit[0], f"store:{hit[1]}"
+    price = await _price_on(client, ativo, day)
+    await asyncio.sleep(1.5)  # respeita o rate limit do free tier (só no caminho de rede)
+    return price, ("coingecko" if price is not None else None)
+
+
 def _load_rows() -> list[dict]:
     """Lê o histórico OFICIAL (Feature Store, tabela predictions — passo 4),
     absorvendo antes o CSV legado se existir (idempotente; fonte vazia → 'direct').
@@ -91,6 +108,9 @@ def _load_rows() -> list[dict]:
             # estratificação obrigatória: a equivalência mediu até 7.8pp de diff
             # nos change_* entre fontes — poolar sem estratificar contamina o n.
             "fonte": (r.get("fonte") or "").strip() or "direct",
+            # 1 = LLM pontuou com input empobrecido; 0 = completo; None = pré-0008
+            # (não medido na época) — o _report estratifica 1 vs 0.
+            "degradado": r.get("input_degradado"),
         })
     return rows
 
@@ -104,22 +124,25 @@ async def run():
     today = datetime.now(timezone.utc).replace(tzinfo=None)
     enriched = []
     async with get_http_client() as client:
-        for row in rows:
-            out = dict(row)
-            for h in HORIZONS:
-                target = row["pred_date"] + timedelta(days=h)
-                if target > today:
-                    out[f"price_d{h}"] = None
-                    out[f"var_d{h}_pct"] = None
-                    continue
-                price = await _price_on(client, row["ativo"], target)
-                out[f"price_d{h}"] = price
-                out[f"var_d{h}_pct"] = (
-                    round((price - row["pred_price"]) / row["pred_price"] * 100, 2)
-                    if price else None
-                )
-                await asyncio.sleep(1.5)  # respeita o rate limit do free tier
-            enriched.append(out)
+        with FeatureStore(FEATURE_STORE_DB) as store:
+            for row in rows:
+                out = dict(row)
+                for h in HORIZONS:
+                    target = row["pred_date"] + timedelta(days=h)
+                    if target > today:
+                        out[f"price_d{h}"] = None
+                        out[f"var_d{h}_pct"] = None
+                        out[f"medida_d{h}"] = None
+                        continue
+                    price, medida = await _realized_price(
+                        store, client, row["ativo"], row["fonte"], target)
+                    out[f"price_d{h}"] = price
+                    out[f"medida_d{h}"] = medida  # régua usada: store:<src> | coingecko
+                    out[f"var_d{h}_pct"] = (
+                        round((price - row["pred_price"]) / row["pred_price"] * 100, 2)
+                        if price else None
+                    )
+                enriched.append(out)
 
     _write(enriched)
     _report(enriched)
@@ -129,7 +152,9 @@ async def run():
 
 def _write(enriched: list[dict]) -> None:
     cols = ["ativo", "score", "pred_date", "pred_price", "fonte",
-            "price_d1", "var_d1_pct", "price_d7", "var_d7_pct", "price_d30", "var_d30_pct"]
+            "price_d1", "var_d1_pct", "medida_d1",
+            "price_d7", "var_d7_pct", "medida_d7",
+            "price_d30", "var_d30_pct", "medida_d30"]
     with open(BACKTEST_CSV, "w", newline="", encoding="utf-8-sig") as f:
         w = csv.DictWriter(f, fieldnames=cols)
         w.writeheader()
@@ -176,6 +201,23 @@ def _report(enriched: list[dict]) -> None:
                     if rs is not None and los is not None:
                         print(f"      └ {label}: Spearman {rs:+.3f} "
                               f"[IC95% {los:+.3f} a {his:+.3f}] (n={len(sub)})")
+            # Estratificação por INPUT DEGRADADO (0008): previsões em que o LLM
+            # pontuou sem indicadores/notícias são população distinta — poolar
+            # esconderia perda de alpha. NULL (pré-flag) fica fora dos estratos.
+            completas = [(r["score"], r[key]) for r in enriched
+                         if r.get(key) is not None and r.get("degradado") == 0]
+            degradadas = [(r["score"], r[key]) for r in enriched
+                          if r.get(key) is not None and r.get("degradado") == 1]
+            if degradadas:
+                for label, sub in (("input completo", completas),
+                                   ("input DEGRADADO", degradadas)):
+                    if len(sub) >= 4:
+                        rs, los, his = spearman_block_ci(sub)
+                        if rs is not None and los is not None:
+                            print(f"      └ {label}: Spearman {rs:+.3f} "
+                                  f"[IC95% {los:+.3f} a {his:+.3f}] (n={len(sub)})")
+                    elif sub:
+                        print(f"      └ {label}: n={len(sub)} (insuficiente p/ IC)")
             # Estratificação por FONTE de dados (obrigatória — equivalência mediu
             # até 7.8pp de diff nos change_* entre fontes; fontes distintas =
             # calibrações distintas do LLM, nunca poolar sem mostrar os estratos).
