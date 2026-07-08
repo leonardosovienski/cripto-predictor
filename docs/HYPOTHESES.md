@@ -56,3 +56,73 @@
 - Critério: Spearman IC95 não cruza zero ("validado") com n ≥ 30 previsões maduras,
   estratificado por Fonte; depois disso, Sharpe líquido por trade + DSR ≥ 0,95.
 - Resultado: (coleta diária em andamento; n=5 previsões, D+7 imaturo)
+
+---
+
+## Backlog condicional (ideias — NÃO são tentativas)
+
+> Registrado em 2026-07-07 (triagem de propostas externas). Nada daqui entra no
+> `trials.json` nem consome tentativa: são candidatos a hipótese futura, com
+> critério de ATIVAÇÃO explícito. Promover um item = escrever um H<N> completo
+> acima (com critério de sucesso ANTES de rodar) + registrar no trials.json.
+> Ordenados por relação benefício/custo estimada na triagem.
+
+### B1 — Calendário macro + DXY como features exógenas
+- Sinal: dummies de evento (FOMC, CPI/PPI — datas conhecidas com antecedência) e
+  série do DXY/juros como contexto de regime.
+- Fonte: CSV estático de calendário (custo ~zero) + `BCBProvider` já existente como
+  precedente de sinal macro com `published_at` correto; DXY via fonte gratuita.
+- Ortogonalidade: choque exógeno — nenhum sinal atual quantifica agenda macro.
+- Ativação: após veredicto da H4 (não misturar mudança de input com trial em curso).
+
+### B2 — Derivativos derivados do que JÁ se coleta (OI/volume, funding contínuo)
+- Sinal: razão OI/volume spot (especulação vs demanda real) e funding como custo de
+  carregamento contínuo (não só extremos); funding consenso multi-exchange via ccxt.
+- Fonte: dados de funding/OI da V3 já ingeridos — só recombinação.
+- Ortogonalidade: parcial (mesma família da H1-H3 refutada) — o aprendizado da H3
+  (sinal de vida curta) LIMITA o desenho: mesma janela, mais convicção, menos trades.
+- Ativação: só com mecanismo causal novo por escrito (recombinar features da família
+  refutada sem tese nova é convite a p-hacking).
+- RESSALVA FACTUAL da triagem: liquidações históricas da Binance NÃO são endpoint
+  público simples (forceOrders exige auth; histórico agregado é de provedores pagos)
+  — o custo de coleta de liquidações é MAIOR que o proposto originalmente.
+
+### B3 — Feature engineering sobre dados existentes (espectro de momentum/vol)
+- Sinal: momentum 3/14/30d, vol EWMA, z-score de volume, correlação rolante com BTC.
+- Fonte: OHLCV já na Feature Store; `feature_version` (migração 0007) permite
+  backfill de versões novas SEM sobrescrever o que experimentos passados leram.
+- Ortogonalidade: baixa-média (deriva de preço/volume) — o ganho é dar espectro ao
+  modelo, não fenômeno novo.
+- Ativação: após veredicto da H4; CADA conjunto de features testado = trial nova
+  (features_used no registro — o schema já suporta).
+
+### B4 — Meta-análise dos NO-GO ("o que as refutadas têm em comum?")
+- Sinal: nenhum — é meta-pesquisa sobre trials.json/HYPOTHESES (não conta tentativa).
+- Custo ~zero; pode rodar a qualquer momento, MAS com n=3 refutadas da MESMA família
+  a resposta hoje é trivial ("custos comem sinais de microestrutura de 24h").
+- Ativação: quando houver ≥2 famílias distintas fechadas (ex.: após veredicto da H4).
+
+### B5 — Sentimento textual como série temporal (separar texto do viés do LLM)
+- Sinal: série diária de sentimento das notícias (léxico/contagem), alinhada por
+  `published_at`, testável como feature independente do score consolidado do LLM.
+- Ortogonalidade: média — permite atribuir o (eventual) alpha da H4 ao texto ou ao LLM.
+- Ativação: só se a H4 validar (se o score consolidado não prevê, decompor ele não
+  tem urgência).
+
+### B6 — Microestrutura de liquidez (spread, profundidade do book)
+- Sinal: spread % médio e profundidade top-10 por snapshot horário → média diária.
+- CORREÇÃO da triagem: o custo NÃO é baixo — exige coletor de alta frequência novo,
+  storage e operação contínua; e sinais de prazo mais curto enfrentam custos de
+  transação PIORES que os que já mataram o sinal de 24h (lição H1-H3).
+- Ativação: só com tese explícita de uso em horizonte ≥ D+1 e orçamento de operação.
+
+### B7 — On-chain (net flow p/ exchanges, Coin Days Destroyed)
+- Ortogonalidade: alta (comportamento de rede, não deriva de preço).
+- Custo: API paga (Glassnode/CoinMetrics) — decisão de ORÇAMENTO, não técnica.
+- Ativação: decisão explícita do dono sobre custo recorrente + hipótese isolada.
+
+### B8 — Modelagem de sobrevivência (tempo até evento de risco, não direção)
+- Sinal: P(drawdown ≥ X% em ≤ T dias) para sizing/gestão de risco.
+- Ativação: SOMENTE se existir edge direcional validado para proteger — gestão de
+  risco de um sinal que não existe é polimento de motor desligado (mesma razão da
+  rejeição do Regime Shift Detector na triagem de jul/2026).
