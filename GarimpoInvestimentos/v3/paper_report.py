@@ -31,6 +31,7 @@ from predictor_core.stats import max_drawdown
 
 from GarimpoInvestimentos.v3.collectors.spot_collector import load_spot_csv
 from GarimpoInvestimentos.v3.feature_builder import build_spot_index
+from GarimpoInvestimentos.v3.timeindex import nearest_value
 
 logger = logging.getLogger(__name__)
 
@@ -62,12 +63,8 @@ def _load_paper_trades(symbol: str) -> list[dict]:
 
 
 def _closest_price(ts_ms: int, spot_index: dict[int, float]) -> float | None:
-    if ts_ms in spot_index:
-        return spot_index[ts_ms]
-    candidates = [t for t in spot_index if abs(t - ts_ms) <= _PRICE_TOLERANCE_MS]
-    if not candidates:
-        return None
-    return spot_index[min(candidates, key=lambda t: abs(t - ts_ms))]
+    """Delegado ao helper único (C5) — antes era a 3ª de 3 cópias da mesma lógica."""
+    return nearest_value(spot_index, ts_ms, _PRICE_TOLERANCE_MS)
 
 
 def _equity_curve(returns: list[float]) -> list[float]:

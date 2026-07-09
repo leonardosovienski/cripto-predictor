@@ -1,6 +1,6 @@
 import csv
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 from openpyxl import Workbook
 from openpyxl.styles import Font, Alignment, PatternFill
 from openpyxl.formatting.rule import CellIsRule
@@ -12,7 +12,9 @@ from GarimpoInvestimentos.core.paths import OUTPUT_DIR
 _log = logging.getLogger("previsao_cripto.reporter")
 
 def export_results(resultados: list[dict]):
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    # UTC como o resto do projeto (C7; previsões são carimbadas em UTC desde
+    # 2026-07-07 — nome de arquivo em hora local criava skew de até 3h no par)
+    timestamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
     csv_filename = str(OUTPUT_DIR / f"garimpo_resultados_{timestamp}.csv")
     xlsx_filename = str(OUTPUT_DIR / f"garimpo_resultados_{timestamp}.xlsx")
 
