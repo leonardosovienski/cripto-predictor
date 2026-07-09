@@ -8,7 +8,7 @@
       "horizonte_dias": 7,
       "input": "LLM + indicadores + noticias (coleta acoplada a rede, pre-DPL)"
     },
-    "sharpe": null,
+    "sharpe": -0.5734,
     "notes": "Configuracao original do Garimpo, avaliada de facto nas coletas de junho/2026. Sharpe por-trade ainda sem n para estimar (aguarda maturacao D+7). Registrada retroativamente na criacao do registro — conta como tentativa."
   },
   {
