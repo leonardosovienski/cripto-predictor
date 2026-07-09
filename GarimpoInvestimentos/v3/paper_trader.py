@@ -39,6 +39,7 @@ from GarimpoInvestimentos.v3.collectors.spot_collector import load_spot_csv
 from GarimpoInvestimentos.v3.feature_builder import build_spot_index
 from GarimpoInvestimentos.v3.pipeline import _spot_path, run_symbol
 from GarimpoInvestimentos.v3.signal_engine import SignalRecord
+from GarimpoInvestimentos.v3.timeindex import nearest_value
 
 logger = logging.getLogger(__name__)
 
@@ -53,13 +54,29 @@ def _paper_path(symbol: str) -> Path:
 
 
 def _ref_price(ts_ms: int, spot_index: dict[int, float]) -> float | None:
-    """Close de spot mais próximo de ts_ms (±5 min). None se não houver."""
-    if ts_ms in spot_index:
-        return spot_index[ts_ms]
-    candidates = [t for t in spot_index if abs(t - ts_ms) <= _PRICE_TOLERANCE_MS]
-    if not candidates:
-        return None
-    return spot_index[min(candidates, key=lambda t: abs(t - ts_ms))]
+    """Close de spot mais próximo de ts_ms (±5 min). None se não houver.
+    Delegado ao helper único (C5) — antes era a 2ª de 3 cópias da mesma lógica."""
+    return nearest_value(spot_index, ts_ms, _PRICE_TOLERANCE_MS)
+
+
+def _already_recorded(symbol: str, timestamp_exchange_ms: int) -> bool:
+    """Idempotência (C4, auditoria 2026-07-09): re-execução no mesmo dia (retry
+    manual pós-falha, agendador disparado 2x) gerava linha duplicada com o MESMO
+    timestamp_exchange_ms — e o paper_report NÃO deduplica: o P&L do trade
+    contava dobrado. O sinal é determinístico por timestamp, então basta checar
+    se o timestamp já está no livro (arquivo é pequeno: 1 linha/dia)."""
+    path = _paper_path(symbol)
+    if not path.exists():
+        return False
+    for line in path.read_text(encoding="utf-8").splitlines():
+        if not line:
+            continue
+        try:
+            if json.loads(line).get("timestamp_exchange_ms") == timestamp_exchange_ms:
+                return True
+        except ValueError:
+            continue
+    return False
 
 
 def _latest_signal(signals: list[SignalRecord]) -> SignalRecord | None:
@@ -148,6 +165,14 @@ async def run_paper(
     latest = _latest_signal(signals)
     if latest is None:
         logger.warning("paper_trader [%s]: nenhum sinal gerado — nada a registrar", symbol)
+        return None
+
+    if _already_recorded(symbol, latest.timestamp_exchange_ms):
+        logger.info(
+            "paper_trader [%s]: sinal ts=%d já registrado no livro — pulando "
+            "(idempotência; re-execução não duplica trade)",
+            symbol, latest.timestamp_exchange_ms,
+        )
         return None
 
     # Preço de referência: close de spot no timestamp do sinal
