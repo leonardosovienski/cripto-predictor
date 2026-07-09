@@ -75,6 +75,7 @@ from GarimpoInvestimentos.v3.feature_builder import (
     build_spot_index,
 )
 from GarimpoInvestimentos.v3.costs import CostModel
+from GarimpoInvestimentos.v3.timeindex import SortedTimeIndex
 from GarimpoInvestimentos.v3.regime_engine import RegimeEngine
 from GarimpoInvestimentos.v3.signal_engine import generate_signal
 
@@ -167,27 +168,18 @@ class KellySweepResult:
 def _find_spot_return(
     ts_ms: int,
     horizon_hours: int,
-    spot_index: dict[int, float],
+    spot_index: "dict[int, float] | SortedTimeIndex",
     tolerance_ms: int = 300_000,
 ) -> float | None:
     """
     Calcula o retorno forward do spot a partir de ts_ms.
     Procura o close em ts_ms e em ts_ms + horizon_hours*3600000.
+    Aceita SortedTimeIndex (O(log n)) ou dict cru (embrulhado na hora).
     """
-    ms_horizon = horizon_hours * 3_600_000
-    target_start = ts_ms
-    target_end = ts_ms + ms_horizon
-
-    def _closest(target: int) -> float | None:
-        if target in spot_index:
-            return spot_index[target]
-        candidates = [t for t in spot_index if abs(t - target) <= tolerance_ms]
-        if not candidates:
-            return None
-        return spot_index[min(candidates, key=lambda t: abs(t - target))]
-
-    close_start = _closest(target_start)
-    close_end = _closest(target_end)
+    if not isinstance(spot_index, SortedTimeIndex):
+        spot_index = SortedTimeIndex(spot_index)
+    close_start = spot_index.nearest(ts_ms, tolerance_ms)
+    close_end = spot_index.nearest(ts_ms + horizon_hours * 3_600_000, tolerance_ms)
 
     if close_start is None or close_end is None or close_start <= 0:
         return None
@@ -252,6 +244,8 @@ def run_wfa(
 
     oi_index = build_oi_index(oi_records)
     spot_index = build_spot_index(kline_records)
+    # índice ordenado UMA vez — o loop OOS consulta milhares de vezes (C5)
+    spot_ti = SortedTimeIndex(spot_index)
 
     funding_times_ms = [r.funding_time_ms for r in funding_records]
     funding_rates = [r.funding_rate for r in funding_records]
@@ -365,7 +359,7 @@ def run_wfa(
         for fv, regime in oos_pairs:
             signal = generate_signal(fv, regime, horizon_hours=horizon_hours)
 
-            fwd = _find_spot_return(fv.timestamp_exchange_ms, horizon_hours, spot_index)
+            fwd = _find_spot_return(fv.timestamp_exchange_ms, horizon_hours, spot_ti)
             if fwd is None:
                 continue
 
@@ -568,6 +562,7 @@ def run_kelly_sweep(
     symbol: str,
     kelly_fractions: list[float],
     slippage_bps: float = _DEFAULT_SLIPPAGE_BPS,
+    taker_fee_bps: float = _DEFAULT_TAKER_FEE_BPS,
     horizon_hours: int = _DEFAULT_HORIZON_HOURS,
     fr_window: int = 90,
 ) -> KellySweepResult:
@@ -588,6 +583,7 @@ def run_kelly_sweep(
         r = run_wfa(
             symbol=symbol,
             slippage_bps=slippage_bps,
+            taker_fee_bps=taker_fee_bps,
             horizon_hours=horizon_hours,
             fr_window=fr_window,
             kelly_fraction=kf,
