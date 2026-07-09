@@ -1,0 +1,6 @@
+{
+  "passed_at": "2026-07-09T20:33:16+00:00",
+  "evaluate": "judge_go_nogo",
+  "edge_verdict": "GO",
+  "note": "juiz GO/NO-GO do backtest_v3 (PSR>=0.80 & IC_lower>0) sobre edge plantado e ruido; seeds 7/8, n=400"
+}

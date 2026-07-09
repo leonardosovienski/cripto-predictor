@@ -64,8 +64,11 @@ def test_sharpes_nulos_ou_infinitos_contam_no_n_mas_nao_na_variancia():
 
 def test_registro_roundtrip_e_dedup_por_nome(tmp_path):
     p = tmp_path / "trials.json"
-    register_trial("cfg-a", params={"h": 7}, sharpe=0.1, path=p)
-    register_trial("cfg-b", params={"h": 30}, path=p)
+    # criação usa bypass explícito da trava de poder (mecânica do registro;
+    # a trava tem testes próprios em test_experiment_registry)
+    register_trial("cfg-a", params={"h": 7}, sharpe=0.1, path=p,
+                   power_attestation=False)
+    register_trial("cfg-b", params={"h": 30}, path=p, power_attestation=False)
     register_trial("cfg-a", params={"h": 7}, sharpe=0.15,
                    notes="reavaliada com mais n", path=p)   # mesma config → atualiza
     trials = load_trials(p)
