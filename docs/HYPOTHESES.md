@@ -26,6 +26,15 @@
 - Critério: PSR ≥ 0,80 ∧ IC_lo(Spearman) > 0 ∧ MaxDD < 20% — **líquido de custos**.
 - Resultado (2026-07-02): **NO-GO.** Bruto +0,44bps/sinal morre em ~0,53bps de custo
   (BTC líquido −0,09bps, PSR 0,445; ETH PSR 0,051). Kelly-invariante.
+- Confirmação independente (2026-07-09, auditoria cruzada): WFA re-rodado na base
+  ESTENDIDA (2021→jul/2026) reproduz o NO-GO por caminho diferente — IC_lower do
+  Spearman **−0,079 (cruza zero) mesmo com os custos da época da homologação**, e o
+  PSR sem sobreposição de janelas (scripts/psr_nonoverlap.py) reprova 0/3 sub-séries.
+  Além de os custos comerem o sinal, o edge bruto NÃO se sustentou no forward
+  2025-26 — o "GO" de jun/2026 (pré-custos, dados até out/2024) está duplamente
+  superado. O juiz tem poder comprovado (controle positivo oficial,
+  scripts/attest_harness.py): o NO-GO é veredito, não cegueira. Implicação
+  registrada no HANDOFF: **não promover a capital real em 28/07**.
 
 ### H2 — Janela curta de funding (fr21) melhora a sensibilidade (status: **refutada**)
 - Data do registro: 2026-07-02 (antes do resultado com custos).
@@ -56,6 +65,10 @@
 - Critério: Spearman IC95 não cruza zero ("validado") com n ≥ 30 previsões maduras,
   estratificado por Fonte; depois disso, Sharpe líquido por trade + DSR ≥ 0,95.
 - Resultado: (coleta diária em andamento; n=5 previsões, D+7 imaturo)
+- Parcial (2026-07-08, fechamento automático do backtest): primeiro Sharpe por-trade
+  maduro da trial 1 = **−0,5734** (n pequeno, estrato único — NÃO é veredicto; o
+  critério pede n ≥ 30). Registrado para que a decisão de continuidade da Fase 1
+  (prazo 28/07, ver HANDOFF) seja tomada olhando o número, não a memória.
 
 ---
 
