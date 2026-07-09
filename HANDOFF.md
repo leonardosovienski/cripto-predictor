@@ -18,6 +18,46 @@ Estado: **Fase 1 + CLI + notícias + backtesting + sinal calibrado + indicadores
 
 ---
 
+## 🔴 Rodada 2026-07-09 — Auditoria cruzada: correções + REFUTAÇÃO do GO do BTC
+
+**Correções (commits 7cd3d58, 1e033c8, c43ce51, 7d6cc07)**: CLI do Kelly sweep
+consertado (TypeError com --taker-fee-bps — regressão do Risco 4, sem teste de
+CLI; agora coberto); idempotência no paper_trader (re-execução duplicava o
+sinal do dia e o paper_report contava dobrado — livro real tinha 2 duplicatas,
+todas FLAT, deduplicado com backup); helper único `v3/timeindex.py` (3 cópias
+de nearest-timestamp viraram bisect O(log n)); reporter em UTC. Suíte 254→266.
+
+**ACHADO MAIOR (C2 → refutação)**: investigando o PSR sobre retornos de 24h
+amostrados a cada 8h (sobreposição infla significância), o WFA foi re-rodado
+na base ATUAL (2021 → jul/2026; a homologação de jun/2026 usou 2021 → out/2024):
+
+| Config | PSR | IC_lower | MaxDD | Veredicto |
+|---|---|---|---|---|
+| Custos completos (fee 10bps + funding), kelly 0.5 | 0.465 | **−0.0794** | 15.56% | **NO-GO** |
+| Custos da época da homologação (slip 5bps) | 0.728 | **−0.0794** | 23.74% | **NO-GO** |
+| PSR sem sobreposição (3 sub-séries 24h) | 0.009 / 0.701 / 0.470 | — | — | 0/3 |
+
+Causa dominante: **extensão da base** — o edge funding/OI não se sustentou no
+forward 2025-26 (IC_lower era +0.0205 em out/2024; virou −0.079 e cruza zero).
+Retorno líquido médio por sinal: **−0.000003** (IC95 cruza zero). Todos os 45
+folds ficam INSUFFICIENT_DATA (<10 sinais ativos). Coerente com o paper
+trading: só FLATs desde 28/06. Reprodução: `python -m ...backtest_v3 --symbol
+BTCUSDT` e `python scripts/psr_nonoverlap.py`.
+
+**Implicação para a decisão de 28/07: NÃO promover a capital real.** O GO de
+junho era específico do regime 2021-24 e anterior ao modelo de custos.
+
+**Decisões de produto PENDENTES (dono)**: (1) destino do V3 — encerrar,
+manter em paper como sonda de regime, ou pesquisar variante; (2) **C6**:
+Fase 1 LLM maturou Sharpe **−0.5734** (trial 1, n pequeno) — decidir
+continuidade até 28/07 e registrar no Experiment Registry.
+
+**Limitação documentada (C3)**: MaxDD do WFA compõe P&L de sinais
+sobrepostos como sequenciais — não é DD de portfólio realizável (nota em
+`_equity_curve`; correção na v2 do backtest, no core).
+
+---
+
 ## ⭐ Rodada 2026-07-07 — Auditoria + Experiment Registry + qualidade de medição
 
 **Bug CRÍTICO corrigido:** a regra não-ancorada `data/` no `.gitignore` engolia o

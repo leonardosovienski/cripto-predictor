@@ -196,6 +196,14 @@ def _equity_curve(returns: list[float]) -> list[float]:
     Converte retornos por-período em curva de equity acumulada (base 1.0).
     predictor_core.max_drawdown ESPERA equity acumulada, não retornos brutos.
     Composição multiplicativa: equity_t = Π (1 + r_i).
+
+    LIMITAÇÃO CONHECIDA (C3, auditoria 2026-07-09): cada retorno é o P&L de
+    um sinal de 24h, mas os sinais saem a cada 8h — até 3 posições coexistem
+    e aqui elas são compostas como se fossem sequenciais. O MaxDD resultante
+    NÃO é o drawdown de um portfólio realizável (exigiria netting das
+    posições simultâneas); direção do erro ambígua. Corrigir na v2 do
+    backtest (plano de convergência: simulação de equity com posições
+    concorrentes no predictor_core.backtest).
     """
     equity: list[float] = []
     acc = 1.0
