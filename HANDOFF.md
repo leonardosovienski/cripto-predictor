@@ -56,6 +56,19 @@ continuidade até 28/07 e registrar no Experiment Registry.
 sobrepostos como sequenciais — não é DD de portfólio realizável (nota em
 `_equity_curve`; correção na v2 do backtest, no core).
 
+**Experiment Registry reconciliado no core (0ace288 + ADR-015, mesma data)**:
+a versão evoluída DAQUI (validate_trials, governança N+1) virou a canônica no
+predictor_core **v1.1.0**; `analyzers/trials.py` virou compat shim (padrão dos
+shims do circuit_breaker). `close_trial_sharpes` permanece aqui (lógica de
+domínio). Novidade: **trava de poder** — criar trial NOVA exige atestado de
+controle positivo; `scripts/attest_harness.py` certifica o juiz GO/NO-GO real
+(PSR≥0.80 ∧ IC_lower>0) contra edge plantado e ruído, e o atestado
+(`GarimpoInvestimentos/trials.harness_attestation.json`) está versionado.
+Corolário: o NO-GO acima é veredito de juiz com poder comprovado, não cegueira.
+Decisão e alternativa rejeitada (flag em memória): docs/ADR-015. Suíte: **269**
+(256 no Python global, 2 skips sem hmmlearn). trials.json com o Sharpe −0.5734
+da trial 1 commitado (0a79ab4); contexto em docs/HYPOTHESES.md (H4).
+
 ---
 
 ## ⭐ Rodada 2026-07-07 — Auditoria + Experiment Registry + qualidade de medição
