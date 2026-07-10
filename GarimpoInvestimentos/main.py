@@ -265,7 +265,12 @@ async def run():
                 "llm_fallback": 1 if analysis.get("llm_fallback") else 0,
             }
             resultados.append(resultado)
-            cache[ativo] = resultado
+            # Fallback NÃO entra no cache: erro transitório do LLM não pode
+            # "valer por 6h" — a reexecução no mesmo dia deve tentar de novo
+            # (a linha fallback persiste no histórico, carimbada, mas o cache
+            # guardá-la impediria a análise real de substituí-la).
+            if not resultado["llm_fallback"]:
+                cache[ativo] = resultado
             log_success(ativo, score)
             if score >= score_threshold:
                 print(f"🏅 {ativo.upper()} está acima do limiar de {score_threshold}.")
