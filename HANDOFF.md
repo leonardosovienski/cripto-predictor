@@ -58,6 +58,17 @@ chaves de TODOS os provedores da partição. ⚠️ ATIVAR = 4 juízes em parale
 encerra a coleta da `v2-dpl-gemini-h7` e exige trial nova — decisão do dono
 (natural na janela de 28/07). Suíte: **270** (teste novo da partição).
 
+**Modo multi ATIVADO (mesma data, decisão do dono)**: `LLM_PROVIDER=multi` no
+.env; trial **`v2-dpl-multi-h7`** registrada (trava de poder validou contra o
+atestado real) e hipótese **H5** pré-registrada em docs/HYPOTHESES.md ANTES de
+qualquer resultado. A `v2-dpl-gemini-h7` foi ENCERRADA com n=5 (imatura, sem
+veredicto — nota de encerramento no registry); razão: risco iminente de estouro
+da cota free-tier do Gemini (22 ativos vs ~20/dia) — interrupção planejada >
+dias perdidos por 429. As 5 previsões antigas ficam no histórico com o carimbo
+gemini e não se misturam à série nova (juiz por-ativo). DSR desconta a
+tentativa adicional — governança funcionando como desenhada. Sanity pós-switch:
+settings carrega (P0 exige as 4 chaves), carimbo por-ativo correto, suíte 270.
+
 **INCIDENTE OPS-1 — GarimpoV3Daily não rodou em 09-10/07**: último resultado
 `0x800710E0` ("operador/administrador recusou"), causa: tarefa "Interativo
 apenas" + bloqueio de bateria — máquina bloqueada/sem sessão no horário. Sem

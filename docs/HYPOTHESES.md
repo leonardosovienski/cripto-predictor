@@ -57,7 +57,7 @@
   qualquer variação futura desta família deve ir na direção OPOSTA (mais convicção e
   menos trades no MESMO horizonte, não horizontes maiores).
 
-### H4 — Score do LLM prevê retorno D+7 (status: **rodando — coleta**)
+### H4 — Score do LLM prevê retorno D+7 (status: **encerrada sem veredicto — coleta interrompida**)
 - Data do registro: formalização em 2026-07-02 (hipótese original do projeto).
 - Hipótese: LLM sobre indicadores + notícias produz score com correlação positiva com
   o retorno de 7 dias, no universo do discovery (condicional à pré-seleção momentum).
@@ -69,6 +69,26 @@
   maduro da trial 1 = **−0,5734** (n pequeno, estrato único — NÃO é veredicto; o
   critério pede n ≥ 30). Registrado para que a decisão de continuidade da Fase 1
   (prazo 28/07, ver HANDOFF) seja tomada olhando o número, não a memória.
+- Encerramento (2026-07-10, decisão do dono): coleta interrompida com **n=5**
+  (imaturo — sem veredicto estatístico) para migrar ao modo multi-provedor
+  (risco iminente de estouro da cota do Gemini: 22 ativos vs ~20/dia do free
+  tier; estourar a cota = dias de coleta perdidos sem querer). Substituída pela
+  H5/`v2-dpl-multi-h7`. As 5 previsões coletadas permanecem no histórico,
+  carimbadas com o juiz gemini — não se misturam com a série nova.
+
+### H5 — Score do LLM prevê retorno D+7, partição multi-provedor (status: **rodando — coleta**)
+- Data do registro: 2026-07-10 (ANTES de qualquer resultado do modo multi).
+- Hipótese: a mesma da H4 (LLM sobre indicadores + notícias produz score com
+  correlação positiva com o retorno D+7), agora com os ativos particionados de
+  forma FIXA e determinística entre 4 juízes (gemini/groq/cerebras/mistral,
+  sha256 do nome mod 4) — cada ativo tem sempre o mesmo juiz, e o carimbo
+  `judge` por previsão permite estratificar por juiz na análise.
+- Configuração: `v2-dpl-multi-h7`.
+- Critério de sucesso (definido ANTES): idêntico ao da H4 — Spearman IC95 não
+  cruza zero com n ≥ 30 previsões maduras, estratificado por Fonte (e agora
+  também reportado por juiz); depois, Sharpe líquido por trade + DSR ≥ 0,95.
+  Um juiz individual só é julgado com n ≥ 30 no SEU estrato.
+- Resultado: (coleta iniciada em 2026-07-10)
 
 ---
 
