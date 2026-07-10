@@ -1,10 +1,13 @@
-"""Análise via LLM, agnóstica de provedor (Gemini ou OpenAI).
+"""Análise via LLM, agnóstica de provedor (Gemini, OpenAI e OpenAI-compatíveis).
 
 O provedor é escolhido em `settings.LLM_PROVIDER`. Clientes são construídos de forma
-preguiçosa para não exigir a chave do provedor que não está em uso.
+preguiçosa para não exigir a chave do provedor que não está em uso. Groq, Cerebras e
+Mistral falam a API da OpenAI (só muda o base_url) — reutilizam o MESMO cliente/retry,
+sem dependência nova.
 
 ⚠️ Para o backtesting ser válido, NÃO misture provedores na mesma janela de coleta —
 um histórico meio-Gemini, meio-OpenAI mistura dois "juízes" com calibrações diferentes.
+O carimbo judge_signature() muda com o provedor: trocar = trial NOVA no registry.
 """
 import asyncio
 import hashlib
@@ -17,7 +20,16 @@ from GarimpoInvestimentos.config import settings
 _log = logging.getLogger("previsao_cripto.ai_insights")
 
 _gemini_client = None
-_openai_client = None
+_openai_clients: dict = {}
+
+# Provedores que falam a API da OpenAI: provider -> (base_url, attr da chave, attr do modelo).
+# base_url None = api.openai.com (default do SDK).
+_OPENAI_COMPAT = {
+    "openai": (None, "OPENAI_API_KEY", "OPENAI_MODEL"),
+    "groq": ("https://api.groq.com/openai/v1", "GROQ_API_KEY", "GROQ_MODEL"),
+    "cerebras": ("https://api.cerebras.ai/v1", "CEREBRAS_API_KEY", "CEREBRAS_MODEL"),
+    "mistral": ("https://api.mistral.ai/v1", "MISTRAL_API_KEY", "MISTRAL_MODEL"),
+}
 
 
 def _get_gemini():
@@ -28,12 +40,13 @@ def _get_gemini():
     return _gemini_client
 
 
-def _get_openai():
-    global _openai_client
-    if _openai_client is None:
+def _get_openai(provider: str = "openai"):
+    if provider not in _openai_clients:
         from openai import OpenAI
-        _openai_client = OpenAI(api_key=settings.OPENAI_API_KEY)
-    return _openai_client
+        base_url, key_attr, _ = _OPENAI_COMPAT[provider]
+        _openai_clients[provider] = OpenAI(
+            api_key=getattr(settings, key_attr), base_url=base_url)
+    return _openai_clients[provider]
 
 
 def _build_prompt(asset_name: str, hard_data: dict, news_snippets: list[str]) -> str:
@@ -75,7 +88,8 @@ def judge_signature() -> str:
     misturaria dois 'juízes' de calibrações diferentes no mesmo histórico — e o
     backtest os trataria como um só estimador, poolando o que não deveria.
     """
-    model = settings.OPENAI_MODEL if settings.LLM_PROVIDER == "openai" else settings.GEMINI_MODEL
+    compat = _OPENAI_COMPAT.get(settings.LLM_PROVIDER)
+    model = getattr(settings, compat[2]) if compat else settings.GEMINI_MODEL
     return f"{settings.LLM_PROVIDER}:{model}:{_PROMPT_HASH}"
 
 
@@ -190,13 +204,14 @@ async def _call_gemini(prompt: str) -> str:
     return await _run_with_llm_retry(_invoke)
 
 
-async def _call_openai(prompt: str) -> str:
-    client = _get_openai()
+async def _call_openai(prompt: str, provider: str = "openai") -> str:
+    client = _get_openai(provider)
+    model = getattr(settings, _OPENAI_COMPAT[provider][2])
 
     async def _invoke() -> str:
         response = await asyncio.to_thread(
             lambda: client.chat.completions.create(
-                model=settings.OPENAI_MODEL,
+                model=model,
                 messages=[{"role": "user", "content": prompt}],
                 temperature=0.2,
                 response_format={"type": "json_object"},
@@ -210,8 +225,8 @@ async def _call_openai(prompt: str) -> str:
 async def analyze_asset(asset_name: str, hard_data: dict, news_snippets: list[str]):
     prompt = _build_prompt(asset_name, hard_data, news_snippets)
     try:
-        if settings.LLM_PROVIDER == "openai":
-            text = await _call_openai(prompt)
+        if settings.LLM_PROVIDER in _OPENAI_COMPAT:
+            text = await _call_openai(prompt, settings.LLM_PROVIDER)
         else:
             text = await _call_gemini(prompt)
 

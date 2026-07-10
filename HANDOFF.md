@@ -36,6 +36,17 @@ refutação: o juiz principal é o Spearman (imune à sobreposição), cujo IC_l
 segue **−0.0794** (cruza zero); o PSR não-sobreposto é teste de robustez
 auxiliar. Implicação de 28/07 inalterada: **não promover a capital real**.
 
+**Provedores LLM free-tier adicionados (mesma data, pedido do dono — custo do
+Gemini)**: `ai_insights.py`/`config.py` ganharam Groq, Cerebras e Mistral via
+rota OpenAI-compatível (mesmo SDK `openai` já instalado, só muda `base_url` —
+**zero dependência nova**). Smoke test real 3/3 OK (groq:llama-3.3-70b-versatile,
+cerebras:gpt-oss-120b, mistral:mistral-small-latest); chaves no `.env`
+(gitignorado). **NADA foi trocado**: `LLM_PROVIDER` segue `gemini` — trocar
+provedor = juiz novo (judge_signature muda) = trial NOVA no registry, decisão
+que pertence à janela de 28/07. Diagnóstico do custo: a lista DEFAULT_ASSETS
+tem 22 ativos vs teto de ~20/dia do free tier do Gemini (aviso já existente no
+.env) — o problema é volume, não preço por chamada. Suíte: 269 verdes.
+
 **INCIDENTE OPS-1 — GarimpoV3Daily não rodou em 09-10/07**: último resultado
 `0x800710E0` ("operador/administrador recusou"), causa: tarefa "Interativo
 apenas" + bloqueio de bateria — máquina bloqueada/sem sessão no horário. Sem

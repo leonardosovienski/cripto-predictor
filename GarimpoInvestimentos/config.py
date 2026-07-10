@@ -28,6 +28,15 @@ class Settings:
     GEMINI_MODEL: str = field(default_factory=lambda: os.getenv("GEMINI_MODEL", "gemini-2.5-flash"))
     OPENAI_API_KEY: str = field(default_factory=lambda: os.getenv("OPENAI_API_KEY", ""))
     OPENAI_MODEL: str = field(default_factory=lambda: os.getenv("OPENAI_MODEL", "gpt-4o-mini"))
+    # Provedores OpenAI-compatíveis com free tier (mesma API, base_url distinto).
+    # ⚠️ Trocar de provedor = trocar de JUIZ (judge_signature muda) = trial NOVA no
+    # Experiment Registry. Não misturar na mesma janela de coleta (ver ai_insights).
+    GROQ_API_KEY: str = field(default_factory=lambda: os.getenv("GROQ_API_KEY", ""))
+    GROQ_MODEL: str = field(default_factory=lambda: os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile"))
+    CEREBRAS_API_KEY: str = field(default_factory=lambda: os.getenv("CEREBRAS_API_KEY", ""))
+    CEREBRAS_MODEL: str = field(default_factory=lambda: os.getenv("CEREBRAS_MODEL", "gpt-oss-120b"))
+    MISTRAL_API_KEY: str = field(default_factory=lambda: os.getenv("MISTRAL_API_KEY", ""))
+    MISTRAL_MODEL: str = field(default_factory=lambda: os.getenv("MISTRAL_MODEL", "mistral-small-latest"))
 
     # --- Notícias ---
     SERP_API_KEY: str = field(default_factory=lambda: os.getenv("SERP_API_KEY", ""))
@@ -55,7 +64,13 @@ class Settings:
         # crash imediato, antes de qualquer modelo inicializar. SerpAPI sempre obrigatória;
         # a de LLM depende do provedor. Strings de mentira ('dummy', etc.) também crasham.
         from predictor_core.settings import require_secrets
-        provider_key = "OPENAI_API_KEY" if self.LLM_PROVIDER == "openai" else "GEMINI_API_KEY"
+        provider_keys = {
+            "openai": "OPENAI_API_KEY",
+            "groq": "GROQ_API_KEY",
+            "cerebras": "CEREBRAS_API_KEY",
+            "mistral": "MISTRAL_API_KEY",
+        }
+        provider_key = provider_keys.get(self.LLM_PROVIDER, "GEMINI_API_KEY")
         require_secrets("SERP_API_KEY", provider_key)
 
 
