@@ -80,17 +80,35 @@ _PROMPT_HASH = hashlib.sha256(
     inspect.getsource(_build_prompt).encode("utf-8")).hexdigest()[:12]
 
 
-def judge_signature() -> str:
+def provider_for_asset(asset_name: str) -> str:
+    """Provedor efetivo para um ativo. Em LLM_PROVIDER=multi, partição FIXA e
+    determinística (sha256 do nome mod n): o mesmo ativo cai SEMPRE no mesmo
+    provedor, em qualquer máquina/execução — a série por-ativo mantém um único
+    juiz. Fora do modo multi, devolve o provedor global."""
+    if settings.LLM_PROVIDER != "multi":
+        return settings.LLM_PROVIDER
+    providers = settings.LLM_MULTI_PROVIDERS
+    digest = hashlib.sha256(asset_name.strip().lower().encode("utf-8")).digest()
+    return providers[int.from_bytes(digest[:4], "big") % len(providers)]
+
+
+def judge_signature(asset_name: str | None = None) -> str:
     """Carimbo do juiz para reprodutibilidade: 'provider:modelo:hash-do-prompt'.
 
     Modo B do framework: o LLM é o modelo, então PRECISA ser identificado. Sem este
     carimbo, um upgrade de modelo (gemini-2.5-flash -> próximo) ou um ajuste de prompt
     misturaria dois 'juízes' de calibrações diferentes no mesmo histórico — e o
     backtest os trataria como um só estimador, poolando o que não deveria.
+
+    Em LLM_PROVIDER=multi o juiz é POR ATIVO (partição fixa) — passe asset_name;
+    sem ele, o modo multi levanta ValueError em vez de carimbar um juiz errado.
     """
-    compat = _OPENAI_COMPAT.get(settings.LLM_PROVIDER)
+    provider = provider_for_asset(asset_name) if asset_name is not None else settings.LLM_PROVIDER
+    if provider == "multi":
+        raise ValueError("judge_signature() em modo multi exige asset_name")
+    compat = _OPENAI_COMPAT.get(provider)
     model = getattr(settings, compat[2]) if compat else settings.GEMINI_MODEL
-    return f"{settings.LLM_PROVIDER}:{model}:{_PROMPT_HASH}"
+    return f"{provider}:{model}:{_PROMPT_HASH}"
 
 
 _DAILY_QUOTA_MARKERS = ("perday", "per day", "requestsperday", "generaterequestsperday")
@@ -225,8 +243,9 @@ async def _call_openai(prompt: str, provider: str = "openai") -> str:
 async def analyze_asset(asset_name: str, hard_data: dict, news_snippets: list[str]):
     prompt = _build_prompt(asset_name, hard_data, news_snippets)
     try:
-        if settings.LLM_PROVIDER in _OPENAI_COMPAT:
-            text = await _call_openai(prompt, settings.LLM_PROVIDER)
+        provider = provider_for_asset(asset_name)
+        if provider in _OPENAI_COMPAT:
+            text = await _call_openai(prompt, provider)
         else:
             text = await _call_gemini(prompt)
 

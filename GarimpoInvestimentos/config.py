@@ -37,6 +37,13 @@ class Settings:
     CEREBRAS_MODEL: str = field(default_factory=lambda: os.getenv("CEREBRAS_MODEL", "gpt-oss-120b"))
     MISTRAL_API_KEY: str = field(default_factory=lambda: os.getenv("MISTRAL_API_KEY", ""))
     MISTRAL_MODEL: str = field(default_factory=lambda: os.getenv("MISTRAL_MODEL", "mistral-small-latest"))
+    # LLM_PROVIDER=multi: particiona os ativos entre estes provedores (partição FIXA
+    # e determinística por sha256 do nome — cada ativo tem SEMPRE o mesmo juiz, para
+    # a série por-ativo ser consistente). Divide a carga: 22 ativos / 4 ≈ 5-6
+    # chamadas/dia por provedor, dentro de todos os free tiers.
+    LLM_MULTI_PROVIDERS: list[str] = field(default_factory=lambda: [
+        p.strip().lower() for p in os.getenv(
+            "LLM_MULTI_PROVIDERS", "gemini,groq,cerebras,mistral").split(",") if p.strip()])
 
     # --- Notícias ---
     SERP_API_KEY: str = field(default_factory=lambda: os.getenv("SERP_API_KEY", ""))
@@ -70,8 +77,14 @@ class Settings:
             "cerebras": "CEREBRAS_API_KEY",
             "mistral": "MISTRAL_API_KEY",
         }
-        provider_key = provider_keys.get(self.LLM_PROVIDER, "GEMINI_API_KEY")
-        require_secrets("SERP_API_KEY", provider_key)
+        if self.LLM_PROVIDER == "multi":
+            # Modo multi exige a chave de TODOS os provedores da partição — falhar
+            # na primeira chamada do lote seria degradação silenciosa (fallback 50).
+            required = [provider_keys.get(p, "GEMINI_API_KEY") for p in self.LLM_MULTI_PROVIDERS]
+            require_secrets("SERP_API_KEY", *required)
+        else:
+            provider_key = provider_keys.get(self.LLM_PROVIDER, "GEMINI_API_KEY")
+            require_secrets("SERP_API_KEY", provider_key)
 
 
 settings = Settings()

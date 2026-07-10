@@ -29,6 +29,24 @@ def test_judge_signature_format(monkeypatch):
     assert len(parts[2]) == 12           # hash do prompt (12 hex)
 
 
+def test_multi_partition_deterministica(monkeypatch):
+    """Modo multi: cada ativo cai SEMPRE no mesmo provedor (sha256, não hash()
+    salteado) e o carimbo do juiz identifica o provedor daquele ativo."""
+    ai = _import_ai(monkeypatch)
+    monkeypatch.setattr(ai.settings, "LLM_PROVIDER", "multi")
+    monkeypatch.setattr(ai.settings, "LLM_MULTI_PROVIDERS",
+                        ["gemini", "groq", "cerebras", "mistral"])
+    ativos = ["bitcoin", "ethereum", "solana", "cardano", "dogecoin"]
+    mapa = {a: ai.provider_for_asset(a) for a in ativos}
+    assert mapa == {a: ai.provider_for_asset(a) for a in ativos}  # estável
+    assert set(mapa.values()) <= {"gemini", "groq", "cerebras", "mistral"}
+    for a in ativos:
+        assert ai.judge_signature(a).startswith(mapa[a] + ":")
+    import pytest
+    with pytest.raises(ValueError):
+        ai.judge_signature()  # multi sem ativo não pode carimbar juiz
+
+
 def test_prompt_hash_stable(monkeypatch):
     ai = _import_ai(monkeypatch)
     assert ai._PROMPT_HASH == ai._PROMPT_HASH

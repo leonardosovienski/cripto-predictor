@@ -47,6 +47,17 @@ que pertence à janela de 28/07. Diagnóstico do custo: a lista DEFAULT_ASSETS
 tem 22 ativos vs teto de ~20/dia do free tier do Gemini (aviso já existente no
 .env) — o problema é volume, não preço por chamada. Suíte: 269 verdes.
 
+**Modo `LLM_PROVIDER=multi` implementado (mesma data, NÃO ativado)**: partição
+FIXA e determinística dos ativos entre gemini/groq/cerebras/mistral (sha256 do
+nome mod n — cada ativo tem SEMPRE o mesmo juiz; nada de rodízio, que misturaria
+calibrações na mesma série). Com os 22 ativos atuais: groq 8, mistral 6,
+gemini 5, cerebras 3 — todos folgados nos free tiers. O carimbo `judge` da
+previsão passa a ser por-ativo (`judge_signature(ativo)`); modo multi sem
+asset_name levanta ValueError (não carimba juiz errado). Trava P0 exige as
+chaves de TODOS os provedores da partição. ⚠️ ATIVAR = 4 juízes em paralelo =
+encerra a coleta da `v2-dpl-gemini-h7` e exige trial nova — decisão do dono
+(natural na janela de 28/07). Suíte: **270** (teste novo da partição).
+
 **INCIDENTE OPS-1 — GarimpoV3Daily não rodou em 09-10/07**: último resultado
 `0x800710E0` ("operador/administrador recusou"), causa: tarefa "Interativo
 apenas" + bloqueio de bateria — máquina bloqueada/sem sessão no horário. Sem

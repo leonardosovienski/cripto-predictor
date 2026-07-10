@@ -249,7 +249,9 @@ async def run():
                 # ambiguidade de até 3h.
                 "data": utc_stamp(),
                 "price_usd": hard_data.get("price_usd", 0),
-                "judge": judge_signature(),
+                # Em modo multi o juiz é por-ativo (partição fixa) — o carimbo
+                # identifica QUAL provedor/modelo julgou ESTA previsão.
+                "judge": judge_signature(ativo),
                 # cross-check flag-only: tagueia contradição LLM-vs-técnico, NÃO muta o score
                 "divergencia": divergence_flag(score, hard_data.get("indicadores", {})),
                 # carimbo Fonte (ADR merge D2): política de dados desta previsão —

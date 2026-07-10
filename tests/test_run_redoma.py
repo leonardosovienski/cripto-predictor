@@ -53,7 +53,8 @@ def test_run_analisa_do_serving_e_persiste_carimbado(tmp_path, monkeypatch):
 
     monkeypatch.setattr(main, "analyze_asset", fake_analyze)
     monkeypatch.setattr(main, "get_news_snippets", fake_news)
-    monkeypatch.setattr(main, "judge_signature", lambda: "stub:modelo:hash")
+    monkeypatch.setattr(main, "judge_signature",
+                        lambda asset_name=None: "stub:modelo:hash")
     monkeypatch.setattr(main, "export_results", lambda resultados: None)
     monkeypatch.setattr(sys, "argv", ["main", "--assets", "bitcoin", "--no-cache"])
 
