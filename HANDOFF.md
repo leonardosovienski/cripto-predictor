@@ -90,6 +90,13 @@ o controle positivo do juiz Fase 1 JÁ existia como teste de regressão
 registry. Suíte: **272** (testes novos: exclusão estrutural de fallback, divisão
 de eras).
 
+**OpenRouter adicionado como 5º provedor (mesma data) — RESERVA, fora da
+partição**: entrar na partição mudaria o hash mod 4→5 e reembaralharia os
+juízes da H5 em curso (= trial nova). Uso: fallback manual se um dos 4 titulares
+morrer, ou juiz de trial futura. Default `nvidia/nemotron-3-super-120b-a12b:free`
+(único que respondeu no smoke — os `:free` do OpenRouter rotacionam e
+congestionam com 429; testar antes de usar). Chave no .env (gitignorado).
+
 **INCIDENTE OPS-1 — GarimpoV3Daily não rodou em 09-10/07**: último resultado
 `0x800710E0` ("operador/administrador recusou"), causa: tarefa "Interativo
 apenas" + bloqueio de bateria — máquina bloqueada/sem sessão no horário. Sem

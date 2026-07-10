@@ -37,6 +37,10 @@ class Settings:
     CEREBRAS_MODEL: str = field(default_factory=lambda: os.getenv("CEREBRAS_MODEL", "gpt-oss-120b"))
     MISTRAL_API_KEY: str = field(default_factory=lambda: os.getenv("MISTRAL_API_KEY", ""))
     MISTRAL_MODEL: str = field(default_factory=lambda: os.getenv("MISTRAL_MODEL", "mistral-small-latest"))
+    OPENROUTER_API_KEY: str = field(default_factory=lambda: os.getenv("OPENROUTER_API_KEY", ""))
+    # OpenRouter é RESERVA (não está na partição da H5 — mudar partição = trial
+    # nova). Modelos :free rotacionam e congestionam (429) — smoke test antes de usar.
+    OPENROUTER_MODEL: str = field(default_factory=lambda: os.getenv("OPENROUTER_MODEL", "nvidia/nemotron-3-super-120b-a12b:free"))
     # LLM_PROVIDER=multi: particiona os ativos entre estes provedores (partição FIXA
     # e determinística por sha256 do nome — cada ativo tem SEMPRE o mesmo juiz, para
     # a série por-ativo ser consistente). Divide a carga: 22 ativos / 4 ≈ 5-6
@@ -76,6 +80,7 @@ class Settings:
             "groq": "GROQ_API_KEY",
             "cerebras": "CEREBRAS_API_KEY",
             "mistral": "MISTRAL_API_KEY",
+            "openrouter": "OPENROUTER_API_KEY",
         }
         if self.LLM_PROVIDER == "multi":
             # Modo multi exige a chave de TODOS os provedores da partição — falhar
