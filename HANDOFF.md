@@ -1,6 +1,6 @@
 # HANDOFF — GarimpoInvestimentos (Fase 1 + melhorias)
 
-Data: 2026-06-14 (última rodada: 2026-07-07 — Auditoria + Experiment Registry)
+Data: 2026-06-14 (última rodada: 2026-07-10 — Validação E2E + incidente do agendador)
 Estado: **Fase 1 + CLI + notícias + backtesting + sinal calibrado + indicadores técnicos + LLM multi-provedor + métricas + retry/backoff + agendamento diário + V3 (edge mecânico: funding/OI/HMM).**
 
 > **NOTA (jun/2026 — Red Team):** o pacote `core/` foi **renomeado para `store/`**
@@ -15,6 +15,40 @@ Estado: **Fase 1 + CLI + notícias + backtesting + sinal calibrado + indicadores
 > **`GarimpoInvestimentos/core/`** de novo. A colisão temida era com
 > `predictor_core` (nomes distintos, sem conflito de import real). Referências a
 > `store/X.py` abaixo correspondem hoje a `core/X.py`.
+
+---
+
+## 🔧 Rodada 2026-07-10 — Validação E2E completa + incidente OPS-1 (agendador)
+
+**Validação comando-a-comando (checklist de 9 itens, tudo executado de verdade):**
+ci_check 3/3 verde (269 testes); registry reconciliado confirmado (shim +
+trials.json válido + atestado válido); trava de poder provada em tmp
+(PowerAttestationMissingError barra, attest_pipeline_power destrava;
+attest_harness --dry-run PASSOU); backtest_v3 BTCUSDT k=0.5 **reproduz o NO-GO
+exato** (PSR 0.4649, IC_lower −0.0794, MaxDD 15.56%, 45 folds
+INSUFFICIENT_DATA); sweep --kelly-fractions 1.0 0.5 sem TypeError (C1 ok);
+idempotência (C4) e timeindex (C5) verdes; H4/trial-1 conferidos.
+
+**ATUALIZAÇÃO C2 (psr_nonoverlap)**: com a série crescida (n=4049), as
+sub-séries 24h dão PSR **0.004 / 0.989 / 0.552 → 1/3 aprovada** (era 0/3 em
+09/07: 0.009/0.701/0.470) — veredicto do script: **AMBÍGUO**. NÃO muda a
+refutação: o juiz principal é o Spearman (imune à sobreposição), cujo IC_lower
+segue **−0.0794** (cruza zero); o PSR não-sobreposto é teste de robustez
+auxiliar. Implicação de 28/07 inalterada: **não promover a capital real**.
+
+**INCIDENTE OPS-1 — GarimpoV3Daily não rodou em 09-10/07**: último resultado
+`0x800710E0` ("operador/administrador recusou"), causa: tarefa "Interativo
+apenas" + bloqueio de bateria — máquina bloqueada/sem sessão no horário. Sem
+log de 09-10/07. **Correção aplicada (2026-07-10)**: `Set-ScheduledTask` com
+AllowStartIfOnBatteries + DontStopIfGoingOnBatteries + StartWhenAvailable
+(execução perdida roda assim que possível). PENDENTE (exige admin): mudar
+logon para S4U ("executar estando conectado ou não") — hoje segue Interactive.
+**Buraco preenchido manualmente** (run_daily_v3.ps1, exit 0): vision_ingest
+trouxe +288 registros de OI (histórico íntegro até 09/07, não-destrutivo);
+paper_trader registrou o dia 10/07 (FLAT, no_signal, sideways). Ledger: **3
+trades, 0 ativos, 3 FLAT, P&L 0**. O sinal do dia 09/07 não é recuperável
+retroativamente (1 dia FLAT faltante no ledger; dados OK) — perda de 1/30 dias
+na janela até 28/07, não compromete a decisão.
 
 ---
 
