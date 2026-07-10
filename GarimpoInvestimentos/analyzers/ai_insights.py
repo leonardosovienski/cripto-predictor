@@ -258,15 +258,19 @@ async def analyze_asset(asset_name: str, hard_data: dict, news_snippets: list[st
             "sentiment": data.get("sentiment", "neutro"),
             "summary": data.get("summary", "sem resumo disponível"),
             "opportunity_score": data.get("opportunity_score", 50),
+            "llm_fallback": False,
         }
 
     except Exception as e:
         _log.warning("erro ao analisar %s (%s: %s) — fallback aplicado",
                      asset_name, type(e).__name__, e)
+        # llm_fallback=True é o carimbo ESTRUTURAL (migração 0009): o backtest
+        # exclui por ele, não pela string do summary (que segue por compat/legado).
         return {
             "sentiment": "neutro",
             "summary": "erro na análise (fallback aplicado)",
             "opportunity_score": 50,
+            "llm_fallback": True,
         }
 
 

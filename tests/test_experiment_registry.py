@@ -133,6 +133,62 @@ def test_backtest_nunca_cria_trial_nova(tmp_path):
     assert len(load_trials(p)) == 1
 
 
+def test_backtest_divide_eras_entre_trial_encerrada_e_sucessora(tmp_path):
+    """Duas trials com os MESMOS params de casamento (fonte, horizonte) — caso
+    real: v2-dpl-gemini-h7 encerrada e v2-dpl-multi-h7 sucessora. Cada previsão
+    matura a trial VIGENTE na sua data (fronteira = registered_at da sucessora);
+    a sucessora nunca herda dados do juiz anterior."""
+    import json as _json
+    from datetime import datetime
+    p = tmp_path / "trials.json"
+    register_trial("era-1", params=PARAMS, path=p, **_NOGATE)
+    register_trial("era-2", params=PARAMS, path=p, **_NOGATE)
+    trials = _json.loads(p.read_text(encoding="utf-8"))
+    trials[0]["registered_at"] = "2026-07-01T00:00:00Z"
+    trials[1]["registered_at"] = "2026-07-10T00:00:00Z"
+    p.write_text(_json.dumps(trials), encoding="utf-8")
+
+    def _dated(score, var, day):
+        return {**_pred(score, var), "pred_date": datetime(2026, 7, day)}
+
+    enriched = [_dated(80, 2.0, 2), _dated(75, -1.0, 3), _dated(90, 3.0, 5),   # era 1
+                _dated(85, -2.0, 11), _dated(72, 4.0, 12), _dated(88, 1.0, 13)]  # era 2
+    updated = close_trial_sharpes(enriched, 7, trials_path=p, threshold=70)
+    assert set(updated) == {"era-1", "era-2"}
+    assert updated["era-1"] != updated["era-2"]  # cada era com os próprios dados
+
+
+def test_load_rows_exclui_fallback_estrutural(tmp_path, monkeypatch):
+    """0009: linha com llm_fallback=1 NÃO entra no backtest (é o fallback neutro,
+    não análise real); o marcador legado no resumo continua coberto."""
+    from GarimpoInvestimentos.analyzers import backtest
+    from GarimpoInvestimentos.dpl import FeatureStore
+
+    db = tmp_path / "fs.db"
+    with FeatureStore(db) as store:
+        store.write_predictions([
+            {"ativo": "BITCOIN", "ts": "2026-07-10 10:00:00", "score": 72,
+             "sentimento": "positivo", "resumo": "analise real", "price_usd": 50000,
+             "juiz": "groq:m:h", "divergencia": 0, "fonte": "dpl:fallback",
+             "input_degradado": 0, "llm_fallback": 0},
+            {"ativo": "ETHEREUM", "ts": "2026-07-10 10:00:00", "score": 50,
+             "sentimento": "neutro", "resumo": "erro na análise (fallback aplicado)",
+             "price_usd": 3000, "juiz": "groq:m:h", "divergencia": 0,
+             "fonte": "dpl:fallback", "input_degradado": 0, "llm_fallback": 1},
+            {"ativo": "SOLANA", "ts": "2026-07-10 10:00:00", "score": 50,
+             "sentimento": "neutro", "resumo": "erro na análise (fallback aplicado)",
+             "price_usd": 150, "juiz": "gemini:m:h", "divergencia": 0,
+             "fonte": "dpl:fallback", "input_degradado": None,
+             "llm_fallback": None},  # legado: pré-0009, coberto pelo marcador
+        ])
+    monkeypatch.setattr(backtest, "FEATURE_STORE_DB", db)
+    # redoma: sem absorver o CSV legado REAL da máquina no banco do teste
+    monkeypatch.setattr(backtest, "migrate_csv_to_store", lambda store: 0)
+    rows = backtest._load_rows()
+    assert [r["ativo"] for r in rows] == ["bitcoin"]
+    assert rows[0]["juiz"] == "groq:m:h"
+
+
 def test_trials_json_real_permanece_intacto_em_dry_run(tmp_path):
     """Sanidade: o closure em path temporário jamais toca o registro real."""
     before = json.loads(TRIALS_PATH.read_text(encoding="utf-8"))

@@ -89,6 +89,10 @@ def _load_rows() -> list[dict]:
         preds = store.read_predictions()
     rows = []
     for r in preds:
+        # Exclusão de fallback do LLM: carimbo estrutural (0009) para linhas novas;
+        # marcador no resumo cobre o legado (llm_fallback NULL = pré-flag).
+        if r.get("llm_fallback") == 1:
+            continue
         if FALLBACK_MARKER in (r.get("resumo") or ""):
             continue
         try:
@@ -111,6 +115,9 @@ def _load_rows() -> list[dict]:
             # 1 = LLM pontuou com input empobrecido; 0 = completo; None = pré-0008
             # (não medido na época) — o _report estratifica 1 vs 0.
             "degradado": r.get("input_degradado"),
+            # Carimbo do juiz (provider:modelo:hash) — no modo multi cada ativo
+            # tem o seu; o _report estratifica para nunca poolar calibrações.
+            "juiz": (r.get("juiz") or "").strip(),
         })
     return rows
 
@@ -234,6 +241,22 @@ def _report(enriched: list[dict]) -> None:
                               f"[IC95% {los:+.3f} a {his:+.3f}] (n={len(sub)})")
                 elif sub:
                     print(f"      └ fonte={fonte}: n={len(sub)} (insuficiente p/ IC)")
+            # Estratificação por JUIZ (H5 / modo multi): cada provedor:modelo é uma
+            # calibração distinta — o Sharpe agregado da trial multi só é interpretável
+            # ao lado dos estratos por juiz (um juiz individual só se julga com o n
+            # mínimo no SEU estrato, ver critério da H5).
+            juizes = sorted({r.get("juiz", "") for r in enriched if r.get("juiz")})
+            if len(juizes) > 1:
+                for juiz in juizes:
+                    sub = [(r["score"], r[key]) for r in enriched
+                           if r.get(key) is not None and r.get("juiz") == juiz]
+                    if len(sub) >= 4:
+                        rs, los, his = spearman_block_ci(sub)
+                        if rs is not None and los is not None:
+                            print(f"      └ juiz={juiz}: Spearman {rs:+.3f} "
+                                  f"[IC95% {los:+.3f} a {his:+.3f}] (n={len(sub)})")
+                    elif sub:
+                        print(f"      └ juiz={juiz}: n={len(sub)} (insuficiente p/ IC)")
             # PAYOFF: o cripto nasce emitindo o evento estruturado do pedágio (Modo B
             # validado). ic_lower nas métricas; a divergência (alucinação?) nos metadados.
             emit_event(
@@ -257,35 +280,60 @@ def close_trial_sharpes(enriched: list[dict], horizon: int, *,
     o Sharpe usa os MESMOS retornos da 'Estratégia' de _metrics (score ≥ limiar),
     na mesma unidade por-período que o DSR consome. Sem trial casada ou n<3, o
     estrato é pulado (nunca cria trial nova — criar tentativa é decisão humana).
+
+    ERAS: quando MAIS DE UMA trial casa (fonte, horizonte) — ex.: a
+    v2-dpl-gemini-h7 encerrada e a v2-dpl-multi-h7 sucessora têm os mesmos
+    params de casamento — o estrato é dividido por época: cada previsão pertence
+    à trial vigente na sua data (fronteira = registered_at da trial seguinte;
+    a primeira absorve a pré-história, cobrindo registros retroativos). Cada era
+    matura a SUA trial — o Sharpe da encerrada congela com os dados dela, e a
+    sucessora nunca herda dados do juiz anterior.
     Retorna {name: sharpe} do que foi atualizado."""
     thr = settings.LIMIAR_SCORE_MINIMO if threshold is None else threshold
     key = f"var_d{horizon}_pct"
     trials = load_trials(trials_path)
     updated: dict[str, float] = {}
+
+    def _registered_at(t: dict) -> datetime:
+        raw = (t.get("registered_at") or "").replace("Z", "+00:00")
+        try:
+            return datetime.fromisoformat(raw).replace(tzinfo=None)
+        except ValueError:
+            return datetime.min
+
     fontes = {r.get("fonte", "direct") for r in enriched}
     for fonte in sorted(fontes):
-        rets = [r[key] / 100 for r in enriched
-                if r.get(key) is not None and r.get("fonte", "direct") == fonte
-                and r["score"] >= thr]
-        if len(rets) < 3:
+        matching = [t for t in trials
+                    if t.get("params", {}).get("fonte") == fonte
+                    and t.get("params", {}).get("horizonte_dias") == horizon]
+        if not matching:
             continue
-        avg = sum(rets) / len(rets)
-        std = (sum((x - avg) ** 2 for x in rets) / (len(rets) - 1)) ** 0.5
-        if not std:
-            continue
-        sharpe = round(avg / std, 4)
-        for t in trials:
+        matching.sort(key=_registered_at)
+        for i, t in enumerate(matching):
+            start = _registered_at(t) if i > 0 else datetime.min
+            end = (_registered_at(matching[i + 1])
+                   if i + 1 < len(matching) else datetime.max)
+            rets = [r[key] / 100 for r in enriched
+                    if r.get(key) is not None and r.get("fonte", "direct") == fonte
+                    and r["score"] >= thr
+                    and start <= r.get("pred_date", datetime.min) < end]
+            if len(rets) < 3:
+                continue
+            avg = sum(rets) / len(rets)
+            std = (sum((x - avg) ** 2 for x in rets) / (len(rets) - 1)) ** 0.5
+            if not std:
+                continue
+            sharpe = round(avg / std, 4)
             p = t.get("params", {})
-            if p.get("fonte") == fonte and p.get("horizonte_dias") == horizon:
-                register_trial(t["name"], params=p, sharpe=sharpe,
-                               notes=t.get("notes", ""), path=trials_path,
-                               **{k: t[k] for k in
-                                  ("features_used", "train_period", "test_period")
-                                  if k in t})
-                updated[t["name"]] = sharpe
-                print(f"📒 trials.json: sharpe por-trade de '{t['name']}' "
-                      f"atualizado → {sharpe:+.4f} (fonte={fonte}, n={len(rets)})")
-                break
+            register_trial(t["name"], params=p, sharpe=sharpe,
+                           notes=t.get("notes", ""), path=trials_path,
+                           **{k: t[k] for k in
+                              ("features_used", "train_period", "test_period")
+                              if k in t})
+            updated[t["name"]] = sharpe
+            print(f"📒 trials.json: sharpe por-trade de '{t['name']}' "
+                  f"atualizado → {sharpe:+.4f} (fonte={fonte}, n={len(rets)}, "
+                  f"era {i + 1}/{len(matching)})")
     return updated
 
 

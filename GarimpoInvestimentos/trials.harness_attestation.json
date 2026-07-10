@@ -1,6 +1,6 @@
 {
-  "passed_at": "2026-07-09T20:33:16+00:00",
+  "passed_at": "2026-07-10T17:56:59+00:00",
   "evaluate": "judge_go_nogo",
   "edge_verdict": "GO",
-  "note": "juiz GO/NO-GO do backtest_v3 (PSR>=0.80 & IC_lower>0) sobre edge plantado e ruido; seeds 7/8, n=400"
+  "note": "DOIS juizes certificados: (1) GO/NO-GO do backtest_v3 (PSR>=0.80 & IC_lower>0), seeds 7/8, n=400; (2) juiz da Fase 1 (Spearman IC95 block bootstrap nao cruza zero), seeds 21/22, n=120 — edge plantado e ruido em ambos"
 }

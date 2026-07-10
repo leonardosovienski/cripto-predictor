@@ -52,6 +52,10 @@ def to_prediction_rows(resultados: list[dict]) -> list[dict]:
             # legados) → None = "não medido", nunca inventar 0.
             "input_degradado": (None if r.get("input_degradado") is None
                                 else int(bool(r.get("input_degradado")))),
+            # 0009: 1 = fallback do LLM (linha sem análise real). Mesma semântica
+            # de NULL para fluxos legados.
+            "llm_fallback": (None if r.get("llm_fallback") is None
+                             else int(bool(r.get("llm_fallback")))),
         })
     return rows
 

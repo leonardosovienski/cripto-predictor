@@ -260,6 +260,9 @@ async def run():
                 # 0008: persistido na previsão (antes só ia à telemetria) — o
                 # backtest estratifica previsões com input empobrecido.
                 "input_degradado": 1 if faltando else 0,
+                # 0009: carimbo estrutural de fallback do LLM — a linha entra no
+                # histórico mas o backtest a EXCLUI (não é análise real).
+                "llm_fallback": 1 if analysis.get("llm_fallback") else 0,
             }
             resultados.append(resultado)
             cache[ativo] = resultado

@@ -286,24 +286,28 @@ class FeatureStore:
 
     PREDICTION_FIELDS = ("ativo", "ts", "score", "sentimento", "resumo",
                          "price_usd", "juiz", "divergencia", "fonte",
-                         "input_degradado")
+                         "input_degradado", "llm_fallback")
 
     def write_predictions(self, rows: list[dict]) -> int:
         """Upsert de previsões. PK (ativo, ts): reexecução/cache hit não infla o n
         do backtest (mesma semântica do dedup do CSV legado).
         `input_degradado` (0008): 1 = LLM pontuou com input empobrecido; 0 =
-        completo; NULL = linha pré-flag (legado) — o backtest estratifica."""
+        completo; NULL = linha pré-flag (legado) — o backtest estratifica.
+        `llm_fallback` (0009): 1 = o LLM falhou e a linha é o fallback neutro
+        (score 50, sem análise real); NULL = pré-flag (o backtest cobre o legado
+        pelo marcador no resumo)."""
         data = [tuple(r.get(f) for f in self.PREDICTION_FIELDS) for r in rows]
         self._conn.executemany(
             """INSERT INTO predictions
                (ativo, ts, score, sentimento, resumo, price_usd, juiz, divergencia,
-                fonte, input_degradado)
-               VALUES (?,?,?,?,?,?,?,?,?,?)
+                fonte, input_degradado, llm_fallback)
+               VALUES (?,?,?,?,?,?,?,?,?,?,?)
                ON CONFLICT(ativo, ts) DO UPDATE SET
                  score=excluded.score, sentimento=excluded.sentimento,
                  resumo=excluded.resumo, price_usd=excluded.price_usd,
                  juiz=excluded.juiz, divergencia=excluded.divergencia,
-                 fonte=excluded.fonte, input_degradado=excluded.input_degradado""",
+                 fonte=excluded.fonte, input_degradado=excluded.input_degradado,
+                 llm_fallback=excluded.llm_fallback""",
             data,
         )
         self._conn.commit()

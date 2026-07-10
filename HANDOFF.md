@@ -69,6 +69,27 @@ gemini e não se misturam à série nova (juiz por-ativo). DSR desconta a
 tentativa adicional — governança funcionando como desenhada. Sanity pós-switch:
 settings carrega (P0 exige as 4 chaves), carimbo por-ativo correto, suíte 270.
 
+**Hardening pós-multi (mesma data, 3 correções da revisão de arquitetura)**:
+(1) **Migração 0009** `llm_fallback` — o fallback neutro do LLM (score 50 em
+falha) entrava no histórico e o backtest o excluía por STRING no resumo
+("fallback aplicado") — frágil; agora o carimbo é coluna estrutural
+(ai_insights → main → history → store), o filtro usa a coluna e o marcador só
+cobre o legado (NULL = pré-0009). Com 4 provedores a superfície de falha
+quadruplicou — era o fix mais urgente. (2) **Backtest estratifica por JUIZ** no
+horizonte principal (prometido pela H5, não existia) e `close_trial_sharpes`
+ganhou **divisão por ERAS**: bug real — a v2-dpl-gemini-h7 (encerrada) e a
+v2-dpl-multi-h7 casam pelos MESMOS (fonte, horizonte); antes, o Sharpe da era
+multi seria gravado na trial errada e/ou herdaria os n=5 do juiz antigo. Agora
+cada previsão matura a trial vigente na sua data (fronteira = registered_at da
+sucessora; linha sem data = primeira era, semântica de legado). (3)
+**Atestado reforçado**: `attest_harness.py` agora certifica DOIS juízes — o do
+V3 (PSR/IC_lower) e o da Fase 1 (Spearman IC95 block bootstrap, o que julga a
+H5) — 4 braços (2×edge/ruído); atestado re-emitido e versionado. Nota honesta:
+o controle positivo do juiz Fase 1 JÁ existia como teste de regressão
+(test_positive_control.py) — a novidade é ele entrar no ATESTADO que destrava o
+registry. Suíte: **272** (testes novos: exclusão estrutural de fallback, divisão
+de eras).
+
 **INCIDENTE OPS-1 — GarimpoV3Daily não rodou em 09-10/07**: último resultado
 `0x800710E0` ("operador/administrador recusou"), causa: tarefa "Interativo
 apenas" + bloqueio de bateria — máquina bloqueada/sem sessão no horário. Sem
