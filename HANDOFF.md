@@ -111,6 +111,15 @@ trades, 0 ativos, 3 FLAT, P&L 0**. O sinal do dia 09/07 não é recuperável
 retroativamente (1 dia FLAT faltante no ledger; dados OK) — perda de 1/30 dias
 na janela até 28/07, não compromete a decisão.
 
+**SELO FINAL — OPS-1 ENCERRADO (2026-07-10 21:30, confirmado 2026-07-11)**:
+disparo automático do Windows Task Scheduler rodou SOZINHO pela primeira vez
+desde a correção — `LastTaskResult = 0`. Log mostra dois `run` no dia (12:58
+manual + **21:30:01 automático**), ambos `exit 0`, sem ERROR/Traceback.
+Idempotência C4 comprovada em produção: o ledger permaneceu em **3 trades, 3
+FLAT, P&L 0** — o disparo automático NÃO duplicou o dia já registrado
+manualmente. Pendência residual (baixa prioridade, inalterada): logon S4U
+exige admin.
+
 ---
 
 ## 🔴 Rodada 2026-07-09 — Auditoria cruzada: correções + REFUTAÇÃO do GO do BTC
