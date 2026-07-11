@@ -20,7 +20,7 @@
       "horizonte_dias": 7,
       "input": "LLM + indicadores + noticias (mercado offline da Feature Store; universo via --discover)"
     },
-    "sharpe": null,
+    "sharpe": -0.9294,
     "notes": "Pipeline pos-merge (ADR DECISAO_MERGE_DPL_DISCOVERY). Em coleta desde 2026-07-01. Estratificada da v1 pelo carimbo Fonte. COLETA ENCERRADA 2026-07-10 com n=5 (imatura, sem veredicto) por decisao do dono — substituida pela v2-dpl-multi-h7 (modo multi-provedor; ver H4/H5 em docs/HYPOTHESES.md)."
   },
   {
