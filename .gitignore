@@ -39,3 +39,4 @@ events.jsonl
 /data/
 GarimpoInvestimentos/data/
 tests/_events_test.jsonl
+garimpo.lock
