@@ -18,6 +18,32 @@ Estado: **Fase 1 + CLI + notícias + backtesting + sinal calibrado + indicadores
 
 ---
 
+## 🧹 Rodada 2026-07-12 — Correção LogonType (S4U) + limpeza de branches
+
+**LogonType S4U aplicado** (`scripts/fix_task_logon.ps1`, commit `5ae3b18`) nas 3
+tarefas do Agendador (`cripto-watchdog-coleta`, `GarimpoFase1`, `GarimpoV3Daily`),
+corrigindo o `0x80070005` (Access Denied) de disparos sem sessão interativa ativa
+(tela bloqueada/PC dormindo). `GarimpoInvestimentos-ColetaDiaria` (rotina antiga,
+18:00) segue **desabilitada de propósito** (evita corrida dupla de cota com a
+`GarimpoFase1`, que assumiu a coleta da H5 às 22:00) — não reabilitar. Confirmação
+da execução real headless (19:00/21:30/22:00) fica para a rodada seguinte.
+
+**Limpeza de branches (só `main` deve existir)**: antes de apagar, confirmado por
+`git merge-base --is-ancestor` que as 3 branches locais extras já eram 100%
+ancestrais de `main` (nenhum commit exclusivo) e os worktrees correspondentes
+estavam limpos (`git status --short` vazio) — apagar não perdeu nenhum conteúdo:
+- `claude/previsao-cripto-guided-tour-daac3e` (297a52f) — branch apagada.
+- `claude/remote-control-0b5470` (297a52f, worktree em HEAD destacado) — worktree
+  removido + branch apagada.
+- `claude/chat-automation-performance-6cc25a` (fdb3c3f) — mergeada em `main`, mas
+  é a branch do worktree onde ESTA sessão está rodando; apagar exigiria remover o
+  worktree ativo, o que encerraria o chat no meio. Fica pendente: depois que esta
+  sessão terminar, rodar `git worktree remove .claude/worktrees/beautiful-saha-2799a6`
+  seguido de `git branch -D claude/chat-automation-performance-6cc25a` na raiz do
+  repo para fechar a limpeza. Origin já só tinha `main` (nada a limpar lá).
+
+---
+
 ## 🔧 Rodada 2026-07-10 — Validação E2E completa + incidente OPS-1 (agendador)
 
 **Validação comando-a-comando (checklist de 9 itens, tudo executado de verdade):**
