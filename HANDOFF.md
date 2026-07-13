@@ -39,8 +39,18 @@ rodado manualmente pelo dono como Admin em 2026-07-13): energia da `GarimpoFase1
 alinhada com a `GarimpoV3Daily` (`DisallowStartIfOnBatteries=False`,
 `StopIfGoingOnBatteries=False`, `StartWhenAvailable=True`) + log operacional do
 Task Scheduler (`Microsoft-Windows-TaskScheduler/Operational`) habilitado, para
-capturar o código Win32 exato se algo falhar de novo. Confirmação da execução
-real de hoje à noite (22:00) fica para a próxima rodada.
+capturar o código Win32 exato se algo falhar de novo.
+
+**FIX CONFIRMADO (2026-07-13 02:24, `Start-ScheduledTask` manual)**: disparo
+forçado da `GarimpoFase1` (mesma conta/S4U real, fora do horário programado)
+rodou ponta a ponta pela primeira vez pós-fix — ingestão dos 28 ativos
+pendentes, 4 juízes (gemini/groq/cerebras/mistral) via LLM (um retry 503
+transitório no Gemini, tratado normalmente pelo `with_retry`), `=== concluído:
+28 gravado(s) na Feature Store, 0 falha(s) isolada(s) ===`,
+`Get-ScheduledTaskInfo` retornou `LastTaskResult = 0`. **Confirma que a causa
+raiz era mesmo a config de energia** (não sobrou nenhuma outra hipótese em
+aberto). Confirmação do disparo agendado normal às 22:00 de hoje fica pendente,
+mas o caminho já está provado funcional.
 
 **Limpeza de branches (só `main` deve existir)**: antes de apagar, confirmado por
 `git merge-base --is-ancestor` que as 3 branches locais extras já eram 100%
