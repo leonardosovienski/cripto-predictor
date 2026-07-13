@@ -28,6 +28,20 @@ corrigindo o `0x80070005` (Access Denied) de disparos sem sessão interativa ati
 `GarimpoFase1`, que assumiu a coleta da H5 às 22:00) — não reabilitar. Confirmação
 da execução real headless (19:00/21:30/22:00) fica para a rodada seguinte.
 
+**Confirmação da noite de 12/07 (headless, pós-S4U)**: `GarimpoV3Daily` (21:30) e
+`cripto-watchdog-coleta` (19:00) rodaram headless com sucesso — o `exit 1` do
+watchdog é esperado (`scripts/watchdog_coleta.py:76`, alerta correto de que a
+`ColetaDiaria` está desabilitada). **`GarimpoFase1` (22:00) falhou** com
+`0x800710E0` sem sequer invocar o Python (nenhuma linha nova no log daquela
+janela) — causa: `DisallowStartIfOnBatteries=True` + `StartWhenAvailable=False`,
+diferente da `GarimpoV3Daily` (que rodou OK). **Corrigido** (`scripts/fix_task_power.ps1`,
+rodado manualmente pelo dono como Admin em 2026-07-13): energia da `GarimpoFase1`
+alinhada com a `GarimpoV3Daily` (`DisallowStartIfOnBatteries=False`,
+`StopIfGoingOnBatteries=False`, `StartWhenAvailable=True`) + log operacional do
+Task Scheduler (`Microsoft-Windows-TaskScheduler/Operational`) habilitado, para
+capturar o código Win32 exato se algo falhar de novo. Confirmação da execução
+real de hoje à noite (22:00) fica para a próxima rodada.
+
 **Limpeza de branches (só `main` deve existir)**: antes de apagar, confirmado por
 `git merge-base --is-ancestor` que as 3 branches locais extras já eram 100%
 ancestrais de `main` (nenhum commit exclusivo) e os worktrees correspondentes
