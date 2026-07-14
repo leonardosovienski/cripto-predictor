@@ -49,8 +49,14 @@ transitório no Gemini, tratado normalmente pelo `with_retry`), `=== concluído:
 28 gravado(s) na Feature Store, 0 falha(s) isolada(s) ===`,
 `Get-ScheduledTaskInfo` retornou `LastTaskResult = 0`. **Confirma que a causa
 raiz era mesmo a config de energia** (não sobrou nenhuma outra hipótese em
-aberto). Confirmação do disparo agendado normal às 22:00 de hoje fica pendente,
-mas o caminho já está provado funcional.
+aberto).
+
+**SELO FINAL — disparo automático real confirmado (2026-07-13 22:00)**: sem
+qualquer gatilho manual, a `GarimpoFase1` disparou sozinha no horário
+programado com `LastTaskResult = 0` — junto com `GarimpoV3Daily` (21:30, `0`) e
+`cripto-watchdog-coleta` (19:00, `1` esperado). As três tarefas rodam headless
+de ponta a ponta, sem intervenção humana. Ciclo de correção (S4U +
+energia + log operacional) encerrado com sucesso.
 
 **Limpeza de branches (só `main` deve existir)**: antes de apagar, confirmado por
 `git merge-base --is-ancestor` que as 3 branches locais extras já eram 100%
