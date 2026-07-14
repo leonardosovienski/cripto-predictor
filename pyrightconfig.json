@@ -1,0 +1,23 @@
+{
+  "pythonVersion": "3.13",
+  "pythonPlatform": "Windows",
+  "typeCheckingMode": "basic",
+  "include": ["GarimpoInvestimentos", "tests", "scripts"],
+  "exclude": [
+    "vendor",
+    "GarimpoInvestimentos/env",
+    "**/site-packages",
+    "**/node_modules",
+    "**/__pycache__",
+    "**/.*"
+  ],
+  "extraPaths": [".", "GarimpoInvestimentos", "vendor", "vendor/predictor_core"],
+  "venvPath": "GarimpoInvestimentos",
+  "venv": "env",
+  "stubPath": "typings",
+  "reportUnknownParameterType": "none",
+  "reportGeneralTypeIssues": "warning",
+  "reportOptionalMemberAccess": "warning",
+  "reportOptionalSubscript": "warning",
+  "reportPrivateUsage": "warning"
+}

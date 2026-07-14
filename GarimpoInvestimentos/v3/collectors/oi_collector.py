@@ -34,6 +34,14 @@ from predictor_core.obs import emit_event
 
 from GarimpoInvestimentos.v3.circuit_breaker import CircuitBreaker
 
+# Garantia de importação explícita no workspace para Pylance/Pyright.
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[2]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
 logger = logging.getLogger(__name__)
 
 _FUTURES_BASE = "https://fapi.binance.com"

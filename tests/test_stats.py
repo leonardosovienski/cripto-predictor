@@ -5,9 +5,9 @@ C:\\Claude\\previsao-cripto:  py -3.12 -m pytest tests/ -q
 """
 import random
 
+from predictor_core.measurement.bootstrap import bootstrap_ci
 from predictor_core.stats import (
     spearman,
-    block_bootstrap_ci,
     spearman_block_ci,
 )
 
@@ -27,8 +27,8 @@ def test_spearman_none_below_3():
 def test_block_bootstrap_reproducible():
     units = [float(i % 5) for i in range(60)]
     mean = lambda u: sum(u) / len(u)
-    r1 = block_bootstrap_ci(units, mean, block_length=5, seed=1)
-    r2 = block_bootstrap_ci(units, mean, block_length=5, seed=1)
+    r1 = bootstrap_ci(units, mean, scheme="moving", block_length=5, seed=1)
+    r2 = bootstrap_ci(units, mean, scheme="moving", block_length=5, seed=1)
     assert r1[:2] == r2[:2]
 
 

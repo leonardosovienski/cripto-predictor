@@ -59,8 +59,8 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from predictor_core.obs import emit_event
+from predictor_core.measurement.bootstrap import bootstrap_ci
 from predictor_core.stats import (
-    block_bootstrap_ci,
     max_drawdown,
     probabilistic_sharpe_ratio,
     spearman_block_ci,
@@ -469,8 +469,8 @@ def run_wfa(
     agg_net_mean = sum(all_oos_returns) / n_ret if n_ret else 0.0
     if n_ret >= 12:
         _bl = max(1, min(21, n_ret // 3))
-        net_lo, net_hi, _ = block_bootstrap_ci(
-            list(all_oos_returns), lambda u: sum(u) / len(u), block_length=_bl)
+        net_lo, net_hi, _ = bootstrap_ci(
+            list(all_oos_returns), lambda u: sum(u) / len(u), scheme="moving", block_length=_bl)
         net_lo, net_hi = _finite(net_lo or 0.0), _finite(net_hi or 0.0)
     else:
         net_lo, net_hi = 0.0, 0.0

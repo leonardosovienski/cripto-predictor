@@ -75,6 +75,22 @@ try:
     import numpy as np
     from sklearn.preprocessing import StandardScaler
     from hmmlearn import hmm as _hmmlearn
+    from hmmlearn import base as _hmmlearn_base
+    from hmmlearn import utils as _hmmlearn_utils
+
+    def _hmmlearn_normalize(a, axis=None):
+        a_sum = a.sum(axis)
+        if axis and a.ndim > 1:
+            a_sum[a_sum == 0] = 1
+            shape = list(a.shape)
+            shape[axis] = 1
+            a_sum = np.reshape(a_sum, shape)
+        a /= a_sum
+
+    _hmmlearn_utils.normalize = _hmmlearn_normalize
+    if hasattr(_hmmlearn_base, "normalize"):
+        _hmmlearn_base.normalize = _hmmlearn_normalize
+
     _DEPS_OK = True
 except ImportError as _e:
     _DEPS_OK = False
