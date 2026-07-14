@@ -81,7 +81,7 @@ def _oi_path(symbol: str) -> Path:
     return _symbol_dir(symbol) / "oi.csv"
 
 
-def _spot_path(symbol: str) -> Path:
+def spot_path(symbol: str) -> Path:
     return _symbol_dir(symbol) / "spot_1h.csv"
 
 
@@ -147,14 +147,14 @@ async def _collect_symbol(
         save_oi_csv(oi, oi_path)
 
     # --- Spot 1h ---
-    spot_path = _spot_path(symbol)
-    if spot_path.exists() and not force_refresh:
-        spot = load_spot_csv(spot_path)
+    spot_csv_path = spot_path(symbol)
+    if spot_csv_path.exists() and not force_refresh:
+        spot = load_spot_csv(spot_csv_path)
         logger.info("pipeline [%s]: %d klines do cache", symbol, len(spot))
     else:
         collector = SpotCollector(symbol, cb_spot)
         spot = await collector.fetch_range(start_ms, end_ms)
-        save_spot_csv(spot, spot_path)
+        save_spot_csv(spot, spot_csv_path)
 
     return funding, oi, spot
 

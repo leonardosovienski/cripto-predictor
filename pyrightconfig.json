@@ -19,5 +19,11 @@
   "reportGeneralTypeIssues": "warning",
   "reportOptionalMemberAccess": "warning",
   "reportOptionalSubscript": "warning",
-  "reportPrivateUsage": "warning"
+  "reportPrivateUsage": "warning",
+  "executionEnvironments": [
+    {
+      "root": "tests",
+      "reportPrivateUsage": "none"
+    }
+  ]
 }

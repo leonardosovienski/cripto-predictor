@@ -37,7 +37,7 @@ from predictor_core.obs import emit_event
 from GarimpoInvestimentos.v3.backtest_v3 import DEFAULT_KELLY_FRACTION
 from GarimpoInvestimentos.v3.collectors.spot_collector import load_spot_csv
 from GarimpoInvestimentos.v3.feature_builder import build_spot_index
-from GarimpoInvestimentos.v3.pipeline import _spot_path, run_symbol
+from GarimpoInvestimentos.v3.pipeline import run_symbol, spot_path
 from GarimpoInvestimentos.v3.signal_engine import SignalRecord
 from GarimpoInvestimentos.v3.timeindex import nearest_value
 
@@ -176,10 +176,10 @@ async def run_paper(
         return None
 
     # Preço de referência: close de spot no timestamp do sinal
-    spot_path = _spot_path(symbol)
+    spot_csv_path = spot_path(symbol)
     ref_price = None
-    if spot_path.exists():
-        spot_index = build_spot_index(load_spot_csv(spot_path))
+    if spot_csv_path.exists():
+        spot_index = build_spot_index(load_spot_csv(spot_csv_path))
         ref_price = _ref_price(latest.timestamp_exchange_ms, spot_index)
 
     paper = _record_paper_trade(symbol, latest, ref_price, kelly_fraction)

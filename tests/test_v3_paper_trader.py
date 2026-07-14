@@ -51,7 +51,7 @@ def test_latest_signal_empty_returns_none():
 def test_latest_signal_picks_max_timestamp():
     sigs = [_mk_signal(1000), _mk_signal(3000), _mk_signal(2000)]
     latest = _latest_signal(sigs)
-    assert latest.timestamp_exchange_ms == 3000
+    assert latest is not None and latest.timestamp_exchange_ms == 3000
 
 
 # ------------------------------------------------------------------ #

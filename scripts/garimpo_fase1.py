@@ -89,7 +89,7 @@ def release_lock() -> None:
 def judges_done_today(store: FeatureStore, today_utc: str) -> dict[str, set[str]]:
     """Ativos já previstos HOJE (UTC), agrupados por juiz — só previsões reais:
     linha de fallback (llm_fallback=1) não conta como coletada e será refeita."""
-    cur = store._conn.execute(
+    cur = store._conn.execute(  # pyright: ignore[reportPrivateUsage] — query ad-hoc de operação, sem API pública equivalente
         """SELECT ativo, juiz FROM predictions
            WHERE ts LIKE ? AND COALESCE(llm_fallback, 0) = 0""",
         (f"{today_utc}%",),
