@@ -79,7 +79,7 @@ def test_marketdatapoint_rejeita_published_antes_do_timestamp():
 def test_marketdatapoint_eh_imutavel():
     p = _point("binance", 100.0)
     with pytest.raises(Exception):
-        p.close = 999.0  # frozen dataclass
+        p.close = 999.0  # pyright: ignore[reportAttributeAccessIssue] — prova que é frozen
 
 
 # --- Router: fallback sequencial ---------------------------------------------

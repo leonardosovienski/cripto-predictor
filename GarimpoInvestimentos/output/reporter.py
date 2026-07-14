@@ -6,6 +6,8 @@ from openpyxl.styles import Font, Alignment, PatternFill
 from openpyxl.formatting.rule import CellIsRule
 from openpyxl.chart import BarChart, Reference
 from openpyxl.chart.label import DataLabelList
+from openpyxl.utils import get_column_letter
+from openpyxl.worksheet.worksheet import Worksheet
 
 from GarimpoInvestimentos.core.paths import OUTPUT_DIR
 
@@ -36,6 +38,7 @@ def export_results(resultados: list[dict]):
     # XLSX
     wb = Workbook()
     ws = wb.active
+    assert isinstance(ws, Worksheet)  # Workbook() sem read_only sempre dá Worksheet
     ws.title = "Análises"
 
     headers = ["Ativo", "Sentimento", "Score", "Resumo", "Data", "Preço USD"]
@@ -59,9 +62,9 @@ def export_results(resultados: list[dict]):
             round(r.get("price_usd", 0), 2),
         ])
 
-    for col in ws.columns:
+    for col_idx, col in enumerate(ws.columns, start=1):
         max_length = 0
-        col_letter = col[0].column_letter
+        col_letter = get_column_letter(col_idx)
         for cell in col:
             if cell.value:
                 max_length = max(max_length, len(str(cell.value)))
@@ -105,7 +108,7 @@ def export_results(resultados: list[dict]):
     chart.dataLabels.showVal = True
 
     chart_anchor_row = end_row + 3
-    ws.add_chart(chart, f"A{chart_anchor_row}")
+    ws.add_chart(chart, f"A{chart_anchor_row}")  # pyright: ignore[reportCallIssue] — stub do openpyxl confunde Worksheet/Chartsheet.add_chart
 
     wb.save(xlsx_filename)
 

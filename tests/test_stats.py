@@ -13,11 +13,13 @@ from predictor_core.stats import (
 
 
 def test_spearman_perfect_monotonic():
-    assert abs(spearman([1, 2, 3, 4, 5], [10, 20, 30, 40, 50]) - 1.0) < 1e-9
+    rho = spearman([1, 2, 3, 4, 5], [10, 20, 30, 40, 50])
+    assert rho is not None and abs(rho - 1.0) < 1e-9
 
 
 def test_spearman_perfect_inverse():
-    assert abs(spearman([1, 2, 3, 4, 5], [50, 40, 30, 20, 10]) + 1.0) < 1e-9
+    rho = spearman([1, 2, 3, 4, 5], [50, 40, 30, 20, 10])
+    assert rho is not None and abs(rho + 1.0) < 1e-9
 
 
 def test_spearman_none_below_3():
@@ -45,6 +47,7 @@ def test_spearman_ci_detects_real_signal():
         ret = 0.1 * (s - 50) + rng.gauss(0, 2)   # retorno cresce com o score
         pairs.append((s, ret))
     rho, lo, hi = spearman_block_ci(pairs, seed=7)
+    assert rho is not None and lo is not None and hi is not None
     assert rho > 0.5
     assert lo > 0, f"IC deveria estar acima de 0 para sinal real: [{lo}, {hi}]"
 
@@ -54,4 +57,5 @@ def test_spearman_ci_flags_noise():
     rng = random.Random(4)
     pairs = [(rng.uniform(0, 100), rng.gauss(0, 2)) for _ in range(80)]
     rho, lo, hi = spearman_block_ci(pairs, seed=7)
+    assert lo is not None and hi is not None
     assert lo < 0 < hi, f"IC deveria cruzar 0 para ruído: [{lo}, {hi}]"

@@ -9,7 +9,7 @@ import sys
 
 for _stream in (sys.stdout, sys.stderr):
     try:
-        _stream.reconfigure(encoding="utf-8")
+        _stream.reconfigure(encoding="utf-8")  # pyright: ignore[reportAttributeAccessIssue] — nem todo TextIO tem
     except (AttributeError, ValueError):
         # best-effort: stream redirecionado (pipe/arquivo) pode não ter reconfigure
         # ou já estar fechado. Só esses casos são toleráveis — não engolir o resto.

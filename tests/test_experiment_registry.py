@@ -7,6 +7,7 @@ Offline: trials em arquivo temporário; o trials.json REAL do repositório tamb�
 denominador for interpretável).
 """
 import json
+from typing import TypedDict
 
 import pytest
 
@@ -17,9 +18,14 @@ from GarimpoInvestimentos.analyzers.backtest import close_trial_sharpes
 
 PARAMS = {"fonte": "dpl:fallback", "juiz": "gemini:g", "horizonte_dias": 7}
 
+
+class _NoGateKwargs(TypedDict):
+    power_attestation: bool
+
+
 # Mecânica do registro é testada com bypass EXPLÍCITO da trava de poder
 # (power_attestation=False) — a trava tem testes próprios no fim do arquivo.
-_NOGATE = {"power_attestation": False}
+_NOGATE: _NoGateKwargs = {"power_attestation": False}
 
 
 # --- schema ------------------------------------------------------------------
@@ -184,7 +190,7 @@ def test_load_rows_exclui_fallback_estrutural(tmp_path, monkeypatch):
     monkeypatch.setattr(backtest, "FEATURE_STORE_DB", db)
     # redoma: sem absorver o CSV legado REAL da máquina no banco do teste
     monkeypatch.setattr(backtest, "migrate_csv_to_store", lambda store: 0)
-    rows = backtest._load_rows()
+    rows = backtest._load_rows()  # pyright: ignore[reportPrivateUsage] — whitebox test
     assert [r["ativo"] for r in rows] == ["bitcoin"]
     assert rows[0]["juiz"] == "groq:m:h"
 
@@ -228,6 +234,7 @@ def test_juiz_go_nogo_tem_poder():
     spec = importlib.util.spec_from_file_location(
         "attest_harness",
         Path(__file__).resolve().parents[1] / "scripts" / "attest_harness.py")
+    assert spec is not None and spec.loader is not None
     mod = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(mod)
     from predictor_core.testing.harness import assert_pipeline_has_power

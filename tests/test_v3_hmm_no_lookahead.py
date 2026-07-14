@@ -40,7 +40,7 @@ def _engine_stub():
     means = np.array([[0.8, -0.2], [-0.8, 0.6], [0.0, 0.0]])
     covars = np.stack([np.eye(2) * s for s in (0.5, 0.7, 0.3)])
     eng = RegimeEngine()
-    eng._scaler = _IdScaler()
+    eng._scaler = _IdScaler()  # pyright: ignore[reportAttributeAccessIssue] — duck-typed test double
     eng._model = types.SimpleNamespace(
         startprob_=np.array([1 / 3] * 3),
         transmat_=transmat, means_=means, covars_=covars)
@@ -79,14 +79,17 @@ def test_contraprova_suavizado_viola_a_invariancia():
     rets, vols = _serie(n=80)
     X = np.column_stack([rets, vols])
     m = eng._model
+    assert m is not None
+    startprob, transmat, means, covars = m.startprob_, m.transmat_, m.means_, m.covars_
+    assert covars is not None
 
     def smoothed(xs):
         T = len(xs)
-        alpha = _forward_causal(xs, m.startprob_, m.transmat_, m.means_, m.covars_)
+        alpha = _forward_causal(xs, startprob, transmat, means, covars)
         beta = np.ones((T, 3))
         for t in range(T - 2, -1, -1):
-            bt1 = _emission_probs(xs[t + 1], m.means_, m.covars_)
-            beta[t] = m.transmat_ @ (bt1 * beta[t + 1])
+            bt1 = _emission_probs(xs[t + 1], means, covars)
+            beta[t] = transmat @ (bt1 * beta[t + 1])
             beta[t] /= beta[t].sum()
         gamma = alpha * beta
         return gamma / gamma.sum(axis=1, keepdims=True)

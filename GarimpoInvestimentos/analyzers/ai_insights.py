@@ -218,6 +218,8 @@ async def _call_gemini(prompt: str) -> str:
             contents=prompt,
             config=types.GenerateContentConfig(temperature=0.2, response_mime_type="application/json"),
         )
+        if response.text is None:
+            raise RuntimeError("gemini: resposta sem texto (bloqueada ou vazia)")
         return response.text
 
     return await _run_with_llm_retry(_invoke)

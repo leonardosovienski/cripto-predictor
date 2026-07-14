@@ -23,7 +23,7 @@ class _DummyModel:
 def _engine_with_dummy():
     eng = RegimeEngine()
     eng._model = _DummyModel()
-    eng._scaler = _DummyModel()
+    eng._scaler = _DummyModel()  # pyright: ignore[reportAttributeAccessIssue] — stand-in piclável
     eng._state_map = {0: "bull", 1: "sideways", 2: "bear"}
     return eng
 

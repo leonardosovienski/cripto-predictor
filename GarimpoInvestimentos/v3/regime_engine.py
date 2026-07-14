@@ -33,7 +33,7 @@ import math
 import pickle
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Optional
+from typing import Optional, cast
 
 logger = logging.getLogger(__name__)
 
@@ -308,14 +308,17 @@ class RegimeEngine:
             raise RuntimeError("RegimeEngine não foi treinado. Chame fit() primeiro.")
 
         X = np.column_stack([log_returns, realized_vols])
-        X_scaled = self._scaler.transform(X)
+        # cast: o stub do sklearn infere um tipo de retorno espúrio p/ transform()
+        X_scaled = cast("np.ndarray", self._scaler.transform(X))
+        covars = self._model.covars_
+        assert covars is not None
 
         alpha = _forward_causal(
             X_scaled,
             self._model.startprob_,
             self._model.transmat_,
             self._model.means_,
-            self._model.covars_,
+            covars,
         )
 
         results = []

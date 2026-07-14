@@ -109,9 +109,10 @@ def test_feature_store_features_nan_roundtrip(tmp_path):
 def test_ingest_materializa_e_serve(tmp_path, monkeypatch):
     monkeypatch.setenv("PREDICTOR_EVENTS_PATH", str(tmp_path / "ev.jsonl"))
     from GarimpoInvestimentos.dpl.ingest import ingest_crypto
-    from GarimpoInvestimentos.dpl import CryptoDataProvider, FallbackRouter, SignalProvider
+    from GarimpoInvestimentos.dpl import (
+        CryptoDataProvider, DataProvider, FallbackRouter, SignalProvider)
 
-    class _FakePrice:  # DataProvider-like
+    class _FakePrice(DataProvider):
         name = "binance"
         async def fetch_ohlcv(self, symbol, interval="1d", limit=1):
             return [_candle(1, 100), _candle(2, 110)]

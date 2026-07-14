@@ -15,6 +15,7 @@ Layout (posições 1-indexadas, registro tipo 01):
 from __future__ import annotations
 
 import zipfile
+from collections.abc import Set as AbstractSet
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
@@ -36,8 +37,8 @@ def _slice_str(line: str, start: int, end: int) -> str:
 def parse_cotahist_lines(
     lines,
     *,
-    codbdi_filter: set[str] | None = frozenset({"02"}),
-    tpmerc_filter: set[str] | None = frozenset({"010"}),
+    codbdi_filter: AbstractSet[str] | None = frozenset({"02"}),
+    tpmerc_filter: AbstractSet[str] | None = frozenset({"010"}),
     publish_lag_hours: int = 18,
     on_error=None,
 ) -> list[MarketDataPoint]:

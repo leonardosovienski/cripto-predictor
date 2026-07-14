@@ -5,28 +5,33 @@ condições de sinal; short/long só disparam no regime certo; strength = intens
 × confiança do regime. (Red Team jun/2026 — antes nenhum teste tocava v3/.)
 """
 from types import SimpleNamespace
+from typing import TYPE_CHECKING, cast
 
 from GarimpoInvestimentos.v3.signal_engine import generate_signal
 
+if TYPE_CHECKING:
+    from GarimpoInvestimentos.v3.feature_builder import FeatureVector
+    from GarimpoInvestimentos.v3.regime_engine import RegimeOutput
 
-def _fv(*, quality=1.0, fr_z=0.0, oi_d=0.0, exch_ms=1_700_000_000_000):
+
+def _fv(*, quality=1.0, fr_z=0.0, oi_d=0.0, exch_ms=1_700_000_000_000) -> "FeatureVector":
     """Stub do FeatureVector — só os atributos que generate_signal lê."""
-    return SimpleNamespace(
+    return cast("FeatureVector", SimpleNamespace(
         data_quality_score=quality, funding_zscore=fr_z, oi_log_delta=oi_d,
         timestamp_exchange_ms=exch_ms, asset="BTCUSDT",
         funding_rate_raw=0.0001, leverage_pressure=0.0,
         log_return_8h=0.0, realized_vol_24h=0.01,
-    )
+    ))
 
 
-def _regime(*, label="bull", conf=0.9, uncertain=False, state=0, entropy=0.2):
+def _regime(*, label="bull", conf=0.9, uncertain=False, state=0, entropy=0.2) -> "RegimeOutput":
     """Stub do RegimeOutput. hmm_posterior[state] = conf (confiança do estado)."""
     posterior = [0.0, 0.0, 0.0]
     posterior[state] = conf
-    return SimpleNamespace(
+    return cast("RegimeOutput", SimpleNamespace(
         hmm_state=state, hmm_state_label=label, hmm_posterior=posterior,
         hmm_entropy=entropy, is_uncertain=uncertain,
-    )
+    ))
 
 
 # ----------------------------------------------------- gating (prioridade)

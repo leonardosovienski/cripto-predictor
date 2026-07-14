@@ -15,7 +15,8 @@ from datetime import datetime, timezone
 from unittest import mock
 
 _OPENPYXL_MODS = ("openpyxl", "openpyxl.styles", "openpyxl.formatting",
-                  "openpyxl.formatting.rule", "openpyxl.chart", "openpyxl.chart.label")
+                  "openpyxl.formatting.rule", "openpyxl.chart", "openpyxl.chart.label",
+                  "openpyxl.utils", "openpyxl.worksheet.worksheet")
 
 
 def test_run_analisa_do_serving_e_persiste_carimbado(tmp_path, monkeypatch):

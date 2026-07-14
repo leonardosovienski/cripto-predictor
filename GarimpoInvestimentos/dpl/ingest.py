@@ -8,20 +8,30 @@ from __future__ import annotations
 
 import hashlib
 from datetime import datetime, timedelta, timezone
+from typing import Protocol
 
 import predictor_core
 from predictor_core.data.quality import detect_jumps
+from predictor_core.data.contracts import MarketDataPoint
 from predictor_core.obs import emit_event
 
 from GarimpoInvestimentos.dpl.alignment import AlignmentEngine
-from GarimpoInvestimentos.dpl.facade import CryptoDataProvider
 from GarimpoInvestimentos.dpl.feature_engineering import derive_features
 from GarimpoInvestimentos.dpl.feature_store import FeatureStore
 from GarimpoInvestimentos.dpl.signals import SignalProvider
 
-# Esta função é crypto-específica (importa CryptoDataProvider), então o default é o
-# domínio cripto — mas continua INJETÁVEL para o futuro ingest genérico não herdar a
-# atribuição errada (mesma regra Core↔Domínio dos routers).
+
+class _OhlcvFacade(Protocol):
+    """Estrutural: qualquer fachada com fetch_ohlcv serve — cripto e ações
+    reusam esta pipeline (ver docstring de ingest_stocks)."""
+    async def fetch_ohlcv(
+        self, symbol: str, interval: str = ..., limit: int = ...
+    ) -> list[MarketDataPoint]: ...
+
+# Esta função nasceu crypto-específica, então o default é o domínio cripto — mas
+# `facade` é estrutural (_OhlcvFacade) e `domain` continua INJETÁVEL, então stocks
+# reusa a mesma pipeline sem herdar a atribuição errada (mesma regra Core↔Domínio
+# dos routers).
 _DEFAULT_DOMAIN = "previsao_cripto"
 
 # |retorno overnight| acima disso é candle suspeito (erro de fonte — cripto não tem
@@ -48,7 +58,7 @@ def series_quality(points, interval: str = "1d") -> dict:
 
 async def ingest_crypto(
     store: FeatureStore,
-    facade: CryptoDataProvider,
+    facade: _OhlcvFacade,
     symbol: str,
     interval: str = "1d",
     limit: int = 30,

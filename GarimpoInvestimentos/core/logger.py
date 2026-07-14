@@ -16,7 +16,7 @@ from predictor_core.obs import emit_event
 _DOMAIN = "previsao_cripto"
 _logger = logging.getLogger("previsao_cripto")
 
-_LOG_STARTED: set[str] = {}  # rastreia tempo de início por ativo (thread-local simples)
+_LOG_STARTED: dict[str, float] = {}  # rastreia tempo de início por ativo (thread-local simples)
 
 
 def run_logging_setup(log_dir: Path, level: str = "INFO") -> None:

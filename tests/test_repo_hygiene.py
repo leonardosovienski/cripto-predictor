@@ -48,6 +48,7 @@ def test_no_code_file_is_gitignored():
     `git check-ignore` sai 0 quando ALGUM caminho passado está ignorado e
     imprime quais — a asserção mostra a lista exata para o diagnóstico.
     """
+    assert _git is not None  # garantido por pytestmark (skipif git ausente)
     files = _python_payload()
     assert files, "payload vazio — layout do repositório mudou?"
     rels = [str(p.relative_to(ROOT)) for p in files]
@@ -70,6 +71,7 @@ def test_vendor_manifest_files_are_tracked():
     Presente-mas-untracked foi exatamente o modo de falha do incidente: a
     suíte local passa e o clone quebra. `git ls-files` é a verdade do índice.
     """
+    assert _git is not None  # garantido por pytestmark (skipif git ausente)
     import json
     manifest = ROOT / "vendor" / "predictor_core" / "CORE_MANIFEST.json"
     if not manifest.exists():

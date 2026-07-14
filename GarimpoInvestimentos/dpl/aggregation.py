@@ -3,5 +3,6 @@
 Promovida ao core na Onda 3. `from GarimpoInvestimentos.dpl.aggregation import
 consensus_median, consensus_mean, twap` segue funcionando.
 """
-from predictor_core.data import aggregation as _mod
-globals().update({k: v for k, v in vars(_mod).items() if not k.startswith("__")})
+from predictor_core.data.aggregation import consensus_mean, consensus_median, twap
+
+__all__ = ["consensus_mean", "consensus_median", "twap"]

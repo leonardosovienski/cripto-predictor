@@ -97,7 +97,7 @@ def compute_indicators(prices: list[float]) -> dict:
     line, sig, hist = macd(prices)
     if line is not None:
         out["macd"] = round(line, 4)
-        if sig is not None:
+        if sig is not None and hist is not None:
             out["macd_signal"] = round(sig, 4)
             out["macd_histogram"] = round(hist, 4)
 

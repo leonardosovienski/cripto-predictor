@@ -185,7 +185,7 @@ def _report(enriched: list[dict]) -> None:
         if rho is None:
             print(f"D+{h}: variância nula em score/retorno (n={n}) — sem correlação.{marca}")
             continue
-        if lo is None:
+        if lo is None or hi is None:
             print(f"D+{h}: Spearman = {rho:+.3f} (n={n}) — IC indisponível.{marca}")
             continue
         # IC que NÃO cruza zero = sinal; cruza zero = ainda é ruído (transforma
