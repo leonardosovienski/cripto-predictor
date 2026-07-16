@@ -12,9 +12,7 @@ set "VENV=%PROJ%\GarimpoInvestimentos\env"
 
 cd /d "%PROJ%" || exit /b 1
 
-call "%VENV%\Scripts\activate.bat"
-
-"%VENV%\Scripts\python.exe" "%PROJ%\scripts\garimpo_fase1.py"
+"%VENV%\Scripts\python.exe" "%PROJ%\..\tools\operational_runner.py" run --task "GarimpoFase1" --project "previsao-cripto" --cwd "%PROJ%" --log "%PROJ%\logs\operations\GarimpoFase1.log" --event-log "%PROJ%\logs\operations\events.jsonl" --heartbeat "%PROJ%\logs\operations\GarimpoFase1.heartbeat.json" --expected-artifact "%PROJ%\output\feature_store.db" --timeout 252000 -- "%VENV%\Scripts\python.exe" -X utf8 "%PROJ%\scripts\garimpo_fase1.py"
 set "RC=%ERRORLEVEL%"
 
 echo garimpo_fase1 finalizado com exit code %RC%

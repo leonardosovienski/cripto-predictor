@@ -4,7 +4,7 @@
 # REGRA PERMANENTE: manter este arquivo em ASCII puro (sem acentos/travessoes).
 # O PowerShell 5.1 le .ps1 sem BOM como Windows-1252 e bytes UTF-8 multibyte
 # viram aspas/caracteres soltos, corrompendo o parse (incidente V3.3.2).
-$ErrorActionPreference = "Continue"   # uma etapa falhar nao pode calar as seguintes
+$ErrorActionPreference = "Continue"   # registra todas as etapas, mas nao esconde falhas
 
 $proj = "C:\Claude-projetos\Claude\previsao-cripto"
 $py   = Join-Path $proj "GarimpoInvestimentos\env\Scripts\python.exe"
@@ -17,12 +17,20 @@ Set-Location $proj
 
 # 1) Descoberta + ingestao (DPL, fallback; ~10 candidatos = cota LLM free tier)
 & $py -m GarimpoInvestimentos.main --ingest --discover 10 *>> $log
-"---- ingestao: exit $LASTEXITCODE ----" | Out-File -FilePath $log -Append -Encoding utf8
+$ingestExit = $LASTEXITCODE
+"---- ingestao: exit $ingestExit ----" | Out-File -FilePath $log -Append -Encoding utf8
 
 # 2) Analise offline (universo = Feature Store; previsoes carimbadas Juiz+Fonte)
 & $py -m GarimpoInvestimentos.main --summary *>> $log
-"---- analise: exit $LASTEXITCODE ----" | Out-File -FilePath $log -Append -Encoding utf8
+$analysisExit = $LASTEXITCODE
+"---- analise: exit $analysisExit ----" | Out-File -FilePath $log -Append -Encoding utf8
 
 # 3) Backtest (Spearman+IC95 estratificado por Fonte + DSR; amadurece com o tempo)
 & $py -m GarimpoInvestimentos.analyzers.backtest *>> $log
-"==== fim $(Get-Date -Format 'HH:mm:ss') (exit $LASTEXITCODE) ====" | Out-File -FilePath $log -Append -Encoding utf8
+$backtestExit = $LASTEXITCODE
+$overallExit = 0
+foreach ($stepExit in @($ingestExit, $analysisExit, $backtestExit)) {
+    if ($overallExit -eq 0 -and $stepExit -ne 0) { $overallExit = [int]$stepExit }
+}
+"==== fim $(Get-Date -Format 'HH:mm:ss') (exit $overallExit) ====" | Out-File -FilePath $log -Append -Encoding utf8
+exit $overallExit

@@ -25,6 +25,11 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
+WORKSPACE = ROOT.parent
+if str(WORKSPACE) not in sys.path:
+    sys.path.insert(0, str(WORKSPACE))
+from tools.operational_runner import write_heartbeat
+
 LOG = ROOT / "logs" / "watchdog.log"
 ALERTA = Path(r"C:\Claude-projetos\Claude\ALERTA_COLETA_CRIPTO.txt")
 JUIZES_ESPERADOS = 4
@@ -100,4 +105,39 @@ def main() -> int:
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    started = datetime.now(timezone.utc)
+    heartbeat = ROOT / "logs" / "operations" / "cripto-watchdog-coleta.heartbeat.json"
+    record = {
+        "run_id": __import__("uuid").uuid4().hex,
+        "task_name": "cripto-watchdog-coleta",
+        "project": "previsao-cripto",
+        "started_at_utc": started.isoformat(timespec="seconds").replace("+00:00", "Z"),
+        "finished_at_utc": None,
+        "duration_seconds": None,
+        "status": "STARTED",
+        "exit_code": None,
+        "command": [sys.executable, str(Path(__file__).resolve())],
+        "script_path": str(Path(__file__).resolve()),
+        "working_directory": str(ROOT),
+        "python_executable": sys.executable,
+        "core_provenance": {"status": "NOT_APPLICABLE", "scope": "watchdog does not import predictor_core"},
+        "expected_artifact": str(ROOT / "output" / "feature_store.db"),
+        "error_summary": None,
+        "log_path": str(LOG),
+        "heartbeat_path": str(heartbeat),
+    }
+    write_heartbeat(heartbeat, record)
+    try:
+        exit_code = main()
+        record["status"] = "SUCCEEDED" if exit_code == 0 else "FAILED"
+        record["exit_code"] = exit_code
+    except Exception as exc:
+        record["status"] = "FAILED"
+        record["exit_code"] = 1
+        record["error_summary"] = str(exc)[:1000]
+        raise
+    finally:
+        record["finished_at_utc"] = datetime.now(timezone.utc).isoformat(timespec="seconds").replace("+00:00", "Z")
+        record["duration_seconds"] = round((datetime.now(timezone.utc) - started).total_seconds(), 3)
+        write_heartbeat(heartbeat, record)
+    sys.exit(record["exit_code"])
