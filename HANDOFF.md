@@ -1,6 +1,6 @@
 # HANDOFF — GarimpoInvestimentos (Fase 1 + melhorias)
 
-Data: 2026-06-14 (última rodada: 2026-07-10 — Validação E2E + incidente do agendador)
+Data: 2026-06-14 (última rodada: 2026-07-16 — backtest diário reativado + commit do operational_runner)
 Estado: **Fase 1 + CLI + notícias + backtesting + sinal calibrado + indicadores técnicos + LLM multi-provedor + métricas + retry/backoff + agendamento diário + V3 (edge mecânico: funding/OI/HMM).**
 
 > **NOTA (jun/2026 — Red Team):** o pacote `core/` foi **renomeado para `store/`**
@@ -15,6 +15,39 @@ Estado: **Fase 1 + CLI + notícias + backtesting + sinal calibrado + indicadores
 > **`GarimpoInvestimentos/core/`** de novo. A colisão temida era com
 > `predictor_core` (nomes distintos, sem conflito de import real). Referências a
 > `store/X.py` abaixo correspondem hoje a `core/X.py`.
+
+---
+
+## 🔭 Rodada 2026-07-16 — Backtest diário reativado + operational_runner commitado
+
+**Backtest órfão corrigido (commit no `run_garimpo_fase1.bat`)**: o passo de
+backtest (Spearman+IC95+DSR) morava no `run_daily.ps1` da ColetaDiaria (18:00),
+desabilitada em 11/07 — desde então o relatório só saía manualmente, às vésperas
+da primeira maturação da H5 (previsões de 10/07 amadurecem D+7 em 17/07). Agora
+roda como segunda etapa da GarimpoFase1 (22:00), envelopado no
+`operational_runner` com task `GarimpoBacktest` (heartbeat/log/eventos próprios,
+timeout 1800s, artefato esperado `output/garimpo_backtest.csv`). Não gasta cota
+de LLM (análise offline). Roda mesmo se a coleta falhar, mas o exit code da
+coleta tem precedência. Validado manualmente: `SUCCEEDED`, exit 0, ~18s, relatório
+completo e legível (UTF-8) em `logs/operations/GarimpoBacktest.log`.
+
+**Integração operational_runner commitada (`8aede5b`)**: as mudanças que já
+rodavam em produção desde 14/07 (3 tarefas envelopadas com heartbeat JSON
+atômico, `events.jsonl`, redação de segredos, lock anti-duplicata) estavam só no
+working tree — histórico e produção reconciliados.
+
+**Snapshot do estado (16/07)**: 3 noites automáticas seguidas OK (13→15/07,
+28 ativos × 4 juízes, exit 0 nas 3 tarefas). Backtest da série antiga (H4):
+Spearman D+7 **−0,207** [IC95 −0,355 a −0,054, n=121] — validado na direção
+ERRADA (motivo do NO-GO); hit rate 20%, estratégia −7,67% vs BTC +0,60%, DSR
+0,00. H5 ainda sem previsões maduras; n≥30 global ~18–19/07, por juiz ~21–22/07.
+
+**Pendências conhecidas (triagem 16/07)**: (a) chave SerpAPI em texto puro no
+log legado `garimpo_fase1_*.log` (28×/noite; logs gitignorados, mas redigir via
+logger httpx→WARNING ou filtro no formatter); (b) falha noturna só alerta no dia
+seguinte — 2º gatilho do watchdog ~22:30 e/ou `RestartCount` na GarimpoFase1;
+(c) `v3_daily_*.log` sai UTF-16 quebrado (`*>>` no PS 5.1) — padronizar
+`-Encoding utf8`.
 
 ---
 
