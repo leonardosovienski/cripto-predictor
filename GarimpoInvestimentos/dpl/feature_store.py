@@ -335,6 +335,16 @@ class FeatureStore:
         )
         return [(r["ativo"], r["juiz"] or "") for r in cur]
 
+    def last_prediction_ts_by_asset(self) -> dict[str, str]:
+        """MAX(ts) da previsão REAL (não-fallback) por ativo (chave minúscula).
+        Usado para ordenar o universo quando o api_guard corta: quem está há mais
+        tempo sem previsão vai primeiro — o corte se distribui em vez de furar
+        sempre os mesmos ativos do fim da lista."""
+        cur = self._conn.execute(
+            """SELECT ativo, MAX(ts) FROM predictions
+               WHERE COALESCE(llm_fallback, 0) = 0 GROUP BY ativo""")
+        return {(r[0] or "").lower(): r[1] for r in cur}
+
     def list_symbols(self, interval: str = "1d") -> list[str]:
         """Símbolos com features materializadas — universo default da análise quando
         não há --assets (ADR do merge, D3)."""

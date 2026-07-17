@@ -171,6 +171,16 @@ def release_lock() -> None:
         pass
 
 
+def order_by_staleness(ativos: list[str], store: FeatureStore) -> list[str]:
+    """Ordena o universo por previsão real mais ANTIGA primeiro (nunca previsto
+    vem antes de tudo; desempate alfabético = determinístico). Sem api_guard é
+    inócuo (todos rodam); com orçamento menor que o universo, faz o corte girar
+    entre os ativos em vez de furar sempre os mesmos do fim da lista — buraco
+    sistemático numa série por-ativo com juiz fixo."""
+    last = store.last_prediction_ts_by_asset()
+    return sorted(ativos, key=lambda a: (last.get(a.lower(), ""), a.lower()))
+
+
 def judges_done_today(store: FeatureStore, today_utc: str) -> set[tuple[str, str]]:
     """Pares (ativo, juiz) já previstos HOJE (UTC) — só previsões reais: linha de
     fallback (llm_fallback=1) não conta como coletada e será refeita. Compara o
@@ -304,6 +314,7 @@ async def main() -> int:
     # 1) Coleta base (rede) — retry com backoff; degrada para análise offline se falhar.
     with FeatureStore(FEATURE_STORE_DB) as store:
         universo = store.list_symbols("1d") or settings.DEFAULT_ASSETS
+        universo = order_by_staleness(universo, store)
     if not await run_ingest_with_retry(universo):
         log.warning("coleta base indisponível — prosseguindo com dados já materializados "
                     "(análise offline usa o último snapshot da Feature Store)")
@@ -312,6 +323,7 @@ async def main() -> int:
     store = FeatureStore(FEATURE_STORE_DB)
     try:
         universo = store.list_symbols("1d") or settings.DEFAULT_ASSETS
+        universo = order_by_staleness(universo, store)
         done = judges_done_today(store, today_utc)
         by_provider: dict[str, set[str]] = {}
         for ativo, juiz in done:

@@ -100,6 +100,8 @@ def main() -> int:
     hoje_iso = datetime.now().strftime("%Y-%m-%d")
     problemas = []
 
+    coleta_concluida = False
+    prefilter_skips = 0
     recente = _log_mais_recente()
     if recente is None:
         problemas.append("nenhum log garimpo_fase1_*.log encontrado — coleta nunca rodou")
@@ -110,7 +112,11 @@ def main() -> int:
                 f"{recente.name} tem {idade_h:.1f}h — coleta pode nao ter rodado hoje")
         else:
             texto = recente.read_text(encoding="utf-8", errors="replace")
-            if MARCADOR_CONCLUSAO not in texto:
+            coleta_concluida = MARCADOR_CONCLUSAO in texto
+            # com LLM_PREFILTER_ENABLED, um dia parado pode legitimamente gerar 0
+            # previsões — as linhas 'pre-filtro: ... fora' distinguem isso de falha.
+            prefilter_skips = texto.count("pre-filtro:")
+            if not coleta_concluida:
                 problemas.append(f"{recente.name} sem marcador de conclusão — rodada incompleta")
 
     juizes = 0
@@ -121,7 +127,12 @@ def main() -> int:
             "select count(*), count(distinct juiz) from predictions "
             "where substr(ts,1,10) = ?", (hoje_iso,)).fetchone()
         if n == 0:
-            problemas.append(f"0 previsoes gravadas em {hoje_iso}")
+            if coleta_concluida and prefilter_skips > 0:
+                log(f"OK: 0 previsoes em {hoje_iso}, mas a coleta concluiu e o "
+                    f"pre-filtro excluiu {prefilter_skips} ativo(s) — dia parado "
+                    "legitimo, nao e' falha")
+            else:
+                problemas.append(f"0 previsoes gravadas em {hoje_iso}")
         else:
             log(f"OK: {n} previsoes de {hoje_iso} com {juizes} juiz(es)")
             if juizes < JUIZES_ESPERADOS:

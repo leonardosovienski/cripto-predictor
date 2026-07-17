@@ -133,3 +133,65 @@ def test_redact_filter_ignora_segredos_curtos(fase1):
     rec = logging.LogRecord("x", logging.INFO, "x", 1, "texto curto normal", None, None)
     filt.filter(rec)
     assert rec.getMessage() == "texto curto normal"
+
+
+# ---------------- ordenação anti-buraco do api_guard ----------------
+
+def test_order_by_staleness_prioriza_mais_antigo_e_nunca_previsto(fase1, store):
+    store.write_predictions([
+        _pred("bitcoin", "2026-07-16T01:00:00Z", "gemini:m:h"),
+        _pred("ethereum", "2026-07-10T01:00:00Z", "groq:m:h"),
+    ])
+    ordem = fase1.order_by_staleness(["bitcoin", "ethereum", "solana"], store)
+    # solana nunca prevista vem primeiro; depois a previsão mais antiga (ethereum)
+    assert ordem == ["solana", "ethereum", "bitcoin"]
+
+
+def test_order_by_staleness_ignora_fallback(fase1, store):
+    # fallback não conta como previsão real: ativo só-com-fallback = nunca previsto
+    store.write_predictions([
+        _pred("bitcoin", "2026-07-16T01:00:00Z", "gemini:m:h", fallback=1),
+        _pred("ethereum", "2026-07-10T01:00:00Z", "groq:m:h"),
+    ])
+    ordem = fase1.order_by_staleness(["ethereum", "bitcoin"], store)
+    assert ordem == ["bitcoin", "ethereum"]
+
+
+# ---------------- paridade simulação x prefiltro canônico ----------------
+
+def test_prefilter_simulation_parity(monkeypatch):
+    """A régua paramétrica do simulate_prefilter deve decidir IGUAL ao
+    prefilter.decide() canônico com os mesmos thresholds — senão a calibração
+    retroativa mente."""
+    import importlib.util as _ilu
+    spec = _ilu.spec_from_file_location("simulate_prefilter", ROOT / "scripts" / "simulate_prefilter.py")
+    sim = _ilu.module_from_spec(spec)
+    spec.loader.exec_module(sim)
+
+    from GarimpoInvestimentos.analyzers import prefilter
+    from GarimpoInvestimentos.analyzers.score_engine import technical_direction
+    from GarimpoInvestimentos.config import settings
+
+    monkeypatch.setattr(settings, "LLM_PREFILTER_ENABLED", True)
+    monkeypatch.setattr(settings, "LLM_PREFILTER_MIN_VOLUME_USD", 10_000_000.0)
+    monkeypatch.setattr(settings, "LLM_PREFILTER_MIN_ABS_CHANGE_7D", 2.0)
+
+    casos = [
+        {},  # sem nada -> low_or_missing_volume
+        {"volume_usd": 5e6, "change_7d": 9.0},
+        {"volume_usd": 5e7},  # sem change_7d
+        {"volume_usd": 5e7, "change_7d": 0.5},
+        {"volume_usd": 5e7, "change_7d": 9.0},  # sem indicadores -> neutral/missing
+        {"volume_usd": 5e7, "change_7d": 9.0,
+         "indicadores": {"preco_vs_sma200_pct": 5.0, "macd_histogram": 1.0}},
+        {"volume_usd": 5e7, "change_7d": -9.0,
+         "indicadores": {"preco_vs_sma200_pct": -5.0, "macd_histogram": -1.0}},
+        {"volume_usd": 5e7, "change_7d": 9.0,
+         "indicadores": {"preco_vs_sma200_pct": 5.0, "macd_histogram": -1.0}},  # neutro
+    ]
+    for hard in casos:
+        canonico = prefilter.decide(hard)
+        simulado = sim.simulate_decision(hard, 10_000_000.0, 2.0, technical_direction)
+        assert (simulado == "selected") == canonico.selected, hard
+        if not canonico.selected:
+            assert simulado == canonico.reason, hard
