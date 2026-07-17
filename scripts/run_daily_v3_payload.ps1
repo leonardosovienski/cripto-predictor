@@ -16,7 +16,9 @@ $env:PREDICTOR_EVENTS_PATH = Join-Path $proj "data\v3\events_v3.jsonl"
 
 function Invoke-V3Step([string]$label, [scriptblock]$command) {
     "---- $label ----" | Out-File -FilePath $log -Append -Encoding utf8
-    & $command *>> $log
+    # PS 5.1: '*>>' grava UTF-16 e quebrava o log. Stringificar cada linha
+    # (ErrorRecords viram texto) e anexar em UTF-8 explicito.
+    & $command 2>&1 | ForEach-Object { $_.ToString() } | Out-File -FilePath $log -Append -Encoding utf8
     if ($LASTEXITCODE -ne 0) {
         "---- $label FAILED (exit $LASTEXITCODE) ----" | Out-File -FilePath $log -Append -Encoding utf8
         exit $LASTEXITCODE

@@ -19,8 +19,11 @@ Falha (1 ou 2) => escreve ALERTA em logs/watchdog.log E cria o arquivo
 C:\\Claude-projetos\\Claude\\ALERTA_COLETA_CRIPTO.txt (visível na raiz do
 workspace — o ecosystem_health também o reporta). Sucesso remove o alerta.
 """
+import json
+import os
 import sqlite3
 import sys
+import urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -50,6 +53,47 @@ def log(msg: str) -> None:
     LOG.parent.mkdir(parents=True, exist_ok=True)
     with open(LOG, "a", encoding="utf-8") as f:
         f.write(f"{stamp} {msg}\n")
+
+
+def _check_backtest_heartbeat(problemas: list[str]) -> None:
+    """O backtest diário (GarimpoBacktest, 2ª etapa da GarimpoFase1) pode falhar
+    em silêncio — o exit code do .bat vai para o Task Scheduler, que ninguém lê
+    todo dia. O heartbeat JSON do operational_runner é a evidência barata."""
+    hb = ROOT / "logs" / "operations" / "GarimpoBacktest.heartbeat.json"
+    if not hb.exists():
+        problemas.append("GarimpoBacktest.heartbeat.json inexistente — backtest diario nunca rodou")
+        return
+    idade_h = (datetime.now().timestamp() - hb.stat().st_mtime) / 3600
+    if idade_h > JANELA_HORAS:
+        problemas.append(f"heartbeat do backtest tem {idade_h:.1f}h — backtest nao rodou na ultima janela")
+        return
+    try:
+        status = json.loads(hb.read_text(encoding="utf-8")).get("status")
+    except Exception as e:
+        problemas.append(f"heartbeat do backtest ilegivel: {e}")
+        return
+    if status != "SUCCEEDED":
+        problemas.append(f"backtest diario com status {status!r} (esperado SUCCEEDED)")
+    else:
+        log("OK: backtest diario SUCCEEDED (heartbeat recente)")
+
+
+def _notify_webhook(texto: str) -> None:
+    """Push best-effort do alerta (operação headless não pode depender de alguém
+    olhar um .txt). Configure ALERTA_WEBHOOK_URL (ex.: topico ntfy.sh ou webhook
+    proprio); sem a variável, mantém só o arquivo — comportamento antigo."""
+    url = os.getenv("ALERTA_WEBHOOK_URL", "").strip()
+    if not url:
+        return
+    try:
+        req = urllib.request.Request(
+            url, data=texto.encode("utf-8"),
+            headers={"Content-Type": "text/plain; charset=utf-8",
+                     "Title": "ALERTA coleta H5 (previsao-cripto)"})
+        urllib.request.urlopen(req, timeout=10).close()
+        log("alerta enviado ao webhook configurado")
+    except Exception as e:
+        log(f"AVISO: webhook de alerta falhou ({e}) — alerta segue no arquivo")
 
 
 def main() -> int:
@@ -86,17 +130,20 @@ def main() -> int:
     except Exception as e:
         problemas.append(f"feature_store.db ilegivel: {e}")
 
+    _check_backtest_heartbeat(problemas)
+
     if problemas:
         for p in problemas:
             log(f"ALERTA: {p}")
-        ALERTA.write_text(
+        texto = (
             "ALERTA da coleta H5 (previsao-cripto) — "
             f"{datetime.now().isoformat(timespec='seconds')}\n"
             + "\n".join(f"- {p}" for p in problemas)
             + "\n\nAcao: rodar manualmente run_garimpo_fase1.bat HOJE para nao "
               "perder o dia da janela H5 (decisao 28/07); investigar o "
-              "agendador (schtasks /Query /TN GarimpoFase1).\n",
-            encoding="utf-8")
+              "agendador (schtasks /Query /TN GarimpoFase1).\n")
+        ALERTA.write_text(texto, encoding="utf-8")
+        _notify_webhook(texto)
         return 1
     if ALERTA.exists():
         ALERTA.unlink()
