@@ -11,6 +11,9 @@ from pathlib import Path
 import pytest
 
 ROOT = Path(__file__).parent.parent
+WORKSPACE = ROOT.parent
+if str(WORKSPACE) not in sys.path:
+    sys.path.insert(0, str(WORKSPACE))
 
 
 def _load_fase1():
@@ -115,16 +118,43 @@ def test_acquire_lock_respeita_instancia_viva(fase1, tmp_path, monkeypatch):
     assert fase1.acquire_lock() is False
 
 
-# ---------------- redação de segredos ----------------
+# ---------------- redação de segredos (Onda 4: delega a tools/secret_redaction) ----------------
+#
+# _RedactSecrets agora é um adaptador logging.Filter fino sobre
+# tools.secret_redaction.safe_redact_text — a implementação canônica
+# compartilhada do ecossistema (ver Onda 3/3A). O marcador mudou de "***"
+# para "[REDACTED]" (formato de tools/); a cobertura ficou estritamente
+# maior (padrões genéricos, não só valores conhecidos). Todos os segredos
+# usados abaixo são sintéticos.
 
-def test_redact_filter_mascara_segredos(fase1):
-    filt = fase1._RedactSecrets(["chave-super-secreta-123456"])
+from tools import secret_redaction as _canonical_redaction
+
+FAKE_KEY = "chave-super-secreta-123456"
+FAKE_TOKEN = "fake_token_987654321"
+
+
+def test_redact_filter_usa_a_implementacao_canonica_de_tools(fase1):
+    # Prova estrutural (não só comportamental) de que não há uma 3a
+    # implementação: o adaptador chama a MESMA função de tools/, importada
+    # do módulo canônico, sem regex/lista de nomes sensíveis próprias.
+    import inspect
+    module_source = inspect.getsource(fase1)
+    class_start = module_source.index("class _RedactSecrets")
+    class_source = module_source[class_start:module_source.index("\n\n\n", class_start)]
+    assert "from tools.secret_redaction import safe_redact_text" in module_source
+    assert fase1._RedactSecrets.filter.__code__.co_names.__contains__("safe_redact_text")
+    assert "re.compile" not in class_source  # sem regex própria
+    assert "SENSITIVE" not in class_source   # sem lista de nomes sensíveis própria
+
+
+def test_redact_filter_mascara_segredo_conhecido(fase1):
+    filt = fase1._RedactSecrets([FAKE_KEY])
     rec = logging.LogRecord("httpx", logging.INFO, "x", 1,
-                            "GET https://serpapi.com/search?api_key=chave-super-secreta-123456&q=btc",
+                            f"GET https://serpapi.com/search?api_key={FAKE_KEY}&q=btc",
                             None, None)
     assert filt.filter(rec) is True
-    assert "chave-super-secreta-123456" not in rec.getMessage()
-    assert "***" in rec.getMessage()
+    assert FAKE_KEY not in rec.getMessage()
+    assert _canonical_redaction.REDACTED in rec.getMessage()
 
 
 def test_redact_filter_ignora_segredos_curtos(fase1):
@@ -133,6 +163,125 @@ def test_redact_filter_ignora_segredos_curtos(fase1):
     rec = logging.LogRecord("x", logging.INFO, "x", 1, "texto curto normal", None, None)
     filt.filter(rec)
     assert rec.getMessage() == "texto curto normal"
+
+
+def test_redact_filter_authorization_header(fase1):
+    filt = fase1._RedactSecrets([])
+    rec = logging.LogRecord("x", logging.INFO, "x", 1,
+                            f"Authorization: Bearer {FAKE_TOKEN}", None, None)
+    filt.filter(rec)
+    assert FAKE_TOKEN not in rec.getMessage()
+
+
+def test_redact_filter_bearer_token(fase1):
+    filt = fase1._RedactSecrets([])
+    rec = logging.LogRecord("x", logging.INFO, "x", 1, f"Bearer {FAKE_TOKEN}", None, None)
+    filt.filter(rec)
+    assert FAKE_TOKEN not in rec.getMessage()
+
+
+def test_redact_filter_api_key_generico_sem_estar_na_lista(fase1):
+    # cobertura NOVA vs. a implementação antiga: valor desconhecido (não
+    # passado no construtor) ainda é mascarado pela regra estrutural.
+    filt = fase1._RedactSecrets([])
+    rec = logging.LogRecord("x", logging.INFO, "x", 1,
+                            "api_key=valor_desconhecido_12345", None, None)
+    filt.filter(rec)
+    assert "valor_desconhecido_12345" not in rec.getMessage()
+
+
+def test_redact_filter_header_estilo_coingecko_sem_literal_no_codigo(fase1):
+    # x-cg-demo-api-key não é um literal em NENHUM lugar do código (nem
+    # aqui, nem em tools/ — confirmado na Onda 3); a cobertura vem da regra
+    # genérica de "*api*key*".
+    filt = fase1._RedactSecrets([])
+    rec = logging.LogRecord("x", logging.INFO, "x", 1,
+                            f"x-cg-demo-api-key: {FAKE_KEY}", None, None)
+    filt.filter(rec)
+    assert FAKE_KEY not in rec.getMessage()
+
+
+def test_redact_filter_url_com_query_param_sensivel(fase1):
+    filt = fase1._RedactSecrets([])
+    rec = logging.LogRecord("x", logging.INFO, "x", 1,
+                            f"https://api.example.test/v1?api_key={FAKE_KEY}&page=2",
+                            None, None)
+    filt.filter(rec)
+    assert FAKE_KEY not in rec.getMessage()
+    assert "page=2" in rec.getMessage()
+
+
+def test_redact_filter_multiplos_segredos_na_mesma_mensagem(fase1):
+    filt = fase1._RedactSecrets([FAKE_KEY])
+    rec = logging.LogRecord("x", logging.INFO, "x", 1,
+                            f"api_key={FAKE_KEY} token={FAKE_TOKEN}", None, None)
+    filt.filter(rec)
+    msg = rec.getMessage()
+    assert FAKE_KEY not in msg and FAKE_TOKEN not in msg
+
+
+def test_redact_filter_record_args_tuple(fase1):
+    # record.msg usa %-format com args — getMessage() já mescla antes do
+    # filtro rodar; args deve ser limpo (None) quando algo foi redigido, do
+    # mesmo jeito que a implementação antiga fazia.
+    filt = fase1._RedactSecrets([FAKE_KEY])
+    rec = logging.LogRecord("x", logging.INFO, "x", 1, "chamando com api_key=%s",
+                            (FAKE_KEY,), None)
+    filt.filter(rec)
+    assert FAKE_KEY not in rec.getMessage()
+    assert rec.args is None
+
+
+def test_redact_filter_valor_vazio_nao_e_mascarado(fase1):
+    filt = fase1._RedactSecrets([])
+    rec = logging.LogRecord("x", logging.INFO, "x", 1, "api_key=", None, None)
+    filt.filter(rec)
+    assert rec.getMessage() == "api_key="
+
+
+def test_redact_filter_valor_curto_sob_chave_sensivel_ainda_mascarado(fase1):
+    # cobertura NOVA: mesmo abaixo do limiar de 8 chars usado para valores
+    # CONHECIDOS, um valor curto sob uma chave sensível (regra estrutural)
+    # ainda é mascarado — o limiar de 8 só se aplica a "known values".
+    filt = fase1._RedactSecrets([])
+    rec = logging.LogRecord("x", logging.INFO, "x", 1, "token=abc", None, None)
+    filt.filter(rec)
+    assert "abc" not in rec.getMessage()
+
+
+def test_redact_filter_case_insensitive(fase1):
+    filt = fase1._RedactSecrets([])
+    rec = logging.LogRecord("x", logging.INFO, "x", 1,
+                            f"X-CG-Demo-API-Key: {FAKE_KEY}", None, None)
+    filt.filter(rec)
+    assert FAKE_KEY not in rec.getMessage()
+
+
+def test_redact_filter_sem_segredo_preserva_mensagem_original(fase1):
+    # quando nada é redigido, record.msg/args NÃO são tocados (preserva
+    # formatação lazy para handlers downstream) — mesmo contrato de antes.
+    filt = fase1._RedactSecrets([FAKE_KEY])
+    original_msg = "mensagem normal sem segredo, ativo=%s"
+    rec = logging.LogRecord("x", logging.INFO, "x", 1, original_msg, ("bitcoin",), None)
+    filt.filter(rec)
+    assert rec.msg == original_msg
+    assert rec.args == ("bitcoin",)
+
+
+def test_redact_filter_falha_interna_nao_expoe_segredo(fase1, monkeypatch):
+    # tools.secret_redaction.safe_redact_text nunca levanta e nunca retorna
+    # o conteúdo bruto — mesmo se o redator interno falhar internamente.
+    import tools.secret_redaction as canonical
+
+    def _boom(*_a, **_k):
+        raise RuntimeError("falha simulada no redator")
+
+    monkeypatch.setattr(canonical, "redact_text", _boom)
+    filt = fase1._RedactSecrets([FAKE_KEY])
+    rec = logging.LogRecord("x", logging.INFO, "x", 1, f"api_key={FAKE_KEY}", None, None)
+    filt.filter(rec)
+    assert FAKE_KEY not in rec.getMessage()
+    assert canonical.REDACTION_FAILED in rec.getMessage()
 
 
 # ---------------- ordenação anti-buraco do api_guard ----------------

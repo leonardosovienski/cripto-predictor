@@ -32,6 +32,12 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
+# Mesmo padrão já usado por scripts/watchdog_coleta.py para consumir tools/
+# (raiz compartilhada do workspace, não um mecanismo novo).
+WORKSPACE = ROOT.parent
+if str(WORKSPACE) not in sys.path:
+    sys.path.insert(0, str(WORKSPACE))
+
 from GarimpoInvestimentos.collectors.news import get_news_result
 from GarimpoInvestimentos.analyzers.ai_insights import (
     analyze_asset, judge_signature, provider_for_asset,
@@ -50,6 +56,7 @@ from GarimpoInvestimentos.dpl.ingest import ingest_crypto
 from GarimpoInvestimentos.dpl.providers.fear_greed import FearAndGreedProvider
 from predictor_core.kernel.timeindex import iso_z
 from predictor_core.obs import emit_event
+from tools.secret_redaction import safe_redact_text
 
 LOCK_FILE = ROOT / "garimpo.lock"
 STALE_LOCK_HOURS = 12.0            # lock mais velho que isso é órfão mesmo com PID vivo (reuso de PID)
@@ -61,18 +68,22 @@ log = logging.getLogger("garimpo_fase1")
 
 
 class _RedactSecrets(logging.Filter):
-    """Substitui valores de segredos por *** em QUALQUER linha de log (inclusive
-    URLs logadas por libs de terceiros — a chave SerpAPI viaja como query param)."""
+    """Adaptador logging.Filter -> tools/secret_redaction (fonte canônica,
+    Onda 4 da reintegração do ecossistema). Não mantém regex nem lista de
+    nomes sensíveis própria: delega toda a redação a safe_redact_text, que
+    além dos valores conhecidos passados aqui também cobre padrões genéricos
+    (chave=valor, Authorization, Bearer, URLs com query param sensível — o
+    que cobre, por exemplo, a chave SerpAPI viajando como query param em logs
+    de libs de terceiros como httpx/httpcore)."""
     def __init__(self, secrets: list[str]):
         super().__init__()
         self._secrets = [s for s in secrets if s and len(s) >= 8]
 
     def filter(self, record: logging.LogRecord) -> bool:
         msg = record.getMessage()
-        if any(s in msg for s in self._secrets):
-            for s in self._secrets:
-                msg = msg.replace(s, "***")
-            record.msg, record.args = msg, None
+        redacted = safe_redact_text(msg, self._secrets)
+        if redacted != msg:
+            record.msg, record.args = redacted, None
         return True
 
 
