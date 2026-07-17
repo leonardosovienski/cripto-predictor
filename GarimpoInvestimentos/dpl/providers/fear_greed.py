@@ -18,8 +18,13 @@ _URL = "https://api.alternative.me/fng/"
 class FearAndGreedProvider(SignalProvider):
     name = "fear_greed"
 
+    def __init__(self):
+        self._cache: dict[int, list[SignalPoint]] = {}
+
     @with_retry()
     async def fetch(self, limit: int = 30) -> list[SignalPoint]:
+        if limit in self._cache:
+            return self._cache[limit]
         async with get_http_client() as client:
             resp = await client.get(_URL, params={"limit": str(limit), "format": "json"})
             resp.raise_for_status()
@@ -38,4 +43,5 @@ class FearAndGreedProvider(SignalProvider):
             )
         if not points:
             raise RuntimeError("fear_greed: resposta vazia")
+        self._cache[limit] = points
         return points

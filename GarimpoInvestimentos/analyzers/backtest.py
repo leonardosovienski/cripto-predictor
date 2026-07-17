@@ -118,6 +118,10 @@ def _load_rows() -> list[dict]:
             # Carimbo do juiz (provider:modelo:hash) — no modo multi cada ativo
             # tem o seu; o _report estratifica para nunca poolar calibrações.
             "juiz": (r.get("juiz") or "").strip(),
+            # 0010/0011: fontes de notícias e seleção são populações
+            # distintas. NULL do legado não pode fingir equivalência.
+            "news_provider": (r.get("news_provider") or "legacy:unknown").strip(),
+            "collection_policy": (r.get("collection_policy") or "legacy:unknown").strip(),
         })
     return rows
 
@@ -158,7 +162,8 @@ async def run():
 
 
 def _write(enriched: list[dict]) -> None:
-    cols = ["ativo", "score", "pred_date", "pred_price", "fonte",
+    cols = ["ativo", "score", "pred_date", "pred_price", "fonte", "juiz",
+            "news_provider", "collection_policy", "degradado",
             "price_d1", "var_d1_pct", "medida_d1",
             "price_d7", "var_d7_pct", "medida_d7",
             "price_d30", "var_d30_pct", "medida_d30"]
@@ -239,8 +244,35 @@ def _report(enriched: list[dict]) -> None:
                     if rs is not None and los is not None:
                         print(f"      └ fonte={fonte}: Spearman {rs:+.3f} "
                               f"[IC95% {los:+.3f} a {his:+.3f}] (n={len(sub)})")
+                    elif sub:
+                        print(f"      └ fonte={fonte}: n={len(sub)} (insuficiente p/ IC)")
+            # Notícias e filtros/budgets não são detalhes operacionais: mudam
+            # o input ou a população. Reportar o estrato impede consenso falso.
+            news_counts = {}
+            for provider in sorted({r.get("news_provider", "legacy:unknown") for r in enriched}):
+                sub = [(r["score"], r[key]) for r in enriched
+                       if r.get(key) is not None and r.get("news_provider") == provider]
+                news_counts[provider] = len(sub)
+                if len(sub) >= 4:
+                    rs, los, his = spearman_block_ci(sub)
+                    if rs is not None and los is not None:
+                        print(f"      └ news_provider={provider}: Spearman {rs:+.3f} "
+                              f"[IC95% {los:+.3f} a {his:+.3f}] (n={len(sub)})")
                 elif sub:
-                    print(f"      └ fonte={fonte}: n={len(sub)} (insuficiente p/ IC)")
+                    print(f"      └ news_provider={provider}: n={len(sub)} (insuficiente p/ IC)")
+            policy_counts = {}
+            for policy in sorted({r.get("collection_policy", "legacy:unknown") for r in enriched}):
+                sub = [(r["score"], r[key]) for r in enriched
+                       if r.get(key) is not None and r.get("collection_policy") == policy]
+                policy_counts[policy] = len(sub)
+                label = policy if policy == "legacy:unknown" else "configured"
+                if len(sub) >= 4:
+                    rs, los, his = spearman_block_ci(sub)
+                    if rs is not None and los is not None:
+                        print(f"      └ collection_policy={label}: Spearman {rs:+.3f} "
+                              f"[IC95% {los:+.3f} a {his:+.3f}] (n={len(sub)})")
+                elif sub:
+                    print(f"      └ collection_policy={label}: n={len(sub)} (insuficiente p/ IC)")
             # Estratificação por JUIZ (H5 / modo multi): cada provedor:modelo é uma
             # calibração distinta — o Sharpe agregado da trial multi só é interpretável
             # ao lado dos estratos por juiz (um juiz individual só se julga com o n
@@ -265,7 +297,8 @@ def _report(enriched: list[dict]) -> None:
                          "ic_upper": round(hi, 4), "n": n},
                 metadata={"horizon_days": h, "veredito": veredito,
                           "n_divergentes": len(flagged), "n_alinhadas": len(aligned),
-                          "n_por_fonte": fonte_counts})
+                          "n_por_fonte": fonte_counts, "n_por_news_provider": news_counts,
+                          "n_por_collection_policy": policy_counts})
 
 
 def close_trial_sharpes(enriched: list[dict], horizon: int, *,

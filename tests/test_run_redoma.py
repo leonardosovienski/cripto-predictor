@@ -49,11 +49,13 @@ def test_run_analisa_do_serving_e_persiste_carimbado(tmp_path, monkeypatch):
         return {"sentiment": "positivo", "score": 77, "opportunity_score": 77,
                 "summary": "análise da redoma"}
 
+    from GarimpoInvestimentos.collectors.news import NewsResult
+
     async def fake_news(ativo):
-        return []
+        return NewsResult([], "stub", "stub_empty")
 
     monkeypatch.setattr(main, "analyze_asset", fake_analyze)
-    monkeypatch.setattr(main, "get_news_snippets", fake_news)
+    monkeypatch.setattr(main, "get_news_result", fake_news)
     monkeypatch.setattr(main, "judge_signature",
                         lambda asset_name=None: "stub:modelo:hash")
     monkeypatch.setattr(main, "export_results", lambda resultados: None)

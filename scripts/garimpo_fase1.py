@@ -32,13 +32,16 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from GarimpoInvestimentos.collectors.serpapi_news import get_news_snippets
+from GarimpoInvestimentos.collectors.news import get_news_result
 from GarimpoInvestimentos.analyzers.ai_insights import (
     analyze_asset, judge_signature, provider_for_asset,
 )
 from GarimpoInvestimentos.analyzers.score_engine import calculate_final_score, divergence_flag
+from GarimpoInvestimentos.analyzers.prefilter import decide as prefilter_decide
 from GarimpoInvestimentos.config import settings
 from GarimpoInvestimentos.core.history import append_history, utc_stamp
+from GarimpoInvestimentos.core.api_guard import allow as guard_allow
+from GarimpoInvestimentos.core.collection_policy import current_policy_json
 from GarimpoInvestimentos.core.paths import FEATURE_STORE_DB, LOGS_DIR
 from GarimpoInvestimentos.dpl import CryptoDataProvider, FeatureStore
 from GarimpoInvestimentos.dpl.feature_store import fonte_label
@@ -46,6 +49,7 @@ from GarimpoInvestimentos.dpl.feature_engineering import to_hard_data
 from GarimpoInvestimentos.dpl.ingest import ingest_crypto
 from GarimpoInvestimentos.dpl.providers.fear_greed import FearAndGreedProvider
 from predictor_core.kernel.timeindex import iso_z
+from predictor_core.obs import emit_event
 
 LOCK_FILE = ROOT / "garimpo.lock"
 INGEST_HISTORY_DAYS = 200          # mesmo valor do main.py (SMA-200 + change_30d)
@@ -111,6 +115,12 @@ async def run_ingest_with_retry(ativos: list[str]) -> bool:
             fear_greed = FearAndGreedProvider()
             with FeatureStore(FEATURE_STORE_DB) as store:
                 for i, ativo in enumerate(ativos):
+                    budget = guard_allow("ingest", "assets", settings.API_GUARD_MAX_INGEST_ASSETS)
+                    if not budget.allowed:
+                        emit_event("previsao_cripto", "api_guard_skipped", metrics={},
+                                   metadata={"stage": "ingest", "ativo": ativo, "reason": budget.reason})
+                        log.info("guarda de API: ingestão de %s pulada (%s)", ativo.upper(), budget.reason)
+                        continue
                     try:
                         aligned = await ingest_crypto(
                             store, facade, ativo, interval="1d",
@@ -151,11 +161,24 @@ async def analyze_pending(store: FeatureStore, pending: list[str]) -> tuple[int,
             if "price_usd" not in hard_data:
                 raise RuntimeError("Feature Store sem price_usd")
 
-            try:
-                news = await get_news_snippets(ativo)
-            except Exception as e:
-                log.warning("notícias de %s indisponíveis (%s) — prossegue degradado", ativo, e)
-                news = []
+            prefilter = prefilter_decide(hard_data)
+            if not prefilter.selected:
+                emit_event("previsao_cripto", "llm_prefilter_skipped", metrics={},
+                           metadata={"ativo": ativo, "reason": prefilter.reason})
+                log.info("pre-filtro: %s fora (%s) — sem chamada de LLM", ativo.upper(), prefilter.reason)
+                continue
+            llm_budget = guard_allow("llm", provider, settings.API_GUARD_MAX_LLM_CALLS_PER_PROVIDER)
+            if not llm_budget.allowed:
+                emit_event("previsao_cripto", "api_guard_skipped", metrics={},
+                           metadata={"stage": "llm", "ativo": ativo, "reason": llm_budget.reason})
+                log.info("guarda de API: LLM de %s pulado (%s)", ativo.upper(), llm_budget.reason)
+                continue
+
+            news_result = await get_news_result(ativo)
+            news = news_result.titles
+            if news_result.degraded:
+                log.warning("notícias de %s indisponíveis (%s) — prossegue degradado",
+                            ativo, news_result.degraded_reason)
 
             analysis = await analyze_asset(ativo, hard_data, news)
             if analysis.get("llm_fallback"):
@@ -177,6 +200,9 @@ async def analyze_pending(store: FeatureStore, pending: list[str]) -> tuple[int,
                     "divergencia": divergence_flag(score, hard_data.get("indicadores", {})),
                     "data_source": fonte_label(store.latest_source(ativo, "1d")),
                     "input_degradado": 0 if news else 1,
+                    "news_provider": news_result.provider,
+                    "news_degraded_reason": news_result.degraded_reason,
+                    "collection_policy": current_policy_json(),
                     "llm_fallback": 0,
                 }
                 append_history([resultado], store)

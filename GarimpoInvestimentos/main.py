@@ -16,13 +16,16 @@ if _known.output_dir:
 from datetime import timedelta
 
 from GarimpoInvestimentos.collectors.discovery import discover_assets
-from GarimpoInvestimentos.collectors.serpapi_news import get_news_snippets
-from GarimpoInvestimentos.analyzers.ai_insights import analyze_asset, judge_signature
+from GarimpoInvestimentos.collectors.news import get_news_result
+from GarimpoInvestimentos.analyzers.ai_insights import analyze_asset, judge_signature, provider_for_asset
 from GarimpoInvestimentos.analyzers.score_engine import calculate_final_score, divergence_flag
+from GarimpoInvestimentos.analyzers.prefilter import decide as prefilter_decide
 from GarimpoInvestimentos.config import settings
 from GarimpoInvestimentos.output.reporter import export_results
 from GarimpoInvestimentos.core.logger import log_start, log_success, log_error
 from GarimpoInvestimentos.core.cache import load_cache, save_cache
+from GarimpoInvestimentos.core.api_guard import allow as guard_allow
+from GarimpoInvestimentos.core.collection_policy import current_policy_json
 from GarimpoInvestimentos.core.history import append_history, migrate_csv_to_store, utc_stamp
 from GarimpoInvestimentos.core.paths import FEATURE_STORE_DB
 from GarimpoInvestimentos.dpl import CryptoDataProvider, FeatureStore
@@ -118,6 +121,12 @@ async def run_ingest(ativos: list[str], mode: str = "fallback") -> None:
     print(f"📥 Ingestão ({mode}) → {FEATURE_STORE_DB}")
     with FeatureStore(FEATURE_STORE_DB) as store:
         for i, ativo in enumerate(ativos):
+            budget = guard_allow("ingest", "assets", settings.API_GUARD_MAX_INGEST_ASSETS)
+            if not budget.allowed:
+                emit_event("previsao_cripto", "api_guard_skipped", metrics={},
+                           metadata={"stage": "ingest", "ativo": ativo, "reason": budget.reason})
+                print(f"  ⏭️  {ativo.upper()} fora do orçamento de ingestão ({budget.reason})")
+                continue
             try:
                 aligned = await ingest_crypto(
                     store, facade, ativo, interval="1d",
@@ -209,6 +218,20 @@ async def run():
             log_error(ativo, RuntimeError("Feature Store sem price_usd para o ativo"))
             continue
 
+        prefilter = prefilter_decide(hard_data)
+        if not prefilter.selected:
+            emit_event("previsao_cripto", "llm_prefilter_skipped", metrics={},
+                       metadata={"ativo": ativo, "reason": prefilter.reason})
+            print(f"🔎 {ativo.upper()} fora do pre-filtro ({prefilter.reason}) — sem chamada de LLM.")
+            continue
+        llm_budget = guard_allow("llm", provider_for_asset(ativo),
+                                 settings.API_GUARD_MAX_LLM_CALLS_PER_PROVIDER)
+        if not llm_budget.allowed:
+            emit_event("previsao_cripto", "api_guard_skipped", metrics={},
+                       metadata={"stage": "llm", "ativo": ativo, "reason": llm_budget.reason})
+            print(f"🔎 {ativo.upper()} fora do orçamento de LLM ({llm_budget.reason}).")
+            continue
+
         # Indicadores são features derivadas já materializadas; ausência = série curta.
         ind_ok = "indicadores" in hard_data
         if not ind_ok:
@@ -216,13 +239,9 @@ async def run():
                 "indicadores ausentes na Feature Store (histórico insuficiente?)"))
 
         # Notícias — fallback para lista vazia; o Gemini ainda analisa com dados de mercado
-        news_ok = True
-        try:
-            news = await get_news_snippets(ativo)
-        except Exception as e:
-            log_error(ativo, e)
-            news = []
-            news_ok = False
+        news_result = await get_news_result(ativo)
+        news = news_result.titles
+        news_ok = not news_result.degraded
 
         # Degradação silenciosa INSTRUMENTADA: antes o except engolia a falha e o LLM
         # pontuava com input empobrecido sem ninguém saber. Agora é contada e EMITIDA
@@ -260,6 +279,9 @@ async def run():
                 # 0008: persistido na previsão (antes só ia à telemetria) — o
                 # backtest estratifica previsões com input empobrecido.
                 "input_degradado": 1 if faltando else 0,
+                "news_provider": news_result.provider,
+                "news_degraded_reason": news_result.degraded_reason,
+                "collection_policy": current_policy_json(),
                 # 0009: carimbo estrutural de fallback do LLM — a linha entra no
                 # histórico mas o backtest a EXCLUI (não é análise real).
                 "llm_fallback": 1 if analysis.get("llm_fallback") else 0,

@@ -24,6 +24,8 @@ def _synthetic(n=60):
             "var_d7_pct": v7,                        # horizonte principal (default 7)
             "var_d30_pct": rng.gauss(0, 5),
             "divergencia": 1 if flagged else 0,
+            "news_provider": "cryptopanic" if i % 2 else "google_news_rss",
+            "collection_policy": "policy-a" if i % 3 else "policy-b",
         })
     return rows
 
@@ -45,6 +47,8 @@ def test_report_emits_toll_passed_and_stratifies(tmp_path, monkeypatch, capsys):
     out = capsys.readouterr().out
     assert "alinhadas" in out, f"estratificação 'alinhadas' ausente na saída:\n{out}"
     assert "divergentes" in out, f"estratificação 'divergentes' ausente na saída:\n{out}"
+    assert "news_provider=" in out
+    assert "collection_policy=" in out
 
     # 2) o evento estruturado foi emitido, com IC nas métricas e divergência nos metadados
     tolls = [e for e in obs.read_events(events) if e["event"] == "toll_passed"]
@@ -56,3 +60,5 @@ def test_report_emits_toll_passed_and_stratifies(tmp_path, monkeypatch, capsys):
     assert -1.0 <= e["metrics"]["ic_lower"] <= 1.0
     assert e["metadata"]["horizon_days"] == 7
     assert e["metadata"]["n_divergentes"] >= 1 and e["metadata"]["n_alinhadas"] >= 1
+    assert set(e["metadata"]["n_por_news_provider"]) == {"cryptopanic", "google_news_rss"}
+    assert set(e["metadata"]["n_por_collection_policy"]) == {"policy-a", "policy-b"}

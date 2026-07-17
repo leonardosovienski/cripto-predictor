@@ -286,7 +286,8 @@ class FeatureStore:
 
     PREDICTION_FIELDS = ("ativo", "ts", "score", "sentimento", "resumo",
                          "price_usd", "juiz", "divergencia", "fonte",
-                         "input_degradado", "llm_fallback")
+                         "input_degradado", "llm_fallback", "news_provider",
+                         "news_degraded_reason", "collection_policy")
 
     def write_predictions(self, rows: list[dict]) -> int:
         """Upsert de previsões. PK (ativo, ts): reexecução/cache hit não infla o n
@@ -300,14 +301,18 @@ class FeatureStore:
         self._conn.executemany(
             """INSERT INTO predictions
                (ativo, ts, score, sentimento, resumo, price_usd, juiz, divergencia,
-                fonte, input_degradado, llm_fallback)
-               VALUES (?,?,?,?,?,?,?,?,?,?,?)
+                fonte, input_degradado, llm_fallback, news_provider, news_degraded_reason,
+                collection_policy)
+               VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)
                ON CONFLICT(ativo, ts) DO UPDATE SET
                  score=excluded.score, sentimento=excluded.sentimento,
                  resumo=excluded.resumo, price_usd=excluded.price_usd,
                  juiz=excluded.juiz, divergencia=excluded.divergencia,
                  fonte=excluded.fonte, input_degradado=excluded.input_degradado,
-                 llm_fallback=excluded.llm_fallback""",
+                 llm_fallback=excluded.llm_fallback,
+                 news_provider=excluded.news_provider,
+                 news_degraded_reason=excluded.news_degraded_reason,
+                 collection_policy=excluded.collection_policy""",
             data,
         )
         self._conn.commit()

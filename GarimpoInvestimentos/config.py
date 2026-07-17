@@ -51,6 +51,20 @@ class Settings:
 
     # --- Notícias ---
     SERP_API_KEY: str = field(default_factory=lambda: os.getenv("SERP_API_KEY", ""))
+    # O padrão preserva H5. Outra composição de fontes altera o input do LLM e
+    # deve ser ativada somente em uma nova trial forward.
+    NEWS_PROVIDERS: list[str] = field(default_factory=lambda: [
+        p.strip().lower() for p in os.getenv("NEWS_PROVIDERS", "serpapi").split(",") if p.strip()])
+    # Vazio preserva o roteamento historico. Quando preenchido, esta fonte e
+    # consultada somente depois de todas as fontes primarias distribuidas.
+    NEWS_FALLBACK_PROVIDER: str = field(default_factory=lambda: os.getenv(
+        "NEWS_FALLBACK_PROVIDER", "").strip().lower())
+    CRYPTOPANIC_AUTH_TOKEN: str = field(default_factory=lambda: os.getenv("CRYPTOPANIC_AUTH_TOKEN", ""))
+    # Credenciais opcionais: os adaptadores permanecem desativados ate serem
+    # incluidos explicitamente em NEWS_PROVIDERS de uma nova trial forward.
+    NEWSAPIAI_API_KEY: str = field(default_factory=lambda: os.getenv(
+        "NEWSAPIAI_API_KEY", os.getenv("NEWSAPI_AI_API_KEY", "")))
+    MEDIASTACK_API_KEY: str = field(default_factory=lambda: os.getenv("MEDIASTACK_API_KEY", ""))
 
     # --- Dados de mercado (opcional) ---
     # Chave Demo do CoinGecko: sobe o rate limit do free tier (evita 429 na coleta
@@ -69,12 +83,50 @@ class Settings:
     # Gemini free tier ~10 req/min: 7s => ~8,5/min, com folga. Sem isso, um lote de 10+
     # ativos estoura o limite e cai TODO no fallback (score 50). Baixe p/ 0 se tiver tier pago.
     LLM_PACING_SECONDS: float = field(default_factory=lambda: float(os.getenv("LLM_PACING_SECONDS", "7")))
+    # Prefiltro OPT-IN: reduz chamadas de LLM usando apenas features já
+    # materializadas. Ligá-lo altera a população observada e exige nova trial.
+    LLM_PREFILTER_ENABLED: bool = field(default_factory=lambda: parse_bool(
+        os.getenv("LLM_PREFILTER_ENABLED"), False))
+    LLM_PREFILTER_MIN_VOLUME_USD: float = field(default_factory=lambda: float(
+        os.getenv("LLM_PREFILTER_MIN_VOLUME_USD", "10000000")))
+    LLM_PREFILTER_MIN_ABS_CHANGE_7D: float = field(default_factory=lambda: float(
+        os.getenv("LLM_PREFILTER_MIN_ABS_CHANGE_7D", "2")))
+    # Guardas de requisição da Fase 1. Zero = sem teto; habilitar qualquer teto
+    # muda a coleta e requer trial nova. Os contadores vivem só no processo atual.
+    API_GUARD_ENABLED: bool = field(default_factory=lambda: parse_bool(
+        os.getenv("API_GUARD_ENABLED"), False))
+    API_GUARD_MAX_INGEST_ASSETS: int = field(default_factory=lambda: int(
+        os.getenv("API_GUARD_MAX_INGEST_ASSETS", "0")))
+    API_GUARD_MAX_NEWS_ATTEMPTS_PER_PROVIDER: int = field(default_factory=lambda: int(
+        os.getenv("API_GUARD_MAX_NEWS_ATTEMPTS_PER_PROVIDER", "0")))
+    API_GUARD_MAX_LLM_CALLS_PER_PROVIDER: int = field(default_factory=lambda: int(
+        os.getenv("API_GUARD_MAX_LLM_CALLS_PER_PROVIDER", "0")))
 
     def __post_init__(self):
         # Trava de governança P0 (predictor_core.settings): chave ausente/FALSA/curta =>
-        # crash imediato, antes de qualquer modelo inicializar. SerpAPI sempre obrigatória;
-        # a de LLM depende do provedor. Strings de mentira ('dummy', etc.) também crasham.
+        # crash imediato, antes de qualquer modelo inicializar. SerpAPI só é obrigatória
+        # quando configurada; RSS não exige credencial. Strings de mentira ('dummy', etc.)
+        # também crasham.
         from predictor_core.settings import require_secrets
+        allowed_news = {
+            "serpapi", "cryptopanic", "newsapi_ai", "mediastack",
+            "google_news_rss", "curated_rss",
+        }
+        unknown_news = set(self.NEWS_PROVIDERS) - allowed_news
+        if not self.NEWS_PROVIDERS or unknown_news:
+            raise ValueError(f"NEWS_PROVIDERS inválido: {sorted(unknown_news) or 'vazio'}")
+        if len(set(self.NEWS_PROVIDERS)) != len(self.NEWS_PROVIDERS):
+            raise ValueError("NEWS_PROVIDERS não pode conter duplicatas")
+        if self.NEWS_FALLBACK_PROVIDER and self.NEWS_FALLBACK_PROVIDER not in allowed_news:
+            raise ValueError("NEWS_FALLBACK_PROVIDER inválido")
+        if self.NEWS_FALLBACK_PROVIDER in self.NEWS_PROVIDERS:
+            raise ValueError("NEWS_FALLBACK_PROVIDER deve ficar fora de NEWS_PROVIDERS")
+        for name in ("API_GUARD_MAX_INGEST_ASSETS", "API_GUARD_MAX_NEWS_ATTEMPTS_PER_PROVIDER",
+                     "API_GUARD_MAX_LLM_CALLS_PER_PROVIDER"):
+            if getattr(self, name) < 0:
+                raise ValueError(f"{name} não pode ser negativo")
+        if self.LLM_PREFILTER_MIN_VOLUME_USD < 0 or self.LLM_PREFILTER_MIN_ABS_CHANGE_7D < 0:
+            raise ValueError("limites do LLM prefilter não podem ser negativos")
         provider_keys = {
             "openai": "OPENAI_API_KEY",
             "groq": "GROQ_API_KEY",
@@ -82,14 +134,16 @@ class Settings:
             "mistral": "MISTRAL_API_KEY",
             "openrouter": "OPENROUTER_API_KEY",
         }
+        uses_serpapi = "serpapi" in self.NEWS_PROVIDERS or self.NEWS_FALLBACK_PROVIDER == "serpapi"
+        required_news = ["SERP_API_KEY"] if uses_serpapi else []
         if self.LLM_PROVIDER == "multi":
             # Modo multi exige a chave de TODOS os provedores da partição — falhar
             # na primeira chamada do lote seria degradação silenciosa (fallback 50).
             required = [provider_keys.get(p, "GEMINI_API_KEY") for p in self.LLM_MULTI_PROVIDERS]
-            require_secrets("SERP_API_KEY", *required)
+            require_secrets(*required_news, *required)
         else:
             provider_key = provider_keys.get(self.LLM_PROVIDER, "GEMINI_API_KEY")
-            require_secrets("SERP_API_KEY", provider_key)
+            require_secrets(*required_news, provider_key)
 
 
 settings = Settings()

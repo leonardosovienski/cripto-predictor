@@ -56,6 +56,10 @@ def to_prediction_rows(resultados: list[dict]) -> list[dict]:
             # de NULL para fluxos legados.
             "llm_fallback": (None if r.get("llm_fallback") is None
                              else int(bool(r.get("llm_fallback")))),
+            # 0010: fonte e motivo de degradação das notícias. Legado = NULL.
+            "news_provider": r.get("news_provider"),
+            "news_degraded_reason": r.get("news_degraded_reason"),
+            "collection_policy": r.get("collection_policy"),
         })
     return rows
 
