@@ -48,11 +48,28 @@ from GarimpoInvestimentos.dpl.providers.fear_greed import FearAndGreedProvider
 from predictor_core.kernel.timeindex import iso_z
 
 LOCK_FILE = ROOT / "garimpo.lock"
+STALE_LOCK_HOURS = 12.0            # lock mais velho que isso é órfão mesmo com PID vivo (reuso de PID)
 INGEST_HISTORY_DAYS = 200          # mesmo valor do main.py (SMA-200 + change_30d)
 INGEST_RETRIES = 3                 # tentativas da coleta base (rede)
 INGEST_BACKOFF_BASE = 5.0          # 5s, 10s, 20s
 
 log = logging.getLogger("garimpo_fase1")
+
+
+class _RedactSecrets(logging.Filter):
+    """Substitui valores de segredos por *** em QUALQUER linha de log (inclusive
+    URLs logadas por libs de terceiros — a chave SerpAPI viaja como query param)."""
+    def __init__(self, secrets: list[str]):
+        super().__init__()
+        self._secrets = [s for s in secrets if s and len(s) >= 8]
+
+    def filter(self, record: logging.LogRecord) -> bool:
+        msg = record.getMessage()
+        if any(s in msg for s in self._secrets):
+            for s in self._secrets:
+                msg = msg.replace(s, "***")
+            record.msg, record.args = msg, None
+        return True
 
 
 def _setup_logging() -> None:
@@ -66,17 +83,81 @@ def _setup_logging() -> None:
             logging.StreamHandler(sys.stdout),
         ],
     )
+    # httpx/httpcore em INFO logam a URL completa de cada request — com a chave
+    # SerpAPI no query string. WARNING silencia; o filtro abaixo é o cinto de
+    # segurança para qualquer outro caminho de log.
+    for noisy in ("httpx", "httpcore"):
+        logging.getLogger(noisy).setLevel(logging.WARNING)
+    redactor = _RedactSecrets([
+        settings.SERP_API_KEY, settings.GEMINI_API_KEY, settings.OPENAI_API_KEY,
+        settings.GROQ_API_KEY, settings.CEREBRAS_API_KEY, settings.MISTRAL_API_KEY,
+        settings.OPENROUTER_API_KEY, settings.COINGECKO_API_KEY,
+    ])
+    for handler in logging.getLogger().handlers:
+        handler.addFilter(redactor)
+
+
+def _pid_alive(pid: int) -> bool:
+    """True se existe processo com este PID. Windows: OpenProcess com
+    QUERY_LIMITED_INFORMATION (não usa os.kill, que no Windows MATA o alvo)."""
+    if pid <= 0:
+        return False
+    if sys.platform == "win32":
+        import ctypes
+        handle = ctypes.windll.kernel32.OpenProcess(0x1000, False, pid)
+        if not handle:
+            return False
+        ctypes.windll.kernel32.CloseHandle(handle)
+        return True
+    try:
+        os.kill(pid, 0)
+        return True
+    except OSError:
+        return False
+
+
+def _lock_is_stale(lock: Path) -> bool:
+    """Lock órfão = PID gravado não existe mais, OU arquivo mais velho que
+    STALE_LOCK_HOURS (cobre reuso de PID). Um kill duro (timeout do runner,
+    queda de energia) pula o finally e deixava a coleta abortando TODA noite
+    seguinte com exit 2 até remoção manual — inaceitável em operação headless."""
+    try:
+        age_h = (datetime.now(timezone.utc).timestamp() - lock.stat().st_mtime) / 3600
+        if age_h > STALE_LOCK_HOURS:
+            return True
+        content = lock.read_text(encoding="utf-8", errors="replace")
+    except OSError:
+        return False  # sumiu/ilegível no meio do caminho — deixa o retry decidir
+    for token in content.split():
+        if token.startswith("pid="):
+            try:
+                return not _pid_alive(int(token[4:]))
+            except ValueError:
+                return True  # conteúdo corrompido = órfão
+    return True  # sem pid= registrado = formato antigo/corrompido = órfão
 
 
 def acquire_lock() -> bool:
-    """Cria garimpo.lock atomicamente (O_EXCL). False = já existe outra instância."""
-    try:
-        fd = os.open(LOCK_FILE, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
-    except FileExistsError:
-        return False
-    with os.fdopen(fd, "w", encoding="utf-8") as f:
-        f.write(f"pid={os.getpid()} started={iso_z(datetime.now(timezone.utc))}\n")
-    return True
+    """Cria garimpo.lock atomicamente (O_EXCL). Lock existente mas ÓRFÃO (PID
+    morto ou velho demais) é removido e a aquisição tentada mais uma vez.
+    False = outra instância realmente em execução."""
+    for attempt in (1, 2):
+        try:
+            fd = os.open(LOCK_FILE, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+        except FileExistsError:
+            if attempt == 1 and _lock_is_stale(LOCK_FILE):
+                log.warning("garimpo.lock órfão detectado (PID morto ou >%.0fh) — "
+                            "removendo e assumindo o lock", STALE_LOCK_HOURS)
+                try:
+                    LOCK_FILE.unlink()
+                except OSError:
+                    return False
+                continue
+            return False
+        with os.fdopen(fd, "w", encoding="utf-8") as f:
+            f.write(f"pid={os.getpid()} started={iso_z(datetime.now(timezone.utc))}\n")
+        return True
+    return False
 
 
 def release_lock() -> None:
@@ -86,19 +167,12 @@ def release_lock() -> None:
         pass
 
 
-def judges_done_today(store: FeatureStore, today_utc: str) -> dict[str, set[str]]:
-    """Ativos já previstos HOJE (UTC), agrupados por juiz — só previsões reais:
-    linha de fallback (llm_fallback=1) não conta como coletada e será refeita."""
-    cur = store._conn.execute(  # pyright: ignore[reportPrivateUsage] — query ad-hoc de operação, sem API pública equivalente
-        """SELECT ativo, juiz FROM predictions
-           WHERE ts LIKE ? AND COALESCE(llm_fallback, 0) = 0""",
-        (f"{today_utc}%",),
-    )
-    done: dict[str, set[str]] = {}
-    for ativo, juiz in cur:
-        provider = (juiz or "").split(":", 1)[0] or "desconhecido"
-        done.setdefault(provider, set()).add(ativo.lower())
-    return done
+def judges_done_today(store: FeatureStore, today_utc: str) -> set[tuple[str, str]]:
+    """Pares (ativo, juiz) já previstos HOJE (UTC) — só previsões reais: linha de
+    fallback (llm_fallback=1) não conta como coletada e será refeita. Compara o
+    judge_signature COMPLETO (provider:modelo:hash): se o modelo/prompt mudar no
+    meio do dia, o ativo NÃO é pulado como se fosse o mesmo juiz."""
+    return {(ativo.lower(), juiz) for ativo, juiz in store.predictions_on(today_utc)}
 
 
 async def run_ingest_with_retry(ativos: list[str]) -> bool:
@@ -213,11 +287,14 @@ async def main() -> int:
     try:
         universo = store.list_symbols("1d") or settings.DEFAULT_ASSETS
         done = judges_done_today(store, today_utc)
-        for provider, ativos_done in sorted(done.items()):
+        by_provider: dict[str, set[str]] = {}
+        for ativo, juiz in done:
+            by_provider.setdefault(juiz.split(":", 1)[0] or "desconhecido", set()).add(ativo)
+        for provider, ativos_done in sorted(by_provider.items()):
             log.info("idempotência: juiz %s já tem %d previsão(ões) hoje — pulando: %s",
                      provider, len(ativos_done), ", ".join(sorted(ativos_done)))
-        done_assets = {a for s in done.values() for a in s}
-        pending = [a for a in universo if a.lower() not in done_assets]
+        pending = [a for a in universo
+                   if (a.lower(), judge_signature(a)) not in done]
 
         if not pending:
             log.info("todos os juízes já coletados hoje (%s) — nada a fazer", today_utc)

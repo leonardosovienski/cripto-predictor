@@ -319,6 +319,17 @@ class FeatureStore:
             "SELECT * FROM predictions ORDER BY ts, ativo")
         return [dict(r) for r in cur]
 
+    def predictions_on(self, day_utc: str) -> list[tuple[str, str]]:
+        """Pares (ativo, juiz) com previsão REAL (não-fallback) gravada no dia UTC
+        (prefixo YYYY-MM-DD do ts). API pública da idempotência da coleta diária
+        (garimpo_fase1): linha de fallback (llm_fallback=1) não conta como coletada."""
+        cur = self._conn.execute(
+            """SELECT ativo, juiz FROM predictions
+               WHERE ts LIKE ? AND COALESCE(llm_fallback, 0) = 0""",
+            (f"{day_utc}%",),
+        )
+        return [(r["ativo"], r["juiz"] or "") for r in cur]
+
     def list_symbols(self, interval: str = "1d") -> list[str]:
         """Símbolos com features materializadas — universo default da análise quando
         não há --assets (ADR do merge, D3)."""
