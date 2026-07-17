@@ -15,6 +15,23 @@ def test_guarda_desligada_nao_muda_comportamento(monkeypatch):
     assert api_guard.allow("llm", "gemini", 1).allowed
 
 
+def test_guarda_desligada_emite_um_evento_de_aviso_por_processo(monkeypatch, tmp_path):
+    # Regressão (auditoria hostil 2026-07-17): API_GUARD_ENABLED tem default
+    # False, e o ramo "disabled" não emitia log/evento algum — se ninguém
+    # setasse a env var em produção, o orçamento nunca protegeu nada desde o
+    # início, sem nenhum jeito de perceber isso pelos logs/telemetria.
+    import predictor_core.obs as obs
+    events_path = tmp_path / "events.jsonl"
+    monkeypatch.setattr(api_guard.settings, "API_GUARD_ENABLED", False)
+    api_guard.reset_for_test()
+    monkeypatch.setenv("PREDICTOR_EVENTS_PATH", str(events_path))
+    api_guard.allow("llm", "gemini", 1)
+    api_guard.allow("llm", "openai", 1)   # segunda chamada NÃO deve duplicar o evento
+    events = obs.read_events(events_path)
+    disabled_events = [e for e in events if e["event"] == "api_guard_disabled"]
+    assert len(disabled_events) == 1
+
+
 def test_guarda_bloqueia_antes_da_unidade_seguinte(monkeypatch):
     monkeypatch.setattr(api_guard.settings, "API_GUARD_ENABLED", True)
     api_guard.reset_for_test()
