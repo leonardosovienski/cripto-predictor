@@ -40,6 +40,21 @@ JANELA_HORAS = 27  # > 24h para tolerar o offset UTC do nome do arquivo
 MARCADOR_CONCLUSAO = "=== concluído:"
 
 
+def contagem_previsoes_reais(db_path: Path, dia_iso: str) -> tuple[int, int]:
+    """(n, juízes distintos) das previsões REAIS do dia — mesma semântica de
+    FeatureStore.predictions_on: linha de fallback do LLM (llm_fallback=1) não
+    é coleta. Sem o filtro, uma execução manual de main.py que persistisse
+    fallbacks no dia mascararia a falha da coleta noturna (n>0 falso)."""
+    con = sqlite3.connect(f"file:{db_path}?mode=ro", uri=True)
+    try:
+        return con.execute(
+            "select count(*), count(distinct juiz) from predictions "
+            "where substr(ts,1,10) = ? and coalesce(llm_fallback, 0) = 0",
+            (dia_iso,)).fetchone()
+    finally:
+        con.close()
+
+
 def _log_mais_recente() -> Path | None:
     candidatos = sorted(
         (ROOT / "logs").glob("garimpo_fase1_*.log"),
@@ -121,11 +136,8 @@ def main() -> int:
 
     juizes = 0
     try:
-        con = sqlite3.connect(
-            f"file:{ROOT / 'output' / 'feature_store.db'}?mode=ro", uri=True)
-        n, juizes = con.execute(
-            "select count(*), count(distinct juiz) from predictions "
-            "where substr(ts,1,10) = ?", (hoje_iso,)).fetchone()
+        n, juizes = contagem_previsoes_reais(
+            ROOT / "output" / "feature_store.db", hoje_iso)
         if n == 0:
             if coleta_concluida and prefilter_skips > 0:
                 log(f"OK: 0 previsoes em {hoje_iso}, mas a coleta concluiu e o "
