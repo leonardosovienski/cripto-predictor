@@ -2,14 +2,22 @@
 
 Duas camadas:
   1. emit_event()  → JSONL estruturado (predictor_core.obs) — telemetria auditável
-  2. logging.*     → console stderr + arquivo rotativo — depuração e operação
+  2. logging.*     → propaga para os handlers do processo hospedeiro — depuração
 
 Nenhum print() neste módulo. Nenhuma dependência de loguru.
-O handler de arquivo e console é configurado UMA vez por run_logging_setup() em main.py.
+
+NOTA (auditoria 2026-07-18): a antiga run_logging_setup() (handler de arquivo
+rotativo logs/garimpo.log) foi REMOVIDA — não tinha nenhum call site desde a
+refatoração de jul/2026 (logs/garimpo.log parado em 30/06 confirma), o docstring
+que dizia "chamada em main.py" era falso, e reativá-la criaria um arquivo de log
+SEM o filtro de redação de segredos (o caminho sancionado de produção,
+scripts/garimpo_fase1.py, configura o próprio logging COM _RedactSecrets).
+Quem precisar de log em arquivo num run manual deve rodar via
+run_garimpo_fase1.bat (runner + redação) — nunca reintroduzir um handler de
+arquivo aqui sem redação equivalente.
 """
 import logging
 import time
-from pathlib import Path
 
 from predictor_core.obs import emit_event
 
@@ -17,40 +25,6 @@ _DOMAIN = "previsao_cripto"
 _logger = logging.getLogger("previsao_cripto")
 
 _LOG_STARTED: dict[str, float] = {}  # rastreia tempo de início por ativo (thread-local simples)
-
-
-def run_logging_setup(log_dir: Path, level: str = "INFO") -> None:
-    """Configura handler de arquivo rotativo + console. Chamar UMA vez em main.py."""
-    if _logger.handlers:
-        return  # idempotente
-
-    fmt = logging.Formatter("%(asctime)s %(levelname)-8s %(name)s — %(message)s",
-                            datefmt="%Y-%m-%dT%H:%M:%S")
-
-    # Console
-    sh = logging.StreamHandler()
-    sh.setFormatter(fmt)
-    sh.setLevel(logging.INFO)
-    _logger.addHandler(sh)
-
-    # Arquivo rotativo (5 MB, sem dependência externa)
-    try:
-        from logging.handlers import RotatingFileHandler
-        log_dir.mkdir(parents=True, exist_ok=True)
-        fh = RotatingFileHandler(
-            log_dir / "garimpo.log",
-            maxBytes=5 * 1024 * 1024,
-            backupCount=3,
-            encoding="utf-8",
-        )
-        fh.setFormatter(fmt)
-        fh.setLevel(logging.DEBUG)
-        _logger.addHandler(fh)
-    except OSError as exc:
-        _logger.warning("logger: nao foi possivel criar arquivo de log (%s)", exc)
-
-    _logger.setLevel(logging.DEBUG)
-    _logger.propagate = False
 
 
 def log_start(ativo: str) -> None:
