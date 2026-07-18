@@ -129,7 +129,8 @@ def _load_rows() -> list[dict]:
 async def run():
     rows = _load_rows()
     if not rows:
-        print("⚠️ Nenhuma previsão válida em garimpo_historico.csv (só fallback ou vazio).")
+        print("⚠️ Nenhuma previsão válida no histórico oficial "
+              "(Feature Store, tabela predictions — só fallback ou vazio).")
         return
 
     today = datetime.now(timezone.utc).replace(tzinfo=None)

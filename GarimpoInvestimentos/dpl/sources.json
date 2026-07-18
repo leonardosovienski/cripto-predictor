@@ -34,7 +34,7 @@
     }
   },
   "crypto_price_consensus": {
-    "_doc": "Modo agregado (Fase 3): consolida Binance + Kraken por mediana ponto-a-ponto, imunizando contra anomalia de uma única exchange. Reusa os providers de crypto_price.",
+    "_doc": "Modo agregado (Fase 3): consolida Binance + Kraken por mediana ponto-a-ponto. ATENÇÃO (correção 2026-07-18, alinhada ao docstring de consensus_median no core): com exatamente 2 fontes a mediana É a média — uma exchange anômala ainda desloca o resultado pela metade da diferença; a robustez real a outlier só existe com 3+ fontes. Sem call site no pipeline ativo (só via `main.py --ingest --mode consensus`, manual); antes de ativar em produção com 2 fontes, reavaliar. Reusa os providers de crypto_price.",
     "policy": "consensus_median",
     "order": ["binance", "kraken"]
   }
