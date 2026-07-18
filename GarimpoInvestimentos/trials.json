@@ -68,7 +68,7 @@
       "horizonte_dias": 7,
       "input": "LLM + indicadores + noticias (mesmo pipeline da v2-dpl-gemini-h7; so muda o juiz por-ativo, carimbado por previsao)"
     },
-    "sharpe": null,
+    "sharpe": -0.531,
     "notes": "H5 (docs/HYPOTHESES.md, pre-registrada 2026-07-10). Substitui a coleta da v2-dpl-gemini-h7 (encerrada com n=5, imatura) por decisao do dono: risco de estouro da cota free-tier do Gemini (22 ativos vs ~20/dia). Particao fixa e deterministica — cada ativo tem sempre o mesmo juiz."
   }
 ]
