@@ -1,5 +1,34 @@
 # HANDOFF — GarimpoInvestimentos (Fase 1 + melhorias)
 
+> ## 🔴 ADENDO ECOSSISTEMA (2026-07-18) — INCIDENTE DE SEGURANÇA ATIVO
+>
+> **`SECURITY_INCIDENT_STATUS = BLOCKED_PENDING_SECRET_ROTATION`** — chave da
+> SerpAPI registrada em texto plano em 5 logs históricos
+> (`logs/garimpo_fase1_20260713.log` a `_17.log`; nunca entraram no Git,
+> gitignored). Mecanismo de prevenção (redação de log,
+> `_RedactSecrets`/`tools.secret_redaction`) já corrigido e **verificado
+> funcionando** com evidência de produção real (log de 18/07 limpo).
+> Rotação da credencial no provedor foi explicitamente despriorizada pelo
+> responsável em 2026-07-18 — sem prazo, mas não esquecida. Nunca abra
+> esses 5 logs em texto bruto. Detalhe completo, checklist e critério de
+> encerramento: `../SECURITY_INCIDENT_SECRET_ROTATION.md`.
+>
+> Vendor de `predictor_core` byte-idêntico ao canônico, sincronizado em
+> `f4d4d81`. Suíte: 302 passed, 2 skipped. `garimpo_fase1.py` teve seu lock
+> interno redundante removido (`50379b1`) — o job real já é envelopado pelo
+> `operational_runner` via `run_garimpo_fase1.bat`. `api_guard` desligado
+> agora emite um evento de aviso em vez de falhar silenciosamente
+> (`b094d05`). `GarimpoInvestimentos/trials.json` teve uma maturação real
+> de produção commitada (`40f3ddc`, sharpe null→-0.531). Tarefas agendadas
+> (`GarimpoFase1`, `GarimpoV3Daily`, `cripto-watchdog-coleta`): `Ready`,
+> `S4U`, últimas execuções com sucesso (verificado 2026-07-18). Tarefa
+> legada `GarimpoInvestimentos-ColetaDiaria`: confirmada `Disabled`, sem
+> risco de coleta duplicada. `consensus_median`/`consensus_mean` (em
+> `predictor_core/data/aggregation.py`, re-exportado aqui) não têm nenhum
+> call site no pipeline ativo hoje — código inerte, ver correção de
+> docstring no próprio arquivo. Documento canônico do ecossistema:
+> `../ECOSYSTEM_HANDOFF.md`.
+
 Data: 2026-06-14 (última rodada: 2026-07-16 — backtest diário reativado + commit do operational_runner)
 Estado: **Fase 1 + CLI + notícias + backtesting + sinal calibrado + indicadores técnicos + LLM multi-provedor + métricas + retry/backoff + agendamento diário + V3 (edge mecânico: funding/OI/HMM).**
 
