@@ -73,49 +73,23 @@ def test_fallback_nao_conta_como_coletado(fase1, store):
     assert fase1.judges_done_today(store, "2026-07-17") == set()
 
 
-# ---------------- lock órfão ----------------
+# ---------------- lock ----------------
+#
+# Regressão (auditoria hostil 2026-07-17, rodada "tools/"): garimpo_fase1.py
+# tinha seu próprio lock (garimpo.lock, O_EXCL + detecção de PID órfão),
+# duplicando o que tools.operational_runner já provê. Confirmado que
+# run_garimpo_fase1.bat já envolve o processo INTEIRO no lock do runner
+# (--task GarimpoFase1) — o lock interno era redundante para o caminho
+# sancionado de produção. Removido; os testes de lock órfão/PID morto agora
+# vivem só em tools/tests/test_operational_runner.py, a fonte canônica.
+# O runner externo continua garantindo single-instance; a única lacuna real
+# é uma execução manual concorrente de `python scripts/garimpo_fase1.py`
+# fora do .bat, um cenário de baixo risco não coberto por nenhum lock aqui.
 
-def test_lock_com_pid_morto_e_stale(fase1, tmp_path, monkeypatch):
-    lock = tmp_path / "garimpo.lock"
-    lock.write_text("pid=999999999 started=2026-07-17T00:00:00Z", encoding="utf-8")
-    monkeypatch.setattr(fase1, "_pid_alive", lambda pid: False)
-    assert fase1._lock_is_stale(lock) is True
-
-
-def test_lock_com_pid_vivo_recente_nao_e_stale(fase1, tmp_path):
-    lock = tmp_path / "garimpo.lock"
-    lock.write_text(f"pid={os.getpid()} started=x", encoding="utf-8")
-    assert fase1._lock_is_stale(lock) is False
-
-
-def test_lock_velho_demais_e_stale_mesmo_com_pid_vivo(fase1, tmp_path):
-    lock = tmp_path / "garimpo.lock"
-    lock.write_text(f"pid={os.getpid()} started=x", encoding="utf-8")
-    velho = time.time() - (fase1.STALE_LOCK_HOURS + 1) * 3600
-    os.utime(lock, (velho, velho))
-    assert fase1._lock_is_stale(lock) is True
-
-
-def test_lock_corrompido_e_stale(fase1, tmp_path):
-    lock = tmp_path / "garimpo.lock"
-    lock.write_text("lixo sem pid", encoding="utf-8")
-    assert fase1._lock_is_stale(lock) is True
-
-
-def test_acquire_lock_assume_lock_orfao(fase1, tmp_path, monkeypatch):
-    lock = tmp_path / "garimpo.lock"
-    lock.write_text("pid=999999999 started=x", encoding="utf-8")
-    monkeypatch.setattr(fase1, "LOCK_FILE", lock)
-    monkeypatch.setattr(fase1, "_pid_alive", lambda pid: False)
-    assert fase1.acquire_lock() is True
-    assert f"pid={os.getpid()}" in lock.read_text(encoding="utf-8")
-
-
-def test_acquire_lock_respeita_instancia_viva(fase1, tmp_path, monkeypatch):
-    lock = tmp_path / "garimpo.lock"
-    lock.write_text(f"pid={os.getpid()} started=x", encoding="utf-8")
-    monkeypatch.setattr(fase1, "LOCK_FILE", lock)
-    assert fase1.acquire_lock() is False
+def test_lock_interno_foi_removido_nao_reintroduzido(fase1):
+    assert not hasattr(fase1, "acquire_lock")
+    assert not hasattr(fase1, "release_lock")
+    assert not hasattr(fase1, "LOCK_FILE")
 
 
 # ---------------- redação de segredos (Onda 4: delega a tools/secret_redaction) ----------------

@@ -5,8 +5,12 @@ Automatiza o fluxo manual: ingestão (rede) → montagem de contexto → inferê
 Feature Store. Desenhado para o Windows Task Scheduler via run_garimpo_fase1.bat.
 
 Garantias:
-  1. Single instance — arquivo garimpo.lock na raiz do projeto (criação atômica
-     com O_EXCL); instância concorrente loga WARNING e aborta. try/finally remove.
+  1. Single instance — garantido pelo lock do tools.operational_runner que envolve
+     TODO o subprocesso (ver run_garimpo_fase1.bat, --task GarimpoFase1). Este script
+     não tem mais lock próprio: até 2026-07-17 reimplementava um segundo lock
+     (garimpo.lock, O_EXCL + detecção de PID órfão) redundante com o do runner —
+     auditoria hostil da rodada "tools/" removeu a duplicação depois de confirmar
+     que o .bat de produção já envolve garimpo_fase1.py inteiro no runner.
   2. Idempotência — antes de qualquer chamada de LLM, consulta a tabela
      `predictions` (PK ativo,ts) e pula os ativos cujo JUIZ já tem previsão real
      (não-fallback) gravada no dia UTC corrente.
@@ -58,8 +62,6 @@ from predictor_core.kernel.timeindex import iso_z
 from predictor_core.obs import emit_event
 from tools.secret_redaction import safe_redact_text
 
-LOCK_FILE = ROOT / "garimpo.lock"
-STALE_LOCK_HOURS = 12.0            # lock mais velho que isso é órfão mesmo com PID vivo (reuso de PID)
 INGEST_HISTORY_DAYS = 200          # mesmo valor do main.py (SMA-200 + change_30d)
 INGEST_RETRIES = 3                 # tentativas da coleta base (rede)
 INGEST_BACKOFF_BASE = 5.0          # 5s, 10s, 20s
@@ -110,76 +112,6 @@ def _setup_logging() -> None:
     ])
     for handler in logging.getLogger().handlers:
         handler.addFilter(redactor)
-
-
-def _pid_alive(pid: int) -> bool:
-    """True se existe processo com este PID. Windows: OpenProcess com
-    QUERY_LIMITED_INFORMATION (não usa os.kill, que no Windows MATA o alvo)."""
-    if pid <= 0:
-        return False
-    if sys.platform == "win32":
-        import ctypes
-        handle = ctypes.windll.kernel32.OpenProcess(0x1000, False, pid)
-        if not handle:
-            return False
-        ctypes.windll.kernel32.CloseHandle(handle)
-        return True
-    try:
-        os.kill(pid, 0)
-        return True
-    except OSError:
-        return False
-
-
-def _lock_is_stale(lock: Path) -> bool:
-    """Lock órfão = PID gravado não existe mais, OU arquivo mais velho que
-    STALE_LOCK_HOURS (cobre reuso de PID). Um kill duro (timeout do runner,
-    queda de energia) pula o finally e deixava a coleta abortando TODA noite
-    seguinte com exit 2 até remoção manual — inaceitável em operação headless."""
-    try:
-        age_h = (datetime.now(timezone.utc).timestamp() - lock.stat().st_mtime) / 3600
-        if age_h > STALE_LOCK_HOURS:
-            return True
-        content = lock.read_text(encoding="utf-8", errors="replace")
-    except OSError:
-        return False  # sumiu/ilegível no meio do caminho — deixa o retry decidir
-    for token in content.split():
-        if token.startswith("pid="):
-            try:
-                return not _pid_alive(int(token[4:]))
-            except ValueError:
-                return True  # conteúdo corrompido = órfão
-    return True  # sem pid= registrado = formato antigo/corrompido = órfão
-
-
-def acquire_lock() -> bool:
-    """Cria garimpo.lock atomicamente (O_EXCL). Lock existente mas ÓRFÃO (PID
-    morto ou velho demais) é removido e a aquisição tentada mais uma vez.
-    False = outra instância realmente em execução."""
-    for attempt in (1, 2):
-        try:
-            fd = os.open(LOCK_FILE, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
-        except FileExistsError:
-            if attempt == 1 and _lock_is_stale(LOCK_FILE):
-                log.warning("garimpo.lock órfão detectado (PID morto ou >%.0fh) — "
-                            "removendo e assumindo o lock", STALE_LOCK_HOURS)
-                try:
-                    LOCK_FILE.unlink()
-                except OSError:
-                    return False
-                continue
-            return False
-        with os.fdopen(fd, "w", encoding="utf-8") as f:
-            f.write(f"pid={os.getpid()} started={iso_z(datetime.now(timezone.utc))}\n")
-        return True
-    return False
-
-
-def release_lock() -> None:
-    try:
-        LOCK_FILE.unlink()
-    except FileNotFoundError:
-        pass
 
 
 def order_by_staleness(ativos: list[str], store: FeatureStore) -> list[str]:
@@ -361,15 +293,12 @@ async def main() -> int:
 
 
 if __name__ == "__main__":
+    # Single-instance já é garantido pelo lock de tools.operational_runner que
+    # envolve este processo inteiro (ver run_garimpo_fase1.bat) — não há mais
+    # lock próprio aqui (ver nota na docstring do módulo).
     _setup_logging()
-    if not acquire_lock():
-        log.warning("garimpo.lock existe (%s) — outra instância em execução ou lock "
-                    "órfão de crash; abortando. Se for órfão, remova o arquivo.", LOCK_FILE)
-        sys.exit(2)
     try:
         sys.exit(asyncio.run(main()))
     except Exception:
         log.exception("erro fatal no orquestrador")
         sys.exit(1)
-    finally:
-        release_lock()
