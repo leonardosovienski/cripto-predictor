@@ -1,5 +1,16 @@
 ﻿# GarimpoInvestimentos + DPL
 
+> ## ATENÇÃO — incidente de segurança aberto (ver HANDOFF.md / ECOSYSTEM_HANDOFF.md)
+>
+> Uma credencial (SerpAPI) foi encontrada em texto claro em 5 logs históricos de
+> `logs/garimpo_fase1_*.log`. Estado: `BLOCKED_PENDING_SECRET_ROTATION` — a
+> causa (o wrapper de execução preservava stdout/stderr do processo filho sem
+> redação) já foi corrigida e verificada (`tools/secret_redaction.py`); falta
+> apenas a rotação/revogação humana da chave no provedor e a decisão sobre os
+> logs históricos, ambas de baixa prioridade por decisão explícita do usuário.
+> Ver `SECURITY_INCIDENT_SECRET_ROTATION.md` na raiz do workspace para o
+> estado atual e o escopo completo.
+
 Sistema de **pesquisa** em previsÃ£o de criptoativos, em duas camadas:
 
 - **GarimpoInvestimentos** (previsÃ£o): descobre candidatos no mercado, analisa com
