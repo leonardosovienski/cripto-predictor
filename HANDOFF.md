@@ -56,6 +56,22 @@
 > worktree/clone isolado a coleta de `test_ops_hardening.py` falha com
 > `ModuleNotFoundError: tools` (esperado, não é bug do projeto). Incidente
 > SEC-1 permanece `BLOCKED_PENDING_SECRET_ROTATION` (rotação humana).
+>
+> **Achado do dia 19/07 (⚠️ AÇÃO HUMANA, exige Admin)**: o
+> `cripto-watchdog-coleta` **não rodou** em 18/07 19:00; a tentativa atrasada
+> de 19/07 00:14 falhou com `0x800710E0` — o MESMO erro da GarimpoFase1 em
+> 12/07. O `fix_task_power.ps1` da época corrigiu SÓ a GarimpoFase1; o
+> watchdog segue com `DisallowStartIfOnBatteries=True` +
+> `StartWhenAvailable=False` (verificado read-only). O guardião falha
+> exatamente na condição que ele vigia. Correção pronta em
+> `scripts/fix_task_power_watchdog.ps1` (rodar como Admin — tarefas do
+> Scheduler não são alteradas por sessão de auditoria). O 2º gatilho 22:30
+> (`fix_task_watchdog_trigger.ps1`, triagem 16/07 item b) também **nunca foi
+> aplicado** (gatilho único 19:00 confirmado). As coletas em si rodaram
+> normalmente na noite 18→19/07 (`SUCCEEDED` 03:14 UTC via
+> StartWhenAvailable); `trials.json` maturou de novo em produção
+> (`v2-dpl-multi-h7` sharpe −0.531→−0.6725, backtest de 19/07 03:20 UTC) —
+> mudança científica concorrente, **não commitada** por esta rodada.
 
 Data: 2026-06-14 (última rodada: 2026-07-18 — auditoria final + watchdog/logger/consenso)
 Estado: **Fase 1 + CLI + notícias + backtesting + sinal calibrado + indicadores técnicos + LLM multi-provedor + métricas + retry/backoff + agendamento diário + V3 (edge mecânico: funding/OI/HMM).**
