@@ -29,7 +29,35 @@
 > docstring no próprio arquivo. Documento canônico do ecossistema:
 > `../ECOSYSTEM_HANDOFF.md`.
 
-Data: 2026-06-14 (última rodada: 2026-07-16 — backtest diário reativado + commit do operational_runner)
+> ## 🔎 Rodada 2026-07-18 — Evolução final: auditoria completa + 3 correções locais
+>
+> Reconstrução independente do estado + auditoria dos eixos point-in-time,
+> segurança e operação. Suíte: **306 passed, 2 skipped** (302 + 4 testes novos).
+> Vendor byte-idêntico (44/44), manifest OK, 4 heartbeats da última noite
+> (17→18/07) todos `SUCCEEDED`. Correções: (1) **watchdog** contava linha de
+> fallback do LLM como coleta do dia — agora usa a semântica de
+> `predictions_on` (só previsão real; `contagem_previsoes_reais()` + 4 testes);
+> (2) `core/logger.py` perdeu a `run_logging_setup` morta (zero call sites
+> desde jul/2026; se religada criaria `logs/garimpo.log` SEM redação de
+> segredos — mesmo modo de falha do SEC-1); (3) `_doc` do
+> `crypto_price_consensus` corrigido (mediana de 2 fontes = média, sem
+> imunidade a outlier — alinhado ao docstring do core) + mensagem de
+> histórico vazio do backtest. Varredura sanitizada AMPLIADA de segredos:
+> todos os logs nunca catalogados (`garimpo.log`, `cron_*.log`,
+> `v3_daily_*.log`, `watchdog.log`, `logs/operations/*`) e os 3 JSONL de
+> eventos = **0 segredos reais**; o log do runner tem 144 marcadores
+> `[REDACTED]` (prova de redação funcionando em produção); precisão do
+> escopo: o log de 17/07 tem **115** ocorrências reais (não 114) e a única
+> ocorrência de 18/07 é o próprio marcador `[REDACTED]`. Observações sem
+> mudança (decisão humana): `--timeout 252000` (70h) nas duas tarefas diárias
+> do runner — teto quase-inócuo; um travamento seguraria o lock até o
+> watchdog alertar no dia seguinte; a suíte exige o layout de workspace
+> (`tools/` irmão do repo ou `PYTHONPATH` na raiz do ecossistema) — num
+> worktree/clone isolado a coleta de `test_ops_hardening.py` falha com
+> `ModuleNotFoundError: tools` (esperado, não é bug do projeto). Incidente
+> SEC-1 permanece `BLOCKED_PENDING_SECRET_ROTATION` (rotação humana).
+
+Data: 2026-06-14 (última rodada: 2026-07-18 — auditoria final + watchdog/logger/consenso)
 Estado: **Fase 1 + CLI + notícias + backtesting + sinal calibrado + indicadores técnicos + LLM multi-provedor + métricas + retry/backoff + agendamento diário + V3 (edge mecânico: funding/OI/HMM).**
 
 > **NOTA (jun/2026 — Red Team):** o pacote `core/` foi **renomeado para `store/`**
