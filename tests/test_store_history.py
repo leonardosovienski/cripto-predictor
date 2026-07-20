@@ -88,6 +88,34 @@ def test_backtest_le_da_store_com_mesmo_resultado_do_loader_csv(tmp_path, monkey
     assert btc["pred_date"].year == 2026 and btc["pred_date"].month == 6
 
 
+def test_load_rows_ignora_ts_ilegivel_sem_quebrar_as_demais(tmp_path, monkeypatch):
+    """Gap encontrado na auditoria de cobertura (2026-07-20): todo teste de
+    temporalidade existente cobre ORDEM errada (published_at < ts) ou LAG
+    excessivo — nenhum cobria um `ts` genuinamente ilegível (string que não é
+    data nenhuma), o cenário real de uma linha corrompida de CSV legado ou
+    escrita manual na store. `write_predictions` não valida o formato de `ts`
+    (coluna TEXT, sem checagem) — a defesa real é o try/except de
+    `_load_rows()` em `datetime.strptime`. Fixa que ele funciona: a linha
+    ilegível é descartada, as válidas sobrevivem."""
+    from GarimpoInvestimentos.analyzers import backtest
+
+    db = tmp_path / "fs.db"
+    with FeatureStore(db) as fs:
+        fs.write_predictions([
+            {"ativo": "BITCOIN", "ts": "não-é-uma-data-nenhuma", "score": 70.0,
+             "sentimento": "positivo", "resumo": "x", "price_usd": 100.0,
+             "juiz": "gemini:x:y", "divergencia": 0, "fonte": "direct"},
+            {"ativo": "SOLANA", "ts": "2026-07-01 23:02:31", "score": 85.0,
+             "sentimento": "positivo", "resumo": "ok", "price_usd": 150.0,
+             "juiz": "gemini:x:y", "divergencia": 0, "fonte": "dpl:fallback"},
+        ])
+    monkeypatch.setattr(backtest, "FEATURE_STORE_DB", db)
+    monkeypatch.setattr(history, "HIST_CSV", str(tmp_path / "inexistente.csv"))
+
+    rows = backtest._load_rows()  # não deve levantar StrptimeError/ValueError
+    assert [r["ativo"] for r in rows] == ["solana"]
+
+
 def test_analise_persiste_previsao_ANTES_de_fechar_a_store():
     """Regressão da conferência de 2026-07-02: um store.close() herdado do fluxo
     pré-passo-4 rodava antes do append_history — a previsão pontuava, exportava
