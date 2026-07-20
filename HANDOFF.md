@@ -67,9 +67,12 @@
 > confirmado `StartWhenAvailable=True`, `DisallowStartIfOnBatteries=False`,
 > `StopIfGoingOnBatteries=False` — mesma config das tarefas de coleta. O
 > guardião não deve mais falhar na condição que ele existe pra vigiar.
-> Pendência residual: o 2º gatilho 22:30 (`fix_task_watchdog_trigger.ps1`,
-> triagem 16/07 item b) ainda **não foi aplicado** (gatilho único 19:00
-> confirmado) — mesma classe de correção, não executada nesta rodada.
+> **2º gatilho 22:30 também aplicado em 2026-07-20** (mesma sessão,
+> `scripts/fix_task_watchdog_trigger.ps1`, elevado, aprovado pelo dono):
+> confirmado 2 gatilhos ativos no `cripto-watchdog-coleta` (19:00 original +
+> 22:30 novo) — pendência da triagem de 16/07 (item b) fechada. Com os dois
+> gatilhos e a energia alinhada, uma falha da GarimpoFase1 (22:00) tem
+> chance real de ser pega ainda na mesma noite, não só 21h depois.
 > `trials.json` maturou de novo em produção
 > (`v2-dpl-multi-h7` sharpe −0.531→−0.6725, backtest de 19/07 03:20 UTC) —
 > mudança científica concorrente, **não commitada** por esta rodada.
