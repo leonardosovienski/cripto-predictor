@@ -104,6 +104,42 @@ def test_429_abre_circuito_na_rodada(monkeypatch):
     assert limited.calls == 1
 
 
+def test_curated_rss_blockworks_nao_usa_dominio_antigo():
+    # Regressão (achado 2026-07-20, OP-7): blockworks.co migrou para
+    # blockworks.com com redirect 308 permanente; get_http_client() não
+    # segue redirect, então raise_for_status() derrubava TODA chamada que
+    # hasheasse para "blockworks" com HTTPStatusError — silenciosamente
+    # classificado como "fonte indisponível", nunca como bug de URL.
+    assert news.CURATED_RSS_FEEDS["blockworks"] == "https://blockworks.com/feed/"
+    assert ".co/" not in news.CURATED_RSS_FEEDS["blockworks"]
+
+
+def test_curated_rss_propaga_erro_de_redirect_nao_seguido(monkeypatch):
+    # Fixa o contrato que o bug acima violava: uma resposta cujo
+    # raise_for_status() levanta (3xx não seguido, 4xx, 5xx) deve propagar
+    # como falha ISOLADA da fonte — get_news_result() a categoriza no
+    # degraded_reason em vez de deixar a exceção subir sem contexto.
+    import httpx
+
+    class _RedirectResponse:
+        def raise_for_status(self):
+            raise httpx.HTTPStatusError("308 redirect", request=None, response=None)
+
+    class _RedirectClient:
+        async def get(self, url, **kwargs):
+            return _RedirectResponse()
+
+    monkeypatch.setattr(news, "get_http_client",
+                        lambda: _ClientContext(_RedirectClient()))
+    monkeypatch.setattr(news, "_PROVIDERS", {"curated_rss": news.CuratedRssProvider()})
+    monkeypatch.setattr(news, "_OPEN_CIRCUITS", set())
+    monkeypatch.setattr(news, "provider_order_for_asset", lambda asset: ["curated_rss"])
+    result = asyncio.run(news.get_news_result("bitcoin"))
+    assert result.provider == "none"
+    assert result.degraded
+    assert "curated_rss:HTTPStatusError" in result.degraded_reason
+
+
 def test_newsapi_ai_envia_chave_no_corpo_e_normaliza_titulos(monkeypatch):
     client = _Client({"articles": {"results": [{"title": "Bitcoin gains today"}]}})
     monkeypatch.setattr(news.settings, "NEWSAPIAI_API_KEY", "unit-test-key")

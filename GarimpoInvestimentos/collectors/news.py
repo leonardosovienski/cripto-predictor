@@ -24,7 +24,13 @@ _log = logging.getLogger("previsao_cripto.news")
 # evitam que uma troca editorial altere silenciosamente o experimento.
 CURATED_RSS_FEEDS = {
     "coindesk": "https://www.coindesk.com/arc/outboundfeeds/rss/?outputType=xml",
-    "blockworks": "https://blockworks.co/feed/",
+    # blockworks.co -> blockworks.com: domínio migrou (308 permanente, achado
+    # 2026-07-20 ao ativar o fallback pela 1ª vez); o cliente HTTP do núcleo
+    # não segue redirect (get_http_client() é follow_redirects=False por
+    # padrão), então a URL antiga derrubava esta fonte em TODA chamada que
+    # hasheasse para "blockworks" — confirmado por reprodução real (200 direto
+    # no domínio novo, Atom válido).
+    "blockworks": "https://blockworks.com/feed/",
     "decrypt": "https://decrypt.co/feed",
     "cointelegraph": "https://cointelegraph.com/rss",
     "cryptopotato": "https://cryptopotato.com/category/crypto-news/feed/",
