@@ -132,6 +132,29 @@
 > fallback ativo — isso é esperado, não é o incidente OP-7 voltando.
 > Suíte: 306→**308 passed**, 2 skipped (2 testes novos do fix de URL).
 >
+> **Confirmado por e-mail real do provedor (2026-07-20)**: plano free da
+> SerpAPI, **250/250 buscas do mês usadas, renova em 2026-08-07** — depois
+> da janela de decisão da H5 (28/07). A hipótese de "cota mensal, não
+> diária" registrada acima deixa de ser inferência. Sem custo monetário —
+> nunca foi plano pago. `curated_rss` segue sendo o único jeito de ter
+> notícia até 07/08 (ou até uma rotação de chave, que também resolveria o
+> SEC-1 e devolveria 250 buscas na hora).
+>
+> **🔴 Leitura honesta dos resultados da H5 (2026-07-20, relatório real da
+> produção, `logs/operations/GarimpoBacktest.log`, não recalculado por
+> mim)**: D+7 (horizonte principal), n=198 — Spearman(Score, retorno) =
+> **−0,255**, IC95% [−0,377, −0,120], **validado (IC não cruza zero) — na
+> direção ERRADA**. Acurácia direcional 29,3% (pior que aleatório); hit
+> rate score≥60 = 24%; estratégia retorno médio −6,87%, Sharpe −0,33; DSR
+> 0,00 (não passa 0,95); benchmark BTC buy&hold bateu a estratégia
+> (+0,67%). Nenhum juiz com n suficiente tem sinal positivo confiável
+> (gemini −0,330 n=159, groq −0,585 n=12, ambos IC fora de zero; mistral
+> −0,023 n=20, IC cruza zero = ruído). `v2-dpl-multi-h7` piorou entre
+> execuções (−0,531→−0,6725). Mesmo padrão que já derrubou a H4. **Não é
+> falta de amostra** — n=198 já é relevante no horizonte principal. Nenhuma
+> alteração de modelo/hipótese feita; só leitura do que a produção já
+> calculou. Decisão de GO/NO-GO continua sendo humana, janela 28/07.
+>
 > **Mapeamento de cobertura por categoria (2026-07-20)**: conferido
 > arquivo:linha, sem assumir por nome de arquivo, que a suíte cobre todos os
 > eixos pedidos na missão (point-in-time, vintage, trials/serialização,
