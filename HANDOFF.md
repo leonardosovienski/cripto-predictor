@@ -57,6 +57,18 @@
 > `ModuleNotFoundError: tools` (esperado, não é bug do projeto). Incidente
 > SEC-1 permanece `BLOCKED_PENDING_SECRET_ROTATION` (rotação humana).
 >
+> **Revalidação independente de 2026-07-20:** suíte atual em `main` (incluindo
+> H6) com **315 passed, 2 skipped** em 34,03 s. Foi reproduzida uma falha real
+> da CI: `scripts/fix_task_power_watchdog.ps1` continha um travessão UTF-8,
+> contrariando a barreira de ASCII criada após o incidente de parse do
+> PowerShell 5.1. O caractere foi substituído por `--`, sem alterar a lógica;
+> `scripts/ci_check.py --fast` voltou a ficar verde. Testes direcionados:
+> segurança/operação **58 passed** e runner compartilhado **24 passed**.
+> Auditoria read-only do Scheduler confirmou as três tarefas ativas `Ready`,
+> `S4U`, resultado 0, energia alinhada; watchdog com gatilhos 19:00 e 22:30;
+> tarefa legada `Disabled`. SQLite `output/feature_store.db`: `integrity_check=ok`.
+> Relatório: `docs/FINAL_AUDIT_2026-07-20.md`.
+>
 > **Achado do dia 19/07 — CORRIGIDO em 20/07 (aprovação do dono via UAC)**: o
 > `cripto-watchdog-coleta` **não rodou** em 18/07 19:00; a tentativa atrasada
 > de 19/07 00:14 falhou com `0x800710E0` — o MESMO erro da GarimpoFase1 em

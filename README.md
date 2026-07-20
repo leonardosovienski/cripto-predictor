@@ -34,7 +34,7 @@ HÃ¡ ainda a **V3 quantitativa** (HMM de regimes + funding/OI + walk-forward co
 custos), na branch `claude/v3-quant-wip`, em reconciliaÃ§Ã£o com esta linha â€” plano
 em [docs/RECONCILIACAO_V3.md](docs/RECONCILIACAO_V3.md).
 
-## Status do projeto (2026-07-02)
+## Status do projeto (2026-07-20)
 
 **Pesquisa. Nenhuma recomendaÃ§Ã£o de capital real.** Nota da auditoria: **5,5/10**
 ([docs/ARQUITETURA_CONSOLIDADA.md](docs/ARQUITETURA_CONSOLIDADA.md)). O walk-forward
@@ -66,7 +66,7 @@ GarimpoInvestimentos/
 â”œâ”€â”€ core/                  â† paths, cache, history (store-first), logger
 â”œâ”€â”€ output/reporter.py     â† exportaÃ§Ã£o CSV/XLSX
 â””â”€â”€ trials.json            â† registro VERSIONADO de tentativas (denominador do DSR)
-tests/                     â† 269 testes (offline, sem chaves)
+tests/                     â† 315 testes verdes (offline, sem chaves; 2 skips opcionais)
 docs/                      â† ADRs e auditorias (ver HANDOFF)
 vendor/predictor_core/     â† nÃºcleo estatÃ­stico vendorizado (NÃƒO editar local)
 ```
