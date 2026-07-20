@@ -93,17 +93,40 @@
 > corretamente as previsões degradadas das completas quando D+7 chegar. Mas
 > a série "H5 com notícias reais" está parada desde 18/07.
 >
-> **Recomendação preparada, NÃO aplicada** (decisão de governança —
-> `config.py` documenta que mudar `NEWS_PROVIDERS`/`NEWS_FALLBACK_PROVIDER`
-> "altera o input do LLM e deve ser ativada somente em nova trial forward"):
-> configurar `NEWS_FALLBACK_PROVIDER=curated_rss` (ou `google_news_rss`) no
-> `.env` — ambos sem chave, já implementados e testados em
-> `GarimpoInvestimentos/collectors/news.py`; zero mudança de código
-> necessária, só a variável de ambiente. Decisão do dono: (a) ligar o
-> fallback dentro da H5 atual (argumento: é uma correção operacional de uma
-> fonte já prevista no desenho, não uma composição nova de fontes), ou (b)
-> tratar como trial nova (H6), no mesmo padrão já usado para o prefiltro.
-> Enquanto não decidido, a H5 segue coletando com o LLM cego a notícias.
+> **Decisão tomada e APLICADA (2026-07-20, autorização explícita do dono
+> — "faça o que você acha melhor")**: `NEWS_FALLBACK_PROVIDER=curated_rss`
+> ligado dentro da H5 atual, não como trial nova. Justificativa registrada
+> na própria leitura do código: o gate "exige trial forward" no `config.py`
+> está escrito sobre `NEWS_PROVIDERS` (a lista PRIMÁRIA — não tocada), não
+> sobre `NEWS_FALLBACK_PROVIDER` (descrito ali como mecanismo operacional,
+> consultado só depois das fontes primárias); o backtest já estratifica por
+> `news_provider` por desenho (0010/0011) — o mecanismo científico para
+> tolerar múltiplas fontes na mesma trial já existia antes desta decisão,
+> não foi criado para justificá-la. `.env` de produção editado (uma linha
+> nova, `GarimpoInvestimentos/.env` — arquivo gitignorado, mudança **não
+> versionada por Git**, registrada só aqui).
+>
+> **Bug real encontrado e corrigido no processo** (`1f51618`): a URL
+> `blockworks.co` (1 das 5 fontes de `curated_rss`) migrou para
+> `blockworks.com` com redirect 308 permanente; o cliente HTTP do núcleo
+> não segue redirect por padrão, então TODA chamada que hasheasse para
+> "blockworks" derrubava com `HTTPStatusError` — indistinguível de "fonte
+> fora do ar" até eu reproduzir manualmente (sandbox, sem chave real:
+> confirmei 308 no domínio antigo, 200+Atom válido no novo). Corrigido +
+> 2 testes de regressão (URL fixada; contrato de propagação de erro com
+> resposta mockada, sem depender de rede real no teste).
+>
+> **Verificação real ponta a ponta (não só suíte)**: smoke test ao vivo
+> (sandbox, sem gastar cota do SerpAPI para múltiplos ativos) —
+> `ethereum` trouxe 2 títulos reais via `curated_rss`, confirmando o
+> caminho completo funciona. **Caveat honesto**: `bitcoin`, `solana`,
+> `chainlink` no mesmo teste vieram `curated_rss:empty` — não é bug, é
+> limitação inerente ao desenho (1 feed geral escolhido por hash do nome
+> do ativo, filtro por substring no título) — cobertura por ativo será
+> MENOR que a do SerpAPI quando ele funcionava (busca dedicada por termo).
+> Esperar que algumas previsões continuem `input_degradado=1` mesmo com o
+> fallback ativo — isso é esperado, não é o incidente OP-7 voltando.
+> Suíte: 306→**308 passed**, 2 skipped (2 testes novos do fix de URL).
 
 Data: 2026-06-14 (última rodada: 2026-07-18 — auditoria final + watchdog/logger/consenso)
 Estado: **Fase 1 + CLI + notícias + backtesting + sinal calibrado + indicadores técnicos + LLM multi-provedor + métricas + retry/backoff + agendamento diário + V3 (edge mecânico: funding/OI/HMM).**
