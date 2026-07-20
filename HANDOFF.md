@@ -131,8 +131,22 @@
 > Esperar que algumas previsões continuem `input_degradado=1` mesmo com o
 > fallback ativo — isso é esperado, não é o incidente OP-7 voltando.
 > Suíte: 306→**308 passed**, 2 skipped (2 testes novos do fix de URL).
+>
+> **Mapeamento de cobertura por categoria (2026-07-20)**: conferido
+> arquivo:linha, sem assumir por nome de arquivo, que a suíte cobre todos os
+> eixos pedidos na missão (point-in-time, vintage, trials/serialização,
+> redação, sem-credencial, falha de provedor, NaN/Inf, duplicação, arquivo
+> truncado, recuperação após falha) — locks/runner/timeout são
+> deliberadamente delegados a `tools/tests/test_operational_runner.py`
+> (`garimpo_fase1.py` não tem lock próprio desde a remoção da duplicação).
+> 2 gaps reais achados: (a) nenhum teste cobria `ts` genuinamente ilegível
+> (só ordem errada/lag excessivo) — **corrigido**, `_load_rows()` já se
+> comportava certo, só faltava o teste (`e9165b6`); (b) concorrência real
+> (threads) não é testada localmente — decisão consciente, catalogada como
+> **OP-1** `CORRECTLY_DEFERRED`, não reaberta. Suíte final: **309 passed**,
+> 2 skipped.
 
-Data: 2026-06-14 (última rodada: 2026-07-18 — auditoria final + watchdog/logger/consenso)
+Data: 2026-06-14 (última rodada: 2026-07-20 — SerpAPI esgotada + fallback + fix de energia/gatilho do watchdog + auditoria de cobertura de testes)
 Estado: **Fase 1 + CLI + notícias + backtesting + sinal calibrado + indicadores técnicos + LLM multi-provedor + métricas + retry/backoff + agendamento diário + V3 (edge mecânico: funding/OI/HMM).**
 
 > **NOTA (jun/2026 — Red Team):** o pacote `core/` foi **renomeado para `store/`**
