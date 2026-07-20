@@ -2,7 +2,7 @@
 #
 # Motivo: em 2026-07-18 19:00 o watchdog NAO rodou; a tentativa atrasada de
 # 2026-07-19 00:14 falhou com 0x800710E0 ("operador ou administrador recusou")
-# — o MESMO erro da GarimpoFase1 em 2026-07-12. O fix_task_power.ps1 daquela
+# -- o MESMO erro da GarimpoFase1 em 2026-07-12. O fix_task_power.ps1 daquela
 # epoca corrigiu SO a GarimpoFase1; o watchdog ficou com
 # DisallowStartIfOnBatteries=True, StopIfGoingOnBatteries=True e
 # StartWhenAvailable=False (verificado read-only em 2026-07-19). Ou seja: o
