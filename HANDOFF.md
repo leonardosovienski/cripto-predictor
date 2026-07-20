@@ -140,6 +140,32 @@
 > notícia até 07/08 (ou até uma rotação de chave, que também resolveria o
 > SEC-1 e devolveria 250 buscas na hora).
 >
+> **H6 implementada e ligada ao ciclo automático (2026-07-20, decisão
+> explícita do dono: "implementa tudo, quero tudo pronto")**: nova função
+> `close_h6_inverted_signal()` em `analyzers/backtest.py`, chamada dentro de
+> `run()` junto do `close_trial_sharpes()` já existente — passa a rodar
+> TODA noite, automaticamente, dentro da tarefa `GarimpoBacktest` já
+> agendada. **Não muda nada da coleta**: prompt, modelo, `ai_insights.py`,
+> `main.py`/`garimpo_fase1.py` intocados — o score do LLM continua
+> significando exatamente o que sempre significou. A função só REINTERPRETA
+> o score já gravado: seleciona `score ≤ (100 − limiar)` como sinal
+> invertido forte (espelho exato do limiar original), e só conta previsões
+> com `pred_date` POSTERIOR ao `registered_at` da própria trial H6
+> (2026-07-20T07:00:37Z) — trava anti-data-snooping embutida na função, não
+> só na nota do registro. Casamento por NOME (`h6-sinal-invertido-d7`), não
+> pelo mecanismo genérico de `fonte`/`horizonte` do `close_trial_sharpes`
+> (que nunca vai casar sozinho, de propósito — `params.fonte` continua
+> `reserved:h6-inversao-sinal`, identidade preservada, nenhuma trial nova
+> criada). 6 testes novos (`test_experiment_registry.py`): no-op sem H6
+> registrada, trava de data anterior ao registro, maturação real com dado
+> posterior, ignora score acima do limiar invertido, ignora fonte errada,
+> e confere que a trial real do repositório segue reservada/não-ativada.
+> Suíte: 309→**315 passed**, 2 skipped. **Zero passo manual restante** —
+> a partir da coleta de hoje à noite (22:00), qualquer previsão com
+> `score ≤ 40` começa a contar pro H6 organicamente, sem precisar tocar em
+> nada de novo. Com n≥3 sinais, o backtest já imprime e grava o sharpe
+> sozinho, todo dia, junto do resto do relatório.
+>
 > **🔴 Leitura honesta dos resultados da H5 (2026-07-20, relatório real da
 > produção, `logs/operations/GarimpoBacktest.log`, não recalculado por
 > mim)**: D+7 (horizonte principal), n=198 — Spearman(Score, retorno) =

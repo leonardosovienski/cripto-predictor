@@ -14,7 +14,8 @@ import pytest
 from GarimpoInvestimentos.analyzers.trials import (
     TRIALS_PATH, PowerAttestationMissingError, attestation_path_for,
     load_trials, register_trial, validate_trials)
-from GarimpoInvestimentos.analyzers.backtest import close_trial_sharpes
+from GarimpoInvestimentos.analyzers.backtest import (
+    close_trial_sharpes, close_h6_inverted_signal, H6_TRIAL_NAME)
 
 PARAMS = {"fonte": "dpl:fallback", "juiz": "gemini:g", "horizonte_dias": 7}
 
@@ -162,6 +163,90 @@ def test_backtest_divide_eras_entre_trial_encerrada_e_sucessora(tmp_path):
     updated = close_trial_sharpes(enriched, 7, trials_path=p, threshold=70)
     assert set(updated) == {"era-1", "era-2"}
     assert updated["era-1"] != updated["era-2"]  # cada era com os próprios dados
+
+
+# --- H6 (sinal invertido) — mecanismo separado, anti-data-snooping ------------
+
+H6_PARAMS = {"fonte": "reserved:h6-inversao-sinal", "horizonte_dias": 7}
+
+
+def _dated_score(score, var, day, fonte="dpl:fallback"):
+    from datetime import datetime
+    return {"score": score, "var_d7_pct": var, "fonte": fonte,
+            "pred_date": datetime(2026, 7, day)}
+
+
+def test_h6_sem_trial_registrada_e_no_op(tmp_path):
+    p = tmp_path / "trials.json"
+    assert close_h6_inverted_signal([_dated_score(10, 5.0, 25)], 7,
+                                    trials_path=p, threshold=60) is None
+
+
+def test_h6_ignora_dado_anterior_ao_registro_mesmo_com_score_baixo(tmp_path):
+    """A trava anti-data-snooping: dado ANTES do registered_at da H6 nunca
+    conta, mesmo que o score já bata o limiar invertido — senão a mesma
+    amostra que inspirou a hipótese validaria a própria hipótese."""
+    from datetime import datetime as _dt
+    p = tmp_path / "trials.json"
+    register_trial(H6_TRIAL_NAME, params=H6_PARAMS, path=p, **_NOGATE)
+    trials = json.loads(p.read_text(encoding="utf-8"))
+    trials[0]["registered_at"] = "2026-07-20T00:00:00Z"
+    p.write_text(json.dumps(trials), encoding="utf-8")
+
+    anterior = [_dated_score(10, 5.0, d) for d in (10, 11, 12)]  # antes do registro
+    assert close_h6_inverted_signal(anterior, 7, trials_path=p, threshold=60) is None
+    assert load_trials(p)[0]["sharpe"] is None
+
+
+def test_h6_matura_com_dado_posterior_ao_registro_e_score_baixo(tmp_path):
+    p = tmp_path / "trials.json"
+    register_trial(H6_TRIAL_NAME, params=H6_PARAMS, path=p, **_NOGATE)
+    trials = json.loads(p.read_text(encoding="utf-8"))
+    trials[0]["registered_at"] = "2026-07-20T00:00:00Z"
+    p.write_text(json.dumps(trials), encoding="utf-8")
+
+    # score <= 40 (100 - limiar 60) = sinal invertido forte; depois do registro
+    posterior = [_dated_score(35, v, d) for v, d in ((3.0, 21), (1.5, 22), (4.2, 23))]
+    sharpe = close_h6_inverted_signal(posterior, 7, trials_path=p, threshold=60)
+    assert sharpe is not None
+    t = load_trials(p)[0]
+    assert t["sharpe"] == sharpe
+    assert t["params"] == H6_PARAMS  # identidade preservada (update, não trial nova)
+
+
+def test_h6_ignora_score_acima_do_limiar_invertido(tmp_path):
+    p = tmp_path / "trials.json"
+    register_trial(H6_TRIAL_NAME, params=H6_PARAMS, path=p, **_NOGATE)
+    trials = json.loads(p.read_text(encoding="utf-8"))
+    trials[0]["registered_at"] = "2026-07-20T00:00:00Z"
+    p.write_text(json.dumps(trials), encoding="utf-8")
+
+    # score 80 > 40 (limiar invertido) — não é sinal invertido forte
+    posterior = [_dated_score(80, 3.0, d) for d in (21, 22, 23)]
+    assert close_h6_inverted_signal(posterior, 7, trials_path=p, threshold=60) is None
+
+
+def test_h6_ignora_fonte_diferente_da_coleta_real():
+    p_trials = json.loads(TRIALS_PATH.read_text(encoding="utf-8"))
+    assert any(t["name"] == H6_TRIAL_NAME for t in p_trials), (
+        "trial H6 sumiu do trials.json real — deveria estar pré-registrada")
+    # fonte reservada do PRÓPRIO registro nunca aparece em predictions.fonte
+    # real (direct/dpl:fallback/dpl:consensus) — dado com essa fonte não conta.
+    h6 = next(t for t in p_trials if t["name"] == H6_TRIAL_NAME)
+    assert h6["params"]["fonte"].startswith("reserved:")
+    posterior = [_dated_score(10, 5.0, 25, fonte=h6["params"]["fonte"])]
+    assert close_h6_inverted_signal(posterior, 7, threshold=60) is None
+
+
+def test_h6_registrada_no_repositorio_real_como_reservada_nao_ativada():
+    """A trial H6 do trials.json real deve continuar com o fonte reservado —
+    se alguém mudar isso sem querer, ela passaria a casar com dado real sem
+    a trava explícita desta função (o casamento genérico do
+    close_trial_sharpes também não a pegaria, mas por acidente, não desenho)."""
+    trials = json.loads(TRIALS_PATH.read_text(encoding="utf-8"))
+    h6 = next(t for t in trials if t["name"] == H6_TRIAL_NAME)
+    assert h6["params"] == {"fonte": "reserved:h6-inversao-sinal", "horizonte_dias": 7}
+    assert h6["sharpe"] is None  # ainda não amadureceu — sem dado genuinamente novo
 
 
 def test_load_rows_exclui_fallback_estrutural(tmp_path, monkeypatch):

@@ -160,6 +160,7 @@ async def run():
     _report(enriched)
     _metrics(enriched, PRIMARY_HORIZON)
     close_trial_sharpes(enriched, PRIMARY_HORIZON)
+    close_h6_inverted_signal(enriched, PRIMARY_HORIZON)
 
 
 def _write(enriched: list[dict]) -> None:
@@ -369,6 +370,63 @@ def close_trial_sharpes(enriched: list[dict], horizon: int, *,
                   f"atualizado → {sharpe:+.4f} (fonte={fonte}, n={len(rets)}, "
                   f"era {i + 1}/{len(matching)})")
     return updated
+
+
+H6_TRIAL_NAME = "h6-sinal-invertido-d7"
+H6_LIVE_FONTE = "dpl:fallback"  # fonte real da coleta em curso (H5/multi-juiz)
+
+
+def close_h6_inverted_signal(enriched: list[dict], horizon: int, *,
+                             trials_path=None, threshold: float | None = None
+                             ) -> float | None:
+    """H6 (docs/HYPOTHESES.md): as 3 encarnações anteriores da família
+    'score do LLM prevê retorno D+7' mostraram correlação NEGATIVA e
+    significativa — esta função testa a leitura INVERTIDA (score BAIXO =
+    sinal de alta) sem tocar em coleta, prompt ou modelo: só reinterpreta o
+    score que já é gravado.
+
+    Pré-registrada com `params.fonte` deliberadamente reservado
+    (nunca casa com `predictions.fonte` real), então NÃO passa pelo
+    casamento genérico de `close_trial_sharpes` — essa função é o mecanismo
+    explícito e separado, com uma trava anti-data-snooping que o casamento
+    genérico não tem: só conta previsões com `pred_date` POSTERIOR ao
+    `registered_at` da própria trial H6 (dado genuinamente novo, nunca
+    reaproveita o histórico que já inspirou a hipótese). Sinal invertido =
+    score ≤ (100 − limiar), espelho exato do limiar original (mesma
+    distância do centro 50). Atualiza trials.json só com n≥3; nunca cria
+    trial nova (se H6 não estiver registrada nesta instância, é no-op).
+    Retorna o sharpe ou None."""
+    trials = load_trials(trials_path)
+    h6 = next((t for t in trials if t.get("name") == H6_TRIAL_NAME), None)
+    if h6 is None:
+        return None
+
+    raw = (h6.get("registered_at") or "").replace("Z", "+00:00")
+    try:
+        registered_at = datetime.fromisoformat(raw).replace(tzinfo=None)
+    except ValueError:
+        return None
+
+    thr = settings.LIMIAR_SCORE_MINIMO if threshold is None else threshold
+    inverted_thr = 100 - thr
+    key = f"var_d{horizon}_pct"
+    rets = [r[key] / 100 for r in enriched
+            if r.get(key) is not None and r.get("fonte", "direct") == H6_LIVE_FONTE
+            and r["score"] <= inverted_thr
+            and r.get("pred_date", datetime.min) > registered_at]
+    if len(rets) < 3:
+        return None
+    avg = sum(rets) / len(rets)
+    std = (sum((x - avg) ** 2 for x in rets) / (len(rets) - 1)) ** 0.5
+    if not std:
+        return None
+    sharpe = round(avg / std, 4)
+    register_trial(H6_TRIAL_NAME, params=h6["params"], sharpe=sharpe,
+                   notes=h6.get("notes", ""), path=trials_path)
+    print(f"📒 trials.json: sharpe (sinal invertido) de '{H6_TRIAL_NAME}' "
+          f"atualizado → {sharpe:+.4f} (n={len(rets)}, score≤{inverted_thr:.0f}, "
+          f"só dado após {registered_at.isoformat()})")
+    return sharpe
 
 
 def _metrics(enriched: list[dict], horizon: int) -> None:
