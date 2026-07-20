@@ -66,10 +66,13 @@ GarimpoInvestimentos/
 â”œâ”€â”€ core/                  â† paths, cache, history (store-first), logger
 â”œâ”€â”€ output/reporter.py     â† exportaÃ§Ã£o CSV/XLSX
 â””â”€â”€ trials.json            â† registro VERSIONADO de tentativas (denominador do DSR)
-tests/                     â† 315 testes verdes (offline, sem chaves; 2 skips opcionais)
+tests/                     â† 320 testes verdes (offline, sem chaves; 2 skips opcionais)
 docs/                      â† ADRs e auditorias (ver HANDOFF)
 vendor/predictor_core/     â† nÃºcleo estatÃ­stico vendorizado (NÃƒO editar local)
 ```
+
+O Feature Store ignorado pelo Git possui backup online verificavel e restore
+nao destrutivo. Procedimento: [docs/BACKUP_RESTORE.md](docs/BACKUP_RESTORE.md).
 
 ## InstalaÃ§Ã£o e configuraÃ§Ã£o
 

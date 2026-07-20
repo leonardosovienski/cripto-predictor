@@ -1,5 +1,15 @@
 # HANDOFF — GarimpoInvestimentos (Fase 1 + melhorias)
 
+> **Hardening operacional 2026-07-20:** `scripts/feature_store_backup.py`
+> fecha o gap local de backup/restore do `output/feature_store.db`: snapshot
+> consistente via API SQLite, manifesto SHA-256, `integrity_check`, publicacao
+> atomica e restore somente para raiz inexistente. Cinco testes de regressao
+> cobrem roundtrip, adulteracao/truncamento, banco/manifesto ausentes e recusa
+> de sobrescrita. Runbook: `docs/BACKUP_RESTORE.md`. Politica de retencao e
+> copia para volume externo continuam decisoes humanas do ecossistema.
+> Validacao final: **320 passed, 2 skipped**; roundtrip no banco real confirmou
+> `integrity_check=ok`, 6 tabelas e contagens de linhas identicas.
+
 > ## 🔴 ADENDO ECOSSISTEMA (2026-07-18) — INCIDENTE DE SEGURANÇA ATIVO
 >
 > **`SECURITY_INCIDENT_STATUS = BLOCKED_PENDING_SECRET_ROTATION`** — chave da

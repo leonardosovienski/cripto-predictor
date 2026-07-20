@@ -1,5 +1,11 @@
 # Auditoria final local — previsao-cripto — 2026-07-20
 
+> **Adendo operacional:** o risco local de backup/restore citado originalmente
+> foi corrigido por `scripts/feature_store_backup.py`. Cinco testes novos passam;
+> a suite completa agora registra **320 passed, 2 skipped**. Um roundtrip com o
+> banco real confirmou `integrity_check=ok`, 6 tabelas e contagens identicas.
+> Retencao/copia externa continuam decisoes humanas; SEC-1 permanece bloqueado.
+
 ## 1. Estado inicial
 
 - Branch `main`, worktree inicialmente limpo.
@@ -80,7 +86,10 @@ O banco estava íntegro e sua atividade/timestamp foi tratada como produção re
 - O fallback RSS tem cobertura menor por ativo; `input_degradado=1` pode continuar
   ocorrendo sem constituir regressão.
 - Consenso com apenas duas fontes não é robusto contra outlier.
-- Backups/restores comuns do Feature Store continuam no gap operacional OP-4.
+- O gap local de backup/restore do Feature Store foi fechado apos esta auditoria:
+  `scripts/feature_store_backup.py` cria snapshot SQLite consistente, manifesta
+  SHA-256, verifica integridade e restaura somente em raiz nova. Politica comum
+  de retencao e copia externa permanece decisao humana no OP-4.
 
 ## 9. Veredito
 
