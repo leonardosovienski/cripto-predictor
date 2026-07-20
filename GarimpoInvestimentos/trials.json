@@ -70,5 +70,15 @@
     },
     "sharpe": -0.6725,
     "notes": "H5 (docs/HYPOTHESES.md, pre-registrada 2026-07-10). Substitui a coleta da v2-dpl-gemini-h7 (encerrada com n=5, imatura) por decisao do dono: risco de estouro da cota free-tier do Gemini (22 ativos vs ~20/dia). Particao fixa e deterministica — cada ativo tem sempre o mesmo juiz."
+  },
+  {
+    "name": "h6-sinal-invertido-d7",
+    "registered_at": "2026-07-20T07:01:59Z",
+    "params": {
+      "fonte": "reserved:h6-inversao-sinal",
+      "horizonte_dias": 7
+    },
+    "sharpe": null,
+    "notes": "Pre-registro (protocolo anti-data-snooping, docs/HYPOTHESES.md H6) ANTES de qualquer resultado dedicado. Hipotese: o score do LLM tem correlacao NEGATIVA e estatisticamente significativa com o retorno D+7 nas 3 encarnacoes anteriores (v1-direct, v2-dpl-gemini, v2-dpl-multi) -- inverter a leitura (score alto = sinal de queda, score baixo = sinal de alta) pode capturar esse padrao. RISCO DE DATA-SNOOPING EXPLICITO: a ideia nasceu observando o resultado das trials anteriores, entao esta trial so vale como veredito com dado GENUINAMENTE NOVO coletado apos o registro, nunca reaproveitando as previsoes ja vistas. NAO ATIVADA: fonte=reserved:* nunca aparece em predictions.fonte real, entao close_trial_sharpes() nunca vai amadurecer isso sozinho -- exige implementacao explicita (inverter a leitura do score no backtest ou na estrategia) e decisao humana de quando comecar a coletar sob essa hipotese."
   }
 ]
