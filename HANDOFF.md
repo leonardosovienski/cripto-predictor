@@ -72,6 +72,38 @@
 > StartWhenAvailable); `trials.json` maturou de novo em produção
 > (`v2-dpl-multi-h7` sharpe −0.531→−0.6725, backtest de 19/07 03:20 UTC) —
 > mudança científica concorrente, **não commitada** por esta rodada.
+>
+> **🔴 Achado grave de 20/07 — SerpAPI esgotada, 3 noites de input degradado
+> (18, 19, 20/07)**: eu tinha reportado "coletas indo bem" olhando só
+> `exit_code`/`status`/`llm_fallback` — **erro meu**: não cruzei
+> `input_degradado`, que já mostrava 28/28 previsões/noite sem notícias
+> desde 18/07 (17/07: 16/18; 16/07 e antes: limpo). Causa raiz (logs
+> `garimpo_fase1_2026071{8,9}.log`/`_20.log`, sem valor de segredo — só
+> `HTTPStatusError` como tipo, nunca o corpo/status real): toda chamada
+> falha já no 1º ativo da noite, com retry 3x + backoff — e o classificador
+> `predictor_core.kernel.net.is_transient` trata cota **diária** como
+> NÃO-retryable (falha instantânea, sem backoff). Como o padrão observado É
+> retry-com-backoff todo dia (inclusive o 1º ativo de um dia UTC novo, onde
+> uma cota diária já teria resetado), a hipótese mais provável é **cota
+> MENSAL/de plano esgotada** (comum no free tier da SerpAPI), não diária —
+> **inferência forte, não confirmada** (o log não grava o status HTTP real).
+> Sem `NEWS_FALLBACK_PROVIDER` configurado, não há segunda fonte. Não é
+> regressão de código: a estratificação por `input_degradado` (migração
+> 0008) está fazendo o trabalho certo — as maturações da H5 vão separar
+> corretamente as previsões degradadas das completas quando D+7 chegar. Mas
+> a série "H5 com notícias reais" está parada desde 18/07.
+>
+> **Recomendação preparada, NÃO aplicada** (decisão de governança —
+> `config.py` documenta que mudar `NEWS_PROVIDERS`/`NEWS_FALLBACK_PROVIDER`
+> "altera o input do LLM e deve ser ativada somente em nova trial forward"):
+> configurar `NEWS_FALLBACK_PROVIDER=curated_rss` (ou `google_news_rss`) no
+> `.env` — ambos sem chave, já implementados e testados em
+> `GarimpoInvestimentos/collectors/news.py`; zero mudança de código
+> necessária, só a variável de ambiente. Decisão do dono: (a) ligar o
+> fallback dentro da H5 atual (argumento: é uma correção operacional de uma
+> fonte já prevista no desenho, não uma composição nova de fontes), ou (b)
+> tratar como trial nova (H6), no mesmo padrão já usado para o prefiltro.
+> Enquanto não decidido, a H5 segue coletando com o LLM cego a notícias.
 
 Data: 2026-06-14 (última rodada: 2026-07-18 — auditoria final + watchdog/logger/consenso)
 Estado: **Fase 1 + CLI + notícias + backtesting + sinal calibrado + indicadores técnicos + LLM multi-provedor + métricas + retry/backoff + agendamento diário + V3 (edge mecânico: funding/OI/HMM).**
