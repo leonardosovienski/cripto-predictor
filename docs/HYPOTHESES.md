@@ -89,6 +89,43 @@
   também reportado por juiz); depois, Sharpe líquido por trade + DSR ≥ 0,95.
   Um juiz individual só é julgado com n ≥ 30 no SEU estrato.
 - Resultado: (coleta iniciada em 2026-07-10)
+- Parcial (2026-07-20, leitura do backtest de produção, NÃO é o veredito
+  final — decisão fica pra janela de 28/07): D+7 pooled (v1+H4+H5), n=198,
+  Spearman −0,255 [IC95% −0,377, −0,120] — **validado, IC não cruza zero,
+  na direção OPOSTA à hipótese**. Sharpe por-trade isolado de `v2-dpl-multi-h7`:
+  −0,6725 (n=45). DSR 0,00, não passa o corte 0,95. Estratégia (score≥60)
+  perde do buy&hold do BTC (−6,87% vs +0,67%). Por juiz com n suficiente:
+  gemini −0,330 (n=159, IC fora de zero), groq −0,585 (n=12, IC fora de
+  zero), mistral −0,023 (n=20, IC cruza zero = ruído p/ ele). Mesmo padrão
+  que encerrou a H4. Motivou o pré-registro da H6 (inversão do sinal).
+
+### H6 — Sinal invertido do LLM prevê retorno D+7 (status: **registrada — não ativada**)
+- Data do registro: 2026-07-20 (ANTES de qualquer resultado dedicado a esta
+  configuração).
+- Hipótese: as 3 encarnações anteriores da mesma família (H4/`v2-dpl-gemini-h7`,
+  `v1-direct-gemini-h7`, H5/`v2-dpl-multi-h7`) mostraram correlação NEGATIVA e
+  estatisticamente significativa entre score do LLM e retorno D+7 (relatório de
+  produção 2026-07-20: Spearman −0,255, IC95% [−0,377, −0,120], n=198 pooled —
+  IC não cruza zero, mas na direção oposta à hipótese original). Inverter a
+  leitura (score alto = sinal de QUEDA, score baixo = sinal de ALTA) pode
+  capturar esse padrão em vez de ser derrotado por ele.
+- Configuração: `h6-sinal-invertido-d7` — `params.fonte` deliberadamente
+  `reserved:h6-inversao-sinal` (nunca aparece em `predictions.fonte` real), pra
+  `close_trial_sharpes()` do backtest NUNCA amadurecer esta trial sozinha com
+  dado da coleta atual (não-invertida). Ativar exige: (1) decisão humana
+  explícita, (2) implementação de código que interprete/estratégie o score
+  invertido (não existe ainda — nem no backtest nem na coleta), (3) coleta de
+  dado GENUINAMENTE NOVO sob essa configuração.
+- ⚠️ **Risco de data-snooping explícito, registrado por honestidade**: a ideia
+  nasceu observando o resultado negativo das trials anteriores — pré-registrar
+  agora não elimina esse viés de origem, só impede que o CRITÉRIO de sucesso
+  seja reescrito depois de ver o resultado. O veredito desta trial só é válido
+  com amostra coletada DEPOIS do registro, nunca reaproveitando as previsões
+  já vistas (v1/H4/H5).
+- Critério de sucesso (definido ANTES): idêntico ao da H4/H5 — Spearman IC95
+  não cruza zero (positivo desta vez) com n ≥ 30 previsões maduras SOB A
+  CONFIGURAÇÃO INVERTIDA; depois, Sharpe líquido por trade + DSR ≥ 0,95.
+- Resultado: (não ativada — sem coleta)
 
 ---
 
