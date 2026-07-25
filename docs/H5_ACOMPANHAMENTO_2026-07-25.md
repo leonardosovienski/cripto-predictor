@@ -41,6 +41,35 @@ parametros, o Scheduler ou o criterio do gate de 28/07/2026.
 - Depois do gate, decidir separadamente se a cobertura RSS justifica uma nova
   hipotese/protocolo. Nao trocar fontes durante H5 para melhorar a amostra.
 
+## Achado tecnico de 2026-07-25 — feed `coindesk` caido (NAO corrigido de proposito)
+
+Diagnostico reproduzivel, sem alterar codigo nem producao:
+
+- Desde 21/07 o motivo `curated_rss:HTTPStatusError` aparece em **exatamente 5
+  previsoes por noite**, todas as noites — padrao deterministico, nao
+  intermitente.
+- Causa confirmada por requisicao real, read-only, aos 5 feeds do
+  `CURATED_RSS_FEEDS` (`collectors/news.py`), com `follow_redirects=False`
+  igual ao cliente do nucleo: `coindesk` responde **308** para
+  `/arc/outboundfeeds/rss?outputType=xml` (sem a barra antes do `?`). Os
+  outros quatro (`blockworks`, `decrypt`, `cointelegraph`, `cryptopotato`)
+  respondem 200 com corpo valido.
+- E o **mesmo modo de falha** do `blockworks.co` -> `blockworks.com`
+  corrigido em 20/07: redirect permanente que o cliente do nucleo nao segue.
+  Cada ativo que hasheia para `coindesk` perde a fonte em toda chamada.
+- Efeito colateral observado: `curated_rss:circuit_open` (~10/noite) e em boa
+  parte a cascata do disjuntor abrindo apos essas falhas repetidas.
+
+**Decisao desta rodada: NAO corrigir a URL antes do gate.** Consertar o feed
+aumentaria a cobertura de noticias nas ultimas noites da janela (25 a 27/07),
+alterando a caracteristica do input no meio de H5 — exatamente o que a secao
+acima proibe ("nao trocar fontes durante H5 para melhorar a amostra"). O
+achado fica registrado com evidencia reproduzivel para decisao humana **depois
+de 28/07**. Nao e regressao de codigo nova nem invalida observacoes ja
+coletadas: as previsoes afetadas ja estao corretamente carimbadas com
+`input_degradado=1` e `news_degraded_reason`, e o backtest ja estratifica por
+esses campos.
+
 ## Limites desta nota
 
 Esta nota nao executa gate, nao recalcula ou persiste metricas, nao modifica
