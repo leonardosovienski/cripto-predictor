@@ -93,10 +93,34 @@ com 429 ou 5xx; alem disso o cache e por `(provider, ativo, limit)`, entao o
 mesmo feed e rebaixado uma vez **por ativo** (28 downloads/noite sobre 5
 feeds). A hipotese e que algum feed passe a responder 429 no meio da rodada e
 derrube o `curated_rss` inteiro para os ativos restantes — incluindo os que
-hasheiam para feeds saudaveis. **Nao corrigido**: falta evidencia de qual feed
-e qual status (o log grava so o tipo da excecao). Corrigir exigiria cachear o
-corpo do feed por rodada — mudanca de comportamento maior, sem causa provada.
-Fica para decisao humana com evidencia melhor.
+hasheiam para feeds saudaveis. **A causa continua nao corrigida** — corrigir
+exigiria cachear o corpo do feed por rodada, mudanca de comportamento maior e
+sem causa provada.
+
+O que foi feito e **instrumentar para provar ou descartar a hipotese**. O
+status HTTP ja era calculado em `get_news_result` (era o que decidia abrir o
+disjuntor) mas era descartado: nem o log nem o banco o guardavam. Agora:
+
+- o marcador gravado em `predictions.news_degraded_reason` passa de
+  `curated_rss:HTTPStatusError` para `curated_rss:HTTPStatusError:429@cryptopotato`
+  — tipo, **status** e **feed de origem**;
+- a linha de log correspondente carrega os mesmos campos;
+- `CuratedRssProvider` carimba na excecao qual feed falhou, porque o disjuntor
+  e por provider e sem isso a queda de um feed e indistinguivel da queda da
+  fonte inteira.
+
+O marcador nunca inclui URL, corpo ou cabecalho — so nome do provider, tipo da
+excecao, inteiro do status e chave do feed. Ha teste dedicado barrando
+vazamento de URL no marcador, porque ele e persistido e sai no log, e a URL do
+serpapi carrega a credencial na query string.
+
+Compatibilidade: `news_degraded_reason` e provenance de escrita — nenhum
+estrato do backtest e chaveado por ele (os estratos sao `news_provider`,
+`collection_policy`, `input_degradado`, fonte e juiz). Linhas antigas mantem o
+formato antigo; nada e recarimbado retroativamente. Depois da coleta de hoje
+(25/07 22:00), uma consulta por `news_degraded_reason` diz exatamente qual feed
+abre o disjuntor e com qual status — e a decisao de cachear ou nao deixa de ser
+palpite.
 
 ## Limites desta nota
 

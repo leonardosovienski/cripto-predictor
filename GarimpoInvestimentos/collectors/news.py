@@ -172,9 +172,17 @@ class CuratedRssProvider:
         digest = hashlib.sha256(query.strip().lower().encode("utf-8")).digest()
         source = keys[int.from_bytes(digest[:4], "big") % len(keys)]
         async with get_http_client() as client:
-            response = await client.get(CURATED_RSS_FEEDS[source])
-            response.raise_for_status()
-            return _matching_titles(_rss_titles(response.content), query, limit)
+            try:
+                response = await client.get(CURATED_RSS_FEEDS[source])
+                response.raise_for_status()
+                return _matching_titles(_rss_titles(response.content), query, limit)
+            except Exception as exc:
+                # Carimba QUAL feed falhou. O disjuntor (_OPEN_CIRCUITS) e por
+                # PROVIDER, entao sem isto a queda de um unico feed aparece so
+                # como "curated_rss indisponivel" — foi o que escondeu o 308 do
+                # coindesk por 4 noites.
+                exc.feed_source = source  # type: ignore[attr-defined]
+                raise
 
 
 _PROVIDERS: dict[str, NewsProvider] = {
@@ -202,6 +210,32 @@ def provider_order_for_asset(asset: str, providers: list[str] | None = None) -> 
     return order
 
 
+def _status_of(exc: BaseException) -> int | None:
+    """Status HTTP da excecao, quando ela carrega uma resposta."""
+    status = getattr(getattr(exc, "response", None), "status_code", None)
+    return status if isinstance(status, int) else None
+
+
+def _failure_marker(name: str, exc: BaseException) -> str:
+    """Marcador persistido em ``predictions.news_degraded_reason``.
+
+    Formato: ``provider:TipoDaExcecao[:status][@feed]``. O tipo sozinho e
+    ambiguo — ``HTTPStatusError`` cobre 3xx nao seguido, 4xx e 5xx, que tem
+    causas e tratamentos completamente diferentes (redirect = URL errada;
+    429/5xx = abre o disjuntor). Sem o status e o feed, diagnosticar exigia
+    reproduzir a chamada na mao. Nunca inclui URL, corpo nem cabecalho: so
+    nome do provider, tipo da excecao, inteiro do status e chave do feed.
+    """
+    marker = f"{name}:{type(exc).__name__}"
+    status = _status_of(exc)
+    if status is not None:
+        marker += f":{status}"
+    feed = getattr(exc, "feed_source", None)
+    if feed:
+        marker += f"@{feed}"
+    return marker
+
+
 async def get_news_result(query: str, limit: int = 5) -> NewsResult:
     """Busca uma fonte saudável e devolve provenance; nunca expõe credenciais."""
     failures: list[str] = []
@@ -223,11 +257,16 @@ async def get_news_result(query: str, limit: int = 5) -> NewsResult:
                 return NewsResult(titles=titles, provider=name)
             failures.append(f"{name}:empty")
         except Exception as exc:
-            failures.append(f"{name}:{type(exc).__name__}")
-            status = getattr(getattr(exc, "response", None), "status_code", None)
+            failures.append(_failure_marker(name, exc))
+            status = _status_of(exc)
             if status == 429 or (isinstance(status, int) and status >= 500):
                 # A fonte não vai se recuperar dentro da mesma rodada. Evita que
                 # cada ativo repita retries e consuma a quota/tempo do agendador.
                 _OPEN_CIRCUITS.add(name)
-            _log.warning("notícias %s indisponíveis para %s: %s", name, query, type(exc).__name__)
+            _log.warning(
+                "notícias %s indisponíveis para %s: %s (status=%s, feed=%s)",
+                name, query, type(exc).__name__,
+                status if status is not None else "-",
+                getattr(exc, "feed_source", "-"),
+            )
     return NewsResult([], "none", ",".join(failures)[:500] or "no_provider_configured")

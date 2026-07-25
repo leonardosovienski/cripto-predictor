@@ -1,5 +1,6 @@
 """Contratos offline do roteador de fontes de notícias."""
 import asyncio
+import hashlib
 
 from GarimpoInvestimentos.collectors import news
 from GarimpoInvestimentos.core.history import to_prediction_rows
@@ -157,6 +158,69 @@ def test_curated_rss_propaga_erro_de_redirect_nao_seguido(monkeypatch):
     assert result.provider == "none"
     assert result.degraded
     assert "curated_rss:HTTPStatusError" in result.degraded_reason
+
+
+def _falha_curated(monkeypatch, status):
+    """Monta um curated_rss cujo raise_for_status() falha com o status dado."""
+    import httpx
+
+    class _Resp:
+        status_code = status
+
+        def raise_for_status(self):
+            erro = httpx.HTTPStatusError("falha", request=None, response=None)
+            erro.response = self  # type: ignore[assignment]
+            raise erro
+
+    class _Cli:
+        async def get(self, url, **kwargs):
+            return _Resp()
+
+    monkeypatch.setattr(news, "get_http_client", lambda: _ClientContext(_Cli()))
+    monkeypatch.setattr(news, "_PROVIDERS", {"curated_rss": news.CuratedRssProvider()})
+    monkeypatch.setattr(news, "_OPEN_CIRCUITS", set())
+    monkeypatch.setattr(news, "_NEWS_CACHE", {})
+    monkeypatch.setattr(news, "provider_order_for_asset", lambda asset: ["curated_rss"])
+
+
+def test_marcador_de_falha_grava_status_http_e_feed(monkeypatch):
+    # O tipo da exceção sozinho é ambíguo: HTTPStatusError cobre 3xx não
+    # seguido, 4xx e 5xx. Sem o status, diagnosticar o 308 do coindesk exigiu
+    # reproduzir a chamada na mão. O marcador persistido em
+    # news_degraded_reason passa a carregar status e feed de origem.
+    _falha_curated(monkeypatch, 308)
+    resultado = asyncio.run(news.get_news_result("uniswap"))
+    assert resultado.provider == "none"
+    assert "curated_rss:HTTPStatusError:308@" in resultado.degraded_reason
+    # o feed carimbado é o que a partição por hash escolheu para o ativo
+    esperado = sorted(news.CURATED_RSS_FEEDS)[
+        int.from_bytes(hashlib.sha256(b"uniswap").digest()[:4], "big")
+        % len(news.CURATED_RSS_FEEDS)
+    ]
+    assert resultado.degraded_reason.endswith("@" + esperado)
+
+
+def test_marcador_nao_vaza_url_nem_corpo(monkeypatch):
+    # O marcador é persistido no banco e sai no log: só pode conter nome do
+    # provider, tipo da exceção, status e chave do feed — nunca URL, que em
+    # outros providers (serpapi) carrega a credencial na query string.
+    _falha_curated(monkeypatch, 500)
+    razao = asyncio.run(news.get_news_result("uniswap")).degraded_reason
+    # "http" sozinho não serve como sonda: HTTPStatusError é o próprio tipo da
+    # exceção. O que não pode aparecer é URL — esquema, host ou query string.
+    assert "://" not in razao
+    assert "?" not in razao and "/" not in razao
+    assert not any(feed in razao for feed in news.CURATED_RSS_FEEDS.values())
+
+
+def test_disjuntor_abre_em_429_e_5xx_mas_nao_em_redirect(monkeypatch):
+    # Fixa a regra que o status agora torna auditável: 429/5xx derrubam a fonte
+    # pela rodada inteira; um 3xx (URL errada) não deve abrir o disjuntor —
+    # senão um feed com URL velha silencia os outros quatro.
+    for status, deve_abrir in ((308, False), (404, False), (429, True), (503, True)):
+        _falha_curated(monkeypatch, status)
+        asyncio.run(news.get_news_result("uniswap"))
+        assert ("curated_rss" in news._OPEN_CIRCUITS) is deve_abrir, status
 
 
 def test_newsapi_ai_envia_chave_no_corpo_e_normaliza_titulos(monkeypatch):
