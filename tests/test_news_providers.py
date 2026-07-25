@@ -114,6 +114,25 @@ def test_curated_rss_blockworks_nao_usa_dominio_antigo():
     assert ".co/" not in news.CURATED_RSS_FEEDS["blockworks"]
 
 
+def test_curated_rss_coindesk_nao_usa_barra_antes_da_query():
+    # Regressão (achado 2026-07-25): a rota do CoinDesk passou a responder 308
+    # permanente quando ha barra antes do "?" — mesmo modo de falha do
+    # blockworks acima. Como get_http_client() nao segue redirect, todo ativo
+    # que hasheasse para "coindesk" perdia a fonte (5 previsoes/noite desde
+    # 21/07). A URL correta e a mesma rota SEM a barra.
+    url = news.CURATED_RSS_FEEDS["coindesk"]
+    assert url == "https://www.coindesk.com/arc/outboundfeeds/rss?outputType=xml"
+    assert "/rss/?" not in url
+
+
+def test_curated_rss_nenhum_feed_tem_barra_antes_da_query():
+    # Generaliza os dois achados: barra imediatamente antes da query string é o
+    # padrão que produziu 308 em blockworks (2026-07-20) e coindesk
+    # (2026-07-25). Barra a classe inteira do bug, não só as duas instâncias.
+    for nome, url in news.CURATED_RSS_FEEDS.items():
+        assert "/?" not in url, f"{nome} tem barra antes da query: {url}"
+
+
 def test_curated_rss_propaga_erro_de_redirect_nao_seguido(monkeypatch):
     # Fixa o contrato que o bug acima violava: uma resposta cujo
     # raise_for_status() levanta (3xx não seguido, 4xx, 5xx) deve propagar

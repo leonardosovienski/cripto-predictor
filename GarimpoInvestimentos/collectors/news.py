@@ -23,7 +23,13 @@ _log = logging.getLogger("previsao_cripto.news")
 # Catálogo curado a partir da lista RSS ativa da CoinDesk Data API. URLs versionadas
 # evitam que uma troca editorial altere silenciosamente o experimento.
 CURATED_RSS_FEEDS = {
-    "coindesk": "https://www.coindesk.com/arc/outboundfeeds/rss/?outputType=xml",
+    # A barra antes do "?" virou redirect 308 permanente para a MESMA rota sem
+    # barra (achado 2026-07-25, mesmo modo de falha do blockworks abaixo):
+    # get_http_client() nao segue redirect, entao raise_for_status() derrubava
+    # TODA chamada que hasheasse para "coindesk" — 5 previsoes por noite desde
+    # 21/07, deterministicamente. Confirmado por requisicao real: 200 + RSS
+    # valido sem a barra, 308 com ela.
+    "coindesk": "https://www.coindesk.com/arc/outboundfeeds/rss?outputType=xml",
     # blockworks.co -> blockworks.com: domínio migrou (308 permanente, achado
     # 2026-07-20 ao ativar o fallback pela 1ª vez); o cliente HTTP do núcleo
     # não segue redirect (get_http_client() é follow_redirects=False por

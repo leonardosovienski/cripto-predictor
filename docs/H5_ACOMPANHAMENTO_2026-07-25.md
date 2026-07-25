@@ -60,15 +60,43 @@ Diagnostico reproduzivel, sem alterar codigo nem producao:
 - Efeito colateral observado: `curated_rss:circuit_open` (~10/noite) e em boa
   parte a cascata do disjuntor abrindo apos essas falhas repetidas.
 
-**Decisao desta rodada: NAO corrigir a URL antes do gate.** Consertar o feed
-aumentaria a cobertura de noticias nas ultimas noites da janela (25 a 27/07),
-alterando a caracteristica do input no meio de H5 — exatamente o que a secao
-acima proibe ("nao trocar fontes durante H5 para melhorar a amostra"). O
-achado fica registrado com evidencia reproduzivel para decisao humana **depois
-de 28/07**. Nao e regressao de codigo nova nem invalida observacoes ja
-coletadas: as previsoes afetadas ja estao corretamente carimbadas com
-`input_degradado=1` e `news_degraded_reason`, e o backtest ja estratifica por
-esses campos.
+**Decisao desta rodada: CORRIGIDA, por decisao explicita do dono.** A primeira
+leitura desta nota recomendava adiar a correcao para depois do gate, por
+receio de alterar o input no meio da janela. Esse receio estava mal
+calibrado e a nota foi corrigida: **nada coletado a partir de 25/07 amadurece
+em D+7 antes de 28/07** (previsoes de hoje maturam em 02/08), entao a
+correcao **nao muda nenhum numero do gate de 28/07**. O que ela afeta e a
+cobertura de noticias das previsoes que maturam em agosto — que ja e
+heterogenea por historico (serpapi ate 17/07, vazio ate 20/07, `curated_rss`
+parcial desde 21/07) e ja e estratificada por `news_provider`,
+`news_degraded_reason` e `input_degradado`.
+
+O que a correcao **nao** faz: nao altera parametro, criterio, custo, data ou
+manifest de H5; nao mexe em `trials.json`; nao reprocessa nem recarimba
+observacao ja coletada; nao adiciona nem remove fonte do catalogo — apenas
+restaura o acesso a uma fonte que ja pertencia a ele.
+
+Verificacao real (read-only, sem credencial): a rota sem barra devolve 200 com
+RSS valido (25 titulos). Dos 6 ativos que hasheiam para `coindesk`
+(`arbitrum`, `bitcoin-cash`, `pepe`, `pump-fun`, `uniswap`, `whitebit`), 3
+voltam a casar titulo. Os outros 3 seguem sem noticia por limitacao ja
+documentada do desenho (1 feed geral por hash + filtro por substring), nao por
+falha. Espera-se, portanto, que parte das previsoes continue
+`input_degradado=1` mesmo apos a correcao.
+
+## Pendencia diagnosticada, NAO corrigida — disjuntor por provider
+
+Separado do feed acima, resta um efeito nao confirmado: `curated_rss:circuit_open`
+aparece ~10 vezes por noite. O mecanismo esta identificado em
+`collectors/news.py`: `_OPEN_CIRCUITS` e por **provider**, nao por feed, e abre
+com 429 ou 5xx; alem disso o cache e por `(provider, ativo, limit)`, entao o
+mesmo feed e rebaixado uma vez **por ativo** (28 downloads/noite sobre 5
+feeds). A hipotese e que algum feed passe a responder 429 no meio da rodada e
+derrube o `curated_rss` inteiro para os ativos restantes — incluindo os que
+hasheiam para feeds saudaveis. **Nao corrigido**: falta evidencia de qual feed
+e qual status (o log grava so o tipo da excecao). Corrigir exigiria cachear o
+corpo do feed por rodada — mudanca de comportamento maior, sem causa provada.
+Fica para decisao humana com evidencia melhor.
 
 ## Limites desta nota
 
