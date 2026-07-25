@@ -8,7 +8,7 @@
       "horizonte_dias": 7,
       "input": "LLM + indicadores + noticias (coleta acoplada a rede, pre-DPL)"
     },
-    "sharpe": -0.5734,
+    "sharpe": -0.5733,
     "notes": "Configuracao original do Garimpo, avaliada de facto nas coletas de junho/2026. Sharpe por-trade ainda sem n para estimar (aguarda maturacao D+7). Registrada retroativamente na criacao do registro — conta como tentativa."
   },
   {
@@ -20,7 +20,7 @@
       "horizonte_dias": 7,
       "input": "LLM + indicadores + noticias (mercado offline da Feature Store; universo via --discover)"
     },
-    "sharpe": -0.3034,
+    "sharpe": -0.3056,
     "notes": "Pipeline pos-merge (ADR DECISAO_MERGE_DPL_DISCOVERY). Em coleta desde 2026-07-01. Estratificada da v1 pelo carimbo Fonte. COLETA ENCERRADA 2026-07-10 com n=5 (imatura, sem veredicto) por decisao do dono — substituida pela v2-dpl-multi-h7 (modo multi-provedor; ver H4/H5 em docs/HYPOTHESES.md)."
   },
   {
@@ -68,7 +68,7 @@
       "horizonte_dias": 7,
       "input": "LLM + indicadores + noticias (mesmo pipeline da v2-dpl-gemini-h7; so muda o juiz por-ativo, carimbado por previsao)"
     },
-    "sharpe": -0.6725,
+    "sharpe": -0.3258,
     "notes": "H5 (docs/HYPOTHESES.md, pre-registrada 2026-07-10). Substitui a coleta da v2-dpl-gemini-h7 (encerrada com n=5, imatura) por decisao do dono: risco de estouro da cota free-tier do Gemini (22 ativos vs ~20/dia). Particao fixa e deterministica — cada ativo tem sempre o mesmo juiz."
   },
   {
