@@ -20,7 +20,7 @@
       "horizonte_dias": 7,
       "input": "LLM + indicadores + noticias (mercado offline da Feature Store; universo via --discover)"
     },
-    "sharpe": -0.3057,
+    "sharpe": -0.3059,
     "notes": "Pipeline pos-merge (ADR DECISAO_MERGE_DPL_DISCOVERY). Em coleta desde 2026-07-01. Estratificada da v1 pelo carimbo Fonte. COLETA ENCERRADA 2026-07-10 com n=5 (imatura, sem veredicto) por decisao do dono — substituida pela v2-dpl-multi-h7 (modo multi-provedor; ver H4/H5 em docs/HYPOTHESES.md)."
   },
   {
@@ -68,8 +68,8 @@
       "horizonte_dias": 7,
       "input": "LLM + indicadores + noticias (mesmo pipeline da v2-dpl-gemini-h7; so muda o juiz por-ativo, carimbado por previsao)"
     },
-    "sharpe": -0.326,
-    "notes": "H5 (docs/HYPOTHESES.md, pre-registrada 2026-07-10). Substitui a coleta da v2-dpl-gemini-h7 (encerrada com n=5, imatura) por decisao do dono: risco de estouro da cota free-tier do Gemini (22 ativos vs ~20/dia). Particao fixa e deterministica — cada ativo tem sempre o mesmo juiz."
+    "sharpe": -0.312,
+    "notes": "H5 (docs/HYPOTHESES.md, pre-registrada 2026-07-10). Substitui a coleta da v2-dpl-gemini-h7 (encerrada com n=5, imatura) por decisao do dono: risco de estouro da cota free-tier do Gemini (22 ativos vs ~20/dia). Particao fixa e deterministica — cada ativo tem sempre o mesmo juiz. || VEREDITO 2026-07-28 — REFUTADA / NO-GO. Gate executado na data pre-registrada, pelo backtest de producao (GarimpoInvestimentos.analyzers.backtest), com o criterio congelado em 2026-07-10 e sem nenhuma alteracao. CRITERIO: Spearman IC95 sem cruzar zero POSITIVO, n>=30 maduras, estratificado por fonte; depois Sharpe liquido por trade + DSR >= 0.95. RESULTADO D+7 pooled: Spearman -0.166 [IC95 -0.266; -0.057], n=440 — o IC NAO cruza zero, mas na direcao OPOSTA a hipotese. Estrato da fonte desta trial (dpl:fallback): -0.161 [-0.264; -0.050], n=431 — mesma direcao. Sharpe por-trade -0.3120 (n=134). DSR 0.00 contra corte 0.95 (SR0 0.447, N=7 tentativas). Acuracia direcional 45.2% (199/440), abaixo de cara-ou-coroa. Estrategia score>=60 rendeu -6.80% contra +0.99% do buy&hold de BTC. POR JUIZ: gemini -0.262 [-0.374; -0.140] n=239 (IC fora de zero, negativo); groq -0.184 [-0.420; +0.067] n=66 e mistral +0.026 [-0.180; +0.238] n=110 (ambos cruzam zero); cerebras -0.483 [-0.765; +0.102] n=22 (cruza zero e n<30). RESSALVA REGISTRADA POR HONESTIDADE, que NAO altera o veredito: separados, nem o estrato de input completo (-0.108 [-0.250; +0.046], n=217) nem o de input degradado (+0.099 [-0.093; +0.289], n=123) atingem significancia. O criterio pre-registrado julga o POOLED com os estratos reportados, e o pooled e significativo na direcao errada. Escolher estrato depois de ver o resultado seria exatamente o que o pre-registro existe para impedir. NAO AUTORIZA CAPITAL: nenhum gate deste ecossistema o faz."
   },
   {
     "name": "h6-sinal-invertido-d7",
@@ -78,7 +78,7 @@
       "fonte": "reserved:h6-inversao-sinal",
       "horizonte_dias": 7
     },
-    "sharpe": null,
+    "sharpe": 0.3479,
     "notes": "Pre-registro (protocolo anti-data-snooping, docs/HYPOTHESES.md H6) ANTES de qualquer resultado dedicado. Hipotese: o score do LLM tem correlacao NEGATIVA e estatisticamente significativa com o retorno D+7 nas 3 encarnacoes anteriores (v1-direct, v2-dpl-gemini, v2-dpl-multi) -- inverter a leitura (score alto = sinal de queda, score baixo = sinal de alta) pode capturar esse padrao. RISCO DE DATA-SNOOPING EXPLICITO: a ideia nasceu observando o resultado das trials anteriores, entao esta trial so vale como veredito com dado GENUINAMENTE NOVO coletado apos o registro, nunca reaproveitando as previsoes ja vistas. NAO ATIVADA: fonte=reserved:* nunca aparece em predictions.fonte real, entao close_trial_sharpes() nunca vai amadurecer isso sozinho -- exige implementacao explicita (inverter a leitura do score no backtest ou na estrategia) e decisao humana de quando comecar a coletar sob essa hipotese."
   }
 ]

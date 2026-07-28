@@ -238,15 +238,32 @@ def test_h6_ignora_fonte_diferente_da_coleta_real():
     assert close_h6_inverted_signal(posterior, 7, threshold=60) is None
 
 
-def test_h6_registrada_no_repositorio_real_como_reservada_nao_ativada():
+def test_h6_no_repositorio_real_mantem_o_fonte_reservado():
     """A trial H6 do trials.json real deve continuar com o fonte reservado —
     se alguém mudar isso sem querer, ela passaria a casar com dado real sem
     a trava explícita desta função (o casamento genérico do
-    close_trial_sharpes também não a pegaria, mas por acidente, não desenho)."""
+    close_trial_sharpes também não a pegaria, mas por acidente, não desenho).
+
+    **Errata de 2026-07-28.** Este teste exigia `sharpe is None`, com o
+    comentário "ainda não amadureceu — sem dado genuinamente novo". Ficou
+    obsoleto em `556f5ad` (2026-07-20), que implementou
+    `close_h6_inverted_signal` e a ligou ao ciclo noturno **de propósito**: a
+    H6 passa a amadurecer sozinha, mas SÓ com previsões posteriores ao
+    `registered_at` dela, que é a trava anti-data-snooping que o casamento
+    genérico não tem.
+
+    O teste não foi atualizado junto e continuou verde por acidente, enquanto
+    não havia n≥3 de dado posterior. Quebrou em 2026-07-28, quando o contador
+    passou — ou seja, avisou de uma mudança de desenho **oito dias depois**
+    dela ter acontecido. O que ele deve guardar é o `fonte` reservado, não a
+    ausência de número.
+    """
     trials = json.loads(TRIALS_PATH.read_text(encoding="utf-8"))
     h6 = next(t for t in trials if t["name"] == H6_TRIAL_NAME)
     assert h6["params"] == {"fonte": "reserved:h6-inversao-sinal", "horizonte_dias": 7}
-    assert h6["sharpe"] is None  # ainda não amadureceu — sem dado genuinamente novo
+    sharpe = h6["sharpe"]
+    assert sharpe is None or isinstance(sharpe, (int, float)), \
+        "sharpe da H6 so pode ser None ou numero produzido por close_h6_inverted_signal"
 
 
 def test_load_rows_exclui_fallback_estrutural(tmp_path, monkeypatch):

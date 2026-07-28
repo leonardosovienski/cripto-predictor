@@ -76,7 +76,37 @@
   H5/`v2-dpl-multi-h7`. As 5 previsões coletadas permanecem no histórico,
   carimbadas com o juiz gemini — não se misturam com a série nova.
 
-### H5 — Score do LLM prevê retorno D+7, partição multi-provedor (status: **rodando — coleta**)
+### H5 — Score do LLM prevê retorno D+7, partição multi-provedor (status: **REFUTADA / NO-GO — 2026-07-28**)
+
+> **VEREDITO, gate executado na data pré-registrada.** Rodado pelo backtest de
+> produção, com o critério congelado em 2026-07-10 e sem nenhuma alteração.
+>
+> ```
+> D+7 pooled     Spearman -0.166  [IC95 -0.266; -0.057]  n=440
+>                IC NAO cruza zero — na direcao OPOSTA a hipotese
+> fonte da trial Spearman -0.161  [IC95 -0.264; -0.050]  n=431
+> Sharpe/trade   -0.3120  (n=134)
+> DSR            0.00  contra corte 0.95   (SR0 0.447, N=7)
+> acuracia dir.  45.2% (199/440) — abaixo de cara-ou-coroa
+> estrategia     score>=60 rendeu -6.80%  vs  buy&hold BTC +0.99%
+> ```
+>
+> **Por juiz:** gemini −0,262 [−0,374; −0,140] n=239 (IC fora de zero,
+> negativo); groq −0,184 [−0,420; +0,067] n=66 e mistral +0,026 [−0,180;
+> +0,238] n=110 (ambos cruzam zero); cerebras −0,483 [−0,765; +0,102] n=22
+> (cruza zero e n<30).
+>
+> **Ressalva registrada por honestidade, que não altera o veredito:**
+> separados, nem o estrato de input completo (−0,108 [−0,250; +0,046], n=217)
+> nem o de input degradado (+0,099 [−0,093; +0,289], n=123) atingem
+> significância. O critério pré-registrado julga o **pooled** com os estratos
+> reportados, e o pooled é significativo na direção errada. Escolher estrato
+> depois de ver o resultado é exatamente o que o pré-registro existe para
+> impedir.
+>
+> É a **quarta** encarnação desta família a terminar em correlação negativa
+> (v1, H4, H5) ou nula. O padrão é consistente e mede-se em centenas de
+> observações, não em ruído.
 - Data do registro: 2026-07-10 (ANTES de qualquer resultado do modo multi).
 - Hipótese: a mesma da H4 (LLM sobre indicadores + notícias produz score com
   correlação positiva com o retorno D+7), agora com os ativos particionados de
@@ -99,7 +129,29 @@
   zero), mistral −0,023 (n=20, IC cruza zero = ruído p/ ele). Mesmo padrão
   que encerrou a H4. Motivou o pré-registro da H6 (inversão do sinal).
 
-### H6 — Sinal invertido do LLM prevê retorno D+7 (status: **registrada — não ativada**)
+### H6 — Sinal invertido do LLM prevê retorno D+7 (status: **coletando — n=6 de 30**)
+
+> **Errata de 2026-07-28.** O status abaixo dizia "registrada — não ativada" e
+> o item (2) das condições dizia que o código "não existe ainda — nem no
+> backtest nem na coleta". **Isso deixou de ser verdade em `556f5ad`
+> (2026-07-20)**, que implementou `close_h6_inverted_signal` e a ligou ao ciclo
+> noturno. A H6 amadurece sozinha desde então, com a trava anti-data-snooping
+> exigida: só entram previsões com `pred_date` POSTERIOR ao `registered_at`
+> dela, e o `params.fonte` segue reservado para nunca casar com o mecanismo
+> genérico.
+>
+> Estado real em 2026-07-28: **sharpe +0,3479 com n=6**. É o único Sharpe
+> positivo do registro do cripto — e **não é veredito nenhum**: o critério
+> pré-registrado exige **n ≥ 30** e IC95 sem cruzar zero. Com n=6 não há IC
+> que decida coisa alguma. Citar esse +0,3479 como sinal de que "a inversão
+> funciona" seria exatamente o erro que este documento existe para impedir.
+>
+> Efeito colateral medido, registrado por transparência: esse Sharpe positivo
+> é o que mais infla a variância entre tentativas, e portanto o `SR0` do
+> projeto — 0,447 com ele, 0,332 sem. **O veredito da H5 não depende disso**:
+> o Sharpe dela é −0,312, negativo, e o DSR fica ~0 com qualquer `SR0`
+> positivo. Verificado antes de registrar o veredito, justamente para que ele
+> não fosse artefato desta contaminação.
 - Data do registro: 2026-07-20 (ANTES de qualquer resultado dedicado a esta
   configuração).
 - Hipótese: as 3 encarnações anteriores da mesma família (H4/`v2-dpl-gemini-h7`,
