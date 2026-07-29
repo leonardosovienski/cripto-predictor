@@ -49,13 +49,21 @@ jobs:
 
               
       - name: Simular Workspace Local (sys.path)
+        shell: python
         run: |
-          if [ -f pyproject.toml ]; then
-            PACKAGE_NAME=$(python -c "import tomllib; print(tomllib.load(open('pyproject.toml', 'rb')).get('project', {}).get('name', ''))")
-            if [ -n "$PACKAGE_NAME" ]; then
-              ln -sfn $(pwd) ../$PACKAGE_NAME
-            fi
-          fi
+          import os, pathlib, tomllib
+          if os.path.exists("pyproject.toml"):
+              with open("pyproject.toml", "rb") as f:
+                  data = tomllib.load(f)
+              package_name = data.get("project", {}).get("name", "")
+              if package_name:
+                  current_dir = pathlib.Path.cwd()
+                  target_dir = current_dir.parent / package_name
+                  if not target_dir.exists():
+                      try:
+                          target_dir.symlink_to(current_dir, target_type="junction" if os.name == "nt" else "dir")
+                      except Exception:
+                          pass
 
       - name: Executar Pyright (Tipagem)
         run: pyright || true
