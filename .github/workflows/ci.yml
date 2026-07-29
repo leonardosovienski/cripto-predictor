@@ -37,12 +37,17 @@ jobs:
           python-version: ${{ matrix.python }}
 
       - name: Instalar Dependências
+        shell: python
         run: |
-          python -m pip install --upgrade pip
-          pip install pytest pyright
-          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-          if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
+          import subprocess, os
+          subprocess.run(["python", "-m", "pip", "install", "--upgrade", "pip"], check=True)
+          subprocess.run(["pip", "install", "pytest", "pyright"], check=True)
+          if os.path.exists("requirements.txt"):
+              subprocess.run(["pip", "install", "-r", "requirements.txt"], check=True)
+          if os.path.exists("requirements-dev.txt"):
+              subprocess.run(["pip", "install", "-r", "requirements-dev.txt"], check=True)
 
+              
       - name: Simular Workspace Local (sys.path)
         run: |
           if [ -f pyproject.toml ]; then
