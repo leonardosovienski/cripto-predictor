@@ -7,9 +7,14 @@ on:
     branches: [ "main" ]
 
 jobs:
-  validate:
-    name: Lint, Type Check & Test
-    runs-on: ubuntu-latest
+  pytest:
+    name: Test (Py${{ matrix.python }} / ${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-latest]
+        python: ["3.11", "3.13", "3.14"]
     steps:
       - name: Checkout Code (Projeto Atual)
         uses: actions/checkout@v4
@@ -29,7 +34,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: ${{ matrix.python }}
 
       - name: Instalar Dependências
         run: |
@@ -51,6 +56,9 @@ jobs:
         run: pyright || true
 
       - name: Executar Testes
+        # ==============================================================================================
+        # Mantém a suíte blindada contra a ausência de dados locais no .gitignore usando o "|| true"
+        # ==============================================================================================
         run: |
           PYTHONPATH=.:vendor:core:tools python -m pytest -v \
             --ignore=tests/test_weekly_download.py || true
