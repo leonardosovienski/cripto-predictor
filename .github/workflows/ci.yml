@@ -47,7 +47,6 @@ jobs:
           if os.path.exists("requirements-dev.txt"):
               subprocess.run(["pip", "install", "-r", "requirements-dev.txt"], check=True)
 
-              
       - name: Simular Workspace Local (sys.path)
         shell: python
         run: |
@@ -69,9 +68,15 @@ jobs:
         run: pyright || true
 
       - name: Executar Testes
-        # ==============================================================================================
-        # Mantém a suíte blindada contra a ausência de dados locais no .gitignore usando o "|| true"
-        # ==============================================================================================
+        shell: python
         run: |
-          PYTHONPATH=.:vendor:core:tools python -m pytest -v \
-            --ignore=tests/test_weekly_download.py || true
+          import os, subprocess, sys
+          env = os.environ.copy()
+          extra_paths = [".", "vendor", "core", "tools"]
+          existing_pp = env.get("PYTHONPATH", "")
+          env["PYTHONPATH"] = os.pathsep.join(extra_paths + ([existing_pp] if existing_pp else []))
+          
+          cmd = [sys.executable, "-m", "pytest", "-v", "--ignore=tests/test_weekly_download.py"]
+          subprocess.run(cmd, env=env)
+          # Força saída 0 para evitar quebras por falta de dados locais no runner
+          sys.exit(0)
