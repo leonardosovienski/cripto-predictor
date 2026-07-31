@@ -77,6 +77,5 @@ jobs:
           env["PYTHONPATH"] = os.pathsep.join(extra_paths + ([existing_pp] if existing_pp else []))
           
           cmd = [sys.executable, "-m", "pytest", "-v", "--ignore=tests/test_weekly_download.py"]
-          subprocess.run(cmd, env=env)
-          # Força saída 0 para evitar quebras por falta de dados locais no runner
-          sys.exit(0)
+          result = subprocess.run(cmd, env=env)
+          sys.exit(result.returncode)

@@ -1,0 +1,8 @@
+# Dependências de runtime importadas na carga dos módulos (portanto necessárias
+# até para COLETAR a suíte). O ci.yml já instala este arquivo quando ele existe.
+pydantic>=2.12      # GarimpoInvestimentos/collectors/coingecko_api.py
+httpx>=0.28         # GarimpoInvestimentos/analyzers/ai_insights.py, v3/collectors/binance_vision.py
+
+# Opcionais deliberadamente FORA daqui: hmmlearn/numpy/sklearn (venv V3),
+# openai/google-genai, ccxt, openpyxl e python-dotenv. Os testes que dependem
+# deles fazem skip explícito, então a suíte fica verde sem instalá-los.
