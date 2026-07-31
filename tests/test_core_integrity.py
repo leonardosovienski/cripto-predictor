@@ -63,8 +63,8 @@ def test_no_orphan_files_in_vendor():
 @pytest.mark.skipif(not MANIFEST.exists(), reason="manifesto ausente")
 def test_aggregate_reproduces():
     """O agregado recalculado do dict de hashes bate com o declarado (mesma fórmula
-    do sync_core.manifest: sha256(json.dumps(files, sort_keys=True))[:16])."""
+    do sync_core.manifest: sha256(json.dumps(files, sort_keys=True)))."""
     manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
     recomputed = hashlib.sha256(
-        json.dumps(manifest["files"], sort_keys=True).encode()).hexdigest()[:16]
+        json.dumps(manifest["files"], sort_keys=True).encode()).hexdigest()
     assert recomputed == manifest["aggregate"]

@@ -12,6 +12,7 @@ SQLite do consumidor; isto é a camada de EVENTOS."""
 from __future__ import annotations
 
 import json
+import os
 from pathlib import Path
 
 __all__ = ["JsonlStore"]
@@ -19,6 +20,10 @@ __all__ = ["JsonlStore"]
 
 class JsonlStore:
     """Arquivo JSONL append-only com leitura streaming.
+
+    A durabilidade é por chamada: `append` serializa antes de abrir, escreve uma
+    linha, faz flush e pede fsync. Não é um protocolo de coordenação entre
+    processos; escrita concorrente precisa ser serializada pelo consumidor.
 
     store = JsonlStore("events.jsonl")
     store.append({"kind": "bet", "stake": 10})
@@ -39,6 +44,8 @@ class JsonlStore:
         self.path.parent.mkdir(parents=True, exist_ok=True)
         with open(self.path, "a", encoding="utf-8") as f:
             f.write(line + "\n")
+            f.flush()
+            os.fsync(f.fileno())
 
     def __iter__(self):
         """Itera os registros em ordem de escrita, streaming (linha a linha).
