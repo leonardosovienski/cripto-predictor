@@ -152,6 +152,21 @@
 > o Sharpe dela é −0,312, negativo, e o DSR fica ~0 com qualquer `SR0`
 > positivo. Verificado antes de registrar o veredito, justamente para que ele
 > não fosse artefato desta contaminação.
+>
+> **Errata de 2026-08-01 — gap de cálculo fechado.** Até aqui, o `sharpe`
+> acima era a ÚNICA estatística automatizada da H6 — o critério de veredito
+> pré-registrado (Spearman IC95 sobre a leitura invertida, não o Sharpe) não
+> tinha nenhum cálculo automatizado em código; teria que ser feito manualmente
+> quando n chegasse a 30. `h6_spearman_verdict()` (`analyzers/backtest.py`),
+> ligada ao mesmo ciclo noturno de `close_h6_inverted_signal`, fecha isso:
+> aplica a MESMA trava anti-data-snooping (só `pred_date` posterior ao
+> `registered_at`, só `fonte==dpl:fallback`) sobre `(100−score, retorno)` e
+> roda a mesma regra do juiz da Fase 1 (`spearman_block_ci`, IC não cruzando
+> zero). Abaixo de n=30 ela deliberadamente só reporta a contagem, nunca
+> rho/IC — evitar repetir com esta métrica o mesmo erro de leitura prematura
+> que o Sharpe de n=6 já ilustrou acima. Não roda produção ainda: isto é
+> implementação, não resultado — o estado real de n permanece o mesmo até a
+> próxima leitura de `logs/operations/GarimpoBacktest.log`.
 - Data do registro: 2026-07-20 (ANTES de qualquer resultado dedicado a esta
   configuração).
 - Hipótese: as 3 encarnações anteriores da mesma família (H4/`v2-dpl-gemini-h7`,
