@@ -1,6 +1,11 @@
 {
-  "passed_at": "2026-07-10T17:56:59+00:00",
+  "schema_version": "pipeline-power/2",
+  "passed_at": "2026-08-01T05:23:51+00:00",
+  "expires_at": "2026-08-08T05:23:51+00:00",
+  "core_version": "2.0.1-ga-20260731",
   "evaluate": "judge_go_nogo",
   "edge_verdict": "GO",
-  "note": "DOIS juizes certificados: (1) GO/NO-GO do backtest_v3 (PSR>=0.80 & IC_lower>0), seeds 7/8, n=400; (2) juiz da Fase 1 (Spearman IC95 block bootstrap nao cruza zero), seeds 21/22, n=120 — edge plantado e ruido em ambos"
+  "note": "Juiz V3 (backtest_v3): GO/NO-GO via PSR>=0.80 & IC_lower>0, seeds 7/8, n=400 — edge plantado e ruido",
+  "metric": "psr",
+  "pipeline_fingerprint": "ac54bb2114d2b1e40070c6596b0d5353c2725e2054fd2563a43ef229980a7a30"
 }

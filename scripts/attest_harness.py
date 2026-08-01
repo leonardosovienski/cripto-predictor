@@ -16,13 +16,16 @@ Cada um sobre séries sintéticas com verdade conhecida:
   - RUÍDO: sinal independente do retorno → o juiz NÃO pode validar
            (especificidade; juiz que fabrica significância = pior que inútil).
 
-Passando nos QUATRO braços (2 juízes × edge/ruído), o harness grava o atestado
-irmão do trials.json — sem ele, registrar trial NOVA no Experiment Registry é
-erro (trava de poder do core v1.1.0). Determinístico (seeds fixos): re-rodar
-reproduz o veredito.
+Passando nos QUATRO braços (2 juízes × edge/ruído), o harness grava DOIS
+atestados irmãos do trials.json — um por juiz/família, cada um com sua própria
+`metric` (contrato do registry, core 2.0.0+): `trials.harness_attestation.json`
+(juiz V3, metric="psr") e `trials.phase1_harness_attestation.json` (juiz Fase 1,
+metric="spearman_ic"). Sem o atestado correspondente, registrar trial NOVA no
+Experiment Registry é erro (trava de poder do core v1.1.0). Determinístico
+(seeds fixos): re-rodar reproduz o veredito.
 
 Uso:
-    python scripts/attest_harness.py            # roda e grava o atestado
+    python scripts/attest_harness.py            # roda e grava os atestados
     python scripts/attest_harness.py --dry-run  # só roda o controle, não grava
 """
 import argparse
@@ -41,6 +44,22 @@ from predictor_core.testing.harness import (            # noqa: E402
     assert_pipeline_has_power, attest_pipeline_power)
 
 TRIALS_PATH = ROOT / "GarimpoInvestimentos" / "trials.json"
+PHASE1_ATTESTATION_PATH = TRIALS_PATH.with_name(
+    TRIALS_PATH.stem + ".phase1_harness_attestation.json")
+
+# Nomes de métrica: contrato com o Experiment Registry (measurement.trials).
+# Trocar qualquer um dos dois é decisão de nomenclatura, não refactor livre —
+# toda trial NOVA registrada contra o atestado correspondente tem que declarar
+# exatamente o mesmo nome, senão o registry levanta MetricMismatchError.
+#   "psr"         — juiz V3 (backtest_v3): PSR>=0.80 & IC_lower>0 sobre P&L do
+#                   sinal. PSR é o limiar nomeado em todo H1/H2/H3
+#                   (docs/HYPOTHESES.md) e no HANDOFF — nome já de fato usado.
+#   "spearman_ic" — juiz da Fase 1 (analyzers/backtest._report): Spearman(score,
+#                   retorno) com IC95 por block bootstrap. Não usei "ic" puro
+#                   para não colidir com as variáveis ic_lower/ic_upper (bounds
+#                   de IC, não o nome da métrica) já estabelecidas no código.
+_METRIC_V3 = "psr"
+_METRIC_PHASE1 = "spearman_ic"
 
 # Mesmos limiares do backtest_v3 (o juiz REAL, não uma cópia amaciada).
 _PSR_THRESHOLD = 0.80
@@ -103,33 +122,47 @@ def noise_series(n: int = 400, seed: int = 8) -> list[tuple[float, float]]:
 
 
 def main() -> int:
-    ap = argparse.ArgumentParser(description="Controle positivo do juiz GO/NO-GO (V3)")
-    ap.add_argument("--dry-run", action="store_true", help="roda sem gravar o atestado")
+    ap = argparse.ArgumentParser(description="Controle positivo dos juizes GO/NO-GO (V3) e VALIDADO/RUIDO (Fase 1)")
+    ap.add_argument("--dry-run", action="store_true", help="roda sem gravar os atestados")
     args = ap.parse_args()
 
-    # Juiz da Fase 1 primeiro: se ele não tem poder, o atestado não pode existir
-    # (o registry governa trials das DUAS famílias). Só o V3 passar não basta.
-    assert_pipeline_has_power(judge_phase1, phase1_edge_series, phase1_noise_series,
-                              edge_verdict="VALIDADO", null_verdict="RUIDO")
-    print("juiz Fase 1 (Spearman IC95): sensibilidade e especificidade OK")
-
     if args.dry_run:
+        # Juiz da Fase 1 primeiro: se ele não tem poder, nenhum atestado deveria
+        # existir (o registry governa trials das DUAS famílias). Só o V3 passar
+        # não basta.
+        assert_pipeline_has_power(judge_phase1, phase1_edge_series, phase1_noise_series,
+                                  edge_verdict="VALIDADO", null_verdict="RUIDO")
+        print("juiz Fase 1 (Spearman IC95): sensibilidade e especificidade OK")
         assert_pipeline_has_power(judge_go_nogo, edge_series, noise_series,
                                   edge_verdict="GO")
         print("juiz V3 (PSR & IC_lower): sensibilidade e especificidade OK")
-        print("controle positivo PASSOU (dry-run; atestado nao gravado)")
+        print("controle positivo PASSOU (dry-run; atestados nao gravados)")
         return 0
-    rec = attest_pipeline_power(
+
+    # Cada juiz grava o SEU atestado, com a SUA metrica — arquivos irmaos
+    # distintos, um por familia de trial (measurement/trials.py so casa uma
+    # trial nova contra o atestado cujo metric+pipeline_fingerprint batem).
+    rec_phase1 = attest_pipeline_power(
+        judge_phase1, phase1_edge_series, phase1_noise_series,
+        attestation_path=PHASE1_ATTESTATION_PATH,
+        note="Juiz da Fase 1 (analyzers/backtest._report): VALIDADO/RUIDO via "
+             "Spearman IC95 block bootstrap nao cruza zero, seeds 21/22, n=120 "
+             "— edge plantado e ruido",
+        edge_verdict="VALIDADO", null_verdict="RUIDO",
+        metric=_METRIC_PHASE1)
+    print("juiz Fase 1 (Spearman IC95): sensibilidade e especificidade OK")
+    print(f"atestado da Fase 1 gravado em {PHASE1_ATTESTATION_PATH} ({rec_phase1['passed_at']})")
+
+    rec_v3 = attest_pipeline_power(
         judge_go_nogo, edge_series, noise_series,
         attestation_path=attestation_path_for(TRIALS_PATH),
-        note="DOIS juizes certificados: (1) GO/NO-GO do backtest_v3 "
-             "(PSR>=0.80 & IC_lower>0), seeds 7/8, n=400; (2) juiz da Fase 1 "
-             "(Spearman IC95 block bootstrap nao cruza zero), seeds 21/22, "
-             "n=120 — edge plantado e ruido em ambos",
-        edge_verdict="GO")
+        note="Juiz V3 (backtest_v3): GO/NO-GO via PSR>=0.80 & IC_lower>0, "
+             "seeds 7/8, n=400 — edge plantado e ruido",
+        edge_verdict="GO",
+        metric=_METRIC_V3)
     print("juiz V3 (PSR & IC_lower): sensibilidade e especificidade OK")
     print(f"controle positivo PASSOU — atestado gravado em "
-          f"{attestation_path_for(TRIALS_PATH)} ({rec['passed_at']})")
+          f"{attestation_path_for(TRIALS_PATH)} ({rec_v3['passed_at']})")
     return 0
 
 
