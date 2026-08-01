@@ -15,7 +15,8 @@ from GarimpoInvestimentos.analyzers.trials import (
     TRIALS_PATH, PowerAttestationMissingError, attestation_path_for,
     load_trials, register_trial, validate_trials)
 from GarimpoInvestimentos.analyzers.backtest import (
-    close_trial_sharpes, close_h6_inverted_signal, H6_TRIAL_NAME)
+    close_trial_sharpes, close_h6_inverted_signal, h6_spearman_verdict,
+    H6_TRIAL_NAME, H6_MIN_N)
 
 PARAMS = {"fonte": "dpl:fallback", "juiz": "gemini:g", "horizonte_dias": 7}
 
@@ -264,6 +265,105 @@ def test_h6_no_repositorio_real_mantem_o_fonte_reservado():
     sharpe = h6["sharpe"]
     assert sharpe is None or isinstance(sharpe, (int, float)), \
         "sharpe da H6 so pode ser None ou numero produzido por close_h6_inverted_signal"
+
+
+# --- H6 (sinal invertido) — critério de veredito Spearman/IC95 -----------------
+
+def _h6_registered_trial(p, registered_at="2026-07-20T00:00:00Z"):
+    register_trial(H6_TRIAL_NAME, params=H6_PARAMS, path=p, **_NOGATE)
+    trials = json.loads(p.read_text(encoding="utf-8"))
+    trials[0]["registered_at"] = registered_at
+    p.write_text(json.dumps(trials), encoding="utf-8")
+
+
+def test_h6_spearman_sem_trial_registrada_e_no_op(tmp_path):
+    p = tmp_path / "trials.json"
+    assert h6_spearman_verdict([_dated_score(10, 5.0, 25)], 7, trials_path=p) is None
+
+
+def test_h6_spearman_ignora_dado_anterior_ao_registro(tmp_path):
+    p = tmp_path / "trials.json"
+    _h6_registered_trial(p)
+    anterior = [_dated_score(10 + i, float(i), 10) for i in range(40)]  # antes do registro
+    r = h6_spearman_verdict(anterior, 7, trials_path=p)
+    assert r["n"] == 0
+    assert r["rho"] is None
+
+
+def test_h6_spearman_aguarda_n_minimo_mesmo_com_dado_valido(tmp_path):
+    """Abaixo de H6_MIN_N o critério não decide nada — e a função
+    deliberadamente não expõe rho/IC nesse regime (evita tratar um número
+    imaturo como sinal, o mesmo erro que o pré-registro documenta para o
+    Sharpe auxiliar)."""
+    p = tmp_path / "trials.json"
+    _h6_registered_trial(p)
+    posterior = [_dated_score(30 + i, float(i), 25) for i in range(H6_MIN_N - 1)]
+    r = h6_spearman_verdict(posterior, 7, trials_path=p)
+    assert r["n"] == H6_MIN_N - 1
+    assert r["rho"] is None
+    assert f"n>={H6_MIN_N}" in r["veredito"]
+
+
+def test_h6_spearman_ignora_fonte_diferente_da_coleta_real(tmp_path):
+    p = tmp_path / "trials.json"
+    _h6_registered_trial(p)
+    posterior = [_dated_score(30 + i, float(i), 25, fonte="reserved:h6-inversao-sinal")
+                 for i in range(H6_MIN_N + 10)]
+    r = h6_spearman_verdict(posterior, 7, trials_path=p)
+    assert r["n"] == 0
+
+
+def _h6_edge_pairs(n=80, seed=99):
+    """Score NEGATIVAMENTE correlacionado ao retorno (o padrão real observado
+    em v1/H4/H5) — sob a leitura INVERTIDA (100-score) que h6_spearman_verdict
+    aplica, isto deve dar correlação POSITIVA e IC fora de zero."""
+    import random
+    rng = random.Random(seed)
+    out = []
+    for _ in range(n):
+        fwd = rng.gauss(0.0, 4.0)
+        score = 50 - 8 * (1 if fwd > 0 else -1) + rng.gauss(0.0, 12.0)
+        out.append((max(0.0, min(100.0, score)), fwd))
+    return out
+
+
+def _h6_noise_pairs(n=80, seed=100):
+    """Score independente do retorno — nem a leitura original nem a invertida
+    devem validar aqui."""
+    import random
+    rng = random.Random(seed)
+    return [(max(0.0, min(100.0, rng.gauss(50.0, 15.0))), rng.gauss(0.0, 4.0))
+            for _ in range(n)]
+
+
+def test_h6_spearman_detecta_sinal_plantado_quando_n_suficiente(tmp_path):
+    p = tmp_path / "trials.json"
+    _h6_registered_trial(p)
+    posterior = [_dated_score(score, fwd, 25) for score, fwd in _h6_edge_pairs()]
+    r = h6_spearman_verdict(posterior, 7, trials_path=p)
+    assert r["n"] >= H6_MIN_N
+    assert r["rho"] is not None and r["rho"] > 0
+    assert r["veredito"] == "validado (IC nao cruza 0)"
+
+
+def test_h6_spearman_rejeita_ruido_quando_n_suficiente(tmp_path):
+    p = tmp_path / "trials.json"
+    _h6_registered_trial(p)
+    posterior = [_dated_score(score, fwd, 25) for score, fwd in _h6_noise_pairs()]
+    r = h6_spearman_verdict(posterior, 7, trials_path=p)
+    assert r["n"] >= H6_MIN_N
+    assert r["veredito"] == "RUIDO (IC cruza 0)"
+
+
+def test_h6_spearman_nunca_grava_em_trials_json(tmp_path):
+    """O veredito em prosa desta família é curadoria humana (ver notes de
+    v2-dpl-multi-h7) — h6_spearman_verdict só reporta, nunca escreve."""
+    p = tmp_path / "trials.json"
+    _h6_registered_trial(p)
+    before = p.read_text(encoding="utf-8")
+    posterior = [_dated_score(score, fwd, 25) for score, fwd in _h6_edge_pairs()]
+    h6_spearman_verdict(posterior, 7, trials_path=p)
+    assert p.read_text(encoding="utf-8") == before
 
 
 def test_load_rows_exclui_fallback_estrutural(tmp_path, monkeypatch):

@@ -161,6 +161,7 @@ async def run():
     _metrics(enriched, PRIMARY_HORIZON)
     close_trial_sharpes(enriched, PRIMARY_HORIZON)
     close_h6_inverted_signal(enriched, PRIMARY_HORIZON)
+    h6_spearman_verdict(enriched, PRIMARY_HORIZON)
 
 
 def _write(enriched: list[dict]) -> None:
@@ -374,6 +375,7 @@ def close_trial_sharpes(enriched: list[dict], horizon: int, *,
 
 H6_TRIAL_NAME = "h6-sinal-invertido-d7"
 H6_LIVE_FONTE = "dpl:fallback"  # fonte real da coleta em curso (H5/multi-juiz)
+H6_MIN_N = 30  # n mínimo do critério pré-registrado (idêntico ao H4/H5)
 
 
 def close_h6_inverted_signal(enriched: list[dict], horizon: int, *,
@@ -427,6 +429,76 @@ def close_h6_inverted_signal(enriched: list[dict], horizon: int, *,
           f"atualizado → {sharpe:+.4f} (n={len(rets)}, score≤{inverted_thr:.0f}, "
           f"só dado após {registered_at.isoformat()})")
     return sharpe
+
+
+def h6_spearman_verdict(enriched: list[dict], horizon: int, *,
+                        trials_path=None) -> dict | None:
+    """Critério de veredito PRÉ-REGISTRADO da H6 (docs/HYPOTHESES.md), idêntico
+    ao do H4/H5 mas sobre a leitura INVERTIDA do score: Spearman IC95 (block
+    bootstrap) não cruzando zero, positivo, com n >= H6_MIN_N previsões
+    maduras. O `sharpe` que `close_h6_inverted_signal` grava é auxiliar
+    (P&L de um corte por limiar) — este é o critério que de fato decide
+    VALIDADO/RUIDO, e não existia cálculo automatizado até aqui: o resto do
+    módulo só computa Spearman para a leitura ORIGINAL do score (_report).
+
+    Leitura invertida = `100 - score` (mesmo espelhamento em torno de 50 que
+    `inverted_thr` usa para o limiar), correlacionado com o retorno cru —
+    matematicamente equivale a negar o Spearman(score, retorno) original, mas
+    calculado explicitamente para reaproveitar a MESMA regra de veredito do
+    juiz da Fase 1 (`lo > 0 or hi < 0`), sem depender de inverter o sinal do
+    IC de cabeça.
+
+    Mesma trava anti-data-snooping do `close_h6_inverted_signal`: só conta
+    `pred_date` POSTERIOR ao `registered_at` da própria trial H6, só
+    `fonte == H6_LIVE_FONTE`. NÃO grava nada em trials.json — o veredito em
+    prosa desta família sempre foi curadoria humana (ver notes de
+    v2-dpl-multi-h7), não escrita automática; esta função só reporta e emite
+    evento, como `_report` já faz para o critério principal.
+
+    Abaixo de H6_MIN_N deliberadamente NÃO imprime rho/IC (só a contagem):
+    expor uma correlação prévia ao n mínimo convidaria exatamente o erro que
+    o pré-registro existe para prevenir (tratar um número imaturo como sinal).
+
+    Retorna None se a H6 não estiver registrada (no-op); senão um dict com
+    n, rho, ic_lower, ic_upper e veredito."""
+    trials = load_trials(trials_path)
+    h6 = next((t for t in trials if t.get("name") == H6_TRIAL_NAME), None)
+    if h6 is None:
+        return None
+
+    raw = (h6.get("registered_at") or "").replace("Z", "+00:00")
+    try:
+        registered_at = datetime.fromisoformat(raw).replace(tzinfo=None)
+    except ValueError:
+        return None
+
+    key = f"var_d{horizon}_pct"
+    pairs = [(100 - r["score"], r[key]) for r in enriched
+             if r.get(key) is not None and r.get("fonte", "direct") == H6_LIVE_FONTE
+             and r.get("pred_date", datetime.min) > registered_at]
+    n = len(pairs)
+    if n < H6_MIN_N:
+        print(f"📊 H6 (sinal invertido, Spearman/IC95): n={n} de {H6_MIN_N} "
+              f"— sem veredito ainda (critério pré-registrado exige n>={H6_MIN_N}).")
+        return {"n": n, "rho": None, "ic_lower": None, "ic_upper": None,
+                "veredito": f"aguardando n>={H6_MIN_N} (n={n})"}
+
+    rho, lo, hi = spearman_block_ci(pairs)
+    if rho is None or lo is None or hi is None:
+        print(f"📊 H6 (sinal invertido, Spearman/IC95): n={n}, IC indisponível "
+              f"(variância nula em score/retorno).")
+        return {"n": n, "rho": rho, "ic_lower": lo, "ic_upper": hi,
+                "veredito": "IC indisponivel"}
+
+    veredito = "validado (IC nao cruza 0)" if (lo > 0 or hi < 0) else "RUIDO (IC cruza 0)"
+    print(f"📊 H6 (sinal invertido, Spearman/IC95) D+{horizon}: "
+          f"rho={rho:+.3f}  [IC95% {lo:+.3f} a {hi:+.3f}]  (n={n}) — {veredito}")
+    emit_event(
+        "previsao_cripto", "h6_spearman_verdict",
+        metrics={"spearman": round(rho, 4), "ic_lower": round(lo, 4),
+                 "ic_upper": round(hi, 4), "n": n},
+        metadata={"horizon_days": horizon, "veredito": veredito, "trial": H6_TRIAL_NAME})
+    return {"n": n, "rho": rho, "ic_lower": lo, "ic_upper": hi, "veredito": veredito}
 
 
 def _metrics(enriched: list[dict], horizon: int) -> None:
