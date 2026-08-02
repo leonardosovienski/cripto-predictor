@@ -126,3 +126,5 @@ look-ahead, DSR contando as tentativas, dados point-in-time. **Consequência: a 
 funding/OI + HMM, como formulada, está fechada. Produção assistida NÃO autorizada.**
 Próximos passos: pivot de pesquisa (novas hipóteses nascem registradas no trials.json
 e avaliadas líquidas) + coleta diária do pipeline LLM até o backtest ter n.
+
+

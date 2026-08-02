@@ -3,8 +3,8 @@ re-execução no mesmo dia gravava o MESMO sinal (timestamp_exchange_ms igual)
 duas vezes, e o paper_report não deduplica: o trade contava dobrado no P&L
 dos 30 dias de produção assistida. A guarda _already_recorded fecha isso.
 """
-import json
 
+import json
 from unittest import mock
 
 from GarimpoInvestimentos.v3 import paper_trader
@@ -14,8 +14,7 @@ def _write_paper(path, ts_list):
     path.parent.mkdir(parents=True, exist_ok=True)
     with open(path, "w", encoding="utf-8") as f:
         for ts in ts_list:
-            f.write(json.dumps({"symbol": "BTCUSDT",
-                                "timestamp_exchange_ms": ts}) + "\n")
+            f.write(json.dumps({"symbol": "BTCUSDT", "timestamp_exchange_ms": ts}) + "\n")
 
 
 def test_already_recorded_detects_existing_timestamp(tmp_path):

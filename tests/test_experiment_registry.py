@@ -6,17 +6,27 @@ Offline: trials em arquivo temporário; o trials.json REAL do repositório tamb�
 é validado contra o schema (o desconto do DSR só é honesto se todo campo do
 denominador for interpretável).
 """
+
 import json
 from typing import TypedDict
 
 import pytest
 
-from GarimpoInvestimentos.analyzers.trials import (
-    TRIALS_PATH, PowerAttestationMissingError, attestation_path_for,
-    load_trials, register_trial, validate_trials)
 from GarimpoInvestimentos.analyzers.backtest import (
-    close_trial_sharpes, close_h6_inverted_signal, h6_spearman_verdict,
-    H6_TRIAL_NAME, H6_MIN_N)
+    H6_MIN_N,
+    H6_TRIAL_NAME,
+    close_h6_inverted_signal,
+    close_trial_sharpes,
+    h6_spearman_verdict,
+)
+from GarimpoInvestimentos.analyzers.trials import (
+    TRIALS_PATH,
+    PowerAttestationMissingError,
+    attestation_path_for,
+    load_trials,
+    register_trial,
+    validate_trials,
+)
 
 PARAMS = {"fonte": "dpl:fallback", "juiz": "gemini:g", "horizonte_dias": 7}
 
@@ -32,35 +42,51 @@ _NOGATE: _NoGateKwargs = {"power_attestation": False}
 
 # --- schema ------------------------------------------------------------------
 
+
 def test_trials_json_do_repositorio_conforma_ao_schema():
     trials = load_trials(TRIALS_PATH)
     assert trials, "trials.json do repositório sumiu?"
     assert validate_trials(trials) == []
 
 
-@pytest.mark.parametrize("mutacao,erro", [
-    ({"name": "com espaço"}, "name inválido"),
-    ({"registered_at": "2026-07-07"}, "registered_at inválido"),
-    ({"params": {}}, "params precisa ser dict NÃO-vazio"),
-    ({"sharpe": float("nan")}, "sharpe inválido"),
-    ({"notes": 42}, "notes precisa ser str"),
-    ({"train_period": ["só-início"]}, "train_period inválido"),
-    ({"features_used": ["ok", 3]}, "features_used inválido"),
-])
+@pytest.mark.parametrize(
+    "mutacao,erro",
+    [
+        ({"name": "com espaço"}, "name inválido"),
+        ({"registered_at": "2026-07-07"}, "registered_at inválido"),
+        ({"params": {}}, "params precisa ser dict NÃO-vazio"),
+        ({"sharpe": float("nan")}, "sharpe inválido"),
+        ({"notes": 42}, "notes precisa ser str"),
+        ({"train_period": ["só-início"]}, "train_period inválido"),
+        ({"features_used": ["ok", 3]}, "features_used inválido"),
+    ],
+)
 def test_schema_rejeita_campo_invalido(mutacao, erro):
-    trial = {"name": "t1", "registered_at": "2026-07-07T00:00:00Z",
-             "params": {"a": 1}, "sharpe": None, "notes": "", **mutacao}
+    trial = {
+        "name": "t1",
+        "registered_at": "2026-07-07T00:00:00Z",
+        "params": {"a": 1},
+        "sharpe": None,
+        "notes": "",
+        **mutacao,
+    }
     errs = validate_trials([trial])
     assert any(erro in e for e in errs), errs
 
 
 def test_schema_rejeita_nome_duplicado():
-    t = {"name": "dup", "registered_at": "2026-07-07T00:00:00Z",
-         "params": {"a": 1}, "sharpe": None, "notes": ""}
+    t = {
+        "name": "dup",
+        "registered_at": "2026-07-07T00:00:00Z",
+        "params": {"a": 1},
+        "sharpe": None,
+        "notes": "",
+    }
     assert any("duplicado" in e for e in validate_trials([t, dict(t)]))
 
 
 # --- governança de identidade (N+1) -------------------------------------------
+
 
 def test_reexecucao_mesma_config_atualiza_sharpe_preservando_registro(tmp_path):
     p = tmp_path / "trials.json"
@@ -76,7 +102,9 @@ def test_reexecucao_mesma_config_atualiza_sharpe_preservando_registro(tmp_path):
 def test_mudar_params_de_trial_existente_e_erro():
     """Variação de hiperparâmetro escondida num 'update' fabricaria significância
     que o DSR não desconta — tem que ser trial NOVA."""
-    import tempfile, pathlib
+    import pathlib
+    import tempfile
+
     with tempfile.TemporaryDirectory() as d:
         p = pathlib.Path(d) / "trials.json"
         register_trial("t-a", params=PARAMS, path=p, **_NOGATE)
@@ -94,16 +122,22 @@ def test_registro_invalido_nao_e_gravado(tmp_path):
 
 def test_campos_opcionais_do_registry_sao_gravados(tmp_path):
     p = tmp_path / "trials.json"
-    register_trial("t-a", params=PARAMS, path=p, **_NOGATE,
-                   features_used=["rsi", "sma_200"],
-                   train_period=["2026-01-01", "2026-06-30"],
-                   test_period=["2026-07-01", "2026-07-31"])
+    register_trial(
+        "t-a",
+        params=PARAMS,
+        path=p,
+        **_NOGATE,
+        features_used=["rsi", "sma_200"],
+        train_period=["2026-01-01", "2026-06-30"],
+        test_period=["2026-07-01", "2026-07-31"],
+    )
     t = load_trials(p)[0]
     assert t["features_used"] == ["rsi", "sma_200"]
     assert t["test_period"][0] == "2026-07-01"
 
 
 # --- fechamento automático do ciclo (backtest → trials.json) -------------------
+
 
 def _pred(score, var, fonte="dpl:fallback"):
     return {"score": score, "var_d7_pct": var, "fonte": fonte}
@@ -112,8 +146,12 @@ def _pred(score, var, fonte="dpl:fallback"):
 def test_backtest_fecha_sharpe_da_trial_casada(tmp_path):
     p = tmp_path / "trials.json"
     register_trial("v2-teste", params=PARAMS, path=p, **_NOGATE)
-    enriched = [_pred(80, 2.0), _pred(75, -1.0), _pred(90, 3.0),
-                _pred(40, 9.9)]  # abaixo do limiar: fora da estratégia
+    enriched = [
+        _pred(80, 2.0),
+        _pred(75, -1.0),
+        _pred(90, 3.0),
+        _pred(40, 9.9),
+    ]  # abaixo do limiar: fora da estratégia
     updated = close_trial_sharpes(enriched, 7, trials_path=p, threshold=70)
     assert "v2-teste" in updated
     t = load_trials(p)[0]
@@ -134,9 +172,11 @@ def test_backtest_nunca_cria_trial_nova(tmp_path):
     casada é ignorado, não inventado."""
     p = tmp_path / "trials.json"
     register_trial("v2-teste", params=PARAMS, path=p, **_NOGATE)
-    enriched = [_pred(80, 2.0, fonte="dpl:consensus"),
-                _pred(75, -1.0, fonte="dpl:consensus"),
-                _pred(90, 3.0, fonte="dpl:consensus")]
+    enriched = [
+        _pred(80, 2.0, fonte="dpl:consensus"),
+        _pred(75, -1.0, fonte="dpl:consensus"),
+        _pred(90, 3.0, fonte="dpl:consensus"),
+    ]
     assert close_trial_sharpes(enriched, 7, trials_path=p, threshold=70) == {}
     assert len(load_trials(p)) == 1
 
@@ -148,6 +188,7 @@ def test_backtest_divide_eras_entre_trial_encerrada_e_sucessora(tmp_path):
     a sucessora nunca herda dados do juiz anterior."""
     import json as _json
     from datetime import datetime
+
     p = tmp_path / "trials.json"
     register_trial("era-1", params=PARAMS, path=p, **_NOGATE)
     register_trial("era-2", params=PARAMS, path=p, **_NOGATE)
@@ -159,8 +200,14 @@ def test_backtest_divide_eras_entre_trial_encerrada_e_sucessora(tmp_path):
     def _dated(score, var, day):
         return {**_pred(score, var), "pred_date": datetime(2026, 7, day)}
 
-    enriched = [_dated(80, 2.0, 2), _dated(75, -1.0, 3), _dated(90, 3.0, 5),   # era 1
-                _dated(85, -2.0, 11), _dated(72, 4.0, 12), _dated(88, 1.0, 13)]  # era 2
+    enriched = [
+        _dated(80, 2.0, 2),
+        _dated(75, -1.0, 3),
+        _dated(90, 3.0, 5),  # era 1
+        _dated(85, -2.0, 11),
+        _dated(72, 4.0, 12),
+        _dated(88, 1.0, 13),
+    ]  # era 2
     updated = close_trial_sharpes(enriched, 7, trials_path=p, threshold=70)
     assert set(updated) == {"era-1", "era-2"}
     assert updated["era-1"] != updated["era-2"]  # cada era com os próprios dados
@@ -173,21 +220,22 @@ H6_PARAMS = {"fonte": "reserved:h6-inversao-sinal", "horizonte_dias": 7}
 
 def _dated_score(score, var, day, fonte="dpl:fallback"):
     from datetime import datetime
-    return {"score": score, "var_d7_pct": var, "fonte": fonte,
-            "pred_date": datetime(2026, 7, day)}
+
+    return {"score": score, "var_d7_pct": var, "fonte": fonte, "pred_date": datetime(2026, 7, day)}
 
 
 def test_h6_sem_trial_registrada_e_no_op(tmp_path):
     p = tmp_path / "trials.json"
-    assert close_h6_inverted_signal([_dated_score(10, 5.0, 25)], 7,
-                                    trials_path=p, threshold=60) is None
+    assert (
+        close_h6_inverted_signal([_dated_score(10, 5.0, 25)], 7, trials_path=p, threshold=60)
+        is None
+    )
 
 
 def test_h6_ignora_dado_anterior_ao_registro_mesmo_com_score_baixo(tmp_path):
     """A trava anti-data-snooping: dado ANTES do registered_at da H6 nunca
     conta, mesmo que o score já bata o limiar invertido — senão a mesma
     amostra que inspirou a hipótese validaria a própria hipótese."""
-    from datetime import datetime as _dt
     p = tmp_path / "trials.json"
     register_trial(H6_TRIAL_NAME, params=H6_PARAMS, path=p, **_NOGATE)
     trials = json.loads(p.read_text(encoding="utf-8"))
@@ -230,7 +278,8 @@ def test_h6_ignora_score_acima_do_limiar_invertido(tmp_path):
 def test_h6_ignora_fonte_diferente_da_coleta_real():
     p_trials = json.loads(TRIALS_PATH.read_text(encoding="utf-8"))
     assert any(t["name"] == H6_TRIAL_NAME for t in p_trials), (
-        "trial H6 sumiu do trials.json real — deveria estar pré-registrada")
+        "trial H6 sumiu do trials.json real — deveria estar pré-registrada"
+    )
     # fonte reservada do PRÓPRIO registro nunca aparece em predictions.fonte
     # real (direct/dpl:fallback/dpl:consensus) — dado com essa fonte não conta.
     h6 = next(t for t in p_trials if t["name"] == H6_TRIAL_NAME)
@@ -263,11 +312,13 @@ def test_h6_no_repositorio_real_mantem_o_fonte_reservado():
     h6 = next(t for t in trials if t["name"] == H6_TRIAL_NAME)
     assert h6["params"] == {"fonte": "reserved:h6-inversao-sinal", "horizonte_dias": 7}
     sharpe = h6["sharpe"]
-    assert sharpe is None or isinstance(sharpe, (int, float)), \
+    assert sharpe is None or isinstance(sharpe, (int, float)), (
         "sharpe da H6 so pode ser None ou numero produzido por close_h6_inverted_signal"
+    )
 
 
 # --- H6 (sinal invertido) — critério de veredito Spearman/IC95 -----------------
+
 
 def _h6_registered_trial(p, registered_at="2026-07-20T00:00:00Z"):
     register_trial(H6_TRIAL_NAME, params=H6_PARAMS, path=p, **_NOGATE)
@@ -307,8 +358,10 @@ def test_h6_spearman_aguarda_n_minimo_mesmo_com_dado_valido(tmp_path):
 def test_h6_spearman_ignora_fonte_diferente_da_coleta_real(tmp_path):
     p = tmp_path / "trials.json"
     _h6_registered_trial(p)
-    posterior = [_dated_score(30 + i, float(i), 25, fonte="reserved:h6-inversao-sinal")
-                 for i in range(H6_MIN_N + 10)]
+    posterior = [
+        _dated_score(30 + i, float(i), 25, fonte="reserved:h6-inversao-sinal")
+        for i in range(H6_MIN_N + 10)
+    ]
     r = h6_spearman_verdict(posterior, 7, trials_path=p)
     assert r["n"] == 0
 
@@ -318,6 +371,7 @@ def _h6_edge_pairs(n=80, seed=99):
     em v1/H4/H5) — sob a leitura INVERTIDA (100-score) que h6_spearman_verdict
     aplica, isto deve dar correlação POSITIVA e IC fora de zero."""
     import random
+
     rng = random.Random(seed)
     out = []
     for _ in range(n):
@@ -331,9 +385,9 @@ def _h6_noise_pairs(n=80, seed=100):
     """Score independente do retorno — nem a leitura original nem a invertida
     devem validar aqui."""
     import random
+
     rng = random.Random(seed)
-    return [(max(0.0, min(100.0, rng.gauss(50.0, 15.0))), rng.gauss(0.0, 4.0))
-            for _ in range(n)]
+    return [(max(0.0, min(100.0, rng.gauss(50.0, 15.0))), rng.gauss(0.0, 4.0)) for _ in range(n)]
 
 
 def test_h6_spearman_detecta_sinal_plantado_quando_n_suficiente(tmp_path):
@@ -374,21 +428,49 @@ def test_load_rows_exclui_fallback_estrutural(tmp_path, monkeypatch):
 
     db = tmp_path / "fs.db"
     with FeatureStore(db) as store:
-        store.write_predictions([
-            {"ativo": "BITCOIN", "ts": "2026-07-10 10:00:00", "score": 72,
-             "sentimento": "positivo", "resumo": "analise real", "price_usd": 50000,
-             "juiz": "groq:m:h", "divergencia": 0, "fonte": "dpl:fallback",
-             "input_degradado": 0, "llm_fallback": 0},
-            {"ativo": "ETHEREUM", "ts": "2026-07-10 10:00:00", "score": 50,
-             "sentimento": "neutro", "resumo": "erro na análise (fallback aplicado)",
-             "price_usd": 3000, "juiz": "groq:m:h", "divergencia": 0,
-             "fonte": "dpl:fallback", "input_degradado": 0, "llm_fallback": 1},
-            {"ativo": "SOLANA", "ts": "2026-07-10 10:00:00", "score": 50,
-             "sentimento": "neutro", "resumo": "erro na análise (fallback aplicado)",
-             "price_usd": 150, "juiz": "gemini:m:h", "divergencia": 0,
-             "fonte": "dpl:fallback", "input_degradado": None,
-             "llm_fallback": None},  # legado: pré-0009, coberto pelo marcador
-        ])
+        store.write_predictions(
+            [
+                {
+                    "ativo": "BITCOIN",
+                    "ts": "2026-07-10 10:00:00",
+                    "score": 72,
+                    "sentimento": "positivo",
+                    "resumo": "analise real",
+                    "price_usd": 50000,
+                    "juiz": "groq:m:h",
+                    "divergencia": 0,
+                    "fonte": "dpl:fallback",
+                    "input_degradado": 0,
+                    "llm_fallback": 0,
+                },
+                {
+                    "ativo": "ETHEREUM",
+                    "ts": "2026-07-10 10:00:00",
+                    "score": 50,
+                    "sentimento": "neutro",
+                    "resumo": "erro na análise (fallback aplicado)",
+                    "price_usd": 3000,
+                    "juiz": "groq:m:h",
+                    "divergencia": 0,
+                    "fonte": "dpl:fallback",
+                    "input_degradado": 0,
+                    "llm_fallback": 1,
+                },
+                {
+                    "ativo": "SOLANA",
+                    "ts": "2026-07-10 10:00:00",
+                    "score": 50,
+                    "sentimento": "neutro",
+                    "resumo": "erro na análise (fallback aplicado)",
+                    "price_usd": 150,
+                    "juiz": "gemini:m:h",
+                    "divergencia": 0,
+                    "fonte": "dpl:fallback",
+                    "input_degradado": None,
+                    "llm_fallback": None,
+                },  # legado: pré-0009, coberto pelo marcador
+            ]
+        )
     monkeypatch.setattr(backtest, "FEATURE_STORE_DB", db)
     # redoma: sem absorver o CSV legado REAL da máquina no banco do teste
     monkeypatch.setattr(backtest, "migrate_csv_to_store", lambda store: 0)
@@ -408,6 +490,7 @@ def test_trials_json_real_permanece_intacto_em_dry_run(tmp_path):
 
 
 # --- trava de poder (harness ↔ registry, core v1.1.0) ---------------------------
+
 
 def test_trial_nova_sem_atestado_e_barrada(tmp_path):
     p = tmp_path / "trials.json"
@@ -433,12 +516,15 @@ def test_juiz_go_nogo_tem_poder():
     fabrica GO em ruído. É o mesmo braço que emitiu o atestado."""
     import importlib.util
     from pathlib import Path
+
     spec = importlib.util.spec_from_file_location(
-        "attest_harness",
-        Path(__file__).resolve().parents[1] / "scripts" / "attest_harness.py")
+        "attest_harness", Path(__file__).resolve().parents[1] / "scripts" / "attest_harness.py"
+    )
     assert spec is not None and spec.loader is not None
     mod = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(mod)
     from predictor_core.testing.harness import assert_pipeline_has_power
+
     assert assert_pipeline_has_power(
-        mod.judge_go_nogo, mod.edge_series, mod.noise_series, edge_verdict="GO")
+        mod.judge_go_nogo, mod.edge_series, mod.noise_series, edge_verdict="GO"
+    )

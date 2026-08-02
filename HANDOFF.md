@@ -16,7 +16,7 @@
 > SerpAPI registrada em texto plano em 5 logs históricos
 > (`logs/garimpo_fase1_20260713.log` a `_17.log`; nunca entraram no Git,
 > gitignored). Mecanismo de prevenção (redação de log,
-> `_RedactSecrets`/`tools.secret_redaction`) já corrigido e **verificado
+> `_RedactSecrets`/`predictor_ops.redaction`) já corrigido e **verificado
 > funcionando** com evidência de produção real (log de 18/07 limpo).
 > Rotação da credencial no provedor foi explicitamente despriorizada pelo
 > responsável em 2026-07-18 — sem prazo, mas não esquecida. Nunca abra
@@ -62,7 +62,7 @@
 > mudança (decisão humana): `--timeout 252000` (70h) nas duas tarefas diárias
 > do runner — teto quase-inócuo; um travamento seguraria o lock até o
 > watchdog alertar no dia seguinte; a suíte exige o layout de workspace
-> (`tools/` irmão do repo ou `PYTHONPATH` na raiz do ecossistema) — num
+> (dependência histórica de repositório irmão ou override de importação) — num
 > worktree/clone isolado a coleta de `test_ops_hardening.py` falha com
 > `ModuleNotFoundError: tools` (esperado, não é bug do projeto). Incidente
 > SEC-1 permanece `BLOCKED_PENDING_SECRET_ROTATION` (rotação humana).
@@ -208,7 +208,7 @@
 > eixos pedidos na missão (point-in-time, vintage, trials/serialização,
 > redação, sem-credencial, falha de provedor, NaN/Inf, duplicação, arquivo
 > truncado, recuperação após falha) — locks/runner/timeout são
-> deliberadamente delegados a `tools/tests/test_operational_runner.py`
+> deliberadamente delegados aos contract tests de `predictor_ops`
 > (`garimpo_fase1.py` não tem lock próprio desde a remoção da duplicação).
 > 2 gaps reais achados: (a) nenhum teste cobria `ts` genuinamente ilegível
 > (só ordem errada/lag excessivo) — **corrigido**, `_load_rows()` já se
@@ -484,7 +484,7 @@ da trial 1 commitado (0a79ab4); contexto em docs/HYPOTHESES.md (H4).
 ## ⭐ Rodada 2026-07-07 — Auditoria + Experiment Registry + qualidade de medição
 
 **Bug CRÍTICO corrigido:** a regra não-ancorada `data/` no `.gitignore` engolia o
-pacote `vendor/predictor_core/data/` (o commit `20128f6` referenciava a camada,
+snapshot embarcado antigo do core (o commit `20128f6` referenciava a camada,
 mas ela nunca entrou no git) — **qualquer clone fresco quebrava com 22 erros de
 coleta**; a suíte só passava na máquina do dono (arquivos presentes, untracked).
 Corrigido (`/data/` ancorado + camada commitada do canônico, hashes batem com o
@@ -753,7 +753,7 @@ o orçamento de risco). PSR idêntico em todas → a decisão é retorno absolut
 
 - **venv V3: `.venv_v3` (Python 3.13.14)** — hmmlearn NÃO compila no 3.14 global
   (sem MSVC). 3.13 tem wheel binário. `py install 3.13` resolveu.
-- Suíte: **80 testes verdes** na venv V3 (`PYTHONPATH=vendor;. pytest tests/`).
+- Suíte histórica: **80 testes verdes** na venv V3 (com override de importação então usado).
   68 no global (sem os testes que dependem de hmmlearn).
 
 ### Pendências
@@ -799,7 +799,7 @@ da Fase 2). As 6 tarefas do roadmap foram aplicadas:
 | 3 | `main.py` | Usa `get_coin_data` real (`model_dump()`) em vez de dados fixos; `asyncio.sleep(1)` entre ativos (ausente após o último); imports absolutos; `price_usd` no resultado. |
 | 4 | `core/cache.py` | TTL de 6h com timestamps UTC timezone-aware; entradas sem/`cached_at` inválido descartadas. |
 | 5 | `core/history.py` | Coluna `price_usd` adicionada ao histórico (âncora da Fase 2). |
-| 6 | estrutura | Deletadas as duplicatas da raiz (`main.py` com `sys.path.insert`, e `core/logger.py`); criados `GarimpoInvestimentos/__init__.py` e `pyproject.toml`. |
+| 6 | estrutura | Deletadas duplicatas da raiz e hacks de importação; criados `GarimpoInvestimentos/__init__.py` e `pyproject.toml`. |
 
 ---
 

@@ -28,20 +28,21 @@ OUTPUT (RegimeOutput):
     hmm_entropy     float  — entropia normalizada [0,1]; > 0.85 = incerto
     is_uncertain    bool   — True se entropia > ENTROPY_THRESHOLD
 """
+
 import logging
 import math
 import pickle
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Optional, cast
+from typing import cast
 
 logger = logging.getLogger(__name__)
 
 N_STATES = 3
-ENTROPY_THRESHOLD = 0.85   # H_norm > 0.85 → sistema em modo de observação
+ENTROPY_THRESHOLD = 0.85  # H_norm > 0.85 → sistema em modo de observação
 _LOG_N = math.log(N_STATES)
 
-_COVARIANCE_TYPE = "full"   # tipo de covariância do GaussianHMM (usado no fit e no fingerprint)
+_COVARIANCE_TYPE = "full"  # tipo de covariância do GaussianHMM (usado no fit e no fingerprint)
 
 # --- Provenância do modelo serializado (espelha o config_hash do wc-predictor) ---
 # Um .pkl é um modelo treinado sob um CONTRATO: features de emissão, nº de estados,
@@ -53,7 +54,7 @@ _COVARIANCE_TYPE = "full"   # tipo de covariância do GaussianHMM (usado no fit 
 # features de emissão mudar (ex.: realized_vol passa de 24h p/ 12h) — é o que um
 # hash de estrutura não pega sozinho.
 MODEL_SCHEMA_VERSION = 1
-_EMISSION_FEATURES = ("log_return_8h", "realized_vol_24h")   # ordem = colunas de X no fit
+_EMISSION_FEATURES = ("log_return_8h", "realized_vol_24h")  # ordem = colunas de X no fit
 
 
 class StaleRegimeModelError(RuntimeError):
@@ -70,13 +71,14 @@ def _model_fingerprint() -> dict:
         "emission_features": list(_EMISSION_FEATURES),
     }
 
+
 # Importação lazy de dependências pesadas para não quebrar testes leves
 try:
     import numpy as np
-    from sklearn.preprocessing import StandardScaler
-    from hmmlearn import hmm as _hmmlearn
     from hmmlearn import base as _hmmlearn_base
+    from hmmlearn import hmm as _hmmlearn
     from hmmlearn import utils as _hmmlearn_utils
+    from sklearn.preprocessing import StandardScaler
 
     def _hmmlearn_normalize(a, axis=None):
         a_sum = a.sum(axis)
@@ -101,13 +103,14 @@ except ImportError as _e:
 # Contrato de saída                                                   #
 # ------------------------------------------------------------------ #
 
+
 @dataclass
 class RegimeOutput:
     hmm_state: int
-    hmm_state_label: str                       # "bull" / "bear" / "sideways"
-    hmm_posterior: list[float]                 # [P(state_i|x_{0:t})] — CAUSAL
-    hmm_entropy: float                         # entropia normalizada [0,1]
-    is_uncertain: bool                         # True se entropia > ENTROPY_THRESHOLD
+    hmm_state_label: str  # "bull" / "bear" / "sideways"
+    hmm_posterior: list[float]  # [P(state_i|x_{0:t})] — CAUSAL
+    hmm_entropy: float  # entropia normalizada [0,1]
+    is_uncertain: bool  # True se entropia > ENTROPY_THRESHOLD
 
     # Pesos sugeridos para os motores de sinal condicionados ao regime
     # (usados pelo signal_engine; pode ser sobrescrito pelo pipeline)
@@ -116,12 +119,12 @@ class RegimeOutput:
 
 _REGIME_WEIGHTS = {
     "bull": {
-        "funding_pressure": 0.55,   # longs overcrowded → pressão de short
+        "funding_pressure": 0.55,  # longs overcrowded → pressão de short
         "oi_divergence": 0.30,
         "volatility_context": 0.15,
     },
     "bear": {
-        "funding_pressure": 0.50,   # shorts overcrowded → pressão de long
+        "funding_pressure": 0.50,  # shorts overcrowded → pressão de long
         "oi_divergence": 0.35,
         "volatility_context": 0.15,
     },
@@ -137,6 +140,7 @@ _REGIME_WEIGHTS = {
 # Forward Algorithm causal (sem lookahead)                            #
 # ------------------------------------------------------------------ #
 
+
 def _emission_probs(x: "np.ndarray", means: "np.ndarray", covars: "np.ndarray") -> "np.ndarray":
     """
     P(x | state=i) para cada estado i — log-space para estabilidade numérica.
@@ -147,7 +151,7 @@ def _emission_probs(x: "np.ndarray", means: "np.ndarray", covars: "np.ndarray") 
     log_probs = np.zeros(n_states)
     for i in range(n_states):
         diff = x - means[i]
-        cov = covars[i]                        # full covariance
+        cov = covars[i]  # full covariance
         try:
             sign, log_det = np.linalg.slogdet(cov)
             if sign <= 0:
@@ -207,6 +211,7 @@ def _forward_causal(
 # Motor principal                                                     #
 # ------------------------------------------------------------------ #
 
+
 class RegimeEngine:
     """
     HMM Gaussiano 3-estados para classificação de regime de mercado.
@@ -218,10 +223,10 @@ class RegimeEngine:
         4. save(path) / load(path)          — persistência do modelo treinado
     """
 
-    def __init__(self, model_path: Optional[Path] = None) -> None:
+    def __init__(self, model_path: Path | None = None) -> None:
         self._model = None
-        self._scaler: Optional["StandardScaler"] = None
-        self._state_map: dict[int, str] = {}       # HMM state idx → label
+        self._scaler: StandardScaler | None = None
+        self._state_map: dict[int, str] = {}  # HMM state idx → label
         if model_path and model_path.exists():
             self.load(model_path)
 
@@ -275,10 +280,7 @@ class RegimeEngine:
         }
         sorted_states = sorted(mean_ret_by_state, key=mean_ret_by_state.__getitem__, reverse=True)
         label_order = ["bull", "sideways", "bear"]
-        self._state_map = {
-            s: label_order[rank]
-            for rank, s in enumerate(sorted_states)
-        }
+        self._state_map = {s: label_order[rank] for rank, s in enumerate(sorted_states)}
 
         logger.info("RegimeEngine treinado com %d observações.", len(log_returns))
         logger.info("Mapa de estados: %s", self._state_map)
@@ -287,7 +289,10 @@ class RegimeEngine:
             pct = 100 * n_obs / len(all_states)
             logger.info(
                 "  Estado %d (%s): %.1f%% das obs, retorno médio=%.6f",
-                s, label, pct, mean_ret_by_state.get(s, 0.0),
+                s,
+                label,
+                pct,
+                mean_ret_by_state.get(s, 0.0),
             )
 
     # ---------------------------------------------------------------- #
@@ -327,21 +332,23 @@ class RegimeEngine:
             state = int(np.argmax(alpha[t]))
             label = self._state_map.get(state, "unknown")
             entropy = _entropy_norm(posterior)
-            results.append(RegimeOutput(
-                hmm_state=state,
-                hmm_state_label=label,
-                hmm_posterior=[round(p, 6) for p in posterior],
-                hmm_entropy=round(entropy, 4),
-                is_uncertain=entropy > ENTROPY_THRESHOLD,
-                signal_weights=_REGIME_WEIGHTS.get(label, {}),
-            ))
+            results.append(
+                RegimeOutput(
+                    hmm_state=state,
+                    hmm_state_label=label,
+                    hmm_posterior=[round(p, 6) for p in posterior],
+                    hmm_entropy=round(entropy, 4),
+                    is_uncertain=entropy > ENTROPY_THRESHOLD,
+                    signal_weights=_REGIME_WEIGHTS.get(label, {}),
+                )
+            )
         return results
 
     def predict_last(
         self,
         log_returns: list[float],
         realized_vols: list[float],
-    ) -> Optional[RegimeOutput]:
+    ) -> RegimeOutput | None:
         """
         Infere apenas o regime do último ponto — wrapper conveniente
         para uso em tempo real (alimentar a janela completa, receber apenas o último).
@@ -358,12 +365,15 @@ class RegimeEngine:
             raise RuntimeError("Nada para salvar — modelo não foi treinado.")
         path.parent.mkdir(parents=True, exist_ok=True)
         with open(path, "wb") as f:
-            pickle.dump({
-                "model": self._model,
-                "scaler": self._scaler,
-                "state_map": self._state_map,
-                "fingerprint": _model_fingerprint(),
-            }, f)
+            pickle.dump(
+                {
+                    "model": self._model,
+                    "scaler": self._scaler,
+                    "state_map": self._state_map,
+                    "fingerprint": _model_fingerprint(),
+                },
+                f,
+            )
         logger.info("RegimeEngine salvo em %s", path)
 
     def load(self, path: Path) -> None:
@@ -380,13 +390,16 @@ class RegimeEngine:
         if saved_fp is None:
             logger.warning(
                 "RegimeEngine: modelo legado em %s sem fingerprint de provenância — "
-                "compatibilidade de features não verificável; recomendado retreinar.", path)
+                "compatibilidade de features não verificável; recomendado retreinar.",
+                path,
+            )
         elif saved_fp != current_fp:
             raise StaleRegimeModelError(
                 f"Modelo em {path} incompatível com o código atual.\n"
                 f"  salvo: {saved_fp}\n  atual: {current_fp}\n"
                 "Retreine: python -m GarimpoInvestimentos.v3.pipeline --symbol <SYM> "
-                "--start-date <YYYY-MM-DD> --force-refresh")
+                "--start-date <YYYY-MM-DD> --force-refresh"
+            )
         self._model = data["model"]
         self._scaler = data["scaler"]
         self._state_map = data["state_map"]
@@ -400,6 +413,7 @@ class RegimeEngine:
 # ------------------------------------------------------------------ #
 # Utilitários                                                         #
 # ------------------------------------------------------------------ #
+
 
 def _entropy_norm(posterior: list[float]) -> float:
     """Entropia de Shannon normalizada: H/log(K) ∈ [0,1]."""

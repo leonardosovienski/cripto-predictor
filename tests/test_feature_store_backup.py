@@ -1,13 +1,13 @@
-import json
 import hashlib
-from pathlib import Path
+import json
 import sqlite3
+from pathlib import Path
 
 import pytest
 
 from scripts.feature_store_backup import (
-    BackupError,
     SCHEMA_VERSION,
+    BackupError,
     create_backup,
     restore_backup,
     verify_backup,

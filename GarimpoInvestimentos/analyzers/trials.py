@@ -11,11 +11,15 @@ positivo (testing.harness.attest_pipeline_power) — o arquivo irmão
 `trials.harness_attestation.json` é emitido por `scripts/attest_harness.py`,
 que prova que o juiz GO/NO-GO detecta edge plantado e rejeita ruído.
 """
+
 from pathlib import Path
 
-from predictor_core.measurement.trials import (   # noqa: F401 — re-export
-    PowerAttestationMissingError, attestation_path_for, validate_trials,
-    expected_max_sharpe, deflated_sharpe_ratio,
+from predictor_core.measurement.trials import (  # noqa: F401 — re-export
+    PowerAttestationMissingError,
+    attestation_path_for,
+    deflated_sharpe_ratio,
+    expected_max_sharpe,
+    validate_trials,
 )
 from predictor_core.measurement.trials import load_trials as _core_load
 from predictor_core.measurement.trials import register_trial as _core_register
@@ -28,7 +32,15 @@ def load_trials(path: Path | None = None) -> list[dict]:
     return _core_load(path or TRIALS_PATH)
 
 
-def register_trial(name: str, *, params: dict, sharpe: float | None = None,
-                   notes: str = "", path: Path | None = None, **extra) -> list[dict]:
-    return _core_register(name, params=params, sharpe=sharpe, notes=notes,
-                          path=path or TRIALS_PATH, **extra)
+def register_trial(
+    name: str,
+    *,
+    params: dict,
+    sharpe: float | None = None,
+    notes: str = "",
+    path: Path | None = None,
+    **extra,
+) -> list[dict]:
+    return _core_register(
+        name, params=params, sharpe=sharpe, notes=notes, path=path or TRIALS_PATH, **extra
+    )

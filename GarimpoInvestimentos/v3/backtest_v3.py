@@ -51,6 +51,7 @@ USO (CLI):
         --symbol BTCUSDT --start-date 2021-01-01 \
         --kelly-fractions 1.0 0.5 0.25 0.10
 """
+
 import argparse
 import logging
 import math
@@ -58,8 +59,8 @@ import sys
 from dataclasses import dataclass
 from pathlib import Path
 
-from predictor_core.obs import emit_event
 from predictor_core.measurement.bootstrap import bootstrap_ci
+from predictor_core.obs import emit_event
 from predictor_core.stats import (
     max_drawdown,
     probabilistic_sharpe_ratio,
@@ -69,15 +70,15 @@ from predictor_core.stats import (
 from GarimpoInvestimentos.v3.collectors.funding_collector import load_funding_csv
 from GarimpoInvestimentos.v3.collectors.oi_collector import load_oi_csv
 from GarimpoInvestimentos.v3.collectors.spot_collector import load_spot_csv
+from GarimpoInvestimentos.v3.costs import CostModel
 from GarimpoInvestimentos.v3.feature_builder import (
     build_feature_vectors,
     build_oi_index,
     build_spot_index,
 )
-from GarimpoInvestimentos.v3.costs import CostModel
-from GarimpoInvestimentos.v3.timeindex import SortedTimeIndex
 from GarimpoInvestimentos.v3.regime_engine import RegimeEngine
 from GarimpoInvestimentos.v3.signal_engine import generate_signal
+from GarimpoInvestimentos.v3.timeindex import SortedTimeIndex
 
 logger = logging.getLogger(__name__)
 
@@ -93,7 +94,7 @@ _STEP_DAYS = 30
 _MS_PER_DAY = 86_400_000
 _MS_PER_8H = 28_800_000
 _DEFAULT_SLIPPAGE_BPS = 5
-_DEFAULT_TAKER_FEE_BPS = 10   # taker por perna (Risco 4 — custos; ver v3/costs.py)
+_DEFAULT_TAKER_FEE_BPS = 10  # taker por perna (Risco 4 — custos; ver v3/costs.py)
 _DEFAULT_HORIZON_HOURS = 24
 
 _GO_PSR_THRESHOLD = 0.80
@@ -112,6 +113,7 @@ _DATA_ROOT = Path(__file__).resolve().parents[2] / "data" / "v3"
 # Resultado por fold                                                   #
 # ------------------------------------------------------------------ #
 
+
 @dataclass
 class FoldResult:
     fold: int
@@ -128,7 +130,7 @@ class FoldResult:
     max_dd: float
     sharpe: float
     slippage_bps: float
-    verdict: str   # "GO" / "NO-GO" / "INSUFFICIENT_DATA"
+    verdict: str  # "GO" / "NO-GO" / "INSUFFICIENT_DATA"
 
 
 @dataclass
@@ -141,9 +143,9 @@ class WFAResult:
     aggregate_ic_ci_lower: float
     aggregate_max_dd: float
     aggregate_sharpe: float
-    final_verdict: str    # "GO" / "NO-GO"
+    final_verdict: str  # "GO" / "NO-GO"
     verdict_reason: str
-    fr_window: int = 90   # janela do z-score usada (baseline=90, pivot=21)
+    fr_window: int = 90  # janela do z-score usada (baseline=90, pivot=21)
     kelly_fraction: float = 1.0  # fração de Kelly aplicada
     # Risco 4 — custos (passo 5.2): bruto vs liquido + IC95 do liquido medio
     aggregate_gross_return: float = 0.0
@@ -156,6 +158,7 @@ class WFAResult:
 @dataclass
 class KellySweepResult:
     """Varredura de frações de Kelly: PSR, MaxDD e Sharpe por fração."""
+
     symbol: str
     fr_window: int
     results: list[WFAResult]  # um por fração, na mesma ordem que kelly_fractions
@@ -164,6 +167,7 @@ class KellySweepResult:
 # ------------------------------------------------------------------ #
 # Utilidades                                                           #
 # ------------------------------------------------------------------ #
+
 
 def _find_spot_return(
     ts_ms: int,
@@ -208,7 +212,7 @@ def _equity_curve(returns: list[float]) -> list[float]:
     equity: list[float] = []
     acc = 1.0
     for r in returns:
-        acc *= (1.0 + r)
+        acc *= 1.0 + r
         equity.append(acc)
     return equity
 
@@ -221,6 +225,7 @@ def _finite(x: float) -> float:
 # ------------------------------------------------------------------ #
 # WFA core                                                            #
 # ------------------------------------------------------------------ #
+
 
 def run_wfa(
     symbol: str,
@@ -263,7 +268,9 @@ def run_wfa(
 
     logger.info(
         "backtest_v3 [%s]: %d registros de funding, %d dias totais",
-        symbol, len(funding_records), total_days,
+        symbol,
+        len(funding_records),
+        total_days,
     )
 
     if total_days < (_IS_DAYS + _OOS_DAYS + _PURGE_DAYS):
@@ -276,12 +283,18 @@ def run_wfa(
     # CRÍTICO: o z-score do funding precisa de fr_window=90 períodos de warmup.
     # Reconstruir features por fatia OOS (30d ≈ 90 períodos) zeraria o output.
     all_features = build_feature_vectors(
-        funding_times_ms, funding_rates, oi_index, spot_index, symbol,
+        funding_times_ms,
+        funding_rates,
+        oi_index,
+        spot_index,
+        symbol,
         fr_window=fr_window,
     )
     logger.info(
         "backtest_v3 [%s]: fr_window=%d, kelly=%.2f",
-        symbol, fr_window, kelly_fraction,
+        symbol,
+        fr_window,
+        kelly_fraction,
     )
     if len(all_features) < 100:
         raise ValueError(
@@ -312,18 +325,22 @@ def run_wfa(
 
         logger.info(
             "backtest_v3 [%s] fold %d: IS=[%d d, %d d), OOS=[%d d, %d d)",
-            symbol, fold_idx,
-            is_start_day, is_start_day + _IS_DAYS,
-            oos_start_day, oos_end_day,
+            symbol,
+            fold_idx,
+            is_start_day,
+            is_start_day + _IS_DAYS,
+            oos_start_day,
+            oos_end_day,
         )
 
         # Particiona as features pré-construídas por timestamp (sem rebuild).
         is_features = [
-            fv for fv in all_features
-            if is_start_ms <= fv.timestamp_exchange_ms < is_end_ms
+            fv for fv in all_features if is_start_ms <= fv.timestamp_exchange_ms < is_end_ms
         ]
         if len(is_features) < 50:
-            logger.warning("backtest_v3 fold %d: features IS insuficientes (%d)", fold_idx, len(is_features))
+            logger.warning(
+                "backtest_v3 fold %d: features IS insuficientes (%d)", fold_idx, len(is_features)
+            )
             fold_idx += 1
             is_start_day += _STEP_DAYS
             continue
@@ -339,20 +356,22 @@ def run_wfa(
         # O Forward Algorithm é causal → cada ponto usa só x_{0:t}; o trecho IS+purge
         # serve apenas de warmup para a recursão alpha. Nenhuma observação futura vaza.
         infer_features = [
-            fv for fv in all_features
-            if is_start_ms <= fv.timestamp_exchange_ms < oos_end_ms
+            fv for fv in all_features if is_start_ms <= fv.timestamp_exchange_ms < oos_end_ms
         ]
         regime_all = engine.predict_series(
             [fv.log_return_8h for fv in infer_features],
             [fv.realized_vol_24h for fv in infer_features],
         )
         oos_pairs = [
-            (fv, rg) for fv, rg in zip(infer_features, regime_all)
+            (fv, rg)
+            for fv, rg in zip(infer_features, regime_all)
             if oos_start_ms <= fv.timestamp_exchange_ms < oos_end_ms
         ]
 
         if len(oos_pairs) < 10:
-            logger.warning("backtest_v3 fold %d: dados OOS insuficientes (%d)", fold_idx, len(oos_pairs))
+            logger.warning(
+                "backtest_v3 fold %d: dados OOS insuficientes (%d)", fold_idx, len(oos_pairs)
+            )
             fold_idx += 1
             is_start_day += _STEP_DAYS
             continue
@@ -438,9 +457,13 @@ def run_wfa(
 
         logger.info(
             "backtest_v3 [%s] fold %d: IC=%.4f [%.4f, %.4f] PSR=%.3f MaxDD=%.2f%% → %s",
-            symbol, fold_idx,
-            fold_result.ic, fold_result.ic_ci_lower, fold_result.ic_ci_upper,
-            fold_result.psr, fold_result.max_dd * 100,
+            symbol,
+            fold_idx,
+            fold_result.ic,
+            fold_result.ic_ci_lower,
+            fold_result.ic_ci_upper,
+            fold_result.psr,
+            fold_result.max_dd * 100,
             fold_result.verdict,
         )
 
@@ -459,7 +482,9 @@ def run_wfa(
         agg_rho, agg_lo = _finite(agg_rho or 0.0), _finite(agg_lo or 0.0)
     else:
         agg_rho, agg_lo = 0.0, 0.0
-    agg_psr = _finite(probabilistic_sharpe_ratio(all_oos_returns)) if len(all_oos_returns) >= 3 else 0.0
+    agg_psr = (
+        _finite(probabilistic_sharpe_ratio(all_oos_returns)) if len(all_oos_returns) >= 3 else 0.0
+    )
     agg_dd = max_drawdown(_equity_curve(all_oos_returns))  # equity acumulada
 
     # Risco 4: bruto vs liquido, com IC95 do retorno LIQUIDO medio (block bootstrap
@@ -470,7 +495,8 @@ def run_wfa(
     if n_ret >= 12:
         _bl = max(1, min(21, n_ret // 3))
         net_lo, net_hi, _ = bootstrap_ci(
-            list(all_oos_returns), lambda u: sum(u) / len(u), scheme="moving", block_length=_bl)
+            list(all_oos_returns), lambda u: sum(u) / len(u), scheme="moving", block_length=_bl
+        )
         net_lo, net_hi = _finite(net_lo or 0.0), _finite(net_hi or 0.0)
     else:
         net_lo, net_hi = 0.0, 0.0
@@ -479,16 +505,16 @@ def run_wfa(
     if len(all_oos_returns) >= 2:
         mean_r = sum(all_oos_returns) / len(all_oos_returns)
         std_r = math.sqrt(sum((r - mean_r) ** 2 for r in all_oos_returns) / len(all_oos_returns))
-        agg_sharpe = _finite((mean_r / std_r) * math.sqrt(len(all_oos_returns)) if std_r > 1e-12 else 0.0)
+        agg_sharpe = _finite(
+            (mean_r / std_r) * math.sqrt(len(all_oos_returns)) if std_r > 1e-12 else 0.0
+        )
     else:
         agg_sharpe = 0.0
 
     if agg_psr >= _GO_PSR_THRESHOLD and agg_lo > 0 and agg_dd < _GO_MAX_DD_THRESHOLD:
         final_verdict = "GO"
         verdict_reason = (
-            f"PSR={agg_psr:.3f} > 0.80, "
-            f"IC_CI_lower={agg_lo:.4f} > 0, "
-            f"MaxDD={agg_dd:.2%} < 20%"
+            f"PSR={agg_psr:.3f} > 0.80, IC_CI_lower={agg_lo:.4f} > 0, MaxDD={agg_dd:.2%} < 20%"
         )
     else:
         final_verdict = "NO-GO"
@@ -527,11 +553,20 @@ def run_wfa(
     # o Deflated Sharpe precisa da SERIE, nao dos agregados. Deterministico
     # (random_state=42 + dados estaticos) => re-execucao reproduz a serie.
     import json as _json
-    (sym_dir / "wfa_returns.json").write_text(_json.dumps({
-        "symbol": symbol, "kelly_fraction": kelly_fraction,
-        "taker_fee_bps": taker_fee_bps, "slippage_bps": slippage_bps,
-        "net": all_oos_returns, "gross": all_gross_returns,
-    }), encoding="utf-8")
+
+    (sym_dir / "wfa_returns.json").write_text(
+        _json.dumps(
+            {
+                "symbol": symbol,
+                "kelly_fraction": kelly_fraction,
+                "taker_fee_bps": taker_fee_bps,
+                "slippage_bps": slippage_bps,
+                "net": all_oos_returns,
+                "gross": all_gross_returns,
+            }
+        ),
+        encoding="utf-8",
+    )
     return result
 
 
@@ -539,23 +574,42 @@ def run_wfa(
 # Relatório                                                           #
 # ------------------------------------------------------------------ #
 
+
 def _log_summary(r: WFAResult) -> None:
     logger.info("=" * 60)
-    logger.info("WFA RESULTADO FINAL — %s (fr_window=%d, kelly=%.2f)", r.symbol, r.fr_window, r.kelly_fraction)
+    logger.info(
+        "WFA RESULTADO FINAL — %s (fr_window=%d, kelly=%.2f)",
+        r.symbol,
+        r.fr_window,
+        r.kelly_fraction,
+    )
     logger.info("=" * 60)
-    logger.info("Folds: %d | GO: %d | NO-GO: %d",
-                r.n_folds,
-                sum(1 for f in r.folds if f.verdict == "GO"),
-                sum(1 for f in r.folds if f.verdict == "NO-GO"))
+    logger.info(
+        "Folds: %d | GO: %d | NO-GO: %d",
+        r.n_folds,
+        sum(1 for f in r.folds if f.verdict == "GO"),
+        sum(1 for f in r.folds if f.verdict == "NO-GO"),
+    )
     logger.info("PSR agregado   : %.4f (threshold: %.2f)", r.aggregate_psr, _GO_PSR_THRESHOLD)
     logger.info("IC Spearman    : %.4f  CI_lower: %.4f", r.aggregate_ic, r.aggregate_ic_ci_lower)
-    logger.info("Max Drawdown   : %.2f%%  (threshold: %.0f%%)", r.aggregate_max_dd * 100, _GO_MAX_DD_THRESHOLD * 100)
+    logger.info(
+        "Max Drawdown   : %.2f%%  (threshold: %.0f%%)",
+        r.aggregate_max_dd * 100,
+        _GO_MAX_DD_THRESHOLD * 100,
+    )
     logger.info("Sharpe agregado: %.4f", r.aggregate_sharpe)
-    logger.info("Retorno medio  : bruto %.6f -> LIQUIDO %.6f por sinal "
-                "(fee %sbps + slip + funding real)",
-                r.aggregate_gross_return, r.aggregate_net_return, r.taker_fee_bps)
-    logger.info("IC95 liq. medio: [%.6f, %.6f]%s", r.net_ci_lower, r.net_ci_upper,
-                "  — cruza zero" if r.net_ci_lower <= 0 <= r.net_ci_upper else "")
+    logger.info(
+        "Retorno medio  : bruto %.6f -> LIQUIDO %.6f por sinal (fee %sbps + slip + funding real)",
+        r.aggregate_gross_return,
+        r.aggregate_net_return,
+        r.taker_fee_bps,
+    )
+    logger.info(
+        "IC95 liq. medio: [%.6f, %.6f]%s",
+        r.net_ci_lower,
+        r.net_ci_upper,
+        "  — cruza zero" if r.net_ci_lower <= 0 <= r.net_ci_upper else "",
+    )
     logger.info("─" * 60)
     logger.info("VEREDICTO: %s", r.final_verdict)
     logger.info("RAZÃO    : %s", r.verdict_reason)
@@ -599,7 +653,9 @@ def run_kelly_sweep(
         results.append(r)
 
     # Tabela comparativa
-    header = f"\n{'Kelly':>8}  {'PSR':>6}  {'IC_low':>7}  {'MaxDD':>7}  {'Sharpe':>7}  {'Veredicto'}"
+    header = (
+        f"\n{'Kelly':>8}  {'PSR':>6}  {'IC_low':>7}  {'MaxDD':>7}  {'Sharpe':>7}  {'Veredicto'}"
+    )
     logger.info(header)
     logger.info("─" * len(header))
     for r in results:
@@ -619,10 +675,13 @@ def run_kelly_sweep(
         best = min(go_results, key=lambda r: r.kelly_fraction)
         logger.info(
             "\n→ RECOMENDAÇÃO: kelly_fraction=%.2f (menor fração com GO, MaxDD=%.2f%%)",
-            best.kelly_fraction, best.aggregate_max_dd * 100,
+            best.kelly_fraction,
+            best.aggregate_max_dd * 100,
         )
     else:
-        logger.info("\n→ Nenhuma fração atingiu GO. Avaliar mudança de parâmetros ou aceitar risco.")
+        logger.info(
+            "\n→ Nenhuma fração atingiu GO. Avaliar mudança de parâmetros ou aceitar risco."
+        )
 
     sweep = KellySweepResult(symbol=symbol, fr_window=fr_window, results=results)
     emit_event(
@@ -670,6 +729,7 @@ def _emit_result(r: WFAResult) -> None:
 # ------------------------------------------------------------------ #
 # CLI                                                                  #
 # ------------------------------------------------------------------ #
+
 
 def _main() -> None:
     parser = argparse.ArgumentParser(

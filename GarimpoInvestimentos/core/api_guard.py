@@ -3,11 +3,13 @@
 Não tenta substituir o rate-limit do provedor. A finalidade é impedir que o
 orquestrador inicie uma nova unidade lógica de trabalho depois do teto declarado.
 """
+
 from collections import defaultdict
 from dataclasses import dataclass
 
-from GarimpoInvestimentos.config import settings
 from predictor_core.obs import emit_event
+
+from GarimpoInvestimentos.config import settings
 
 
 @dataclass(frozen=True)
@@ -32,9 +34,16 @@ def allow(stage: str, key: str, limit: int) -> GuardDecision:
     if not settings.API_GUARD_ENABLED or limit <= 0:
         global _disabled_notice_emitted
         if not _disabled_notice_emitted:
-            emit_event("previsao_cripto", "api_guard_disabled", metrics={},
-                      metadata={"reason": "API_GUARD_ENABLED is false or limit<=0",
-                               "stage": stage, "key": key})
+            emit_event(
+                "previsao_cripto",
+                "api_guard_disabled",
+                metrics={},
+                metadata={
+                    "reason": "API_GUARD_ENABLED is false or limit<=0",
+                    "stage": stage,
+                    "key": key,
+                },
+            )
             _disabled_notice_emitted = True
         return GuardDecision(True, "disabled")
     counter = (stage, key)

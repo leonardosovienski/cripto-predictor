@@ -5,6 +5,7 @@ SEM chamada real à OpenAI/Gemini/CoinGecko.
 Como: chaves dummy (settings passa), `httpx` stubbado (o _report não faz rede, mas o
 módulo importa httpx na carga), e PREDICTOR_EVENTS_PATH apontando p/ tmp.
 """
+
 import random
 import sys
 import types
@@ -16,17 +17,19 @@ def _synthetic(n=60):
     rows = []
     for i in range(n):
         score = rng.uniform(0, 100)
-        flagged = (i % 5 == 0)                       # ~20% divergentes
+        flagged = i % 5 == 0  # ~20% divergentes
         v7 = rng.gauss(0, 3) if flagged else 0.08 * (score - 50) + rng.gauss(0, 2)
-        rows.append({
-            "score": score,
-            "var_d1_pct": rng.gauss(0, 2),
-            "var_d7_pct": v7,                        # horizonte principal (default 7)
-            "var_d30_pct": rng.gauss(0, 5),
-            "divergencia": 1 if flagged else 0,
-            "news_provider": "cryptopanic" if i % 2 else "google_news_rss",
-            "collection_policy": "policy-a" if i % 3 else "policy-b",
-        })
+        rows.append(
+            {
+                "score": score,
+                "var_d1_pct": rng.gauss(0, 2),
+                "var_d7_pct": v7,  # horizonte principal (default 7)
+                "var_d30_pct": rng.gauss(0, 5),
+                "divergencia": 1 if flagged else 0,
+                "news_provider": "cryptopanic" if i % 2 else "google_news_rss",
+                "collection_policy": "policy-a" if i % 3 else "policy-b",
+            }
+        )
     return rows
 
 
@@ -38,8 +41,9 @@ def test_report_emits_toll_passed_and_stratifies(tmp_path, monkeypatch, capsys):
     monkeypatch.setenv("PREDICTOR_EVENTS_PATH", str(events))
     monkeypatch.setitem(sys.modules, "httpx", types.ModuleType("httpx"))  # stub: sem rede
 
-    from GarimpoInvestimentos.analyzers import backtest
     from predictor_core import obs
+
+    from GarimpoInvestimentos.analyzers import backtest
 
     backtest._report(_synthetic(60))
 
@@ -54,7 +58,7 @@ def test_report_emits_toll_passed_and_stratifies(tmp_path, monkeypatch, capsys):
     tolls = [e for e in obs.read_events(events) if e["event"] == "toll_passed"]
     assert len(tolls) == 1, f"esperava 1 toll_passed, veio {len(tolls)}"
     e = tolls[0]
-    assert set(e.keys()) == set(obs.ENVELOPE_KEYS)            # envelope rígido de 7 chaves
+    assert set(e.keys()) == set(obs.ENVELOPE_KEYS)  # envelope rígido de 7 chaves
     assert e["domain"] == "previsao_cripto"
     assert {"spearman", "ic_lower", "ic_upper", "n"} <= set(e["metrics"])
     assert -1.0 <= e["metrics"]["ic_lower"] <= 1.0

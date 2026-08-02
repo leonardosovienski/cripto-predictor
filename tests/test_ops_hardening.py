@@ -1,27 +1,18 @@
 """Hardening operacional (triagem 2026-07-16/17): redação de segredos no log,
 lock órfão auto-recuperável, idempotência por judge_signature completo e a API
 pública FeatureStore.predictions_on. Offline, sem chaves reais."""
-import importlib.util
+
+import importlib
 import logging
-import os
-import sys
-import time
 from pathlib import Path
 
 import pytest
 
 ROOT = Path(__file__).parent.parent
-WORKSPACE = ROOT.parent
-if str(WORKSPACE) not in sys.path:
-    sys.path.insert(0, str(WORKSPACE))
 
 
 def _load_fase1():
-    spec = importlib.util.spec_from_file_location(
-        "garimpo_fase1", ROOT / "scripts" / "garimpo_fase1.py")
-    mod = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(mod)
-    return mod
+    return importlib.import_module("GarimpoInvestimentos.phase1")
 
 
 @pytest.fixture(scope="module")
@@ -32,34 +23,51 @@ def fase1():
 @pytest.fixture()
 def store(tmp_path):
     from GarimpoInvestimentos.dpl import FeatureStore
+
     with FeatureStore(tmp_path / "fs.db") as s:
         yield s
 
 
 def _pred(ativo, ts, juiz, fallback=0):
-    return {"ativo": ativo, "ts": ts, "score": 55.0, "sentimento": "neutro",
-            "resumo": "t", "price_usd": 1.0, "juiz": juiz, "divergencia": 0,
-            "fonte": "direct", "input_degradado": 0, "llm_fallback": fallback}
+    return {
+        "ativo": ativo,
+        "ts": ts,
+        "score": 55.0,
+        "sentimento": "neutro",
+        "resumo": "t",
+        "price_usd": 1.0,
+        "juiz": juiz,
+        "divergencia": 0,
+        "fonte": "direct",
+        "input_degradado": 0,
+        "llm_fallback": fallback,
+    }
 
 
 # ---------------- FeatureStore.predictions_on ----------------
 
+
 def test_predictions_on_filtra_dia_e_fallback(store):
-    store.write_predictions([
-        _pred("bitcoin", "2026-07-17T01:00:00Z", "gemini:m:abc"),
-        _pred("ethereum", "2026-07-17T01:05:00Z", "groq:m:abc", fallback=1),
-        _pred("solana", "2026-07-16T01:00:00Z", "mistral:m:abc"),
-    ])
+    store.write_predictions(
+        [
+            _pred("bitcoin", "2026-07-17T01:00:00Z", "gemini:m:abc"),
+            _pred("ethereum", "2026-07-17T01:05:00Z", "groq:m:abc", fallback=1),
+            _pred("solana", "2026-07-16T01:00:00Z", "mistral:m:abc"),
+        ]
+    )
     pares = store.predictions_on("2026-07-17")
     assert pares == [("bitcoin", "gemini:m:abc")]  # fallback e outro dia ficam de fora
 
 
 # ---------------- idempotência por assinatura completa ----------------
 
+
 def test_judges_done_today_compara_assinatura_completa(fase1, store):
-    store.write_predictions([
-        _pred("bitcoin", "2026-07-17T01:00:00Z", "gemini:modelo-antigo:h1"),
-    ])
+    store.write_predictions(
+        [
+            _pred("bitcoin", "2026-07-17T01:00:00Z", "gemini:modelo-antigo:h1"),
+        ]
+    )
     done = fase1.judges_done_today(store, "2026-07-17")
     assert ("bitcoin", "gemini:modelo-antigo:h1") in done
     # mesmo provedor com modelo/prompt diferente NÃO conta como coletado
@@ -67,24 +75,27 @@ def test_judges_done_today_compara_assinatura_completa(fase1, store):
 
 
 def test_fallback_nao_conta_como_coletado(fase1, store):
-    store.write_predictions([
-        _pred("bitcoin", "2026-07-17T01:00:00Z", "gemini:m:h", fallback=1),
-    ])
+    store.write_predictions(
+        [
+            _pred("bitcoin", "2026-07-17T01:00:00Z", "gemini:m:h", fallback=1),
+        ]
+    )
     assert fase1.judges_done_today(store, "2026-07-17") == set()
 
 
 # ---------------- lock ----------------
 #
-# Regressão (auditoria hostil 2026-07-17, rodada "tools/"): garimpo_fase1.py
+# Regressão (auditoria hostil 2026-07-17): garimpo_fase1.py
 # tinha seu próprio lock (garimpo.lock, O_EXCL + detecção de PID órfão),
-# duplicando o que tools.operational_runner já provê. Confirmado que
+# duplicando o que predictor_ops já provê. Confirmado que
 # run_garimpo_fase1.bat já envolve o processo INTEIRO no lock do runner
 # (--task GarimpoFase1) — o lock interno era redundante para o caminho
 # sancionado de produção. Removido; os testes de lock órfão/PID morto agora
-# vivem só em tools/tests/test_operational_runner.py, a fonte canônica.
+# vivem nos contract tests de predictor_ops, a fonte canônica.
 # O runner externo continua garantindo single-instance; a única lacuna real
 # é uma execução manual concorrente de `python scripts/garimpo_fase1.py`
 # fora do .bat, um cenário de baixo risco não coberto por nenhum lock aqui.
+
 
 def test_lock_interno_foi_removido_nao_reintroduzido(fase1):
     assert not hasattr(fase1, "acquire_lock")
@@ -92,40 +103,47 @@ def test_lock_interno_foi_removido_nao_reintroduzido(fase1):
     assert not hasattr(fase1, "LOCK_FILE")
 
 
-# ---------------- redação de segredos (Onda 4: delega a tools/secret_redaction) ----------------
+# ---------------- redação de segredos (delega a predictor_ops.redaction) ----------------
 #
 # _RedactSecrets agora é um adaptador logging.Filter fino sobre
-# tools.secret_redaction.safe_redact_text — a implementação canônica
+# predictor_ops.redaction.redact_text — a implementação canônica
 # compartilhada do ecossistema (ver Onda 3/3A). O marcador mudou de "***"
-# para "[REDACTED]" (formato de tools/); a cobertura ficou estritamente
+# para "[REDACTED]"; a cobertura ficou estritamente
 # maior (padrões genéricos, não só valores conhecidos). Todos os segredos
 # usados abaixo são sintéticos.
 
-from tools import secret_redaction as _canonical_redaction
+from GarimpoInvestimentos.security import redaction as _canonical_redaction
 
 FAKE_KEY = "chave-super-secreta-123456"
 FAKE_TOKEN = "fake_token_987654321"
 
 
-def test_redact_filter_usa_a_implementacao_canonica_de_tools(fase1):
+def test_redact_filter_usa_a_implementacao_canonica_de_predictor_ops(fase1):
     # Prova estrutural (não só comportamental) de que não há uma 3a
-    # implementação: o adaptador chama a MESMA função de tools/, importada
+    # implementação: o adaptador chama a MESMA função do pacote instalado, importada
     # do módulo canônico, sem regex/lista de nomes sensíveis próprias.
     import inspect
+
     module_source = inspect.getsource(fase1)
     class_start = module_source.index("class _RedactSecrets")
-    class_source = module_source[class_start:module_source.index("\n\n\n", class_start)]
-    assert "from tools.secret_redaction import safe_redact_text" in module_source
+    class_source = module_source[class_start : module_source.index("\n\n\n", class_start)]
+    assert "from GarimpoInvestimentos.security.redaction import safe_redact_text" in module_source
     assert fase1._RedactSecrets.filter.__code__.co_names.__contains__("safe_redact_text")
     assert "re.compile" not in class_source  # sem regex própria
-    assert "SENSITIVE" not in class_source   # sem lista de nomes sensíveis própria
+    assert "SENSITIVE" not in class_source  # sem lista de nomes sensíveis própria
 
 
 def test_redact_filter_mascara_segredo_conhecido(fase1):
     filt = fase1._RedactSecrets([FAKE_KEY])
-    rec = logging.LogRecord("httpx", logging.INFO, "x", 1,
-                            f"GET https://serpapi.com/search?api_key={FAKE_KEY}&q=btc",
-                            None, None)
+    rec = logging.LogRecord(
+        "httpx",
+        logging.INFO,
+        "x",
+        1,
+        f"GET https://serpapi.com/search?api_key={FAKE_KEY}&q=btc",
+        None,
+        None,
+    )
     assert filt.filter(rec) is True
     assert FAKE_KEY not in rec.getMessage()
     assert _canonical_redaction.REDACTED in rec.getMessage()
@@ -141,8 +159,9 @@ def test_redact_filter_ignora_segredos_curtos(fase1):
 
 def test_redact_filter_authorization_header(fase1):
     filt = fase1._RedactSecrets([])
-    rec = logging.LogRecord("x", logging.INFO, "x", 1,
-                            f"Authorization: Bearer {FAKE_TOKEN}", None, None)
+    rec = logging.LogRecord(
+        "x", logging.INFO, "x", 1, f"Authorization: Bearer {FAKE_TOKEN}", None, None
+    )
     filt.filter(rec)
     assert FAKE_TOKEN not in rec.getMessage()
 
@@ -158,28 +177,34 @@ def test_redact_filter_api_key_generico_sem_estar_na_lista(fase1):
     # cobertura NOVA vs. a implementação antiga: valor desconhecido (não
     # passado no construtor) ainda é mascarado pela regra estrutural.
     filt = fase1._RedactSecrets([])
-    rec = logging.LogRecord("x", logging.INFO, "x", 1,
-                            "api_key=valor_desconhecido_12345", None, None)
+    rec = logging.LogRecord(
+        "x", logging.INFO, "x", 1, "api_key=" + "valor_desconhecido_12345", None, None
+    )
     filt.filter(rec)
     assert "valor_desconhecido_12345" not in rec.getMessage()
 
 
 def test_redact_filter_header_estilo_coingecko_sem_literal_no_codigo(fase1):
     # x-cg-demo-api-key não é um literal em NENHUM lugar do código (nem
-    # aqui, nem em tools/ — confirmado na Onda 3); a cobertura vem da regra
+    # aqui, nem na dependência compartilhada); a cobertura vem da regra
     # genérica de "*api*key*".
     filt = fase1._RedactSecrets([])
-    rec = logging.LogRecord("x", logging.INFO, "x", 1,
-                            f"x-cg-demo-api-key: {FAKE_KEY}", None, None)
+    rec = logging.LogRecord("x", logging.INFO, "x", 1, f"x-cg-demo-api-key: {FAKE_KEY}", None, None)
     filt.filter(rec)
     assert FAKE_KEY not in rec.getMessage()
 
 
 def test_redact_filter_url_com_query_param_sensivel(fase1):
     filt = fase1._RedactSecrets([])
-    rec = logging.LogRecord("x", logging.INFO, "x", 1,
-                            f"https://api.example.test/v1?api_key={FAKE_KEY}&page=2",
-                            None, None)
+    rec = logging.LogRecord(
+        "x",
+        logging.INFO,
+        "x",
+        1,
+        f"https://api.example.test/v1?api_key={FAKE_KEY}&page=2",
+        None,
+        None,
+    )
     filt.filter(rec)
     assert FAKE_KEY not in rec.getMessage()
     assert "page=2" in rec.getMessage()
@@ -187,8 +212,9 @@ def test_redact_filter_url_com_query_param_sensivel(fase1):
 
 def test_redact_filter_multiplos_segredos_na_mesma_mensagem(fase1):
     filt = fase1._RedactSecrets([FAKE_KEY])
-    rec = logging.LogRecord("x", logging.INFO, "x", 1,
-                            f"api_key={FAKE_KEY} token={FAKE_TOKEN}", None, None)
+    rec = logging.LogRecord(
+        "x", logging.INFO, "x", 1, f"api_key={FAKE_KEY} token={FAKE_TOKEN}", None, None
+    )
     filt.filter(rec)
     msg = rec.getMessage()
     assert FAKE_KEY not in msg and FAKE_TOKEN not in msg
@@ -199,8 +225,7 @@ def test_redact_filter_record_args_tuple(fase1):
     # filtro rodar; args deve ser limpo (None) quando algo foi redigido, do
     # mesmo jeito que a implementação antiga fazia.
     filt = fase1._RedactSecrets([FAKE_KEY])
-    rec = logging.LogRecord("x", logging.INFO, "x", 1, "chamando com api_key=%s",
-                            (FAKE_KEY,), None)
+    rec = logging.LogRecord("x", logging.INFO, "x", 1, "chamando com api_key=%s", (FAKE_KEY,), None)
     filt.filter(rec)
     assert FAKE_KEY not in rec.getMessage()
     assert rec.args is None
@@ -225,8 +250,7 @@ def test_redact_filter_valor_curto_sob_chave_sensivel_ainda_mascarado(fase1):
 
 def test_redact_filter_case_insensitive(fase1):
     filt = fase1._RedactSecrets([])
-    rec = logging.LogRecord("x", logging.INFO, "x", 1,
-                            f"X-CG-Demo-API-Key: {FAKE_KEY}", None, None)
+    rec = logging.LogRecord("x", logging.INFO, "x", 1, f"X-CG-Demo-API-Key: {FAKE_KEY}", None, None)
     filt.filter(rec)
     assert FAKE_KEY not in rec.getMessage()
 
@@ -243,9 +267,9 @@ def test_redact_filter_sem_segredo_preserva_mensagem_original(fase1):
 
 
 def test_redact_filter_falha_interna_nao_expoe_segredo(fase1, monkeypatch):
-    # tools.secret_redaction.safe_redact_text nunca levanta e nunca retorna
+    # predictor_ops.redaction.redact_text nunca levanta e nunca retorna
     # o conteúdo bruto — mesmo se o redator interno falhar internamente.
-    import tools.secret_redaction as canonical
+    import GarimpoInvestimentos.security.redaction as canonical
 
     def _boom(*_a, **_k):
         raise RuntimeError("falha simulada no redator")
@@ -260,11 +284,14 @@ def test_redact_filter_falha_interna_nao_expoe_segredo(fase1, monkeypatch):
 
 # ---------------- ordenação anti-buraco do api_guard ----------------
 
+
 def test_order_by_staleness_prioriza_mais_antigo_e_nunca_previsto(fase1, store):
-    store.write_predictions([
-        _pred("bitcoin", "2026-07-16T01:00:00Z", "gemini:m:h"),
-        _pred("ethereum", "2026-07-10T01:00:00Z", "groq:m:h"),
-    ])
+    store.write_predictions(
+        [
+            _pred("bitcoin", "2026-07-16T01:00:00Z", "gemini:m:h"),
+            _pred("ethereum", "2026-07-10T01:00:00Z", "groq:m:h"),
+        ]
+    )
     ordem = fase1.order_by_staleness(["bitcoin", "ethereum", "solana"], store)
     # solana nunca prevista vem primeiro; depois a previsão mais antiga (ethereum)
     assert ordem == ["solana", "ethereum", "bitcoin"]
@@ -272,22 +299,28 @@ def test_order_by_staleness_prioriza_mais_antigo_e_nunca_previsto(fase1, store):
 
 def test_order_by_staleness_ignora_fallback(fase1, store):
     # fallback não conta como previsão real: ativo só-com-fallback = nunca previsto
-    store.write_predictions([
-        _pred("bitcoin", "2026-07-16T01:00:00Z", "gemini:m:h", fallback=1),
-        _pred("ethereum", "2026-07-10T01:00:00Z", "groq:m:h"),
-    ])
+    store.write_predictions(
+        [
+            _pred("bitcoin", "2026-07-16T01:00:00Z", "gemini:m:h", fallback=1),
+            _pred("ethereum", "2026-07-10T01:00:00Z", "groq:m:h"),
+        ]
+    )
     ordem = fase1.order_by_staleness(["ethereum", "bitcoin"], store)
     assert ordem == ["bitcoin", "ethereum"]
 
 
 # ---------------- paridade simulação x prefiltro canônico ----------------
 
+
 def test_prefilter_simulation_parity(monkeypatch):
     """A régua paramétrica do simulate_prefilter deve decidir IGUAL ao
     prefilter.decide() canônico com os mesmos thresholds — senão a calibração
     retroativa mente."""
     import importlib.util as _ilu
-    spec = _ilu.spec_from_file_location("simulate_prefilter", ROOT / "scripts" / "simulate_prefilter.py")
+
+    spec = _ilu.spec_from_file_location(
+        "simulate_prefilter", ROOT / "scripts" / "simulate_prefilter.py"
+    )
     sim = _ilu.module_from_spec(spec)
     spec.loader.exec_module(sim)
 
@@ -305,12 +338,21 @@ def test_prefilter_simulation_parity(monkeypatch):
         {"volume_usd": 5e7},  # sem change_7d
         {"volume_usd": 5e7, "change_7d": 0.5},
         {"volume_usd": 5e7, "change_7d": 9.0},  # sem indicadores -> neutral/missing
-        {"volume_usd": 5e7, "change_7d": 9.0,
-         "indicadores": {"preco_vs_sma200_pct": 5.0, "macd_histogram": 1.0}},
-        {"volume_usd": 5e7, "change_7d": -9.0,
-         "indicadores": {"preco_vs_sma200_pct": -5.0, "macd_histogram": -1.0}},
-        {"volume_usd": 5e7, "change_7d": 9.0,
-         "indicadores": {"preco_vs_sma200_pct": 5.0, "macd_histogram": -1.0}},  # neutro
+        {
+            "volume_usd": 5e7,
+            "change_7d": 9.0,
+            "indicadores": {"preco_vs_sma200_pct": 5.0, "macd_histogram": 1.0},
+        },
+        {
+            "volume_usd": 5e7,
+            "change_7d": -9.0,
+            "indicadores": {"preco_vs_sma200_pct": -5.0, "macd_histogram": -1.0},
+        },
+        {
+            "volume_usd": 5e7,
+            "change_7d": 9.0,
+            "indicadores": {"preco_vs_sma200_pct": 5.0, "macd_histogram": -1.0},
+        },  # neutro
     ]
     for hard in casos:
         canonico = prefilter.decide(hard)

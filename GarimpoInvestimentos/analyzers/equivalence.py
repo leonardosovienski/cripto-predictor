@@ -16,9 +16,9 @@ O que compara, por ativo:
 Sem .env: nada aqui importa settings (só rede pública CoinGecko + DPL).
 Uso: python -m GarimpoInvestimentos.analyzers.equivalence --assets bitcoin,ethereum
 """
+
 import argparse
 import asyncio
-import math
 
 from GarimpoInvestimentos.analyzers.indicators import compute_indicators
 from GarimpoInvestimentos.collectors.coingecko_api import get_coin_data, get_price_series
@@ -41,8 +41,9 @@ def _rel_diff(a: float, b: float) -> float:
     return abs(a - b) / denom
 
 
-def compare_asset(ind_direct: dict, ind_dpl: dict, changes_direct: dict,
-                  changes_dpl: dict | None = None) -> dict:
+def compare_asset(
+    ind_direct: dict, ind_dpl: dict, changes_direct: dict, changes_dpl: dict | None = None
+) -> dict:
     """Comparação pura (testável sem rede). Retorna {indicadores: {key: rel_diff},
     changes: {key: (direto_rolling, dpl_calendario, diff_abs_pp)}, ok: bool}."""
     if changes_dpl is None:
@@ -51,7 +52,7 @@ def compare_asset(ind_direct: dict, ind_dpl: dict, changes_direct: dict,
     for k in sorted(INDICATOR_KEYS):
         a, b = ind_direct.get(k), ind_dpl.get(k)
         if a is None or b is None:
-            out["indicadores"][k] = None      # ausente num dos lados (série curta)
+            out["indicadores"][k] = None  # ausente num dos lados (série curta)
             out["ok"] = out["ok"] and (a is None and b is None)
             continue
         d = _rel_diff(a, b)
@@ -61,14 +62,14 @@ def compare_asset(ind_direct: dict, ind_dpl: dict, changes_direct: dict,
     for k in _CHANGE_KEYS:
         a, b = changes_direct.get(k), changes_dpl.get(k)
         if a is not None and b is not None:
-            out["changes"][k] = (a, b, abs(a - b))   # pontos percentuais
+            out["changes"][k] = (a, b, abs(a - b))  # pontos percentuais
     return out
 
 
 async def run(assets: list[str], pause_s: float = 8.0) -> dict:
     """3 chamadas CoinGecko por ativo → pausa generosa (free tier ~10 req/min).
     Falha de um ativo (ex.: 429 persistente) não derruba o lote: vira 'skipped'."""
-    facade = CryptoDataProvider()   # fallback (Binance→CoinGecko), igual à ingestão
+    facade = CryptoDataProvider()  # fallback (Binance→CoinGecko), igual à ingestão
     results = {}
     for i, ativo in enumerate(assets):
         try:
@@ -89,7 +90,8 @@ async def run(assets: list[str], pause_s: float = 8.0) -> dict:
             a, b = closes[:-1], closes_dpl[:-1]
             common = min(len(a), len(b))
             results[ativo] = compare_asset(
-                compute_indicators(a[-common:]), compute_indicators(b[-common:]),
+                compute_indicators(a[-common:]),
+                compute_indicators(b[-common:]),
                 {k: getattr(coin, k) for k in _CHANGE_KEYS},
                 changes_dpl=feats,
             )
@@ -111,19 +113,25 @@ def report(results: dict) -> bool:
         all_ok = all_ok and r["ok"]
         print(f"\n{ativo.upper()}: indicadores {status} (pior diff relativo: {worst:.2e})")
         for k, (a, b, d) in r["changes"].items():
-            print(f"   {k}: direto(rolling) {a:+.2f}% vs dpl(calendário) {b:+.2f}%"
-                  f" — diff {d:.2f} pp")
-    print("\nVeredito indicadores:", "EQUIVALENTES em todos os ativos" if all_ok
-          else "há divergência — NÃO trocar a coleta antes de investigar")
-    print("Nota: diffs de change_* são semânticos (rolling vs calendário), não bug —"
-          "\ncobertos pela estratificação do carimbo Fonte (ADR D2).")
+            print(
+                f"   {k}: direto(rolling) {a:+.2f}% vs dpl(calendário) {b:+.2f}% — diff {d:.2f} pp"
+            )
+    print(
+        "\nVeredito indicadores:",
+        "EQUIVALENTES em todos os ativos"
+        if all_ok
+        else "há divergência — NÃO trocar a coleta antes de investigar",
+    )
+    print(
+        "Nota: diffs de change_* são semânticos (rolling vs calendário), não bug —"
+        "\ncobertos pela estratificação do carimbo Fonte (ADR D2)."
+    )
     return all_ok
 
 
 if __name__ == "__main__":
     p = argparse.ArgumentParser()
-    p.add_argument("--assets", default="bitcoin,ethereum,solana",
-                   help="lista separada por vírgula")
+    p.add_argument("--assets", default="bitcoin,ethereum,solana", help="lista separada por vírgula")
     args = p.parse_args()
     resultados = asyncio.run(run([a.strip() for a in args.assets.split(",") if a.strip()]))
     report(resultados)

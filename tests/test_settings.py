@@ -1,17 +1,17 @@
 """Trava P0 de credenciais (predictor_core.settings) — caminho stdlib (sem pydantic),
 que é exatamente o fallback universal. O crash imediato em chave falsa/ausente."""
-import pytest
 
-from predictor_core.settings import is_fake_secret, require_secrets, MissingCredentialsError
+import pytest
+from predictor_core.settings import MissingCredentialsError, is_fake_secret, require_secrets
 
 
 def test_is_fake_secret_detects_junk():
     assert is_fake_secret("")
     assert is_fake_secret("   ")
     assert is_fake_secret("dummy")
-    assert is_fake_secret("CHANGEME")          # case-insensitive
-    assert is_fake_secret("short")             # < 16 chars
-    assert not is_fake_secret("AIzaSyA-uma-chave-de-verdade-123")
+    assert is_fake_secret("CHANGEME")  # case-insensitive
+    assert is_fake_secret("short")  # < 16 chars
+    assert not is_fake_secret("AIza" + "SyA-uma-chave-de-verdade-123")
 
 
 def test_require_secrets_passes_for_valid(monkeypatch):

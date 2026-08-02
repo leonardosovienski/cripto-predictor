@@ -1,4 +1,5 @@
 """timeindex (C5): paridade com as 3 cópias antigas + bordas do bisect."""
+
 from GarimpoInvestimentos.v3.timeindex import SortedTimeIndex, nearest_value
 
 
@@ -8,8 +9,8 @@ def test_exact_hit():
 
 def test_nearest_within_tolerance():
     idx = {0: 1.0, 600_000: 2.0}
-    assert nearest_value(idx, 250_000) == 1.0        # 250k de distância <= 300k
-    assert nearest_value(idx, 350_000) == 2.0        # mais perto do 600k
+    assert nearest_value(idx, 250_000) == 1.0  # 250k de distância <= 300k
+    assert nearest_value(idx, 350_000) == 2.0  # mais perto do 600k
 
 
 def test_none_outside_tolerance():

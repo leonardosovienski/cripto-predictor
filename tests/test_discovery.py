@@ -3,11 +3,11 @@
 O contrato: filtrar o que nunca é oportunidade (stable, wrapped, ilíquido) e
 ranquear o resto por momentum. Rede (_fetch_*) fica fora — é casca fina de httpx.
 """
+
 from GarimpoInvestimentos.collectors.discovery import rank_candidates
 
 
-def _row(coin_id, symbol="xyz", price=100.0, volume=50_000_000.0,
-         change_7d=0.0, change_24h=0.0):
+def _row(coin_id, symbol="xyz", price=100.0, volume=50_000_000.0, change_7d=0.0, change_24h=0.0):
     return {
         "id": coin_id,
         "symbol": symbol,
@@ -88,10 +88,14 @@ def test_trending_da_bonus_mas_nao_garante_topo():
 
 def test_campos_ausentes_nao_quebram():
     markets = [
-        {"id": "capenga", "symbol": None, "current_price": None,
-         "total_volume": 20_000_000.0,
-         "price_change_percentage_7d_in_currency": None,
-         "price_change_percentage_24h_in_currency": None},
+        {
+            "id": "capenga",
+            "symbol": None,
+            "current_price": None,
+            "total_volume": 20_000_000.0,
+            "price_change_percentage_7d_in_currency": None,
+            "price_change_percentage_24h_in_currency": None,
+        },
         {"symbol": "semid", "total_volume": 20_000_000.0},  # sem id → ignorada
     ]
     assert rank_candidates(markets, top_n=5) == ["capenga"]

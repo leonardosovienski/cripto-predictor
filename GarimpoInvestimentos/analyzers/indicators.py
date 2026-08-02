@@ -5,11 +5,11 @@ para o LLM *interpretar* (ex.: "RSI=28 → sobrevendido"), em vez de pedir que o
 calcule sobre séries (no que LLMs são ruins). Entrada: lista de closes diários (ordem
 cronológica, mais antigo → mais recente).
 """
+
 import math
-from typing import Optional
 
 
-def sma(prices: list[float], period: int) -> Optional[float]:
+def sma(prices: list[float], period: int) -> float | None:
     if len(prices) < period:
         return None
     return sum(prices[-period:]) / period
@@ -27,7 +27,7 @@ def _ema_series(prices: list[float], period: int) -> list[float]:
     return out
 
 
-def rsi(prices: list[float], period: int = 14) -> Optional[float]:
+def rsi(prices: list[float], period: int = 14) -> float | None:
     if len(prices) < period + 1:
         return None
     deltas = [prices[i] - prices[i - 1] for i in range(1, len(prices))]

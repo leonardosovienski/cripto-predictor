@@ -6,6 +6,7 @@ DERIVADAS, calculadas aqui a partir dos candles e materializadas em `features_al
 durante a ingestão. Assim o preço bruto e as features derivadas coexistem sem misturar
 responsabilidades (ver docs/DOSSIE_PLATAFORMA.md, decisão sobre Variância Zero).
 """
+
 from __future__ import annotations
 
 import math
@@ -15,10 +16,19 @@ from GarimpoInvestimentos.dpl.contracts import MarketDataPoint
 
 # Chaves produzidas por compute_indicators — usadas no serving para separar os
 # indicadores (sub-dict "indicadores") das demais features de topo.
-INDICATOR_KEYS = frozenset({
-    "rsi_14", "sma_50", "preco_vs_sma50_pct", "sma_200", "preco_vs_sma200_pct",
-    "macd", "macd_signal", "macd_histogram", "bollinger_pct_b",
-})
+INDICATOR_KEYS = frozenset(
+    {
+        "rsi_14",
+        "sma_50",
+        "preco_vs_sma50_pct",
+        "sma_200",
+        "preco_vs_sma200_pct",
+        "macd",
+        "macd_signal",
+        "macd_histogram",
+        "bollinger_pct_b",
+    }
+)
 # Features de baixa frequência alinhadas (não-derivadas) que não entram no hard_data
 # de mercado — ficam disponíveis separadamente (ex.: sentimento).
 _SIGNAL_KEYS = frozenset({"fear_greed"})

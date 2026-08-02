@@ -11,9 +11,10 @@ Candidato a promoção futura pro predictor_core (plano de convergência da
 auditoria: predictor_core/timeindex.py) — a evolução do core é upstream via
 sync_core, nunca editando o vendor; até lá o helper vive no pacote v3.
 """
+
 from bisect import bisect_left
 
-_DEFAULT_TOLERANCE_MS = 300_000   # ±5 min — a tolerância histórica das 3 cópias
+_DEFAULT_TOLERANCE_MS = 300_000  # ±5 min — a tolerância histórica das 3 cópias
 
 
 class SortedTimeIndex:
@@ -44,8 +45,9 @@ class SortedTimeIndex:
         return self._index[best[1]] if best else None
 
 
-def nearest_value(index: dict[int, float], ts: int,
-                  tolerance_ms: int = _DEFAULT_TOLERANCE_MS) -> float | None:
+def nearest_value(
+    index: dict[int, float], ts: int, tolerance_ms: int = _DEFAULT_TOLERANCE_MS
+) -> float | None:
     """Conveniência para consulta única. Em loops, construa SortedTimeIndex
     uma vez (o sort é O(n log n) por chamada aqui)."""
     return SortedTimeIndex(index).nearest(ts, tolerance_ms)

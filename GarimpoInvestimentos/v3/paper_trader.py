@@ -23,13 +23,13 @@ USO (CLI):
 
     # Roda 1×/dia (após o pipeline diário) — cada execução registra o sinal corrente.
 """
+
 import argparse
 import asyncio
 import json
 import logging
 import sys
-from dataclasses import asdict
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 from predictor_core.obs import emit_event
@@ -94,7 +94,7 @@ def _record_paper_trade(
 ) -> dict:
     """Monta, persiste e emite o trade teórico. Retorna o dict gravado."""
     position = signal.direction * signal.strength * kelly_fraction
-    signal_ts_utc = datetime.now(timezone.utc).isoformat(timespec="seconds")
+    signal_ts_utc = datetime.now(UTC).isoformat(timespec="seconds")
 
     paper = {
         "symbol": symbol,
@@ -122,7 +122,8 @@ def _record_paper_trade(
 
     # Telemetria estruturada
     emit_event(
-        _DOMAIN, "paper_trade",
+        _DOMAIN,
+        "paper_trade",
         metrics={
             "direction": float(signal.direction),
             "strength": float(signal.strength),
@@ -171,7 +172,8 @@ async def run_paper(
         logger.info(
             "paper_trader [%s]: sinal ts=%d já registrado no livro — pulando "
             "(idempotência; re-execução não duplica trade)",
-            symbol, latest.timestamp_exchange_ms,
+            symbol,
+            latest.timestamp_exchange_ms,
         )
         return None
 
@@ -187,9 +189,13 @@ async def run_paper(
     side = {1: "LONG", -1: "SHORT", 0: "FLAT"}.get(latest.direction, "?")
     logger.info(
         "paper_trader [%s]: %s pos=%.4f (kelly=%.2f) @ %s — regime=%s reason=%s",
-        symbol, side, paper["position"], kelly_fraction,
+        symbol,
+        side,
+        paper["position"],
+        kelly_fraction,
         f"{ref_price:.2f}" if ref_price else "n/d",
-        latest.regime_state, latest.reason,
+        latest.regime_state,
+        latest.reason,
     )
     return paper
 
@@ -208,8 +214,9 @@ async def _main() -> None:
         help=f"Fração de Kelly (default homologado: {DEFAULT_KELLY_FRACTION})",
     )
     parser.add_argument("--horizon-hours", type=int, default=24)
-    parser.add_argument("--log-level", default="INFO",
-                        choices=["DEBUG", "INFO", "WARNING", "ERROR"])
+    parser.add_argument(
+        "--log-level", default="INFO", choices=["DEBUG", "INFO", "WARNING", "ERROR"]
+    )
     args = parser.parse_args()
 
     logging.basicConfig(

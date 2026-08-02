@@ -263,3 +263,5 @@
 - Ativação: SOMENTE se existir edge direcional validado para proteger — gestão de
   risco de um sinal que não existe é polimento de motor desligado (mesma razão da
   rejeição do Regime Shift Detector na triagem de jul/2026).
+
+

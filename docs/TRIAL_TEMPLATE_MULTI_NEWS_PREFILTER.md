@@ -50,3 +50,5 @@ API_GUARD_MAX_LLM_CALLS_PER_PROVIDER:
 4. Validar um ciclo manual: redaction, lock, timeout, heartbeat, JSONL, artefato,
    exit code e idempotencia.
 5. Conferir no SQLite que `news_provider` e `collection_policy` foram gravados.
+
+

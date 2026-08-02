@@ -88,3 +88,5 @@ pedágio estatístico com controle positivo, DSR, custos) é exatamente o que to
 próximos ciclos de hipótese baratos e confiáveis: formular → registrar tentativa →
 backtest líquido → veredito em que se pode confiar. O projeto aprendeu a dizer "não"
 com rigor; o próximo objetivo é ter uma hipótese que mereça um "sim".
+
+

@@ -7,6 +7,7 @@ NOTA: importa só helpers que não dependem de hmmlearn. Se hmmlearn faltar no
 ambiente de teste, os imports do pipeline falhariam — por isso testamos a
 matemática de posição de forma isolada quando possível.
 """
+
 import pytest
 
 # paper_trader importa pipeline -> regime_engine -> hmmlearn. Se hmmlearn não
@@ -44,6 +45,7 @@ def _mk_signal(ts_ms: int, direction: int = 1, strength: float = 0.8) -> SignalR
 # _latest_signal                                                      #
 # ------------------------------------------------------------------ #
 
+
 def test_latest_signal_empty_returns_none():
     assert _latest_signal([]) is None
 
@@ -57,6 +59,7 @@ def test_latest_signal_picks_max_timestamp():
 # ------------------------------------------------------------------ #
 # _ref_price                                                          #
 # ------------------------------------------------------------------ #
+
 
 def test_ref_price_exact_match():
     idx = {1000: 50000.0, 2000: 51000.0}
@@ -85,13 +88,17 @@ def test_ref_price_picks_closest():
 # Cálculo de posição (direction × strength × kelly_fraction)          #
 # ------------------------------------------------------------------ #
 
-@pytest.mark.parametrize("direction,strength,kelly,expected", [
-    (1, 0.8, 0.5, 0.4),     # long
-    (-1, 0.8, 0.5, -0.4),   # short
-    (0, 0.0, 0.5, 0.0),     # flat
-    (1, 1.0, 0.25, 0.25),   # kelly conservador
-    (1, 1.0, 1.0, 1.0),     # kelly completo
-])
+
+@pytest.mark.parametrize(
+    "direction,strength,kelly,expected",
+    [
+        (1, 0.8, 0.5, 0.4),  # long
+        (-1, 0.8, 0.5, -0.4),  # short
+        (0, 0.0, 0.5, 0.0),  # flat
+        (1, 1.0, 0.25, 0.25),  # kelly conservador
+        (1, 1.0, 1.0, 1.0),  # kelly completo
+    ],
+)
 def test_position_math(direction, strength, kelly, expected):
     assert direction * strength * kelly == pytest.approx(expected)
 
@@ -99,4 +106,5 @@ def test_position_math(direction, strength, kelly, expected):
 def test_default_kelly_fraction_is_homologated():
     """A fração homologada (Kelly sweep 2026-06-27) é 0.50."""
     from GarimpoInvestimentos.v3.backtest_v3 import DEFAULT_KELLY_FRACTION
+
     assert DEFAULT_KELLY_FRACTION == 0.50

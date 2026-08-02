@@ -12,6 +12,7 @@ levanta ValueError, que o Router já trata como falha normal desse provedor — 
 contaminada é excluída (fallback) ou some da lista de sobreviventes (consenso), em vez
 de silenciosamente entrar na mediana.
 """
+
 from __future__ import annotations
 
 import math

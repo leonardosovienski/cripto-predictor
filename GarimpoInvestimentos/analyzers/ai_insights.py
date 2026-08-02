@@ -9,6 +9,7 @@ sem dependência nova.
 um histórico meio-Gemini, meio-OpenAI mistura dois "juízes" com calibrações diferentes.
 O carimbo judge_signature() muda com o provedor: trocar = trial NOVA no registry.
 """
+
 import asyncio
 import hashlib
 import inspect
@@ -37,6 +38,7 @@ def _get_gemini():
     global _gemini_client
     if _gemini_client is None:
         from google import genai
+
         _gemini_client = genai.Client(api_key=settings.GEMINI_API_KEY)
     return _gemini_client
 
@@ -44,9 +46,9 @@ def _get_gemini():
 def _get_openai(provider: str = "openai"):
     if provider not in _openai_clients:
         from openai import OpenAI
+
         base_url, key_attr, _ = _OPENAI_COMPAT[provider]
-        _openai_clients[provider] = OpenAI(
-            api_key=getattr(settings, key_attr), base_url=base_url)
+        _openai_clients[provider] = OpenAI(api_key=getattr(settings, key_attr), base_url=base_url)
     return _openai_clients[provider]
 
 
@@ -77,8 +79,7 @@ def _build_prompt(asset_name: str, hard_data: dict, news_snippets: list[str]) ->
 
 # Hash do CÓDIGO do template (inspect), não do texto preenchido: muda sozinho
 # quando o prompt muda, sem depender de bumpar uma constante na mão.
-_PROMPT_HASH = hashlib.sha256(
-    inspect.getsource(_build_prompt).encode("utf-8")).hexdigest()[:12]
+_PROMPT_HASH = hashlib.sha256(inspect.getsource(_build_prompt).encode("utf-8")).hexdigest()[:12]
 
 
 def provider_for_asset(asset_name: str) -> str:
@@ -141,6 +142,7 @@ def _retry_delay_for_error(exc: Exception, attempt: int) -> float | None:
     else:
         try:
             import httpx
+
             if isinstance(exc, (httpx.TimeoutException, httpx.TransportError)):
                 pass
             else:
@@ -202,13 +204,16 @@ async def _run_with_llm_retry(callable_obj) -> str:
             if attempt >= 4 or delay is None:
                 raise
             sleep_for = max(base_delay, delay)
-            _log.warning("llm retry %d/4 after %s (sleep %.1fs)", attempt, type(exc).__name__, sleep_for)
+            _log.warning(
+                "llm retry %d/4 after %s (sleep %.1fs)", attempt, type(exc).__name__, sleep_for
+            )
             await asyncio.sleep(sleep_for)
     raise RuntimeError("llm retry loop exhausted")
 
 
 async def _call_gemini(prompt: str) -> str:
     from google.genai import types
+
     client = _get_gemini()
 
     async def _invoke() -> str:
@@ -216,7 +221,9 @@ async def _call_gemini(prompt: str) -> str:
             client.models.generate_content,
             model=settings.GEMINI_MODEL,
             contents=prompt,
-            config=types.GenerateContentConfig(temperature=0.2, response_mime_type="application/json"),
+            config=types.GenerateContentConfig(
+                temperature=0.2, response_mime_type="application/json"
+            ),
         )
         if response.text is None:
             raise RuntimeError("gemini: resposta sem texto (bloqueada ou vazia)")
@@ -265,8 +272,9 @@ async def analyze_asset(asset_name: str, hard_data: dict, news_snippets: list[st
         }
 
     except Exception as e:
-        _log.warning("erro ao analisar %s (%s: %s) — fallback aplicado",
-                     asset_name, type(e).__name__, e)
+        _log.warning(
+            "erro ao analisar %s (%s: %s) — fallback aplicado", asset_name, type(e).__name__, e
+        )
         # llm_fallback=True é o carimbo ESTRUTURAL (migração 0009): o backtest
         # exclui por ele, não pela string do summary (que segue por compat/legado).
         return {

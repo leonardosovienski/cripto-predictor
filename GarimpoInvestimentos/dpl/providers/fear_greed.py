@@ -4,9 +4,10 @@ Fonte de BAIXA frequência (1 ponto/dia) usada como prova de conceito da fusão 
 granularidades do Alignment Engine: diário (sentimento) × horário/diário (preço).
 O índice de um dia é publicado naquele mesmo dia → published_at = timestamp.
 """
+
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from predictor_core.net import get_http_client, with_retry
 
@@ -31,7 +32,7 @@ class FearAndGreedProvider(SignalProvider):
             data = resp.json()
         points = []
         for item in data.get("data", []):
-            ts = datetime.fromtimestamp(int(item["timestamp"]), tz=timezone.utc)
+            ts = datetime.fromtimestamp(int(item["timestamp"]), tz=UTC)
             points.append(
                 SignalPoint(
                     name=self.name,

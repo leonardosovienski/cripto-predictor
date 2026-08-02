@@ -40,3 +40,5 @@ $x = Get-ScheduledTask -TaskName $taskName
 } | Format-Table -AutoSize
 
 Read-Host "`nPressione Enter para fechar"
+
+

@@ -22,3 +22,5 @@ Set-ScheduledTask -TaskName $taskName -Trigger $triggers | Out-Null
 
 $depois = (Get-ScheduledTask -TaskName $taskName).Triggers | ForEach-Object { $_.StartBoundary }
 Write-Host "OK: gatilhos de $taskName agora: $($depois -join ', ')"
+
+

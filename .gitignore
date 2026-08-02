@@ -1,42 +1,23 @@
-# Segredos — VITAL: chaves de API (Gemini/OpenAI/SerpAPI). NUNCA versionar.
 .env
-*.env
-**/.env
-
-# Ambientes virtuais (EDR corporativo quarentena venv — jamais versionar)
-env/
-venv/
 .venv/
-.venv_v3/
-**/env/
-
-# Bytecode / cache
 __pycache__/
 *.py[cod]
 .pytest_cache/
-
-# Saída de runtime na RAIZ (CSVs, cache.json, logs descartáveis).
-# ATENÇÃO: ancorado em '/output/' de propósito — NÃO ignora o PACOTE de código
-# GarimpoInvestimentos/output/ (reporter.py precisa ser rastreado). O bug do
-# .gitignore antigo (ignorava o pacote) teria quebrado o clone.
-/output/
-/logs/
-
-# IDE
-.vs/
-*.pyproj.user
-
-# SO
-.DS_Store
-Thumbs.db
-
-# telemetria local (predictor_core.obs) — artefato de runtime, nunca versionar
-events.jsonl
-# dados brutos de mercado (regeneraveis por ingestao) e telemetria local.
-# ATENCAO: ancorado em '/data/' de proposito — o padrao nao-ancorado 'data/'
-# ignorava silenciosamente o PACOTE vendor/predictor_core/data/ (codigo),
-# quebrando qualquer clone fresco (22 erros de colecao na suite).
-/data/
-GarimpoInvestimentos/data/
-tests/_events_test.jsonl
-garimpo.lock
+.ruff_cache/
+.coverage
+htmlcov/
+dist/
+build/
+*.egg-info/
+output/
+data/
+cache/
+logs/
+*.db
+*.sqlite*
+*.csv
+*.xlsx
+*.jsonl
+!.env.example
+!tests/fixtures/**/*.csv
+!tests/fixtures/**/*.jsonl

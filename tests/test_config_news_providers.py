@@ -1,4 +1,5 @@
 """Validação fail-fast da configuração de fontes de notícias."""
+
 import pytest
 
 from GarimpoInvestimentos.config import Settings

@@ -19,6 +19,7 @@ USO (CLI):
     python -m GarimpoInvestimentos.v3.paper_report --symbol BTCUSDT
     python -m GarimpoInvestimentos.v3.paper_report --symbol BTCUSDT ETHUSDT --horizon-hours 24
 """
+
 import argparse
 import json
 import logging
@@ -71,7 +72,7 @@ def _equity_curve(returns: list[float]) -> list[float]:
     """Retornos por-trade → equity acumulada (base 1.0). Igual ao backtest_v3."""
     equity, acc = [], 1.0
     for r in returns:
-        acc *= (1.0 + r)
+        acc *= 1.0 + r
         equity.append(acc)
     return equity
 
@@ -161,7 +162,8 @@ def _print_report(s: dict) -> None:
 
 def _emit_report(s: dict) -> None:
     emit_event(
-        _DOMAIN, "paper_report",
+        _DOMAIN,
+        "paper_report",
         metrics={
             "n_total": float(s["n_total"]),
             "n_active": float(s["n_active"]),
@@ -170,8 +172,7 @@ def _emit_report(s: dict) -> None:
             "max_dd": float(s["max_dd"]),
             "hit_rate": float(s["hit_rate"]) if s["hit_rate"] is not None else -1.0,
         },
-        metadata={"symbol": s["symbol"], "by_regime": s["by_regime"],
-                  "by_reason": s["by_reason"]},
+        metadata={"symbol": s["symbol"], "by_regime": s["by_regime"], "by_reason": s["by_reason"]},
     )
 
 
@@ -181,8 +182,9 @@ def _main() -> None:
     )
     parser.add_argument("--symbol", nargs="+", default=["BTCUSDT"])
     parser.add_argument("--horizon-hours", type=int, default=24)
-    parser.add_argument("--log-level", default="INFO",
-                        choices=["DEBUG", "INFO", "WARNING", "ERROR"])
+    parser.add_argument(
+        "--log-level", default="INFO", choices=["DEBUG", "INFO", "WARNING", "ERROR"]
+    )
     args = parser.parse_args()
 
     logging.basicConfig(

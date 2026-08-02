@@ -30,7 +30,7 @@ metodológica compartilhada, rastreabilidade de dados e independência de deploy
 - **Hub-and-spoke com fonte canônica** — `predictor_core` é o único repositório de verdade
   matemática e de contratos de dados.
 - **Vendoring unidirecional** — cada domínio carrega uma cópia versionada do core
-  (`vendor/predictor_core/`) com manifesto de integridade (SHA256).
+  (snapshot embarcado histórico do core) com manifesto de integridade (SHA256).
 - **Evolução por demanda** — primitivas sobem dos domínios para o core quando genéricas;
   versões descem do core para os domínios via sync.
 - **Separação estrita de responsabilidades** — domínios não importam código uns dos outros;
@@ -572,3 +572,4 @@ CCXT; ele é encapsulado nos provedores concretos.
 > incorporando todo o aprendizado, decisões e componentes discutidos, enriquecido com a adoção
 > do CCXT, a separação explícita das tabelas da Feature Store e o tratamento da Variância Zero.
 > Serve como documentação canônica para os próximos passos de implementação.
+

@@ -5,22 +5,32 @@ migração aditiva de header) e D3 (universo default da análise = Feature Store
 list_symbols; latest_source alimenta o carimbo). D1 (altcoin sem symbol_map cai no
 CoinGecko) já é coberta pelo teste de fachada da Fase 1 + validada em smoke ao vivo.
 """
-from datetime import datetime, timezone
+
+from datetime import UTC, datetime
 
 from GarimpoInvestimentos.dpl import FeatureStore, MarketDataPoint
 from GarimpoInvestimentos.dpl.feature_store import fonte_label
 
-UTC = timezone.utc
+UTC = UTC
 
 
 def _candle(symbol, source, ts):
     return MarketDataPoint(
-        source=source, symbol=symbol, interval="1d", timestamp=ts,
-        open=1.0, high=2.0, low=0.5, close=1.5, volume=100.0, published_at=ts,
+        source=source,
+        symbol=symbol,
+        interval="1d",
+        timestamp=ts,
+        open=1.0,
+        high=2.0,
+        low=0.5,
+        close=1.5,
+        volume=100.0,
+        published_at=ts,
     )
 
 
 # --- D2: rótulo do carimbo -------------------------------------------------
+
 
 def test_fonte_label_mapeia_politicas():
     assert fonte_label("coingecko") == "dpl:fallback"
@@ -33,16 +43,19 @@ def test_fonte_label_mapeia_politicas():
 
 def test_latest_source_devolve_fonte_do_candle_mais_recente(tmp_path):
     with FeatureStore(tmp_path / "fs.db") as fs:
-        fs.write_raw([
-            _candle("bitcoin", "binance", datetime(2026, 6, 30, tzinfo=UTC)),
-            _candle("bitcoin", "coingecko", datetime(2026, 7, 1, tzinfo=UTC)),
-        ])
-        assert fs.latest_source("bitcoin", "1d") == "coingecko"   # o mais recente
+        fs.write_raw(
+            [
+                _candle("bitcoin", "binance", datetime(2026, 6, 30, tzinfo=UTC)),
+                _candle("bitcoin", "coingecko", datetime(2026, 7, 1, tzinfo=UTC)),
+            ]
+        )
+        assert fs.latest_source("bitcoin", "1d") == "coingecko"  # o mais recente
         assert fs.latest_source("inexistente", "1d") is None
         assert fonte_label(fs.latest_source("inexistente", "1d")) == "direct"
 
 
 # --- D3: universo default da análise ---------------------------------------
+
 
 def test_list_symbols_devolve_universo_materializado(tmp_path):
     ts = datetime(2026, 7, 1, tzinfo=UTC)
@@ -56,20 +69,38 @@ def test_list_symbols_devolve_universo_materializado(tmp_path):
 
 # --- D2: carimbo Fonte no histórico oficial (Feature Store, passo 4) --------
 
+
 def test_append_history_grava_fonte_na_store(tmp_path):
     from GarimpoInvestimentos.core import history
 
     with FeatureStore(tmp_path / "fs.db") as fs:
-        history.append_history([{
-            "ativo": "solana", "sentimento": "positivo", "score": 85.0, "resumo": "r",
-            "data": "2026-07-01 23:02:31", "price_usd": 150.0, "judge": "gemini:x:y",
-            "divergencia": 0, "data_source": "dpl:fallback",
-        }, {
-            # resultado sem carimbo (caminho legado) → backfill 'direct' na escrita
-            "ativo": "bitcoin", "sentimento": "negativo", "score": 25.0, "resumo": "b",
-            "data": "2026-06-30 02:35:23", "price_usd": 59296.8, "judge": "gemini:x:y",
-            "divergencia": 0,
-        }], fs)
+        history.append_history(
+            [
+                {
+                    "ativo": "solana",
+                    "sentimento": "positivo",
+                    "score": 85.0,
+                    "resumo": "r",
+                    "data": "2026-07-01 23:02:31",
+                    "price_usd": 150.0,
+                    "judge": "gemini:x:y",
+                    "divergencia": 0,
+                    "data_source": "dpl:fallback",
+                },
+                {
+                    # resultado sem carimbo (caminho legado) → backfill 'direct' na escrita
+                    "ativo": "bitcoin",
+                    "sentimento": "negativo",
+                    "score": 25.0,
+                    "resumo": "b",
+                    "data": "2026-06-30 02:35:23",
+                    "price_usd": 59296.8,
+                    "judge": "gemini:x:y",
+                    "divergencia": 0,
+                },
+            ],
+            fs,
+        )
         preds = {p["ativo"]: p for p in fs.read_predictions()}
     assert preds["SOLANA"]["fonte"] == "dpl:fallback"
     assert preds["BITCOIN"]["fonte"] == "direct"

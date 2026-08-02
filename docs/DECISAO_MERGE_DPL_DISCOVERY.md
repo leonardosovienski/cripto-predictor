@@ -52,3 +52,5 @@ justamente nos candidatos do discovery — registrado, mitigado pela telemetria
 3. Merge com base no `main.py` da DPL; discovery re-aplicado como enxerto (`--assets | --discover`).
 4. `--discover` só com `--ingest`; análise sem `--assets` lê o universo da Feature Store.
 5. Ordem de execução: este documento aprovado → merge de `799cd27` na branch da DPL → carimbo implementado no mesmo PR do merge (nenhuma linha de histórico nova sem `Fonte`).
+
+

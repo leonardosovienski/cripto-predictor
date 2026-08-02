@@ -1,7 +1,7 @@
 import logging
 
-from pydantic import BaseModel
 from predictor_core.net import get_http_client, with_retry
+from pydantic import BaseModel
 
 from GarimpoInvestimentos.dpl.providers.coingecko import coingecko_auth_headers
 

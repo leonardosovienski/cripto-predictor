@@ -46,16 +46,16 @@ O join é feito por timestamp_ms com tolerância de ±5min para diferenças de
 relógio entre feeds. Registros sem par (funding sem OI ou sem spot) são descartados
 com quality_score = 0.0 (NUNCA interpolados).
 """
+
 import bisect
 import logging
 import math
 from dataclasses import dataclass
-from typing import Optional
 
 logger = logging.getLogger(__name__)
 
 # Janelas padrão — parametrizáveis pelo pipeline
-_DEFAULT_FR_WINDOW = 90         # 90 períodos × 8h = 30 dias
+_DEFAULT_FR_WINDOW = 90  # 90 períodos × 8h = 30 dias
 _DEFAULT_VOL_WINDOW_HOURS = 24  # 24 closes 1h para vol realizada
 _JOIN_TOLERANCE_MS = 5 * 60 * 1000  # 5 minutos
 
@@ -63,6 +63,7 @@ _JOIN_TOLERANCE_MS = 5 * 60 * 1000  # 5 minutos
 # ------------------------------------------------------------------ #
 # Contrato de dado canônico                                            #
 # ------------------------------------------------------------------ #
+
 
 @dataclass(frozen=True)
 class FeatureVector:
@@ -72,8 +73,9 @@ class FeatureVector:
     o registro NÃO é gerado (retorna None no builder).
     O signal_engine e o backtest rejeitam vetores com quality < 0.5.
     """
+
     # Identificação
-    timestamp_exchange_ms: int   # timestamp do funding rate (chave de alinhamento)
+    timestamp_exchange_ms: int  # timestamp do funding rate (chave de alinhamento)
     asset: str
 
     # Dados brutos preservados para auditoria
@@ -82,19 +84,20 @@ class FeatureVector:
     spot_close: float
 
     # Features estacionárias
-    funding_zscore: float        # z-score janela rolante
-    oi_log_delta: float          # Δ log(OI_t / OI_{t-1})
-    leverage_pressure: float     # composição FR_zscore × Δ_OI_log
-    log_return_8h: float         # retorno log spot 8h alinhado
-    realized_vol_24h: float      # std dos log returns 1h das últimas 24h
+    funding_zscore: float  # z-score janela rolante
+    oi_log_delta: float  # Δ log(OI_t / OI_{t-1})
+    leverage_pressure: float  # composição FR_zscore × Δ_OI_log
+    log_return_8h: float  # retorno log spot 8h alinhado
+    realized_vol_24h: float  # std dos log returns 1h das últimas 24h
 
     # Qualidade
-    data_quality_score: float    # 1.0 = todos os dados presentes; 0.0 = inválido
+    data_quality_score: float  # 1.0 = todos os dados presentes; 0.0 = inválido
 
 
 # ------------------------------------------------------------------ #
 # Funções de cálculo (puras, sem side effects)                        #
 # ------------------------------------------------------------------ #
+
 
 def _zscore(series: list[float]) -> float:
     """Z-score do último elemento sobre a janela inteira."""
@@ -108,7 +111,7 @@ def _zscore(series: list[float]) -> float:
     return (series[-1] - mean) / std
 
 
-def _log_delta(prev: float, curr: float) -> Optional[float]:
+def _log_delta(prev: float, curr: float) -> float | None:
     """Δ log(curr/prev). Retorna None se algum valor for ≤ 0."""
     if prev <= 0.0 or curr <= 0.0:
         return None
@@ -129,7 +132,8 @@ def _realized_vol(log_returns: list[float]) -> float:
 # Alinhamento de séries                                               #
 # ------------------------------------------------------------------ #
 
-def _find_closest(target_ms: int, index: dict[int, float], tolerance_ms: int) -> Optional[float]:
+
+def _find_closest(target_ms: int, index: dict[int, float], tolerance_ms: int) -> float | None:
     """
     Encontra o valor mais próximo de target_ms no índice.
     Retorna None se o timestamp mais próximo exceder tolerance_ms.
@@ -146,11 +150,12 @@ def _find_closest(target_ms: int, index: dict[int, float], tolerance_ms: int) ->
 # Builder principal                                                   #
 # ------------------------------------------------------------------ #
 
+
 def build_feature_vectors(
     funding_times_ms: list[int],
     funding_rates: list[float],
-    oi_index: dict[int, float],        # timestamp_ms → oi_notional_usd
-    spot_index: dict[int, float],      # open_ms → close price (1h klines)
+    oi_index: dict[int, float],  # timestamp_ms → oi_notional_usd
+    spot_index: dict[int, float],  # open_ms → close price (1h klines)
     asset: str,
     fr_window: int = _DEFAULT_FR_WINDOW,
     vol_window_hours: int = _DEFAULT_VOL_WINDOW_HOURS,
@@ -250,35 +255,38 @@ def build_feature_vectors(
         ]
         realized_vol_24h = _realized_vol(vol_log_returns)
 
-        vectors.append(FeatureVector(
-            timestamp_exchange_ms=ts,
-            asset=asset,
-            funding_rate_raw=round(funding_rates[i], 8),
-            oi_notional_usd=round(oi_curr, 2),
-            spot_close=round(spot_curr, 4),
-            funding_zscore=round(funding_zscore, 6),
-            oi_log_delta=round(oi_log_delta, 8),
-            leverage_pressure=round(leverage_pressure, 8),
-            log_return_8h=round(log_return_8h, 8),
-            realized_vol_24h=round(realized_vol_24h, 8),
-            data_quality_score=1.0,
-        ))
+        vectors.append(
+            FeatureVector(
+                timestamp_exchange_ms=ts,
+                asset=asset,
+                funding_rate_raw=round(funding_rates[i], 8),
+                oi_notional_usd=round(oi_curr, 2),
+                spot_close=round(spot_curr, 4),
+                funding_zscore=round(funding_zscore, 6),
+                oi_log_delta=round(oi_log_delta, 8),
+                leverage_pressure=round(leverage_pressure, 8),
+                log_return_8h=round(log_return_8h, 8),
+                realized_vol_24h=round(realized_vol_24h, 8),
+                data_quality_score=1.0,
+            )
+        )
 
     if skipped:
         logger.warning(
             "feature_builder [%s]: %d/%d timestamps descartados por dados ausentes",
-            asset, skipped, n,
+            asset,
+            skipped,
+            n,
         )
 
-    logger.info(
-        "feature_builder [%s]: %d FeatureVectors construídos", asset, len(vectors)
-    )
+    logger.info("feature_builder [%s]: %d FeatureVectors construídos", asset, len(vectors))
     return vectors
 
 
 # ------------------------------------------------------------------ #
 # Helpers para construção de índices                                  #
 # ------------------------------------------------------------------ #
+
 
 def build_oi_index(oi_records) -> dict[int, float]:
     """Constrói índice {timestamp_ms: oi_notional_usd} de OIRecord[]."""

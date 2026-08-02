@@ -40,3 +40,5 @@ causal por `predict_proba`/suavização, o teste de invariância falha — como 
 **Consequência**: o Risco nº 1 da matriz passa de "Alta prob. / Crítico" para
 **fechado para a decodificação do RegimeEngine** — vereditos do walk-forward da V3
 não estão invalidados por look-ahead de regime.
+
+

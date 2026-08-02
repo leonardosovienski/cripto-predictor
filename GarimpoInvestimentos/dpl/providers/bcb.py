@@ -8,9 +8,10 @@ retry/backoff) e, opcionalmente, um CircuitBreaker. Modela point-in-time:
   - vintage        : instante da coleta — distingue revisões (mesmo reference_date,
                      valor diferente coletado depois).
 """
+
 from __future__ import annotations
 
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
 from predictor_core.net import get_http_client, with_retry
 
@@ -23,8 +24,14 @@ _BASE = "https://api.bcb.gov.br/dados/serie/bcdata.sgs.{code}/dados/ultimos/{n}"
 class BCBProvider(SignalProvider):
     """Um provider por série SGS. `name` é o rótulo da feature (ex.: 'selic')."""
 
-    def __init__(self, series_code: int, name: str, *, publish_lag_days: int = 1,
-                 breaker: CircuitBreaker | None = None):
+    def __init__(
+        self,
+        series_code: int,
+        name: str,
+        *,
+        publish_lag_days: int = 1,
+        breaker: CircuitBreaker | None = None,
+    ):
         self.series_code = series_code
         self.name = name
         self._lag = timedelta(days=publish_lag_days)
@@ -38,11 +45,12 @@ class BCBProvider(SignalProvider):
             resp.raise_for_status()
             return resp.json()
 
-    async def fetch(self, limit: int = 30, *, collected_at: datetime | None = None
-                    ) -> list[SignalPoint]:
+    async def fetch(
+        self, limit: int = 30, *, collected_at: datetime | None = None
+    ) -> list[SignalPoint]:
         if self._breaker is not None and not self._breaker.allow():
             raise CircuitOpenError(f"bcb[{self.name}]: circuito aberto")
-        vintage = collected_at or datetime.now(timezone.utc)
+        vintage = collected_at or datetime.now(UTC)
         try:
             rows = await self._get(limit)
         except Exception:
@@ -54,12 +62,18 @@ class BCBProvider(SignalProvider):
 
         points = []
         for item in rows:
-            ref = datetime.strptime(item["data"], "%d/%m/%Y").replace(tzinfo=timezone.utc)
-            points.append(SignalPoint(
-                name=self.name, timestamp=ref, value=float(item["valor"]),
-                source="bcb_sgs", published_at=ref + self._lag,
-                reference_date=ref, vintage=vintage,
-            ))
+            ref = datetime.strptime(item["data"], "%d/%m/%Y").replace(tzinfo=UTC)
+            points.append(
+                SignalPoint(
+                    name=self.name,
+                    timestamp=ref,
+                    value=float(item["valor"]),
+                    source="bcb_sgs",
+                    published_at=ref + self._lag,
+                    reference_date=ref,
+                    vintage=vintage,
+                )
+            )
         if not points:
             raise RuntimeError(f"bcb[{self.name}]: resposta vazia")
         return points

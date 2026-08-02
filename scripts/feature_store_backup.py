@@ -4,18 +4,18 @@ O snapshot usa ``sqlite3.Connection.backup`` para permanecer consistente com
 WAL e escritores concorrentes. O restore exige uma raiz inexistente e nunca
 substitui ``output/feature_store.db`` de producao.
 """
+
 from __future__ import annotations
 
 import argparse
-from datetime import datetime, timezone
 import hashlib
 import json
-from pathlib import Path
 import shutil
 import sqlite3
-from typing import Any
 import uuid
-
+from datetime import UTC, datetime
+from pathlib import Path
+from typing import Any
 
 ROOT = Path(__file__).resolve().parent.parent
 DEFAULT_DATABASE = ROOT / "output" / "feature_store.db"
@@ -38,8 +38,7 @@ def _sha256(path: Path) -> str:
 
 def _integrity_check(path: Path) -> None:
     try:
-        connection = sqlite3.connect(
-            path.resolve().as_uri() + "?mode=ro&immutable=1", uri=True)
+        connection = sqlite3.connect(path.resolve().as_uri() + "?mode=ro&immutable=1", uri=True)
         try:
             result = connection.execute("PRAGMA integrity_check").fetchone()
         finally:
@@ -73,7 +72,7 @@ def create_backup(destination: Path, *, database: Path = DEFAULT_DATABASE) -> Pa
         _integrity_check(snapshot)
         manifest: dict[str, Any] = {
             "schema_version": SCHEMA_VERSION,
-            "created_at_utc": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+            "created_at_utc": datetime.now(UTC).isoformat(timespec="seconds"),
             "database": DATABASE_NAME,
             "sha256": _sha256(snapshot),
             "size_bytes": snapshot.stat().st_size,
@@ -117,7 +116,8 @@ def restore_backup(backup: Path, destination_root: Path) -> Path:
     if destination_root.exists():
         raise BackupError(f"raiz de restauracao ja existe: {destination_root}")
     temporary = destination_root.with_name(
-        f".{destination_root.name}.{uuid.uuid4().hex}.restore.tmp")
+        f".{destination_root.name}.{uuid.uuid4().hex}.restore.tmp"
+    )
     output = temporary / "output"
     try:
         output.mkdir(parents=True)
@@ -147,7 +147,10 @@ def main(argv: list[str] | None = None) -> int:
         if args.command == "create":
             result = {"backup": str(create_backup(args.output, database=args.database))}
         elif args.command == "verify":
-            result = {"verified": str(args.backup.resolve()), "manifest": verify_backup(args.backup)}
+            result = {
+                "verified": str(args.backup.resolve()),
+                "manifest": verify_backup(args.backup),
+            }
         else:
             result = {"restored": str(restore_backup(args.backup, args.destination))}
     except (BackupError, OSError, sqlite3.Error) as exc:

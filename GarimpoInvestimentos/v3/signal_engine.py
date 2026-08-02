@@ -33,13 +33,13 @@ CONTRATO DE SAÍDA (SignalRecord):
     Serializado como JSONL via predictor_core.obs.emit_event.
     O campo features_used garante rastreabilidade completa ("Por que abriu às 14:32?").
 """
+
 import json
 import logging
 import uuid
 from dataclasses import asdict, dataclass
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Optional
 
 from predictor_core.obs import emit_event
 
@@ -52,15 +52,16 @@ logger = logging.getLogger(__name__)
 # Parâmetros do sinal (tunar SOMENTE no in-sample do WFA)            #
 # ------------------------------------------------------------------ #
 
-_FR_ZSCORE_THRESHOLD = 2.0      # |z| > 2.0 → sinal ativo
-_FR_ZSCORE_MAX = 4.0            # normalização do strength
-_MIN_DATA_QUALITY = 0.5         # abaixo disso → FLAT obrigatório
-_MIN_REGIME_CONFIDENCE = 0.60   # P(estado) < 0.60 → não gera sinal
+_FR_ZSCORE_THRESHOLD = 2.0  # |z| > 2.0 → sinal ativo
+_FR_ZSCORE_MAX = 4.0  # normalização do strength
+_MIN_DATA_QUALITY = 0.5  # abaixo disso → FLAT obrigatório
+_MIN_REGIME_CONFIDENCE = 0.60  # P(estado) < 0.60 → não gera sinal
 
 
 # ------------------------------------------------------------------ #
 # Contrato de sinal                                                   #
 # ------------------------------------------------------------------ #
+
 
 @dataclass
 class SignalRecord:
@@ -71,29 +72,30 @@ class SignalRecord:
     engine_id: hash do engine + versão dos parâmetros para reprodutibilidade.
     features_used: vetor exato que gerou o sinal (replay hermético).
     """
+
     schema_version: str
     event_id: str
     timestamp_exchange_ms: int
-    timestamp_signal_ms: int        # quando o sinal foi gerado (≥ exchange_ms)
+    timestamp_signal_ms: int  # quando o sinal foi gerado (≥ exchange_ms)
     asset: str
     engine_id: str
 
     # Regime
     regime_state: str
-    regime_confidence: float        # P(regime_state | x_{0:t})
+    regime_confidence: float  # P(regime_state | x_{0:t})
     regime_entropy: float
     regime_is_uncertain: bool
 
     # Sinal
-    direction: int                  # -1 (short) / 0 (flat) / +1 (long)
-    strength: float                 # [0, 1] — proporcional à convicção
-    active: bool                    # False = sem sinal / dados degradados
-    reason: str                     # legível: "long_squeeze_risk" etc.
-    horizon_hours: int              # horizonte esperado do edge (8h/24h/48h)
+    direction: int  # -1 (short) / 0 (flat) / +1 (long)
+    strength: float  # [0, 1] — proporcional à convicção
+    active: bool  # False = sem sinal / dados degradados
+    reason: str  # legível: "long_squeeze_risk" etc.
+    horizon_hours: int  # horizonte esperado do edge (8h/24h/48h)
 
     # Infraestrutura
     data_quality_score: float
-    operational_state: str          # "HEALTHY" / "DEGRADED" / "CRITICAL"
+    operational_state: str  # "HEALTHY" / "DEGRADED" / "CRITICAL"
 
     # Auditoria completa
     features_used: dict
@@ -106,6 +108,7 @@ _SCHEMA_VERSION = "v3.1.0"
 # ------------------------------------------------------------------ #
 # Gerador de sinal                                                    #
 # ------------------------------------------------------------------ #
+
 
 def generate_signal(
     fv: FeatureVector,
@@ -122,19 +125,23 @@ def generate_signal(
     4. Condições de sinal: short ou long se atendidas
     5. Caso contrário → FLAT
     """
-    now_ms = int(datetime.now(timezone.utc).timestamp() * 1000)
+    now_ms = int(datetime.now(UTC).timestamp() * 1000)
 
     # Estado operacional propagado
     if fv.data_quality_score < _MIN_DATA_QUALITY:
         return _flat(
-            fv, regime, now_ms,
+            fv,
+            regime,
+            now_ms,
             reason="data_degraded",
             operational_state="CRITICAL",
         )
 
     if regime.is_uncertain:
         return _flat(
-            fv, regime, now_ms,
+            fv,
+            regime,
+            now_ms,
             reason="regime_uncertain",
             operational_state="DEGRADED",
         )
@@ -142,7 +149,9 @@ def generate_signal(
     regime_confidence = regime.hmm_posterior[regime.hmm_state]
     if regime_confidence < _MIN_REGIME_CONFIDENCE:
         return _flat(
-            fv, regime, now_ms,
+            fv,
+            regime,
+            now_ms,
             reason="regime_low_confidence",
             operational_state="DEGRADED",
         )
@@ -153,13 +162,11 @@ def generate_signal(
     strength = round(intensity * regime_confidence, 4)
 
     # Sinal SHORT: longs overcrowded
-    if (
-        fr_z >= _FR_ZSCORE_THRESHOLD
-        and oi_d > 0
-        and regime.hmm_state_label in ("bull", "sideways")
-    ):
+    if fr_z >= _FR_ZSCORE_THRESHOLD and oi_d > 0 and regime.hmm_state_label in ("bull", "sideways"):
         return _signal(
-            fv, regime, now_ms,
+            fv,
+            regime,
+            now_ms,
             direction=-1,
             strength=strength,
             reason="long_squeeze_risk",
@@ -173,7 +180,9 @@ def generate_signal(
         and regime.hmm_state_label in ("bear", "sideways")
     ):
         return _signal(
-            fv, regime, now_ms,
+            fv,
+            regime,
+            now_ms,
             direction=+1,
             strength=strength,
             reason="short_squeeze_risk",
@@ -194,7 +203,9 @@ def _signal(
     horizon_hours: int,
 ) -> SignalRecord:
     return _build(
-        fv, regime, now_ms,
+        fv,
+        regime,
+        now_ms,
         direction=direction,
         strength=strength,
         active=True,
@@ -212,7 +223,9 @@ def _flat(
     operational_state: str = "HEALTHY",
 ) -> SignalRecord:
     return _build(
-        fv, regime, now_ms,
+        fv,
+        regime,
+        now_ms,
         direction=0,
         strength=0.0,
         active=False,
@@ -267,6 +280,7 @@ def _build(
 # ------------------------------------------------------------------ #
 # Persistência — JSONL via predictor_core.obs                        #
 # ------------------------------------------------------------------ #
+
 
 def emit_signal(record: SignalRecord) -> None:
     """

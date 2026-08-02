@@ -13,6 +13,7 @@ Roda com numpy puro (engine stub com parâmetros fixos); o teste com modelo REAL
 treinado (Baum-Welch) roda onde hmmlearn/sklearn existem (.venv_v3) e é skipped
 nos ambientes leves — mesmo padrão do restante da suíte V3.
 """
+
 import types
 
 import pytest
@@ -34,16 +35,14 @@ class _IdScaler:
 def _engine_stub():
     """Engine com parâmetros HMM fixos e válidos — isola a DECODIFICAÇÃO
     (objeto da auditoria) do treinamento (coberto no teste com hmmlearn)."""
-    transmat = np.array([[0.90, 0.05, 0.05],
-                         [0.05, 0.90, 0.05],
-                         [0.05, 0.05, 0.90]])
+    transmat = np.array([[0.90, 0.05, 0.05], [0.05, 0.90, 0.05], [0.05, 0.05, 0.90]])
     means = np.array([[0.8, -0.2], [-0.8, 0.6], [0.0, 0.0]])
     covars = np.stack([np.eye(2) * s for s in (0.5, 0.7, 0.3)])
     eng = RegimeEngine()
     eng._scaler = _IdScaler()  # pyright: ignore[reportAttributeAccessIssue] — duck-typed test double
     eng._model = types.SimpleNamespace(
-        startprob_=np.array([1 / 3] * 3),
-        transmat_=transmat, means_=means, covars_=covars)
+        startprob_=np.array([1 / 3] * 3), transmat_=transmat, means_=means, covars_=covars
+    )
     eng._state_map = {0: "bull", 1: "bear", 2: "sideways"}
     return eng
 
@@ -66,8 +65,8 @@ def test_regime_em_t_invariante_a_dados_futuros():
         parcial = eng.predict_series(rets[:cut], vols[:cut])
         for t in range(cut):
             assert parcial[t].hmm_posterior == full[t].hmm_posterior, (
-                f"LOOKAHEAD: posterior em t={t} mudou quando a série "
-                f"foi estendida além de {cut}")
+                f"LOOKAHEAD: posterior em t={t} mudou quando a série foi estendida além de {cut}"
+            )
             assert parcial[t].hmm_state == full[t].hmm_state
 
 
@@ -98,7 +97,8 @@ def test_contraprova_suavizado_viola_a_invariancia():
     diff = np.abs(smoothed(X)[:cut] - smoothed(X[:cut])).max()
     assert diff > 1e-6, (
         "o suavizado deveria depender do futuro — se não depende, o teste de "
-        "invariância não teria poder para detectar a regressão")
+        "invariância não teria poder para detectar a regressão"
+    )
 
 
 def test_invariancia_com_modelo_real_treinado():
@@ -115,7 +115,7 @@ def test_invariancia_com_modelo_real_treinado():
         vols += np.abs(rng.normal(sigma, 0.2, 75)).tolist()
 
     eng = RegimeEngine()
-    eng.fit(rets[:150], vols[:150])          # treino SÓ no IS (como o backtest_v3)
+    eng.fit(rets[:150], vols[:150])  # treino SÓ no IS (como o backtest_v3)
     full = eng.predict_series(rets, vols)
     cut = 220
     parcial = eng.predict_series(rets[:cut], vols[:cut])

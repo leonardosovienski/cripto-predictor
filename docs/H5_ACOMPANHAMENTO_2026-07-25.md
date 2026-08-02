@@ -127,3 +127,5 @@ palpite.
 Esta nota nao executa gate, nao recalcula ou persiste metricas, nao modifica
 `trials.json`, nao estende H5 e nao ativa H6. A rotacao da credencial SerpAPI
 continua `BLOCKED_PENDING_SECRET_ROTATION` e depende de evidencia humana.
+
+

@@ -1,19 +1,24 @@
+"""Configurable runtime paths; defaults never write inside an installed wheel."""
+
+from __future__ import annotations
+
 import os
 from pathlib import Path
 
-# Raiz do projeto = a pasta que contém o pacote GarimpoInvestimentos.
-# Resolvido a partir deste arquivo (não do diretório de onde se executa),
-# para que output/ e logs/ caiam sempre no mesmo lugar.
-ROOT = Path(__file__).resolve().parents[2]
+from platformdirs import user_cache_path, user_data_path, user_log_path
 
-# Permite sobrescrever o diretório de saída (usado pela flag --output-dir,
-# que seta GARIMPO_OUTPUT_DIR antes de importar este módulo).
-OUTPUT_DIR = Path(os.getenv("GARIMPO_OUTPUT_DIR") or (ROOT / "output"))
-LOGS_DIR = Path(os.getenv("GARIMPO_LOGS_DIR") or (ROOT / "logs"))
 
-OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-LOGS_DIR.mkdir(parents=True, exist_ok=True)
+def _configured(primary: str, legacy: str, default: Path) -> Path:
+    raw = os.getenv(primary) or os.getenv(legacy)
+    return Path(raw).expanduser().resolve() if raw else default.resolve()
 
-# Feature Store: repositório canônico de dados E do histórico de previsões
-# (passo 4 — o garimpo_historico.csv é legado, absorvido por migração única).
+
+DATA_DIR = _configured("DATA_DIR", "GARIMPO_DATA_DIR", user_data_path("cripto-predictor"))
+OUTPUT_DIR = _configured("OUTPUT_DIR", "GARIMPO_OUTPUT_DIR", DATA_DIR / "output")
+CACHE_DIR = _configured("CACHE_DIR", "GARIMPO_CACHE_DIR", user_cache_path("cripto-predictor"))
+LOGS_DIR = _configured("LOGS_DIR", "GARIMPO_LOGS_DIR", user_log_path("cripto-predictor"))
+
+for directory in (DATA_DIR, OUTPUT_DIR, CACHE_DIR, LOGS_DIR):
+    directory.mkdir(parents=True, exist_ok=True)
+
 FEATURE_STORE_DB = OUTPUT_DIR / "feature_store.db"

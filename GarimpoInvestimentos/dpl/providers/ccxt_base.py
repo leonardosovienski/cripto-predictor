@@ -5,9 +5,10 @@ exchange + o symbol_map. Binance e Kraken (Fase 3) são subclasses triviais. O C
 é encapsulado AQUI: o domínio nunca o importa. Import lazy → o pacote dpl é
 importável sem ccxt instalado (testes injetam provedores fake).
 """
+
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from GarimpoInvestimentos.dpl.contracts import DataProvider, MarketDataPoint
 from GarimpoInvestimentos.dpl.providers._validation import require_finite
@@ -57,15 +58,26 @@ class CCXTProvider(DataProvider):
                 pass
         points = []
         for ts_ms, o, h, l, c, v in rows:
-            ts = datetime.fromtimestamp(ts_ms / 1000, tz=timezone.utc)
-            kw = {"open": float(o), "high": float(h), "low": float(l),
-                  "close": float(c), "volume": float(v)}
+            ts = datetime.fromtimestamp(ts_ms / 1000, tz=UTC)
+            kw = {
+                "open": float(o),
+                "high": float(h),
+                "low": float(l),
+                "close": float(c),
+                "volume": float(v),
+            }
             for field, val in kw.items():
                 require_finite(val, field=field, provider=self.exchange_id, symbol=symbol)
-            points.append(MarketDataPoint(
-                symbol=symbol, timestamp=ts, source=self.name, interval=interval,
-                published_at=ts, **kw,
-            ))
+            points.append(
+                MarketDataPoint(
+                    symbol=symbol,
+                    timestamp=ts,
+                    source=self.name,
+                    interval=interval,
+                    published_at=ts,
+                    **kw,
+                )
+            )
         if not points:
             raise RuntimeError(f"{self.exchange_id}: resposta vazia para {pair}")
         return points

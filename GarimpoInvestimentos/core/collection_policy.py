@@ -1,4 +1,5 @@
 """Identidade canônica da política que selecionou uma previsão."""
+
 import json
 
 from GarimpoInvestimentos.config import settings

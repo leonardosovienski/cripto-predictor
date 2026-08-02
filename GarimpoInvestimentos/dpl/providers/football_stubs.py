@@ -7,6 +7,7 @@ emitiria MatchObservation (estatísticas/odds/escalações/clima) com published_
 correto: pré-jogo (odds, escalação provável, clima previsto) < kickoff; pós-jogo
 (estatísticas finais) > kickoff.
 """
+
 from __future__ import annotations
 
 from GarimpoInvestimentos.dpl.entity_mapper import EntityMapper
@@ -22,24 +23,29 @@ class _NetworkMatchProvider(MatchDataProvider):
     async def fetch_matches(self, limit: int = 100) -> list[MatchObservation]:
         raise NotImplementedError(
             f"{self.name}: provider de rede — implementar quando wc-predictor-v2 "
-            "sair do PARKED (Fase 5).")
+            "sair do PARKED (Fase 5)."
+        )
 
 
 class SofascoreProvider(_NetworkMatchProvider):
     """Estatísticas detalhadas, escalações, odds (pré e pós-jogo)."""
+
     name = "sofascore"
 
 
 class FBrefProvider(_NetworkMatchProvider):
     """Estatísticas avançadas (xG, posse, passes) — tipicamente pós-jogo."""
+
     name = "fbref"
 
 
 class OddsProvider(_NetworkMatchProvider):
     """Odds de casas de apostas — pré-jogo (published_at < kickoff)."""
+
     name = "odds"
 
 
 class WeatherProvider(_NetworkMatchProvider):
     """Clima previsto para o estádio — pré-jogo."""
+
     name = "weather"

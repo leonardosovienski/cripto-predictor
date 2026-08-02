@@ -6,6 +6,7 @@ informação pública ANTES do kickoff". Este módulo adiciona esse 2º modo SEM
 engine de séries (ver ADR-012). Continua desenho/piloto — o domínio wc-predictor-v2
 segue PARKED; o código aqui é testável offline.
 """
+
 from __future__ import annotations
 
 import abc
@@ -22,10 +23,11 @@ NaN = float("nan")
 class MatchObservation:
     """Observação ligada a uma partida. `published_at` < kickoff = pré-jogo (pode
     alimentar a previsão); > kickoff = pós-jogo (só alimenta partidas futuras)."""
+
     source: str
     match_id: str
     kickoff: datetime
-    home_id: str       # canonical_id (via EntityMapper)
+    home_id: str  # canonical_id (via EntityMapper)
     away_id: str
     published_at: datetime
     payload: dict = field(default_factory=dict)
@@ -65,19 +67,27 @@ class EventAlignmentEngine:
 
         rows = []
         for m in sorted(matches, key=lambda x: x.kickoff):
-            row = {"match_id": m.match_id, "kickoff": m.kickoff,
-                   "home_id": m.home_id, "away_id": m.away_id}
+            row = {
+                "match_id": m.match_id,
+                "kickoff": m.kickoff,
+                "home_id": m.home_id,
+                "away_id": m.away_id,
+            }
             for name, (s_sorted, pub_keys) in prepared.items():
-                row[name] = self._asof(s_sorted, pub_keys, m.kickoff,
-                                       max_staleness.get(name), inclusive)
+                row[name] = self._asof(
+                    s_sorted, pub_keys, m.kickoff, max_staleness.get(name), inclusive
+                )
             rows.append(row)
         return rows
 
     @staticmethod
     def _asof(s_sorted, pub_keys, kickoff, max_staleness, inclusive):
         # nº de sinais publicados antes (ou até) o kickoff
-        idx = (bisect.bisect_right(pub_keys, kickoff) if inclusive
-               else bisect.bisect_left(pub_keys, kickoff))
+        idx = (
+            bisect.bisect_right(pub_keys, kickoff)
+            if inclusive
+            else bisect.bisect_left(pub_keys, kickoff)
+        )
         if idx == 0:
             return NaN
         sig = s_sorted[idx - 1]

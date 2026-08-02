@@ -17,6 +17,7 @@ Contrato de saída (FundingRecord):
     funding_rate       float ← decimal (ex.: 0.0001 = 0.01%)
     mark_price         float ← preço mark no momento do funding
 """
+
 import asyncio
 import csv
 import logging
@@ -33,12 +34,13 @@ logger = logging.getLogger(__name__)
 _FUTURES_BASE = "https://fapi.binance.com"
 _FUNDING_PATH = "/fapi/v1/fundingRate"
 _MAX_PER_PAGE = 1000
-_PAGE_SLEEP_S = 0.5   # 500ms entre páginas — Binance free tier (2 400 req/min para dados públicos)
+_PAGE_SLEEP_S = 0.5  # 500ms entre páginas — Binance free tier (2 400 req/min para dados públicos)
 
 
 # ------------------------------------------------------------------ #
 # Contrato de dado                                                     #
 # ------------------------------------------------------------------ #
+
 
 @dataclass(frozen=True)
 class FundingRecord:
@@ -51,6 +53,7 @@ class FundingRecord:
 # ------------------------------------------------------------------ #
 # Coletor                                                              #
 # ------------------------------------------------------------------ #
+
 
 class FundingCollector:
     """
@@ -126,7 +129,7 @@ class FundingCollector:
                 if last_ts >= end_ms or len(page) < _MAX_PER_PAGE:
                     break
 
-                cursor = last_ts + 1           # próxima página começa depois do último registro
+                cursor = last_ts + 1  # próxima página começa depois do último registro
                 await asyncio.sleep(_PAGE_SLEEP_S)
 
         emit_event(
@@ -204,16 +207,16 @@ def save_funding_csv(records: list[FundingRecord], path: Path) -> int:
         if write_header:
             writer.writeheader()
         for r in new_records:
-            writer.writerow({
-                "symbol": r.symbol,
-                "funding_time_ms": r.funding_time_ms,
-                "funding_rate": r.funding_rate,
-                "mark_price": r.mark_price,
-            })
+            writer.writerow(
+                {
+                    "symbol": r.symbol,
+                    "funding_time_ms": r.funding_time_ms,
+                    "funding_rate": r.funding_rate,
+                    "mark_price": r.mark_price,
+                }
+            )
 
-    logger.info(
-        "funding_collector: %d novos registros → %s", len(new_records), path
-    )
+    logger.info("funding_collector: %d novos registros → %s", len(new_records), path)
     return len(new_records)
 
 
@@ -224,10 +227,12 @@ def load_funding_csv(path: Path) -> list[FundingRecord]:
     rows = []
     with open(path, newline="", encoding="utf-8-sig") as f:
         for row in csv.DictReader(f):
-            rows.append(FundingRecord(
-                symbol=row["symbol"],
-                funding_time_ms=int(row["funding_time_ms"]),
-                funding_rate=float(row["funding_rate"]),
-                mark_price=float(row["mark_price"]),
-            ))
+            rows.append(
+                FundingRecord(
+                    symbol=row["symbol"],
+                    funding_time_ms=int(row["funding_time_ms"]),
+                    funding_rate=float(row["funding_rate"]),
+                    mark_price=float(row["mark_price"]),
+                )
+            )
     return sorted(rows, key=lambda r: r.funding_time_ms)

@@ -17,14 +17,13 @@ qualquer fracao homologada.
 Uso:
     python scripts/psr_nonoverlap.py [--symbol BTCUSDT] [--threshold 0.80]
 """
+
 import argparse
 import json
 import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-sys.path.insert(0, str(ROOT / "vendor"))
-sys.path.insert(0, str(ROOT))
 
 from predictor_core.stats import probabilistic_sharpe_ratio  # noqa: E402
 
@@ -42,9 +41,11 @@ def main() -> int:
     data = json.loads(path.read_text(encoding="utf-8"))
     net = data["net"]
 
-    print(f"C2 - PSR sem sobreposicao [{args.symbol}]  "
-          f"(serie salva: kelly={data['kelly_fraction']}, "
-          f"fee={data['taker_fee_bps']}bps, n={len(net)})")
+    print(
+        f"C2 - PSR sem sobreposicao [{args.symbol}]  "
+        f"(serie salva: kelly={data['kelly_fraction']}, "
+        f"fee={data['taker_fee_bps']}bps, n={len(net)})"
+    )
     print(f"{'serie':<22}{'n':>6}{'n ativos':>10}{'PSR':>8}  veredicto (>= {args.threshold})")
 
     def linha(nome, serie):
@@ -58,18 +59,24 @@ def main() -> int:
     subs = [linha(f"offset {off} (24h puros)", net[off::3]) for off in range(3)]
 
     aprovadas = sum(1 for p in subs if p >= args.threshold)
-    print(f"\noriginal: {original:.3f} | sub-series: "
-          + ", ".join(f"{p:.3f}" for p in subs)
-          + f" | {aprovadas}/3 aprovadas")
+    print(
+        f"\noriginal: {original:.3f} | sub-series: "
+        + ", ".join(f"{p:.3f}" for p in subs)
+        + f" | {aprovadas}/3 aprovadas"
+    )
     if aprovadas == 3:
         print("VEREDICTO C2: GO SOBREVIVE sem sobreposicao.")
     elif aprovadas == 0:
-        print("VEREDICTO C2: GO NAO sobrevive - PSR original estava inflado "
-              "pela sobreposicao. Rediscutir a decisao de capital.")
+        print(
+            "VEREDICTO C2: GO NAO sobrevive - PSR original estava inflado "
+            "pela sobreposicao. Rediscutir a decisao de capital."
+        )
     else:
-        print("VEREDICTO C2: AMBIGUO - parte das sub-series reprova. Tratar "
-              "como evidencia enfraquecida; nao promover a capital real sem "
-              "investigacao (ver tambem IC do Spearman, que e imune).")
+        print(
+            "VEREDICTO C2: AMBIGUO - parte das sub-series reprova. Tratar "
+            "como evidencia enfraquecida; nao promover a capital real sem "
+            "investigacao (ver tambem IC do Spearman, que e imune)."
+        )
     return 0
 
 

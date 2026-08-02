@@ -3,6 +3,7 @@
 Roda sem .env: importa só core.stats (puro, sem settings/rede). Invoque de
 C:\\Claude\\previsao-cripto:  py -3.12 -m pytest tests/ -q
 """
+
 import random
 
 from predictor_core.measurement.bootstrap import bootstrap_ci
@@ -44,7 +45,7 @@ def test_spearman_ci_detects_real_signal():
     pairs = []
     for _ in range(80):
         s = rng.uniform(0, 100)
-        ret = 0.1 * (s - 50) + rng.gauss(0, 2)   # retorno cresce com o score
+        ret = 0.1 * (s - 50) + rng.gauss(0, 2)  # retorno cresce com o score
         pairs.append((s, ret))
     rho, lo, hi = spearman_block_ci(pairs, seed=7)
     assert rho is not None and lo is not None and hi is not None

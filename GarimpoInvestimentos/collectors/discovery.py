@@ -9,6 +9,7 @@ A pré-seleção por momentum enviesa o histórico coletado (só "vencedores rec
 entram) — o backtest da Fase 2 mede o edge CONDICIONAL a essa pré-seleção, que é
 exatamente o processo que rodaria em produção.
 """
+
 from predictor_core.net import get_http_client, with_retry
 
 from GarimpoInvestimentos.dpl.providers.coingecko import coingecko_auth_headers
@@ -16,14 +17,55 @@ from GarimpoInvestimentos.dpl.providers.coingecko import coingecko_auth_headers
 # Símbolos que nunca são "oportunidade": paridade com fiat (stable) ou espelho de
 # outro ativo (wrapped/staked — redundante com o subjacente, que já é elegível).
 STABLECOIN_SYMBOLS = {
-    "usdt", "usdc", "usds", "usde", "dai", "fdusd", "pyusd", "tusd", "usdd",
-    "usdp", "gusd", "frax", "lusd", "susd", "crvusd", "busd", "usd1", "usdt0",
-    "usdtb", "rlusd", "eurc", "eurt", "usdy", "usd0",
+    "usdt",
+    "usdc",
+    "usds",
+    "usde",
+    "dai",
+    "fdusd",
+    "pyusd",
+    "tusd",
+    "usdd",
+    "usdp",
+    "gusd",
+    "frax",
+    "lusd",
+    "susd",
+    "crvusd",
+    "busd",
+    "usd1",
+    "usdt0",
+    "usdtb",
+    "rlusd",
+    "eurc",
+    "eurt",
+    "usdy",
+    "usd0",
 }
 WRAPPED_SYMBOLS = {
-    "wbtc", "weth", "wbnb", "steth", "wsteth", "reth", "cbeth", "cbbtc", "weeth",
-    "wbeth", "rseth", "ezeth", "meth", "lbtc", "tbtc", "solvbtc", "msol",
-    "jitosol", "bnsol", "jupsol", "stsol", "wpol", "wtrx",
+    "wbtc",
+    "weth",
+    "wbnb",
+    "steth",
+    "wsteth",
+    "reth",
+    "cbeth",
+    "cbbtc",
+    "weeth",
+    "wbeth",
+    "rseth",
+    "ezeth",
+    "meth",
+    "lbtc",
+    "tbtc",
+    "solvbtc",
+    "msol",
+    "jitosol",
+    "bnsol",
+    "jupsol",
+    "stsol",
+    "wpol",
+    "wtrx",
 }
 
 
@@ -105,5 +147,6 @@ async def discover_assets(top_n: int = 10, min_volume_usd: float = 10_000_000.0)
         trending = await _fetch_trending_ids()
     except Exception:
         trending = ()
-    return rank_candidates(markets, top_n=top_n, min_volume_usd=min_volume_usd,
-                           trending_ids=trending)
+    return rank_candidates(
+        markets, top_n=top_n, min_volume_usd=min_volume_usd, trending_ids=trending
+    )

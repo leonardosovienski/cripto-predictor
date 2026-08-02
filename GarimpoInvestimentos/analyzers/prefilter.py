@@ -4,6 +4,7 @@ O filtro não calcula nem altera o score: apenas decide se um ativo recebe chama
 LLM. Ele usa somente features já presentes na Feature Store, portanto não introduz
 rede nem look-ahead. Ainda assim muda a população do experimento e é opt-in.
 """
+
 from dataclasses import dataclass
 
 from GarimpoInvestimentos.analyzers.score_engine import technical_direction

@@ -15,6 +15,7 @@ Contrato de saída (KlineRecord):
     close       float
     volume      float
 """
+
 import asyncio
 import csv
 import logging
@@ -39,10 +40,11 @@ _PAGE_SLEEP_S = 0.3
 # Contrato de dado                                                     #
 # ------------------------------------------------------------------ #
 
+
 @dataclass(frozen=True)
 class KlineRecord:
     symbol: str
-    open_ms: int     # open_time — chave canônica
+    open_ms: int  # open_time — chave canônica
     close: float
     volume: float
 
@@ -50,6 +52,7 @@ class KlineRecord:
 # ------------------------------------------------------------------ #
 # Coletor                                                              #
 # ------------------------------------------------------------------ #
+
 
 class SpotCollector:
     """
@@ -82,9 +85,7 @@ class SpotCollector:
                         metrics={"data_quality_score": 0.0},
                         metadata={"collector": "spot", "symbol": self.symbol},
                     )
-                    raise RuntimeError(
-                        f"CircuitBreaker OPEN para spot/{self.symbol}"
-                    )
+                    raise RuntimeError(f"CircuitBreaker OPEN para spot/{self.symbol}")
 
                 try:
                     page = await self._fetch_page(client, cursor, end_ms)
@@ -124,9 +125,7 @@ class SpotCollector:
             metrics={"n_records": len(records)},
             metadata={"symbol": self.symbol, "start_ms": start_ms, "end_ms": end_ms},
         )
-        logger.info(
-            "spot_collector [%s]: %d registros coletados", self.symbol, len(records)
-        )
+        logger.info("spot_collector [%s]: %d registros coletados", self.symbol, len(records))
         return records
 
     @with_retry(attempts=4, base_delay=2.0, max_delay=30.0)
@@ -184,12 +183,14 @@ def save_spot_csv(records: list[KlineRecord], path: Path) -> int:
         if write_header:
             writer.writeheader()
         for r in new_records:
-            writer.writerow({
-                "symbol": r.symbol,
-                "open_ms": r.open_ms,
-                "close": r.close,
-                "volume": r.volume,
-            })
+            writer.writerow(
+                {
+                    "symbol": r.symbol,
+                    "open_ms": r.open_ms,
+                    "close": r.close,
+                    "volume": r.volume,
+                }
+            )
 
     logger.info("spot_collector: %d novos registros → %s", len(new_records), path)
     return len(new_records)
@@ -201,10 +202,12 @@ def load_spot_csv(path: Path) -> list[KlineRecord]:
     rows = []
     with open(path, newline="", encoding="utf-8-sig") as f:
         for row in csv.DictReader(f):
-            rows.append(KlineRecord(
-                symbol=row["symbol"],
-                open_ms=int(row["open_ms"]),
-                close=float(row["close"]),
-                volume=float(row["volume"]),
-            ))
+            rows.append(
+                KlineRecord(
+                    symbol=row["symbol"],
+                    open_ms=int(row["open_ms"]),
+                    close=float(row["close"]),
+                    volume=float(row["volume"]),
+                )
+            )
     return sorted(rows, key=lambda r: r.open_ms)

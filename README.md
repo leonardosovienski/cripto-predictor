@@ -5,7 +5,7 @@
 > Uma credencial (SerpAPI) foi encontrada em texto claro em 5 logs históricos de
 > `logs/garimpo_fase1_*.log`. Estado: `BLOCKED_PENDING_SECRET_ROTATION` — a
 > causa (o wrapper de execução preservava stdout/stderr do processo filho sem
-> redação) já foi corrigida e verificada (`tools/secret_redaction.py`); falta
+> redação) já foi corrigida e verificada (`predictor_ops.redaction`); falta
 > apenas a rotação/revogação humana da chave no provedor e a decisão sobre os
 > logs históricos, ambas de baixa prioridade por decisão explícita do usuário.
 > Ver `SECURITY_INCIDENT_SECRET_ROTATION.md` na raiz do workspace para o
@@ -68,7 +68,7 @@ GarimpoInvestimentos/
 â””â”€â”€ trials.json            â† registro VERSIONADO de tentativas (denominador do DSR)
 tests/                     â† 320 testes verdes (offline, sem chaves; 2 skips opcionais)
 docs/                      â† ADRs e auditorias (ver HANDOFF)
-vendor/predictor_core/     â† nÃºcleo estatÃ­stico vendorizado (NÃƒO editar local)
+wheelhouse/                ← wheels canônicas verificadas das bibliotecas compartilhadas
 ```
 
 O Feature Store ignorado pelo Git possui backup online verificavel e restore
@@ -121,3 +121,7 @@ e fica congelado.
 
 HistÃ³rico completo e decisÃµes: [HANDOFF-2026-07-02.md](HANDOFF-2026-07-02.md) Â·
 era prÃ©-DPL: [HANDOFF.md](HANDOFF.md) Â· conferÃªncia: [docs/CONFERENCIA_GERAL.md](docs/CONFERENCIA_GERAL.md)
+
+# cripto-predictor — modernização portátil
+
+Instalação: `uv sync --locked --extra test`. Extras: `llm`, `v3`, `excel`, `science` e `test`. `predictor-core` e `predictor-ops` são pacotes instalados de wheels verificadas. Linux/container é o runtime principal; `DATA_DIR`, `OUTPUT_DIR` e `CACHE_DIR` são configuráveis. A modernização preserva juiz, partição de providers, features, thresholds, população, trials e estados de capital.

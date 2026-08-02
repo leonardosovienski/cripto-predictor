@@ -1,29 +1,16 @@
 {
   "pythonVersion": "3.13",
-  "pythonPlatform": "Windows",
   "typeCheckingMode": "basic",
-  "include": ["GarimpoInvestimentos", "tests", "scripts"],
-  "exclude": [
-    "vendor",
-    "GarimpoInvestimentos/env",
-    "**/site-packages",
-    "**/node_modules",
-    "**/__pycache__",
-    "**/.*"
+  "include": [
+    "GarimpoInvestimentos/config.py",
+    "GarimpoInvestimentos/contracts.py",
+    "GarimpoInvestimentos/feature_store_health.py",
+    "GarimpoInvestimentos/persistence.py",
+    "GarimpoInvestimentos/plugin.py",
+    "GarimpoInvestimentos/providers",
+    "GarimpoInvestimentos/security",
+    "GarimpoInvestimentos/services/inference.py"
   ],
-  "extraPaths": [".", "GarimpoInvestimentos", "vendor", "vendor/predictor_core"],
-  "venvPath": "GarimpoInvestimentos",
-  "venv": "env",
-  "stubPath": "typings",
-  "reportUnknownParameterType": "none",
-  "reportGeneralTypeIssues": "warning",
-  "reportOptionalMemberAccess": "warning",
-  "reportOptionalSubscript": "warning",
-  "reportPrivateUsage": "warning",
-  "executionEnvironments": [
-    {
-      "root": "tests",
-      "reportPrivateUsage": "none"
-    }
-  ]
+  "exclude": ["**/__pycache__"],
+  "stubPath": "typings"
 }
