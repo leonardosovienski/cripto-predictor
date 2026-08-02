@@ -49,6 +49,7 @@ jobs:
         with:
           python-version: "3.14"
       - run: uv sync --extra test
+      - run: uv build
       - run: uv run pytest -q
 
   all-extras:
@@ -62,6 +63,7 @@ jobs:
         with:
           python-version: "3.13"
       - run: uv sync --locked --all-extras
+      - run: uv build
       - run: uv run coverage run --rcfile=coverage-runtime.ini -m pytest -q
       - run: uv run coverage report --rcfile=coverage-runtime.ini
 
