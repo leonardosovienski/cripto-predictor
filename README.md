@@ -68,8 +68,12 @@ GarimpoInvestimentos/
 â””â”€â”€ trials.json            â† registro VERSIONADO de tentativas (denominador do DSR)
 tests/                     â† 320 testes verdes (offline, sem chaves; 2 skips opcionais)
 docs/                      â† ADRs e auditorias (ver HANDOFF)
-wheelhouse/                ← wheels canônicas verificadas das bibliotecas compartilhadas
 ```
+
+predictor-core/predictor-ops nao sao vendorizados: sao wheels externas resolvidas
+via [tool.uv.sources] a partir das GitHub Releases de core-predictor/tools-predictor,
+com hash fixado em uv.lock.
+
 
 O Feature Store ignorado pelo Git possui backup online verificavel e restore
 nao destrutivo. Procedimento: [docs/BACKUP_RESTORE.md](docs/BACKUP_RESTORE.md).

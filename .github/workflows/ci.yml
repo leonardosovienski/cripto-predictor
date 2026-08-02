@@ -24,13 +24,17 @@ jobs:
       - run: uv run ruff format --check .
       - run: uv run pyright
       - run: uv run python scripts/scan_secrets.py .
-      - run: uv run pytest --cov=GarimpoInvestimentos --cov-report=term-missing
       - run: uv build
+      - run: uv run pytest --cov=GarimpoInvestimentos --cov-report=term-missing
       - name: Contract test installed wheels outside checkout
         shell: bash
         run: |
           python -m venv "$RUNNER_TEMP/wheel-contract"
-          "$RUNNER_TEMP/wheel-contract/bin/pip" install wheelhouse/predictor_core-2.1.0-py3-none-any.whl wheelhouse/predictor_ops-2.0.0-py3-none-any.whl dist/cripto_predictor-1.0.0-py3-none-any.whl
+          "$RUNNER_TEMP/wheel-contract/bin/pip" install --upgrade pip
+          "$RUNNER_TEMP/wheel-contract/bin/pip" install \
+            "predictor-core @ https://github.com/leonardosovienski/core-predictor/releases/download/v2.1.0/predictor_core-2.1.0-py3-none-any.whl" \
+            "predictor-ops @ https://github.com/leonardosovienski/tools-predictor/releases/download/v2.0.1/predictor_ops-2.0.1-py3-none-any.whl" \
+            dist/cripto_predictor-1.0.0-py3-none-any.whl
           cd "$RUNNER_TEMP"
           "$RUNNER_TEMP/wheel-contract/bin/python" "$GITHUB_WORKSPACE/scripts/verify_installed_wheels.py"
 
@@ -72,7 +76,7 @@ jobs:
           output-file: sbom.spdx.json
       - run: docker build --tag cripto-predictor:test .
       - run: docker run --rm --read-only --tmpfs /tmp --cap-drop ALL cripto-predictor:test --help
-      - uses: aquasecurity/trivy-action@0.33.1
+      - uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
         with:
           image-ref: cripto-predictor:test
           severity: CRITICAL,HIGH
