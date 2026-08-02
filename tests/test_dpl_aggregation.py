@@ -2,10 +2,12 @@
 
 Offline e determinístico: provedores fake, relógio injetado no breaker.
 """
+
 import asyncio
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
 import pytest
+from predictor_core.obs import read_events
 
 from GarimpoInvestimentos.dpl import (
     AggregationRouter,
@@ -17,16 +19,23 @@ from GarimpoInvestimentos.dpl import (
     twap,
 )
 from GarimpoInvestimentos.dpl.circuit_breaker import CLOSED, HALF_OPEN, OPEN
-from predictor_core.obs import read_events
 
-UTC = timezone.utc
+UTC = UTC
 
 
 def _pt(day: int, close: float, source: str, vol: float = 10.0) -> MarketDataPoint:
     ts = datetime(2026, 1, day, tzinfo=UTC)
     return MarketDataPoint(
-        symbol="bitcoin", timestamp=ts, open=close, high=close + 1, low=close - 1,
-        close=close, volume=vol, source=source, interval="1d", published_at=ts,
+        symbol="bitcoin",
+        timestamp=ts,
+        open=close,
+        high=close + 1,
+        low=close - 1,
+        close=close,
+        volume=vol,
+        source=source,
+        interval="1d",
+        published_at=ts,
     )
 
 
@@ -55,6 +64,7 @@ class _Fail(DataProvider):
 
 # --- Agregação pura ----------------------------------------------------------
 
+
 def test_consensus_median_funde_por_timestamp():
     a = [_pt(1, 100, "binance"), _pt(2, 200, "binance")]
     b = [_pt(1, 110, "kraken"), _pt(2, 190, "kraken")]
@@ -67,9 +77,18 @@ def test_consensus_median_funde_por_timestamp():
 
 def test_consensus_median_published_at_eh_o_maximo():
     p1 = _pt(1, 100, "binance")
-    p2 = MarketDataPoint(symbol="bitcoin", timestamp=p1.timestamp, open=100, high=101,
-                         low=99, close=110, volume=5, source="kraken", interval="1d",
-                         published_at=p1.timestamp + timedelta(hours=2))
+    p2 = MarketDataPoint(
+        symbol="bitcoin",
+        timestamp=p1.timestamp,
+        open=100,
+        high=101,
+        low=99,
+        close=110,
+        volume=5,
+        source="kraken",
+        interval="1d",
+        published_at=p1.timestamp + timedelta(hours=2),
+    )
     fused = consensus_median([[p1], [p2]])
     # consolidado só disponível quando a ÚLTIMA fonte publicou (anti-lookahead)
     assert fused[0].published_at == p1.timestamp + timedelta(hours=2)
@@ -82,10 +101,12 @@ def test_twap_serie_uniforme_eh_media():
 
 # --- AggregationRouter -------------------------------------------------------
 
+
 def test_aggregation_router_funde_sobreviventes(tmp_path, monkeypatch):
     monkeypatch.setenv("PREDICTOR_EVENTS_PATH", str(tmp_path / "ev.jsonl"))
-    r = AggregationRouter([_Ok("binance", {1: 100}), _Ok("kraken", {1: 120})],
-                          policy="consensus_median")
+    r = AggregationRouter(
+        [_Ok("binance", {1: 100}), _Ok("kraken", {1: 120})], policy="consensus_median"
+    )
     out = asyncio.run(r.fetch_ohlcv("bitcoin"))
     assert out[0].close == 110  # mediana de 2 = média
     eventos = [e["event"] for e in read_events(tmp_path / "ev.jsonl")]
@@ -94,8 +115,7 @@ def test_aggregation_router_funde_sobreviventes(tmp_path, monkeypatch):
 
 def test_aggregation_router_tolera_falha_parcial(tmp_path, monkeypatch):
     monkeypatch.setenv("PREDICTOR_EVENTS_PATH", str(tmp_path / "ev.jsonl"))
-    r = AggregationRouter([_Ok("binance", {1: 100}), _Fail("kraken")],
-                          policy="consensus_median")
+    r = AggregationRouter([_Ok("binance", {1: 100}), _Fail("kraken")], policy="consensus_median")
     out = asyncio.run(r.fetch_ohlcv("bitcoin"))
     assert out[0].close == 100  # funde só o sobrevivente
 
@@ -113,6 +133,7 @@ def test_aggregation_router_rejeita_politica_invalida():
 
 # --- Circuit Breaker ---------------------------------------------------------
 
+
 def test_breaker_abre_apos_limiar(tmp_path, monkeypatch):
     monkeypatch.setenv("PREDICTOR_EVENTS_PATH", str(tmp_path / "ev.jsonl"))
     cb = CircuitBreaker("binance", failure_threshold=3, reset_timeout=60)
@@ -124,9 +145,9 @@ def test_breaker_abre_apos_limiar(tmp_path, monkeypatch):
 
 def test_breaker_meio_aberto_apos_timeout_e_fecha_no_sucesso():
     now = {"t": 1000.0}
-    cb = CircuitBreaker("binance", failure_threshold=2, reset_timeout=30,
-                        clock=lambda: now["t"])
-    cb.record_failure(); cb.record_failure()
+    cb = CircuitBreaker("binance", failure_threshold=2, reset_timeout=30, clock=lambda: now["t"])
+    cb.record_failure()
+    cb.record_failure()
     assert cb.state == OPEN
     now["t"] += 31  # passou o timeout
     # CB unificado (Onda 3): state é getter PURO; allow() dispara OPEN→HALF_OPEN.
@@ -137,8 +158,7 @@ def test_breaker_meio_aberto_apos_timeout_e_fecha_no_sucesso():
 
 def test_breaker_reabre_se_sondagem_falha():
     now = {"t": 0.0}
-    cb = CircuitBreaker("binance", failure_threshold=1, reset_timeout=10,
-                        clock=lambda: now["t"])
+    cb = CircuitBreaker("binance", failure_threshold=1, reset_timeout=10, clock=lambda: now["t"])
     cb.record_failure()
     assert cb.state == OPEN
     now["t"] += 11

@@ -17,6 +17,7 @@ Fricção (fee+slippage) é sempre custo; funding é SIGNED (pode ser receita).
 Unidades: retornos e custos em fração do capital; `position` é fração signed
 do capital (direction × strength × kelly).
 """
+
 from dataclasses import dataclass
 
 _FUNDING_WINDOW_HOURS = 8.0
@@ -33,17 +34,20 @@ class CostModel:
         per_leg = (self.taker_fee_bps + self.slippage_bps) / 10_000.0
         return 2.0 * per_leg * abs(position)
 
-    def funding_pnl(self, position: float, funding_rate: float,
-                    horizon_hours: float) -> float:
+    def funding_pnl(self, position: float, funding_rate: float, horizon_hours: float) -> float:
         """P&L de funding da posição mantida pelo horizonte (signed):
         long paga funding positivo (pnl negativo); short o recebe."""
         n_windows = horizon_hours / _FUNDING_WINDOW_HOURS
         return -position * funding_rate * n_windows
 
-    def net_return(self, gross: float, position: float, funding_rate: float,
-                   horizon_hours: float) -> float:
+    def net_return(
+        self, gross: float, position: float, funding_rate: float, horizon_hours: float
+    ) -> float:
         """Retorno líquido = bruto + funding (signed) − fricção."""
         if position == 0.0:
             return gross
-        return gross + self.funding_pnl(position, funding_rate, horizon_hours) \
+        return (
+            gross
+            + self.funding_pnl(position, funding_rate, horizon_hours)
             - self.friction(position)
+        )

@@ -4,15 +4,16 @@
 diariamente). O domínio nunca chama isto em tempo de previsão; ele lê a Feature
 Store já materializada. Emite telemetria `data.ingested` / `data.materialized`.
 """
+
 from __future__ import annotations
 
 import hashlib
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from typing import Protocol
 
 import predictor_core
-from predictor_core.data.quality import detect_jumps
 from predictor_core.data.contracts import MarketDataPoint
+from predictor_core.data.quality import detect_jumps
 from predictor_core.obs import emit_event
 
 from GarimpoInvestimentos.dpl.alignment import AlignmentEngine
@@ -24,9 +25,11 @@ from GarimpoInvestimentos.dpl.signals import SignalProvider
 class _OhlcvFacade(Protocol):
     """Estrutural: qualquer fachada com fetch_ohlcv serve — cripto e ações
     reusam esta pipeline (ver docstring de ingest_stocks)."""
+
     async def fetch_ohlcv(
         self, symbol: str, interval: str = ..., limit: int = ...
     ) -> list[MarketDataPoint]: ...
+
 
 # Esta função nasceu crypto-específica, então o default é o domínio cripto — mas
 # `facade` é estrutural (_OhlcvFacade) e `domain` continua INJETÁVEL, então stocks
@@ -51,8 +54,7 @@ def series_quality(points, interval: str = "1d") -> dict:
     if interval == "1d" and len(pts) >= 2:
         expected = (pts[-1].timestamp - pts[0].timestamp).days + 1
         n_gaps = max(0, expected - len(pts))
-    jumps = detect_jumps([p.timestamp.date() for p in pts],
-                         [p.close for p in pts], JUMP_THRESHOLD)
+    jumps = detect_jumps([p.timestamp.date() for p in pts], [p.close for p in pts], JUMP_THRESHOLD)
     return {"n_gaps": n_gaps, "jumps": jumps}
 
 
@@ -78,27 +80,46 @@ async def ingest_crypto(
     # core. A tabela existia desde a migração 0004 mas nunca era populada — sem isso,
     # "reproduzir o backtest de 6 meses atrás" não tem âncora de dados.
     content_hash = hashlib.sha256(
-        "\n".join(f"{p.timestamp.isoformat()},{p.open},{p.high},{p.low},{p.close},{p.volume}"
-                  for p in points).encode()).hexdigest()[:16]
-    if record_provenance:   # wrappers com proveniência própria (ex.: stocks) desligam
+        "\n".join(
+            f"{p.timestamp.isoformat()},{p.open},{p.high},{p.low},{p.close},{p.volume}"
+            for p in points
+        ).encode()
+    ).hexdigest()[:16]
+    if record_provenance:  # wrappers com proveniência própria (ex.: stocks) desligam
         store.write_provenance(
-            source=points[0].source, entity=symbol, n_rows=len(points),
-            ingested_at=datetime.now(timezone.utc),
+            source=points[0].source,
+            entity=symbol,
+            n_rows=len(points),
+            ingested_at=datetime.now(UTC),
             origin=f"sha256:{content_hash}",
-            code_version=f"predictor_core:{predictor_core.__version__}")
-    emit_event(domain, "data.ingested",
-               metrics={"n_candles": len(points)},
-               metadata={"symbol": symbol, "interval": interval,
-                         "source": points[0].source, "content_hash": content_hash})
+            code_version=f"predictor_core:{predictor_core.__version__}",
+        )
+    emit_event(
+        domain,
+        "data.ingested",
+        metrics={"n_candles": len(points)},
+        metadata={
+            "symbol": symbol,
+            "interval": interval,
+            "source": points[0].source,
+            "content_hash": content_hash,
+        },
+    )
 
     # Qualidade da série (jul/2026): gap/salto entra na store do mesmo jeito (não
     # bloqueia — pode ser movimento real), mas NUNCA em silêncio: telemetria + console.
     q = series_quality(points, interval)
     if q["n_gaps"] or q["jumps"]:
-        emit_event(domain, "data.quality_warning",
-                   metrics={"n_gaps": q["n_gaps"], "n_jumps": len(q["jumps"])},
-                   metadata={"symbol": symbol, "interval": interval,
-                             "jumps": [(str(d), round(r, 4)) for d, r in q["jumps"]]})
+        emit_event(
+            domain,
+            "data.quality_warning",
+            metrics={"n_gaps": q["n_gaps"], "n_jumps": len(q["jumps"])},
+            metadata={
+                "symbol": symbol,
+                "interval": interval,
+                "jumps": [(str(d), round(r, 4)) for d, r in q["jumps"]],
+            },
+        )
         avisos = []
         if q["n_gaps"]:
             avisos.append(f"{q['n_gaps']} dia(s) faltando na série")
@@ -107,15 +128,18 @@ async def ingest_crypto(
         print(f"  ⚠️  {symbol.upper()}: {'; '.join(avisos)} — ver events.jsonl")
 
     signals: dict[str, list] = {}
-    for sp in (signal_providers or []):
+    for sp in signal_providers or []:
         try:
             series = await sp.fetch(limit=limit)
             store.write_signals(series)
             signals[sp.name] = series
         except Exception as exc:  # noqa: BLE001 — sinal é opcional; preço não
-            emit_event(domain, "data.signal_failed",
-                       metrics={}, metadata={"signal": sp.name,
-                                             "error": type(exc).__name__})
+            emit_event(
+                domain,
+                "data.signal_failed",
+                metrics={},
+                metadata={"signal": sp.name, "error": type(exc).__name__},
+            )
 
     aligned = AlignmentEngine().align(points, signals, max_staleness)
     # Features derivadas (change_*, indicadores) pertencem ao ÚLTIMO candle —
@@ -124,9 +148,10 @@ async def ingest_crypto(
     if aligned and derived:
         aligned[-1].update(derived)
     n_features = store.write_features(symbol, interval, aligned)
-    emit_event(domain, "data.materialized",
-               metrics={"n_rows": len(aligned), "n_cells": n_features,
-                        "n_derived": len(derived)},
-               metadata={"symbol": symbol, "interval": interval,
-                         "signals": list(signals)})
+    emit_event(
+        domain,
+        "data.materialized",
+        metrics={"n_rows": len(aligned), "n_cells": n_features, "n_derived": len(derived)},
+        metadata={"symbol": symbol, "interval": interval, "signals": list(signals)},
+    )
     return aligned

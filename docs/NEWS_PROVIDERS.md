@@ -75,3 +75,5 @@ continua marcada por `input_degradado=1`.
 Mudar `NEWS_PROVIDERS`, URLs curadas, roteamento ou forma de busca muda o input
 do LLM. Logo, nao se ativa essa configuracao dentro da H5: registrar uma nova
 trial e coletar uma amostra forward separada e obrigatorio.
+
+

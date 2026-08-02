@@ -69,3 +69,5 @@ cegueira.
   construir o controle positivo ANTES da primeira tentativa registrada.
 - Custo assumido: chamadas de criação em testes precisam do bypass explícito;
   o atestado precisa ser re-emitido se o juiz mudar (feature, não bug).
+
+

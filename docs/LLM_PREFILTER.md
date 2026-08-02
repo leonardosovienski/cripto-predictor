@@ -25,3 +25,5 @@ acima do piso e direção técnica `bull` ou `bear`. Os excluídos geram o event
 Essa seleção muda a população observada e, portanto, não pode ser ativada na H5.
 Registrar uma nova trial, manter a configuração congelada e avaliar a série forward
 separadamente é obrigatório.
+
+

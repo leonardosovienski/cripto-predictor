@@ -14,6 +14,7 @@ serial) de propósito: é o regime para o qual o block bootstrap existe.
 
 Mesma redoma do test_report_harness: chaves dummy, httpx stubbado, eventos em tmp.
 """
+
 import random
 import sys
 import types
@@ -31,13 +32,15 @@ def _serie(n=80, edge=0.08, phi=0.5, seed=42):
     for _ in range(n):
         score = rng.uniform(0, 100)
         eps = phi * eps + rng.gauss(0, 2)
-        rows.append({
-            "score": score,
-            "var_d1_pct": rng.gauss(0, 2),
-            "var_d7_pct": edge * (score - 50) + eps,   # horizonte principal
-            "var_d30_pct": rng.gauss(0, 5),
-            "divergencia": 0,
-        })
+        rows.append(
+            {
+                "score": score,
+                "var_d1_pct": rng.gauss(0, 2),
+                "var_d7_pct": edge * (score - 50) + eps,  # horizonte principal
+                "var_d30_pct": rng.gauss(0, 5),
+                "divergencia": 0,
+            }
+        )
     return rows
 
 
@@ -50,8 +53,9 @@ def _roda_report(rows, tmp_path, monkeypatch):
     monkeypatch.setenv("PREDICTOR_EVENTS_PATH", str(events))
     monkeypatch.setitem(sys.modules, "httpx", types.ModuleType("httpx"))  # sem rede
 
-    from GarimpoInvestimentos.analyzers import backtest
     from predictor_core import obs
+
+    from GarimpoInvestimentos.analyzers import backtest
 
     backtest._report(rows)
     tolls = [e for e in obs.read_events(events) if e["event"] == "toll_passed"]
@@ -64,7 +68,8 @@ def test_controle_positivo_edge_conhecido_vira_validado(tmp_path, monkeypatch):
     NO-GO dele é interpretável. Este é o controle positivo."""
     e = _roda_report(_serie(edge=0.08), tmp_path, monkeypatch)
     assert e["metadata"]["veredito"].startswith("validado"), (
-        f"pipeline sem poder: edge sintético não detectado — {e['metrics']}")
+        f"pipeline sem poder: edge sintético não detectado — {e['metrics']}"
+    )
     assert e["metrics"]["ic_lower"] > 0, e["metrics"]
 
 
@@ -74,7 +79,8 @@ def test_controle_nulo_ruido_puro_vira_ruido(tmp_path, monkeypatch):
     positivo não é um sim automático."""
     e = _roda_report(_serie(edge=0.0), tmp_path, monkeypatch)
     assert e["metadata"]["veredito"].startswith("RUÍDO"), (
-        f"falso positivo: ruído puro validado — {e['metrics']}")
+        f"falso positivo: ruído puro validado — {e['metrics']}"
+    )
     assert e["metrics"]["ic_lower"] <= 0 <= e["metrics"]["ic_upper"], e["metrics"]
 
 

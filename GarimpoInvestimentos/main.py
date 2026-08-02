@@ -15,25 +15,30 @@ if _known.output_dir:
 
 from datetime import timedelta
 
+from predictor_core.obs import emit_event
+
+from GarimpoInvestimentos.analyzers.ai_insights import (
+    analyze_asset,
+    judge_signature,
+    provider_for_asset,
+)
+from GarimpoInvestimentos.analyzers.prefilter import decide as prefilter_decide
+from GarimpoInvestimentos.analyzers.score_engine import calculate_final_score, divergence_flag
 from GarimpoInvestimentos.collectors.discovery import discover_assets
 from GarimpoInvestimentos.collectors.news import get_news_result
-from GarimpoInvestimentos.analyzers.ai_insights import analyze_asset, judge_signature, provider_for_asset
-from GarimpoInvestimentos.analyzers.score_engine import calculate_final_score, divergence_flag
-from GarimpoInvestimentos.analyzers.prefilter import decide as prefilter_decide
 from GarimpoInvestimentos.config import settings
-from GarimpoInvestimentos.output.reporter import export_results
-from GarimpoInvestimentos.core.logger import log_start, log_success, log_error
-from GarimpoInvestimentos.core.cache import load_cache, save_cache
 from GarimpoInvestimentos.core.api_guard import allow as guard_allow
+from GarimpoInvestimentos.core.cache import load_cache, save_cache
 from GarimpoInvestimentos.core.collection_policy import current_policy_json
 from GarimpoInvestimentos.core.history import append_history, migrate_csv_to_store, utc_stamp
+from GarimpoInvestimentos.core.logger import log_error, log_start, log_success
 from GarimpoInvestimentos.core.paths import FEATURE_STORE_DB
 from GarimpoInvestimentos.dpl import CryptoDataProvider, FeatureStore
-from GarimpoInvestimentos.dpl.feature_store import fonte_label
 from GarimpoInvestimentos.dpl.feature_engineering import to_hard_data
+from GarimpoInvestimentos.dpl.feature_store import fonte_label
 from GarimpoInvestimentos.dpl.ingest import ingest_crypto
 from GarimpoInvestimentos.dpl.providers.fear_greed import FearAndGreedProvider
-from predictor_core.obs import emit_event
+from GarimpoInvestimentos.output.reporter import export_results
 
 # A Feature Store (core.paths.FEATURE_STORE_DB) é o repositório offline do qual o
 # pipeline lê (serving) E o histórico oficial de previsões; a ingestão (rede)
@@ -88,20 +93,22 @@ def parse_args():
         "--ingest",
         action="store_true",
         help="Roda só a INGESTÃO (rede): coleta OHLCV + Fear&Greed, alinha e "
-             "materializa na Feature Store local. O pipeline de análise lê dela.",
+        "materializa na Feature Store local. O pipeline de análise lê dela.",
     )
     parser.add_argument(
         "--mode",
         choices=["fallback", "consensus"],
         default="fallback",
         help="Política de coleta de preço na ingestão: 'fallback' (sequencial "
-             "Binance→CoinGecko, padrão) ou 'consensus' (mediana Binance+Kraken). "
-             "Só afeta --ingest; o serving é indiferente a quantas fontes geraram o dado.",
+        "Binance→CoinGecko, padrão) ou 'consensus' (mediana Binance+Kraken). "
+        "Só afeta --ingest; o serving é indiferente a quantas fontes geraram o dado.",
     )
     args = parser.parse_args()
     if args.discover is not None and not args.ingest:
-        parser.error("--discover exige --ingest (descubra e ingira primeiro; "
-                     "depois rode a análise offline, que lê o universo da Feature Store)")
+        parser.error(
+            "--discover exige --ingest (descubra e ingira primeiro; "
+            "depois rode a análise offline, que lê o universo da Feature Store)"
+        )
     return args
 
 
@@ -123,13 +130,20 @@ async def run_ingest(ativos: list[str], mode: str = "fallback") -> None:
         for i, ativo in enumerate(ativos):
             budget = guard_allow("ingest", "assets", settings.API_GUARD_MAX_INGEST_ASSETS)
             if not budget.allowed:
-                emit_event("previsao_cripto", "api_guard_skipped", metrics={},
-                           metadata={"stage": "ingest", "ativo": ativo, "reason": budget.reason})
+                emit_event(
+                    "previsao_cripto",
+                    "api_guard_skipped",
+                    metrics={},
+                    metadata={"stage": "ingest", "ativo": ativo, "reason": budget.reason},
+                )
                 print(f"  ⏭️  {ativo.upper()} fora do orçamento de ingestão ({budget.reason})")
                 continue
             try:
                 aligned = await ingest_crypto(
-                    store, facade, ativo, interval="1d",
+                    store,
+                    facade,
+                    ativo,
+                    interval="1d",
                     limit=INGEST_HISTORY_DAYS,
                     signal_providers=[fear_greed],
                     max_staleness=SIGNAL_STALENESS,
@@ -152,8 +166,10 @@ async def run():
         print(f"🔭 Varrendo mercado por {n} candidatos (momentum + trending)...")
         ativos = await discover_assets(top_n=n)
         if not ativos:
-            raise ValueError("Descoberta não retornou candidatos (mercado indisponível "
-                             "ou filtros zeraram a lista).")
+            raise ValueError(
+                "Descoberta não retornou candidatos (mercado indisponível "
+                "ou filtros zeraram a lista)."
+            )
     elif args.assets:
         ativos = [asset.strip() for asset in args.assets.split(",") if asset.strip()]
     else:
@@ -162,7 +178,9 @@ async def run():
     if args.ingest:
         ativos = ativos or settings.DEFAULT_ASSETS
         if not ativos:
-            raise ValueError("Nenhum ativo válido informado. Use --assets, --discover ou DEFAULT_ASSETS.")
+            raise ValueError(
+                "Nenhum ativo válido informado. Use --assets, --discover ou DEFAULT_ASSETS."
+            )
         await run_ingest(ativos, mode=args.mode)
         print("📦 Ingestão concluída. Rode sem --ingest para analisar (offline).")
         return
@@ -210,8 +228,10 @@ async def run():
         # Dados de mercado — lidos da Feature Store (offline). Sem dados não há análise.
         flat = store.latest_features(ativo, "1d")
         if not flat:
-            log_error(ativo, RuntimeError(
-                "sem dados na Feature Store — rode `--ingest` antes de analisar"))
+            log_error(
+                ativo,
+                RuntimeError("sem dados na Feature Store — rode `--ingest` antes de analisar"),
+            )
             continue
         hard_data = to_hard_data(flat)
         if "price_usd" not in hard_data:
@@ -220,23 +240,36 @@ async def run():
 
         prefilter = prefilter_decide(hard_data)
         if not prefilter.selected:
-            emit_event("previsao_cripto", "llm_prefilter_skipped", metrics={},
-                       metadata={"ativo": ativo, "reason": prefilter.reason})
-            print(f"🔎 {ativo.upper()} fora do pre-filtro ({prefilter.reason}) — sem chamada de LLM.")
+            emit_event(
+                "previsao_cripto",
+                "llm_prefilter_skipped",
+                metrics={},
+                metadata={"ativo": ativo, "reason": prefilter.reason},
+            )
+            print(
+                f"🔎 {ativo.upper()} fora do pre-filtro ({prefilter.reason}) — sem chamada de LLM."
+            )
             continue
-        llm_budget = guard_allow("llm", provider_for_asset(ativo),
-                                 settings.API_GUARD_MAX_LLM_CALLS_PER_PROVIDER)
+        llm_budget = guard_allow(
+            "llm", provider_for_asset(ativo), settings.API_GUARD_MAX_LLM_CALLS_PER_PROVIDER
+        )
         if not llm_budget.allowed:
-            emit_event("previsao_cripto", "api_guard_skipped", metrics={},
-                       metadata={"stage": "llm", "ativo": ativo, "reason": llm_budget.reason})
+            emit_event(
+                "previsao_cripto",
+                "api_guard_skipped",
+                metrics={},
+                metadata={"stage": "llm", "ativo": ativo, "reason": llm_budget.reason},
+            )
             print(f"🔎 {ativo.upper()} fora do orçamento de LLM ({llm_budget.reason}).")
             continue
 
         # Indicadores são features derivadas já materializadas; ausência = série curta.
         ind_ok = "indicadores" in hard_data
         if not ind_ok:
-            log_error(ativo, RuntimeError(
-                "indicadores ausentes na Feature Store (histórico insuficiente?)"))
+            log_error(
+                ativo,
+                RuntimeError("indicadores ausentes na Feature Store (histórico insuficiente?)"),
+            )
 
         # Notícias — fallback para lista vazia; o Gemini ainda analisa com dados de mercado
         news_result = await get_news_result(ativo)
@@ -250,9 +283,12 @@ async def run():
         faltando = [k for k, ok in (("indicadores", ind_ok), ("noticias", news_ok)) if not ok]
         if faltando:
             n_degraded += 1
-            emit_event("previsao_cripto", "input_degraded",
-                       metrics={"n_faltando": len(faltando)},
-                       metadata={"ativo": ativo, "faltando": faltando})
+            emit_event(
+                "previsao_cripto",
+                "input_degraded",
+                metrics={"n_faltando": len(faltando)},
+                metadata={"ativo": ativo, "faltando": faltando},
+            )
 
         # Análise e score
         try:
@@ -306,8 +342,10 @@ async def run():
             await asyncio.sleep(settings.LLM_PACING_SECONDS)
 
     if n_degraded:
-        print(f"⚠️  {n_degraded}/{len(ativos)} ativo(s) com input degradado "
-              f"(indicador/notícia faltando) — score do LLM saiu empobrecido; ver events.jsonl.")
+        print(
+            f"⚠️  {n_degraded}/{len(ativos)} ativo(s) com input degradado "
+            f"(indicador/notícia faltando) — score do LLM saiu empobrecido; ver events.jsonl."
+        )
     # Cache só é regravado quando habilitado (--no-cache não toca no cache.json)
     if cache_enabled:
         save_cache(cache)
@@ -317,7 +355,9 @@ async def run():
     # conferência de 2026-07-02; o teste de integração cobre a ordem agora.)
     append_history(resultados, store)
     store.close()
-    print(f"📊 Histórico oficial atualizado na Feature Store ({FEATURE_STORE_DB.name}, tabela predictions)")
+    print(
+        f"📊 Histórico oficial atualizado na Feature Store ({FEATURE_STORE_DB.name}, tabela predictions)"
+    )
 
     if args.summary:
         destaques = [r for r in resultados if r.get("score", 0) >= score_threshold]

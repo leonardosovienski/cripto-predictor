@@ -6,6 +6,7 @@ por `run_migrations` (idempotente por nome). Princípio (ADR-017 / auditoria C-0
 nova migração que transforma o estado anterior, garantindo idempotência para DBs em
 qualquer versão.
 """
+
 from GarimpoInvestimentos.dpl.migrations import _0005_fix_raw_signals as _m0005
 from GarimpoInvestimentos.dpl.migrations import _0006_predictions as _m0006
 from GarimpoInvestimentos.dpl.migrations import _0007_feature_version as _m0007

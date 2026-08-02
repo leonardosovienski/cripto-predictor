@@ -9,10 +9,11 @@ o /market_chart não traz OHLC completo, sintetizamos o candle com open=high=low
 (série baseada em fechamento — os indicadores do domínio são todos sobre closes).
 Para intervalos intradiários usa /ohlc (OHLC real, sem volume).
 """
+
 from __future__ import annotations
 
 import os
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from predictor_core.net import get_http_client, with_retry
 
@@ -69,16 +70,26 @@ class CoinGeckoProvider(DataProvider):
             raise RuntimeError(f"coingecko: resposta vazia para {coin_id}")
         points = []
         for ts_ms, price in prices[-limit:]:
-            ts = datetime.fromtimestamp(ts_ms / 1000, tz=timezone.utc)
+            ts = datetime.fromtimestamp(ts_ms / 1000, tz=UTC)
             c = require_finite(float(price), field="close", provider=self.name, symbol=symbol)
-            vol = require_finite(float(volumes.get(int(ts_ms), 0.0)),
-                                 field="volume", provider=self.name, symbol=symbol)
+            vol = require_finite(
+                float(volumes.get(int(ts_ms), 0.0)),
+                field="volume",
+                provider=self.name,
+                symbol=symbol,
+            )
             points.append(
                 MarketDataPoint(
-                    symbol=symbol, timestamp=ts,
-                    open=c, high=c, low=c, close=c,  # série de fechamento
+                    symbol=symbol,
+                    timestamp=ts,
+                    open=c,
+                    high=c,
+                    low=c,
+                    close=c,  # série de fechamento
                     volume=vol,
-                    source=self.name, interval="1d", published_at=ts,
+                    source=self.name,
+                    interval="1d",
+                    published_at=ts,
                 )
             )
         return points
@@ -95,15 +106,18 @@ class CoinGeckoProvider(DataProvider):
             raise RuntimeError(f"coingecko: resposta vazia para {coin_id}")
         points = []
         for ts_ms, o, h, l, c in rows[-limit:]:
-            ts = datetime.fromtimestamp(ts_ms / 1000, tz=timezone.utc)
+            ts = datetime.fromtimestamp(ts_ms / 1000, tz=UTC)
             kw = {"open": float(o), "high": float(h), "low": float(l), "close": float(c)}
             for field, val in kw.items():
                 require_finite(val, field=field, provider=self.name, symbol=symbol)
             points.append(
                 MarketDataPoint(
-                    symbol=symbol, timestamp=ts,
+                    symbol=symbol,
+                    timestamp=ts,
                     volume=0.0,  # /ohlc não fornece volume
-                    source=self.name, interval=interval, published_at=ts,
+                    source=self.name,
+                    interval=interval,
+                    published_at=ts,
                     **kw,
                 )
             )
@@ -112,8 +126,9 @@ class CoinGeckoProvider(DataProvider):
     async def health_check(self) -> bool:
         try:
             async with get_http_client() as client:
-                resp = await client.get("https://api.coingecko.com/api/v3/ping",
-                                        headers=coingecko_auth_headers())
+                resp = await client.get(
+                    "https://api.coingecko.com/api/v3/ping", headers=coingecko_auth_headers()
+                )
                 return resp.status_code == 200
         except Exception:
             return False

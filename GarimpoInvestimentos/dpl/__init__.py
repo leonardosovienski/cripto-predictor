@@ -7,6 +7,7 @@ contrato `MarketDataPoint` — nunca conhece Binance, CoinGecko ou o CCXT.
 
 Ver docs/DOSSIE_PLATAFORMA.md §5 (componentes) e §7 (plano de fases).
 """
+
 from GarimpoInvestimentos.dpl.aggregation import consensus_mean, consensus_median, twap
 from GarimpoInvestimentos.dpl.alignment import AlignmentEngine
 from GarimpoInvestimentos.dpl.circuit_breaker import CircuitBreaker, CircuitOpenError

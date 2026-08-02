@@ -8,6 +8,7 @@ Nota de semântica: o `state` unificado é um getter PURO — a transição OPEN
 acontece em `allow()`/`can_attempt()` (não ao ler `state`). O router usa `allow()`,
 então o comportamento de produção é idêntico.
 """
+
 from predictor_core.data.circuit_breaker import CircuitBreaker, CircuitOpenError  # noqa: F401
 
 # Constantes de módulo (compat: test_dpl_aggregation importa CLOSED/OPEN/HALF_OPEN daqui).

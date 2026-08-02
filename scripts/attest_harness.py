@@ -28,24 +28,28 @@ Uso:
     python scripts/attest_harness.py            # roda e grava os atestados
     python scripts/attest_harness.py --dry-run  # só roda o controle, não grava
 """
+
 import argparse
 import random
 import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-sys.path.insert(0, str(ROOT / "vendor"))
-sys.path.insert(0, str(ROOT))
 
-from predictor_core.measurement.stats import (          # noqa: E402
-    probabilistic_sharpe_ratio, spearman_block_ci)
+from predictor_core.measurement.stats import (  # noqa: E402
+    probabilistic_sharpe_ratio,
+    spearman_block_ci,
+)
 from predictor_core.measurement.trials import attestation_path_for  # noqa: E402
-from predictor_core.testing.harness import (            # noqa: E402
-    assert_pipeline_has_power, attest_pipeline_power)
+from predictor_core.testing.harness import (  # noqa: E402
+    assert_pipeline_has_power,
+    attest_pipeline_power,
+)
 
 TRIALS_PATH = ROOT / "GarimpoInvestimentos" / "trials.json"
 PHASE1_ATTESTATION_PATH = TRIALS_PATH.with_name(
-    TRIALS_PATH.stem + ".phase1_harness_attestation.json")
+    TRIALS_PATH.stem + ".phase1_harness_attestation.json"
+)
 
 # Nomes de métrica: contrato com o Experiment Registry (measurement.trials).
 # Trocar qualquer um dos dois é decisão de nomenclatura, não refactor livre —
@@ -68,11 +72,15 @@ _PSR_THRESHOLD = 0.80
 def judge_go_nogo(pairs: list[tuple[float, float]]) -> dict:
     """O juiz do V3 destilado: GO exige PSR >= 0.80 E IC_lower > 0 sobre pares
     (sinal, retorno_forward) — os mesmos critérios de run_wfa."""
-    returns = [s * r for s, r in pairs]                  # P&L de seguir o sinal
+    returns = [s * r for s, r in pairs]  # P&L de seguir o sinal
     psr = probabilistic_sharpe_ratio(returns)
     _rho, lo, _hi = spearman_block_ci(pairs)
-    go = (psr == psr and psr >= _PSR_THRESHOLD           # psr==psr descarta nan
-          and lo is not None and lo > 0)
+    go = (
+        psr == psr
+        and psr >= _PSR_THRESHOLD  # psr==psr descarta nan
+        and lo is not None
+        and lo > 0
+    )
     return {"verdict": "GO" if go else "NO-GO", "psr": psr, "ic_lower": lo}
 
 
@@ -91,7 +99,7 @@ def phase1_edge_series(n: int = 120, seed: int = 21) -> list[tuple[float, float]
     rng = random.Random(seed)
     out = []
     for _ in range(n):
-        fwd = rng.gauss(0.0, 4.0)                       # var % em D+7
+        fwd = rng.gauss(0.0, 4.0)  # var % em D+7
         score = 50 + 8 * (1 if fwd > 0 else -1) + rng.gauss(0.0, 12.0)
         out.append((max(0.0, min(100.0, score)), fwd))
     return out
@@ -100,8 +108,7 @@ def phase1_edge_series(n: int = 120, seed: int = 21) -> list[tuple[float, float]
 def phase1_noise_series(n: int = 120, seed: int = 22) -> list[tuple[float, float]]:
     """Scores independentes do retorno — validar aqui é significância fabricada."""
     rng = random.Random(seed)
-    return [(max(0.0, min(100.0, rng.gauss(50.0, 15.0))), rng.gauss(0.0, 4.0))
-            for _ in range(n)]
+    return [(max(0.0, min(100.0, rng.gauss(50.0, 15.0))), rng.gauss(0.0, 4.0)) for _ in range(n)]
 
 
 def edge_series(n: int = 400, seed: int = 7) -> list[tuple[float, float]]:
@@ -122,7 +129,9 @@ def noise_series(n: int = 400, seed: int = 8) -> list[tuple[float, float]]:
 
 
 def main() -> int:
-    ap = argparse.ArgumentParser(description="Controle positivo dos juizes GO/NO-GO (V3) e VALIDADO/RUIDO (Fase 1)")
+    ap = argparse.ArgumentParser(
+        description="Controle positivo dos juizes GO/NO-GO (V3) e VALIDADO/RUIDO (Fase 1)"
+    )
     ap.add_argument("--dry-run", action="store_true", help="roda sem gravar os atestados")
     args = ap.parse_args()
 
@@ -130,11 +139,15 @@ def main() -> int:
         # Juiz da Fase 1 primeiro: se ele não tem poder, nenhum atestado deveria
         # existir (o registry governa trials das DUAS famílias). Só o V3 passar
         # não basta.
-        assert_pipeline_has_power(judge_phase1, phase1_edge_series, phase1_noise_series,
-                                  edge_verdict="VALIDADO", null_verdict="RUIDO")
+        assert_pipeline_has_power(
+            judge_phase1,
+            phase1_edge_series,
+            phase1_noise_series,
+            edge_verdict="VALIDADO",
+            null_verdict="RUIDO",
+        )
         print("juiz Fase 1 (Spearman IC95): sensibilidade e especificidade OK")
-        assert_pipeline_has_power(judge_go_nogo, edge_series, noise_series,
-                                  edge_verdict="GO")
+        assert_pipeline_has_power(judge_go_nogo, edge_series, noise_series, edge_verdict="GO")
         print("juiz V3 (PSR & IC_lower): sensibilidade e especificidade OK")
         print("controle positivo PASSOU (dry-run; atestados nao gravados)")
         return 0
@@ -143,26 +156,35 @@ def main() -> int:
     # distintos, um por familia de trial (measurement/trials.py so casa uma
     # trial nova contra o atestado cujo metric+pipeline_fingerprint batem).
     rec_phase1 = attest_pipeline_power(
-        judge_phase1, phase1_edge_series, phase1_noise_series,
+        judge_phase1,
+        phase1_edge_series,
+        phase1_noise_series,
         attestation_path=PHASE1_ATTESTATION_PATH,
         note="Juiz da Fase 1 (analyzers/backtest._report): VALIDADO/RUIDO via "
-             "Spearman IC95 block bootstrap nao cruza zero, seeds 21/22, n=120 "
-             "— edge plantado e ruido",
-        edge_verdict="VALIDADO", null_verdict="RUIDO",
-        metric=_METRIC_PHASE1)
+        "Spearman IC95 block bootstrap nao cruza zero, seeds 21/22, n=120 "
+        "— edge plantado e ruido",
+        edge_verdict="VALIDADO",
+        null_verdict="RUIDO",
+        metric=_METRIC_PHASE1,
+    )
     print("juiz Fase 1 (Spearman IC95): sensibilidade e especificidade OK")
     print(f"atestado da Fase 1 gravado em {PHASE1_ATTESTATION_PATH} ({rec_phase1['passed_at']})")
 
     rec_v3 = attest_pipeline_power(
-        judge_go_nogo, edge_series, noise_series,
+        judge_go_nogo,
+        edge_series,
+        noise_series,
         attestation_path=attestation_path_for(TRIALS_PATH),
         note="Juiz V3 (backtest_v3): GO/NO-GO via PSR>=0.80 & IC_lower>0, "
-             "seeds 7/8, n=400 — edge plantado e ruido",
+        "seeds 7/8, n=400 — edge plantado e ruido",
         edge_verdict="GO",
-        metric=_METRIC_V3)
+        metric=_METRIC_V3,
+    )
     print("juiz V3 (PSR & IC_lower): sensibilidade e especificidade OK")
-    print(f"controle positivo PASSOU — atestado gravado em "
-          f"{attestation_path_for(TRIALS_PATH)} ({rec_v3['passed_at']})")
+    print(
+        f"controle positivo PASSOU — atestado gravado em "
+        f"{attestation_path_for(TRIALS_PATH)} ({rec_v3['passed_at']})"
+    )
     return 0
 
 

@@ -1,4 +1,5 @@
 """Contrato do pre-filtro de custo: puramente local, determinístico e opt-in."""
+
 from GarimpoInvestimentos.analyzers import prefilter
 
 
@@ -29,4 +30,6 @@ def test_exclui_com_motivo_auditavel(monkeypatch):
     monkeypatch.setattr(prefilter.settings, "LLM_PREFILTER_ENABLED", True)
     assert prefilter.decide(_data(volume_usd=1.0)).reason == "low_or_missing_volume"
     assert prefilter.decide(_data(change_7d=0.5)).reason == "weak_7d_momentum"
-    assert prefilter.decide(_data(indicadores={})).reason == "neutral_or_missing_technical_direction"
+    assert (
+        prefilter.decide(_data(indicadores={})).reason == "neutral_or_missing_technical_direction"
+    )

@@ -1,0 +1,16 @@
+services:
+  cripto-predictor:
+    build: .
+    read_only: true
+    user: "10001:10001"
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=64m
+    volumes:
+      - predictor-data:/var/lib/cripto-predictor
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+
+volumes:
+  predictor-data: {}

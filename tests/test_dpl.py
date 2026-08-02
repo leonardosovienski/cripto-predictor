@@ -4,11 +4,12 @@ Offline: provedores são fakes injetados no Router/fachada; nenhum acessa rede o
 ccxt. Telemetria é redirecionada para um JSONL temporário via PREDICTOR_EVENTS_PATH.
 Async sem plugin: cada teste roda a corotina com asyncio.run.
 """
+
 import asyncio
-import json
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
 import pytest
+from predictor_core.obs import read_events
 
 from GarimpoInvestimentos.dpl import (
     CryptoDataProvider,
@@ -17,16 +18,22 @@ from GarimpoInvestimentos.dpl import (
     FallbackRouter,
     MarketDataPoint,
 )
-from predictor_core.obs import read_events
 
-UTC_NOW = datetime(2026, 6, 30, 12, 0, tzinfo=timezone.utc)
+UTC_NOW = datetime(2026, 6, 30, 12, 0, tzinfo=UTC)
 
 
 def _point(source: str, close: float) -> MarketDataPoint:
     return MarketDataPoint(
-        symbol="bitcoin", timestamp=UTC_NOW, open=close, high=close + 1,
-        low=close - 1, close=close, volume=10.0, source=source,
-        interval="1d", published_at=UTC_NOW,
+        symbol="bitcoin",
+        timestamp=UTC_NOW,
+        open=close,
+        high=close + 1,
+        low=close - 1,
+        close=close,
+        volume=10.0,
+        source=source,
+        interval="1d",
+        published_at=UTC_NOW,
     )
 
 
@@ -59,19 +66,35 @@ class _FailProvider(DataProvider):
 
 # --- Contrato MarketDataPoint ------------------------------------------------
 
+
 def test_marketdatapoint_rejeita_high_menor_que_low():
     with pytest.raises(ValueError):
         MarketDataPoint(
-            symbol="x", timestamp=UTC_NOW, open=1, high=1, low=5, close=2,
-            volume=0, source="t", interval="1d", published_at=UTC_NOW,
+            symbol="x",
+            timestamp=UTC_NOW,
+            open=1,
+            high=1,
+            low=5,
+            close=2,
+            volume=0,
+            source="t",
+            interval="1d",
+            published_at=UTC_NOW,
         )
 
 
 def test_marketdatapoint_rejeita_published_antes_do_timestamp():
     with pytest.raises(ValueError):
         MarketDataPoint(
-            symbol="x", timestamp=UTC_NOW, open=1, high=2, low=1, close=2,
-            volume=0, source="t", interval="1d",
+            symbol="x",
+            timestamp=UTC_NOW,
+            open=1,
+            high=2,
+            low=1,
+            close=2,
+            volume=0,
+            source="t",
+            interval="1d",
             published_at=UTC_NOW - timedelta(hours=1),
         )
 
@@ -83,6 +106,7 @@ def test_marketdatapoint_eh_imutavel():
 
 
 # --- Router: fallback sequencial ---------------------------------------------
+
 
 def test_primaria_ok_nao_chama_secundaria():
     primaria = _OkProvider("binance", 100.0)
@@ -127,14 +151,16 @@ def test_router_emite_telemetria_no_dominio_injetado(tmp_path, monkeypatch):
     vaza como cripto. Sem isso, eventos de ações sairiam rotulados de previsao_cripto."""
     events = tmp_path / "ev.jsonl"
     monkeypatch.setenv("PREDICTOR_EVENTS_PATH", str(events))
-    router = FallbackRouter([_FailProvider("b3"), _OkProvider("cotahist", 1.0)],
-                            domain="predictor_stocks")
+    router = FallbackRouter(
+        [_FailProvider("b3"), _OkProvider("cotahist", 1.0)], domain="predictor_stocks"
+    )
     asyncio.run(router.fetch_ohlcv("PETR4"))
     dominios = {e["domain"] for e in read_events(events)}
     assert dominios == {"predictor_stocks"}  # nenhum evento vazou como 'previsao_cripto'
 
 
 # --- Fachada -----------------------------------------------------------------
+
 
 def test_fachada_latest_close_delegada_ao_router():
     router = FallbackRouter([_OkProvider("binance", 42.0)])

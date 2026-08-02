@@ -2,11 +2,12 @@
 
 Tudo em score_engine, que é puro (sem settings/rede) — roda sem .env.
 """
+
 from GarimpoInvestimentos.analyzers.score_engine import (
-    technical_direction,
-    llm_direction,
-    divergence_flag,
     calculate_final_score,
+    divergence_flag,
+    llm_direction,
+    technical_direction,
 )
 
 

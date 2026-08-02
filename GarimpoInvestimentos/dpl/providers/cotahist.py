@@ -12,11 +12,12 @@ Layout (posições 1-indexadas, registro tipo 01):
   PREABE 57-69 | PREMAX 70-82 | PREMIN 83-95 | PREULT 109-121 | VOLTOT 171-188
   (preços e volume com 2 casas decimais implícitas → dividir por 100)
 """
+
 from __future__ import annotations
 
 import zipfile
 from collections.abc import Set as AbstractSet
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
 from GarimpoInvestimentos.dpl.contracts import DataProvider, MarketDataPoint
@@ -26,12 +27,12 @@ _REGISTRO_COTACAO = "01"
 
 def _slice_int(line: str, start: int, end: int) -> int:
     """Fatia 1-indexada inclusiva → inteiro (campos numéricos vêm zero-preenchidos)."""
-    raw = line[start - 1:end].strip()
+    raw = line[start - 1 : end].strip()
     return int(raw) if raw else 0
 
 
 def _slice_str(line: str, start: int, end: int) -> str:
-    return line[start - 1:end].strip()
+    return line[start - 1 : end].strip()
 
 
 def parse_cotahist_lines(
@@ -59,7 +60,7 @@ def parse_cotahist_lines(
             continue
         try:
             data = _slice_str(line, 3, 10)
-            ts = datetime.strptime(data, "%Y%m%d").replace(tzinfo=timezone.utc)
+            ts = datetime.strptime(data, "%Y%m%d").replace(tzinfo=UTC)
             ticker = _slice_str(line, 13, 24)
             o = _slice_int(line, 57, 69) / 100
             h = _slice_int(line, 70, 82) / 100
@@ -68,11 +69,20 @@ def parse_cotahist_lines(
             v = _slice_int(line, 171, 188) / 100 if len(line) >= 188 else 0.0
             if not ticker or h < l or c <= 0:
                 raise ValueError("campos fora de faixa (ticker vazio / high<low / close<=0)")
-            out.append(MarketDataPoint(
-                symbol=ticker, timestamp=ts, open=o, high=h, low=l, close=c, volume=v,
-                source="cotahist", interval="1d",
-                published_at=ts + timedelta(hours=publish_lag_hours),
-            ))
+            out.append(
+                MarketDataPoint(
+                    symbol=ticker,
+                    timestamp=ts,
+                    open=o,
+                    high=h,
+                    low=l,
+                    close=c,
+                    volume=v,
+                    source="cotahist",
+                    interval="1d",
+                    published_at=ts + timedelta(hours=publish_lag_hours),
+                )
+            )
         except (ValueError, KeyError) as exc:
             if on_error is not None:
                 on_error(line, str(exc))
@@ -90,16 +100,21 @@ def _read_lines(path: Path):
                 for raw in fh:
                     yield raw.decode("latin-1")
     else:
-        with open(path, "r", encoding="latin-1") as fh:
+        with open(path, encoding="latin-1") as fh:
             yield from fh
 
 
 class COTAHISTProvider(DataProvider):
     name = "cotahist"
 
-    def __init__(self, file_path: str | Path | None = None, *,
-                 codbdi_filter=frozenset({"02"}), tpmerc_filter=frozenset({"010"}),
-                 publish_lag_hours: int = 18):
+    def __init__(
+        self,
+        file_path: str | Path | None = None,
+        *,
+        codbdi_filter=frozenset({"02"}),
+        tpmerc_filter=frozenset({"010"}),
+        publish_lag_hours: int = 18,
+    ):
         self._file_path = Path(file_path) if file_path else None
         self._codbdi = codbdi_filter
         self._tpmerc = tpmerc_filter
@@ -117,7 +132,9 @@ class COTAHISTProvider(DataProvider):
             lines = _read_lines(self._file_path)
         self.parse_errors = []
         pts = parse_cotahist_lines(
-            lines, codbdi_filter=self._codbdi, tpmerc_filter=self._tpmerc,
+            lines,
+            codbdi_filter=self._codbdi,
+            tpmerc_filter=self._tpmerc,
             publish_lag_hours=self._lag,
             on_error=lambda ln, why: self.parse_errors.append((ln[:24], why)),
         )
@@ -130,8 +147,9 @@ class COTAHISTProvider(DataProvider):
             self._cache = index
         return index
 
-    async def fetch_ohlcv(self, symbol: str, interval: str = "1d",
-                          limit: int = 1) -> list[MarketDataPoint]:
+    async def fetch_ohlcv(
+        self, symbol: str, interval: str = "1d", limit: int = 1
+    ) -> list[MarketDataPoint]:
         if interval != "1d":
             raise ValueError("cotahist: só intervalo diário ('1d')")
         index = self.parse_all()

@@ -90,3 +90,5 @@ verificações passando (329 testes verdes no ecossistema), documentação fiel 
 código, histórico oficial na Feature Store com carimbos, veredito estatístico
 registrado com governança completa. **Sem recomendação para capital real** — a
 infraestrutura está pronta; o edge, comprovadamente, ainda não existe.
+
+

@@ -4,6 +4,7 @@ Esconde a existência de múltiplos provedores e a política (fallback ou agrega
 A montagem (ler sources.json, instanciar conectores, escolher o Router, anexar
 Circuit Breakers) acontece aqui. O domínio só chama `fetch_ohlcv` / `latest_close`.
 """
+
 from __future__ import annotations
 
 import json
@@ -31,11 +32,12 @@ def _load_config(config_path: Path | None = None) -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
-_DOMAIN = "previsao_cripto"   # esta fachada É o domínio cripto: injeta seu rótulo na camada DPL
+_DOMAIN = "previsao_cripto"  # esta fachada É o domínio cripto: injeta seu rótulo na camada DPL
 
 
-def _build_router(config_key: str = "crypto_price", config_path: Path | None = None,
-                  with_breakers: bool = True):
+def _build_router(
+    config_key: str = "crypto_price", config_path: Path | None = None, with_breakers: bool = True
+):
     cfg = _load_config(config_path)
     block = cfg[config_key]
     # As definições dos providers (symbol_map) vivem sempre em crypto_price; blocos
@@ -48,8 +50,11 @@ def _build_router(config_key: str = "crypto_price", config_path: Path | None = N
             raise ValueError(f"sources.json: provedor desconhecido '{name}'")
         providers.append(klass(symbol_map=defs.get(name, {}).get("symbol_map", {})))
 
-    breakers = ({p.name: CircuitBreaker(p.name, domain=_DOMAIN) for p in providers}
-                if with_breakers else None)
+    breakers = (
+        {p.name: CircuitBreaker(p.name, domain=_DOMAIN) for p in providers}
+        if with_breakers
+        else None
+    )
     policy = block.get("policy", "fallback")
     if policy == "fallback":
         return FallbackRouter(providers, breakers=breakers, domain=_DOMAIN)
@@ -63,8 +68,13 @@ class CryptoDataProvider:
     sequencial, padrão) ou "crypto_price_consensus" (mediana Binance+Kraken).
     """
 
-    def __init__(self, router=None, config_key: str = "crypto_price",
-                 config_path: Path | None = None, with_breakers: bool = True):
+    def __init__(
+        self,
+        router=None,
+        config_key: str = "crypto_price",
+        config_path: Path | None = None,
+        with_breakers: bool = True,
+    ):
         # router injetável para teste; senão, montado a partir do sources.json.
         self._router = router or _build_router(config_key, config_path, with_breakers)
 

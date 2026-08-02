@@ -1,4 +1,5 @@
 """Contratos offline do roteador de fontes de notícias."""
+
 import asyncio
 import hashlib
 
@@ -64,8 +65,18 @@ def test_rss_parser_suporta_rss_e_atom():
 
 def test_ordem_por_ativo_e_estavel_e_distribuida():
     providers = ["serpapi", "cryptopanic", "google_news_rss", "curated_rss"]
-    assert news.provider_order_for_asset("bitcoin", providers) == news.provider_order_for_asset("bitcoin", providers)
-    assert len({news.provider_order_for_asset(asset, providers)[0] for asset in ("bitcoin", "ethereum", "solana", "ripple", "cardano")}) > 1
+    assert news.provider_order_for_asset("bitcoin", providers) == news.provider_order_for_asset(
+        "bitcoin", providers
+    )
+    assert (
+        len(
+            {
+                news.provider_order_for_asset(asset, providers)[0]
+                for asset in ("bitcoin", "ethereum", "solana", "ripple", "cardano")
+            }
+        )
+        > 1
+    )
 
 
 def test_fallback_configurado_e_ultima_tentativa(monkeypatch):
@@ -149,8 +160,7 @@ def test_curated_rss_propaga_erro_de_redirect_nao_seguido(monkeypatch):
         async def get(self, url, **kwargs):
             return _RedirectResponse()
 
-    monkeypatch.setattr(news, "get_http_client",
-                        lambda: _ClientContext(_RedirectClient()))
+    monkeypatch.setattr(news, "get_http_client", lambda: _ClientContext(_RedirectClient()))
     monkeypatch.setattr(news, "_PROVIDERS", {"curated_rss": news.CuratedRssProvider()})
     monkeypatch.setattr(news, "_OPEN_CIRCUITS", set())
     monkeypatch.setattr(news, "provider_order_for_asset", lambda asset: ["curated_rss"])
@@ -194,8 +204,7 @@ def test_marcador_de_falha_grava_status_http_e_feed(monkeypatch):
     assert "curated_rss:HTTPStatusError:308@" in resultado.degraded_reason
     # o feed carimbado é o que a partição por hash escolheu para o ativo
     esperado = sorted(news.CURATED_RSS_FEEDS)[
-        int.from_bytes(hashlib.sha256(b"uniswap").digest()[:4], "big")
-        % len(news.CURATED_RSS_FEEDS)
+        int.from_bytes(hashlib.sha256(b"uniswap").digest()[:4], "big") % len(news.CURATED_RSS_FEEDS)
     ]
     assert resultado.degraded_reason.endswith("@" + esperado)
 
@@ -255,17 +264,24 @@ def test_mediastack_envia_consulta_e_rejeita_erro_da_api(monkeypatch):
 
 
 def test_provenance_de_noticias_persiste_e_legado_permanece_null(tmp_path):
-    rows = to_prediction_rows([
-        {"ativo": "bitcoin", "data": "2026-07-17 00:00:00", "score": 70,
-         "news_provider": "google_news_rss", "news_degraded_reason": None,
-         "collection_policy": "{\"news_providers\":[\"google_news_rss\"]}"},
-        {"ativo": "ethereum", "data": "2026-07-17 00:00:00", "score": 60},
-    ])
+    rows = to_prediction_rows(
+        [
+            {
+                "ativo": "bitcoin",
+                "data": "2026-07-17 00:00:00",
+                "score": 70,
+                "news_provider": "google_news_rss",
+                "news_degraded_reason": None,
+                "collection_policy": '{"news_providers":["google_news_rss"]}',
+            },
+            {"ativo": "ethereum", "data": "2026-07-17 00:00:00", "score": 60},
+        ]
+    )
     with FeatureStore(tmp_path / "news.db") as store:
         store.write_predictions(rows)
         got = {row["ativo"]: row for row in store.read_predictions()}
     assert got["BITCOIN"]["news_provider"] == "google_news_rss"
     assert got["BITCOIN"]["news_degraded_reason"] is None
-    assert got["BITCOIN"]["collection_policy"] == "{\"news_providers\":[\"google_news_rss\"]}"
+    assert got["BITCOIN"]["collection_policy"] == '{"news_providers":["google_news_rss"]}'
     assert got["ETHEREUM"]["news_provider"] is None
     assert got["ETHEREUM"]["collection_policy"] is None

@@ -2,6 +2,7 @@
 integração do backtest (lê da store, produz as mesmas linhas que o loader CSV
 produzia para a mesma amostra).
 """
+
 import sys
 import types
 
@@ -30,8 +31,8 @@ def test_migracao_csv_backfill_direct_e_preserva_dados(tmp_path):
         preds = fs.read_predictions()
     assert n == 1 and len(preds) == 1
     p = preds[0]
-    assert p["fonte"] == "direct"                 # linha pré-DPL → backfill
-    assert p["resumo"] == "tendencia de baixa"    # dado não corrompido
+    assert p["fonte"] == "direct"  # linha pré-DPL → backfill
+    assert p["resumo"] == "tendencia de baixa"  # dado não corrompido
     assert p["juiz"] == "gemini:x:y" and p["score"] == 25.0
     # CSV não foi tocado (fica congelado como registro da era pré-store)
     assert csv_path.read_bytes() == bytes_antes
@@ -44,8 +45,8 @@ def test_migracao_idempotente_e_linha_malformada_fica_fora(tmp_path):
         n1 = history.migrate_csv_to_store(fs, csv_path=str(csv_path))
         n2 = history.migrate_csv_to_store(fs, csv_path=str(csv_path))  # 2ª vez = upsert
         preds = fs.read_predictions()
-    assert n1 == n2 == 2                          # QUEBRADA (sem score) não entra
-    assert len(preds) == 2                        # idempotente: nada duplicou
+    assert n1 == n2 == 2  # QUEBRADA (sem score) não entra
+    assert len(preds) == 2  # idempotente: nada duplicou
     assert {p["fonte"] for p in preds} == {"dpl:fallback"}  # carimbo preservado
 
 
@@ -61,20 +62,54 @@ def test_backtest_le_da_store_com_mesmo_resultado_do_loader_csv(tmp_path, monkey
 
     db = tmp_path / "fs.db"
     with FeatureStore(db) as fs:
-        fs.write_predictions([
-            {"ativo": "BITCOIN", "ts": "2026-06-30 02:35:23", "score": 25.0,
-             "sentimento": "negativo", "resumo": "baixa", "price_usd": 59296.8,
-             "juiz": "gemini:x:y", "divergencia": 0, "fonte": "direct"},
-            {"ativo": "SOLANA", "ts": "2026-07-01 23:02:31", "score": 85.0,
-             "sentimento": "positivo", "resumo": "alta", "price_usd": 150.0,
-             "juiz": "gemini:x:y", "divergencia": 1, "fonte": "dpl:fallback"},
-            {"ativo": "VELVET", "ts": "2026-07-01 23:49:26", "score": 80.0,
-             "sentimento": "positivo", "resumo": "fallback aplicado", "price_usd": 1.0,
-             "juiz": "gemini:x:y", "divergencia": 0, "fonte": "dpl:fallback"},
-            {"ativo": "ZERADA", "ts": "2026-07-01 23:55:00", "score": 50.0,
-             "sentimento": "neutro", "resumo": "preco invalido", "price_usd": 0.0,
-             "juiz": "gemini:x:y", "divergencia": 0, "fonte": "dpl:fallback"},
-        ])
+        fs.write_predictions(
+            [
+                {
+                    "ativo": "BITCOIN",
+                    "ts": "2026-06-30 02:35:23",
+                    "score": 25.0,
+                    "sentimento": "negativo",
+                    "resumo": "baixa",
+                    "price_usd": 59296.8,
+                    "juiz": "gemini:x:y",
+                    "divergencia": 0,
+                    "fonte": "direct",
+                },
+                {
+                    "ativo": "SOLANA",
+                    "ts": "2026-07-01 23:02:31",
+                    "score": 85.0,
+                    "sentimento": "positivo",
+                    "resumo": "alta",
+                    "price_usd": 150.0,
+                    "juiz": "gemini:x:y",
+                    "divergencia": 1,
+                    "fonte": "dpl:fallback",
+                },
+                {
+                    "ativo": "VELVET",
+                    "ts": "2026-07-01 23:49:26",
+                    "score": 80.0,
+                    "sentimento": "positivo",
+                    "resumo": "fallback aplicado",
+                    "price_usd": 1.0,
+                    "juiz": "gemini:x:y",
+                    "divergencia": 0,
+                    "fonte": "dpl:fallback",
+                },
+                {
+                    "ativo": "ZERADA",
+                    "ts": "2026-07-01 23:55:00",
+                    "score": 50.0,
+                    "sentimento": "neutro",
+                    "resumo": "preco invalido",
+                    "price_usd": 0.0,
+                    "juiz": "gemini:x:y",
+                    "divergencia": 0,
+                    "fonte": "dpl:fallback",
+                },
+            ]
+        )
     monkeypatch.setattr(backtest, "FEATURE_STORE_DB", db)
     monkeypatch.setattr(history, "HIST_CSV", str(tmp_path / "inexistente.csv"))
 
@@ -101,14 +136,32 @@ def test_load_rows_ignora_ts_ilegivel_sem_quebrar_as_demais(tmp_path, monkeypatc
 
     db = tmp_path / "fs.db"
     with FeatureStore(db) as fs:
-        fs.write_predictions([
-            {"ativo": "BITCOIN", "ts": "não-é-uma-data-nenhuma", "score": 70.0,
-             "sentimento": "positivo", "resumo": "x", "price_usd": 100.0,
-             "juiz": "gemini:x:y", "divergencia": 0, "fonte": "direct"},
-            {"ativo": "SOLANA", "ts": "2026-07-01 23:02:31", "score": 85.0,
-             "sentimento": "positivo", "resumo": "ok", "price_usd": 150.0,
-             "juiz": "gemini:x:y", "divergencia": 0, "fonte": "dpl:fallback"},
-        ])
+        fs.write_predictions(
+            [
+                {
+                    "ativo": "BITCOIN",
+                    "ts": "não-é-uma-data-nenhuma",
+                    "score": 70.0,
+                    "sentimento": "positivo",
+                    "resumo": "x",
+                    "price_usd": 100.0,
+                    "juiz": "gemini:x:y",
+                    "divergencia": 0,
+                    "fonte": "direct",
+                },
+                {
+                    "ativo": "SOLANA",
+                    "ts": "2026-07-01 23:02:31",
+                    "score": 85.0,
+                    "sentimento": "positivo",
+                    "resumo": "ok",
+                    "price_usd": 150.0,
+                    "juiz": "gemini:x:y",
+                    "divergencia": 0,
+                    "fonte": "dpl:fallback",
+                },
+            ]
+        )
     monkeypatch.setattr(backtest, "FEATURE_STORE_DB", db)
     monkeypatch.setattr(history, "HIST_CSV", str(tmp_path / "inexistente.csv"))
 
@@ -125,11 +178,13 @@ def test_analise_persiste_previsao_ANTES_de_fechar_a_store():
     from pathlib import Path
 
     src = (Path(__file__).parent.parent / "GarimpoInvestimentos" / "main.py").read_text(
-        encoding="utf-8")
+        encoding="utf-8"
+    )
     assert "append_history(resultados, store)" in src
     assert "store.close()" in src
     assert src.index("append_history(resultados, store)") < src.index("store.close()"), (
-        "store.close() antes do append_history: previsões seriam descartadas em silêncio")
+        "store.close() antes do append_history: previsões seriam descartadas em silêncio"
+    )
 
 
 def test_report_estratifica_por_fonte(tmp_path, monkeypatch, capsys):
@@ -149,13 +204,16 @@ def test_report_estratifica_por_fonte(tmp_path, monkeypatch, capsys):
     enriched = []
     for i in range(24):
         score = rng.uniform(0, 100)
-        enriched.append({
-            "score": score, "divergencia": 0,
-            "fonte": "direct" if i % 2 == 0 else "dpl:fallback",
-            "var_d1_pct": rng.gauss(0, 2),
-            "var_d7_pct": 0.08 * (score - 50) + rng.gauss(0, 2),
-            "var_d30_pct": rng.gauss(0, 5),
-        })
+        enriched.append(
+            {
+                "score": score,
+                "divergencia": 0,
+                "fonte": "direct" if i % 2 == 0 else "dpl:fallback",
+                "var_d1_pct": rng.gauss(0, 2),
+                "var_d7_pct": 0.08 * (score - 50) + rng.gauss(0, 2),
+                "var_d30_pct": rng.gauss(0, 5),
+            }
+        )
     backtest._report(enriched)
     out = capsys.readouterr().out
     assert "fonte=direct" in out

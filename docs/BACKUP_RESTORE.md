@@ -41,3 +41,5 @@ A ferramenta resolve criacao, integridade e recuperacao local. Frequencia,
 retencao, criptografia e volume externo continuam sendo decisoes operacionais
 humanas. Um teste periodico deve criar o backup, verifica-lo, restaura-lo para
 uma raiz descartavel e consultar o banco restaurado em modo read-only.
+
+

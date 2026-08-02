@@ -17,6 +17,7 @@ Uso:
     python scripts/ci_check.py            # tudo
     python scripts/ci_check.py --fast     # pula o pytest (so barreiras estaticas)
 """
+
 import argparse
 import os
 import shutil
@@ -33,11 +34,13 @@ warnings_: list[str] = []
 def check_pytest() -> None:
     print("[1/3] pytest (suite completa)...")
     env = dict(os.environ)
-    # A suite importa predictor_core do vendor e o pacote da raiz.
-    env["PYTHONPATH"] = os.pathsep.join(
-        [str(ROOT / "vendor"), str(ROOT), env.get("PYTHONPATH", "")]).rstrip(os.pathsep)
-    r = subprocess.run([sys.executable, "-m", "pytest", "tests/", "-q"],
-                       cwd=ROOT, capture_output=True, text=True, env=env)
+    r = subprocess.run(
+        [sys.executable, "-m", "pytest", "tests/", "-q"],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+        env=env,
+    )
     tail = (r.stdout or "").strip().splitlines()[-1:] or ["(sem saida)"]
     print(f"      {tail[0]}")
     if r.returncode != 0:
@@ -60,7 +63,8 @@ def check_ps1_ascii() -> None:
             failures.append(
                 f"scripts/{f.name}: {len(bad)} byte(s) nao-ASCII (1o: 0x{b:02x} "
                 f"na linha {line}) — PowerShell 5.1 le sem BOM como cp1252 e "
-                f"corrompe o parse; reescreva sem acentos/travessoes")
+                f"corrompe o parse; reescreva sem acentos/travessoes"
+            )
     print(f"      {len(scripts)} script(s) verificados")
 
 
@@ -78,12 +82,14 @@ def check_ps1_parse() -> None:
             f"[void][System.Management.Automation.Language.Parser]::ParseFile('{f}',[ref]$null,[ref]$e);"
             "if($e){$e|ForEach-Object{$_.Message};exit 1}"
         )
-        r = subprocess.run([pwsh, "-NoProfile", "-NonInteractive", "-Command", cmd],
-                           capture_output=True, text=True)
+        r = subprocess.run(
+            [pwsh, "-NoProfile", "-NonInteractive", "-Command", cmd], capture_output=True, text=True
+        )
         if r.returncode != 0:
             msg = (r.stdout or r.stderr or "").strip().splitlines()[:1]
-            failures.append(f"scripts/{f.name}: erro de parse — {msg} "
-                            f"(o agendador sairia 1 sem criar log)")
+            failures.append(
+                f"scripts/{f.name}: erro de parse — {msg} (o agendador sairia 1 sem criar log)"
+            )
     print(f"      {len(scripts)} script(s) parseados")
 
 

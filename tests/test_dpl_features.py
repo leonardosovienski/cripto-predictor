@@ -4,22 +4,33 @@ Validam que features derivadas (change_*, indicadores) saem do OHLCV bruto sem
 alargar o MarketDataPoint, e que o serving reconstrói o hard_data que o pipeline
 consome (price/change no topo, indicadores aninhados).
 """
-from datetime import datetime, timezone
+
+from datetime import UTC, datetime
 
 from GarimpoInvestimentos.dpl.contracts import MarketDataPoint
 from GarimpoInvestimentos.dpl.feature_engineering import derive_features, to_hard_data
 
-UTC = timezone.utc
+UTC = UTC
 
 
 def _series(closes: list[float]) -> list[MarketDataPoint]:
     pts = []
     for i, c in enumerate(closes, start=1):
         ts = datetime(2026, 1, 1, tzinfo=UTC).replace(day=min(i, 28))
-        pts.append(MarketDataPoint(
-            symbol="bitcoin", timestamp=ts, open=c, high=c, low=c, close=c,
-            volume=float(i), source="coingecko", interval="1d", published_at=ts,
-        ))
+        pts.append(
+            MarketDataPoint(
+                symbol="bitcoin",
+                timestamp=ts,
+                open=c,
+                high=c,
+                low=c,
+                close=c,
+                volume=float(i),
+                source="coingecko",
+                interval="1d",
+                published_at=ts,
+            )
+        )
     return pts
 
 
@@ -44,8 +55,12 @@ def test_derive_serie_curta_sem_indicadores_longos():
 def test_to_hard_data_separa_indicadores():
     flat = {
         "ts": datetime(2026, 1, 1, tzinfo=UTC),
-        "price_usd": 100.0, "volume_usd": 5.0, "change_24h": 2.0,
-        "rsi_14": 55.0, "sma_200": 90.0, "preco_vs_sma200_pct": 11.1,
+        "price_usd": 100.0,
+        "volume_usd": 5.0,
+        "change_24h": 2.0,
+        "rsi_14": 55.0,
+        "sma_200": 90.0,
+        "preco_vs_sma200_pct": 11.1,
         "fear_greed": 40.0,
     }
     hard = to_hard_data(flat)
@@ -55,8 +70,7 @@ def test_to_hard_data_separa_indicadores():
 
 
 def test_to_hard_data_descarta_nan():
-    flat = {"ts": datetime(2026, 1, 1, tzinfo=UTC), "price_usd": 100.0,
-            "change_7d": float("nan")}
+    flat = {"ts": datetime(2026, 1, 1, tzinfo=UTC), "price_usd": 100.0, "change_7d": float("nan")}
     hard = to_hard_data(flat)
     assert "change_7d" not in hard  # NaN não polui o prompt
 

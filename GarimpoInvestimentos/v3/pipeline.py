@@ -22,11 +22,12 @@ USO (CLI):
 DEPENDÊNCIAS:
     pip install hmmlearn numpy scikit-learn httpx
 """
+
 import argparse
 import asyncio
 import logging
 import sys
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 from predictor_core.obs import emit_event
@@ -97,19 +98,21 @@ def _model_path(symbol: str) -> Path:
 # Conversão de data para ms                                           #
 # ------------------------------------------------------------------ #
 
+
 def _date_to_ms(date_str: str) -> int:
     """'YYYY-MM-DD' → timestamp UTC início do dia em ms."""
-    dt = datetime.strptime(date_str, "%Y-%m-%d").replace(tzinfo=timezone.utc)
+    dt = datetime.strptime(date_str, "%Y-%m-%d").replace(tzinfo=UTC)
     return int(dt.timestamp() * 1000)
 
 
 def _now_ms() -> int:
-    return int(datetime.now(timezone.utc).timestamp() * 1000)
+    return int(datetime.now(UTC).timestamp() * 1000)
 
 
 # ------------------------------------------------------------------ #
 # Coleta (assíncrona)                                                 #
 # ------------------------------------------------------------------ #
+
 
 async def _collect_symbol(
     symbol: str,
@@ -163,6 +166,7 @@ async def _collect_symbol(
 # Pipeline completo de um símbolo                                     #
 # ------------------------------------------------------------------ #
 
+
 async def run_symbol(
     symbol: str,
     start_date: str,
@@ -178,18 +182,24 @@ async def run_symbol(
 
     logger.info(
         "pipeline [%s]: iniciando coleta %s → %s",
-        symbol, start_date, end_date or "agora",
+        symbol,
+        start_date,
+        end_date or "agora",
     )
 
     # 1. Coleta
     funding_records, oi_records, kline_records = await _collect_symbol(
-        symbol, start_ms, end_ms, force_refresh,
+        symbol,
+        start_ms,
+        end_ms,
+        force_refresh,
     )
 
     if not funding_records:
         logger.error("pipeline [%s]: sem dados de funding — abortando", symbol)
         emit_event(
-            "v3_cripto", "pipeline_aborted",
+            "v3_cripto",
+            "pipeline_aborted",
             metrics={"data_quality_score": 0.0},
             metadata={"symbol": symbol, "reason": "no_funding_data"},
         )
@@ -214,12 +224,18 @@ async def run_symbol(
     if len(feature_vectors) < 100:
         logger.error(
             "pipeline [%s]: apenas %d feature vectors — mínimo 100 para treinar HMM",
-            symbol, len(feature_vectors),
+            symbol,
+            len(feature_vectors),
         )
         emit_event(
-            "v3_cripto", "pipeline_aborted",
+            "v3_cripto",
+            "pipeline_aborted",
             metrics={"data_quality_score": 0.0},
-            metadata={"symbol": symbol, "reason": "insufficient_features", "count": len(feature_vectors)},
+            metadata={
+                "symbol": symbol,
+                "reason": "insufficient_features",
+                "count": len(feature_vectors),
+            },
         )
         return []
 
@@ -240,12 +256,15 @@ async def run_symbol(
         except StaleRegimeModelError as exc:
             # Contrato de features/HMM mudou: o .pkl em cache é incoerente. Auto-cura
             # retreinando em vez de servir previsões erradas em silêncio.
-            logger.warning("pipeline [%s]: modelo em cache incompatível — retreinando. %s",
-                           symbol, exc)
+            logger.warning(
+                "pipeline [%s]: modelo em cache incompatível — retreinando. %s", symbol, exc
+            )
             engine.fit(log_returns, realized_vols)
             engine.save(model_path)
     else:
-        logger.info("pipeline [%s]: treinando RegimeEngine com %d obs…", symbol, len(feature_vectors))
+        logger.info(
+            "pipeline [%s]: treinando RegimeEngine com %d obs…", symbol, len(feature_vectors)
+        )
         engine.fit(log_returns, realized_vols)
         engine.save(model_path)
 
@@ -267,11 +286,15 @@ async def run_symbol(
     active_count = sum(1 for s in signals if s.active)
     logger.info(
         "pipeline [%s]: %d sinais totais, %d ativos → %s",
-        symbol, len(signals), active_count, sig_path,
+        symbol,
+        len(signals),
+        active_count,
+        sig_path,
     )
 
     emit_event(
-        "v3_cripto", "pipeline_complete",
+        "v3_cripto",
+        "pipeline_complete",
         metrics={
             "n_features": float(len(feature_vectors)),
             "n_signals": float(len(signals)),
@@ -293,6 +316,7 @@ async def run_symbol(
 # ------------------------------------------------------------------ #
 # CLI                                                                  #
 # ------------------------------------------------------------------ #
+
 
 async def _main() -> None:
     parser = argparse.ArgumentParser(

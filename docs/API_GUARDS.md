@@ -34,3 +34,5 @@ API_GUARD_MAX_LLM_CALLS_PER_PROVIDER=6
 Cada bloqueio emite `api_guard_skipped` no JSONL com etapa, ativo e razão. Como os
 tetos reduzem a população observada, qualquer ativação altera a coleta e exige trial
 forward nova; H5 permanece congelada.
+
+

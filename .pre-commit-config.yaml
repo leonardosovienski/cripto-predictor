@@ -1,0 +1,14 @@
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.16.1
+    hooks:
+      - id: ruff-check
+        args: [--fix]
+      - id: ruff-format
+  - repo: local
+    hooks:
+      - id: secret-scan
+        name: secret scan
+        entry: python scripts/scan_secrets.py .
+        language: system
+        pass_filenames: false

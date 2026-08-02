@@ -7,11 +7,12 @@ Sem rede: parser sobre linhas/CSV, testável com fixtures. As demais fontes (Sof
 FBref, odds, clima) seguem o mesmo contrato MatchDataProvider — ver stubs em
 providers/football_stubs.py.
 """
+
 from __future__ import annotations
 
 import csv
 import io
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
 from GarimpoInvestimentos.dpl.entity_mapper import EntityMapper
 from GarimpoInvestimentos.dpl.events import MatchDataProvider, MatchObservation
@@ -36,23 +37,28 @@ class Martj42Provider(MatchDataProvider):
                 self.unmapped.append(("martj42", row["away_team"]))
             if home_id is None or away_id is None:
                 continue  # bloqueia registro com entidade fantasma
-            kickoff = datetime.strptime(row["date"], "%Y-%m-%d").replace(tzinfo=timezone.utc)
-            out.append(MatchObservation(
-                source="martj42",
-                match_id=f"{row['date']}_{home_id}_{away_id}",
-                kickoff=kickoff, home_id=home_id, away_id=away_id,
-                published_at=kickoff + self._lag,  # resultado público após o jogo
-                payload={
-                    "home_score": _int(row.get("home_score")),
-                    "away_score": _int(row.get("away_score")),
-                    "tournament": row.get("tournament"),
-                },
-            ))
+            kickoff = datetime.strptime(row["date"], "%Y-%m-%d").replace(tzinfo=UTC)
+            out.append(
+                MatchObservation(
+                    source="martj42",
+                    match_id=f"{row['date']}_{home_id}_{away_id}",
+                    kickoff=kickoff,
+                    home_id=home_id,
+                    away_id=away_id,
+                    published_at=kickoff + self._lag,  # resultado público após o jogo
+                    payload={
+                        "home_score": _int(row.get("home_score")),
+                        "away_score": _int(row.get("away_score")),
+                        "tournament": row.get("tournament"),
+                    },
+                )
+            )
         return out
 
     async def fetch_matches(self, limit: int = 100) -> list[MatchObservation]:
         raise NotImplementedError(
-            "martj42: carregue via parse_csv(text). fetch_matches (rede) é stub.")
+            "martj42: carregue via parse_csv(text). fetch_matches (rede) é stub."
+        )
 
 
 def _int(v):

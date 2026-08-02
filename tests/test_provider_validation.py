@@ -8,6 +8,7 @@ com NaN tem resultado indefinido, sem exceção). JSON padrão não tem NaN, mas
 na fronteira do provider (domínio), não no vendor: um valor não-finito vira ValueError,
 que o Router já trata como falha normal desse provedor.
 """
+
 import math
 
 import pytest

@@ -20,6 +20,7 @@ def calculate_final_score(analysis: dict) -> float:
 # e prova se as linhas tagueadas perdem alpha — sem hiperparâmetro arbitrário mutando
 # o sinal original.
 
+
 def technical_direction(indicadores: dict) -> str | None:
     """'bull' | 'bear' | 'neutral' a partir de tendência (SMA200), momentum (MACD) e
     sobrecompra/sobrevenda (RSI). None se não há indicador suficiente para opinar."""

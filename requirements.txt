@@ -6,3 +6,5 @@ httpx>=0.28         # GarimpoInvestimentos/analyzers/ai_insights.py, v3/collecto
 # Opcionais deliberadamente FORA daqui: hmmlearn/numpy/sklearn (venv V3),
 # openai/google-genai, ccxt, openpyxl e python-dotenv. Os testes que dependem
 # deles fazem skip explícito, então a suíte fica verde sem instalá-los.
+
+

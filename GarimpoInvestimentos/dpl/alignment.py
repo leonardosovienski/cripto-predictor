@@ -11,6 +11,7 @@ Regra dupla (ver docs/DOSSIE_PLATAFORMA.md, ADR-003):
 A DPL entrega o dado bruto com forward fill / NaN; a engenharia de features
 derivadas (deltas, z-scores — tratamento da Variância Zero) é do domínio.
 """
+
 from __future__ import annotations
 
 import bisect
@@ -22,8 +23,9 @@ from GarimpoInvestimentos.dpl.signals import SignalPoint
 NaN = float("nan")
 
 
-def _asof_value(signals_sorted: list[SignalPoint], pub_keys: list,
-                candle_ts, max_staleness: timedelta | None):
+def _asof_value(
+    signals_sorted: list[SignalPoint], pub_keys: list, candle_ts, max_staleness: timedelta | None
+):
     """Último sinal cujo published_at <= candle_ts (forward fill anti-lookahead).
     Retorna NaN se não houver elegível ou se o dado estiver stale.
     """

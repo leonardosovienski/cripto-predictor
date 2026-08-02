@@ -4,6 +4,7 @@ Cada ativo consulta uma fonte primária estável (hash do nome) e tenta as demai
 somente quando a primeira está indisponível. Alterar ``NEWS_PROVIDERS`` muda o
 input do LLM e exige uma nova trial forward.
 """
+
 from __future__ import annotations
 
 import hashlib
@@ -13,10 +14,11 @@ from dataclasses import dataclass
 from typing import Protocol
 from urllib.parse import quote_plus
 
+from predictor_core.net import get_http_client
+
 from GarimpoInvestimentos.collectors.serpapi_news import get_news_snippets as _serpapi
 from GarimpoInvestimentos.config import settings
 from GarimpoInvestimentos.core.api_guard import allow as guard_allow
-from predictor_core.net import get_http_client
 
 _log = logging.getLogger("previsao_cripto.news")
 
@@ -139,12 +141,20 @@ class MediastackProvider:
 def _rss_titles(payload: bytes) -> list[str]:
     """Extrai títulos de RSS 2.0 ou Atom sem dependência externa."""
     root = ET.fromstring(payload)
-    titles = [title.strip() for title in (item.findtext("title") for item in root.findall(".//item"))
-              if title and title.strip()]
+    titles = [
+        title.strip()
+        for title in (item.findtext("title") for item in root.findall(".//item"))
+        if title and title.strip()
+    ]
     if not titles:
         atom = "{http://www.w3.org/2005/Atom}"
-        titles = [title.strip() for title in (entry.findtext(f"{atom}title") for entry in root.findall(f".//{atom}entry"))
-                  if title and title.strip()]
+        titles = [
+            title.strip()
+            for title in (
+                entry.findtext(f"{atom}title") for entry in root.findall(f".//{atom}entry")
+            )
+            if title and title.strip()
+        ]
     return titles
 
 
@@ -157,7 +167,11 @@ class GoogleNewsRssProvider:
     name = "google_news_rss"
 
     async def fetch(self, query: str, limit: int) -> list[str]:
-        url = "https://news.google.com/rss/search?q=" + quote_plus(query) + "&hl=pt-BR&gl=BR&ceid=BR:pt-419"
+        url = (
+            "https://news.google.com/rss/search?q="
+            + quote_plus(query)
+            + "&hl=pt-BR&gl=BR&ceid=BR:pt-419"
+        )
         async with get_http_client() as client:
             response = await client.get(url)
             response.raise_for_status()
@@ -186,9 +200,12 @@ class CuratedRssProvider:
 
 
 _PROVIDERS: dict[str, NewsProvider] = {
-    "serpapi": SerpApiProvider(), "cryptopanic": CryptoPanicProvider(),
-    "newsapi_ai": NewsApiAiProvider(), "mediastack": MediastackProvider(),
-    "google_news_rss": GoogleNewsRssProvider(), "curated_rss": CuratedRssProvider(),
+    "serpapi": SerpApiProvider(),
+    "cryptopanic": CryptoPanicProvider(),
+    "newsapi_ai": NewsApiAiProvider(),
+    "mediastack": MediastackProvider(),
+    "google_news_rss": GoogleNewsRssProvider(),
+    "curated_rss": CuratedRssProvider(),
 }
 _OPEN_CIRCUITS: set[str] = set()
 _NEWS_CACHE: dict[tuple[str, str, int], list[str]] = {}
@@ -265,7 +282,9 @@ async def get_news_result(query: str, limit: int = 5) -> NewsResult:
                 _OPEN_CIRCUITS.add(name)
             _log.warning(
                 "notícias %s indisponíveis para %s: %s (status=%s, feed=%s)",
-                name, query, type(exc).__name__,
+                name,
+                query,
+                type(exc).__name__,
                 status if status is not None else "-",
                 getattr(exc, "feed_source", "-"),
             )

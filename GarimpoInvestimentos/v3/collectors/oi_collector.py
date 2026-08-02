@@ -22,9 +22,12 @@ Contrato de saída (OIRecord):
 Nota: a Binance retorna OI em contratos (BTC) e em valor nocional (USD).
 O feature_builder usa oi_notional_usd (invariante à flutuação de preço unitário).
 """
+
 import asyncio
 import csv
 import logging
+
+# Garantia de importação explícita no workspace para Pylance/Pyright.
 import time
 from dataclasses import dataclass
 from pathlib import Path
@@ -34,21 +37,15 @@ from predictor_core.obs import emit_event
 
 from GarimpoInvestimentos.v3.circuit_breaker import CircuitBreaker
 
-# Garantia de importação explícita no workspace para Pylance/Pyright.
-import sys
-from pathlib import Path
-
 ROOT = Path(__file__).resolve().parents[2]
-if str(ROOT) not in sys.path:
-    sys.path.insert(0, str(ROOT))
 
 logger = logging.getLogger(__name__)
 
 _FUTURES_BASE = "https://fapi.binance.com"
 _OI_HIST_PATH = "/futures/data/openInterestHist"
-_PERIOD = "1h"         # "8h" é INVÁLIDO neste endpoint (erro -1130); 1h alinha nos funding times
-_MAX_OI_HISTORY_DAYS = 30   # Binance só serve os últimos ~30 dias de OI histórico
-_MAX_PER_PAGE = 500    # limite da Binance para este endpoint
+_PERIOD = "1h"  # "8h" é INVÁLIDO neste endpoint (erro -1130); 1h alinha nos funding times
+_MAX_OI_HISTORY_DAYS = 30  # Binance só serve os últimos ~30 dias de OI histórico
+_MAX_PER_PAGE = 500  # limite da Binance para este endpoint
 _PAGE_SLEEP_S = 0.5
 
 
@@ -56,10 +53,11 @@ _PAGE_SLEEP_S = 0.5
 # Contrato de dado                                                     #
 # ------------------------------------------------------------------ #
 
+
 @dataclass(frozen=True)
 class OIRecord:
     symbol: str
-    timestamp_ms: int           # início do período — usado como chave de join
+    timestamp_ms: int  # início do período — usado como chave de join
     oi_contracts: float
     oi_notional_usd: float
 
@@ -67,6 +65,7 @@ class OIRecord:
 # ------------------------------------------------------------------ #
 # Coletor                                                              #
 # ------------------------------------------------------------------ #
+
 
 class OICollector:
     """
@@ -93,7 +92,8 @@ class OICollector:
         floor_ms = int(time.time() * 1000) - _MAX_OI_HISTORY_DAYS * 86_400_000
         if start_ms < floor_ms:
             emit_event(
-                "v3_cripto", "oi_range_clamped",
+                "v3_cripto",
+                "oi_range_clamped",
                 metrics={"clamped_days": float(_MAX_OI_HISTORY_DAYS)},
                 metadata={
                     "symbol": self.symbol,
@@ -105,7 +105,8 @@ class OICollector:
             logger.warning(
                 "oi_collector [%s]: start ajustado para -%dd (limite Binance OI). "
                 "Histórico de OI mais antigo exige feed pago.",
-                self.symbol, _MAX_OI_HISTORY_DAYS,
+                self.symbol,
+                _MAX_OI_HISTORY_DAYS,
             )
             start_ms = floor_ms
         cursor = start_ms
@@ -119,9 +120,7 @@ class OICollector:
                         metrics={"data_quality_score": 0.0},
                         metadata={"collector": "oi", "symbol": self.symbol},
                     )
-                    raise RuntimeError(
-                        f"CircuitBreaker OPEN para oi/{self.symbol}"
-                    )
+                    raise RuntimeError(f"CircuitBreaker OPEN para oi/{self.symbol}")
 
                 try:
                     page = await self._fetch_page(client, cursor, end_ms)
@@ -160,9 +159,7 @@ class OICollector:
             metrics={"n_records": len(records)},
             metadata={"symbol": self.symbol, "start_ms": start_ms, "end_ms": end_ms},
         )
-        logger.info(
-            "oi_collector [%s]: %d registros coletados", self.symbol, len(records)
-        )
+        logger.info("oi_collector [%s]: %d registros coletados", self.symbol, len(records))
         return records
 
     @with_retry(attempts=4, base_delay=2.0, max_delay=30.0)
@@ -219,12 +216,14 @@ def save_oi_csv(records: list[OIRecord], path: Path) -> int:
         if write_header:
             writer.writeheader()
         for r in new_records:
-            writer.writerow({
-                "symbol": r.symbol,
-                "timestamp_ms": r.timestamp_ms,
-                "oi_contracts": r.oi_contracts,
-                "oi_notional_usd": r.oi_notional_usd,
-            })
+            writer.writerow(
+                {
+                    "symbol": r.symbol,
+                    "timestamp_ms": r.timestamp_ms,
+                    "oi_contracts": r.oi_contracts,
+                    "oi_notional_usd": r.oi_notional_usd,
+                }
+            )
 
     logger.info("oi_collector: %d novos registros → %s", len(new_records), path)
     return len(new_records)
@@ -236,10 +235,12 @@ def load_oi_csv(path: Path) -> list[OIRecord]:
     rows = []
     with open(path, newline="", encoding="utf-8-sig") as f:
         for row in csv.DictReader(f):
-            rows.append(OIRecord(
-                symbol=row["symbol"],
-                timestamp_ms=int(row["timestamp_ms"]),
-                oi_contracts=float(row["oi_contracts"]),
-                oi_notional_usd=float(row["oi_notional_usd"]),
-            ))
+            rows.append(
+                OIRecord(
+                    symbol=row["symbol"],
+                    timestamp_ms=int(row["timestamp_ms"]),
+                    oi_contracts=float(row["oi_contracts"]),
+                    oi_notional_usd=float(row["oi_notional_usd"]),
+                )
+            )
     return sorted(rows, key=lambda r: r.timestamp_ms)

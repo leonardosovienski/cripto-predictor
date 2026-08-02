@@ -4,6 +4,7 @@ Um .pkl é um modelo treinado sob um contrato (features de emissão + estrutura 
 HMM). Se o contrato muda no código mas o cache é velho, servir esse modelo é um bug
 silencioso. Estes testes não tocam hmmlearn — exercitam só save/load/fingerprint
 com stand-ins picláveis (o import do RegimeEngine é lazy nas deps pesadas)."""
+
 import pickle
 
 import pytest
@@ -40,15 +41,23 @@ def test_roundtrip_load_ok(tmp_path):
     p = tmp_path / "m.pkl"
     _engine_with_dummy().save(p)
     eng2 = RegimeEngine()
-    eng2.load(p)   # fingerprint bate → não levanta
+    eng2.load(p)  # fingerprint bate → não levanta
     assert eng2._state_map == {0: "bull", 1: "sideways", 2: "bear"}
 
 
 def test_load_rejects_stale_fingerprint(tmp_path):
     p = tmp_path / "m.pkl"
-    bad = {"model": _DummyModel(), "scaler": _DummyModel(), "state_map": {},
-           "fingerprint": {"schema_version": 999, "n_states": 5,
-                           "covariance_type": "diag", "emission_features": ["x"]}}
+    bad = {
+        "model": _DummyModel(),
+        "scaler": _DummyModel(),
+        "state_map": {},
+        "fingerprint": {
+            "schema_version": 999,
+            "n_states": 5,
+            "covariance_type": "diag",
+            "emission_features": ["x"],
+        },
+    }
     p.write_bytes(pickle.dumps(bad))
     with pytest.raises(StaleRegimeModelError):
         RegimeEngine().load(p)
@@ -60,6 +69,6 @@ def test_load_warns_on_legacy_without_fingerprint(tmp_path, caplog):
     p.write_bytes(pickle.dumps(legacy))
     eng = RegimeEngine()
     with caplog.at_level("WARNING"):
-        eng.load(p)   # legado: avisa mas carrega (migração não-destrutiva)
+        eng.load(p)  # legado: avisa mas carrega (migração não-destrutiva)
     assert eng._state_map == {0: "bull"}
     assert any("sem fingerprint" in r.message for r in caplog.records)

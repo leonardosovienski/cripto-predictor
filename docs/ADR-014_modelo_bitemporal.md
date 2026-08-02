@@ -81,3 +81,5 @@ Usar 0,43 no backtest de 20/abr seria lookahead — invisível sem este modelo.
 [[ADR-003]] (forward-fill + published_at), [[ADR-008]] (vintage), [[ADR-011]] (lag de
 publicação), [[ADR-012]] (event-asof). Ver também [DPL_FASES_4_5.md](DPL_FASES_4_5.md)
 e a auditoria [AUDITORIA_DPL.md](AUDITORIA_DPL.md) (C-05).
+
+

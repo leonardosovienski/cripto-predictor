@@ -235,3 +235,5 @@ Padrões que **de fato** se manifestaram (com evidência):
 6. **Mitigar bus factor:** revisão independente e documentação dos invariantes anti-lookahead.
 
 > **Síntese do auditor:** arquitetura de alta qualidade, **maturidade superestimada pelo número de testes verdes**. Os 74 testes provam *consistência interna*, não *correção contra o mundo real*. Aprovo a continuidade do desenvolvimento; **não** aprovaria uso em produção/decisão financeira sem resolver B-1..B-3.
+
+

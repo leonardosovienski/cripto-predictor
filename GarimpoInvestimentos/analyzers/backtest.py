@@ -15,19 +15,19 @@ Linhas de fallback (sem análise real) são ignoradas.
 Uso:
     python -m GarimpoInvestimentos.analyzers.backtest
 """
+
 import asyncio
 import csv
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
-from GarimpoInvestimentos.config import settings
-from predictor_core.net import get_http_client
-from GarimpoInvestimentos.core.paths import OUTPUT_DIR, FEATURE_STORE_DB
-from predictor_core.net import with_retry
-from predictor_core.stats import spearman_block_ci
+from predictor_core.net import get_http_client, with_retry
 from predictor_core.obs import emit_event
-from GarimpoInvestimentos.analyzers.trials import (
-    load_trials, deflated_sharpe_ratio, register_trial)
+from predictor_core.stats import spearman_block_ci
+
+from GarimpoInvestimentos.analyzers.trials import deflated_sharpe_ratio, load_trials, register_trial
+from GarimpoInvestimentos.config import settings
 from GarimpoInvestimentos.core.history import migrate_csv_to_store
+from GarimpoInvestimentos.core.paths import FEATURE_STORE_DB, OUTPUT_DIR
 from GarimpoInvestimentos.dpl import FeatureStore
 from GarimpoInvestimentos.dpl.providers.coingecko import coingecko_auth_headers
 
@@ -60,16 +60,16 @@ async def _price_on(client, coin_id: str, day: datetime) -> float | None:
         return None
 
 
-async def _realized_price(store, client, ativo: str, fonte: str, day: datetime
-                          ) -> tuple[float | None, str | None]:
+async def _realized_price(
+    store, client, ativo: str, fonte: str, day: datetime
+) -> tuple[float | None, str | None]:
     """Preço realizado com régua OFFLINE-FIRST: primeiro a Feature Store (mesma
     família de fontes da previsão — a equivalência mediu até 7.8pp de diff entre
     fontes; medir noutra régua adiciona ruído), fallback CoinGecko via rede só
     quando a store não tem o dia. Retorna (preço, carimbo_da_medição):
     'store:<source>' | 'coingecko' | None. O sleep de rate limit só acontece
     quando a rede foi de fato usada."""
-    hit = store.close_on(ativo, "1d", day,
-                         prefer_consensus=(fonte == "dpl:consensus"))
+    hit = store.close_on(ativo, "1d", day, prefer_consensus=(fonte == "dpl:consensus"))
     if hit:
         return hit[0], f"store:{hit[1]}"
     price = await _price_on(client, ativo, day)
@@ -103,37 +103,41 @@ def _load_rows() -> list[dict]:
             continue
         if price <= 0:
             continue
-        rows.append({
-            "ativo": (r.get("ativo") or "").lower(),
-            "score": score,
-            "pred_date": pred_date,
-            "pred_price": price,
-            "divergencia": 1 if r.get("divergencia") else 0,
-            # estratificação obrigatória: a equivalência mediu até 7.8pp de diff
-            # nos change_* entre fontes — poolar sem estratificar contamina o n.
-            "fonte": (r.get("fonte") or "").strip() or "direct",
-            # 1 = LLM pontuou com input empobrecido; 0 = completo; None = pré-0008
-            # (não medido na época) — o _report estratifica 1 vs 0.
-            "degradado": r.get("input_degradado"),
-            # Carimbo do juiz (provider:modelo:hash) — no modo multi cada ativo
-            # tem o seu; o _report estratifica para nunca poolar calibrações.
-            "juiz": (r.get("juiz") or "").strip(),
-            # 0010/0011: fontes de notícias e seleção são populações
-            # distintas. NULL do legado não pode fingir equivalência.
-            "news_provider": (r.get("news_provider") or "legacy:unknown").strip(),
-            "collection_policy": (r.get("collection_policy") or "legacy:unknown").strip(),
-        })
+        rows.append(
+            {
+                "ativo": (r.get("ativo") or "").lower(),
+                "score": score,
+                "pred_date": pred_date,
+                "pred_price": price,
+                "divergencia": 1 if r.get("divergencia") else 0,
+                # estratificação obrigatória: a equivalência mediu até 7.8pp de diff
+                # nos change_* entre fontes — poolar sem estratificar contamina o n.
+                "fonte": (r.get("fonte") or "").strip() or "direct",
+                # 1 = LLM pontuou com input empobrecido; 0 = completo; None = pré-0008
+                # (não medido na época) — o _report estratifica 1 vs 0.
+                "degradado": r.get("input_degradado"),
+                # Carimbo do juiz (provider:modelo:hash) — no modo multi cada ativo
+                # tem o seu; o _report estratifica para nunca poolar calibrações.
+                "juiz": (r.get("juiz") or "").strip(),
+                # 0010/0011: fontes de notícias e seleção são populações
+                # distintas. NULL do legado não pode fingir equivalência.
+                "news_provider": (r.get("news_provider") or "legacy:unknown").strip(),
+                "collection_policy": (r.get("collection_policy") or "legacy:unknown").strip(),
+            }
+        )
     return rows
 
 
 async def run():
     rows = _load_rows()
     if not rows:
-        print("⚠️ Nenhuma previsão válida no histórico oficial "
-              "(Feature Store, tabela predictions — só fallback ou vazio).")
+        print(
+            "⚠️ Nenhuma previsão válida no histórico oficial "
+            "(Feature Store, tabela predictions — só fallback ou vazio)."
+        )
         return
 
-    today = datetime.now(timezone.utc).replace(tzinfo=None)
+    today = datetime.now(UTC).replace(tzinfo=None)
     enriched = []
     async with get_http_client() as client:
         with FeatureStore(FEATURE_STORE_DB) as store:
@@ -147,12 +151,14 @@ async def run():
                         out[f"medida_d{h}"] = None
                         continue
                     price, medida = await _realized_price(
-                        store, client, row["ativo"], row["fonte"], target)
+                        store, client, row["ativo"], row["fonte"], target
+                    )
                     out[f"price_d{h}"] = price
                     out[f"medida_d{h}"] = medida  # régua usada: store:<src> | coingecko
                     out[f"var_d{h}_pct"] = (
                         round((price - row["pred_price"]) / row["pred_price"] * 100, 2)
-                        if price else None
+                        if price
+                        else None
                     )
                 enriched.append(out)
 
@@ -165,11 +171,26 @@ async def run():
 
 
 def _write(enriched: list[dict]) -> None:
-    cols = ["ativo", "score", "pred_date", "pred_price", "fonte", "juiz",
-            "news_provider", "collection_policy", "degradado",
-            "price_d1", "var_d1_pct", "medida_d1",
-            "price_d7", "var_d7_pct", "medida_d7",
-            "price_d30", "var_d30_pct", "medida_d30"]
+    cols = [
+        "ativo",
+        "score",
+        "pred_date",
+        "pred_price",
+        "fonte",
+        "juiz",
+        "news_provider",
+        "collection_policy",
+        "degradado",
+        "price_d1",
+        "var_d1_pct",
+        "medida_d1",
+        "price_d7",
+        "var_d7_pct",
+        "medida_d7",
+        "price_d30",
+        "var_d30_pct",
+        "medida_d30",
+    ]
     with open(BACKTEST_CSV, "w", newline="", encoding="utf-8-sig") as f:
         w = csv.DictWriter(f, fieldnames=cols)
         w.writeheader()
@@ -182,12 +203,16 @@ def _report(enriched: list[dict]) -> None:
     for h in HORIZONS:
         # pairs em ORDEM TEMPORAL (enriched preserva a ordem do histórico) — o block
         # bootstrap depende disso para capturar a dependência serial dos horizontes.
-        pairs = [(r["score"], r[f"var_d{h}_pct"]) for r in enriched if r.get(f"var_d{h}_pct") is not None]
+        pairs = [
+            (r["score"], r[f"var_d{h}_pct"]) for r in enriched if r.get(f"var_d{h}_pct") is not None
+        ]
         n = len(pairs)
         marca = "  ← horizonte principal" if h == PRIMARY_HORIZON else ""
         if n < 4:
-            print(f"D+{h}: dados insuficientes ({n} ponto(s) com preço) — "
-                  f"aguarde previsões maduras.{marca}")
+            print(
+                f"D+{h}: dados insuficientes ({n} ponto(s) com preço) — "
+                f"aguarde previsões maduras.{marca}"
+            )
             continue
         rho, lo, hi = spearman_block_ci(pairs)
         if rho is None:
@@ -199,38 +224,57 @@ def _report(enriched: list[dict]) -> None:
         # IC que NÃO cruza zero = sinal; cruza zero = ainda é ruído (transforma
         # história convincente em decisão defensável — a régua dos domínios irmãos).
         veredito = "validado (IC não cruza 0)" if (lo > 0 or hi < 0) else "RUÍDO (IC cruza 0)"
-        print(f"D+{h}: Spearman(Score, variação) = {rho:+.3f}  "
-              f"[IC95% {lo:+.3f} a {hi:+.3f}]  (n={n}) — {veredito}{marca}")
+        print(
+            f"D+{h}: Spearman(Score, variação) = {rho:+.3f}  "
+            f"[IC95% {lo:+.3f} a {hi:+.3f}]  (n={n}) — {veredito}{marca}"
+        )
         # Estratificação por divergência LLM-vs-técnico (só no horizonte principal):
         # a matemática prova se as previsões tagueadas (alucinação?) perdem alpha.
         if h == PRIMARY_HORIZON:
             key = f"var_d{h}_pct"
-            aligned = [(r["score"], r[key]) for r in enriched
-                       if r.get(key) is not None and not r.get("divergencia")]
-            flagged = [(r["score"], r[key]) for r in enriched
-                       if r.get(key) is not None and r.get("divergencia")]
-            for label, sub in (("alinhadas (LLM≈técnico)", aligned),
-                               ("divergentes (LLM×técnico)", flagged)):
+            aligned = [
+                (r["score"], r[key])
+                for r in enriched
+                if r.get(key) is not None and not r.get("divergencia")
+            ]
+            flagged = [
+                (r["score"], r[key])
+                for r in enriched
+                if r.get(key) is not None and r.get("divergencia")
+            ]
+            for label, sub in (
+                ("alinhadas (LLM≈técnico)", aligned),
+                ("divergentes (LLM×técnico)", flagged),
+            ):
                 if len(sub) >= 4:
                     rs, los, his = spearman_block_ci(sub)
                     if rs is not None and los is not None:
-                        print(f"      └ {label}: Spearman {rs:+.3f} "
-                              f"[IC95% {los:+.3f} a {his:+.3f}] (n={len(sub)})")
+                        print(
+                            f"      └ {label}: Spearman {rs:+.3f} "
+                            f"[IC95% {los:+.3f} a {his:+.3f}] (n={len(sub)})"
+                        )
             # Estratificação por INPUT DEGRADADO (0008): previsões em que o LLM
             # pontuou sem indicadores/notícias são população distinta — poolar
             # esconderia perda de alpha. NULL (pré-flag) fica fora dos estratos.
-            completas = [(r["score"], r[key]) for r in enriched
-                         if r.get(key) is not None and r.get("degradado") == 0]
-            degradadas = [(r["score"], r[key]) for r in enriched
-                          if r.get(key) is not None and r.get("degradado") == 1]
+            completas = [
+                (r["score"], r[key])
+                for r in enriched
+                if r.get(key) is not None and r.get("degradado") == 0
+            ]
+            degradadas = [
+                (r["score"], r[key])
+                for r in enriched
+                if r.get(key) is not None and r.get("degradado") == 1
+            ]
             if degradadas:
-                for label, sub in (("input completo", completas),
-                                   ("input DEGRADADO", degradadas)):
+                for label, sub in (("input completo", completas), ("input DEGRADADO", degradadas)):
                     if len(sub) >= 4:
                         rs, los, his = spearman_block_ci(sub)
                         if rs is not None and los is not None:
-                            print(f"      └ {label}: Spearman {rs:+.3f} "
-                                  f"[IC95% {los:+.3f} a {his:+.3f}] (n={len(sub)})")
+                            print(
+                                f"      └ {label}: Spearman {rs:+.3f} "
+                                f"[IC95% {los:+.3f} a {his:+.3f}] (n={len(sub)})"
+                            )
                     elif sub:
                         print(f"      └ {label}: n={len(sub)} (insuficiente p/ IC)")
             # Estratificação por FONTE de dados (obrigatória — equivalência mediu
@@ -239,41 +283,56 @@ def _report(enriched: list[dict]) -> None:
             fontes = sorted({r.get("fonte", "direct") for r in enriched})
             fonte_counts = {}
             for fonte in fontes:
-                sub = [(r["score"], r[key]) for r in enriched
-                       if r.get(key) is not None and r.get("fonte", "direct") == fonte]
+                sub = [
+                    (r["score"], r[key])
+                    for r in enriched
+                    if r.get(key) is not None and r.get("fonte", "direct") == fonte
+                ]
                 fonte_counts[fonte] = len(sub)
                 if len(sub) >= 4:
                     rs, los, his = spearman_block_ci(sub)
                     if rs is not None and los is not None:
-                        print(f"      └ fonte={fonte}: Spearman {rs:+.3f} "
-                              f"[IC95% {los:+.3f} a {his:+.3f}] (n={len(sub)})")
+                        print(
+                            f"      └ fonte={fonte}: Spearman {rs:+.3f} "
+                            f"[IC95% {los:+.3f} a {his:+.3f}] (n={len(sub)})"
+                        )
                     elif sub:
                         print(f"      └ fonte={fonte}: n={len(sub)} (insuficiente p/ IC)")
             # Notícias e filtros/budgets não são detalhes operacionais: mudam
             # o input ou a população. Reportar o estrato impede consenso falso.
             news_counts = {}
             for provider in sorted({r.get("news_provider", "legacy:unknown") for r in enriched}):
-                sub = [(r["score"], r[key]) for r in enriched
-                       if r.get(key) is not None and r.get("news_provider") == provider]
+                sub = [
+                    (r["score"], r[key])
+                    for r in enriched
+                    if r.get(key) is not None and r.get("news_provider") == provider
+                ]
                 news_counts[provider] = len(sub)
                 if len(sub) >= 4:
                     rs, los, his = spearman_block_ci(sub)
                     if rs is not None and los is not None:
-                        print(f"      └ news_provider={provider}: Spearman {rs:+.3f} "
-                              f"[IC95% {los:+.3f} a {his:+.3f}] (n={len(sub)})")
+                        print(
+                            f"      └ news_provider={provider}: Spearman {rs:+.3f} "
+                            f"[IC95% {los:+.3f} a {his:+.3f}] (n={len(sub)})"
+                        )
                 elif sub:
                     print(f"      └ news_provider={provider}: n={len(sub)} (insuficiente p/ IC)")
             policy_counts = {}
             for policy in sorted({r.get("collection_policy", "legacy:unknown") for r in enriched}):
-                sub = [(r["score"], r[key]) for r in enriched
-                       if r.get(key) is not None and r.get("collection_policy") == policy]
+                sub = [
+                    (r["score"], r[key])
+                    for r in enriched
+                    if r.get(key) is not None and r.get("collection_policy") == policy
+                ]
                 policy_counts[policy] = len(sub)
                 label = policy if policy == "legacy:unknown" else "configured"
                 if len(sub) >= 4:
                     rs, los, his = spearman_block_ci(sub)
                     if rs is not None and los is not None:
-                        print(f"      └ collection_policy={label}: Spearman {rs:+.3f} "
-                              f"[IC95% {los:+.3f} a {his:+.3f}] (n={len(sub)})")
+                        print(
+                            f"      └ collection_policy={label}: Spearman {rs:+.3f} "
+                            f"[IC95% {los:+.3f} a {his:+.3f}] (n={len(sub)})"
+                        )
                 elif sub:
                     print(f"      └ collection_policy={label}: n={len(sub)} (insuficiente p/ IC)")
             # Estratificação por JUIZ (H5 / modo multi): cada provedor:modelo é uma
@@ -283,30 +342,46 @@ def _report(enriched: list[dict]) -> None:
             juizes = sorted({r.get("juiz", "") for r in enriched if r.get("juiz")})
             if len(juizes) > 1:
                 for juiz in juizes:
-                    sub = [(r["score"], r[key]) for r in enriched
-                           if r.get(key) is not None and r.get("juiz") == juiz]
+                    sub = [
+                        (r["score"], r[key])
+                        for r in enriched
+                        if r.get(key) is not None and r.get("juiz") == juiz
+                    ]
                     if len(sub) >= 4:
                         rs, los, his = spearman_block_ci(sub)
                         if rs is not None and los is not None:
-                            print(f"      └ juiz={juiz}: Spearman {rs:+.3f} "
-                                  f"[IC95% {los:+.3f} a {his:+.3f}] (n={len(sub)})")
+                            print(
+                                f"      └ juiz={juiz}: Spearman {rs:+.3f} "
+                                f"[IC95% {los:+.3f} a {his:+.3f}] (n={len(sub)})"
+                            )
                     elif sub:
                         print(f"      └ juiz={juiz}: n={len(sub)} (insuficiente p/ IC)")
             # PAYOFF: o cripto nasce emitindo o evento estruturado do pedágio (Modo B
             # validado). ic_lower nas métricas; a divergência (alucinação?) nos metadados.
             emit_event(
-                "previsao_cripto", "toll_passed",
-                metrics={"spearman": round(rho, 4), "ic_lower": round(lo, 4),
-                         "ic_upper": round(hi, 4), "n": n},
-                metadata={"horizon_days": h, "veredito": veredito,
-                          "n_divergentes": len(flagged), "n_alinhadas": len(aligned),
-                          "n_por_fonte": fonte_counts, "n_por_news_provider": news_counts,
-                          "n_por_collection_policy": policy_counts})
+                "previsao_cripto",
+                "toll_passed",
+                metrics={
+                    "spearman": round(rho, 4),
+                    "ic_lower": round(lo, 4),
+                    "ic_upper": round(hi, 4),
+                    "n": n,
+                },
+                metadata={
+                    "horizon_days": h,
+                    "veredito": veredito,
+                    "n_divergentes": len(flagged),
+                    "n_alinhadas": len(aligned),
+                    "n_por_fonte": fonte_counts,
+                    "n_por_news_provider": news_counts,
+                    "n_por_collection_policy": policy_counts,
+                },
+            )
 
 
-def close_trial_sharpes(enriched: list[dict], horizon: int, *,
-                        trials_path=None, threshold: float | None = None
-                        ) -> dict[str, float]:
+def close_trial_sharpes(
+    enriched: list[dict], horizon: int, *, trials_path=None, threshold: float | None = None
+) -> dict[str, float]:
     """Fecha o ciclo do Experiment Registry: grava em trials.json o Sharpe
     POR-TRADE observado de cada estrato de Fonte com n≥3 sinais fortes maduros.
 
@@ -339,20 +414,26 @@ def close_trial_sharpes(enriched: list[dict], horizon: int, *,
 
     fontes = {r.get("fonte", "direct") for r in enriched}
     for fonte in sorted(fontes):
-        matching = [t for t in trials
-                    if t.get("params", {}).get("fonte") == fonte
-                    and t.get("params", {}).get("horizonte_dias") == horizon]
+        matching = [
+            t
+            for t in trials
+            if t.get("params", {}).get("fonte") == fonte
+            and t.get("params", {}).get("horizonte_dias") == horizon
+        ]
         if not matching:
             continue
         matching.sort(key=_registered_at)
         for i, t in enumerate(matching):
             start = _registered_at(t) if i > 0 else datetime.min
-            end = (_registered_at(matching[i + 1])
-                   if i + 1 < len(matching) else datetime.max)
-            rets = [r[key] / 100 for r in enriched
-                    if r.get(key) is not None and r.get("fonte", "direct") == fonte
-                    and r["score"] >= thr
-                    and start <= r.get("pred_date", datetime.min) < end]
+            end = _registered_at(matching[i + 1]) if i + 1 < len(matching) else datetime.max
+            rets = [
+                r[key] / 100
+                for r in enriched
+                if r.get(key) is not None
+                and r.get("fonte", "direct") == fonte
+                and r["score"] >= thr
+                and start <= r.get("pred_date", datetime.min) < end
+            ]
             if len(rets) < 3:
                 continue
             avg = sum(rets) / len(rets)
@@ -361,15 +442,20 @@ def close_trial_sharpes(enriched: list[dict], horizon: int, *,
                 continue
             sharpe = round(avg / std, 4)
             p = t.get("params", {})
-            register_trial(t["name"], params=p, sharpe=sharpe,
-                           notes=t.get("notes", ""), path=trials_path,
-                           **{k: t[k] for k in
-                              ("features_used", "train_period", "test_period")
-                              if k in t})
+            register_trial(
+                t["name"],
+                params=p,
+                sharpe=sharpe,
+                notes=t.get("notes", ""),
+                path=trials_path,
+                **{k: t[k] for k in ("features_used", "train_period", "test_period") if k in t},
+            )
             updated[t["name"]] = sharpe
-            print(f"📒 trials.json: sharpe por-trade de '{t['name']}' "
-                  f"atualizado → {sharpe:+.4f} (fonte={fonte}, n={len(rets)}, "
-                  f"era {i + 1}/{len(matching)})")
+            print(
+                f"📒 trials.json: sharpe por-trade de '{t['name']}' "
+                f"atualizado → {sharpe:+.4f} (fonte={fonte}, n={len(rets)}, "
+                f"era {i + 1}/{len(matching)})"
+            )
     return updated
 
 
@@ -378,9 +464,9 @@ H6_LIVE_FONTE = "dpl:fallback"  # fonte real da coleta em curso (H5/multi-juiz)
 H6_MIN_N = 30  # n mínimo do critério pré-registrado (idêntico ao H4/H5)
 
 
-def close_h6_inverted_signal(enriched: list[dict], horizon: int, *,
-                             trials_path=None, threshold: float | None = None
-                             ) -> float | None:
+def close_h6_inverted_signal(
+    enriched: list[dict], horizon: int, *, trials_path=None, threshold: float | None = None
+) -> float | None:
     """H6 (docs/HYPOTHESES.md): as 3 encarnações anteriores da família
     'score do LLM prevê retorno D+7' mostraram correlação NEGATIVA e
     significativa — esta função testa a leitura INVERTIDA (score BAIXO =
@@ -412,10 +498,14 @@ def close_h6_inverted_signal(enriched: list[dict], horizon: int, *,
     thr = settings.LIMIAR_SCORE_MINIMO if threshold is None else threshold
     inverted_thr = 100 - thr
     key = f"var_d{horizon}_pct"
-    rets = [r[key] / 100 for r in enriched
-            if r.get(key) is not None and r.get("fonte", "direct") == H6_LIVE_FONTE
-            and r["score"] <= inverted_thr
-            and r.get("pred_date", datetime.min) > registered_at]
+    rets = [
+        r[key] / 100
+        for r in enriched
+        if r.get(key) is not None
+        and r.get("fonte", "direct") == H6_LIVE_FONTE
+        and r["score"] <= inverted_thr
+        and r.get("pred_date", datetime.min) > registered_at
+    ]
     if len(rets) < 3:
         return None
     avg = sum(rets) / len(rets)
@@ -423,16 +513,22 @@ def close_h6_inverted_signal(enriched: list[dict], horizon: int, *,
     if not std:
         return None
     sharpe = round(avg / std, 4)
-    register_trial(H6_TRIAL_NAME, params=h6["params"], sharpe=sharpe,
-                   notes=h6.get("notes", ""), path=trials_path)
-    print(f"📒 trials.json: sharpe (sinal invertido) de '{H6_TRIAL_NAME}' "
-          f"atualizado → {sharpe:+.4f} (n={len(rets)}, score≤{inverted_thr:.0f}, "
-          f"só dado após {registered_at.isoformat()})")
+    register_trial(
+        H6_TRIAL_NAME,
+        params=h6["params"],
+        sharpe=sharpe,
+        notes=h6.get("notes", ""),
+        path=trials_path,
+    )
+    print(
+        f"📒 trials.json: sharpe (sinal invertido) de '{H6_TRIAL_NAME}' "
+        f"atualizado → {sharpe:+.4f} (n={len(rets)}, score≤{inverted_thr:.0f}, "
+        f"só dado após {registered_at.isoformat()})"
+    )
     return sharpe
 
 
-def h6_spearman_verdict(enriched: list[dict], horizon: int, *,
-                        trials_path=None) -> dict | None:
+def h6_spearman_verdict(enriched: list[dict], horizon: int, *, trials_path=None) -> dict | None:
     """Critério de veredito PRÉ-REGISTRADO da H6 (docs/HYPOTHESES.md), idêntico
     ao do H4/H5 mas sobre a leitura INVERTIDA do score: Spearman IC95 (block
     bootstrap) não cruzando zero, positivo, com n >= H6_MIN_N previsões
@@ -473,31 +569,51 @@ def h6_spearman_verdict(enriched: list[dict], horizon: int, *,
         return None
 
     key = f"var_d{horizon}_pct"
-    pairs = [(100 - r["score"], r[key]) for r in enriched
-             if r.get(key) is not None and r.get("fonte", "direct") == H6_LIVE_FONTE
-             and r.get("pred_date", datetime.min) > registered_at]
+    pairs = [
+        (100 - r["score"], r[key])
+        for r in enriched
+        if r.get(key) is not None
+        and r.get("fonte", "direct") == H6_LIVE_FONTE
+        and r.get("pred_date", datetime.min) > registered_at
+    ]
     n = len(pairs)
     if n < H6_MIN_N:
-        print(f"📊 H6 (sinal invertido, Spearman/IC95): n={n} de {H6_MIN_N} "
-              f"— sem veredito ainda (critério pré-registrado exige n>={H6_MIN_N}).")
-        return {"n": n, "rho": None, "ic_lower": None, "ic_upper": None,
-                "veredito": f"aguardando n>={H6_MIN_N} (n={n})"}
+        print(
+            f"📊 H6 (sinal invertido, Spearman/IC95): n={n} de {H6_MIN_N} "
+            f"— sem veredito ainda (critério pré-registrado exige n>={H6_MIN_N})."
+        )
+        return {
+            "n": n,
+            "rho": None,
+            "ic_lower": None,
+            "ic_upper": None,
+            "veredito": f"aguardando n>={H6_MIN_N} (n={n})",
+        }
 
     rho, lo, hi = spearman_block_ci(pairs)
     if rho is None or lo is None or hi is None:
-        print(f"📊 H6 (sinal invertido, Spearman/IC95): n={n}, IC indisponível "
-              f"(variância nula em score/retorno).")
-        return {"n": n, "rho": rho, "ic_lower": lo, "ic_upper": hi,
-                "veredito": "IC indisponivel"}
+        print(
+            f"📊 H6 (sinal invertido, Spearman/IC95): n={n}, IC indisponível "
+            f"(variância nula em score/retorno)."
+        )
+        return {"n": n, "rho": rho, "ic_lower": lo, "ic_upper": hi, "veredito": "IC indisponivel"}
 
     veredito = "validado (IC nao cruza 0)" if (lo > 0 or hi < 0) else "RUIDO (IC cruza 0)"
-    print(f"📊 H6 (sinal invertido, Spearman/IC95) D+{horizon}: "
-          f"rho={rho:+.3f}  [IC95% {lo:+.3f} a {hi:+.3f}]  (n={n}) — {veredito}")
+    print(
+        f"📊 H6 (sinal invertido, Spearman/IC95) D+{horizon}: "
+        f"rho={rho:+.3f}  [IC95% {lo:+.3f} a {hi:+.3f}]  (n={n}) — {veredito}"
+    )
     emit_event(
-        "previsao_cripto", "h6_spearman_verdict",
-        metrics={"spearman": round(rho, 4), "ic_lower": round(lo, 4),
-                 "ic_upper": round(hi, 4), "n": n},
-        metadata={"horizon_days": horizon, "veredito": veredito, "trial": H6_TRIAL_NAME})
+        "previsao_cripto",
+        "h6_spearman_verdict",
+        metrics={
+            "spearman": round(rho, 4),
+            "ic_lower": round(lo, 4),
+            "ic_upper": round(hi, 4),
+            "n": n,
+        },
+        metadata={"horizon_days": horizon, "veredito": veredito, "trial": H6_TRIAL_NAME},
+    )
     return {"n": n, "rho": rho, "ic_lower": lo, "ic_upper": hi, "veredito": veredito}
 
 
@@ -520,13 +636,17 @@ def _metrics(enriched: list[dict], horizon: int) -> None:
     directional = [r for r in mature if r["score"] != 50]
     if directional:
         hits = sum(1 for r in directional if (r["score"] > 50) == (r[key] > 0))
-        print(f"  Acurácia direcional: {hits}/{len(directional)} = {hits / len(directional) * 100:.1f}%")
+        print(
+            f"  Acurácia direcional: {hits}/{len(directional)} = {hits / len(directional) * 100:.1f}%"
+        )
 
     # Hit rate dos sinais fortes (score >= limiar): % que fechou positivo
     strong = [r for r in mature if r["score"] >= threshold]
     if strong:
         pos = sum(1 for r in strong if r[key] > 0)
-        print(f"  Hit rate (score ≥ {threshold}): {pos}/{len(strong)} positivos = {pos / len(strong) * 100:.1f}%")
+        print(
+            f"  Hit rate (score ≥ {threshold}): {pos}/{len(strong)} positivos = {pos / len(strong) * 100:.1f}%"
+        )
 
         # Estratégia fictícia: comprar os sinais fortes; retorno médio + Sharpe simplificado
         rets = [r[key] for r in strong]
@@ -542,12 +662,13 @@ def _metrics(enriched: list[dict], horizon: int) -> None:
         # reportar a melhor fabrica significância — o desconto que ninguém media.
         trials = load_trials()
         if trials and len(rets) >= 3:
-            d = deflated_sharpe_ratio([x / 100 for x in rets],
-                                      [t.get("sharpe") for t in trials])
+            d = deflated_sharpe_ratio([x / 100 for x in rets], [t.get("sharpe") for t in trials])
             if not (d["dsr"] != d["dsr"]):  # NaN check sem numpy
-                print(f"  DSR (N={d['n_trials']} tentativas registradas): "
-                      f"P(SR > máx-por-sorte) = {d['dsr']:.2f} | SR0 = {d['sr0']:.3f} "
-                      f"— {'passa' if d['dsr'] >= 0.95 else 'NÃO passa'} o corte 0.95")
+                print(
+                    f"  DSR (N={d['n_trials']} tentativas registradas): "
+                    f"P(SR > máx-por-sorte) = {d['dsr']:.2f} | SR0 = {d['sr0']:.3f} "
+                    f"— {'passa' if d['dsr'] >= 0.95 else 'NÃO passa'} o corte 0.95"
+                )
     else:
         print(f"  Hit rate (score ≥ {threshold}): nenhum sinal forte ainda")
 

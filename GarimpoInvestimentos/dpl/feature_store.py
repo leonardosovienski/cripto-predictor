@@ -12,6 +12,7 @@ Separa INGESTÃO (escrita de dados brutos + materialização de features) de SER
 Construída sobre predictor_core.infra (WAL + migração idempotente). O domínio nunca
 acessa APIs externas: lê apenas daqui.
 """
+
 from __future__ import annotations
 
 import math
@@ -36,7 +37,9 @@ SCHEMA_VERSION = 8
 MAX_PUBLICATION_LAG = timedelta(days=45)
 
 _MIGRATIONS = [
-    ("0001_raw_market_data", """
+    (
+        "0001_raw_market_data",
+        """
         CREATE TABLE IF NOT EXISTS raw_market_data (
             source       TEXT NOT NULL,
             symbol       TEXT NOT NULL,
@@ -50,11 +53,14 @@ _MIGRATIONS = [
             published_at TEXT NOT NULL,
             PRIMARY KEY (source, symbol, interval, ts)
         );
-    """),
+    """,
+    ),
     # NOTA: 0002 mantém o schema ORIGINAL (PK source,name,ts). A evolução para o
     # schema com vintage/reference_date é feita pela migração ADITIVA 0005 (ver
     # dpl/migrations/) — nunca alterando esta migração in-place (ADR-017 / auditoria C-04).
-    ("0002_raw_signals", """
+    (
+        "0002_raw_signals",
+        """
         CREATE TABLE IF NOT EXISTS raw_signals (
             source       TEXT NOT NULL,
             name         TEXT NOT NULL,
@@ -63,8 +69,11 @@ _MIGRATIONS = [
             published_at TEXT NOT NULL,
             PRIMARY KEY (source, name, ts)
         );
-    """),
-    ("0003_features_aligned", """
+    """,
+    ),
+    (
+        "0003_features_aligned",
+        """
         CREATE TABLE IF NOT EXISTS features_aligned (
             symbol   TEXT NOT NULL,
             interval TEXT NOT NULL,
@@ -73,8 +82,11 @@ _MIGRATIONS = [
             value    REAL,
             PRIMARY KEY (symbol, interval, ts, feature)
         );
-    """),
-    ("0004_ingestion_provenance", """
+    """,
+    ),
+    (
+        "0004_ingestion_provenance",
+        """
         CREATE TABLE IF NOT EXISTS ingestion_provenance (
             run_id       TEXT,
             source       TEXT NOT NULL,
@@ -85,7 +97,8 @@ _MIGRATIONS = [
             ingested_at  TEXT NOT NULL,
             code_version TEXT
         );
-    """),
+    """,
+    ),
 ]
 
 
@@ -98,32 +111,34 @@ def _parse(s: str) -> datetime:
 
 
 class FeatureStore:
-    def __init__(self, db_path: Path | str, *,
-                 max_publication_lag: timedelta = MAX_PUBLICATION_LAG):
+    def __init__(
+        self, db_path: Path | str, *, max_publication_lag: timedelta = MAX_PUBLICATION_LAG
+    ):
         self._conn = infra.connect(db_path)
         self._max_publication_lag = max_publication_lag
         # Schema base (0001-0004) + migrações aditivas (0005+, em dpl/migrations/).
         # run_migrations é idempotente por nome → seguro para DBs em qualquer versão.
         infra.run_migrations(self._conn, _MIGRATIONS + ADDITIVE_MIGRATIONS)
 
-    def _check_temporal(self, label: str, timestamp: datetime,
-                        published_at: datetime) -> None:
+    def _check_temporal(self, label: str, timestamp: datetime, published_at: datetime) -> None:
         """Fail-fast bidirecional (ver MAX_PUBLICATION_LAG). Lança ValueError —
         dado com carimbo temporal impossível NUNCA entra na store."""
         if published_at < timestamp:
             raise ValueError(
                 f"integridade temporal [{label}]: published_at ({published_at}) < "
-                f"timestamp ({timestamp}) — look-ahead de rotulagem na origem")
+                f"timestamp ({timestamp}) — look-ahead de rotulagem na origem"
+            )
         if published_at > timestamp + self._max_publication_lag:
             raise ValueError(
                 f"integridade temporal [{label}]: published_at ({published_at}) excede "
                 f"timestamp + {self._max_publication_lag} — rotulagem anômala/stale "
-                "(se o lag é legítimo, ajuste max_publication_lag da instância)")
+                "(se o lag é legítimo, ajuste max_publication_lag da instância)"
+            )
 
     def close(self) -> None:
         self._conn.close()
 
-    def __enter__(self) -> "FeatureStore":
+    def __enter__(self) -> FeatureStore:
         return self
 
     def __exit__(self, *exc) -> None:
@@ -136,8 +151,18 @@ class FeatureStore:
         for p in points:
             self._check_temporal(f"{p.source}/{p.symbol}", p.timestamp, p.published_at)
         rows = [
-            (p.source, p.symbol, p.interval, _iso(p.timestamp),
-             p.open, p.high, p.low, p.close, p.volume, _iso(p.published_at))
+            (
+                p.source,
+                p.symbol,
+                p.interval,
+                _iso(p.timestamp),
+                p.open,
+                p.high,
+                p.low,
+                p.close,
+                p.volume,
+                _iso(p.published_at),
+            )
             for p in points
         ]
         self._conn.executemany(
@@ -160,10 +185,15 @@ class FeatureStore:
         for s in signals:
             self._check_temporal(f"{s.source}/{s.name}", s.timestamp, s.published_at)
         rows = [
-            (s.source, s.name, _iso(s.timestamp),
-             _iso(s.reference_date) if s.reference_date else None,
-             s.value, _iso(s.published_at),
-             _iso(s.vintage) if s.vintage else "")
+            (
+                s.source,
+                s.name,
+                _iso(s.timestamp),
+                _iso(s.reference_date) if s.reference_date else None,
+                s.value,
+                _iso(s.published_at),
+                _iso(s.vintage) if s.vintage else "",
+            )
             for s in signals
         ]
         self._conn.executemany(
@@ -186,29 +216,50 @@ class FeatureStore:
         )
         return [
             SignalPoint(
-                name=r["name"], timestamp=_parse(r["ts"]), value=r["value"],
-                source=r["source"], published_at=_parse(r["published_at"]),
+                name=r["name"],
+                timestamp=_parse(r["ts"]),
+                value=r["value"],
+                source=r["source"],
+                published_at=_parse(r["published_at"]),
                 reference_date=_parse(r["reference_date"]) if r["reference_date"] else None,
                 vintage=_parse(r["vintage"]) if r["vintage"] else None,
             )
             for r in cur
         ]
 
-    def write_provenance(self, *, source: str, entity: str, n_rows: int,
-                         ingested_at, run_id: str | None = None, origin: str | None = None,
-                         vintage=None, code_version: str | None = None) -> None:
+    def write_provenance(
+        self,
+        *,
+        source: str,
+        entity: str,
+        n_rows: int,
+        ingested_at,
+        run_id: str | None = None,
+        origin: str | None = None,
+        vintage=None,
+        code_version: str | None = None,
+    ) -> None:
         """Registra a origem de um lote ingerido (auditoria origem→feature→modelo)."""
         self._conn.execute(
             """INSERT INTO ingestion_provenance
                (run_id, source, entity, origin, vintage, n_rows, ingested_at, code_version)
                VALUES (?,?,?,?,?,?,?,?)""",
-            (run_id, source, entity, origin,
-             _iso(vintage) if vintage else None, n_rows, _iso(ingested_at), code_version),
+            (
+                run_id,
+                source,
+                entity,
+                origin,
+                _iso(vintage) if vintage else None,
+                n_rows,
+                _iso(ingested_at),
+                code_version,
+            ),
         )
         self._conn.commit()
 
-    def write_features(self, symbol: str, interval: str,
-                       rows: list[dict], *, feature_version: str = "v1") -> int:
+    def write_features(
+        self, symbol: str, interval: str, rows: list[dict], *, feature_version: str = "v1"
+    ) -> int:
         """Materializa features alinhadas. Cada row: {ts: datetime, <feat>: value}.
         Valores NaN/None viram NULL (serving os reconstrói como NaN).
 
@@ -238,9 +289,10 @@ class FeatureStore:
 
     # --- Serving (leitura) ---------------------------------------------------
 
-    def read_raw(self, symbol: str, interval: str,
-                 source: str | None = None) -> list[MarketDataPoint]:
-        sql = ("SELECT * FROM raw_market_data WHERE symbol=? AND interval=?")
+    def read_raw(
+        self, symbol: str, interval: str, source: str | None = None
+    ) -> list[MarketDataPoint]:
+        sql = "SELECT * FROM raw_market_data WHERE symbol=? AND interval=?"
         params: list = [symbol, interval]
         if source:
             sql += " AND source=?"
@@ -248,16 +300,23 @@ class FeatureStore:
         sql += " ORDER BY ts"
         return [
             MarketDataPoint(
-                symbol=r["symbol"], timestamp=_parse(r["ts"]),
-                open=r["open"], high=r["high"], low=r["low"], close=r["close"],
-                volume=r["volume"], source=r["source"], interval=r["interval"],
+                symbol=r["symbol"],
+                timestamp=_parse(r["ts"]),
+                open=r["open"],
+                high=r["high"],
+                low=r["low"],
+                close=r["close"],
+                volume=r["volume"],
+                source=r["source"],
+                interval=r["interval"],
                 published_at=_parse(r["published_at"]),
             )
             for r in self._conn.execute(sql, params)
         ]
 
-    def read_features(self, symbol: str, interval: str, *,
-                      feature_version: str = "v1") -> list[dict]:
+    def read_features(
+        self, symbol: str, interval: str, *, feature_version: str = "v1"
+    ) -> list[dict]:
         """Retorna a matriz alinhada em formato LARGO, ordenada por ts.
         NULL volta como float('nan'). Cada dict: {ts, <feature>: value, ...}.
         Lê UMA versão de features (default 'v1') — experimentos fixam a sua.
@@ -284,10 +343,22 @@ class FeatureStore:
 
     # --- Histórico oficial de previsões (passo 4 — aposenta o CSV) -----------
 
-    PREDICTION_FIELDS = ("ativo", "ts", "score", "sentimento", "resumo",
-                         "price_usd", "juiz", "divergencia", "fonte",
-                         "input_degradado", "llm_fallback", "news_provider",
-                         "news_degraded_reason", "collection_policy")
+    PREDICTION_FIELDS = (
+        "ativo",
+        "ts",
+        "score",
+        "sentimento",
+        "resumo",
+        "price_usd",
+        "juiz",
+        "divergencia",
+        "fonte",
+        "input_degradado",
+        "llm_fallback",
+        "news_provider",
+        "news_degraded_reason",
+        "collection_policy",
+    )
 
     def write_predictions(self, rows: list[dict]) -> int:
         """Upsert de previsões. PK (ativo, ts): reexecução/cache hit não infla o n
@@ -320,8 +391,7 @@ class FeatureStore:
 
     def read_predictions(self) -> list[dict]:
         """Todas as previsões em ORDEM TEMPORAL (o block bootstrap depende disso)."""
-        cur = self._conn.execute(
-            "SELECT * FROM predictions ORDER BY ts, ativo")
+        cur = self._conn.execute("SELECT * FROM predictions ORDER BY ts, ativo")
         return [dict(r) for r in cur]
 
     def predictions_on(self, day_utc: str) -> list[tuple[str, str]]:
@@ -342,7 +412,8 @@ class FeatureStore:
         sempre os mesmos ativos do fim da lista."""
         cur = self._conn.execute(
             """SELECT ativo, MAX(ts) FROM predictions
-               WHERE COALESCE(llm_fallback, 0) = 0 GROUP BY ativo""")
+               WHERE COALESCE(llm_fallback, 0) = 0 GROUP BY ativo"""
+        )
         return {(r[0] or "").lower(): r[1] for r in cur}
 
     def list_symbols(self, interval: str = "1d") -> list[str]:
@@ -355,8 +426,9 @@ class FeatureStore:
         )
         return [r["symbol"] for r in cur]
 
-    def close_on(self, symbol: str, interval: str, day: datetime, *,
-                 prefer_consensus: bool = False) -> tuple[float, str] | None:
+    def close_on(
+        self, symbol: str, interval: str, day: datetime, *, prefer_consensus: bool = False
+    ) -> tuple[float, str] | None:
         """Fecho do candle bruto do DIA (YYYY-MM-DD) — régua OFFLINE do backtest.
 
         Motivação (auditoria jul/2026): medir o retorno realizado numa fonte
@@ -374,8 +446,7 @@ class FeatureStore:
             return None
         # candidatas que casam com a política primeiro; empate → ordem alfabética
         # de source (determinístico entre execuções).
-        rows.sort(key=lambda cs: (cs[1].startswith("consensus") != prefer_consensus,
-                                  cs[1]))
+        rows.sort(key=lambda cs: (cs[1].startswith("consensus") != prefer_consensus, cs[1]))
         return rows[0]
 
     def latest_source(self, symbol: str, interval: str = "1d") -> str | None:

@@ -441,3 +441,5 @@ sem tocar o engine de séries (ADR-012).
 > separa um backtest de ações honesto de um enviesado. A Fase 5 está desenhada e
 > bloqueada por curadoria de entidades (ADR-013) e pelo modo event-asof (ADR-012); ambos
 > são aditivos e não exigem mudança no que já roda. Nada aqui altera as Fases 0–3.
+
+

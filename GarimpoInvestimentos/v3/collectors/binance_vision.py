@@ -34,13 +34,13 @@ CACHE:
     ZIPs baixados ficam em data/v3/_vision_cache/ — re-execuções não re-baixam.
     Cada arquivo tem um .CHECKSUM (SHA256) no Vision; verificamos quando disponível.
 """
+
 import csv
 import hashlib
 import io
 import logging
 import zipfile
-from calendar import monthrange
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
 import httpx
@@ -59,6 +59,7 @@ _HTTP_TIMEOUT = 120.0
 # ------------------------------------------------------------------ #
 # Download + cache + checksum                                         #
 # ------------------------------------------------------------------ #
+
 
 def _cache_path(rel_url: str) -> Path:
     """Mapeia o caminho remoto para um arquivo local achatado e único."""
@@ -94,7 +95,7 @@ def _download_zip(rel_url: str, client: httpx.Client) -> bytes | None:
     try:
         cr = client.get(f"{url}.CHECKSUM")
         if cr.status_code == 200 and not _verify_checksum(content, cr.text):
-            raise IOError(f"Checksum SHA256 NÃO confere para {rel_url}")
+            raise OSError(f"Checksum SHA256 NÃO confere para {rel_url}")
     except httpx.HTTPError:
         logger.debug("binance_vision: checksum indisponível para %s", rel_url)
 
@@ -113,13 +114,16 @@ def _read_csv_rows(zip_bytes: bytes) -> list[list[str]]:
         return []
     # Header presente se a 1ª célula não for numérica
     first = rows[0][0].strip().lower()
-    has_header = not (first.isdigit() or first.replace("-", "").replace(":", "").replace(" ", "").isdigit())
+    has_header = not (
+        first.isdigit() or first.replace("-", "").replace(":", "").replace(" ", "").isdigit()
+    )
     return rows[1:] if has_header else rows
 
 
 # ------------------------------------------------------------------ #
 # Iteradores de período                                               #
 # ------------------------------------------------------------------ #
+
 
 def _months(start: datetime, end: datetime):
     """Gera (ano, mês) de start até end inclusive."""
@@ -145,10 +149,11 @@ def _days(start: datetime, end: datetime):
 # Loaders públicos — devolvem os dataclasses canônicos                #
 # ------------------------------------------------------------------ #
 
+
 def load_funding_vision(symbol: str, start_ms: int, end_ms: int) -> list[FundingRecord]:
     """Funding rate histórico (arquivos mensais)."""
-    start = datetime.fromtimestamp(start_ms / 1000, tz=timezone.utc)
-    end = datetime.fromtimestamp(end_ms / 1000, tz=timezone.utc)
+    start = datetime.fromtimestamp(start_ms / 1000, tz=UTC)
+    end = datetime.fromtimestamp(end_ms / 1000, tz=UTC)
     out: list[FundingRecord] = []
     with httpx.Client(timeout=_HTTP_TIMEOUT, follow_redirects=True) as client:
         for y, m in _months(start, end):
@@ -160,12 +165,14 @@ def load_funding_vision(symbol: str, start_ms: int, end_ms: int) -> list[Funding
                 # calc_time, funding_interval_hours, last_funding_rate
                 ts = int(row[0])
                 if start_ms <= ts <= end_ms:
-                    out.append(FundingRecord(
-                        symbol=symbol,
-                        funding_time_ms=ts,
-                        funding_rate=float(row[2]),
-                        mark_price=0.0,  # Vision não fornece mark_price no funding
-                    ))
+                    out.append(
+                        FundingRecord(
+                            symbol=symbol,
+                            funding_time_ms=ts,
+                            funding_rate=float(row[2]),
+                            mark_price=0.0,  # Vision não fornece mark_price no funding
+                        )
+                    )
     out.sort(key=lambda r: r.funding_time_ms)
     logger.info("binance_vision[%s]: %d funding records", symbol, len(out))
     return out
@@ -175,8 +182,8 @@ def load_klines_vision(
     symbol: str, start_ms: int, end_ms: int, interval: str = "1h"
 ) -> list[KlineRecord]:
     """Klines histórico (arquivos mensais)."""
-    start = datetime.fromtimestamp(start_ms / 1000, tz=timezone.utc)
-    end = datetime.fromtimestamp(end_ms / 1000, tz=timezone.utc)
+    start = datetime.fromtimestamp(start_ms / 1000, tz=UTC)
+    end = datetime.fromtimestamp(end_ms / 1000, tz=UTC)
     out: list[KlineRecord] = []
     with httpx.Client(timeout=_HTTP_TIMEOUT, follow_redirects=True) as client:
         for y, m in _months(start, end):
@@ -188,12 +195,14 @@ def load_klines_vision(
                 # open_time, open, high, low, close, volume, close_time, ...
                 ts = int(row[0])
                 if start_ms <= ts <= end_ms:
-                    out.append(KlineRecord(
-                        symbol=symbol,
-                        open_ms=ts,
-                        close=float(row[4]),
-                        volume=float(row[5]),
-                    ))
+                    out.append(
+                        KlineRecord(
+                            symbol=symbol,
+                            open_ms=ts,
+                            close=float(row[4]),
+                            volume=float(row[5]),
+                        )
+                    )
     out.sort(key=lambda r: r.open_ms)
     logger.info("binance_vision[%s]: %d klines (%s)", symbol, len(out), interval)
     return out
@@ -204,8 +213,8 @@ def load_oi_vision(symbol: str, start_ms: int, end_ms: int) -> list[OIRecord]:
     Open Interest histórico via dataset 'metrics' (arquivos DIÁRIOS, 5min).
     create_time é string 'YYYY-MM-DD HH:MM:SS' em UTC.
     """
-    start = datetime.fromtimestamp(start_ms / 1000, tz=timezone.utc)
-    end = datetime.fromtimestamp(end_ms / 1000, tz=timezone.utc)
+    start = datetime.fromtimestamp(start_ms / 1000, tz=UTC)
+    end = datetime.fromtimestamp(end_ms / 1000, tz=UTC)
     out: list[OIRecord] = []
     missing = 0
     with httpx.Client(timeout=_HTTP_TIMEOUT, follow_redirects=True) as client:
@@ -221,12 +230,14 @@ def load_oi_vision(symbol: str, start_ms: int, end_ms: int) -> list[OIRecord]:
                 if ts is None or not (start_ms <= ts <= end_ms):
                     continue
                 try:
-                    out.append(OIRecord(
-                        symbol=symbol,
-                        timestamp_ms=ts,
-                        oi_contracts=float(row[2]),
-                        oi_notional_usd=float(row[3]),
-                    ))
+                    out.append(
+                        OIRecord(
+                            symbol=symbol,
+                            timestamp_ms=ts,
+                            oi_contracts=float(row[2]),
+                            oi_notional_usd=float(row[3]),
+                        )
+                    )
                 except (ValueError, IndexError):
                     continue
     out.sort(key=lambda r: r.timestamp_ms)
@@ -239,7 +250,7 @@ def load_oi_vision(symbol: str, start_ms: int, end_ms: int) -> list[OIRecord]:
 def _parse_metrics_time(s: str) -> int | None:
     """'2024-01-15 00:05:00' (UTC) → epoch ms."""
     try:
-        dt = datetime.strptime(s.strip(), "%Y-%m-%d %H:%M:%S").replace(tzinfo=timezone.utc)
+        dt = datetime.strptime(s.strip(), "%Y-%m-%d %H:%M:%S").replace(tzinfo=UTC)
         return int(dt.timestamp() * 1000)
     except ValueError:
         return None

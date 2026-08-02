@@ -2,10 +2,11 @@
 
 Todos os testes rodam sem rede e sem .env real (conftest injeta credenciais mínimas).
 """
+
 import json
 import os
 import tempfile
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from unittest.mock import patch
 
 import GarimpoInvestimentos.core.cache as cache_mod
@@ -17,7 +18,7 @@ def _write_cache(path: str, entries: dict) -> None:
 
 
 def _now_utc() -> datetime:
-    return datetime.now(timezone.utc)
+    return datetime.now(UTC)
 
 
 def _ts(dt: datetime) -> str:
@@ -27,6 +28,7 @@ def _ts(dt: datetime) -> str:
 # ------------------------------------------------------------------ #
 # Testes                                                              #
 # ------------------------------------------------------------------ #
+
 
 def test_load_cache_empty_when_file_missing():
     """Sem arquivo de cache → retorna dict vazio sem exception."""
@@ -43,8 +45,7 @@ def test_load_cache_valid_entry_within_ttl():
         path = os.path.join(tmpdir, "cache.json")
         recent = _ts(_now_utc() - timedelta(minutes=30))
         _write_cache(path, {"bitcoin": {"score": 75, "cached_at": recent}})
-        with patch.object(cache_mod, "CACHE_PATH", path), \
-             patch.object(cache_mod, "TTL_HOURS", 6):
+        with patch.object(cache_mod, "CACHE_PATH", path), patch.object(cache_mod, "TTL_HOURS", 6):
             result = cache_mod.load_cache()
     assert "bitcoin" in result
     assert result["bitcoin"]["score"] == 75
@@ -56,8 +57,7 @@ def test_load_cache_expired_entry_excluded():
         path = os.path.join(tmpdir, "cache.json")
         old = _ts(_now_utc() - timedelta(hours=8))
         _write_cache(path, {"ethereum": {"score": 60, "cached_at": old}})
-        with patch.object(cache_mod, "CACHE_PATH", path), \
-             patch.object(cache_mod, "TTL_HOURS", 6):
+        with patch.object(cache_mod, "CACHE_PATH", path), patch.object(cache_mod, "TTL_HOURS", 6):
             result = cache_mod.load_cache()
     assert "ethereum" not in result
 
@@ -113,12 +113,14 @@ def test_load_cache_malformed_cached_at_excluded():
     with tempfile.TemporaryDirectory() as tmpdir:
         path = os.path.join(tmpdir, "cache.json")
         good_ts = _ts(_now_utc() - timedelta(minutes=10))
-        _write_cache(path, {
-            "bitcoin": {"score": 70, "cached_at": good_ts},
-            "broken": {"score": 50, "cached_at": "not-a-date"},
-        })
-        with patch.object(cache_mod, "CACHE_PATH", path), \
-             patch.object(cache_mod, "TTL_HOURS", 6):
+        _write_cache(
+            path,
+            {
+                "bitcoin": {"score": 70, "cached_at": good_ts},
+                "broken": {"score": 50, "cached_at": "not-a-date"},
+            },
+        )
+        with patch.object(cache_mod, "CACHE_PATH", path), patch.object(cache_mod, "TTL_HOURS", 6):
             result = cache_mod.load_cache()
     assert "bitcoin" in result
     assert "broken" not in result

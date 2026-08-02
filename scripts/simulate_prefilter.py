@@ -14,21 +14,19 @@ corte do prefilter.decide() com thresholds paramétricos (a lógica canônica se
 em analyzers/prefilter.py; este script é instrumento de calibração, e o teste
 test_prefilter_simulation_parity garante a paridade das réguas).
 """
+
 import argparse
 import sys
 from collections import Counter, defaultdict
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT))
-sys.path.insert(0, str(ROOT / "vendor"))
 
 VOLUME_GRID = [5_000_000, 10_000_000, 20_000_000]
 CHANGE_GRID = [1.0, 2.0, 3.0]
 
 
-def simulate_decision(hard: dict, min_volume: float, min_change: float,
-                      technical_direction) -> str:
+def simulate_decision(hard: dict, min_volume: float, min_change: float, technical_direction) -> str:
     """Mesma régua de prefilter.decide(), com thresholds paramétricos.
     Retorna a razão ('selected' se passa)."""
     volume = hard.get("volume_usd")
@@ -47,8 +45,9 @@ def simulate_decision(hard: dict, min_volume: float, min_change: float,
 
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--days", type=int, default=0,
-                        help="limitar aos últimos N dias distintos (0 = tudo)")
+    parser.add_argument(
+        "--days", type=int, default=0, help="limitar aos últimos N dias distintos (0 = tudo)"
+    )
     args = parser.parse_args()
 
     from GarimpoInvestimentos.analyzers.score_engine import technical_direction
@@ -67,12 +66,13 @@ def main() -> int:
 
     dias = sorted(rows)
     if args.days:
-        dias = dias[-args.days:]
+        dias = dias[-args.days :]
     n_ativos = len(symbols)
-    print(f"Universo: {n_ativos} ativos | dias simulados: {len(dias)} "
-          f"({dias[0]} a {dias[-1]})\n")
+    print(f"Universo: {n_ativos} ativos | dias simulados: {len(dias)} ({dias[0]} a {dias[-1]})\n")
 
-    header = f"{'volume>=':>12} {'|chg7d|>=':>10} {'pass/dia':>9} {'taxa':>6}   razões dos excluídos"
+    header = (
+        f"{'volume>=':>12} {'|chg7d|>=':>10} {'pass/dia':>9} {'taxa':>6}   razões dos excluídos"
+    )
     print(header)
     print("-" * len(header))
     for min_vol in VOLUME_GRID:
@@ -95,9 +95,11 @@ def main() -> int:
             taxa = passed / total * 100 if total else 0.0
             top = ", ".join(f"{k}={v}" for k, v in reasons.most_common(3))
             print(f"{min_vol:>12,.0f} {min_chg:>9.1f}% {media:>9.1f} {taxa:>5.0f}%   {top}")
-    print("\nLeitura: 'pass/dia' é o nº médio de chamadas de LLM por dia com o filtro "
-          "ligado; hoje são ~%d/dia (universo inteiro). n>=30 por juiz leva "
-          "~(30*4)/pass_dia dias." % n_ativos)
+    print(
+        "\nLeitura: 'pass/dia' é o nº médio de chamadas de LLM por dia com o filtro "
+        "ligado; hoje são ~%d/dia (universo inteiro). n>=30 por juiz leva "
+        "~(30*4)/pass_dia dias." % n_ativos
+    )
     return 0
 
 

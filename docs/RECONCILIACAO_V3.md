@@ -52,3 +52,5 @@
 4. Coleta V3 → DPL é fase própria (R5), com funding/OI como `SignalPoint` bitemporal (`published_at` = fim da janela).
 5. Custos de transação (passo 5.2) implementados sobre a V3 **pós**-reconciliação, não antes.
 6. `main` só é promovida após reconciliação completa e suíte combinada verde.
+
+
