@@ -1,28 +1,41 @@
 from __future__ import annotations
 
-import hashlib
 import importlib.metadata
 import os
 import subprocess
 import sys
 import tempfile
+import tomllib
 from pathlib import Path
 
 EXPECTED = {
-    "predictor_core-2.1.0-py3-none-any.whl": "83de1d4415700dedaf387bc46dd9685e046de1fa47f37367bf2167462b09761b",
-    "predictor_ops-2.0.0-py3-none-any.whl": "8f7cf5373fa944c99ab355fbaaa3ba05e8d127efaafc723be95836dc79ec0d23",
+    "predictor-core": (
+        "https://github.com/leonardosovienski/core-predictor/releases/download/v2.1.0/predictor_core-2.1.0-py3-none-any.whl",
+        "sha256:83de1d4415700dedaf387bc46dd9685e046de1fa47f37367bf2167462b09761b",
+    ),
+    "predictor-ops": (
+        "https://github.com/leonardosovienski/tools-predictor/releases/download/v2.0.1/predictor_ops-2.0.1-py3-none-any.whl",
+        "sha256:77ca2eb3f1090226dfef23b84d7fb2f9a61bd858c970d433d28303e637a8903e",
+    ),
 }
 
 
 def main() -> int:
     root = Path(__file__).resolve().parents[1]
-    for name, expected in EXPECTED.items():
-        assert hashlib.sha256((root / "wheelhouse" / name).read_bytes()).hexdigest() == expected
+    # predictor-core/predictor-ops are consumed from their published GitHub
+    # Release (see [tool.uv.sources] in pyproject.toml), not vendored locally,
+    # so the portable source of truth is the lockfile itself.
+    lock = tomllib.loads((root / "uv.lock").read_text(encoding="utf-8"))
+    packages = {pkg["name"]: pkg for pkg in lock["package"]}
+    for name, (url, digest) in EXPECTED.items():
+        wheel = packages[name]["wheels"][0]
+        assert wheel["url"] == url
+        assert wheel["hash"] == digest
     import predictor_core
     import predictor_ops
 
     assert importlib.metadata.version("predictor-core") == "2.1.0"
-    assert importlib.metadata.version("predictor-ops") == "2.0.0"
+    assert importlib.metadata.version("predictor-ops") == "2.0.1"
     for module in (predictor_core, predictor_ops):
         assert "site-packages" in Path(module.__file__).resolve().as_posix().lower()
     entrypoint = next(

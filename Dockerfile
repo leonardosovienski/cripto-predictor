@@ -1,16 +1,21 @@
 # syntax=docker/dockerfile:1.7
-FROM python:3.13.11-slim-bookworm@sha256:20080e807bfc404f8450b185cf0fc95d553462673598549613735f70a5b4d5d0 AS build
+FROM python:3.13.14-alpine3.24@sha256:399babc8b49529dabfd9c922f2b5eea81d611e4512e3ed250d75bd2e7683f4b0 AS build
+RUN apk add --no-cache build-base
 WORKDIR /build
 RUN python -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 COPY pyproject.toml README.md ./
 COPY GarimpoInvestimentos ./GarimpoInvestimentos
-COPY wheelhouse ./wheelhouse
 RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir ./wheelhouse/predictor_core-2.1.0-py3-none-any.whl ./wheelhouse/predictor_ops-2.0.0-py3-none-any.whl .
+    pip install --no-cache-dir \
+        "predictor-core @ https://github.com/leonardosovienski/core-predictor/releases/download/v2.1.0/predictor_core-2.1.0-py3-none-any.whl" \
+        "predictor-ops @ https://github.com/leonardosovienski/tools-predictor/releases/download/v2.0.1/predictor_ops-2.0.1-py3-none-any.whl" \
+        . && \
+    pip uninstall -y pip
 
-FROM python:3.13.11-slim-bookworm@sha256:20080e807bfc404f8450b185cf0fc95d553462673598549613735f70a5b4d5d0 AS runtime
-RUN groupadd --system --gid 10001 predictor && useradd --system --uid 10001 --gid predictor --home-dir /nonexistent predictor
+FROM python:3.13.14-alpine3.24@sha256:399babc8b49529dabfd9c922f2b5eea81d611e4512e3ed250d75bd2e7683f4b0 AS runtime
+RUN addgroup -S -g 10001 predictor && adduser -S -D -u 10001 -h /nonexistent -G predictor predictor && \
+    python -m pip uninstall -y pip setuptools
 COPY --from=build /opt/venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH" PYTHONUTF8=1 PYTHONDONTWRITEBYTECODE=1 OUTPUT_DIR=/var/lib/cripto-predictor/output DATA_DIR=/var/lib/cripto-predictor/data CACHE_DIR=/var/lib/cripto-predictor/cache
 RUN mkdir -p /var/lib/cripto-predictor/output /var/lib/cripto-predictor/data /var/lib/cripto-predictor/cache && chown -R predictor:predictor /var/lib/cripto-predictor
