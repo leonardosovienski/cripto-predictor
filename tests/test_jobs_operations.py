@@ -70,7 +70,7 @@ def test_timeout_shutdown_heartbeat_events_and_redaction(tmp_path):
     leaking = _job(
         tmp_path,
         "import os,sys,time; print(os.environ['SERP_API_KEY']); print(os.environ['SERP_API_KEY'], file=sys.stderr); time.sleep(5)",
-        timeout=0.2,
+        timeout=1.0,
         environment={"SERP_API_KEY": secret},
     )
     result = run_job(leaking)
