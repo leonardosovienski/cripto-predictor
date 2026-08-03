@@ -76,9 +76,11 @@ async def ingest_crypto(
     """
     points = await facade.fetch_ohlcv(symbol, interval=interval, limit=limit)
     store.write_raw(points)
-    # Proveniência (ADR-015, versão mínima): hash do CONTEÚDO ingerido + versão do
-    # core. A tabela existia desde a migração 0004 mas nunca era populada — sem isso,
-    # "reproduzir o backtest de 6 meses atrás" não tem âncora de dados.
+    # Proveniência (ADR-015): hash do CONTEÚDO ingerido + versão do core, em coluna
+    # própria (migração 0012) — antes o hash ficava sobrecarregado dentro de `origin`,
+    # colidindo semanticamente com o uso de `origin` em stocks.py ("cotahist+bcb",
+    # descrição da fonte). Sem hash dedicado, "reproduzir o backtest de 6 meses atrás"
+    # não tinha âncora de dados verificável por query direta.
     content_hash = hashlib.sha256(
         "\n".join(
             f"{p.timestamp.isoformat()},{p.open},{p.high},{p.low},{p.close},{p.volume}"
@@ -91,8 +93,8 @@ async def ingest_crypto(
             entity=symbol,
             n_rows=len(points),
             ingested_at=datetime.now(UTC),
-            origin=f"sha256:{content_hash}",
             code_version=f"predictor_core:{predictor_core.__version__}",
+            content_hash=content_hash,
         )
     emit_event(
         domain,

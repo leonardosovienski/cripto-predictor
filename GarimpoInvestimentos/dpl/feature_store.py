@@ -238,12 +238,19 @@ class FeatureStore:
         origin: str | None = None,
         vintage=None,
         code_version: str | None = None,
+        content_hash: str | None = None,
     ) -> None:
-        """Registra a origem de um lote ingerido (auditoria origem→feature→modelo)."""
+        """Registra a origem de um lote ingerido (auditoria origem→feature→modelo).
+
+        `content_hash` (ADR-015): SHA-256 determinístico dos pontos ingeridos, calculado
+        pelo chamador (`ingest.py`). Prova que dois runs do mesmo `code_version`
+        produziram os MESMOS dados — sem ele, "mesmo código" não implica "mesmo dado".
+        """
         self._conn.execute(
             """INSERT INTO ingestion_provenance
-               (run_id, source, entity, origin, vintage, n_rows, ingested_at, code_version)
-               VALUES (?,?,?,?,?,?,?,?)""",
+               (run_id, source, entity, origin, vintage, n_rows, ingested_at, code_version,
+                content_hash)
+               VALUES (?,?,?,?,?,?,?,?,?)""",
             (
                 run_id,
                 source,
@@ -253,6 +260,7 @@ class FeatureStore:
                 n_rows,
                 _iso(ingested_at),
                 code_version,
+                content_hash,
             ),
         )
         self._conn.commit()
