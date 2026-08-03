@@ -5,8 +5,16 @@ from GarimpoInvestimentos.plugin import CryptoPredictorPlugin
 
 def test_plugin_missing_store_is_fail_closed(tmp_path):
     health = CryptoPredictorPlugin(tmp_path / "missing.db").health()
+    assert health.domain == "crypto"
     assert health.status == OperationalStatus.SOURCE_UNAVAILABLE
     assert health.details["feature_store"] == "MISSING"
+
+
+def test_plugin_capabilities_keep_research_domain_out_of_prediction():
+    capabilities = CryptoPredictorPlugin().capabilities()
+    assert capabilities["domain"] == "crypto"
+    assert capabilities["supports_prediction"] is False
+    assert capabilities["scientific_status"] == "NO_GO"
 
 
 def test_persistence_interfaces_are_importable_contracts():

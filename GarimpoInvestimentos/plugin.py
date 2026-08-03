@@ -25,8 +25,25 @@ class CryptoPredictorPlugin:
             StoreState.CORRUPT: OperationalStatus.FAILED,
         }[store.state]
         return HealthStatus(
-            status=status, details={"mode": "research", "feature_store": store.state}
+            domain=self.domain,
+            status=status,
+            details={"mode": "research", "feature_store": store.state},
         )
+
+    def capabilities(self) -> dict[str, object]:
+        """Expose the research-only boundary to the ecosystem gateway."""
+        return {
+            "domain": self.domain,
+            "supports_prediction": False,
+            "supports_settlement": False,
+            "supports_collection": False,
+            "scientific_status": "NO_GO",
+            "extra": {
+                "mode": "research",
+                "secret_rotation_pending": True,
+                "trading": False,
+            },
+        }
 
 
 PLUGIN = CryptoPredictorPlugin()
