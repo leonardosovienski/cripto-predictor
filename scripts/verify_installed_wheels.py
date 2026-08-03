@@ -40,7 +40,7 @@ def main() -> int:
         assert "site-packages" in Path(module.__file__).resolve().as_posix().lower()
     entrypoint = next(
         item
-        for item in importlib.metadata.entry_points(group="ecosystem_predictor.plugins")
+        for item in importlib.metadata.entry_points(group="predictor.plugins")
         if item.name == "cripto"
     )
     with tempfile.TemporaryDirectory() as directory:
