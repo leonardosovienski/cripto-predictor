@@ -82,8 +82,10 @@ class SettlementResult(BaseModel):
 
 
 class HealthStatus(BaseModel):
+    domain: str = "crypto"
+    version: str | None = None
     status: OperationalStatus
-    details: dict[str, str] = Field(default_factory=dict)
+    details: dict[str, Any] = Field(default_factory=dict)
 
 
 @runtime_checkable
