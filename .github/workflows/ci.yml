@@ -11,12 +11,12 @@ jobs:
   quality:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: astral-sh/setup-uv@v7
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v6
         with:
           version: "0.12.1"
           enable-cache: true
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.13"
       - run: uv sync --locked --extra test
@@ -41,11 +41,11 @@ jobs:
   python-314-experimental:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: astral-sh/setup-uv@v7
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v6
         with:
           version: "0.12.1"
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.14"
       - run: uv sync --extra test
@@ -55,11 +55,11 @@ jobs:
   all-extras:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: astral-sh/setup-uv@v7
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v6
         with:
           version: "0.12.1"
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.13"
       - run: uv sync --locked --all-extras
@@ -71,7 +71,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: docker/setup-buildx-action@v3
+      - uses: docker/setup-buildx-action@v4
       - uses: anchore/sbom-action@v0
         with:
           path: .
