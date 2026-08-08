@@ -58,7 +58,7 @@ def test_revisoes_coexistem_apos_migracao(tmp_path):
 
 def test_schema_version_exposto():
     # 10 inclui os sinais enriquecidos e snapshots auditáveis de qualidade.
-    assert SCHEMA_VERSION == 10
+    assert SCHEMA_VERSION == 11
 
 
 def test_migration_0005_preserva_dados_existentes(tmp_path):

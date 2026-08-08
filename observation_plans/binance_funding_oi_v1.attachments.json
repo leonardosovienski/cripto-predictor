@@ -1,0 +1,12 @@
+{
+  "plan_checksum": "e46d72547ebea8011f1fdb5506c40b31d42f08b64b6d45fbb41ae8015c8d6ea4",
+  "plan_id": "crypto-binance-funding-oi-observation-v1",
+  "reports": [
+    {
+      "path": "observation_reports/crypto-binance-funding-oi-observation-v1-resilience.json",
+      "sha256": "2b5e7ccf2bec1df059f0fc2265bcc81376382c55b6a81cf6a71550e06cf2c262",
+      "type": "scheduled_resilience_tests"
+    }
+  ],
+  "scientific_state": "COLLECTION_ONLY"
+}

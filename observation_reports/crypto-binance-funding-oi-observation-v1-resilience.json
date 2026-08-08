@@ -1,0 +1,28 @@
+{
+  "executed_at": "2026-08-08T10:08:32.772039+00:00",
+  "passed": true,
+  "plan_id": "crypto-binance-funding-oi-observation-v1",
+  "schema_version": "collection-resilience-report/1",
+  "scientific_state": "COLLECTION_ONLY",
+  "tests": {
+    "disconnection": {
+      "gap_count": 1,
+      "passed": true,
+      "state": "DEGRADED",
+      "violations": [
+        "coverage",
+        "freshness_median",
+        "freshness_p95",
+        "freshness_p99"
+      ]
+    },
+    "duplicate_response": {
+      "conflict_rejected": true,
+      "passed": true
+    },
+    "revision": {
+      "passed": true,
+      "revision_count": 1
+    }
+  }
+}

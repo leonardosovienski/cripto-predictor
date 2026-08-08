@@ -30,6 +30,7 @@ def job_config(name: str, *, timeout_seconds: float | None = None) -> JobConfig:
         "backtest": [sys.executable, "-m", "GarimpoInvestimentos.analyzers.backtest"],
         "watchdog": [sys.executable, "-m", "GarimpoInvestimentos.watchdog"],
         "v3-daily": [sys.executable, "-m", "GarimpoInvestimentos.v3.daily"],
+        "observation-daily": [sys.executable, "-m", "GarimpoInvestimentos.observation_quality"],
     }
     if name not in commands:
         raise ValueError(f"unknown job: {name}")
@@ -41,7 +42,7 @@ def job_config(name: str, *, timeout_seconds: float | None = None) -> JobConfig:
         heartbeat_interval_seconds=5,
         expected_artifact=artifact,
         provenance={"domain": "crypto", "scientific_change": False},
-        scientific_state="COLLECTION_ONLY" if name == "v3-daily" else None,
+        scientific_state="COLLECTION_ONLY" if name in {"v3-daily", "observation-daily"} else None,
         runtime={"backend": "local", "root": _state_root(), "lock_stale_after_seconds": 86_400},
     )
 
@@ -54,7 +55,9 @@ def execute_job(
 
 def main(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Run cripto-predictor jobs via predictor_ops")
-    parser.add_argument("job", choices=("phase1", "backtest", "watchdog", "v3-daily"))
+    parser.add_argument(
+        "job", choices=("phase1", "backtest", "watchdog", "v3-daily", "observation-daily")
+    )
     parser.add_argument("--timeout", type=float)
     args = parser.parse_args(argv)
     result = execute_job(args.job, timeout_seconds=args.timeout)
