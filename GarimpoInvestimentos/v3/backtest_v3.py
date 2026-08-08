@@ -57,7 +57,6 @@ import logging
 import math
 import sys
 from dataclasses import dataclass
-from pathlib import Path
 
 from predictor_core.measurement.bootstrap import bootstrap_ci
 from predictor_core.obs import emit_event

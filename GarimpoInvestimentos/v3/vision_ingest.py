@@ -21,7 +21,6 @@ import argparse
 import logging
 import sys
 from datetime import UTC, datetime
-from pathlib import Path
 
 from predictor_core.obs import emit_event
 
