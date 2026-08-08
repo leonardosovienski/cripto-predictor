@@ -47,11 +47,20 @@ def commands(symbols: Sequence[str], *, start_date: str, end_date: str) -> list[
     result.append(
         [sys.executable, "-m", "GarimpoInvestimentos.v3.paper_report", "--symbol", *symbols]
     )
+    result.append(
+        [
+            sys.executable,
+            "-m",
+            "GarimpoInvestimentos.observation_quality",
+            "--date",
+            end_date,
+        ]
+    )
     return result
 
 
 def main() -> int:
-    symbols = ("BTCUSDT",)
+    symbols = ("BTCUSDT", "ETHUSDT")
     end_date = (datetime.now(UTC) - timedelta(days=1)).date().isoformat()
     for command in commands(symbols, start_date="2021-01-01", end_date=end_date):
         completed = subprocess.run(command, check=False)

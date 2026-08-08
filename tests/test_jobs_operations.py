@@ -39,11 +39,13 @@ def test_v3_daily_is_supervised_and_stops_on_first_failed_step(tmp_path, monkeyp
     assert jobs.job_config("v3-daily").command[-1] == "GarimpoInvestimentos.v3.daily"
     assert jobs.job_config("v3-daily").scientific_state == "COLLECTION_ONLY"
     planned = daily.commands(("BTCUSDT",), start_date="2021-01-01", end_date="2026-01-01")
+    assert planned[-1][-2:] == ["--date", "2026-01-01"]
     assert [command[2] for command in planned] == [
         "GarimpoInvestimentos.v3.vision_ingest",
         "GarimpoInvestimentos.v3.pipeline",
         "GarimpoInvestimentos.v3.paper_trader",
         "GarimpoInvestimentos.v3.paper_report",
+        "GarimpoInvestimentos.observation_quality",
     ]
 
     calls = []
