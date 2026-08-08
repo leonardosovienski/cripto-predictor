@@ -6,6 +6,8 @@ RUN python -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 COPY pyproject.toml README.md ./
 COPY GarimpoInvestimentos ./GarimpoInvestimentos
+COPY charters ./charters
+COPY observation_plans ./observation_plans
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir \
         "predictor-core @ https://github.com/leonardosovienski/core-predictor/releases/download/v2.2.0/predictor_core-2.2.0-py3-none-any.whl" \
