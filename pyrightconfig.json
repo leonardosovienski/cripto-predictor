@@ -9,6 +9,7 @@
     "GarimpoInvestimentos/observation_quality.py",
     "GarimpoInvestimentos/observation_reporting.py",
     "GarimpoInvestimentos/observation_resilience.py",
+    "GarimpoInvestimentos/observation_watchdog.py",
     "GarimpoInvestimentos/persistence.py",
     "GarimpoInvestimentos/plugin.py",
     "GarimpoInvestimentos/providers",

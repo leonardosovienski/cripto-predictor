@@ -28,7 +28,7 @@ def job_config(name: str, *, timeout_seconds: float | None = None) -> JobConfig:
     commands = {
         "phase1": [sys.executable, "-m", "GarimpoInvestimentos.phase1"],
         "backtest": [sys.executable, "-m", "GarimpoInvestimentos.analyzers.backtest"],
-        "watchdog": [sys.executable, "-m", "GarimpoInvestimentos.watchdog"],
+        "watchdog": [sys.executable, "-m", "GarimpoInvestimentos.observation_watchdog"],
         "v3-daily": [sys.executable, "-m", "GarimpoInvestimentos.v3.daily"],
         "observation-daily": [sys.executable, "-m", "GarimpoInvestimentos.observation_quality"],
     }
