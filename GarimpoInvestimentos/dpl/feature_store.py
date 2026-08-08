@@ -15,6 +15,7 @@ acessa APIs externas: lê apenas daqui.
 
 from __future__ import annotations
 
+import json
 import math
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -26,7 +27,7 @@ from GarimpoInvestimentos.dpl.migrations import ADDITIVE_MIGRATIONS
 from GarimpoInvestimentos.dpl.signals import SignalPoint
 
 # Versão do schema da Feature Store (base 0001-0004 + aditivas em dpl/migrations/).
-SCHEMA_VERSION = 8
+SCHEMA_VERSION = 10
 
 # Guard de integridade temporal na INSERÇÃO (auditoria jul/2026) — duas pontas:
 #   published_at <  timestamp            → look-ahead de rotulagem (publicou antes
@@ -178,12 +179,20 @@ class FeatureStore:
         self._conn.commit()
         return len(rows)
 
-    def write_signals(self, signals: list[SignalPoint]) -> int:
+    def write_signals(
+        self,
+        signals: list[SignalPoint],
+        *,
+        require_enriched: bool = False,
+        scientific_state: str = "COLLECTION_ONLY",
+    ) -> int:
         """Upsert de sinais. A PK inclui `vintage`, então revisões (mesmo ts, vintage
         distinto) COEXISTEM — base do point-in-time. Sem vintage → '' (ex.: Fear&Greed).
         """
         for s in signals:
             self._check_temporal(f"{s.source}/{s.name}", s.timestamp, s.published_at)
+            if require_enriched:
+                s.require_enriched()
         rows = [
             (
                 s.source,
@@ -193,16 +202,35 @@ class FeatureStore:
                 s.value,
                 _iso(s.published_at),
                 _iso(s.vintage) if s.vintage else "",
+                s.instrument,
+                s.metric,
+                s.unit,
+                _iso(s.event_at) if s.event_at else None,
+                _iso(s.ingested_at) if s.ingested_at else None,
+                s.content_hash,
+                s.collector_version,
+                s.schema_version,
+                json.dumps(sorted(s.quality_flags)),
+                scientific_state,
             )
             for s in signals
         ]
         self._conn.executemany(
             """INSERT INTO raw_signals
-               (source, name, ts, reference_date, value, published_at, vintage)
-               VALUES (?,?,?,?,?,?,?)
+               (source, name, ts, reference_date, value, published_at, vintage,
+                instrument, metric, unit, event_at, ingested_at, content_hash,
+                collector_version, schema_version, quality_flags, scientific_state)
+               VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
                ON CONFLICT(source, name, ts, vintage) DO UPDATE SET
                  reference_date=excluded.reference_date, value=excluded.value,
-                 published_at=excluded.published_at""",
+                 published_at=excluded.published_at,
+                 instrument=excluded.instrument, metric=excluded.metric, unit=excluded.unit,
+                 event_at=excluded.event_at, ingested_at=excluded.ingested_at,
+                 content_hash=excluded.content_hash,
+                 collector_version=excluded.collector_version,
+                 schema_version=excluded.schema_version,
+                 quality_flags=excluded.quality_flags,
+                 scientific_state=excluded.scientific_state""",
             rows,
         )
         self._conn.commit()
@@ -223,9 +251,42 @@ class FeatureStore:
                 published_at=_parse(r["published_at"]),
                 reference_date=_parse(r["reference_date"]) if r["reference_date"] else None,
                 vintage=_parse(r["vintage"]) if r["vintage"] else None,
+                instrument=r["instrument"],
+                metric=r["metric"],
+                unit=r["unit"],
+                event_at=_parse(r["event_at"]) if r["event_at"] else None,
+                ingested_at=_parse(r["ingested_at"]) if r["ingested_at"] else None,
+                content_hash=r["content_hash"],
+                collector_version=r["collector_version"],
+                schema_version=r["schema_version"],
+                quality_flags=frozenset(json.loads(r["quality_flags"])),
             )
             for r in cur
         ]
+
+    def write_quality_scorecard(
+        self,
+        payload: dict,
+        *,
+        calculated_at: datetime,
+        scientific_state: str = "COLLECTION_ONLY",
+    ) -> None:
+        self._conn.execute(
+            """INSERT INTO source_quality_scorecards
+               (source, window_start, window_end, calculated_at, state,
+                scientific_state, payload_json)
+               VALUES (?,?,?,?,?,?,?)""",
+            (
+                payload["source"],
+                payload["window_start"],
+                payload["window_end"],
+                _iso(calculated_at),
+                payload["state"],
+                scientific_state,
+                json.dumps(payload, ensure_ascii=False, sort_keys=True, allow_nan=False),
+            ),
+        )
+        self._conn.commit()
 
     def write_provenance(
         self,

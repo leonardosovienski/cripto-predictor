@@ -57,10 +57,8 @@ def test_revisoes_coexistem_apos_migracao(tmp_path):
 
 
 def test_schema_version_exposto():
-    # 8 = base 0001-0004 + 0005 (raw_signals bitemporal) + 0006 (predictions, passo 4)
-    #   + 0007 (feature_version na PK de features_aligned)
-    #   + 0008 (input_degradado nas predictions)
-    assert SCHEMA_VERSION == 8
+    # 10 inclui os sinais enriquecidos e snapshots auditáveis de qualidade.
+    assert SCHEMA_VERSION == 10
 
 
 def test_migration_0005_preserva_dados_existentes(tmp_path):

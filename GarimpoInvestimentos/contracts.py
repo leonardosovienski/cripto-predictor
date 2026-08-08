@@ -4,18 +4,14 @@ from datetime import UTC, datetime
 from enum import StrEnum
 from typing import Any, Protocol, runtime_checkable
 
+from predictor_core.contracts import ScientificState
 from predictor_ops import RunStatus as OperationalStatus
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 
-class ScientificStatus(StrEnum):
+class PredictionEligibility(StrEnum):
     ELIGIBLE = "ELIGIBLE"
     EXCLUDED_DEGRADED = "EXCLUDED_DEGRADED"
-    NO_GO = "NO_GO"
-    SHADOW = "SHADOW"
-    COLLECTION_ONLY = "COLLECTION_ONLY"
-    PENDING_SAMPLE = "PENDING_SAMPLE"
-    CLOSED_BY_HUMAN_DECISION = "CLOSED_BY_HUMAN_DECISION"
 
 
 def _aware(value: datetime) -> datetime:
@@ -52,7 +48,8 @@ class PredictionResult(BaseModel):
     core_version: str
     degraded: bool = False
     degraded_reasons: tuple[str, ...] = ()
-    scientific_status: ScientificStatus = ScientificStatus.ELIGIBLE
+    eligibility: PredictionEligibility = PredictionEligibility.ELIGIBLE
+    scientific_state: ScientificState = ScientificState.COLLECTION_ONLY
     score: float
     _times = field_validator("predicted_at", "data_as_of", "matures_at")(_aware)
 

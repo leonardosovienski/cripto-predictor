@@ -1,0 +1,34 @@
+{
+  "schema_version": "scientific-governance/1",
+  "charter_id": "crypto-binance-funding-oi-v3",
+  "source": "binance-futures",
+  "metrics": ["funding_rate", "open_interest_contracts", "open_interest_notional_usd"],
+  "assets": ["BTCUSDT", "ETHUSDT"],
+  "cadence": "funding:8h;open_interest:1h",
+  "timestamp_semantics": {
+    "event_at_source": "Binance fundingTime/timestamp in the API response",
+    "published_at_source": "Binance fundingTime/timestamp returned for the public observation",
+    "ingested_at_source": "UTC collector clock immediately after response validation"
+  },
+  "latency_sla": {"median_seconds": 30.0, "p99_seconds": 60.0},
+  "resource_budget": {"traffic_mb_month": 1024.0, "storage_gb_month": 2.0},
+  "owner": "leonardosovienski",
+  "revision_policy": "Append a new vintage and content hash; never overwrite historical vintages.",
+  "initial_scientific_state": "COLLECTION_ONLY",
+  "collector_version": "funding-oi-v3/1",
+  "expected_schema_version": "crypto-signal/2",
+  "retention_policy": {"raw_days": 30, "normalized_days": null, "aggregates_days": null},
+  "quality_thresholds": {
+    "minimum_coverage": 0.99,
+    "maximum_median_freshness_seconds": 30.0,
+    "maximum_p99_freshness_seconds": 60.0,
+    "maximum_gap_count": 0,
+    "maximum_gap_seconds": 0.0,
+    "maximum_revision_rate": 0.01,
+    "minimum_availability": 0.99,
+    "maximum_causality_failure_rate": 0.0,
+    "maximum_integrity_failure_rate": 0.0
+  },
+  "created_at": "2026-08-08T00:00:00Z",
+  "rationale": "Collect point-in-time derivatives data before testing cross-exchange divergence hypotheses. No capital authorization."
+}

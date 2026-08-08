@@ -27,11 +27,16 @@ import argparse
 import asyncio
 import logging
 import sys
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
+from predictor_core.contracts import SourceQualityState
 from predictor_core.obs import emit_event
 
+from GarimpoInvestimentos.core.paths import FEATURE_STORE_DB
+from GarimpoInvestimentos.dpl.derivatives import SOURCE, persist_v3_derivatives
+from GarimpoInvestimentos.dpl.feature_store import FeatureStore
+from GarimpoInvestimentos.quality_scorecard import calculate_and_persist_scorecard
 from GarimpoInvestimentos.v3.circuit_breaker import CircuitBreaker
 from GarimpoInvestimentos.v3.collectors.funding_collector import (
     FundingCollector,
@@ -194,6 +199,68 @@ async def run_symbol(
         end_ms,
         force_refresh,
     )
+
+    # DPL oficial: o CSV permanece como ponte de rollback, mas a Feature Store
+    # bitemporal passa a ser o registro canônico para funding/OI novos.
+    cache_paths = [path for path in (_funding_path(symbol), _oi_path(symbol)) if path.exists()]
+    cache_mtime = max(
+        (path.stat().st_mtime for path in cache_paths), default=datetime.now(UTC).timestamp()
+    )
+    ingested_at = datetime.fromtimestamp(cache_mtime, tz=UTC)
+    quality_states = {}
+    with FeatureStore(FEATURE_STORE_DB) as store:
+        persisted = persist_v3_derivatives(
+            store,
+            funding=funding_records,
+            open_interest=oi_records,
+            ingested_at=ingested_at,
+        )
+        for metric_name, cadence_seconds in (
+            (f"{symbol}:funding_rate", 8 * 3600),
+            (f"{symbol}:open_interest_contracts", 3600),
+            (f"{symbol}:open_interest_notional_usd", 3600),
+        ):
+            metric_points = store.read_signals(SOURCE, metric_name)
+            if metric_points:
+                event_times = [point.event_at for point in metric_points if point.event_at]
+                scorecard = calculate_and_persist_scorecard(
+                    store,
+                    metric_points,
+                    source=SOURCE,
+                    window_start=min(event_times),
+                    window_end=max(event_times) + timedelta(seconds=cadence_seconds),
+                    cadence_seconds=cadence_seconds,
+                    successful_requests=1,
+                    total_requests=1,
+                )
+                quality_states[metric_name] = scorecard.state
+    emit_event(
+        "v3_cripto",
+        "derivatives.persisted",
+        metrics={"n_signal_points": persisted},
+        metadata={"symbol": symbol, "scientific_state": "COLLECTION_ONLY"},
+    )
+
+    if quality_states.get(f"{symbol}:funding_rate") is SourceQualityState.QUARANTINED:
+        emit_event(
+            "v3_cripto",
+            "pipeline_aborted",
+            metrics={"data_quality_score": 0.0},
+            metadata={"symbol": symbol, "reason": "funding_source_quarantined"},
+        )
+        return []
+    oi_metrics = (
+        f"{symbol}:open_interest_contracts",
+        f"{symbol}:open_interest_notional_usd",
+    )
+    if any(quality_states.get(metric) is SourceQualityState.QUARANTINED for metric in oi_metrics):
+        oi_records = []
+        emit_event(
+            "v3_cripto",
+            "source.quarantine_applied",
+            metrics={},
+            metadata={"symbol": symbol, "metrics": list(oi_metrics)},
+        )
 
     if not funding_records:
         logger.error("pipeline [%s]: sem dados de funding — abortando", symbol)

@@ -74,6 +74,20 @@ predictor-core/predictor-ops nao sao vendorizados: sao wheels externas resolvida
 via [tool.uv.sources] a partir das GitHub Releases de core-predictor/tools-predictor,
 com hash fixado em uv.lock.
 
+## Coleta exploratória `COLLECTION_ONLY`
+
+Funding e open interest da V3 entram na DPL como `SignalPoint` bitemporal
+enriquecido, com instrumento, métrica, unidade, `event_at`, `published_at`,
+`ingested_at`, hash de conteúdo, versões de coletor/schema e flags de qualidade.
+O charter versionado em `charters/funding_oi_v3.json` fixa SLA, retenção,
+orçamentos e thresholds antes da coleta.
+
+Esses dados permanecem em `scientific_state=COLLECTION_ONLY`: uma execução pode
+terminar com `run_status=SUCCEEDED`, mas isso não constitui validação de hipótese
+nem autorização de capital. O core exige registro de hipótese e `DatasetFreeze`
+selado antes de qualquer promoção científica. Scorecards persistidos classificam
+fontes separadamente como `HEALTHY`, `DEGRADED` ou `QUARANTINED`.
+
 
 O Feature Store ignorado pelo Git possui backup online verificavel e restore
 nao destrutivo. Procedimento: [docs/BACKUP_RESTORE.md](docs/BACKUP_RESTORE.md).
