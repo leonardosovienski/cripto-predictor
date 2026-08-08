@@ -1,5 +1,5 @@
 import json
-from datetime import UTC, datetime, timedelta
+from datetime import UTC, datetime
 
 from GarimpoInvestimentos.observation_watchdog import check_observation_health
 

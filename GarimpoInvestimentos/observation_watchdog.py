@@ -10,8 +10,8 @@ from pathlib import Path
 from predictor_core.obs import emit_event
 
 from GarimpoInvestimentos.core.paths import FEATURE_STORE_DB
-from GarimpoInvestimentos.dpl.feature_store import FeatureStore
 from GarimpoInvestimentos.dpl.derivatives import SOURCE
+from GarimpoInvestimentos.dpl.feature_store import FeatureStore
 from GarimpoInvestimentos.governance import load_observation_plan
 
 
