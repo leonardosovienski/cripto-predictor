@@ -8,8 +8,8 @@ COPY pyproject.toml README.md ./
 COPY GarimpoInvestimentos ./GarimpoInvestimentos
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir \
-        "predictor-core @ https://github.com/leonardosovienski/core-predictor/releases/download/v2.1.0/predictor_core-2.1.0-py3-none-any.whl" \
-        "predictor-ops @ https://github.com/leonardosovienski/tools-predictor/releases/download/v2.0.1/predictor_ops-2.0.1-py3-none-any.whl" \
+        "predictor-core @ https://github.com/leonardosovienski/core-predictor/releases/download/v2.2.0/predictor_core-2.2.0-py3-none-any.whl" \
+        "predictor-ops @ https://github.com/leonardosovienski/tools-predictor/releases/download/v3.0.0/predictor_ops-3.0.0-py3-none-any.whl" \
         . && \
     pip uninstall -y pip
 
