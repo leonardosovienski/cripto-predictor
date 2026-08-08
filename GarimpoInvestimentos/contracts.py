@@ -4,7 +4,7 @@ from datetime import UTC, datetime
 from enum import StrEnum
 from typing import Any, Protocol, runtime_checkable
 
-from predictor_ops import OperationalState as OperationalStatus
+from predictor_ops import RunStatus as OperationalStatus
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 

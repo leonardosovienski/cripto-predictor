@@ -10,7 +10,7 @@ from collections.abc import Sequence
 from pathlib import Path
 
 from platformdirs import user_state_path
-from predictor_ops import JobConfig, OperationalState, RunResult, run_job
+from predictor_ops import JobConfig, RunResult, RunStatus, run_job
 
 from GarimpoInvestimentos.core.paths import FEATURE_STORE_DB
 
@@ -41,6 +41,7 @@ def job_config(name: str, *, timeout_seconds: float | None = None) -> JobConfig:
         heartbeat_interval_seconds=5,
         expected_artifact=artifact,
         provenance={"domain": "crypto", "scientific_change": False},
+        scientific_state="COLLECTION_ONLY" if name == "v3-daily" else None,
         runtime={"backend": "local", "root": _state_root(), "lock_stale_after_seconds": 86_400},
     )
 
@@ -57,11 +58,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--timeout", type=float)
     args = parser.parse_args(argv)
     result = execute_job(args.job, timeout_seconds=args.timeout)
-    return (
-        0
-        if result.status in {OperationalState.SUCCEEDED, OperationalState.PARTIAL}
-        else result.exit_code
-    )
+    return 0 if result.run_status in {RunStatus.SUCCEEDED, RunStatus.PARTIAL} else result.exit_code
 
 
 if __name__ == "__main__":

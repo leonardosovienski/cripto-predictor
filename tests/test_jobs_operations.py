@@ -7,7 +7,7 @@ import time
 from pathlib import Path
 
 import pytest
-from predictor_ops import JobConfig, OperationalState, run_job
+from predictor_ops import JobConfig, RunStatus, run_job
 
 from GarimpoInvestimentos import jobs
 from GarimpoInvestimentos.v3 import daily
@@ -37,6 +37,7 @@ def test_public_job_config_uses_installed_module_and_no_checkout_cwd(tmp_path, m
 def test_v3_daily_is_supervised_and_stops_on_first_failed_step(tmp_path, monkeypatch):
     monkeypatch.setenv("PREDICTOR_OPS_STATE_DIR", str(tmp_path))
     assert jobs.job_config("v3-daily").command[-1] == "GarimpoInvestimentos.v3.daily"
+    assert jobs.job_config("v3-daily").scientific_state == "COLLECTION_ONLY"
     planned = daily.commands(("BTCUSDT",), start_date="2021-01-01", end_date="2026-01-01")
     assert [command[2] for command in planned] == [
         "GarimpoInvestimentos.v3.vision_ingest",
@@ -57,8 +58,8 @@ def test_v3_daily_is_supervised_and_stops_on_first_failed_step(tmp_path, monkeyp
 
 
 def test_job_cli_maps_operational_status(monkeypatch):
-    succeeded = type("Result", (), {"status": OperationalState.SUCCEEDED, "exit_code": 0})()
-    failed = type("Result", (), {"status": OperationalState.FAILED, "exit_code": 9})()
+    succeeded = type("Result", (), {"run_status": RunStatus.SUCCEEDED, "exit_code": 0})()
+    failed = type("Result", (), {"run_status": RunStatus.FAILED, "exit_code": 9})()
     monkeypatch.setattr(jobs, "execute_job", lambda *args, **kwargs: succeeded)
     assert jobs.main(["watchdog", "--timeout", "1"]) == 0
     monkeypatch.setattr(jobs, "execute_job", lambda *args, **kwargs: failed)
@@ -74,11 +75,11 @@ def test_timeout_shutdown_heartbeat_events_and_redaction(tmp_path):
         environment={"SERP_API_KEY": secret},
     )
     result = run_job(leaking)
-    assert result.exit_code == 124 and result.status == OperationalState.FAILED
+    assert result.exit_code == 124 and result.run_status == RunStatus.FAILED
     serialized = json.dumps(result.record)
     assert secret not in serialized and "[REDACTED]" in serialized
     root = tmp_path / leaking.id
-    assert json.loads((root / "heartbeat.json").read_text())["status"] == "FAILED"
+    assert json.loads((root / "heartbeat.json").read_text())["run_status"] == "FAILED"
     assert secret not in (root / "events.jsonl").read_text()
 
     stop = threading.Event()
@@ -96,5 +97,5 @@ def test_lock_prevents_concurrent_duplicate(tmp_path):
     time.sleep(0.1)
     second = run_job(job)
     thread.join()
-    assert second.status == OperationalState.SKIPPED
-    assert first[0].status == OperationalState.SUCCEEDED
+    assert second.run_status == RunStatus.SKIPPED
+    assert first[0].run_status == RunStatus.SUCCEEDED

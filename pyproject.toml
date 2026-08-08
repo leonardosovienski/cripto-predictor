@@ -11,8 +11,8 @@ requires-python = ">=3.13,<3.15"
 license = { text = "Proprietary" }
 dependencies = [
   "httpx>=0.28.1,<1",
-  "predictor-core>=2.1.0,<2.2",
-  "predictor-ops>=2.0.0,<2.1",
+  "predictor-core>=2.2.0,<2.3",
+  "predictor-ops>=3.0.0,<3.1",
   "pydantic>=2.12,<3",
   "pydantic-settings>=2.10,<3",
   "platformdirs>=4.3,<5",
@@ -75,5 +75,5 @@ stubPath = "typings"
 dev = ["build>=1.3,<2", "coverage[toml]>=7.10,<8", "pre-commit>=4.3,<5", "pyright>=1.1.403,<2", "pytest>=8.4,<9", "pytest-cov>=6.2,<7", "ruff>=0.12,<1"]
 
 [tool.uv.sources]
-predictor-core = { url = "https://github.com/leonardosovienski/core-predictor/releases/download/v2.1.0/predictor_core-2.1.0-py3-none-any.whl" }
-predictor-ops = { url = "https://github.com/leonardosovienski/tools-predictor/releases/download/v2.0.1/predictor_ops-2.0.1-py3-none-any.whl" }
+predictor-core = { url = "https://github.com/leonardosovienski/core-predictor/releases/download/v2.2.0/predictor_core-2.2.0-py3-none-any.whl" }
+predictor-ops = { url = "https://github.com/leonardosovienski/tools-predictor/releases/download/v3.0.0/predictor_ops-3.0.0-py3-none-any.whl" }

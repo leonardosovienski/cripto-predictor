@@ -15,19 +15,19 @@ ROOT = Path(__file__).resolve().parents[1]
 # truth is the lockfile itself.
 EXPECTED = {
     "predictor-core": (
-        "https://github.com/leonardosovienski/core-predictor/releases/download/v2.1.0/predictor_core-2.1.0-py3-none-any.whl",
-        "sha256:83de1d4415700dedaf387bc46dd9685e046de1fa47f37367bf2167462b09761b",
+        "https://github.com/leonardosovienski/core-predictor/releases/download/v2.2.0/predictor_core-2.2.0-py3-none-any.whl",
+        "sha256:fe95dece93a2c91436ffd60058cea1d9192022d2170abb7e8e8512ccb76f9fdd",
     ),
     "predictor-ops": (
-        "https://github.com/leonardosovienski/tools-predictor/releases/download/v2.0.1/predictor_ops-2.0.1-py3-none-any.whl",
-        "sha256:77ca2eb3f1090226dfef23b84d7fb2f9a61bd858c970d433d28303e637a8903e",
+        "https://github.com/leonardosovienski/tools-predictor/releases/download/v3.0.0/predictor_ops-3.0.0-py3-none-any.whl",
+        "sha256:9574d5fa4d17232a9d7dbd1aaff0131b65f341974508c5457b8d570bf41e8945",
     ),
 }
 
 
 def test_shared_versions_are_exactly_compatible():
-    assert importlib.metadata.version("predictor-core") == "2.1.0"
-    assert importlib.metadata.version("predictor-ops") == "2.0.1"
+    assert importlib.metadata.version("predictor-core") == "2.2.0"
+    assert importlib.metadata.version("predictor-ops") == "3.0.0"
 
 
 def test_shared_libraries_resolve_from_site_packages():
