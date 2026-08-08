@@ -25,6 +25,7 @@ from pathlib import Path
 
 from predictor_core.obs import emit_event
 
+from GarimpoInvestimentos.core.paths import DATA_DIR
 from GarimpoInvestimentos.v3.collectors.binance_vision import (
     load_funding_vision,
     load_klines_vision,
@@ -36,7 +37,7 @@ from GarimpoInvestimentos.v3.collectors.spot_collector import save_spot_csv
 
 logger = logging.getLogger(__name__)
 
-_DATA_ROOT = Path(__file__).resolve().parents[2] / "data" / "v3"
+_DATA_ROOT = DATA_DIR / "v3"
 
 
 def _date_to_ms(date_str: str) -> int:

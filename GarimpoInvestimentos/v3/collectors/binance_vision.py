@@ -45,6 +45,7 @@ from pathlib import Path
 
 import httpx
 
+from GarimpoInvestimentos.core.paths import CACHE_DIR
 from GarimpoInvestimentos.v3.collectors.funding_collector import FundingRecord
 from GarimpoInvestimentos.v3.collectors.oi_collector import OIRecord
 from GarimpoInvestimentos.v3.collectors.spot_collector import KlineRecord
@@ -52,7 +53,7 @@ from GarimpoInvestimentos.v3.collectors.spot_collector import KlineRecord
 logger = logging.getLogger(__name__)
 
 _BASE = "https://data.binance.vision/data/futures/um"
-_CACHE_DIR = Path(__file__).resolve().parents[3] / "data" / "v3" / "_vision_cache"
+_CACHE_DIR = CACHE_DIR / "v3" / "binance_vision"
 _HTTP_TIMEOUT = 120.0
 
 

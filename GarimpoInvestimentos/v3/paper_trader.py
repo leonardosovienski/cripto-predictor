@@ -34,6 +34,7 @@ from pathlib import Path
 
 from predictor_core.obs import emit_event
 
+from GarimpoInvestimentos.core.paths import DATA_DIR
 from GarimpoInvestimentos.v3.backtest_v3 import DEFAULT_KELLY_FRACTION
 from GarimpoInvestimentos.v3.collectors.spot_collector import load_spot_csv
 from GarimpoInvestimentos.v3.feature_builder import build_spot_index
@@ -44,7 +45,7 @@ from GarimpoInvestimentos.v3.timeindex import nearest_value
 logger = logging.getLogger(__name__)
 
 _DOMAIN = "v3_paper"
-_DATA_ROOT = Path(__file__).resolve().parents[2] / "data" / "v3"
+_DATA_ROOT = DATA_DIR / "v3"
 _PAPER_DIR = _DATA_ROOT / "paper"
 _PRICE_TOLERANCE_MS = 300_000  # ±5 min para casar o preço de referência
 

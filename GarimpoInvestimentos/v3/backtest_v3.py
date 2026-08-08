@@ -67,6 +67,7 @@ from predictor_core.stats import (
     spearman_block_ci,
 )
 
+from GarimpoInvestimentos.core.paths import DATA_DIR
 from GarimpoInvestimentos.v3.collectors.funding_collector import load_funding_csv
 from GarimpoInvestimentos.v3.collectors.oi_collector import load_oi_csv
 from GarimpoInvestimentos.v3.collectors.spot_collector import load_spot_csv
@@ -106,7 +107,7 @@ _GO_MAX_DD_THRESHOLD = 0.20  # 20%
 # sob fracionamento (o Kelly escala exposição, não o sinal). Ver HANDOFF.md.
 DEFAULT_KELLY_FRACTION = 0.50
 
-_DATA_ROOT = Path(__file__).resolve().parents[2] / "data" / "v3"
+_DATA_ROOT = DATA_DIR / "v3"
 
 
 # ------------------------------------------------------------------ #

@@ -33,7 +33,7 @@ from pathlib import Path
 from predictor_core.contracts import SourceQualityState
 from predictor_core.obs import emit_event
 
-from GarimpoInvestimentos.core.paths import FEATURE_STORE_DB
+from GarimpoInvestimentos.core.paths import DATA_DIR, FEATURE_STORE_DB
 from GarimpoInvestimentos.dpl.derivatives import SOURCE, persist_v3_derivatives
 from GarimpoInvestimentos.dpl.feature_store import FeatureStore
 from GarimpoInvestimentos.quality_scorecard import calculate_and_persist_scorecard
@@ -72,7 +72,7 @@ logger = logging.getLogger(__name__)
 # Caminhos de dados                                                   #
 # ------------------------------------------------------------------ #
 
-_DATA_ROOT = Path(__file__).resolve().parents[2] / "data" / "v3"
+_DATA_ROOT = DATA_DIR / "v3"
 
 
 def _symbol_dir(symbol: str) -> Path:
