@@ -17,6 +17,7 @@ from GarimpoInvestimentos.dpl.migrations import _0011_predictions_collection_pol
 from GarimpoInvestimentos.dpl.migrations import _0012_provenance_content_hash as _m0012
 from GarimpoInvestimentos.dpl.migrations import _0013_enriched_signals as _m0013
 from GarimpoInvestimentos.dpl.migrations import _0014_source_quality_scorecards as _m0014
+from GarimpoInvestimentos.dpl.migrations import _0015_observation_scorecards as _m0015
 
 # Lista ordenada de migrações aditivas (nome, sql), aplicadas após o schema base.
 ADDITIVE_MIGRATIONS = [
@@ -30,4 +31,5 @@ ADDITIVE_MIGRATIONS = [
     (_m0012.NAME, _m0012.SQL),
     (_m0013.NAME, _m0013.SQL),
     (_m0014.NAME, _m0014.SQL),
+    (_m0015.NAME, _m0015.SQL),
 ]

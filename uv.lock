@@ -411,6 +411,7 @@ dependencies = [
     { name = "predictor-ops" },
     { name = "pydantic" },
     { name = "pydantic-settings" },
+    { name = "pyyaml" },
 ]
 
 [package.optional-dependencies]
@@ -473,6 +474,7 @@ requires-dist = [
     { name = "pyright", marker = "extra == 'test'", specifier = ">=1.1.403,<2" },
     { name = "pytest", marker = "extra == 'test'", specifier = ">=8.4,<9" },
     { name = "pytest-cov", marker = "extra == 'test'", specifier = ">=6.2,<7" },
+    { name = "pyyaml", specifier = ">=6.0.3,<7" },
     { name = "ruff", marker = "extra == 'test'", specifier = ">=0.12,<1" },
     { name = "scikit-learn", marker = "extra == 'science'", specifier = ">=1.6,<2" },
     { name = "scikit-learn", marker = "extra == 'v3'", specifier = ">=1.6,<2" },

@@ -1,0 +1,42 @@
+schema_version: collection-observation-plan/1
+plan_id: crypto-binance-funding-oi-observation-v1
+created_at: "2026-08-08T00:00:00Z"
+target_source: binance_futures
+metrics_under_observation:
+  - metric: funding_rate
+    signal_metrics: [funding_rate]
+    cadence_seconds: 28800
+    min_duration_days: {initial: 30, desired: 90}
+    min_points: 180  # 30 days * 3 observations/day * 2 instruments
+    min_daily_coverage: 0.99
+    min_weekly_coverage: 0.995
+    max_consecutive_gaps: 3
+    latency_p50_max_ms: 30000
+    latency_p95_max_ms: 60000
+    latency_p99_max_ms: 60000
+    max_allowed_degraded_events_per_month: 2
+    max_unexplained_quarantines: 0
+    scheduled_tests: [disconnection, duplicate_response, revision]
+  - metric: open_interest
+    signal_metrics: [open_interest_contracts, open_interest_notional_usd]
+    cadence_seconds: 3600
+    min_duration_days: {initial: 30, desired: 90}
+    min_points: 1440  # logical observations: 30 days * 24 hours * 2 instruments
+    min_daily_coverage: 0.99
+    min_weekly_coverage: 0.995
+    max_consecutive_gaps: 3
+    latency_p50_max_ms: 30000
+    latency_p95_max_ms: 60000
+    latency_p99_max_ms: 60000
+    max_allowed_degraded_events_per_month: 2
+    max_unexplained_quarantines: 0
+    scheduled_tests: [disconnection, duplicate_response, revision]
+global_criteria:
+  hash_stability_required: true
+  idempotency_required: true
+  cost_within_charter: true
+  human_approval_required_after_initial: true
+  human_approval_required_after_desired: true
+state: ACTIVE
+scientific_state: COLLECTION_ONLY
+plan_checksum: e46d72547ebea8011f1fdb5506c40b31d42f08b64b6d45fbb41ae8015c8d6ea4

@@ -15,6 +15,7 @@ acessa APIs externas: lê apenas daqui.
 
 from __future__ import annotations
 
+import hashlib
 import json
 import math
 from datetime import datetime, timedelta
@@ -27,7 +28,7 @@ from GarimpoInvestimentos.dpl.migrations import ADDITIVE_MIGRATIONS
 from GarimpoInvestimentos.dpl.signals import SignalPoint
 
 # Versão do schema da Feature Store (base 0001-0004 + aditivas em dpl/migrations/).
-SCHEMA_VERSION = 10
+SCHEMA_VERSION = 11
 
 # Guard de integridade temporal na INSERÇÃO (auditoria jul/2026) — duas pontas:
 #   published_at <  timestamp            → look-ahead de rotulagem (publicou antes
@@ -193,6 +194,21 @@ class FeatureStore:
             self._check_temporal(f"{s.source}/{s.name}", s.timestamp, s.published_at)
             if require_enriched:
                 s.require_enriched()
+            existing = self._conn.execute(
+                """SELECT content_hash FROM raw_signals
+                   WHERE source=? AND name=? AND ts=? AND vintage=?""",
+                (s.source, s.name, _iso(s.timestamp), _iso(s.vintage) if s.vintage else ""),
+            ).fetchone()
+            if (
+                existing
+                and existing["content_hash"]
+                and s.content_hash
+                and existing["content_hash"] != s.content_hash
+            ):
+                raise ValueError(
+                    "duplicate observation key has a different content_hash; "
+                    "use a later vintage for a genuine revision"
+                )
         rows = [
             (
                 s.source,
@@ -264,6 +280,47 @@ class FeatureStore:
             for r in cur
         ]
 
+    def read_enriched_signals_window(
+        self,
+        *,
+        source: str,
+        metrics: tuple[str, ...],
+        window_start: datetime,
+        window_end: datetime,
+    ) -> list[SignalPoint]:
+        """Read enriched observations in a half-open UTC event-time window."""
+        if not metrics or window_end <= window_start:
+            raise ValueError("metrics and a valid half-open window are required")
+        placeholders = ",".join("?" for _ in metrics)
+        cur = self._conn.execute(
+            f"""SELECT * FROM raw_signals
+                WHERE source=? AND metric IN ({placeholders})
+                  AND event_at>=? AND event_at<?
+                ORDER BY event_at, instrument, metric, vintage""",  # noqa: S608
+            (source, *metrics, _iso(window_start), _iso(window_end)),
+        )
+        return [
+            SignalPoint(
+                name=r["name"],
+                timestamp=_parse(r["ts"]),
+                value=r["value"],
+                source=r["source"],
+                published_at=_parse(r["published_at"]),
+                reference_date=_parse(r["reference_date"]) if r["reference_date"] else None,
+                vintage=_parse(r["vintage"]) if r["vintage"] else None,
+                instrument=r["instrument"],
+                metric=r["metric"],
+                unit=r["unit"],
+                event_at=_parse(r["event_at"]),
+                ingested_at=_parse(r["ingested_at"]) if r["ingested_at"] else None,
+                content_hash=r["content_hash"],
+                collector_version=r["collector_version"],
+                schema_version=r["schema_version"],
+                quality_flags=frozenset(json.loads(r["quality_flags"])),
+            )
+            for r in cur
+        ]
+
     def write_quality_scorecard(
         self,
         payload: dict,
@@ -287,6 +344,62 @@ class FeatureStore:
             ),
         )
         self._conn.commit()
+
+    def write_observation_scorecard(self, payload: dict, *, calculated_at: datetime) -> bool:
+        """Insert an immutable daily scorecard; identical reruns are idempotent."""
+        encoded = json.dumps(payload, ensure_ascii=False, sort_keys=True, allow_nan=False)
+        digest = hashlib.sha256(encoded.encode("utf-8")).hexdigest()
+        key = (
+            payload["plan_id"],
+            payload["source"],
+            payload["metric"],
+            payload["window_start"],
+            payload["window_end"],
+        )
+        existing = self._conn.execute(
+            """SELECT payload_hash FROM observation_scorecards
+               WHERE plan_id=? AND source=? AND metric=? AND window_start=? AND window_end=?""",
+            key,
+        ).fetchone()
+        if existing:
+            if existing["payload_hash"] != digest:
+                raise ValueError(
+                    "immutable observation scorecard already exists with other content"
+                )
+            return False
+        self._conn.execute(
+            """INSERT INTO observation_scorecards
+               (plan_id, source, metric, window_start, window_end, calculated_at,
+                state, scientific_state, payload_hash, payload_json)
+               VALUES (?,?,?,?,?,?,?,?,?,?)""",
+            (*key, _iso(calculated_at), payload["state"], "COLLECTION_ONLY", digest, encoded),
+        )
+        self._conn.commit()
+        return True
+
+    def read_observation_scorecards(
+        self,
+        *,
+        plan_id: str,
+        source: str,
+        metric: str,
+        window_start: datetime | None = None,
+        window_end: datetime | None = None,
+    ) -> list[dict]:
+        clauses = ["plan_id=?", "source=?", "metric=?"]
+        params: list[object] = [plan_id, source, metric]
+        if window_start is not None:
+            clauses.append("window_start>=?")
+            params.append(_iso(window_start))
+        if window_end is not None:
+            clauses.append("window_end<=?")
+            params.append(_iso(window_end))
+        rows = self._conn.execute(
+            f"""SELECT payload_json FROM observation_scorecards
+                WHERE {" AND ".join(clauses)} ORDER BY window_start""",  # noqa: S608
+            params,
+        )
+        return [json.loads(row["payload_json"]) for row in rows]
 
     def write_provenance(
         self,
