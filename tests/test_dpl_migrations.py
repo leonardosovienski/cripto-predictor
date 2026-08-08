@@ -57,7 +57,7 @@ def test_revisoes_coexistem_apos_migracao(tmp_path):
 
 
 def test_schema_version_exposto():
-    # 10 inclui os sinais enriquecidos e snapshots auditáveis de qualidade.
+    # 11 inclui scorecards de observação separados por métrica.
     assert SCHEMA_VERSION == 11
 
 
