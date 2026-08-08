@@ -199,6 +199,19 @@ def evaluate_daily_metric(
         },
     )
     if state is not SourceQualityState.HEALTHY:
+        emit_event(
+            "v3_cripto",
+            "observation.quality_alert",
+            metrics={"violation_count": len(payload["violations"])},
+            metadata={
+                "plan_id": plan.plan_id,
+                "source": SOURCE,
+                "metric": metric.metric,
+                "state": state.value,
+                "violations": payload["violations"],
+                "scientific_state": "COLLECTION_ONLY",
+            },
+        )
         LOG.warning("quality alert source=%s metric=%s state=%s", SOURCE, metric.metric, state)
     return payload
 

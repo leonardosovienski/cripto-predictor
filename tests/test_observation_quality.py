@@ -87,3 +87,25 @@ def test_resilience_drills_pass_and_write_report(tmp_path):
     result = run_drills(tmp_path)
     assert result["passed"] is True
     assert set(result["tests"]) == {"disconnection", "duplicate_response", "revision"}
+
+
+def test_degraded_scorecard_emits_dedicated_alert_telemetry(tmp_path, monkeypatch):
+    events = []
+    monkeypatch.setattr(
+        "GarimpoInvestimentos.observation_quality.emit_event",
+        lambda domain, event, **payload: events.append((domain, event, payload)),
+    )
+    with FeatureStore(tmp_path / "features.db") as store:
+        evaluate_daily_metric(
+            store,
+            plan=load_observation_plan(),
+            metric_name="funding_rate",
+            day=date(2026, 8, 1),
+            audit_path=tmp_path / "audit.jsonl",
+            calculated_at=datetime(2026, 8, 2, tzinfo=UTC),
+        )
+    assert [event for _, event, _ in events] == [
+        "observation.daily_scorecard",
+        "observation.quality_alert",
+    ]
+    assert events[-1][2]["metadata"]["scientific_state"] == "COLLECTION_ONLY"
