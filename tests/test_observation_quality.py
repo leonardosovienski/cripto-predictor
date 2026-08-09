@@ -1,4 +1,5 @@
 from datetime import UTC, date, datetime, timedelta
+from dataclasses import replace
 
 import pytest
 
@@ -87,6 +88,21 @@ def test_resilience_drills_pass_and_write_report(tmp_path):
     result = run_drills(tmp_path)
     assert result["passed"] is True
     assert set(result["tests"]) == {"disconnection", "duplicate_response", "revision"}
+
+
+def test_conflicting_duplicates_inside_one_batch_are_first_valid_wins(tmp_path):
+    start = datetime(2026, 8, 1, tzinfo=UTC)
+    original = funding_signal_points(
+        [FundingRecord("BTCUSDT", int(start.timestamp() * 1000), 0.0001, 1)],
+        ingested_at=start + timedelta(seconds=10),
+    )[0]
+    conflicting = replace(original, value=0.0002, content_hash="f" * 64)
+    with FeatureStore(tmp_path / "features.db") as store:
+        assert store.write_signals([original, conflicting], require_enriched=True) == 1
+        assert store.write_signals([original, conflicting], require_enriched=True) == 1
+        persisted = store.read_signals(original.source, original.name)
+    assert len(persisted) == 1
+    assert persisted[0].content_hash == original.content_hash
 
 
 def test_degraded_scorecard_emits_dedicated_alert_telemetry(tmp_path, monkeypatch):

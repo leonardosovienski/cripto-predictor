@@ -190,14 +190,26 @@ class FeatureStore:
         """Upsert de sinais. A PK inclui `vintage`, então revisões (mesmo ts, vintage
         distinto) COEXISTEM — base do point-in-time. Sem vintage → '' (ex.: Fear&Greed).
         """
+        unique: dict[tuple[str, str, str, str], SignalPoint] = {}
         for s in signals:
             self._check_temporal(f"{s.source}/{s.name}", s.timestamp, s.published_at)
             if require_enriched:
                 s.require_enriched()
+            key = (
+                s.source,
+                s.name,
+                _iso(s.timestamp),
+                _iso(s.vintage) if s.vintage else "",
+            )
+            # Provider batches can repeat an observation. First-valid-wins makes
+            # retries deterministic and matches the resilience contract.
+            if key in unique:
+                continue
+            unique[key] = s
             existing = self._conn.execute(
                 """SELECT content_hash FROM raw_signals
                    WHERE source=? AND name=? AND ts=? AND vintage=?""",
-                (s.source, s.name, _iso(s.timestamp), _iso(s.vintage) if s.vintage else ""),
+                key,
             ).fetchone()
             if (
                 existing
@@ -229,7 +241,7 @@ class FeatureStore:
                 json.dumps(sorted(s.quality_flags)),
                 scientific_state,
             )
-            for s in signals
+            for s in unique.values()
         ]
         self._conn.executemany(
             """INSERT INTO raw_signals
