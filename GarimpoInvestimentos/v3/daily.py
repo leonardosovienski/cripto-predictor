@@ -9,42 +9,16 @@ from datetime import UTC, datetime, timedelta
 
 
 def commands(symbols: Sequence[str], *, start_date: str, end_date: str) -> list[list[str]]:
-    result: list[list[str]] = []
-    for symbol in symbols:
-        result.extend(
-            [
-                [
-                    sys.executable,
-                    "-m",
-                    "GarimpoInvestimentos.v3.vision_ingest",
-                    "--symbol",
-                    symbol,
-                    "--start-date",
-                    start_date,
-                    "--end-date",
-                    end_date,
-                ],
-                [
-                    sys.executable,
-                    "-m",
-                    "GarimpoInvestimentos.v3.pipeline",
-                    "--symbol",
-                    symbol,
-                    "--start-date",
-                    start_date,
-                ],
-            ]
-        )
-    result.append(
+    del start_date
+    return [
         [
             sys.executable,
             "-m",
-            "GarimpoInvestimentos.observation_quality",
+            "GarimpoInvestimentos.observation_collect",
             "--date",
             end_date,
         ]
-    )
-    return result
+    ]
 
 
 def main() -> int:

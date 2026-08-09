@@ -7,6 +7,7 @@
     "GarimpoInvestimentos/feature_store_health.py",
     "GarimpoInvestimentos/governance.py",
     "GarimpoInvestimentos/observation_quality.py",
+    "GarimpoInvestimentos/observation_collect.py",
     "GarimpoInvestimentos/observation_reporting.py",
     "GarimpoInvestimentos/observation_resilience.py",
     "GarimpoInvestimentos/observation_watchdog.py",

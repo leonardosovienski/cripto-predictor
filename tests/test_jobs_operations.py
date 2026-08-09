@@ -34,28 +34,26 @@ def test_public_job_config_uses_installed_module_and_no_checkout_cwd(tmp_path, m
         jobs.job_config("invalid")
 
 
-def test_v3_daily_is_supervised_and_stops_on_first_failed_step(tmp_path, monkeypatch):
+def test_v3_daily_is_supervised_and_propagates_collection_failure(tmp_path, monkeypatch):
     monkeypatch.setenv("PREDICTOR_OPS_STATE_DIR", str(tmp_path))
     assert jobs.job_config("v3-daily").command[-1] == "GarimpoInvestimentos.v3.daily"
     assert jobs.job_config("v3-daily").scientific_state == "COLLECTION_ONLY"
     planned = daily.commands(("BTCUSDT",), start_date="2021-01-01", end_date="2026-01-01")
     assert planned[-1][-2:] == ["--date", "2026-01-01"]
     assert [command[2] for command in planned] == [
-        "GarimpoInvestimentos.v3.vision_ingest",
-        "GarimpoInvestimentos.v3.pipeline",
-        "GarimpoInvestimentos.observation_quality",
+        "GarimpoInvestimentos.observation_collect",
     ]
     assert all("paper" not in part for command in planned for part in command)
 
     calls = []
 
-    def fail_second(command, check):
+    def fail_collection(command, check):
         calls.append((command, check))
-        return type("Completed", (), {"returncode": 7 if len(calls) == 2 else 0})()
+        return type("Completed", (), {"returncode": 7})()
 
-    monkeypatch.setattr(daily.subprocess, "run", fail_second)
+    monkeypatch.setattr(daily.subprocess, "run", fail_collection)
     assert daily.main() == 7
-    assert len(calls) == 2
+    assert len(calls) == 1
 
 
 def test_job_cli_maps_operational_status(monkeypatch):

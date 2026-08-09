@@ -206,6 +206,8 @@ class FeatureStore:
             if key in unique:
                 continue
             unique[key] = s
+        pending: list[SignalPoint] = []
+        for key, s in unique.items():
             existing = self._conn.execute(
                 """SELECT content_hash FROM raw_signals
                    WHERE source=? AND name=? AND ts=? AND vintage=?""",
@@ -221,6 +223,14 @@ class FeatureStore:
                     "duplicate observation key has a different content_hash; "
                     "use a later vintage for a genuine revision"
                 )
+            identical = self._conn.execute(
+                """SELECT 1 FROM raw_signals
+                   WHERE source=? AND name=? AND ts=? AND content_hash=? LIMIT 1""",
+                (s.source, s.name, _iso(s.timestamp), s.content_hash),
+            ).fetchone()
+            if identical:
+                continue
+            pending.append(s)
         rows = [
             (
                 s.source,
@@ -241,7 +251,7 @@ class FeatureStore:
                 json.dumps(sorted(s.quality_flags)),
                 scientific_state,
             )
-            for s in unique.values()
+            for s in pending
         ]
         self._conn.executemany(
             """INSERT INTO raw_signals
