@@ -35,6 +35,19 @@ def check_observation_health(
     else:
         violations.append("v3_daily_heartbeat_missing")
 
+    live_path = root / "cripto-observation-live" / "heartbeat.json"
+    if live_path.exists():
+        live = json.loads(live_path.read_text(encoding="utf-8"))
+        if live.get("run_status") not in {"WAITING", "SUCCEEDED", "PARTIAL"}:
+            violations.append("live_collection_unsuccessful")
+        if live.get("scientific_state") != "COLLECTION_ONLY":
+            violations.append("live_scientific_state_changed")
+        heartbeat_at = live.get("heartbeat_at")
+        if not heartbeat_at or stamp - datetime.fromisoformat(heartbeat_at) > timedelta(minutes=10):
+            violations.append("live_collection_stale")
+    else:
+        violations.append("live_collection_heartbeat_missing")
+
     plan = load_observation_plan()
     day = (stamp - timedelta(days=1)).date().isoformat()
     states = {}

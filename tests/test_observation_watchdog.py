@@ -16,7 +16,11 @@ def test_watchdog_fails_closed_when_collection_has_not_started(tmp_path, monkeyp
         now=datetime(2026, 8, 8, tzinfo=UTC),
     )
     assert result["healthy"] is False
-    assert result["violations"] == ["v3_daily_heartbeat_missing", "feature_store_missing"]
+    assert result["violations"] == [
+        "v3_daily_heartbeat_missing",
+        "live_collection_heartbeat_missing",
+        "feature_store_missing",
+    ]
     assert events[0][0] == "observation.watchdog"
 
 

@@ -1,8 +1,6 @@
 from dataclasses import replace
 from datetime import UTC, date, datetime, timedelta
 
-import pytest
-
 from GarimpoInvestimentos.dpl.derivatives import funding_signal_points, oi_signal_points
 from GarimpoInvestimentos.dpl.feature_store import FeatureStore
 from GarimpoInvestimentos.governance import load_observation_plan
@@ -62,7 +60,7 @@ def test_daily_scorecards_are_metric_separated_and_idempotent(tmp_path):
         assert len(audit.read_text(encoding="utf-8").splitlines()) == 2
 
 
-def test_scorecard_is_immutable_for_changed_rerun(tmp_path):
+def test_scorecard_rerun_with_other_calculation_time_is_idempotent(tmp_path):
     plan = load_observation_plan()
     with FeatureStore(tmp_path / "features.db") as store:
         evaluate_daily_metric(
@@ -73,15 +71,16 @@ def test_scorecard_is_immutable_for_changed_rerun(tmp_path):
             audit_path=tmp_path / "audit.jsonl",
             calculated_at=datetime(2026, 8, 2, tzinfo=UTC),
         )
-        with pytest.raises(ValueError, match="immutable"):
-            evaluate_daily_metric(
-                store,
-                plan=plan,
-                metric_name="funding_rate",
-                day=date(2026, 8, 1),
-                audit_path=tmp_path / "audit.jsonl",
-                calculated_at=datetime(2026, 8, 3, tzinfo=UTC),
-            )
+        evaluate_daily_metric(
+            store,
+            plan=plan,
+            metric_name="funding_rate",
+            day=date(2026, 8, 1),
+            audit_path=tmp_path / "audit.jsonl",
+            calculated_at=datetime(2026, 8, 3, tzinfo=UTC),
+        )
+        assert store._conn.execute("SELECT count(*) FROM observation_scorecards").fetchone()[0] == 1
+        assert len((tmp_path / "audit.jsonl").read_text(encoding="utf-8").splitlines()) == 1
 
 
 def test_resilience_drills_pass_and_write_report(tmp_path):

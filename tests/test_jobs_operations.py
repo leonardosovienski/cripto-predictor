@@ -56,6 +56,13 @@ def test_v3_daily_is_supervised_and_propagates_collection_failure(tmp_path, monk
     assert len(calls) == 1
 
 
+def test_live_observation_job_is_collection_only(tmp_path, monkeypatch):
+    monkeypatch.setenv("PREDICTOR_OPS_STATE_DIR", str(tmp_path))
+    config = jobs.job_config("observation-live")
+    assert config.scientific_state == "COLLECTION_ONLY"
+    assert config.command[-2:] == ["GarimpoInvestimentos.observation_collect", "--live"]
+
+
 def test_job_cli_maps_operational_status(monkeypatch):
     succeeded = type("Result", (), {"run_status": RunStatus.SUCCEEDED, "exit_code": 0})()
     failed = type("Result", (), {"run_status": RunStatus.FAILED, "exit_code": 9})()

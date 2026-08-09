@@ -165,7 +165,6 @@ def evaluate_daily_metric(
         "signal_metrics": list(metric.signal_metrics),
         "window_start": start.isoformat(),
         "window_end": end.isoformat(),
-        "calculated_at": (calculated_at or datetime.now(UTC)).isoformat(),
         "scientific_state": "COLLECTION_ONLY",
         "state": state.value,
         "violations": sorted(set(violations)),

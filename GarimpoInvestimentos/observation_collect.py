@@ -26,6 +26,17 @@ async def collect_day(
 ) -> list[dict]:
     start = datetime.combine(day, time.min, tzinfo=UTC)
     end = start + timedelta(days=1)
+    await collect_window(start=start, end=end, db_path=db_path, symbols=symbols)
+    return run_daily(db_path=db_path, day=day, audit_path=audit_path)
+
+
+async def collect_window(
+    *,
+    start: datetime,
+    end: datetime,
+    db_path: Path = FEATURE_STORE_DB,
+    symbols: tuple[str, ...] = ("BTCUSDT", "ETHUSDT"),
+) -> int:
     start_ms, end_ms = int(start.timestamp() * 1000), int(end.timestamp() * 1000) - 1
     funding = []
     open_interest = []
@@ -39,13 +50,12 @@ async def collect_day(
             await OICollector(symbol, CircuitBreaker(f"oi_{symbol}")).fetch_range(start_ms, end_ms)
         )
     with FeatureStore(db_path) as store:
-        persist_v3_derivatives(
+        return persist_v3_derivatives(
             store,
             funding=funding,
             open_interest=open_interest,
             ingested_at=datetime.now(UTC),
         )
-    return run_daily(db_path=db_path, day=day, audit_path=audit_path)
 
 
 def main(argv: Sequence[str] | None = None) -> int:
@@ -55,8 +65,15 @@ def main(argv: Sequence[str] | None = None) -> int:
     )
     parser.add_argument("--db", type=Path, default=FEATURE_STORE_DB)
     parser.add_argument("--audit-log", type=Path, default=DEFAULT_AUDIT_LOG)
+    parser.add_argument(
+        "--live", action="store_true", help="collect the rolling two-hour window without scoring"
+    )
     args = parser.parse_args(argv)
-    asyncio.run(collect_day(day=args.date, db_path=args.db, audit_path=args.audit_log))
+    if args.live:
+        end = datetime.now(UTC)
+        asyncio.run(collect_window(start=end - timedelta(hours=2), end=end, db_path=args.db))
+    else:
+        asyncio.run(collect_day(day=args.date, db_path=args.db, audit_path=args.audit_log))
     return 0
 
 
@@ -64,4 +81,4 @@ if __name__ == "__main__":
     raise SystemExit(main())
 
 
-__all__ = ["collect_day"]
+__all__ = ["collect_day", "collect_window"]
