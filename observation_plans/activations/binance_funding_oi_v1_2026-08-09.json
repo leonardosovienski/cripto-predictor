@@ -1,0 +1,33 @@
+{
+  "schema_version": "collection-observation-activation/1",
+  "activation_id": "crypto-binance-funding-oi-observation-v1-2026-08-09",
+  "plan_id": "crypto-binance-funding-oi-observation-v1",
+  "plan_checksum": "e46d72547ebea8011f1fdb5506c40b31d42f08b64b6d45fbb41ae8015c8d6ea4",
+  "plan_file_sha256": "6f88545522074e64cdb6b8e2cacb9a87396929ca050b8429ea658fac0152a866",
+  "activated_at": "2026-08-09T05:32:47.842Z",
+  "activated_by": "Superleo13",
+  "activation_code_commit": "e87546907010b27f2b3200d4420a59b861cb6f07",
+  "state": "ACTIVE",
+  "scientific_state": "COLLECTION_ONLY",
+  "capital_authorized": false,
+  "collection": {
+    "task_name": "cripto-observation-live",
+    "interval": "PT1M",
+    "first_scheduled_run_id": "b1fbb85eee2e46c78ea16172630dfe32",
+    "first_scheduled_run_status": "SUCCEEDED"
+  },
+  "watchdog": {
+    "task_name": "cripto-watchdog-coleta",
+    "interval": "PT5M",
+    "verification_run_id": "a41c3f6f5cd44ebb9508106a1b66ecd6",
+    "verification_run_status": "SUCCEEDED",
+    "healthy": true,
+    "violations": []
+  },
+  "activation_gate_status": "PASSED",
+  "quality_baseline_status": "DEGRADED",
+  "quality_baseline_note": "The first daily scorecards include historical batch ingestion latency. Live collection is active and must accumulate evidence before any scientific transition.",
+  "minimum_observation_days": 30,
+  "desired_observation_days": 90,
+  "activation_checksum": "e99c838b1e4828f2f25a239b4dc562a1dd5b06ea696de3b89f8e098bf91c03bb"
+}

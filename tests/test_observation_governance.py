@@ -1,12 +1,38 @@
+import json
 from pathlib import Path
 
 import pytest
 import yaml
 
 from GarimpoInvestimentos.governance import (
+    BINANCE_OBSERVATION_ACTIVATION,
     BINANCE_OBSERVATION_PLAN,
+    load_observation_activation,
     load_observation_plan,
 )
+
+
+def test_observation_activation_is_valid_and_collection_only():
+    activation = load_observation_activation()
+    assert activation.state == "ACTIVE"
+    assert activation.scientific_state == "COLLECTION_ONLY"
+    assert activation.capital_authorized is False
+    assert activation.watchdog.healthy is True
+
+
+@pytest.mark.parametrize(
+    ("field", "value"),
+    [("scientific_state", "GO"), ("capital_authorized", True)],
+)
+def test_observation_activation_cannot_authorize_science_or_capital(
+    tmp_path: Path, field: str, value
+):
+    raw = json.loads(BINANCE_OBSERVATION_ACTIVATION.read_text(encoding="utf-8"))
+    raw[field] = value
+    path = tmp_path / "invalid-activation.json"
+    path.write_text(json.dumps(raw), encoding="utf-8")
+    with pytest.raises(ValueError):
+        load_observation_activation(path)
 
 
 def test_active_observation_plan_is_valid_and_sealed():
