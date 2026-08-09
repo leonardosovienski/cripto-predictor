@@ -33,20 +33,8 @@ def commands(symbols: Sequence[str], *, start_date: str, end_date: str) -> list[
                     "--start-date",
                     start_date,
                 ],
-                [
-                    sys.executable,
-                    "-m",
-                    "GarimpoInvestimentos.v3.paper_trader",
-                    "--symbol",
-                    symbol,
-                    "--start-date",
-                    start_date,
-                ],
             ]
         )
-    result.append(
-        [sys.executable, "-m", "GarimpoInvestimentos.v3.paper_report", "--symbol", *symbols]
-    )
     result.append(
         [
             sys.executable,
@@ -60,6 +48,7 @@ def commands(symbols: Sequence[str], *, start_date: str, end_date: str) -> list[
 
 
 def main() -> int:
+    """Collect and score source quality; no shadow/paper execution in COLLECTION_ONLY."""
     symbols = ("BTCUSDT", "ETHUSDT")
     end_date = (datetime.now(UTC) - timedelta(days=1)).date().isoformat()
     for command in commands(symbols, start_date="2021-01-01", end_date=end_date):

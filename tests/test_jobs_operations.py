@@ -43,10 +43,9 @@ def test_v3_daily_is_supervised_and_stops_on_first_failed_step(tmp_path, monkeyp
     assert [command[2] for command in planned] == [
         "GarimpoInvestimentos.v3.vision_ingest",
         "GarimpoInvestimentos.v3.pipeline",
-        "GarimpoInvestimentos.v3.paper_trader",
-        "GarimpoInvestimentos.v3.paper_report",
         "GarimpoInvestimentos.observation_quality",
     ]
+    assert all("paper" not in part for command in planned for part in command)
 
     calls = []
 
