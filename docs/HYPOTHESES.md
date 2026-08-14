@@ -194,6 +194,44 @@
   CONFIGURAÇÃO INVERTIDA; depois, Sharpe líquido por trade + DSR ≥ 0,95.
 - Resultado: (não ativada — sem coleta)
 
+### H7 — Calendário macro (FOMC/CPI/PPI) + DXY como contexto exógeno de regime (status: **registrada — infraestrutura de coleta implementada, coleta real não iniciada**)
+- Data do registro: 2026-08-14 (ANTES de qualquer coleta ou resultado). Promove o
+  item B1 do backlog condicional (abaixo) — ativação estava liberada desde o
+  veredito da H4 (2026-07-10), formalizada agora.
+- Hipótese (mecanismo causal): eventos macro conhecidos com antecedência (reunião
+  do FOMC, divulgação de CPI/PPI) e o nível/variação do DXY carregam informação
+  sobre o regime de risco do mercado cripto — mercado tende a reduzir
+  alavancagem/exposição na véspera de eventos de alta incerteza macro, e um DXY
+  em alta/queda forte é contexto de fluxo para ativos de risco. Isso é ORTOGONAL
+  a tudo já testado (H1-H6): nenhuma trial anterior olhou agenda macro ou câmbio.
+- Configuração (entra no trials.json quando ativada): dummy de janela de evento
+  (±N dias, N a definir no in-sample) por tipo de evento (FOMC/CPI/PPI) +
+  nível/retorno do DXY, como feature adicional — não como sinal isolado. Duas
+  integrações possíveis, a decidir com dado real em mãos antes de qualquer
+  backtest: (a) covariável exógena do HMM do V3 (`v3/regime_engine.py`), ou (b)
+  contexto adicional no prompt do juiz LLM (Fase 1). Qualquer uma das duas conta
+  como trial NOVA própria — não é reaproveitamento de H1-H6.
+- Critério de sucesso (definido ANTES): idêntico em espécie ao das famílias
+  anteriores — líquido de custos quando aplicável ao V3 (PSR ≥ 0,80, IC_lo > 0),
+  ou Spearman IC95 não cruzando zero com n ≥ 30 quando aplicável à Fase 1 —
+  critério exato a fixar por escrito no momento da ativação (antes de rodar),
+  igual às demais.
+- O que foi implementado nesta sessão (infraestrutura, não resultado):
+  `GarimpoInvestimentos/dpl/providers/dxy.py` (DXYProvider, stooq.com, CSV
+  público sem chave — endpoint não verificado ao vivo, ambiente de
+  desenvolvimento sem rede externa liberada) e
+  `GarimpoInvestimentos/dpl/macro_calendar.py` (loader do calendário +
+  `macro_event_signal_points`, dummy de janela por tipo de evento). O calendário
+  (`GarimpoInvestimentos/macro_calendar.example.json`) está **vazio de
+  propósito** — datas de FOMC/CPI/PPI são fato verificável e o projeto não
+  fabrica dado que alimenta backtest; precisa ser preenchido a partir da fonte
+  oficial (federalreserve.gov / bls.gov) antes de qualquer coleta real.
+- Resultado (preenchido DEPOIS): não iniciado. Pendências antes de qualquer
+  dado: (1) preencher o calendário com datas confirmadas na fonte oficial, (2)
+  verificar ao vivo o endpoint do DXYProvider (símbolo `dx.f` no stooq.com), (3)
+  decidir e implementar a integração V3 vs. Fase 1, (4) só então começar a
+  coletar dado GENUINAMENTE NOVO sob esta configuração.
+
 ---
 
 ## Backlog condicional (ideias — NÃO são tentativas)
@@ -204,13 +242,15 @@
 > acima (com critério de sucesso ANTES de rodar) + registrar no trials.json.
 > Ordenados por relação benefício/custo estimada na triagem.
 
-### B1 — Calendário macro + DXY como features exógenas
+### B1 — Calendário macro + DXY como features exógenas — **PROMOVIDO a H7 (2026-08-14)**
 - Sinal: dummies de evento (FOMC, CPI/PPI — datas conhecidas com antecedência) e
   série do DXY/juros como contexto de regime.
 - Fonte: CSV estático de calendário (custo ~zero) + `BCBProvider` já existente como
   precedente de sinal macro com `published_at` correto; DXY via fonte gratuita.
 - Ortogonalidade: choque exógeno — nenhum sinal atual quantifica agenda macro.
 - Ativação: após veredicto da H4 (não misturar mudança de input com trial em curso).
+- Ver H7 acima para o registro completo (mecanismo, critério e o que já foi
+  implementado vs. o que ainda falta antes de qualquer coleta real).
 
 ### B2 — Derivativos derivados do que JÁ se coleta (OI/volume, funding contínuo)
 - Sinal: razão OI/volume spot (especulação vs demanda real) e funding como custo de
