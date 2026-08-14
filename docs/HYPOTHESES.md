@@ -341,4 +341,36 @@
   risco de um sinal que não existe é polimento de motor desligado (mesma razão da
   rejeição do Regime Shift Detector na triagem de jul/2026).
 
+---
+
+## Override de governança 2026-08-14 — infraestrutura de execução antes de edge validado
+
+**Decisão explícita do dono, registrada por honestidade**: construir contrato
+econômico, execução (order lifecycle), microestrutura (book/impacto) e
+portfólio (risco agregado) **agora**, apesar de nenhuma hipótese ter validado
+edge até esta data (H1-H6: NO-GO/refutadas; H7: infraestrutura de coleta
+pronta, coleta real não iniciada). Isto **contradiz deliberadamente** a regra
+do B8 acima ("gestão de risco de um sinal que não existe é polimento de motor
+desligado") — o dono foi avisado da contradição antes de decidir e escolheu
+prosseguir mesmo assim.
+
+**O que isso é e o que não é:**
+- É infraestrutura de engenharia (contratos, máquina de estados, matemática de
+  portfólio/microestrutura) — testável e testada offline, sem depender de
+  nenhum sinal ter poder preditivo.
+- **NÃO é autorização de capital.** Nenhum gate do ecossistema (trials.json,
+  DSR, atestado do harness) muda por causa disso. `scientific_state` dos dados
+  que essa camada eventualmente consumir continua `COLLECTION_ONLY` até uma
+  hipótese validar pelos critérios já estabelecidos.
+- **NÃO é validação de que a execução simulada aqui é fidedigna.** Os modelos
+  de impacto/fill em `trading/microstructure.py` são fórmulas-texto-padrão
+  (walk-the-book, impacto raiz-quadrada) — não foram calibrados contra
+  execução real, e não devem ser tratados como mais confiáveis do que o
+  modelo de custo fixo (`v3/costs.py`) já usado nos vereditos H1-H3 até
+  passarem por calibração.
+- Módulos novos vivem em `GarimpoInvestimentos/trading/` (app layer) — não
+  promovidos a `predictor_core` ainda; promoção é decisão futura, só depois
+  do padrão provar estável em uso (mesmo caminho que `analyzers/trials.py`
+  percorreu antes de virar `predictor_core.measurement.trials`, ADR-015).
+
 
