@@ -232,16 +232,27 @@
   proveniência completa. **CPI/PPI continuam vazios**: a busca só devolveu
   calendário parcial (faltaram meses inteiros) — sem fonte primária confiável
   disponível nesta sessão, nenhuma data foi adivinhada para preencher o buraco.
-- Resultado (preenchido DEPOIS): não iniciado (calendário FOMC pronto, mas
-  nenhum dado foi coletado ainda). Pendências antes de qualquer dado: (1)
-  preencher CPI/PPI a partir da fonte oficial (requer acesso direto a
-  bls.gov, indisponível nesta sessão), (2) verificar ao vivo o endpoint do
-  DXYProvider (símbolo `dx.f` no stooq.com — também indisponível nesta sessão;
-  `--ingest`, `--summary` e a coleta `observation-daily` do Binance têm a
-  mesma limitação: precisam rodar num ambiente com rede externa liberada e,
-  para a Fase 1, chaves reais de LLM/notícias), (3) decidir e implementar a
-  integração V3 vs. Fase 1, (4) só então começar a coletar dado GENUINAMENTE
-  NOVO sob esta configuração.
+- Atualização 2026-08-14 (dono testou ao vivo, na própria máquina): o endpoint
+  de CSV do stooq.com passou a exigir um desafio anti-bot em JavaScript
+  (resposta HTTP 200 com página "verify your browser", não CSV) — confirmado
+  contra os 3 símbolos candidatos (`usd_i`, `dx.f`, `dx.c`). Não é algo pra
+  contornar (seria burlar um mecanismo anti-scraping de propósito). O
+  `DXYProvider` foi trocado para o **FRED** (`fredgraph.csv`, série
+  `DTWEXBGS` — Nominal Broad U.S. Dollar Index, dado oficial do Federal
+  Reserve, sem chave, sem desafio anti-bot). `publish_lag_days=1` é
+  conservador (o release H.10 sai com defasagem de ~1 dia útil; o valor exato
+  não foi confirmado contra o texto oficial do release). Ainda não testado ao
+  vivo contra o FRED — pendente de confirmação numa máquina com rede.
+- Resultado (preenchido DEPOIS): não iniciado (calendário FOMC pronto, DXY
+  reapontado para o FRED mas ainda não validado ao vivo; nenhum dado
+  coletado). Pendências antes de qualquer dado: (1) preencher CPI/PPI a
+  partir da fonte oficial (requer acesso direto a bls.gov, indisponível nesta
+  sessão), (2) validar ao vivo o `DXYProvider` contra o FRED e confirmar o
+  `publish_lag_days` real do H.10, (3) `--ingest`, `--summary` e a coleta
+  `observation-daily` do Binance têm a mesma limitação de rede (e, para a
+  Fase 1, precisam de chaves reais de LLM/notícias), (4) decidir e
+  implementar a integração V3 vs. Fase 1, (5) só então começar a coletar
+  dado GENUINAMENTE NOVO sob esta configuração.
 
 ---
 
