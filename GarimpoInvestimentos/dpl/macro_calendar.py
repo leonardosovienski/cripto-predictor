@@ -6,11 +6,14 @@ atual olha agenda macro). Fonte: um JSON local versionado, sem rede — datas de
 reunião do FOMC e de divulgação de CPI/PPI são anunciadas pelo Fed/BLS com meses
 de antecedência, então conhecê-las hoje para um evento futuro NÃO é look-ahead.
 
-⚠️ O arquivo padrão (macro_calendar.example.json) vem VAZIO de propósito: data de
-calendário econômico é fato verificável, e este projeto não fabrica dado que
-alimenta um backtest (mesma régua do resto da DPL — sem interpolação, sem
-inferência). Preencha a partir da fonte oficial antes de ativar a coleta real:
-  - FOMC: https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm
+O arquivo padrão (macro_calendar.json) traz o calendário FOMC 2026 (8 reuniões,
+dia da decisão/coletiva) sourced via WebSearch em 2026-08-14 e corroborado por
+múltiplas fontes independentes — ver `source_note` dentro do próprio JSON para a
+proveniência completa. CPI/PPI ficam deliberadamente vazios: a busca só devolveu
+calendário parcial/com lacunas, e este projeto não fabrica dado que alimenta
+backtest (mesma régua do resto da DPL — sem interpolação, sem inferência).
+Preencha CPI/PPI a partir da fonte oficial quando houver acesso direto a ela:
+  - FOMC (re-verificação/anos futuros): https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm
   - CPI/PPI: https://www.bls.gov/schedule/news_release/cpi.htm / .../ppi.htm
 Datas não confirmadas na fonte primária não entram no arquivo.
 """
@@ -26,7 +29,7 @@ from GarimpoInvestimentos.dpl.feature_store import FeatureStore
 from GarimpoInvestimentos.dpl.signals import SignalPoint
 
 _SCHEMA_VERSION = "macro-calendar/1"
-DEFAULT_CALENDAR_PATH = Path(__file__).resolve().parent.parent / "macro_calendar.example.json"
+DEFAULT_CALENDAR_PATH = Path(__file__).resolve().parent.parent / "macro_calendar.json"
 SOURCE = "macro_calendar"
 
 

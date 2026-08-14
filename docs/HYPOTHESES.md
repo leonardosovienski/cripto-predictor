@@ -221,16 +221,27 @@
   público sem chave — endpoint não verificado ao vivo, ambiente de
   desenvolvimento sem rede externa liberada) e
   `GarimpoInvestimentos/dpl/macro_calendar.py` (loader do calendário +
-  `macro_event_signal_points`, dummy de janela por tipo de evento). O calendário
-  (`GarimpoInvestimentos/macro_calendar.example.json`) está **vazio de
-  propósito** — datas de FOMC/CPI/PPI são fato verificável e o projeto não
-  fabrica dado que alimenta backtest; precisa ser preenchido a partir da fonte
-  oficial (federalreserve.gov / bls.gov) antes de qualquer coleta real.
-- Resultado (preenchido DEPOIS): não iniciado. Pendências antes de qualquer
-  dado: (1) preencher o calendário com datas confirmadas na fonte oficial, (2)
-  verificar ao vivo o endpoint do DXYProvider (símbolo `dx.f` no stooq.com), (3)
-  decidir e implementar a integração V3 vs. Fase 1, (4) só então começar a
-  coletar dado GENUINAMENTE NOVO sob esta configuração.
+  `macro_event_signal_points`, dummy de janela por tipo de evento).
+- Atualização 2026-08-14 (mesmo dia, sessão seguinte): `WebFetch` continua
+  bloqueado pelo egress proxy do ambiente para qualquer host externo (inclusive
+  `federalreserve.gov`, `bls.gov` e `stooq.com` — testado e confirmado); só
+  `WebSearch` (busca com resumo, sem acesso direto à página) funciona. Com isso,
+  `GarimpoInvestimentos/macro_calendar.json` (renomeado de `.example.json`) foi
+  preenchido com as 8 datas do FOMC 2026 — corroboradas por múltiplas fontes
+  independentes no WebSearch, ver `source_note` no próprio arquivo para a
+  proveniência completa. **CPI/PPI continuam vazios**: a busca só devolveu
+  calendário parcial (faltaram meses inteiros) — sem fonte primária confiável
+  disponível nesta sessão, nenhuma data foi adivinhada para preencher o buraco.
+- Resultado (preenchido DEPOIS): não iniciado (calendário FOMC pronto, mas
+  nenhum dado foi coletado ainda). Pendências antes de qualquer dado: (1)
+  preencher CPI/PPI a partir da fonte oficial (requer acesso direto a
+  bls.gov, indisponível nesta sessão), (2) verificar ao vivo o endpoint do
+  DXYProvider (símbolo `dx.f` no stooq.com — também indisponível nesta sessão;
+  `--ingest`, `--summary` e a coleta `observation-daily` do Binance têm a
+  mesma limitação: precisam rodar num ambiente com rede externa liberada e,
+  para a Fase 1, chaves reais de LLM/notícias), (3) decidir e implementar a
+  integração V3 vs. Fase 1, (4) só então começar a coletar dado GENUINAMENTE
+  NOVO sob esta configuração.
 
 ---
 
