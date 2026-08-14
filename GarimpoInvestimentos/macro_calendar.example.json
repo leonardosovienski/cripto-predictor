@@ -1,5 +1,0 @@
-{
-  "schema_version": "macro-calendar/1",
-  "source_note": "Popular SOMENTE com datas confirmadas na fonte oficial antes de ativar a coleta. FOMC: https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm . CPI/PPI: https://www.bls.gov/schedule/news_release/cpi.htm e https://www.bls.gov/schedule/news_release/ppi.htm . Este arquivo vem intencionalmente SEM datas pré-preenchidas: calendario economico e fato verificavel, e o projeto nao fabrica dado que alimenta backtest (mesma regra do resto da DPL — sem interpolacao, sem inferencia). Formato de cada evento: {\"event_type\": \"FOMC\", \"date\": \"YYYY-MM-DD\"}.",
-  "events": []
-}

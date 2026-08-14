@@ -25,14 +25,25 @@ def _write_calendar(tmp_path, events: list[dict]):
     return p
 
 
-# --- template shipado --------------------------------------------------------
+# --- calendário shipado -------------------------------------------------------
 
 
-def test_shipped_example_calendar_has_no_fabricated_dates():
-    """O template do repositório vem vazio de propósito — nenhuma data inventada."""
+def test_shipped_calendar_has_sourced_fomc_dates_only():
+    """FOMC 2026 foi preenchido com datas sourced/citadas (ver source_note no JSON);
+    CPI/PPI ficam vazios de propósito — a fonte encontrada tinha lacunas demais
+    pra confiar (nenhuma data fabricada/interpolada para completar o buraco)."""
     assert DEFAULT_CALENDAR_PATH.exists()
     events = load_macro_calendar()
-    assert events == []
+    assert len(events) == 8
+    assert all(e.event_type == "FOMC" for e in events)
+    assert events == sorted(events, key=lambda e: e.event_date)  # cronológico, sem duplicata
+    assert len({e.event_date for e in events}) == 8
+    assert {e.event_date.year for e in events} == {2026}
+
+
+def test_shipped_calendar_has_no_cpi_or_ppi_yet():
+    events = load_macro_calendar()
+    assert {e.event_type for e in events} == {"FOMC"}
 
 
 # --- load_macro_calendar ------------------------------------------------------

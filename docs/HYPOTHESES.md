@@ -221,16 +221,53 @@
   público sem chave — endpoint não verificado ao vivo, ambiente de
   desenvolvimento sem rede externa liberada) e
   `GarimpoInvestimentos/dpl/macro_calendar.py` (loader do calendário +
-  `macro_event_signal_points`, dummy de janela por tipo de evento). O calendário
-  (`GarimpoInvestimentos/macro_calendar.example.json`) está **vazio de
-  propósito** — datas de FOMC/CPI/PPI são fato verificável e o projeto não
-  fabrica dado que alimenta backtest; precisa ser preenchido a partir da fonte
-  oficial (federalreserve.gov / bls.gov) antes de qualquer coleta real.
-- Resultado (preenchido DEPOIS): não iniciado. Pendências antes de qualquer
-  dado: (1) preencher o calendário com datas confirmadas na fonte oficial, (2)
-  verificar ao vivo o endpoint do DXYProvider (símbolo `dx.f` no stooq.com), (3)
-  decidir e implementar a integração V3 vs. Fase 1, (4) só então começar a
-  coletar dado GENUINAMENTE NOVO sob esta configuração.
+  `macro_event_signal_points`, dummy de janela por tipo de evento).
+- Atualização 2026-08-14 (mesmo dia, sessão seguinte): `WebFetch` continua
+  bloqueado pelo egress proxy do ambiente para qualquer host externo (inclusive
+  `federalreserve.gov`, `bls.gov` e `stooq.com` — testado e confirmado); só
+  `WebSearch` (busca com resumo, sem acesso direto à página) funciona. Com isso,
+  `GarimpoInvestimentos/macro_calendar.json` (renomeado de `.example.json`) foi
+  preenchido com as 8 datas do FOMC 2026 — corroboradas por múltiplas fontes
+  independentes no WebSearch, ver `source_note` no próprio arquivo para a
+  proveniência completa. **CPI/PPI continuam vazios**: a busca só devolveu
+  calendário parcial (faltaram meses inteiros) — sem fonte primária confiável
+  disponível nesta sessão, nenhuma data foi adivinhada para preencher o buraco.
+- Atualização 2026-08-14 (dono testou ao vivo, na própria máquina): o endpoint
+  de CSV do stooq.com passou a exigir um desafio anti-bot em JavaScript
+  (resposta HTTP 200 com página "verify your browser", não CSV) — confirmado
+  contra os 3 símbolos candidatos (`usd_i`, `dx.f`, `dx.c`). Não é algo pra
+  contornar (seria burlar um mecanismo anti-scraping de propósito). O
+  `DXYProvider` foi trocado para o **FRED** (`fredgraph.csv`, série
+  `DTWEXBGS` — Nominal Broad U.S. Dollar Index, dado oficial do Federal
+  Reserve, sem chave, sem desafio anti-bot). `publish_lag_days=1` é
+  conservador (o release H.10 sai com defasagem de ~1 dia útil; o valor exato
+  não foi confirmado contra o texto oficial do release).
+- Atualização 2026-08-14 (mesmo dia, validação ao vivo pelo dono): primeira
+  tentativa contra o FRED rodou (sem erro de rede/HTTP) mas devolveu "nenhuma
+  linha válida" — o `curl -v` mostrou por quê: o CSV do FRED usa
+  `observation_date` como nome da primeira coluna, não `DATE` como o código
+  assumia. Corrigido; teste de regressão com os bytes reais devolvidos
+  (`observation_date,DTWEXBGS\n2006-01-02,101.4155...`) adicionado em
+  `tests/test_dpl_dxy.py` pra travar contra reintroduzir esse erro. Nota à
+  parte: `Invoke-WebRequest` do PowerShell deu timeout contra esse mesmo
+  endpoint enquanto `curl.exe` respondeu rápido — possível inspeção de TLS do
+  proxy corporativo afetando um cliente especificamente; sem efeito no
+  `httpx` que o provider usa, mas vale observar se aparecer timeout em
+  produção. **Ainda pendente:** confirmar que a correção da coluna funciona
+  de ponta a ponta rodando `DXYProvider().fetch()` ao vivo de novo (só o
+  `curl` cru foi validado até aqui, não o parsing do provider contra a
+  resposta real).
+- Resultado (preenchido DEPOIS): não iniciado (calendário FOMC pronto, DXY
+  reapontado para o FRED com o bug de coluna corrigido, mas o `fetch()` do
+  provider ainda não foi confirmado ao vivo de ponta a ponta; nenhum dado
+  coletado). Pendências antes de qualquer dado: (1) preencher CPI/PPI a
+  partir da fonte oficial (requer acesso direto a bls.gov, indisponível nesta
+  sessão), (2) validar ao vivo o `DXYProvider` contra o FRED e confirmar o
+  `publish_lag_days` real do H.10, (3) `--ingest`, `--summary` e a coleta
+  `observation-daily` do Binance têm a mesma limitação de rede (e, para a
+  Fase 1, precisam de chaves reais de LLM/notícias), (4) decidir e
+  implementar a integração V3 vs. Fase 1, (5) só então começar a coletar
+  dado GENUINAMENTE NOVO sob esta configuração.
 
 ---
 
