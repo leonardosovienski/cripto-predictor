@@ -61,12 +61,20 @@ tentativas registradas em `GarimpoInvestimentos/trials.json`.
 GarimpoInvestimentos/
 ├── main.py                ← CLI: --ingest, --discover N, --assets, --mode, --summary
 ├── collectors/            ← discovery.py (candidatos) + coleta direta legada
-├── dpl/                   ← contratos, providers, routers, feature_store, migrações
-├── analyzers/             ← ai_insights (LLM), indicators, backtest, trials (DSR), equivalence
+├── dpl/                   ← contratos, providers, routers, feature_store, migrações,
+│                             macro_calendar.py (calendário FOMC — B1/H7)
+├── analyzers/             ← ai_insights (LLM, com ensemble multi-sample opcional),
+│                             indicators, backtest, trials (DSR), equivalence
+├── v3/                    ← HMM de regimes, funding/OI, walk-forward com custos
+├── trading/                ← contrato econômico, execução, microestrutura, portfólio —
+│                             infraestrutura construída por OVERRIDE de governança
+│                             2026-08-14 (docs/HYPOTHESES.md), ANTES de qualquer edge
+│                             validado; não autoriza capital, não muda nenhum gate
 ├── core/                  ← paths, cache, history (store-first), logger
 ├── output/reporter.py     ← exportação CSV/XLSX
+├── macro_calendar.json    ← calendário FOMC 2026 (sourced/citado — ver source_note)
 └── trials.json            ← registro VERSIONADO de tentativas (denominador do DSR)
-tests/                     ← 350 testes verdes (offline, sem chaves; 2 skips opcionais)
+tests/                     ← 489 testes verdes (offline, sem chaves; 2 skips opcionais)
 docs/                      ← ADRs e auditorias (ver HANDOFF)
 ```
 
@@ -136,6 +144,15 @@ e fica congelado.
 3. Pós-reconciliação: collectors V3 (funding/OI) viram providers da DPL (`SignalPoint`
    bitemporal, `published_at` no FIM da janela de 8h).
 4. Pivot de pesquisa da V3 (o NO-GO líquido fecha a hipótese atual como formulada).
+5. H7 (`docs/HYPOTHESES.md`) — calendário macro + DXY como contexto exógeno: FOMC 2026
+   populado, CPI/PPI pendente (fonte primária indisponível na última sessão),
+   `DXYProvider` (FRED/DTWEXBGS) validado ao vivo, integração V3-vs-Fase1 ainda a
+   decidir; nenhuma coleta real começou.
+6. Camada `trading/` (contrato econômico, execução, microestrutura, portfólio) —
+   construída em override deliberado de governança (2026-08-14), sem depender de
+   edge validado. Gaps conhecidos: sem persistência (tudo em memória, nada grava na
+   Feature Store), sem adapter `SignalRecord`→`TradeIntent`, sem venue real
+   (`ExchangeAdapter` só tem a implementação simulada).
 
 Histórico completo e decisões: [HANDOFF-2026-07-02.md](HANDOFF-2026-07-02.md) ·
 era pré-DPL: [HANDOFF.md](HANDOFF.md) · conferência: [docs/CONFERENCIA_GERAL.md](docs/CONFERENCIA_GERAL.md)

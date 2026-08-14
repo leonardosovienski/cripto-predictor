@@ -141,6 +141,11 @@ def test_sqrt_impact_bps_rejects_negative_volatility():
         sqrt_impact_bps(0.1, -1.0)
 
 
+def test_sqrt_impact_bps_rejects_negative_kappa():
+    with pytest.raises(ValueError, match="kappa"):
+        sqrt_impact_bps(0.1, 100.0, kappa=-1.0)
+
+
 # --- BinanceOrderBookCollector (HTTP mockado) -------------------------------------
 
 
