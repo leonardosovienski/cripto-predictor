@@ -12,7 +12,7 @@ import pytest
 
 from GarimpoInvestimentos.dpl.providers import dxy
 
-_CSV = "DATE,DTWEXBGS\n2026-08-10,103.10\n2026-08-11,103.45\n2026-08-12,103.30\n"
+_CSV = "observation_date,DTWEXBGS\n2026-08-10,103.10\n2026-08-11,103.45\n2026-08-12,103.30\n"
 
 
 class _Resp:
@@ -75,7 +75,9 @@ def test_dxy_skips_missing_value_rows_without_interpolating(monkeypatch):
 
 
 def test_dxy_empty_response_raises(monkeypatch):
-    monkeypatch.setattr(dxy, "get_http_client", lambda *a, **k: _Client("DATE,DTWEXBGS\n"))
+    monkeypatch.setattr(
+        dxy, "get_http_client", lambda *a, **k: _Client("observation_date,DTWEXBGS\n")
+    )
     provider = dxy.DXYProvider()
     with pytest.raises(RuntimeError, match="dxy"):
         asyncio.run(provider.fetch())
@@ -107,3 +109,21 @@ def test_dxy_custom_publish_lag(monkeypatch):
     provider = dxy.DXYProvider(publish_lag_days=0)
     points = asyncio.run(provider.fetch())
     assert all(p.published_at == p.timestamp for p in points)
+
+
+def test_dxy_parses_real_fred_response_snippet(monkeypatch):
+    """Regressão: bytes reais devolvidos por fredgraph.csv (curl -v, dono do
+    projeto, 2026-08-14) — trava contra reintroduzir o bug de coluna "DATE"
+    (o nome real é "observation_date")."""
+    real_snippet = (
+        "observation_date,DTWEXBGS\n"
+        "2006-01-02,101.4155\n"
+        "2006-01-03,100.7558\n"
+        "2006-01-04,100.2288\n"
+        "2006-01-05,100.2992\n"
+    )
+    monkeypatch.setattr(dxy, "get_http_client", lambda *a, **k: _Client(real_snippet))
+    provider = dxy.DXYProvider()
+    points = asyncio.run(provider.fetch(limit=90))
+    assert len(points) == 4
+    assert points[0].value == 101.4155

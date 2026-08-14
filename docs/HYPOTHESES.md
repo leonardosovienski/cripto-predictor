@@ -241,10 +241,25 @@
   `DTWEXBGS` — Nominal Broad U.S. Dollar Index, dado oficial do Federal
   Reserve, sem chave, sem desafio anti-bot). `publish_lag_days=1` é
   conservador (o release H.10 sai com defasagem de ~1 dia útil; o valor exato
-  não foi confirmado contra o texto oficial do release). Ainda não testado ao
-  vivo contra o FRED — pendente de confirmação numa máquina com rede.
+  não foi confirmado contra o texto oficial do release).
+- Atualização 2026-08-14 (mesmo dia, validação ao vivo pelo dono): primeira
+  tentativa contra o FRED rodou (sem erro de rede/HTTP) mas devolveu "nenhuma
+  linha válida" — o `curl -v` mostrou por quê: o CSV do FRED usa
+  `observation_date` como nome da primeira coluna, não `DATE` como o código
+  assumia. Corrigido; teste de regressão com os bytes reais devolvidos
+  (`observation_date,DTWEXBGS\n2006-01-02,101.4155...`) adicionado em
+  `tests/test_dpl_dxy.py` pra travar contra reintroduzir esse erro. Nota à
+  parte: `Invoke-WebRequest` do PowerShell deu timeout contra esse mesmo
+  endpoint enquanto `curl.exe` respondeu rápido — possível inspeção de TLS do
+  proxy corporativo afetando um cliente especificamente; sem efeito no
+  `httpx` que o provider usa, mas vale observar se aparecer timeout em
+  produção. **Ainda pendente:** confirmar que a correção da coluna funciona
+  de ponta a ponta rodando `DXYProvider().fetch()` ao vivo de novo (só o
+  `curl` cru foi validado até aqui, não o parsing do provider contra a
+  resposta real).
 - Resultado (preenchido DEPOIS): não iniciado (calendário FOMC pronto, DXY
-  reapontado para o FRED mas ainda não validado ao vivo; nenhum dado
+  reapontado para o FRED com o bug de coluna corrigido, mas o `fetch()` do
+  provider ainda não foi confirmado ao vivo de ponta a ponta; nenhum dado
   coletado). Pendências antes de qualquer dado: (1) preencher CPI/PPI a
   partir da fonte oficial (requer acesso direto a bls.gov, indisponível nesta
   sessão), (2) validar ao vivo o `DXYProvider` contra o FRED e confirmar o

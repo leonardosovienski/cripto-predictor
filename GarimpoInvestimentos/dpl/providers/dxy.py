@@ -14,6 +14,15 @@ contra o texto oficial do release nesta sessão — `publish_lag_days=1` é a
 estimativa conservadora (assume o dado mais tarde disponível, nunca mais cedo);
 confirme contra https://www.federalreserve.gov/releases/h10/ antes de depender
 disso para timing fino.
+
+Endpoint validado ao vivo em 2026-08-14 (`curl -v`, dono do projeto): HTTP 200,
+`Content-Type: application/csv`, cabeçalho `observation_date,DTWEXBGS` (o FRED
+usa `observation_date`, não `DATE`, como nome da primeira coluna — só isso
+tinha ficado errado na primeira versão). `Invoke-WebRequest` do PowerShell
+travou/deu timeout contra o mesmo endpoint que o `curl` respondeu rápido —
+suspeita de inspeção de TLS no proxy corporativo interferindo com um cliente
+especificamente; sem efeito no `httpx` usado aqui, mas vale monitorar se o
+provider apresentar timeouts em produção.
 """
 
 from __future__ import annotations
@@ -60,7 +69,7 @@ class DXYProvider(SignalProvider):
         points: list[SignalPoint] = []
         for row in rows[-limit:]:
             try:
-                day = datetime.strptime(row["DATE"], "%Y-%m-%d").replace(tzinfo=UTC)
+                day = datetime.strptime(row["observation_date"], "%Y-%m-%d").replace(tzinfo=UTC)
                 value = float(row[self._series])
             except (KeyError, ValueError):
                 continue  # "." = feriado/sem dado publicado — pula, não interpola
