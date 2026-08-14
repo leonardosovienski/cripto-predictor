@@ -15,6 +15,7 @@ import hashlib
 import inspect
 import json
 import logging
+from statistics import median, pstdev
 
 from GarimpoInvestimentos.config import settings
 
@@ -104,13 +105,20 @@ def judge_signature(asset_name: str | None = None) -> str:
 
     Em LLM_PROVIDER=multi o juiz é POR ATIVO (partição fixa) — passe asset_name;
     sem ele, o modo multi levanta ValueError em vez de carimbar um juiz errado.
+
+    LLM_ENSEMBLE_N > 1 muda o estimador (mediana de N amostras, não mais uma
+    chamada única) — por isso vira um 4º campo (':ensembleN') em vez de silenciar
+    a mudança dentro do mesmo carimbo. N=1 (default) mantém o formato de 3 campos
+    de sempre, então histórico já coletado não perde a identidade do juiz.
     """
     provider = provider_for_asset(asset_name) if asset_name is not None else settings.LLM_PROVIDER
     if provider == "multi":
         raise ValueError("judge_signature() em modo multi exige asset_name")
     compat = _OPENAI_COMPAT.get(provider)
     model = getattr(settings, compat[2]) if compat else settings.GEMINI_MODEL
-    return f"{provider}:{model}:{_PROMPT_HASH}"
+    base = f"{provider}:{model}:{_PROMPT_HASH}"
+    n = max(int(settings.LLM_ENSEMBLE_N), 1)
+    return base if n == 1 else f"{base}:ensemble{n}"
 
 
 _DAILY_QUOTA_MARKERS = ("perday", "per day", "requestsperday", "generaterequestsperday")
@@ -250,10 +258,10 @@ async def _call_openai(prompt: str, provider: str = "openai") -> str:
     return await _run_with_llm_retry(_invoke)
 
 
-async def analyze_asset(asset_name: str, hard_data: dict, news_snippets: list[str]):
-    prompt = _build_prompt(asset_name, hard_data, news_snippets)
+async def _analyze_once(asset_name: str, prompt: str, provider: str) -> dict:
+    """Uma amostra do juiz — a chamada única de sempre, isolada para o ensemble
+    poder repeti-la N vezes sem duplicar o parsing/fallback."""
     try:
-        provider = provider_for_asset(asset_name)
         if provider in _OPENAI_COMPAT:
             text = await _call_openai(prompt, provider)
         else:
@@ -283,6 +291,46 @@ async def analyze_asset(asset_name: str, hard_data: dict, news_snippets: list[st
             "opportunity_score": 50,
             "llm_fallback": True,
         }
+
+
+def _aggregate_ensemble(samples: list[dict]) -> dict:
+    """Mediana das amostras bem-sucedidas (robusta a outlier de 1 chamada ruim);
+    sentimento/resumo vêm da amostra mais próxima da mediana (nenhum texto novo é
+    sintetizado). `opportunity_score_std` fica no resultado como proxy de confiança
+    do próprio juiz — desacordo alto entre amostras é sinal auditável, não descartado.
+    Todas as amostras vieram do MESMO prompt/provider — só repetidas; não são um
+    "segundo juiz" (isso continuaria exigindo um judge_signature próprio)."""
+    successful = [s for s in samples if not s["llm_fallback"]]
+    if not successful:
+        result = dict(samples[0])
+        result["ensemble_n"] = len(samples)
+        result["ensemble_samples_used"] = 0
+        result["opportunity_score_std"] = 0.0
+        return result
+    scores = [float(s["opportunity_score"]) for s in successful]
+    score_median = median(scores)
+    chosen = min(successful, key=lambda s: abs(float(s["opportunity_score"]) - score_median))
+    return {
+        "sentiment": chosen["sentiment"],
+        "summary": chosen["summary"],
+        "opportunity_score": round(score_median, 2),
+        "llm_fallback": False,
+        "ensemble_n": len(samples),
+        "ensemble_samples_used": len(successful),
+        "opportunity_score_std": round(pstdev(scores), 2) if len(scores) > 1 else 0.0,
+    }
+
+
+async def analyze_asset(asset_name: str, hard_data: dict, news_snippets: list[str]):
+    prompt = _build_prompt(asset_name, hard_data, news_snippets)
+    provider = provider_for_asset(asset_name)
+    n = max(int(settings.LLM_ENSEMBLE_N), 1)
+
+    if n == 1:
+        return await _analyze_once(asset_name, prompt, provider)
+
+    samples = [await _analyze_once(asset_name, prompt, provider) for _ in range(n)]
+    return _aggregate_ensemble(samples)
 
 
 # Compat: código antigo importava analyze_with_gemini.

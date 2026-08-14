@@ -49,6 +49,7 @@ class Settings(BaseSettings):
     ENABLE_CACHE: bool = True
     SCORE_HORIZON_DAYS: int = 7
     LLM_PACING_SECONDS: float = 7.0
+    LLM_ENSEMBLE_N: int = 1
     LLM_PREFILTER_ENABLED: bool = False
     LLM_PREFILTER_MIN_VOLUME_USD: float = 10_000_000.0
     LLM_PREFILTER_MIN_ABS_CHANGE_7D: float = 2.0
@@ -105,6 +106,8 @@ class Settings(BaseSettings):
             raise ValueError("limite de API não pode ser negativo")
         if self.LLM_PREFILTER_MIN_VOLUME_USD < 0 or self.LLM_PREFILTER_MIN_ABS_CHANGE_7D < 0:
             raise ValueError("limites do LLM prefilter não podem ser negativos")
+        if self.LLM_ENSEMBLE_N < 1:
+            raise ValueError("LLM_ENSEMBLE_N deve ser >= 1")
         provider_keys = {
             "openai": "OPENAI_API_KEY",
             "groq": "GROQ_API_KEY",
