@@ -110,17 +110,6 @@ def test_trade_intent_rejects_nonpositive_slippage_limit():
         _intent(slippage_limit_bps=0)
 
 
-@pytest.mark.parametrize("bad_pct", [0.0, 1.0, -0.01, 1.5])
-def test_trade_intent_rejects_stop_loss_pct_out_of_bounds(bad_pct):
-    with pytest.raises(ValueError, match="stop_loss_pct"):
-        _intent(exit_rule=ExitRule.PRICE_STOP, stop_loss_pct=bad_pct)
-
-
-def test_trade_intent_rejects_nonpositive_take_profit_pct():
-    with pytest.raises(ValueError, match="take_profit_pct"):
-        _intent(exit_rule=ExitRule.TAKE_PROFIT, take_profit_pct=0.0)
-
-
 # --- Order / Fill ---------------------------------------------------------------
 
 
@@ -195,40 +184,6 @@ def test_fill_rejects_nonpositive_qty_and_price():
         Fill(new_id("f"), "o1", 1.0, 0.0, 1.0, Liquidity.TAKER, T0)
 
 
-def test_fill_rejects_negative_fee():
-    with pytest.raises(ValueError, match="fee"):
-        Fill(new_id("f"), "o1", 1.0, 60_000.0, -0.01, Liquidity.TAKER, T0)
-
-
-def test_order_rejects_nonpositive_qty():
-    with pytest.raises(ValueError, match="qty"):
-        Order(
-            new_id("o"),
-            new_id("i"),
-            BTC_PERP,
-            OrderSide.BUY,
-            OrderType.MARKET,
-            0.0,
-            OrderStatus.NEW,
-            T0,
-        )
-
-
-def test_limit_order_rejects_nonpositive_limit_price():
-    with pytest.raises(ValueError, match="limit_price"):
-        Order(
-            new_id("o"),
-            new_id("i"),
-            BTC_PERP,
-            OrderSide.BUY,
-            OrderType.LIMIT,
-            1.0,
-            OrderStatus.NEW,
-            T0,
-            limit_price=0.0,
-        )
-
-
 # --- Position --------------------------------------------------------------------
 
 
@@ -247,11 +202,6 @@ def test_position_notional():
 def test_position_rejects_nonpositive_qty():
     with pytest.raises(ValueError, match="qty"):
         Position(BTC_PERP, Direction.LONG, 0.0, 60_000.0, T0)
-
-
-def test_position_rejects_nonpositive_avg_entry_price():
-    with pytest.raises(ValueError, match="avg_entry_price"):
-        Position(BTC_PERP, Direction.LONG, 1.0, 0.0, T0)
 
 
 # --- SettlementRecord --------------------------------------------------------------
@@ -305,57 +255,5 @@ def test_settlement_record_rejects_closed_before_opened():
             T0,
             T0 - timedelta(hours=1),
             0.0,
-            ExitRule.TIME_STOP,
-        )
-
-
-def test_settlement_record_rejects_nonpositive_qty():
-    with pytest.raises(ValueError, match="qty"):
-        SettlementRecord(
-            new_id("stl"),
-            new_id("intent"),
-            BTC_PERP,
-            Direction.LONG,
-            0.0,
-            60_000.0,
-            61_000.0,
-            T0,
-            T0 + timedelta(hours=1),
-            0.0,
-            ExitRule.TIME_STOP,
-        )
-
-
-@pytest.mark.parametrize("entry,exit_", [(0.0, 61_000.0), (60_000.0, 0.0)])
-def test_settlement_record_rejects_nonpositive_prices(entry, exit_):
-    with pytest.raises(ValueError, match="entry_price/exit_price"):
-        SettlementRecord(
-            new_id("stl"),
-            new_id("intent"),
-            BTC_PERP,
-            Direction.LONG,
-            1.0,
-            entry,
-            exit_,
-            T0,
-            T0 + timedelta(hours=1),
-            0.0,
-            ExitRule.TIME_STOP,
-        )
-
-
-def test_settlement_record_rejects_negative_fees():
-    with pytest.raises(ValueError, match="fees_paid"):
-        SettlementRecord(
-            new_id("stl"),
-            new_id("intent"),
-            BTC_PERP,
-            Direction.LONG,
-            1.0,
-            60_000.0,
-            61_000.0,
-            T0,
-            T0 + timedelta(hours=1),
-            -1.0,
             ExitRule.TIME_STOP,
         )

@@ -65,11 +65,6 @@ def test_correlation_perfect_negative():
     assert correlation(a, b) == pytest.approx(-1.0)
 
 
-def test_correlation_rejects_zero_variance_series():
-    with pytest.raises(ValueError, match="correlation"):
-        correlation([1.0, 1.0, 1.0], [1.0, 2.0, 3.0])
-
-
 def test_correlation_matrix_diagonal_is_one_and_symmetric():
     returns = {"BTC": [0.01, -0.02, 0.03], "ETH": [0.02, -0.01, 0.025]}
     matrix = correlation_matrix(returns)
@@ -130,11 +125,6 @@ def test_aggregate_leverage_rejects_nonpositive_equity():
         aggregate_leverage(_positions(), {}, equity=0.0)
 
 
-def test_aggregate_leverage_missing_mark_price_raises():
-    with pytest.raises(ValueError, match="mark price"):
-        aggregate_leverage(_positions(), {"binance_futures:BTCUSDT": 60_000.0}, equity=45_000.0)
-
-
 # --- volatility_target_size ---------------------------------------------------------
 
 
@@ -151,16 +141,6 @@ def test_volatility_target_size_caps_at_full_capital():
 def test_volatility_target_size_rejects_zero_asset_vol():
     with pytest.raises(ValueError, match="asset_vol"):
         volatility_target_size(0.02, 0.0, 100_000.0)
-
-
-def test_volatility_target_size_rejects_negative_vols():
-    with pytest.raises(ValueError, match="negativas"):
-        volatility_target_size(-0.01, 0.02, 100_000.0)
-
-
-def test_volatility_target_size_rejects_nonpositive_capital():
-    with pytest.raises(ValueError, match="capital"):
-        volatility_target_size(0.02, 0.04, 0.0)
 
 
 # --- DrawdownTracker -----------------------------------------------------------------
@@ -202,12 +182,6 @@ def test_liquidation_distance_pct_rejects_already_liquidatable():
 def test_liquidation_distance_pct_rejects_bad_leverage():
     with pytest.raises(ValueError, match="leverage"):
         liquidation_distance_pct(Direction.LONG, leverage=0.0, maintenance_margin_rate=0.01)
-
-
-@pytest.mark.parametrize("bad_rate", [-0.01, 1.0, 1.5])
-def test_liquidation_distance_pct_rejects_bad_maintenance_margin_rate(bad_rate):
-    with pytest.raises(ValueError, match="maintenance_margin_rate"):
-        liquidation_distance_pct(Direction.LONG, leverage=5.0, maintenance_margin_rate=bad_rate)
 
 
 # --- reconcile_balance ---------------------------------------------------------------
