@@ -79,7 +79,7 @@ docs/                      ← ADRs e auditorias (ver HANDOFF)
 ```
 
 predictor-core/predictor-ops nao sao vendorizados: sao wheels externas resolvidas
-via [tool.uv.sources] a partir das GitHub Releases de core-predictor/tools-predictor,
+via [tool.uv.sources] a partir das GitHub Releases de core-predictor/predictor-ops,
 com hash fixado em uv.lock.
 
 ## Coleta exploratória `COLLECTION_ONLY`

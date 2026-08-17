@@ -32,8 +32,8 @@ jobs:
           python -m venv "$RUNNER_TEMP/wheel-contract"
           "$RUNNER_TEMP/wheel-contract/bin/pip" install --upgrade pip
           "$RUNNER_TEMP/wheel-contract/bin/pip" install \
-            "predictor-core @ https://github.com/leonardosovienski/core-predictor/releases/download/v2.2.0/predictor_core-2.2.0-py3-none-any.whl" \
-            "predictor-ops @ https://github.com/leonardosovienski/tools-predictor/releases/download/v3.0.0/predictor_ops-3.0.0-py3-none-any.whl" \
+            "predictor-core @ https://github.com/leonardosovienski/core-predictor/releases/download/v2.3.0/predictor_core-2.3.0-py3-none-any.whl" \
+            "predictor-ops @ https://github.com/leonardosovienski/predictor-ops/releases/download/v3.1.0/predictor_ops-3.1.0-py3-none-any.whl" \
             dist/cripto_predictor-1.0.0-py3-none-any.whl
           cd "$RUNNER_TEMP"
           "$RUNNER_TEMP/wheel-contract/bin/python" "$GITHUB_WORKSPACE/scripts/verify_installed_wheels.py"
