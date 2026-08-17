@@ -79,7 +79,7 @@
       "horizonte_dias": 7
     },
     "sharpe": 0.3479,
-    "notes": "Pre-registro (protocolo anti-data-snooping, docs/HYPOTHESES.md H6) ANTES de qualquer resultado dedicado. Hipotese: o score do LLM tem correlacao NEGATIVA e estatisticamente significativa com o retorno D+7 nas 3 encarnacoes anteriores (v1-direct, v2-dpl-gemini, v2-dpl-multi) -- inverter a leitura (score alto = sinal de queda, score baixo = sinal de alta) pode capturar esse padrao. RISCO DE DATA-SNOOPING EXPLICITO: a ideia nasceu observando o resultado das trials anteriores, entao esta trial so vale como veredito com dado GENUINAMENTE NOVO coletado apos o registro, nunca reaproveitando as previsoes ja vistas. NAO ATIVADA: fonte=reserved:* nunca aparece em predictions.fonte real, entao close_trial_sharpes() nunca vai amadurecer isso sozinho -- exige implementacao explicita (inverter a leitura do score no backtest ou na estrategia) e decisao humana de quando comecar a coletar sob essa hipotese."
+    "notes": "Pre-registro anti-data-snooping anterior ao resultado dedicado. A hipotese nasceu da correlacao negativa observada nas familias anteriores e so aceita previsoes posteriores a registered_at. MATURACAO DEDICADA ATIVA: close_h6_inverted_signal() e h6_spearman_verdict() implementam a leitura invertida sem casar a fonte reserved:* pelo mecanismo generico. Ultima evidencia versionada: Sharpe auxiliar +0.3479 com n=6, IMATURO; o gate exige n>=30 e IC95 positivo. H6 e pesquisa de correlacao, nao gera TradeIntent, nao autoriza shadow/capital e nao permite LLM como decisao direta de trading."
   }
 ]
 

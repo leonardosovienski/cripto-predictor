@@ -1,0 +1,21 @@
+{
+  "schema_version": "crypto-scientific-state/1",
+  "as_of_commit": "770af84252f47a51f7411fc72657badbc3e3a07c",
+  "capital_authorized": false,
+  "leverage_authorized": false,
+  "llm_direct_trading_authorized": false,
+  "security_incident": "BLOCKED_PENDING_SECRET_ROTATION",
+  "hypotheses": {
+    "H1": "CLOSED_NO_GO",
+    "H2": "CLOSED_NO_GO",
+    "H3": "CLOSED_NO_GO",
+    "H4": "CLOSED_INSUFFICIENT_SAMPLE",
+    "H5": "CLOSED_NO_GO",
+    "H6": "COLLECTION_ONLY_IMMATURE",
+    "H7": "REGISTERED_NOT_ACTIVATED"
+  },
+  "frozen_families": [
+    "funding_oi_hmm_v3"
+  ],
+  "notes": "H1-H3/V3 cannot be reopened or reparameterized silently. Any materially new hypothesis requires a new trial and valid power attestation."
+}

@@ -1,0 +1,56 @@
+{
+  "schema_version": "strategy-trial-draft/1",
+  "status": "DRAFT_NOT_REGISTERED",
+  "hypothesis_name": "trend-following-binance-spot-4h-v1",
+  "venue": "binance_spot",
+  "assets": ["BTCUSDT", "ETHUSDT"],
+  "horizon": "4h",
+  "position_set": [0, 1],
+  "short_allowed": false,
+  "leverage_allowed": false,
+  "llm_allowed": false,
+  "signal": {
+    "description": "Long when the last closed 4h close is above the trailing moving average; otherwise cash.",
+    "lookback_bars": 42,
+    "decision_time": "after_4h_candle_close",
+    "entry_window_minutes": 5,
+    "holding_period_hours": 4
+  },
+  "baselines": [
+    "cash",
+    "buy_and_hold_same_asset",
+    "buy_and_hold_same_risk_budget"
+  ],
+  "costs": [
+    "observed_entry_and_exit_book",
+    "walk_the_book",
+    "actual_fee_schedule_assumption",
+    "latency_scenario",
+    "insufficient_depth_no_fill"
+  ],
+  "validation": {
+    "split": "walk_forward_time_ordered",
+    "purge": "max(label_horizon, feature_lookback)",
+    "dsr_minimum": 0.95,
+    "net_confidence_interval_lower_bound": ">0",
+    "must_beat_best_comparable_baseline": true,
+    "report_by_asset_period_and_regime_without_post_selection": true
+  },
+  "stop_conditions": [
+    "venue_mismatch",
+    "sequence_gap_without_resync",
+    "costs_unavailable",
+    "net_confidence_interval_crosses_zero",
+    "dsr_below_threshold",
+    "requires_leverage",
+    "top_five_trades_concentration_above_preregistered_limit",
+    "parameter_change_without_new_trial"
+  ],
+  "activation_requirements": [
+    "SerpAPI incident remains an explicit external block for private credentials and capital",
+    "microstructure observation plan is activated and mature",
+    "positive-control attestation is valid",
+    "trial is added to trials.json before any OOS evaluation"
+  ],
+  "note": "This draft fixes the intended first simple hypothesis but is deliberately not a registered trial and must not consume OOS data."
+}

@@ -1,0 +1,39 @@
+schema_version: collection-observation-plan/1
+plan_id: crypto-binance-spot-microstructure-observation-v1
+created_at: "2026-08-17T00:00:00Z"
+target_source: binance_spot
+state: DRAFT
+scientific_state: COLLECTION_ONLY
+capital_authorized: false
+trading_credentials_required: false
+assets: [BTCUSDT, ETHUSDT]
+research_horizon: 4h
+streams:
+  - trade
+  - book_ticker
+  - diff_depth_100ms
+bootstrap:
+  endpoint: /api/v3/depth
+  limit: 1000
+  required_fields: [lastUpdateId, bids, asks]
+integrity:
+  sequence_continuity_required: true
+  resnapshot_on_gap: true
+  append_only: true
+  content_hash_required: true
+  event_received_ingested_times_required: true
+  rest_snapshot_missing_exchange_time_must_be_flagged: true
+minimum_observation_days: 30
+desired_observation_days: 90
+activation_requirements:
+  - security incident remains isolated from public market-data collection
+  - live smoke proves snapshot plus buffered diff-depth sequencing
+  - persistence and restart recovery pass
+  - watchdog and quality scorecards exist
+  - human approval records activation checksum
+prohibitions:
+  - no private API key
+  - no order submission
+  - no leverage
+  - no capital
+  - no use as execution history before prospective collection

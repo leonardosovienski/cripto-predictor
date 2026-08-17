@@ -55,11 +55,16 @@ class OrderType(Enum):
 
 class OrderStatus(Enum):
     NEW = "new"
+    SUBMITTING = "submitting"
     ACCEPTED = "accepted"
     PARTIALLY_FILLED = "partially_filled"
     FILLED = "filled"
     CANCELLED = "cancelled"
     REJECTED = "rejected"
+    UNKNOWN = "unknown"
+    RECONCILING = "reconciling"
+    RECONCILED = "reconciled"
+    EXPIRED = "expired"
 
 
 class Liquidity(Enum):
@@ -175,6 +180,11 @@ class Order:
     created_at: datetime
     limit_price: float | None = None
     fills: tuple[Fill, ...] = field(default_factory=tuple)
+    submitted_at: datetime | None = None
+    accepted_at: datetime | None = None
+    terminal_at: datetime | None = None
+    last_reconciled_at: datetime | None = None
+    status_reason: str | None = None
 
     def __post_init__(self) -> None:
         if self.qty <= 0:
@@ -188,7 +198,19 @@ class Order:
             raise ValueError(
                 f"Order {self.order_id}: soma dos fills ({filled_qty}) excede qty ({self.qty})"
             )
-        object.__setattr__(self, "created_at", ensure_utc(self.created_at, "Order.created_at"))
+        created = ensure_utc(self.created_at, "Order.created_at")
+        object.__setattr__(self, "created_at", created)
+        for name in ("submitted_at", "accepted_at", "terminal_at", "last_reconciled_at"):
+            value = getattr(self, name)
+            if value is None:
+                continue
+            normalized = ensure_utc(value, f"Order.{name}")
+            if normalized < created:
+                raise ValueError(f"Order.{name} anterior a created_at")
+            object.__setattr__(self, name, normalized)
+        if self.accepted_at is not None and self.submitted_at is not None:
+            if self.accepted_at < self.submitted_at:
+                raise ValueError("Order.accepted_at anterior a submitted_at")
 
     @property
     def filled_qty(self) -> float:

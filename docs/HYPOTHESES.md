@@ -179,10 +179,11 @@
 - Configuração: `h6-sinal-invertido-d7` — `params.fonte` deliberadamente
   `reserved:h6-inversao-sinal` (nunca aparece em `predictions.fonte` real), pra
   `close_trial_sharpes()` do backtest NUNCA amadurecer esta trial sozinha com
-  dado da coleta atual (não-invertida). Ativar exige: (1) decisão humana
-  explícita, (2) implementação de código que interprete/estratégie o score
-  invertido (não existe ainda — nem no backtest nem na coleta), (3) coleta de
-  dado GENUINAMENTE NOVO sob essa configuração.
+  dado da coleta atual (não-invertida). A maturação dedicada foi implementada
+  em `close_h6_inverted_signal()` e só aceita previsões posteriores ao registro,
+  como documentado na errata acima. H6 continua sendo pesquisa de correlação:
+  não produz `TradeIntent`, não autoriza shadow e não permite decisão direta de
+  trading por LLM.
 - ⚠️ **Risco de data-snooping explícito, registrado por honestidade**: a ideia
   nasceu observando o resultado negativo das trials anteriores — pré-registrar
   agora não elimina esse viés de origem, só impede que o CRITÉRIO de sucesso
@@ -192,7 +193,8 @@
 - Critério de sucesso (definido ANTES): idêntico ao da H4/H5 — Spearman IC95
   não cruza zero (positivo desta vez) com n ≥ 30 previsões maduras SOB A
   CONFIGURAÇÃO INVERTIDA; depois, Sharpe líquido por trade + DSR ≥ 0,95.
-- Resultado: (não ativada — sem coleta)
+- Resultado: **imaturo** — última evidência versionada: Sharpe auxiliar +0,3479
+  com n=6; o gate pré-registrado exige n>=30 e IC95 positivo. Sem veredito.
 
 ### H7 — Calendário macro (FOMC/CPI/PPI) + DXY como contexto exógeno de regime (status: **registrada — infraestrutura de coleta implementada, coleta real não iniciada**)
 - Data do registro: 2026-08-14 (ANTES de qualquer coleta ou resultado). Promove o
@@ -211,6 +213,10 @@
   backtest: (a) covariável exógena do HMM do V3 (`v3/regime_engine.py`), ou (b)
   contexto adicional no prompt do juiz LLM (Fase 1). Qualquer uma das duas conta
   como trial NOVA própria — não é reaproveitamento de H1-H6.
+- Estado de governança: ainda não é uma trial ativa e, por isso, não entra no
+  denominador antes da escolha prévia de uma das integrações. Dados observados
+  para completar/calibrar a formulação não podem depois ser reutilizados como
+  OOS. A ativação exige atestado de poder válido e registro em `trials.json`.
 - Critério de sucesso (definido ANTES): idêntico em espécie ao das famílias
   anteriores — líquido de custos quando aplicável ao V3 (PSR ≥ 0,80, IC_lo > 0),
   ou Spearman IC95 não cruzando zero com n ≥ 30 quando aplicável à Fase 1 —

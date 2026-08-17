@@ -1,0 +1,40 @@
+{
+  "schema_version": "scientific-governance/1",
+  "charter_id": "crypto-binance-spot-microstructure-v1",
+  "source": "binance-spot",
+  "metrics": [
+    "trade",
+    "best_bid",
+    "best_ask",
+    "order_book_depth",
+    "instrument_status"
+  ],
+  "assets": ["BTCUSDT", "ETHUSDT"],
+  "cadence": "trades:stream;book_ticker:stream;diff_depth:100ms;snapshot:on_start_and_resync;instrument_status:1h",
+  "timestamp_semantics": {
+    "event_at_source": "Binance event/trade time when present; REST depth snapshot has no exchange event time and must be flagged",
+    "published_at_source": "Binance WebSocket event time or local received_at for REST snapshots with an explicit quality flag",
+    "ingested_at_source": "UTC collector clock after validation and before durable commit"
+  },
+  "latency_sla": {"median_seconds": 1.0, "p99_seconds": 5.0},
+  "resource_budget": {"traffic_mb_month": 20480.0, "storage_gb_month": 20.0},
+  "owner": "leonardosovienski",
+  "revision_policy": "Append-only by venue sequence/update id and content hash; never rewrite observed books or trades.",
+  "initial_scientific_state": "COLLECTION_ONLY",
+  "collector_version": "binance-spot-microstructure/1",
+  "expected_schema_version": "crypto-microstructure/1",
+  "retention_policy": {"raw_days": 90, "normalized_days": null, "aggregates_days": null},
+  "quality_thresholds": {
+    "minimum_coverage": 0.99,
+    "maximum_median_freshness_seconds": 1.0,
+    "maximum_p99_freshness_seconds": 5.0,
+    "maximum_gap_count": 0,
+    "maximum_gap_seconds": 0.0,
+    "maximum_revision_rate": 0.0,
+    "minimum_availability": 0.99,
+    "maximum_causality_failure_rate": 0.0,
+    "maximum_integrity_failure_rate": 0.0
+  },
+  "created_at": "2026-08-17T00:00:00Z",
+  "rationale": "Prospective public market-data collection for BTC/ETH Binance Spot 4h research. No trading credentials, leverage, shadow or capital authorization."
+}

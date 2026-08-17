@@ -192,6 +192,27 @@ def test_binance_collector_parses_depth_into_snapshot(monkeypatch):
     assert len(snapshot.bids) == 2 and len(snapshot.asks) == 2
 
 
+def test_binance_collector_preserves_sequence_and_temporal_envelope(monkeypatch):
+    from GarimpoInvestimentos.trading import microstructure as ms
+
+    payload = {
+        "lastUpdateId": 123,
+        "bids": [["59990.00", "1.5"]],
+        "asks": [["60010.00", "1.2"]],
+    }
+    monkeypatch.setattr(ms, "get_http_client", lambda *a, **k: _Client(payload))
+    observation = asyncio.run(BinanceOrderBookCollector().fetch_observation("btcusdt"))
+    assert observation.last_update_id == 123
+    assert observation.snapshot.instrument.key == "binance_spot:BTCUSDT"
+    assert observation.requested_at <= observation.received_at <= observation.ingested_at
+    assert "snapshot_no_exchange_event_time" in observation.quality_flags
+
+
+def test_binance_collector_rejects_unsupported_depth_limit():
+    with pytest.raises(ValueError, match="limit"):
+        asyncio.run(BinanceOrderBookCollector().fetch_observation("BTCUSDT", limit=7))
+
+
 def test_binance_collector_raises_on_unexpected_format(monkeypatch):
     from GarimpoInvestimentos.trading import microstructure as ms
 

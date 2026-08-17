@@ -101,6 +101,107 @@ class SimulatedFill:
         return self.filled_qty >= self.requested_qty - 1e-12
 
 
+@dataclass(frozen=True)
+class CollectedOrderBook:
+    """Envelope temporal do snapshot REST.
+
+    O endpoint de depth não fornece event time. Por honestidade, `timestamp` do
+    snapshot é o instante local de recebimento, e a ausência do tempo do venue
+    fica explícita em quality_flags. `lastUpdateId` é preservado para permitir
+    ligação futura com o diff-depth WebSocket; um snapshot sozinho não prova
+    continuidade do book.
+    """
+
+    snapshot: OrderBookSnapshot
+    last_update_id: int
+    requested_at: datetime
+    received_at: datetime
+    ingested_at: datetime
+    quality_flags: frozenset[str] = frozenset({"snapshot_no_exchange_event_time"})
+
+    def __post_init__(self) -> None:
+        requested = ensure_utc(self.requested_at, "CollectedOrderBook.requested_at")
+        received = ensure_utc(self.received_at, "CollectedOrderBook.received_at")
+        ingested = ensure_utc(self.ingested_at, "CollectedOrderBook.ingested_at")
+        if self.last_update_id < 0:
+            raise ValueError("CollectedOrderBook.last_update_id não pode ser negativo")
+        if not (requested <= received <= ingested):
+            raise ValueError("tempos precisam obedecer requested_at <= received_at <= ingested_at")
+        object.__setattr__(self, "requested_at", requested)
+        object.__setattr__(self, "received_at", received)
+        object.__setattr__(self, "ingested_at", ingested)
+
+
+@dataclass(frozen=True)
+class DepthUpdate:
+    instrument: Instrument
+    first_update_id: int
+    final_update_id: int
+    event_at: datetime
+    bids: tuple[tuple[float, float], ...]
+    asks: tuple[tuple[float, float], ...]
+
+    def __post_init__(self) -> None:
+        event_at = ensure_utc(self.event_at, "DepthUpdate.event_at")
+        if self.first_update_id < 0 or self.final_update_id < self.first_update_id:
+            raise ValueError("DepthUpdate sequence inválida")
+        for price, qty in (*self.bids, *self.asks):
+            if price <= 0 or qty < 0:
+                raise ValueError("DepthUpdate exige price > 0 e qty >= 0")
+        object.__setattr__(self, "event_at", event_at)
+
+
+class DepthSequenceGap(RuntimeError):
+    """O book local perdeu updates e precisa de novo snapshot."""
+
+
+class LocalOrderBook:
+    """Reconstrói um book a partir de snapshot REST + diff-depth ordenado."""
+
+    def __init__(self, snapshot: OrderBookSnapshot, *, last_update_id: int):
+        if last_update_id < 0:
+            raise ValueError("last_update_id não pode ser negativo")
+        self._instrument = snapshot.instrument
+        self._last_update_id = last_update_id
+        self._timestamp = snapshot.timestamp
+        self._bids = {level.price: level.qty for level in snapshot.bids}
+        self._asks = {level.price: level.qty for level in snapshot.asks}
+
+    @property
+    def last_update_id(self) -> int:
+        return self._last_update_id
+
+    def apply(self, update: DepthUpdate) -> bool:
+        if update.instrument != self._instrument:
+            raise ValueError("DepthUpdate pertence a outro instrumento/venue")
+        if update.final_update_id <= self._last_update_id:
+            return False
+        expected = self._last_update_id + 1
+        if not (update.first_update_id <= expected <= update.final_update_id):
+            raise DepthSequenceGap(
+                f"gap de sequence: esperado {expected}, recebido "
+                f"[{update.first_update_id},{update.final_update_id}]"
+            )
+        for book, changes in ((self._bids, update.bids), (self._asks, update.asks)):
+            for price, qty in changes:
+                if qty == 0:
+                    book.pop(price, None)
+                else:
+                    book[price] = qty
+        if not self._bids or not self._asks:
+            raise DepthSequenceGap("update esvaziou um lado do book; resnapshot obrigatório")
+        self._last_update_id = update.final_update_id
+        self._timestamp = update.event_at
+        return True
+
+    def snapshot(self) -> OrderBookSnapshot:
+        bids = tuple(
+            OrderBookLevel(price, qty) for price, qty in sorted(self._bids.items(), reverse=True)
+        )
+        asks = tuple(OrderBookLevel(price, qty) for price, qty in sorted(self._asks.items()))
+        return OrderBookSnapshot(self._instrument, self._timestamp, bids, asks)
+
+
 def simulate_market_fill(snapshot: OrderBookSnapshot, side: OrderSide, qty: float) -> SimulatedFill:
     """Anda o book nível a nível ("walk the book") consumindo liquidez até
     preencher `qty` ou esgotar os níveis disponíveis — nunca preenche além do
@@ -179,17 +280,33 @@ class BinanceOrderBookCollector:
             resp.raise_for_status()
             return resp.json()
 
-    async def fetch(self, symbol: str, *, limit: int = 100) -> OrderBookSnapshot:
+    async def fetch_observation(self, symbol: str, *, limit: int = 100) -> CollectedOrderBook:
+        if limit not in {5, 10, 20, 50, 100, 500, 1000, 5000}:
+            raise ValueError("binance depth limit inválido")
+        requested_at = datetime.now(UTC)
         data = await self._get_depth(symbol, limit)
-        if "bids" not in data or "asks" not in data:
+        received_at = datetime.now(UTC)
+        if "lastUpdateId" not in data or "bids" not in data or "asks" not in data:
             raise RuntimeError(
-                f"binance_orderbook[{symbol}]: resposta sem bids/asks — formato inesperado"
+                f"binance_orderbook[{symbol}]: resposta sem lastUpdateId/bids/asks — "
+                "formato inesperado"
             )
         bids = tuple(OrderBookLevel(float(p), float(q)) for p, q in data["bids"])
         asks = tuple(OrderBookLevel(float(p), float(q)) for p, q in data["asks"])
-        return OrderBookSnapshot(
-            instrument=Instrument(symbol, self._venue),
-            timestamp=datetime.now(UTC),
+        snapshot = OrderBookSnapshot(
+            instrument=Instrument(symbol.upper(), self._venue, "crypto_spot"),
+            timestamp=received_at,
             bids=bids,
             asks=asks,
         )
+        return CollectedOrderBook(
+            snapshot=snapshot,
+            last_update_id=int(data["lastUpdateId"]),
+            requested_at=requested_at,
+            received_at=received_at,
+            ingested_at=datetime.now(UTC),
+        )
+
+    async def fetch(self, symbol: str, *, limit: int = 100) -> OrderBookSnapshot:
+        """Compatibilidade: consumidores novos devem preferir fetch_observation()."""
+        return (await self.fetch_observation(symbol, limit=limit)).snapshot

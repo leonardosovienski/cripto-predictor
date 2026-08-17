@@ -19,10 +19,39 @@ def _artifact(directory: str, filename: str) -> Path:
 
 
 FUNDING_OI_CHARTER = _artifact("charters", "funding_oi_v3.json")
+BINANCE_SPOT_MICROSTRUCTURE_CHARTER = _artifact("charters", "binance_spot_microstructure_v1.json")
 BINANCE_OBSERVATION_PLAN = _artifact("observation_plans", "binance_funding_oi_v1.yaml")
 BINANCE_OBSERVATION_ACTIVATION = _artifact(
     "observation_plans/activations", "binance_funding_oi_v1_2026-08-09.json"
 )
+SCIENTIFIC_STATE_CHARTER = _artifact("charters", "scientific_state.json")
+
+
+class ScientificStateCharter(BaseModel):
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    schema_version: str
+    as_of_commit: str = Field(pattern=r"^[0-9a-f]{40}$")
+    capital_authorized: bool
+    leverage_authorized: bool
+    llm_direct_trading_authorized: bool
+    security_incident: str
+    hypotheses: dict[str, str]
+    frozen_families: tuple[str, ...]
+    notes: str
+
+    @model_validator(mode="after")
+    def fail_closed(self) -> ScientificStateCharter:
+        if self.capital_authorized or self.leverage_authorized:
+            raise ValueError("scientific state must not authorize capital or leverage")
+        if self.llm_direct_trading_authorized:
+            raise ValueError("LLM direct trading must remain forbidden")
+        for hypothesis in ("H1", "H2", "H3", "H5"):
+            if self.hypotheses.get(hypothesis) != "CLOSED_NO_GO":
+                raise ValueError(f"{hypothesis} must remain CLOSED_NO_GO")
+        if "funding_oi_hmm_v3" not in self.frozen_families:
+            raise ValueError("funding/OI HMM V3 family must remain frozen")
+        return self
 
 
 class DurationTargets(BaseModel):
@@ -222,13 +251,36 @@ def load_acquisition_charter(path: Path | str = FUNDING_OI_CHARTER) -> DataAcqui
     return DataAcquisitionCharter.from_dict(value)
 
 
+def load_microstructure_charter(
+    path: Path | str = BINANCE_SPOT_MICROSTRUCTURE_CHARTER,
+) -> DataAcquisitionCharter:
+    return load_acquisition_charter(path)
+
+
+def load_scientific_state(
+    path: Path | str = SCIENTIFIC_STATE_CHARTER,
+) -> ScientificStateCharter:
+    try:
+        value = json.loads(Path(path).read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise ValueError(f"invalid scientific state charter {path}: {exc}") from exc
+    if not isinstance(value, dict):
+        raise ValueError("scientific state charter root must be a JSON object")
+    return ScientificStateCharter.model_validate(value)
+
+
 __all__ = [
     "BINANCE_OBSERVATION_PLAN",
     "BINANCE_OBSERVATION_ACTIVATION",
+    "BINANCE_SPOT_MICROSTRUCTURE_CHARTER",
     "FUNDING_OI_CHARTER",
+    "SCIENTIFIC_STATE_CHARTER",
     "ObservationPlan",
     "ObservationActivation",
+    "ScientificStateCharter",
     "load_acquisition_charter",
     "load_observation_plan",
     "load_observation_activation",
+    "load_microstructure_charter",
+    "load_scientific_state",
 ]

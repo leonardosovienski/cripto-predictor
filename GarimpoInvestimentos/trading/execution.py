@@ -24,19 +24,35 @@ from typing import Protocol
 
 from GarimpoInvestimentos.trading.contracts import Fill, Order, OrderStatus
 
-_TERMINAL_STATES = frozenset({OrderStatus.FILLED, OrderStatus.CANCELLED, OrderStatus.REJECTED})
+_TERMINAL_STATES = frozenset(
+    {
+        OrderStatus.FILLED,
+        OrderStatus.CANCELLED,
+        OrderStatus.REJECTED,
+        OrderStatus.RECONCILED,
+        OrderStatus.EXPIRED,
+    }
+)
 
 
 class OrderLifecycleError(RuntimeError):
     """Transição de estado inválida — nunca deve mutar silenciosamente."""
 
 
-def accept(order: Order, *, accepted_at: datetime | None = None) -> Order:
+def submit(order: Order, *, submitted_at: datetime) -> Order:
     if order.status is not OrderStatus.NEW:
         raise OrderLifecycleError(
-            f"Order {order.order_id}: accept() exige status=NEW, tinha {order.status}"
+            f"Order {order.order_id}: submit() exige status=NEW, tinha {order.status}"
         )
-    return replace(order, status=OrderStatus.ACCEPTED)
+    return replace(order, status=OrderStatus.SUBMITTING, submitted_at=submitted_at)
+
+
+def accept(order: Order, *, accepted_at: datetime | None = None) -> Order:
+    if order.status not in (OrderStatus.NEW, OrderStatus.SUBMITTING):
+        raise OrderLifecycleError(
+            f"Order {order.order_id}: accept() exige NEW/SUBMITTING, tinha {order.status}"
+        )
+    return replace(order, status=OrderStatus.ACCEPTED, accepted_at=accepted_at)
 
 
 def apply_fill(order: Order, fill: Fill) -> Order:
@@ -60,20 +76,70 @@ def apply_fill(order: Order, fill: Fill) -> Order:
     return replace(order, status=status, fills=new_fills)
 
 
-def cancel(order: Order) -> Order:
+def cancel(
+    order: Order, *, cancelled_at: datetime | None = None, reason: str | None = None
+) -> Order:
     if order.status in _TERMINAL_STATES:
         raise OrderLifecycleError(
             f"Order {order.order_id}: cancel() em estado terminal ({order.status})"
         )
-    return replace(order, status=OrderStatus.CANCELLED)
+    return replace(
+        order, status=OrderStatus.CANCELLED, terminal_at=cancelled_at, status_reason=reason
+    )
 
 
-def reject(order: Order) -> Order:
-    if order.status is not OrderStatus.NEW:
+def reject(
+    order: Order, *, rejected_at: datetime | None = None, reason: str | None = None
+) -> Order:
+    if order.status not in (OrderStatus.NEW, OrderStatus.SUBMITTING):
         raise OrderLifecycleError(
-            f"Order {order.order_id}: reject() exige status=NEW, tinha {order.status}"
+            f"Order {order.order_id}: reject() exige NEW/SUBMITTING, tinha {order.status}"
         )
-    return replace(order, status=OrderStatus.REJECTED)
+    return replace(
+        order, status=OrderStatus.REJECTED, terminal_at=rejected_at, status_reason=reason
+    )
+
+
+def mark_unknown(order: Order, *, reason: str) -> Order:
+    """Marca resultado indeterminado sem assumir sucesso ou falha do venue."""
+    if order.status in _TERMINAL_STATES:
+        raise OrderLifecycleError(
+            f"Order {order.order_id}: mark_unknown() em estado terminal ({order.status})"
+        )
+    if not reason.strip():
+        raise ValueError("mark_unknown: reason não pode ser vazio")
+    return replace(order, status=OrderStatus.UNKNOWN, status_reason=reason)
+
+
+def begin_reconciliation(order: Order) -> Order:
+    if order.status is not OrderStatus.UNKNOWN:
+        raise OrderLifecycleError(
+            f"Order {order.order_id}: begin_reconciliation() exige UNKNOWN, tinha {order.status}"
+        )
+    return replace(order, status=OrderStatus.RECONCILING)
+
+
+def mark_reconciled(order: Order, *, reconciled_at: datetime, reason: str | None = None) -> Order:
+    if order.status is not OrderStatus.RECONCILING:
+        raise OrderLifecycleError(
+            f"Order {order.order_id}: mark_reconciled() exige RECONCILING, tinha {order.status}"
+        )
+    return replace(
+        order,
+        status=OrderStatus.RECONCILED,
+        terminal_at=reconciled_at,
+        last_reconciled_at=reconciled_at,
+        status_reason=reason,
+    )
+
+
+def expire(order: Order, *, expired_at: datetime, reason: str = "entry_window_expired") -> Order:
+    if order.status in _TERMINAL_STATES or order.status in (
+        OrderStatus.PARTIALLY_FILLED,
+        OrderStatus.FILLED,
+    ):
+        raise OrderLifecycleError(f"Order {order.order_id}: expire() inválido em {order.status}")
+    return replace(order, status=OrderStatus.EXPIRED, terminal_at=expired_at, status_reason=reason)
 
 
 class ExchangeAdapter(Protocol):
