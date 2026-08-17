@@ -1,8 +1,8 @@
 {
   "schema_version": "pipeline-power/2",
-  "passed_at": "2026-08-14T03:53:15+00:00",
-  "expires_at": "2026-08-21T03:53:15+00:00",
-  "core_version": "2.2.0",
+  "passed_at": "2026-08-17T14:44:53+00:00",
+  "expires_at": "2026-08-24T14:44:53+00:00",
+  "core_version": "2.3.0",
   "evaluate": "judge_go_nogo",
   "edge_verdict": "GO",
   "note": "Juiz V3 (backtest_v3): GO/NO-GO via PSR>=0.80 & IC_lower>0, seeds 7/8, n=400 — edge plantado e ruido",
