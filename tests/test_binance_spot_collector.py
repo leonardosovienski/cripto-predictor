@@ -239,3 +239,23 @@ def test_new_events_use_compressed_storage_and_v1_migration_is_lossless(tmp_path
         rows = store.quality_rows(T0 - timedelta(seconds=1), T0 + timedelta(seconds=1))
         assert len(rows) == 2
         assert {item["payload_hash"] for item in rows} == {row["payload_hash_blob"].hex()}
+
+
+def test_snapshots_with_same_sequence_and_different_request_are_distinct(tmp_path):
+    with TradingStore(tmp_path / "snapshots.db") as store:
+        first = snapshot(last=10)
+        second = CollectedOrderBook(
+            first.snapshot,
+            first.last_update_id,
+            first.requested_at + timedelta(microseconds=1),
+            first.received_at + timedelta(microseconds=1),
+            first.ingested_at + timedelta(microseconds=1),
+        )
+        assert store.append_collected_snapshot(first, session_id="s")
+        assert store.append_collected_snapshot(second, session_id="s")
+        assert (
+            store._conn.execute(
+                "SELECT COUNT(*) FROM microstructure_events_v3 WHERE kind_code=4"
+            ).fetchone()[0]
+            == 2
+        )

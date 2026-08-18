@@ -489,7 +489,7 @@ class TradingStore:
         }
         return self._append_microstructure(
             kind="snapshot",
-            observation_id=str(observation.last_update_id),
+            observation_id=(f"{observation.last_update_id}:{observation.requested_at.isoformat()}"),
             venue=snapshot.instrument.venue,
             symbol=snapshot.instrument.symbol,
             sequence_id=observation.last_update_id,
