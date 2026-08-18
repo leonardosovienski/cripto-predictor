@@ -12,6 +12,7 @@ import hashlib
 import json
 import time
 import uuid
+import zlib
 from dataclasses import asdict, dataclass
 from datetime import datetime
 from pathlib import Path
@@ -100,6 +101,32 @@ _MIGRATIONS = [
         );
         CREATE INDEX IF NOT EXISTS idx_collector_health_time
             ON collector_health(metric, symbol, recorded_at);
+        """,
+    ),
+    (
+        "0004_compressed_microstructure",
+        """
+        CREATE TABLE IF NOT EXISTS microstructure_events_v2 (
+            kind TEXT NOT NULL,
+            observation_id TEXT NOT NULL,
+            venue TEXT NOT NULL,
+            symbol TEXT NOT NULL,
+            sequence_id INTEGER,
+            event_at TEXT,
+            received_at TEXT NOT NULL,
+            ingested_at TEXT NOT NULL,
+            session_id TEXT NOT NULL,
+            collector_version TEXT NOT NULL,
+            payload_hash TEXT NOT NULL,
+            payload_zlib BLOB NOT NULL,
+            quality_flags TEXT NOT NULL,
+            scientific_state TEXT NOT NULL CHECK(scientific_state='COLLECTION_ONLY'),
+            PRIMARY KEY(venue, symbol, kind, observation_id)
+        );
+        CREATE INDEX IF NOT EXISTS idx_microstructure_v2_instrument_time
+            ON microstructure_events_v2(venue, symbol, kind, received_at);
+        CREATE INDEX IF NOT EXISTS idx_microstructure_v2_sequence
+            ON microstructure_events_v2(venue, symbol, kind, sequence_id);
         """,
     ),
 ]
@@ -301,19 +328,23 @@ class TradingStore:
         ingested = datetime.now(received.tzinfo)
         encoded, digest = _canonical(payload)
         with self._conn:
+            key = (venue, symbol, kind, observation_id)
             existing = self._conn.execute(
-                """SELECT payload_hash FROM microstructure_events
-                   WHERE venue=? AND symbol=? AND kind=? AND observation_id=?""",
-                (venue, symbol, kind, observation_id),
+                """SELECT payload_hash FROM microstructure_events_v2
+                   WHERE venue=? AND symbol=? AND kind=? AND observation_id=?
+                   UNION ALL
+                   SELECT payload_hash FROM microstructure_events
+                   WHERE venue=? AND symbol=? AND kind=? AND observation_id=? LIMIT 1""",
+                (*key, *key),
             ).fetchone()
             if existing:
                 if existing["payload_hash"] != digest:
                     raise ValueError("observation ID já existe com hash conflitante")
                 return False
             self._conn.execute(
-                """INSERT INTO microstructure_events
+                """INSERT INTO microstructure_events_v2
                 (kind,observation_id,venue,symbol,sequence_id,event_at,received_at,ingested_at,
-                 session_id,collector_version,payload_hash,payload_json,quality_flags,scientific_state)
+                 session_id,collector_version,payload_hash,payload_zlib,quality_flags,scientific_state)
                 VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
                 (
                     kind,
@@ -327,7 +358,7 @@ class TradingStore:
                     session_id,
                     "binance_spot_microstructure_v1",
                     digest,
-                    encoded,
+                    zlib.compress(encoded.encode("utf-8"), level=6),
                     json.dumps(sorted(quality_flags)),
                     SCIENTIFIC_STATE,
                 ),
@@ -459,18 +490,93 @@ class TradingStore:
         return True
 
     def latest_microstructure(self) -> list[Any]:
-        return list(
-            self._conn.execute(
-                """SELECT m.* FROM microstructure_events m JOIN (
-               SELECT kind,symbol,MAX(received_at) received_at FROM microstructure_events
-               GROUP BY kind,symbol) x USING(kind,symbol,received_at)"""
-            )
-        )
+        rows = self._decoded_rows()
+        latest: dict[tuple[str, str], dict[str, Any]] = {}
+        for row in rows:
+            key = (row["symbol"], row["kind"])
+            if key not in latest or row["received_at"] > latest[key]["received_at"]:
+                latest[key] = row
+        return list(latest.values())
 
     def quality_rows(self, start: datetime, end: datetime) -> list[Any]:
-        return list(
-            self._conn.execute(
-                "SELECT * FROM microstructure_events WHERE received_at>=? AND received_at<? ORDER BY received_at",
-                (_dt(start, "start"), _dt(end, "end")),
-            )
+        return self._decoded_rows(
+            "WHERE received_at>=? AND received_at<?",
+            (_dt(start, "start"), _dt(end, "end")),
         )
+
+    def _decoded_rows(self, where: str = "", params: tuple[Any, ...] = ()) -> list[dict[str, Any]]:
+        columns = (
+            "kind,observation_id,venue,symbol,sequence_id,event_at,received_at,ingested_at,"
+            "session_id,collector_version,payload_hash,quality_flags,scientific_state"
+        )
+        result: list[dict[str, Any]] = []
+        for row in self._conn.execute(
+            f"SELECT {columns},payload_json,NULL payload_zlib FROM microstructure_events {where}",
+            params,
+        ):
+            result.append(dict(row))
+        for row in self._conn.execute(
+            f"SELECT {columns},NULL payload_json,payload_zlib FROM microstructure_events_v2 {where}",
+            params,
+        ):
+            item = dict(row)
+            item["payload_json"] = zlib.decompress(item.pop("payload_zlib")).decode("utf-8")
+            result.append(item)
+        result.sort(key=lambda item: item["received_at"])
+        return result
+
+    def compact_microstructure_v1(self, *, batch_size: int = 10_000) -> dict[str, int]:
+        """Copy v1 rows losslessly to compressed v2, verify, then remove redundancy.
+
+        Call only while the collector is stopped. A filesystem backup must be made by
+        the operator before this maintenance operation.
+        """
+        if batch_size <= 0:
+            raise ValueError("batch_size precisa ser positivo")
+        before = self._conn.execute("SELECT COUNT(*) FROM microstructure_events").fetchone()[0]
+        copied = 0
+        while True:
+            rows = self._conn.execute(
+                "SELECT * FROM microstructure_events ORDER BY rowid LIMIT ?", (batch_size,)
+            ).fetchall()
+            if not rows:
+                break
+            with self._conn:
+                for row in rows:
+                    self._conn.execute(
+                        """INSERT INTO microstructure_events_v2
+                        (kind,observation_id,venue,symbol,sequence_id,event_at,received_at,
+                         ingested_at,session_id,collector_version,payload_hash,payload_zlib,
+                         quality_flags,scientific_state) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+                        ON CONFLICT(venue,symbol,kind,observation_id) DO NOTHING""",
+                        (
+                            row["kind"],
+                            row["observation_id"],
+                            row["venue"],
+                            row["symbol"],
+                            row["sequence_id"],
+                            row["event_at"],
+                            row["received_at"],
+                            row["ingested_at"],
+                            row["session_id"],
+                            row["collector_version"],
+                            row["payload_hash"],
+                            zlib.compress(row["payload_json"].encode("utf-8"), 6),
+                            row["quality_flags"],
+                            row["scientific_state"],
+                        ),
+                    )
+                    copied += 1
+                # Delete only rows proven present in v2 with the same content hash.
+                self._conn.execute(
+                    """DELETE FROM microstructure_events AS old WHERE EXISTS (
+                       SELECT 1 FROM microstructure_events_v2 AS new
+                       WHERE new.venue=old.venue AND new.symbol=old.symbol
+                         AND new.kind=old.kind AND new.observation_id=old.observation_id
+                         AND new.payload_hash=old.payload_hash)"""
+                )
+            # DELETE removes the entire verified batch (and any previously verified rows).
+        remaining = self._conn.execute("SELECT COUNT(*) FROM microstructure_events").fetchone()[0]
+        if remaining:
+            raise RuntimeError(f"compactação incompleta: {remaining} linhas v1 restantes")
+        return {"v1_before": before, "processed": copied, "v1_after": remaining}

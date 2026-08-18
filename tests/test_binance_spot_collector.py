@@ -1,5 +1,6 @@
 import asyncio
 import json
+import zlib
 from datetime import UTC, datetime, timedelta
 
 import pytest
@@ -186,3 +187,40 @@ def test_heartbeat_is_rate_limited(tmp_path, monkeypatch):
             "SELECT COUNT(*) FROM collector_health WHERE metric='heartbeat'"
         ).fetchone()[0]
         assert count == 2
+
+
+def test_new_events_use_compressed_storage_and_v1_migration_is_lossless(tmp_path):
+    path = tmp_path / "compressed.db"
+    trade = TradeObservation(I, 77, 100, 2, True, T0, T0, T0, "s")
+    with TradingStore(path) as store:
+        assert store.append_trade(trade)
+        assert store._conn.execute("SELECT COUNT(*) FROM microstructure_events").fetchone()[0] == 0
+        blob = store._conn.execute("SELECT payload_zlib FROM microstructure_events_v2").fetchone()[
+            0
+        ]
+        assert isinstance(blob, bytes)
+        assert store.quality_rows(T0 - timedelta(seconds=1), T0 + timedelta(seconds=1))[0][
+            "payload_json"
+        ]
+
+        # Simulate one legacy row and prove it survives the additive migration.
+        row = store._conn.execute("SELECT * FROM microstructure_events_v2").fetchone()
+        payload = zlib.decompress(row["payload_zlib"]).decode()
+        store._conn.execute("DELETE FROM microstructure_events_v2")
+        store._conn.execute(
+            """INSERT INTO microstructure_events
+            (kind,observation_id,venue,symbol,sequence_id,event_at,received_at,ingested_at,
+             session_id,collector_version,payload_hash,payload_json,quality_flags,scientific_state)
+             VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
+            tuple(row[k] for k in row.keys() if k != "payload_zlib")[:11]
+            + (payload, row["quality_flags"], row["scientific_state"]),
+        )
+        store._conn.commit()
+        result = store.compact_microstructure_v1(batch_size=1)
+        assert result == {"v1_before": 1, "processed": 1, "v1_after": 0}
+        assert (
+            store.quality_rows(T0 - timedelta(seconds=1), T0 + timedelta(seconds=1))[0][
+                "payload_hash"
+            ]
+            == row["payload_hash"]
+        )
