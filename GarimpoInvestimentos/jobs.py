@@ -37,6 +37,14 @@ def job_config(name: str, *, timeout_seconds: float | None = None) -> JobConfig:
             "GarimpoInvestimentos.observation_collect",
             "--live",
         ],
+        "microstructure-live": [
+            sys.executable,
+            "-m",
+            "GarimpoInvestimentos.trading.binance_spot_collector",
+            "--symbol",
+            "BTCUSDT",
+            "ETHUSDT",
+        ],
     }
     if name not in commands:
         raise ValueError(f"unknown job: {name}")
@@ -50,7 +58,7 @@ def job_config(name: str, *, timeout_seconds: float | None = None) -> JobConfig:
         provenance={"domain": "crypto", "scientific_change": False},
         scientific_state=(
             "COLLECTION_ONLY"
-            if name in {"v3-daily", "observation-daily", "observation-live"}
+            if name in {"v3-daily", "observation-daily", "observation-live", "microstructure-live"}
             else None
         ),
         runtime={"backend": "local", "root": _state_root(), "lock_stale_after_seconds": 86_400},
@@ -74,6 +82,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             "v3-daily",
             "observation-daily",
             "observation-live",
+            "microstructure-live",
         ),
     )
     parser.add_argument("--timeout", type=float)

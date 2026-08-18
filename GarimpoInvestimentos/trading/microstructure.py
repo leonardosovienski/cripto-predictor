@@ -140,11 +140,14 @@ class DepthUpdate:
     event_at: datetime
     bids: tuple[tuple[float, float], ...]
     asks: tuple[tuple[float, float], ...]
+    previous_final_update_id: int | None = None
 
     def __post_init__(self) -> None:
         event_at = ensure_utc(self.event_at, "DepthUpdate.event_at")
         if self.first_update_id < 0 or self.final_update_id < self.first_update_id:
             raise ValueError("DepthUpdate sequence inválida")
+        if self.previous_final_update_id is not None and self.previous_final_update_id < 0:
+            raise ValueError("DepthUpdate.previous_final_update_id inválido")
         for price, qty in (*self.bids, *self.asks):
             if price <= 0 or qty < 0:
                 raise ValueError("DepthUpdate exige price > 0 e qty >= 0")
@@ -177,6 +180,14 @@ class LocalOrderBook:
         if update.final_update_id <= self._last_update_id:
             return False
         expected = self._last_update_id + 1
+        if (
+            update.previous_final_update_id is not None
+            and update.previous_final_update_id != self._last_update_id
+        ):
+            raise DepthSequenceGap(
+                f"gap de previous final: esperado {self._last_update_id}, "
+                f"recebido {update.previous_final_update_id}"
+            )
         if not (update.first_update_id <= expected <= update.final_update_id):
             raise DepthSequenceGap(
                 f"gap de sequence: esperado {expected}, recebido "

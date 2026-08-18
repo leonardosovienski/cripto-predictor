@@ -412,6 +412,7 @@ dependencies = [
     { name = "pydantic" },
     { name = "pydantic-settings" },
     { name = "pyyaml" },
+    { name = "websockets" },
 ]
 
 [package.optional-dependencies]
@@ -478,6 +479,7 @@ requires-dist = [
     { name = "ruff", marker = "extra == 'test'", specifier = ">=0.12,<1" },
     { name = "scikit-learn", marker = "extra == 'science'", specifier = ">=1.6,<2" },
     { name = "scikit-learn", marker = "extra == 'v3'", specifier = ">=1.6,<2" },
+    { name = "websockets", specifier = ">=15,<17" },
 ]
 provides-extras = ["llm", "v3", "excel", "science", "test"]
 
