@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import time
 import uuid
 from dataclasses import asdict, dataclass
 from datetime import datetime
@@ -131,6 +132,7 @@ class TradingStore:
         self._conn = infra.connect(db_path)
         infra.run_migrations(self._conn, _MIGRATIONS)
         self.session_id = uuid.uuid4().hex
+        self._last_heartbeat_monotonic: float | None = None
 
     def new_session(self) -> str:
         self.session_id = uuid.uuid4().hex
@@ -443,8 +445,18 @@ class TradingStore:
                 ),
             )
 
-    def heartbeat(self) -> None:
+    def heartbeat(self, *, min_interval_seconds: float = 5.0) -> bool:
+        if min_interval_seconds <= 0:
+            raise ValueError("min_interval_seconds precisa ser positivo")
+        now = time.monotonic()
+        if (
+            self._last_heartbeat_monotonic is not None
+            and now - self._last_heartbeat_monotonic < min_interval_seconds
+        ):
+            return False
         self.record_health("heartbeat", "*")
+        self._last_heartbeat_monotonic = now
+        return True
 
     def latest_microstructure(self) -> list[Any]:
         return list(

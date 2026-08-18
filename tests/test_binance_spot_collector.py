@@ -173,3 +173,16 @@ def test_collector_has_no_order_or_paper_trading_imports():
     assert "paper_trader" not in source
     assert "TradeIntent" not in source
     assert "ExchangeAdapter" not in source
+
+
+def test_heartbeat_is_rate_limited(tmp_path, monkeypatch):
+    ticks = iter((10.0, 11.0, 15.0))
+    monkeypatch.setattr("GarimpoInvestimentos.trading.store.time.monotonic", lambda: next(ticks))
+    with TradingStore(tmp_path / "heartbeat.db") as store:
+        assert store.heartbeat(min_interval_seconds=5)
+        assert not store.heartbeat(min_interval_seconds=5)
+        assert store.heartbeat(min_interval_seconds=5)
+        count = store._conn.execute(
+            "SELECT COUNT(*) FROM collector_health WHERE metric='heartbeat'"
+        ).fetchone()[0]
+        assert count == 2
