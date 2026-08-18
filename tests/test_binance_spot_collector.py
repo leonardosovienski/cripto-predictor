@@ -195,7 +195,7 @@ def test_new_events_use_compressed_storage_and_v1_migration_is_lossless(tmp_path
     with TradingStore(path) as store:
         assert store.append_trade(trade)
         assert store._conn.execute("SELECT COUNT(*) FROM microstructure_events").fetchone()[0] == 0
-        blob = store._conn.execute("SELECT payload_zlib FROM microstructure_events_v2").fetchone()[
+        blob = store._conn.execute("SELECT payload_zlib FROM microstructure_events_v3").fetchone()[
             0
         ]
         assert isinstance(blob, bytes)
@@ -204,23 +204,38 @@ def test_new_events_use_compressed_storage_and_v1_migration_is_lossless(tmp_path
         ]
 
         # Simulate one legacy row and prove it survives the additive migration.
-        row = store._conn.execute("SELECT * FROM microstructure_events_v2").fetchone()
+        row = store._conn.execute("SELECT * FROM microstructure_events_v3").fetchone()
         payload = zlib.decompress(row["payload_zlib"]).decode()
-        store._conn.execute("DELETE FROM microstructure_events_v2")
         store._conn.execute(
             """INSERT INTO microstructure_events
             (kind,observation_id,venue,symbol,sequence_id,event_at,received_at,ingested_at,
              session_id,collector_version,payload_hash,payload_json,quality_flags,scientific_state)
              VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
-            tuple(row[k] for k in row.keys() if k != "payload_zlib")[:11]
-            + (payload, row["quality_flags"], row["scientific_state"]),
+            (
+                "trade",
+                "legacy-78",
+                "binance_spot",
+                "BTCUSDT",
+                78,
+                T0.isoformat(),
+                T0.isoformat(),
+                T0.isoformat(),
+                "legacy-session",
+                "binance_spot_microstructure_v1",
+                row["payload_hash_blob"].hex(),
+                payload,
+                "[]",
+                "COLLECTION_ONLY",
+            ),
         )
         store._conn.commit()
         result = store.compact_microstructure_v1(batch_size=1)
         assert result == {"v1_before": 1, "processed": 1, "v1_after": 0}
-        assert (
-            store.quality_rows(T0 - timedelta(seconds=1), T0 + timedelta(seconds=1))[0][
-                "payload_hash"
-            ]
-            == row["payload_hash"]
-        )
+        assert store.compact_microstructure_v2(batch_size=1) == {
+            "v2_before": 1,
+            "processed": 1,
+            "v2_after": 0,
+        }
+        rows = store.quality_rows(T0 - timedelta(seconds=1), T0 + timedelta(seconds=1))
+        assert len(rows) == 2
+        assert {item["payload_hash"] for item in rows} == {row["payload_hash_blob"].hex()}
