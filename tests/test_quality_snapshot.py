@@ -6,6 +6,7 @@ maduras, e a contagem de "H6 valid n" tem que vir da mesma função que fecha o
 veredito oficial (h6_spearman_verdict), não de uma reimplementação do filtro.
 """
 
+import json
 from datetime import UTC, datetime
 
 import pytest
@@ -171,3 +172,75 @@ def test_by_provider_quality_separa_por_juiz():
     assert result["mistral"]["accuracy"] == 1.0
     assert result["groq"]["n_total"] == 1
     assert result["groq"]["accuracy"] == 0.0
+
+
+def test_append_history_e_realmente_append_only(tmp_path):
+    history_path = tmp_path / "history.jsonl"
+    snap1 = {
+        "checked_at": "2026-08-19T00:00:00Z",
+        "pipeline": {"llm_fallbacks_recent": 0.0, "status": "HEALTHY"},
+        "sample": {
+            "total_predictions": 2,
+            "maturity_stage": "VERY_EARLY",
+            "mature_d7": 0,
+            "h6_valid_n": 2,
+            "h6_gate": 30,
+        },
+        "predictive_quality": {
+            "accuracy_d7": None,
+            "balanced_accuracy_d7": None,
+            "majority_baseline_d7": None,
+            "spearman_d7": None,
+        },
+        "by_provider": {"mistral": 1, "groq": 1},
+    }
+    quality_snapshot.append_history(snap1, path=history_path)
+    assert history_path.exists()
+    lines_after_first = history_path.read_text(encoding="utf-8").splitlines()
+    assert len(lines_after_first) == 1
+    record1 = json.loads(lines_after_first[0])
+    assert record1["n"] == 2
+    assert record1["maturity_stage"] == "VERY_EARLY"
+    assert record1["providers"] == {"mistral": 1, "groq": 1}
+
+    snap2 = {**snap1, "checked_at": "2026-08-20T00:00:00Z"}
+    snap2["sample"] = {**snap1["sample"], "total_predictions": 5}
+    quality_snapshot.append_history(snap2, path=history_path)
+
+    lines_after_second = history_path.read_text(encoding="utf-8").splitlines()
+    # a primeira linha continua exatamente igual — nada foi reescrito
+    assert lines_after_second[0] == lines_after_first[0]
+    assert len(lines_after_second) == 2
+    record2 = json.loads(lines_after_second[1])
+    assert record2["n"] == 5
+
+
+def test_history_record_extrai_campos_pedidos():
+    snap = {
+        "checked_at": "x",
+        "pipeline": {"llm_fallbacks_recent": 0.05, "status": "DEGRADED"},
+        "sample": {
+            "total_predictions": 12,
+            "maturity_stage": "IMMATURE",
+            "mature_d7": 8,
+            "h6_valid_n": 8,
+            "h6_gate": 30,
+        },
+        "predictive_quality": {
+            "accuracy_d7": 0.625,
+            "balanced_accuracy_d7": 0.6,
+            "majority_baseline_d7": {"accuracy": 0.5, "n": 8, "majority_direction": "up"},
+            "spearman_d7": {"rho": 0.12, "ic_lower": -0.1, "ic_upper": 0.3, "n": 8},
+        },
+        "by_provider": {"gemini": 4, "groq": 4},
+    }
+    record = quality_snapshot._history_record(snap)
+    assert record["n"] == 12
+    assert record["mature_n_d7"] == 8
+    assert record["accuracy_d7"] == 0.625
+    assert record["majority_baseline_accuracy_d7"] == 0.5
+    assert record["spearman_d7"] == 0.12
+    assert record["fallback_rate_recent"] == 0.05
+    assert record["pipeline_status"] == "DEGRADED"
+    assert record["providers"] == {"gemini": 4, "groq": 4}
+    assert record["h6_valid_n"] == 8

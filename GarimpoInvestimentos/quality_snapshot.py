@@ -36,8 +36,16 @@ from GarimpoInvestimentos.analyzers.backtest import (
     h6_spearman_verdict,
     overlap_block_length,
 )
+from GarimpoInvestimentos.core.paths import OUTPUT_DIR
 from GarimpoInvestimentos.governance import SCIENTIFIC_STATE_CHARTER
 from GarimpoInvestimentos.phase1_watchdog import check_phase1_health
+
+# Histórico append-only da própria saúde científica do projeto — NUNCA sobrescrito
+# nem truncado, só append (mesmo princípio de predictions_archive/migração 0016).
+# Não altera modelo nem H6; é só uma série temporal do que o snapshot já calcula,
+# pra enxergar evolução (n crescendo, accuracy oscilando, fallback rate) sem
+# precisar rodar o painel e guardar prints manualmente.
+HISTORY_PATH = OUTPUT_DIR / "quality_snapshot_history.jsonl"
 
 
 def _directional_stats(enriched: list[dict], horizon: int) -> dict:
@@ -77,6 +85,11 @@ def _spearman_stats(enriched: list[dict], horizon: int) -> dict | None:
 # Estágios de maturidade da amostra — monitoramento apenas, NUNCA substitui o
 # gate oficial de H6 (H6_MIN_N, verificado por h6_spearman_verdict). Serve só
 # pra evitar formar opinião com n=3/n=8/n=12 sem perceber o quão cedo ainda é.
+#
+# São RÓTULOS OPERACIONAIS, não níveis de confiança científica: n=100 pode
+# continuar fraco se houver forte dependência temporal, baixa diversidade de
+# ativos/providers, ou efeito concentrado num único regime. O n cresce sozinho;
+# a confiança real só vem das métricas ao lado (Spearman, baseline, by_provider).
 _MATURITY_STAGES = (
     (10, "VERY_EARLY"),
     (30, "IMMATURE"),
@@ -144,7 +157,14 @@ def _majority_baseline(enriched: list[dict], horizon: int) -> dict | None:
     """Baseline mais barato possível: prever sempre a direção majoritária
     observada NA PRÓPRIA amostra madura (não é um baseline causal/prospectivo —
     é só a régua mínima que qualquer sinal real precisa bater: se o LLM não
-    supera nem isso, ele não está adicionando informação)."""
+    supera nem isso, ele não está adicionando informação).
+
+    Este é o PRIMEIRO baseline, não o único que vai importar. Quando a amostra
+    crescer o suficiente (momentum/mean-reversion exigem buscar preço histórico
+    adicional por linha — custo real, não faz sentido com n pequeno), os
+    próximos baselines que precisam entrar são momentum simples e mean-reversion
+    simples: um predictor de mercado tem que bater não só "sempre a direção
+    majoritária", mas heurísticas triviais de mercado."""
     key = f"var_d{horizon}_pct"
     mature = [r for r in enriched if r.get(key) is not None]
     if len(mature) < 4:
@@ -350,9 +370,48 @@ def render(snap: dict) -> str:
     return "\n".join(lines)
 
 
+def _history_record(snap: dict) -> dict:
+    """Registro compacto de UMA execução — o que o usuário pediu pra rastrear
+    ao longo do tempo: n, mature_n, accuracy, baseline_accuracy, spearman,
+    fallback_rate, providers, H6_progress. Deriva tudo do snap já calculado,
+    não recalcula nada."""
+    q = snap["predictive_quality"]
+    return {
+        "checked_at": snap["checked_at"],
+        "n": snap["sample"]["total_predictions"],
+        "maturity_stage": snap["sample"]["maturity_stage"],
+        "mature_n_d7": snap["sample"]["mature_d7"],
+        "accuracy_d7": q["accuracy_d7"],
+        "balanced_accuracy_d7": q["balanced_accuracy_d7"],
+        "majority_baseline_accuracy_d7": (
+            q["majority_baseline_d7"]["accuracy"] if q["majority_baseline_d7"] else None
+        ),
+        "spearman_d7": q["spearman_d7"]["rho"] if q["spearman_d7"] else None,
+        "spearman_d7_ic_lower": q["spearman_d7"]["ic_lower"] if q["spearman_d7"] else None,
+        "spearman_d7_ic_upper": q["spearman_d7"]["ic_upper"] if q["spearman_d7"] else None,
+        "fallback_rate_recent": snap["pipeline"]["llm_fallbacks_recent"],
+        "pipeline_status": snap["pipeline"]["status"],
+        "providers": snap["by_provider"],
+        "h6_valid_n": snap["sample"]["h6_valid_n"],
+        "h6_gate": snap["sample"]["h6_gate"],
+    }
+
+
+def append_history(snap: dict, path=HISTORY_PATH) -> None:
+    """Append-only: nunca lê nem reescreve linhas existentes. Uma linha JSON
+    por execução — igual em espírito ao predictions_archive (migração 0016),
+    mas em arquivo, porque isso é observação de processo, não dado científico
+    que precise de trigger SQL."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with open(path, "a", encoding="utf-8") as f:
+        f.write(json.dumps(_history_record(snap), sort_keys=True) + "\n")
+
+
 def main() -> int:
     snap = asyncio.run(build_snapshot())
     print(render(snap))
+    append_history(snap)
+    print(f"\n(histórico registrado em {HISTORY_PATH})")
     return 0
 
 
