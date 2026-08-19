@@ -156,15 +156,12 @@ def _load_rows() -> list[dict]:
     return rows
 
 
-async def run():
-    rows = _load_rows()
-    if not rows:
-        print(
-            "⚠️ Nenhuma previsão válida no histórico oficial "
-            "(Feature Store, tabela predictions — só fallback ou vazio)."
-        )
-        return
-
+async def enrich_with_realized_prices(rows: list[dict]) -> list[dict]:
+    """Busca o preço realizado em D+1/D+7/D+30 (+PRIMARY_HORIZON) pra cada previsão
+    e calcula var_d{h}_pct. ÚNICA fonte de verdade desse cálculo — `run()` (backtest
+    oficial) e qualquer painel/relatório derivado (ex. quality_snapshot.py) DEVEM
+    reusar esta função, nunca reimplementar o loop de _realized_price: divergir
+    daqui seria ter dois critérios de maturidade diferentes no mesmo projeto."""
     today = datetime.now(UTC).replace(tzinfo=None)
     enriched = []
     async with get_http_client() as client:
@@ -189,6 +186,19 @@ async def run():
                         else None
                     )
                 enriched.append(out)
+    return enriched
+
+
+async def run():
+    rows = _load_rows()
+    if not rows:
+        print(
+            "⚠️ Nenhuma previsão válida no histórico oficial "
+            "(Feature Store, tabela predictions — só fallback ou vazio)."
+        )
+        return
+
+    enriched = await enrich_with_realized_prices(rows)
 
     _write(enriched)
     _report(enriched)
