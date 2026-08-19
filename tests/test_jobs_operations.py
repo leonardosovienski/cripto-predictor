@@ -56,6 +56,30 @@ def test_v3_daily_is_supervised_and_propagates_collection_failure(tmp_path, monk
     assert len(calls) == 1
 
 
+def test_phase1_exit_code_1_maps_to_partial_not_failed(tmp_path, monkeypatch):
+    """phase1.py sai com 1 quando algum juiz falha isoladamente (ex.: provider sem
+    creditos) mesmo gravando previsoes reais para os demais. Sem exit_statuses, o
+    predictor_ops trataria isso como FAILED para sempre enquanto aquele provider
+    ficar indisponivel — phase1_watchdog.py so aceita SUCCEEDED/PARTIAL."""
+    monkeypatch.setenv("PREDICTOR_OPS_STATE_DIR", str(tmp_path))
+    config = jobs.job_config("phase1")
+    assert config.exit_statuses == {1: RunStatus.PARTIAL}
+
+    isolated_failure_job = _job(tmp_path, "import sys; sys.exit(1)")
+    isolated_failure_job = JobConfig(
+        **{**isolated_failure_job.model_dump(), "exit_statuses": {1: RunStatus.PARTIAL}}
+    )
+    result = run_job(isolated_failure_job)
+    assert result.run_status == RunStatus.PARTIAL
+    assert result.exit_code == 1
+
+
+def test_other_jobs_do_not_get_the_partial_mapping(tmp_path, monkeypatch):
+    monkeypatch.setenv("PREDICTOR_OPS_STATE_DIR", str(tmp_path))
+    for name in ("backtest", "watchdog", "v3-daily", "observation-daily", "observation-live"):
+        assert jobs.job_config(name).exit_statuses == {}
+
+
 def test_live_observation_job_is_collection_only(tmp_path, monkeypatch):
     monkeypatch.setenv("PREDICTOR_OPS_STATE_DIR", str(tmp_path))
     config = jobs.job_config("observation-live")

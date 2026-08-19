@@ -61,6 +61,15 @@ def job_config(name: str, *, timeout_seconds: float | None = None) -> JobConfig:
             if name in {"v3-daily", "observation-daily", "observation-live", "microstructure-live"}
             else None
         ),
+        # phase1.py sai com 1 (GarimpoInvestimentos/phase1.py:348) sempre que ALGUM
+        # juiz falha isoladamente (ex.: um provider sem créditos), mesmo com os
+        # demais gravando previsões reais normalmente. Sem este mapeamento,
+        # predictor_ops.run_job trata qualquer exit code fora de exit_statuses como
+        # FAILED (models.py: default RunStatus.FAILED) — o job nunca mais reportaria
+        # SUCCEEDED enquanto aquele provider ficar indisponível, mesmo saudável pros
+        # outros. phase1_watchdog.py já aceita SUCCEEDED/PARTIAL como não-violação;
+        # PARTIAL é a leitura correta de "1 gravado, N falha(s) isolada(s)".
+        exit_statuses={1: RunStatus.PARTIAL} if name == "phase1" else {},
         runtime={"backend": "local", "root": _state_root(), "lock_stale_after_seconds": 86_400},
     )
 
