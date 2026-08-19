@@ -4,7 +4,7 @@
   "capital_authorized": false,
   "leverage_authorized": false,
   "llm_direct_trading_authorized": false,
-  "security_incident": "BLOCKED_PENDING_SECRET_ROTATION",
+  "security_incident": "ROTATED_CONFIRMED_BY_OWNER_2026-08-19",
   "hypotheses": {
     "H1": "CLOSED_NO_GO",
     "H2": "CLOSED_NO_GO",

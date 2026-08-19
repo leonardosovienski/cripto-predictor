@@ -91,4 +91,101 @@ código, histórico oficial na Feature Store com carimbos, veredito estatístico
 registrado com governança completa. **Sem recomendação para capital real** — a
 infraestrutura está pronta; o edge, comprovadamente, ainda não existe.
 
+> Este relatório é um retrato histórico de 2026-07-02 e permanece intocado como
+> registro. O fechamento mais recente da auditoria/remediação (2026-08-19) está
+> na seção 9 abaixo — não substitui os itens acima, complementa.
+
+## 9. Fechamento de auditoria e remediação — 2026-08-19
+
+**Método:** mesma disciplina do relatório original — cada item conferido no
+repositório (código, testes, `git log`/`git diff` pós-push), nunca na memória
+da conversa. Rodada de fechamento após várias rodadas anteriores de auditoria
+forense (H5, H6, V3/HMM, pipeline, segurança) documentadas nas conversas e nos
+commits desde `acc9f2a`.
+
+**Gaps reais encontrados e corrigidos nesta rodada** (nenhum era cosmético):
+1. Migração `_0016_predictions_append_only` não tinha teste para (a) um banco
+   criado ANTES de 0016 existir com `predictions` já populada, nem (b) uma
+   migração interrompida no meio. Ambos os cenários agora têm teste dedicado
+   em `tests/test_predictions_append_only.py` (7/7 passam).
+2. `h6_spearman_verdict()` — o gate anti-data-snooping oficial da H6 — nunca
+   teve teste direto provando que `pred_date > registered_at` e
+   `fonte == H6_LIVE_FONTE` realmente excluem previsões pré-registro/de outra
+   fonte do `n`. Adicionado em `tests/test_h6_spearman_verdict_eligibility.py`
+   (5/5 passam): pré-registro não conta, fonte errada não conta, elegível
+   conta, mistura conta só os elegíveis, ausência da H6 é no-op.
+3. `docs/SECURITY_INCIDENT_SERPAPI.md` reconciliado: as 5 chaves expostas em
+   texto puro durante depuração ao vivo desta auditoria foram rotacionadas
+   (confirmado diretamente pelo dono do repositório em produção). Registrado
+   como adendo, sem apagar o estado original `BLOCKED_PENDING_SECRET_ROTATION`.
+
+**Mapeamento H1–H7 → trial real, verificado literalmente em `docs/HYPOTHESES.md`
+(não por inferência):**
+
+```
+H1 -> v3-hmm-funding-oi-fr90        (HYPOTHESES.md:21, "Configuração:")
+H2 -> v3-hmm-funding-oi-fr21        (HYPOTHESES.md:39)
+H3 -> v3-hmm-funding-oi-fr90-h48    (HYPOTHESES.md:47)
+H4 -> v2-dpl-gemini-h7              (HYPOTHESES.md:60)
+H5 -> v2-dpl-multi-h7               (HYPOTHESES.md:79)
+H6 -> h6-sinal-invertido-d7         (HYPOTHESES.md:132)
+H7 -> não registrada em trials.json (HYPOTHESES.md:199 — infra pronta, coleta não iniciada)
+```
+
+`v1-direct-gemini-h7` não tem cabeçalho `### H<N>` em `HYPOTHESES.md` — é o
+ancestral pré-protocolo da linha LLM, sem rótulo formal (só entra no
+denominador de trials para o DSR). O mapeamento vive em
+`charters/scientific_state.json` (`hypothesis_trials`) e é travado por
+`tests/test_scientific_state_charter.py`.
+
+**Estado canônico final:**
+
+```
+AUDIT_AND_REMEDIATION = CLOSED
+KNOWN_BLOCKING_CODE_BUGS = NONE
+TEST_SUITE = PASS (616/616, 0 skipped)
+CURRENT_PROJECT_MODE = PROSPECTIVE_OBSERVATION
+
+H1/H2/H3 (HMM): TEMPORAL_VALIDITY=PASS, LEAKAGE=NOT_FOUND,
+                 ECONOMIC_EDGE=NO_GO, FAMILY_STATUS=FROZEN
+H4 = CLOSED_INSUFFICIENT_SAMPLE
+H5 = CLOSED_NO_GO
+     H5_POSITIVE_EDGE=REJECTED, H5_NEGATIVE_RELATION=WEAK_HISTORICAL_EVIDENCE
+     H5_RAW_DATA=LOST, H5_RETROSPECTIVE_REANALYSIS=NOT_REPRODUCIBLE
+     H5_HISTORICAL_CI=METHODOLOGICALLY_LIMITED (bootstrap sem overlap-aware
+     block_length na época; não reescrito, só qualificado)
+H6 = ACTIVE_PROSPECTIVE / IMMATURE
+     H6_SCIENTIFIC_INTEGRITY=PASS, H6_DEFINITION=FROZEN (hash verificável)
+     SANDBOX_H6_VALID_N=0 (ambiente de auditoria sem banco de produção)
+     PRODUCTION_H6_N=NOT_VERIFIED_IN_THIS_ENVIRONMENT — n real fica no
+     feature_store.db de produção, não neste sandbox
+H7 = REGISTERED_NOT_ACTIVATED
+
+DATA_INTEGRITY=HIGH, ENGINEERING_QUALITY=HIGH, OBSERVABILITY=HIGH
+CURRENT_RESEARCH_RIGOR=HIGH (pré-registro, hash, append-only, DELETE
+     bloqueado, bootstrap overlap-aware, testes causais, watchdog,
+     quality_snapshot, emendas históricas versionadas)
+HISTORICAL_REPRODUCIBILITY=LIMITED (perda dos dados brutos da H5)
+CURRENT_PREDICTIVE_QUALITY=NOT_YET_MEASURABLE (coorte H6 ainda imatura)
+HISTORICAL_ECONOMIC_RESULTS=NO_GO (H1-H3, H5)
+CURRENT_H6_ECONOMIC_EDGE=NOT_YET_MEASURABLE
+
+OFFLINE_SMOKE=PASS (main.run() ingest→analysis→persistence via
+     tests/test_run_redoma.py + 43 testes de integração por estágio)
+LIVE_PRODUCTION_SMOKE=NOT_EXECUTED_IN_SANDBOX
+
+SECURITY_CODE_BLOCKER=NONE
+SECURITY_NEW_KEYS_ROTATED=YES (confirmado pelo dono)
+SECURITY_OLD_KEYS_REVOKED=UNVERIFIED
+SECURITY_EXTERNAL_ACTION=VERIFY_OLD_KEY_REVOCATION
+
+LIVE_CAPITAL=FORBIDDEN
+```
+
+**Decisão:** `AUDIT_AND_REMEDIATION = CLOSED`. Nenhum blocker de código
+restante. H6 segue congelada e protegida — sua maturação real depende do
+`feature_store.db` de produção, não deste ambiente de auditoria. Próximo
+passo é observação prospectiva (coleta → watchdog → `quality_snapshot`),
+não nova auditoria.
+
 
