@@ -23,25 +23,25 @@ def test_chave_resolvida_via_init_kwarg_e_aceita_mesmo_ausente_de_os_environ(mon
     monkeypatch.delenv("GEMINI_API_KEY", raising=False)
     monkeypatch.delenv("SERP_API_KEY", raising=False)
     settings = Settings(
-        GEMINI_API_KEY="key-vinda-do-dotenv-nao-do-os-environ",
-        SERP_API_KEY="outra-key-vinda-do-dotenv-arquivo",
+        GEMINI_API_KEY="unit-test-key-vinda-do-dotenv",
+        SERP_API_KEY="unit-test-outra-key-vinda-do-dotenv",
     )
-    assert settings.GEMINI_API_KEY == "key-vinda-do-dotenv-nao-do-os-environ"
-    assert settings.SERP_API_KEY == "outra-key-vinda-do-dotenv-arquivo"
+    assert settings.GEMINI_API_KEY == "unit-test-key-vinda-do-dotenv"
+    assert settings.SERP_API_KEY == "unit-test-outra-key-vinda-do-dotenv"
 
 
 def test_chave_realmente_ausente_ainda_e_rejeitada(monkeypatch):
     monkeypatch.delenv("GEMINI_API_KEY", raising=False)
     monkeypatch.delenv("SERP_API_KEY", raising=False)
     with pytest.raises(MissingCredentialsError, match="GEMINI_API_KEY"):
-        Settings(GEMINI_API_KEY="", SERP_API_KEY="uma-chave-valida-bem-longa")
+        Settings(GEMINI_API_KEY="", SERP_API_KEY="unit-test-chave-valida-bem-longa")
 
 
 def test_chave_com_placeholder_ainda_e_rejeitada_mesmo_resolvida(monkeypatch):
     monkeypatch.delenv("GEMINI_API_KEY", raising=False)
     monkeypatch.delenv("SERP_API_KEY", raising=False)
     with pytest.raises(MissingCredentialsError, match="SERP_API_KEY"):
-        Settings(GEMINI_API_KEY="uma-chave-valida-bem-longa", SERP_API_KEY="changeme")
+        Settings(GEMINI_API_KEY="unit-test-chave-valida-bem-longa", SERP_API_KEY="changeme")
 
 
 def test_modo_multi_valida_todas_as_chaves_dos_providers_resolvidos(monkeypatch):
@@ -56,19 +56,19 @@ def test_modo_multi_valida_todas_as_chaves_dos_providers_resolvidos(monkeypatch)
     with pytest.raises(MissingCredentialsError, match="GROQ_API_KEY"):
         Settings(
             LLM_PROVIDER="multi",
-            GEMINI_API_KEY="key-valida-bem-longa-aqui",
+            GEMINI_API_KEY="unit-test-key-valida-bem-longa",
             GROQ_API_KEY="",  # faltando de propósito
-            CEREBRAS_API_KEY="key-valida-bem-longa-aqui",
-            MISTRAL_API_KEY="key-valida-bem-longa-aqui",
-            SERP_API_KEY="key-valida-bem-longa-aqui",
+            CEREBRAS_API_KEY="unit-test-key-valida-bem-longa",
+            MISTRAL_API_KEY="unit-test-key-valida-bem-longa",
+            SERP_API_KEY="unit-test-key-valida-bem-longa",
         )
 
     settings = Settings(
         LLM_PROVIDER="multi",
-        GEMINI_API_KEY="key-valida-bem-longa-aqui",
-        GROQ_API_KEY="key-valida-bem-longa-aqui",
-        CEREBRAS_API_KEY="key-valida-bem-longa-aqui",
-        MISTRAL_API_KEY="key-valida-bem-longa-aqui",
-        SERP_API_KEY="key-valida-bem-longa-aqui",
+        GEMINI_API_KEY="unit-test-key-valida-bem-longa",
+        GROQ_API_KEY="unit-test-key-valida-bem-longa",
+        CEREBRAS_API_KEY="unit-test-key-valida-bem-longa",
+        MISTRAL_API_KEY="unit-test-key-valida-bem-longa",
+        SERP_API_KEY="unit-test-key-valida-bem-longa",
     )
     assert settings.LLM_PROVIDER == "multi"
