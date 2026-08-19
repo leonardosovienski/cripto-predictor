@@ -16,8 +16,12 @@ if errorlevel 1 (
     exit /b 1
 )
 
-echo === Sync do ambiente (uv) ===
-uv sync --extra llm --extra excel
+rem O mesmo .venv e compartilhado por phase1, v3-daily e microstructure-live
+rem (GarimpoInvestimentos/jobs.py usa sys.executable para todos). Sincronizar
+rem so llm+excel DESINSTALA numpy/scipy/hmmlearn/ccxt (extra v3), quebrando a
+rem familia V3/HMM na proxima execucao dela (auditoria 2026-08-19).
+echo === Sync do ambiente (uv: llm + excel + v3) ===
+uv sync --extra llm --extra excel --extra v3
 if errorlevel 1 (
     echo uv sync falhou.
     popd
