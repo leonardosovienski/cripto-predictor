@@ -127,7 +127,17 @@ class Settings(BaseSettings):
             ]
         else:
             required = [provider_keys.get(self.LLM_PROVIDER, "GEMINI_API_KEY")]
-        require_secrets(*required_news, *required)
+        # `require_secrets(*names)` (default env=None) lê os.environ CRU — mas o
+        # pydantic-settings já resolveu os valores reais (de .env, env var do SO,
+        # ou default) nos campos de `self`. Um `.env` correto e completo, mas sem
+        # as mesmas chaves também exportadas como variável de ambiente do processo,
+        # passaria raw os.environ vazio e falharia aqui mesmo com tudo certo
+        # (auditoria 2026-08-19: reproduzido no pipeline de produção — GEMINI_API_KEY
+        # e SERP_API_KEY presentes e válidas no .env, mas MissingCredentialsError
+        # mesmo assim). Validar contra os valores JÁ RESOLVIDOS de self, não contra
+        # o ambiente do processo.
+        resolved = {name: getattr(self, name, "") for name in {*required_news, *required}}
+        require_secrets(*required_news, *required, env=resolved)
         return self
 
 
