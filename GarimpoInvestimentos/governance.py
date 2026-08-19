@@ -37,6 +37,13 @@ class ScientificStateCharter(BaseModel):
     llm_direct_trading_authorized: bool
     security_incident: str
     hypotheses: dict[str, str]
+    # Rótulo H<N> -> nome real da trial em trials.json. Existe porque "H1" sozinho
+    # é ambíguo sem isso: auditoria de 2026-08-19 descobriu que "H1" vinha sendo
+    # confundido com `v1-direct-gemini-h7` (o ancestral pré-protocolo da linha LLM,
+    # que nunca teve rótulo formal) quando o H1 real, definido em
+    # docs/HYPOTHESES.md, é `v3-hmm-funding-oi-fr90`. Mantém as duas fontes
+    # (trials.json e este charter) conectadas de forma explícita e verificável.
+    hypothesis_trials: dict[str, str]
     frozen_families: tuple[str, ...]
     notes: str
 
@@ -51,6 +58,11 @@ class ScientificStateCharter(BaseModel):
                 raise ValueError(f"{hypothesis} must remain CLOSED_NO_GO")
         if "funding_oi_hmm_v3" not in self.frozen_families:
             raise ValueError("funding/OI HMM V3 family must remain frozen")
+        if set(self.hypothesis_trials) != set(self.hypotheses):
+            raise ValueError(
+                "hypothesis_trials deve ter exatamente as mesmas chaves H<N> que hypotheses "
+                f"(diferenca: {set(self.hypothesis_trials) ^ set(self.hypotheses)})"
+            )
         return self
 
 
