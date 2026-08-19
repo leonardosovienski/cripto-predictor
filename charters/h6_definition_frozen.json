@@ -1,0 +1,37 @@
+{
+  "H6_DEFINITION_FROZEN": true,
+  "as_of_commit": "3f133f2f7e8186cfafcf42b0e80cbe8ff8f9b33a",
+  "generated_at": "2026-08-19T04:10:20.653003+00:00",
+  "governing_code": {
+    "constants": {
+      "H6_LIVE_FONTE": "\"dpl:fallback\"",
+      "H6_MIN_N": "30",
+      "H6_TRIAL_NAME": "\"h6-sinal-invertido-d7\""
+    },
+    "file": "GarimpoInvestimentos/analyzers/backtest.py",
+    "functions": [
+      "close_h6_inverted_signal",
+      "h6_spearman_verdict"
+    ]
+  },
+  "governing_code_sha256": "ffd36975bcdfae63ac7f53d3b2dbd5cac793c90af36b9cae12482b650fb32c32",
+  "note": "Rode 'python -m scripts.freeze_h6_definition --check' antes de reativar a coleta de H6 e a cada deploy subsequente enquanto H6 estiver ACTIVE_PROSPECTIVE. Um hash divergente é bloqueante até investigação humana.",
+  "rules": {
+    "min_n_gate": "n >= H6_MIN_N (30) antes de qualquer veredito ser calculado/impresso.",
+    "no_silent_change": "Qualquer mudança de threshold, horizonte, ativos, provider, score transformation ou filtro DEVE ser registrada como hipótese nova e prospectiva. H6 nunca é reaberta/reparametrizada.",
+    "registered_at_lock": "close_h6_inverted_signal/h6_spearman_verdict só aceitam pred_date > registered_at (trials.json). Não pode ser alterado sem virar uma trial nova.",
+    "reserved_fonte": "params.fonte = 'reserved:h6-inversao-sinal' nunca casa com o mecanismo genérico de fechamento de trial — só o dedicado."
+  },
+  "trial_id": "h6-sinal-invertido-d7",
+  "trials_json_entry": {
+    "name": "h6-sinal-invertido-d7",
+    "notes": "Pre-registro anti-data-snooping anterior ao resultado dedicado. A hipotese nasceu da correlacao negativa observada nas familias anteriores e so aceita previsoes posteriores a registered_at. MATURACAO DEDICADA ATIVA: close_h6_inverted_signal() e h6_spearman_verdict() implementam a leitura invertida sem casar a fonte reserved:* pelo mecanismo generico. Ultima evidencia versionada: Sharpe auxiliar +0.3479 com n=6, IMATURO; o gate exige n>=30 e IC95 positivo. H6 e pesquisa de correlacao, nao gera TradeIntent, nao autoriza shadow/capital e nao permite LLM como decisao direta de trading.",
+    "params": {
+      "fonte": "reserved:h6-inversao-sinal",
+      "horizonte_dias": 7
+    },
+    "registered_at": "2026-07-20T07:01:59Z",
+    "sharpe": 0.3479
+  },
+  "trials_json_entry_sha256": "ab16f1aab4c845d66beb0adc2ce54379e4b966573542a18f80e82c5f24bc060f"
+}

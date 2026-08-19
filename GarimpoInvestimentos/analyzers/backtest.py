@@ -36,9 +36,37 @@ PRIMARY_HORIZON = settings.SCORE_HORIZON_DAYS  # horizonte ao qual o score se re
 HORIZONS = sorted({1, 7, 30, PRIMARY_HORIZON})
 FALLBACK_MARKER = "fallback aplicado"
 
+# Cadência de emissão assumida da coleta prospectiva (garimpo_fase1.py roda uma vez
+# por dia UTC). Auditoria de 2026-08-19: block_length=5 (default de spearman_block_ci)
+# era MENOR que o horizonte de 7 dias da H5/H6 — um bloco de 5 observações
+# consecutivas não cobre a janela inteira de overlap entre previsões diárias com
+# horizonte D+7, subestimando a dependência serial e produzindo IC95% mais estreito
+# do que o real. Ver docs/HYPOTHESES.md (limitação histórica registrada).
+EMISSION_INTERVAL_DAYS = 1
+
+
+def overlap_block_length(
+    horizon_days: int, *, emission_interval_days: int = EMISSION_INTERVAL_DAYS
+) -> int:
+    """Tamanho de bloco mínimo defensável para o block bootstrap de Spearman.
+
+    Regra: com emissão a cada `emission_interval_days` e horizonte de `horizon_days`,
+    cada retorno realizado contamina até `ceil(horizon_days / emission_interval_days)`
+    previsões vizinhas (overlap span). O bloco do bootstrap precisa ser >= esse span
+    para capturar a dependência serial inteira — um bloco mais curto que o overlap
+    deixa vazar autocorrelação não modelada para fora do bloco, estreitando o IC.
+    `spearman_block_ci` já satura o bloco em `n//3` para amostras pequenas; aqui só
+    definimos o PISO metodológico, nunca um valor menor que o overlap real.
+    """
+    if emission_interval_days <= 0:
+        raise ValueError("emission_interval_days deve ser positivo")
+    overlap_span = -(-horizon_days // emission_interval_days)  # ceil sem importar math
+    return max(1, overlap_span)
+
 
 # Spearman + block bootstrap vivem em core/stats.py (puro, testável sem .env) —
-# importados acima. A significância (IC) entra no _report.
+# importados acima. A significância (IC) entra no _report. block_length é sempre
+# passado explicitamente (overlap_block_length), nunca o default da função (5).
 
 
 # ---------- CoinGecko histórico ----------
@@ -214,7 +242,7 @@ def _report(enriched: list[dict]) -> None:
                 f"aguarde previsões maduras.{marca}"
             )
             continue
-        rho, lo, hi = spearman_block_ci(pairs)
+        rho, lo, hi = spearman_block_ci(pairs, block_length=overlap_block_length(h))
         if rho is None:
             print(f"D+{h}: variância nula em score/retorno (n={n}) — sem correlação.{marca}")
             continue
@@ -247,7 +275,7 @@ def _report(enriched: list[dict]) -> None:
                 ("divergentes (LLM×técnico)", flagged),
             ):
                 if len(sub) >= 4:
-                    rs, los, his = spearman_block_ci(sub)
+                    rs, los, his = spearman_block_ci(sub, block_length=overlap_block_length(h))
                     if rs is not None and los is not None:
                         print(
                             f"      └ {label}: Spearman {rs:+.3f} "
@@ -269,7 +297,7 @@ def _report(enriched: list[dict]) -> None:
             if degradadas:
                 for label, sub in (("input completo", completas), ("input DEGRADADO", degradadas)):
                     if len(sub) >= 4:
-                        rs, los, his = spearman_block_ci(sub)
+                        rs, los, his = spearman_block_ci(sub, block_length=overlap_block_length(h))
                         if rs is not None and los is not None:
                             print(
                                 f"      └ {label}: Spearman {rs:+.3f} "
@@ -290,7 +318,7 @@ def _report(enriched: list[dict]) -> None:
                 ]
                 fonte_counts[fonte] = len(sub)
                 if len(sub) >= 4:
-                    rs, los, his = spearman_block_ci(sub)
+                    rs, los, his = spearman_block_ci(sub, block_length=overlap_block_length(h))
                     if rs is not None and los is not None:
                         print(
                             f"      └ fonte={fonte}: Spearman {rs:+.3f} "
@@ -309,7 +337,7 @@ def _report(enriched: list[dict]) -> None:
                 ]
                 news_counts[provider] = len(sub)
                 if len(sub) >= 4:
-                    rs, los, his = spearman_block_ci(sub)
+                    rs, los, his = spearman_block_ci(sub, block_length=overlap_block_length(h))
                     if rs is not None and los is not None:
                         print(
                             f"      └ news_provider={provider}: Spearman {rs:+.3f} "
@@ -327,7 +355,7 @@ def _report(enriched: list[dict]) -> None:
                 policy_counts[policy] = len(sub)
                 label = policy if policy == "legacy:unknown" else "configured"
                 if len(sub) >= 4:
-                    rs, los, his = spearman_block_ci(sub)
+                    rs, los, his = spearman_block_ci(sub, block_length=overlap_block_length(h))
                     if rs is not None and los is not None:
                         print(
                             f"      └ collection_policy={label}: Spearman {rs:+.3f} "
@@ -348,7 +376,7 @@ def _report(enriched: list[dict]) -> None:
                         if r.get(key) is not None and r.get("juiz") == juiz
                     ]
                     if len(sub) >= 4:
-                        rs, los, his = spearman_block_ci(sub)
+                        rs, los, his = spearman_block_ci(sub, block_length=overlap_block_length(h))
                         if rs is not None and los is not None:
                             print(
                                 f"      └ juiz={juiz}: Spearman {rs:+.3f} "
@@ -590,7 +618,7 @@ def h6_spearman_verdict(enriched: list[dict], horizon: int, *, trials_path=None)
             "veredito": f"aguardando n>={H6_MIN_N} (n={n})",
         }
 
-    rho, lo, hi = spearman_block_ci(pairs)
+    rho, lo, hi = spearman_block_ci(pairs, block_length=overlap_block_length(horizon))
     if rho is None or lo is None or hi is None:
         print(
             f"📊 H6 (sinal invertido, Spearman/IC95): n={n}, IC indisponível "
