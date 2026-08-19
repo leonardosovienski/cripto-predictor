@@ -36,8 +36,16 @@ from GarimpoInvestimentos.analyzers.backtest import (
     h6_spearman_verdict,
     overlap_block_length,
 )
+from GarimpoInvestimentos.core.paths import OUTPUT_DIR
 from GarimpoInvestimentos.governance import SCIENTIFIC_STATE_CHARTER
 from GarimpoInvestimentos.phase1_watchdog import check_phase1_health
+
+# Histórico append-only da própria saúde científica do projeto — NUNCA sobrescrito
+# nem truncado, só append (mesmo princípio de predictions_archive/migração 0016).
+# Não altera modelo nem H6; é só uma série temporal do que o snapshot já calcula,
+# pra enxergar evolução (n crescendo, accuracy oscilando, fallback rate) sem
+# precisar rodar o painel e guardar prints manualmente.
+HISTORY_PATH = OUTPUT_DIR / "quality_snapshot_history.jsonl"
 
 
 def _directional_stats(enriched: list[dict], horizon: int) -> dict:
@@ -74,8 +82,114 @@ def _spearman_stats(enriched: list[dict], horizon: int) -> dict | None:
     return {"n": len(pairs), "rho": rho, "ic_lower": lo, "ic_upper": hi}
 
 
+# Estágios de maturidade da amostra — monitoramento apenas, NUNCA substitui o
+# gate oficial de H6 (H6_MIN_N, verificado por h6_spearman_verdict). Serve só
+# pra evitar formar opinião com n=3/n=8/n=12 sem perceber o quão cedo ainda é.
+#
+# São RÓTULOS OPERACIONAIS, não níveis de confiança científica: n=100 pode
+# continuar fraco se houver forte dependência temporal, baixa diversidade de
+# ativos/providers, ou efeito concentrado num único regime. O n cresce sozinho;
+# a confiança real só vem das métricas ao lado (Spearman, baseline, by_provider).
+_MATURITY_STAGES = (
+    (10, "VERY_EARLY"),
+    (30, "IMMATURE"),
+    (100, "PRELIMINARY"),
+    (300, "DEVELOPING_EVIDENCE"),
+)
+
+
+def _maturity_stage(n: int) -> str:
+    for threshold, label in _MATURITY_STAGES:
+        if n < threshold:
+            return label
+    return "SUBSTANTIAL_SAMPLE"
+
+
+_SCORE_BUCKETS = ((0, 20), (20, 40), (40, 60), (60, 80), (80, 100))
+
+
+def _score_buckets(enriched: list[dict], horizon: int) -> list[dict]:
+    """score -> retorno realizado, em buckets fixos. Não decide nada sozinho
+    (n por bucket tende a ser pequeno por muito tempo) — é pra visualizar a
+    forma da relação, não pra tirar conclusão de um bucket isolado."""
+    key = f"var_d{horizon}_pct"
+    mature = [r for r in enriched if r.get(key) is not None]
+    out = []
+    for lo, hi in _SCORE_BUCKETS:
+        in_bucket = [
+            r for r in mature if lo <= r["score"] < hi or (hi == 100 and r["score"] == 100)
+        ]
+        if not in_bucket:
+            out.append({"range": f"{lo}-{hi}", "n": 0, "avg_return": None, "pct_positive": None})
+            continue
+        rets = [r[key] for r in in_bucket]
+        out.append(
+            {
+                "range": f"{lo}-{hi}",
+                "n": len(in_bucket),
+                "avg_return": sum(rets) / len(rets),
+                "pct_positive": sum(1 for x in rets if x > 0) / len(rets),
+            }
+        )
+    return out
+
+
+def _by_provider_quality(enriched: list[dict], horizon: int) -> dict[str, dict]:
+    """Accuracy/Spearman por juiz (provider:modelo:hash) no horizonte principal —
+    monitoramento, nunca seleção: a coorte continua coletando todos os providers
+    igualmente enquanto estiver aberta (ver auditoria sobre Gemini em H5)."""
+    juizes: list[str] = sorted({j for r in enriched if (j := r.get("juiz"))})
+    out = {}
+    for juiz in juizes:
+        sub = [r for r in enriched if r.get("juiz") == juiz]
+        d = _directional_stats(sub, horizon)
+        sp = _spearman_stats(sub, horizon)
+        out[juiz] = {
+            "n_total": len(sub),
+            "n_mature": d["n"],
+            "accuracy": d["accuracy"],
+            "spearman": sp["rho"] if sp else None,
+        }
+    return out
+
+
+def _majority_baseline(enriched: list[dict], horizon: int) -> dict | None:
+    """Baseline mais barato possível: prever sempre a direção majoritária
+    observada NA PRÓPRIA amostra madura (não é um baseline causal/prospectivo —
+    é só a régua mínima que qualquer sinal real precisa bater: se o LLM não
+    supera nem isso, ele não está adicionando informação).
+
+    Este é o PRIMEIRO baseline, não o único que vai importar. Quando a amostra
+    crescer o suficiente (momentum/mean-reversion exigem buscar preço histórico
+    adicional por linha — custo real, não faz sentido com n pequeno), os
+    próximos baselines que precisam entrar são momentum simples e mean-reversion
+    simples: um predictor de mercado tem que bater não só "sempre a direção
+    majoritária", mas heurísticas triviais de mercado."""
+    key = f"var_d{horizon}_pct"
+    mature = [r for r in enriched if r.get(key) is not None]
+    if len(mature) < 4:
+        return None
+    n_up = sum(1 for r in mature if r[key] > 0)
+    majority_is_up = n_up >= (len(mature) - n_up)
+    hits = sum(1 for r in mature if (r[key] > 0) == majority_is_up)
+    return {
+        "n": len(mature),
+        "accuracy": hits / len(mature),
+        "majority_direction": "up" if majority_is_up else "down",
+    }
+
+
 def _fmt_pct(value: float | None) -> str:
     return f"{value * 100:.1f}%" if value is not None else "NOT_AVAILABLE"
+
+
+def _fmt_majority_baseline(baseline: dict | None) -> str:
+    if baseline is None:
+        return "NOT_AVAILABLE"
+    return (
+        f"{_fmt_pct(baseline['accuracy'])} "
+        f"(sempre '{baseline['majority_direction']}', n={baseline['n']})"
+    )
 
 
 def _fmt_rho(stats: dict | None) -> str:
@@ -118,6 +232,10 @@ async def build_snapshot(now: datetime | None = None) -> dict:
     if with_price:
         h6_result = h6_spearman_verdict(with_price, PRIMARY_HORIZON)
 
+    score_buckets = _score_buckets(with_price, PRIMARY_HORIZON)
+    by_provider_quality = _by_provider_quality(with_price, PRIMARY_HORIZON)
+    majority_baseline = _majority_baseline(with_price, PRIMARY_HORIZON)
+
     state = {}
     if SCIENTIFIC_STATE_CHARTER.exists():
         state = json.loads(SCIENTIFIC_STATE_CHARTER.read_text(encoding="utf-8"))
@@ -140,6 +258,7 @@ async def build_snapshot(now: datetime | None = None) -> dict:
             "h6_valid_n": h6_result["n"] if h6_result else 0,
             "h6_gate": H6_MIN_N,
             "h6_fonte_esperada": H6_LIVE_FONTE,
+            "maturity_stage": _maturity_stage(len(rows_real)),
         },
         "predictive_quality": {
             "accuracy_d1": d1["accuracy"],
@@ -147,9 +266,12 @@ async def build_snapshot(now: datetime | None = None) -> dict:
             "balanced_accuracy_d1": d1["balanced_accuracy"],
             "balanced_accuracy_d7": d7["balanced_accuracy"],
             "spearman_d7": spearman_primary,
+            "majority_baseline_d7": majority_baseline,
+            "score_buckets_d7": score_buckets,
         },
         "by_asset": dict(by_asset),
         "by_provider": dict(by_juiz),
+        "by_provider_quality_d7": by_provider_quality,
         "by_fonte": dict(by_fonte),
         "historical_state": {
             "H5": state.get("hypotheses", {}).get("H5", "UNKNOWN"),
@@ -183,6 +305,7 @@ def render(snap: dict) -> str:
         "Scientific sample",
         "------------------",
         f"  Total prospective predictions:  {s['total_predictions']}",
+        f"  Maturity stage:                 {s['maturity_stage']}",
         f"  Mature D+1 predictions:         {s['mature_d1']}",
         f"  Mature D+{PRIMARY_HORIZON} predictions:         {s['mature_d7']}",
         f"  H6 valid n (fonte={s['h6_fonte_esperada']}, pred_date>registered_at): {s['h6_valid_n']}",
@@ -195,6 +318,20 @@ def render(snap: dict) -> str:
         f"  Balanced accuracy D+1:     {_fmt_pct(q['balanced_accuracy_d1'])}",
         f"  Balanced accuracy D+{PRIMARY_HORIZON}:     {_fmt_pct(q['balanced_accuracy_d7'])}",
         f"  Spearman(score, D+{PRIMARY_HORIZON}):      {_fmt_rho(q['spearman_d7'])}",
+        f"  Majority-class baseline D+{PRIMARY_HORIZON}:  {_fmt_majority_baseline(q['majority_baseline_d7'])}",
+        "",
+        f"  Score buckets (D+{PRIMARY_HORIZON}):",
+    ]
+    for bucket in q["score_buckets_d7"]:
+        if bucket["n"] == 0:
+            lines.append(f"    {bucket['range']:>7s}: n=0")
+        else:
+            lines.append(
+                f"    {bucket['range']:>7s}: n={bucket['n']:<3d} "
+                f"retorno médio={bucket['avg_return']:+.2f}% "
+                f"%positivo={bucket['pct_positive'] * 100:.0f}%"
+            )
+    lines += [
         "",
         "Economic quality",
         "-----------------",
@@ -207,6 +344,22 @@ def render(snap: dict) -> str:
         "Predictions by fonte:    "
         + (", ".join(f"{k}={v}" for k, v in snap["by_fonte"].items()) or "-"),
         "",
+        f"Quality by provider (D+{PRIMARY_HORIZON}, monitoramento — nunca seleção enquanto a coorte estiver aberta)",
+        "-----------------------------------------------------------------------------------------",
+    ]
+    if not snap["by_provider_quality_d7"]:
+        lines.append("  (sem dados ainda)")
+    else:
+        for juiz, pq in snap["by_provider_quality_d7"].items():
+            spearman_txt = (
+                f"{pq['spearman']:+.3f}" if pq["spearman"] is not None else "NOT_AVAILABLE"
+            )
+            lines.append(
+                f"  {juiz:45s} n_total={pq['n_total']:<3d} n_mature={pq['n_mature']:<3d} "
+                f"accuracy={_fmt_pct(pq['accuracy'])} spearman={spearman_txt}"
+            )
+    lines += [
+        "",
         "Historical state",
         "-----------------",
         f"  H5:  {snap['historical_state']['H5']}",
@@ -217,9 +370,48 @@ def render(snap: dict) -> str:
     return "\n".join(lines)
 
 
+def _history_record(snap: dict) -> dict:
+    """Registro compacto de UMA execução — o que o usuário pediu pra rastrear
+    ao longo do tempo: n, mature_n, accuracy, baseline_accuracy, spearman,
+    fallback_rate, providers, H6_progress. Deriva tudo do snap já calculado,
+    não recalcula nada."""
+    q = snap["predictive_quality"]
+    return {
+        "checked_at": snap["checked_at"],
+        "n": snap["sample"]["total_predictions"],
+        "maturity_stage": snap["sample"]["maturity_stage"],
+        "mature_n_d7": snap["sample"]["mature_d7"],
+        "accuracy_d7": q["accuracy_d7"],
+        "balanced_accuracy_d7": q["balanced_accuracy_d7"],
+        "majority_baseline_accuracy_d7": (
+            q["majority_baseline_d7"]["accuracy"] if q["majority_baseline_d7"] else None
+        ),
+        "spearman_d7": q["spearman_d7"]["rho"] if q["spearman_d7"] else None,
+        "spearman_d7_ic_lower": q["spearman_d7"]["ic_lower"] if q["spearman_d7"] else None,
+        "spearman_d7_ic_upper": q["spearman_d7"]["ic_upper"] if q["spearman_d7"] else None,
+        "fallback_rate_recent": snap["pipeline"]["llm_fallbacks_recent"],
+        "pipeline_status": snap["pipeline"]["status"],
+        "providers": snap["by_provider"],
+        "h6_valid_n": snap["sample"]["h6_valid_n"],
+        "h6_gate": snap["sample"]["h6_gate"],
+    }
+
+
+def append_history(snap: dict, path=HISTORY_PATH) -> None:
+    """Append-only: nunca lê nem reescreve linhas existentes. Uma linha JSON
+    por execução — igual em espírito ao predictions_archive (migração 0016),
+    mas em arquivo, porque isso é observação de processo, não dado científico
+    que precise de trigger SQL."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with open(path, "a", encoding="utf-8") as f:
+        f.write(json.dumps(_history_record(snap), sort_keys=True) + "\n")
+
+
 def main() -> int:
     snap = asyncio.run(build_snapshot())
     print(render(snap))
+    append_history(snap)
+    print(f"\n(histórico registrado em {HISTORY_PATH})")
     return 0
 
 
