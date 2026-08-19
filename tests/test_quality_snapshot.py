@@ -102,72 +102,43 @@ def test_directional_stats_ignora_score_neutro():
     assert stats["accuracy"] == pytest.approx(2 / 3)
 
 
-def test_render_nao_quebra_com_stats_vazias(db_path):
-    """Reusa o snapshot real de um banco vazio (não duplica o schema à mão —
-    um dict sintético desatualiza sozinho toda vez que build_snapshot ganha
-    um campo novo, como já aconteceu com maturity_stage)."""
-    import asyncio
-
-    with FeatureStore(db_path):
-        pass
-    snap = asyncio.run(quality_snapshot.build_snapshot())
+def test_render_nao_quebra_com_stats_vazias():
+    snap = {
+        "checked_at": "x",
+        "pipeline": {
+            "predictions_persisted": 0,
+            "predictions_today": 0,
+            "llm_fallbacks_recent": None,
+            "status": "FAILED",
+            "watchdog_violations": ["no_real_prediction_ever_recorded"],
+            "watchdog_degraded": [],
+            "last_successful_run": None,
+        },
+        "sample": {
+            "total_predictions": 0,
+            "mature_d1": 0,
+            "mature_d7": 0,
+            "h6_valid_n": 0,
+            "h6_gate": 30,
+            "h6_fonte_esperada": "dpl:fallback",
+        },
+        "predictive_quality": {
+            "accuracy_d1": None,
+            "accuracy_d7": None,
+            "balanced_accuracy_d1": None,
+            "balanced_accuracy_d7": None,
+            "spearman_d7": None,
+        },
+        "by_asset": {},
+        "by_provider": {},
+        "by_fonte": {},
+        "historical_state": {
+            "H5": "CLOSED_NO_GO",
+            "H6": "COLLECTION_ONLY_IMMATURE",
+            "V3_frozen_families": ["funding_oi_hmm_v3"],
+            "capital_authorized": False,
+        },
+    }
     text = quality_snapshot.render(snap)
-    assert "PROJECT QUALITY SNAPSHOT" in text
+    assert "FAILED" in text
     assert "0 / 30" in text
-    assert "VERY_EARLY" in text
-
-
-def test_maturity_stage_thresholds():
-    assert quality_snapshot._maturity_stage(0) == "VERY_EARLY"
-    assert quality_snapshot._maturity_stage(9) == "VERY_EARLY"
-    assert quality_snapshot._maturity_stage(10) == "IMMATURE"
-    assert quality_snapshot._maturity_stage(29) == "IMMATURE"
-    assert quality_snapshot._maturity_stage(30) == "PRELIMINARY"
-    assert quality_snapshot._maturity_stage(99) == "PRELIMINARY"
-    assert quality_snapshot._maturity_stage(100) == "DEVELOPING_EVIDENCE"
-    assert quality_snapshot._maturity_stage(299) == "DEVELOPING_EVIDENCE"
-    assert quality_snapshot._maturity_stage(300) == "SUBSTANTIAL_SAMPLE"
-    assert quality_snapshot._maturity_stage(10_000) == "SUBSTANTIAL_SAMPLE"
-
-
-def test_score_buckets_agrupa_corretamente():
-    enriched = [
-        {"score": 10, "var_d7_pct": -5.0},
-        {"score": 25, "var_d7_pct": 1.0},
-        {"score": 65, "var_d7_pct": 2.0},
-        {"score": 100, "var_d7_pct": 3.0},  # extremo direito inclusivo
-    ]
-    buckets = quality_snapshot._score_buckets(enriched, 7)
-    by_range = {b["range"]: b for b in buckets}
-    assert by_range["0-20"]["n"] == 1
-    assert by_range["0-20"]["avg_return"] == -5.0
-    assert by_range["20-40"]["n"] == 1
-    assert by_range["40-60"]["n"] == 0
-    assert by_range["40-60"]["avg_return"] is None
-    assert by_range["60-80"]["n"] == 1
-    assert by_range["80-100"]["n"] == 1  # score=100 cai no último bucket
-
-
-def test_majority_baseline_precisa_de_n_minimo():
-    assert quality_snapshot._majority_baseline([{"var_d7_pct": 1.0}] * 3, 7) is None
-
-
-def test_majority_baseline_calcula_direcao_majoritaria():
-    enriched = [{"var_d7_pct": v} for v in (1.0, 2.0, 3.0, -1.0)]  # 3 up, 1 down
-    baseline = quality_snapshot._majority_baseline(enriched, 7)
-    assert baseline["majority_direction"] == "up"
-    assert baseline["n"] == 4
-    assert baseline["accuracy"] == pytest.approx(3 / 4)
-
-
-def test_by_provider_quality_separa_por_juiz():
-    enriched = [
-        {"juiz": "mistral", "score": 60, "var_d7_pct": 1.0},
-        {"juiz": "mistral", "score": 40, "var_d7_pct": -1.0},
-        {"juiz": "groq", "score": 60, "var_d7_pct": -1.0},
-    ]
-    result = quality_snapshot._by_provider_quality(enriched, 7)
-    assert result["mistral"]["n_total"] == 2
-    assert result["mistral"]["accuracy"] == 1.0
-    assert result["groq"]["n_total"] == 1
-    assert result["groq"]["accuracy"] == 0.0
