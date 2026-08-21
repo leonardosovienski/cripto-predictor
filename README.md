@@ -264,6 +264,9 @@ declarado, e dado coletado **depois** do registro — nunca reaproveitando hist�
 [docs/CONFERENCIA_GERAL.md](docs/CONFERENCIA_GERAL.md) ·
 [docs/RELATORIO_FINAL.md](docs/RELATORIO_FINAL.md) (fechamento canônico).
 
+Panorama geral do estado atual — o que existe, o que falta e o que **não** falta:
+[docs/PANORAMA_2026-08-21.md](docs/PANORAMA_2026-08-21.md).
+
 Os documentos datados são **registros históricos** e não são reescritos: correções
 entram como errata ou adendo, preservando o texto original. O índice consolidado do
 que neles já não vale está em
