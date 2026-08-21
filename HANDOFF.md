@@ -1,5 +1,28 @@
 # HANDOFF — GarimpoInvestimentos (Fase 1 + melhorias)
 
+> ## ⚠️ ERRATA 2026-08-19 — leia antes dos adendos abaixo
+>
+> Este documento é um **registro histórico da era pré-DPL** e não é reescrito: os
+> adendos abaixo permanecem como foram publicados, com as datas que tinham. Três
+> pontos deles já não descrevem o estado atual:
+>
+> 1. **Incidente de segurança.** O adendo de 2026-07-18 registra
+>    `SECURITY_INCIDENT_STATUS = BLOCKED_PENDING_SECRET_ROTATION`. O estado atual é
+>    `ROTATED_CONFIRMED_BY_OWNER_2026-08-19` — as 5 chaves expostas foram rotacionadas,
+>    confirmado pelo dono do repositório. Resta apenas a verificação externa de que as
+>    chaves **antigas** foram revogadas. Registro canônico:
+>    [docs/SECURITY_INCIDENT_SERPAPI.md](docs/SECURITY_INCIDENT_SERPAPI.md).
+> 2. **Arquivos citados que não existem neste repositório.**
+>    `../SECURITY_INCIDENT_SECRET_ROTATION.md` e `../ECOSYSTEM_HANDOFF.md` eram
+>    documentos do workspace do ecossistema, fora deste repo. Use
+>    `docs/SECURITY_INCIDENT_SERPAPI.md` e `docs/RELATORIO_FINAL.md` §9 no lugar.
+> 3. **Contagens de teste.** Os números citados nos adendos (302, 306, 320…) são de
+>    suas respectivas datas. A suíte atual: **616 verdes, 0 skips** com
+>    `uv sync --locked --all-extras`.
+>
+> Estado científico e operacional corrente: [README.md](README.md) e
+> [docs/RELATORIO_FINAL.md](docs/RELATORIO_FINAL.md) §9.
+
 > **Hardening operacional 2026-07-20:** `scripts/feature_store_backup.py`
 > fecha o gap local de backup/restore do `output/feature_store.db`: snapshot
 > consistente via API SQLite, manifesto SHA-256, `integrity_check`, publicacao
