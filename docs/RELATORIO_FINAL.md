@@ -92,8 +92,9 @@ registrado com governança completa. **Sem recomendação para capital real** �
 infraestrutura está pronta; o edge, comprovadamente, ainda não existe.
 
 > Este relatório é um retrato histórico de 2026-07-02 e permanece intocado como
-> registro. O fechamento mais recente da auditoria/remediação (2026-08-19) está
-> na seção 9 abaixo — não substitui os itens acima, complementa.
+> registro. O fechamento da auditoria/remediação (2026-08-19) está na seção 9
+> abaixo, e a reconciliação das pendências das seções 5 e 7 (2026-08-21) na
+> seção 10 — nenhuma das duas substitui os itens acima; complementam.
 
 ## 9. Fechamento de auditoria e remediação — 2026-08-19
 
@@ -189,3 +190,46 @@ passo é observação prospectiva (coleta → watchdog → `quality_snapshot`),
 não nova auditoria.
 
 
+
+## 10. Reconciliação de pendências — 2026-08-21
+
+**Escopo desta seção.** As seções 1-8 são o retrato de 2026-07-02 e a seção 9 é o
+fechamento de auditoria de 2026-08-19; ambas permanecem intocadas. A §9 tratou de
+integridade científica e blockers de código — não passou pelas **listas de pendência**
+da §5 (matriz de riscos) e da §7 (próximos passos), que continuaram descrevendo um
+repositório de várias branches com CI inexistente. Esta seção fecha essa lacuna,
+item a item, com a evidência de cada verificação. Índice geral das divergências dos
+documentos datados: [ERRATA_2026-08-21.md](ERRATA_2026-08-21.md).
+
+### 10.1 Itens da §5 e da §7 — estado verificado
+
+| Item (onde aparece) | Estado em 2026-08-21 | Evidência |
+|---|---|---|
+| "falta CI" (§5, mitigado 2; §7.4) | **fechado** | `.github/workflows/ci.yml`: quality (ruff + pyright + scan de segredos + build + pytest com cobertura + contract test das wheels instaladas fora do checkout), python-314-experimental, all-extras, container (SBOM + Trivy) |
+| "falta ADR-015" / proveniência sem hash (§5, mitigado 1; §7.4) | **fechado** | migração `_0012_provenance_content_hash` + `content_hash` calculado em `ingest.py`; o ADR-015 registra status "aceito e implementado" |
+| "rotação das chaves antigas — pendente desde 14/06" (§5, aberto 2; §7.4) | **rotacionado** | `ROTATED_CONFIRMED_BY_OWNER_2026-08-19`; ver §9 e [SECURITY_INCIDENT_SERPAPI.md](SECURITY_INCIDENT_SERPAPI.md). Persiste apenas a verificação externa de revogação das chaves **antigas** |
+| "aprovar a reconciliação V3 → promover a `main` (hoje intacta em `a78580c`)" (§7.1) | **executado** | `GarimpoInvestimentos/v3/` está na `main`; nenhuma das branches do plano existe ([RECONCILIACAO_V3.md](RECONCILIACAO_V3.md) traz errata) |
+| "coleta diária até o backtest ter n (hoje: 4 previsões)" (§7.2) | **superado** | H5 fechou em 2026-07-28 com **n=440**: Spearman −0,166 [IC95 −0,266; −0,057], NO-GO. A coleta prospectiva atual serve à H6 |
+| "pivot de pesquisa da V3" (§7.3) | **parcial** | a família `funding_oi_hmm_v3` está em `frozen_families` (charter); H6 e H7 nasceram registradas. Nenhuma hipótese nova validou edge |
+| "C-03 — consenso ao vivo" (§7.4) | **aberto** | sem evidência de que a agregação por consenso tenha fundido dado real; a confiança segue baseada em testes sintéticos ([AUDITORIA_DPL.md](AUDITORIA_DPL.md) C-03) |
+| "equivalência ETH/SOL" (§7.4) | **aberto** | a equivalência foi provada para bitcoin/kaspa/aave (`6416a71`); ETH/SOL seguem pendentes por 429 |
+| "regime shift em produção" (§5, aberto 1) | **aberto, irrelevante** | continua sem produção — nenhum capital autorizado |
+
+### 10.2 Contagens de teste
+
+A §2 tabula suítes por branch (118 / 87+2 / 85 / 39) e a §8 cita "329 testes verdes no
+ecossistema". Todos esses números são de 2026-07-02 e das branches daquela data. A §9
+já registra 616/616; verificado de novo em 2026-08-21:
+
+| Comando | Resultado |
+|---|---|
+| `uv sync --locked --all-extras && uv build && uv run pytest -q` | **616 passed, 0 skipped** |
+| `uv sync --locked --extra test && uv build && uv run pytest -q` | **601 passed, 2 skipped** (numpy e hmmlearn) |
+
+### 10.3 O que a §6 e a §8 mantêm
+
+O veredito estatístico da §6 (**NO-GO** com governança completa), a nota **6,0/10** e a
+declaração da §8 — infraestrutura pronta, edge inexistente, **sem recomendação para
+capital real** — continuam valendo integralmente. Nada nesta reconciliação altera
+`trials.json`, gates, thresholds ou o estado científico das hipóteses; ver §9 para o
+estado canônico de H1-H7 e [../README.md](../README.md) para o corrente.
