@@ -24,12 +24,14 @@ import asyncio
 import json
 from collections import Counter
 from datetime import UTC, datetime
+from pathlib import Path
 
 from predictor_core.stats import spearman_block_ci
 
 from GarimpoInvestimentos.analyzers.backtest import (
     H6_LIVE_FONTE,
     H6_MIN_N,
+    H6_TRIAL_NAME,
     PRIMARY_HORIZON,
     _load_rows,
     enrich_with_realized_prices,
@@ -46,6 +48,19 @@ from GarimpoInvestimentos.phase1_watchdog import check_phase1_health
 # pra enxergar evolução (n crescendo, accuracy oscilando, fallback rate) sem
 # precisar rodar o painel e guardar prints manualmente.
 HISTORY_PATH = OUTPUT_DIR / "quality_snapshot_history.jsonl"
+
+# Estado da H6 em arquivo VERSIONADO — ao lado de trials.json, mesma convenção
+# ("viaja com o repositório"). Existe por um motivo específico: o n real da H6 é
+# calculado a partir do feature_store.db, que vive em OUTPUT_DIR e é gitignored.
+# Logo, ninguém fora da máquina de produção consegue vê-lo — nem uma revisão, nem
+# um handoff, nem o cron semanal "Watch H6 n>=30", que só enxerga o que está
+# commitado. Sem este artefato, o único n visível de fora é o número escrito à mão
+# em docs/HYPOTHESES.md, que envelhece em silêncio. Este arquivo é a ponte
+# produção -> git: gerado aqui, commitado por quem roda o painel.
+#
+# NÃO é fonte científica: não substitui trials.json nem o gate de
+# h6_spearman_verdict, e não autoriza nada. É observação de estado, publicada.
+H6_STATUS_PATH = Path(__file__).resolve().parent / "h6_status.json"
 
 
 def _directional_stats(enriched: list[dict], horizon: int) -> dict:
@@ -242,6 +257,11 @@ async def build_snapshot(now: datetime | None = None) -> dict:
 
     return {
         "checked_at": stamp.isoformat(),
+        # Resultado canônico bruto da H6. Antes daqui só o `n` sobrevivia em
+        # sample.h6_valid_n — o que basta enquanto n < gate (a função devolve
+        # rho/IC como None de propósito), mas descartaria o VEREDITO no dia em
+        # que o gate abrisse. Guardado inteiro para o artefato versionado.
+        "h6": h6_result,
         "pipeline": {
             "predictions_persisted": len(rows_real),
             "predictions_today": predictions_today,
@@ -407,11 +427,64 @@ def append_history(snap: dict, path=HISTORY_PATH) -> None:
         f.write(json.dumps(_history_record(snap), sort_keys=True) + "\n")
 
 
+def h6_status_payload(snap: dict, *, observed_at: str | None = None) -> dict:
+    """Estado publicável da H6. Espelha o resultado canônico sem recalcular nada.
+
+    `rho`/`ic_*`/`veredito` só têm valor quando n >= gate: abaixo disso
+    h6_spearman_verdict devolve None de propósito, para não expor uma
+    correlação prematura como se fosse sinal. Este payload preserva esse
+    silêncio em vez de contorná-lo.
+    """
+    h6 = snap.get("h6") or {}
+    return {
+        "trial": H6_TRIAL_NAME,
+        "observed_at": observed_at or snap["checked_at"],
+        "n": snap["sample"]["h6_valid_n"],
+        "gate": snap["sample"]["h6_gate"],
+        "gate_atingido": snap["sample"]["h6_valid_n"] >= snap["sample"]["h6_gate"],
+        "fonte_esperada": snap["sample"]["h6_fonte_esperada"],
+        "rho": h6.get("rho"),
+        "ic_lower": h6.get("ic_lower"),
+        "ic_upper": h6.get("ic_upper"),
+        "veredito": h6.get("veredito"),
+    }
+
+
+def write_h6_status(snap: dict, path: Path = H6_STATUS_PATH) -> bool:
+    """Grava o estado da H6 só quando ele MUDA. Devolve True se o arquivo mudou.
+
+    A idempotência é o ponto: o painel roda todo dia, mas um arquivo versionado
+    que muda diariamente só no timestamp produz commit de ruído e treina quem
+    revisa a ignorá-lo. Por isso `observed_at` é preservado enquanto o estado
+    for o mesmo — ele marca quando aquele estado foi visto PELA PRIMEIRA VEZ,
+    não a última execução (essa fica no histórico append-only, que é local).
+    """
+    novo = h6_status_payload(snap)
+    if path.exists():
+        try:
+            atual = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            atual = None
+        if isinstance(atual, dict):
+            comparavel = {k: v for k, v in novo.items() if k != "observed_at"}
+            if {k: v for k, v in atual.items() if k != "observed_at"} == comparavel:
+                return False
+    path.write_text(json.dumps(novo, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    return True
+
+
 def main() -> int:
     snap = asyncio.run(build_snapshot())
     print(render(snap))
     append_history(snap)
     print(f"\n(histórico registrado em {HISTORY_PATH})")
+    if write_h6_status(snap):
+        print(
+            f"(estado da H6 MUDOU -> {H6_STATUS_PATH.name} atualizado; "
+            f"commite-o para que o acompanhamento externo enxergue o n)"
+        )
+    else:
+        print(f"(estado da H6 inalterado — {H6_STATUS_PATH.name} não foi tocado)")
     return 0
 
 
