@@ -18,7 +18,7 @@
 
 | Documento | Para quê | Quando ler |
 |---|---|---|
-| **este** | overview + roadmap; o estado atual | primeiro |
+| **este** | overview + roadmap; o estado atual; onde as coisas estão na máquina (§10) | primeiro |
 | `README.md` | como instalar, rodar e a estrutura de pastas | antes de executar qualquer coisa |
 | `docs/HYPOTHESES.md` | o pré-registro: todas as hipóteses, critérios e vereditos | antes de propor QUALQUER ideia nova |
 | `docs/PANORAMA_2026-08-21.md` | inventário detalhado + avaliação crítica do projeto | para profundidade |
@@ -154,7 +154,7 @@ capabilities.
 
 ---
 
-## 4. O que foi feito em 2026-08-21 — 10 PRs, todos na `main`
+## 4. O que foi feito em 2026-08-21 — 11 PRs, todos na `main`
 
 | PR | O que entregou |
 |---|---|
@@ -168,6 +168,7 @@ capabilities.
 | #44 | Fecha 4 lacunas do panorama: `signal_adapter`, `report`, `cost_policy`, e renovação condicional do atestado (`--if-expiring-within` + job `attest-renew`) |
 | #45 | **Harness de verdade plantada** (`ground_truth_harness.py`) |
 | #46 | **Poder do gate** (`gate_power.py`) + B12 com a tabela completa |
+| #47 | Este documento; e, no passe de reverificação dele, 4 correções próprias + o `README` anunciando como abertos dois gaps que o #44 fechou |
 
 ### 4.1 As duas medições que mudam como ler tudo
 
@@ -389,7 +390,95 @@ uv run cripto-predictor-job phase1 | backtest | watchdog | v3-daily
 
 ---
 
-## 10. O padrão que vale levar para a próxima sessão
+## 10. Onde as coisas estão
+
+Esta seção existe porque a fase de coleta acontece **na máquina de produção**, e
+quase tudo que importa ali fica **fora do repositório**.
+
+### 10.1 No repositório
+
+| Caminho | O que é |
+|---|---|
+| `GarimpoInvestimentos/.env` | as chaves reais. **Não versionado**; veja `.env.example`. Chave ausente ou com menos de 16 chars **crasha na carga de `config.py`**, por design |
+| `GarimpoInvestimentos/trials.json` | o registro de tentativas — denominador do DSR |
+| `GarimpoInvestimentos/h6_status.json` | a ponte produção → git do `n` da H6. **Não é gitignored** (confirmado com `git check-ignore`): existe para ser commitado |
+| `charters/` | invariantes (`scientific_state.json`) e a definição congelada da H6 |
+| `run_sinal_diario.bat` | ingestão dos 10 fixos + `--discover 15` + análise |
+| `run_garimpo_fase1.bat` | `jobs phase1` + `jobs backtest` |
+| `scripts/fix_task_*.ps1` | correções do Agendador do Windows (ver §10.3) |
+| `events.jsonl` | telemetria estruturada |
+
+Os dois `.bat` rodam `uv sync --extra llm --extra excel --extra v3` — os **três**
+extras juntos. Sincronizar só `llm+excel` desinstala numpy/scipy/hmmlearn/ccxt e
+quebra a família V3 na execução seguinte. Está comentado dentro dos dois arquivos
+porque já aconteceu (auditoria de 2026-08-19).
+
+### 10.2 Fora do repositório — os caminhos de runtime
+
+Resolvidos em `GarimpoInvestimentos/core/paths.py` via `platformdirs`, e cada um
+pode ser sobrescrito por variável de ambiente (nome novo ou legado):
+
+| O quê | Variável | Default |
+|---|---|---|
+| Dados | `DATA_DIR` / `GARIMPO_DATA_DIR` | `user_data_path("cripto-predictor")` |
+| Saída — **onde vive o `feature_store.db`** | `OUTPUT_DIR` / `GARIMPO_OUTPUT_DIR` | `DATA_DIR/output` |
+| Cache | `CACHE_DIR` / `GARIMPO_CACHE_DIR` | `user_cache_path("cripto-predictor")` |
+| Logs | `LOGS_DIR` / `GARIMPO_LOGS_DIR` | `user_log_path("cripto-predictor")` |
+| Estado dos jobs (lock, heartbeat) | `PREDICTOR_OPS_STATE_DIR` | `user_state_path("cripto-predictor")` |
+
+O default **nunca** escreve dentro do wheel instalado. No Windows isso cai em
+`%LOCALAPPDATA%\cripto-predictor\...`; no Linux, em `~/.local/share/...`.
+
+**Para descobrir os caminhos reais da SUA máquina** — não adivinhe, imprima:
+
+```bash
+uv run python -c "from GarimpoInvestimentos.core.paths import DATA_DIR, OUTPUT_DIR, CACHE_DIR, LOGS_DIR, FEATURE_STORE_DB; from platformdirs import user_state_path; [print(f'{k:18} {v}') for k, v in (('DATA_DIR', DATA_DIR), ('OUTPUT_DIR', OUTPUT_DIR), ('FEATURE_STORE_DB', FEATURE_STORE_DB), ('CACHE_DIR', CACHE_DIR), ('LOGS_DIR', LOGS_DIR), ('STATE (jobs)', user_state_path('cripto-predictor')))]"
+```
+
+O log da coleta é `LOGS_DIR/garimpo_fase1_AAAAMMDD.log` — um arquivo por dia, com
+**filtro de redação de segredos** (`_RedactSecrets` em `phase1.py`, que também
+força `httpx`/`httpcore` para `WARNING`, porque em `INFO` eles logam a URL
+completa — com a chave SerpAPI no query string). Por isso: **um run manual que
+precise de log em arquivo deve passar pelo `run_garimpo_fase1.bat`**, nunca por um
+handler de arquivo improvisado.
+
+### 10.3 O Agendador de Tarefas do Windows
+
+Três tarefas, e o histórico de falhas delas está registrado nos próprios scripts
+de correção:
+
+| Tarefa | Quando | Observação |
+|---|---|---|
+| `GarimpoFase1` | 22:00 diário | a coleta |
+| `GarimpoV3Daily` | diário | família V3 |
+| `cripto-watchdog-coleta` | 19:00 **e** 22:30 | o segundo gatilho existe porque, só com o das 19:00, uma falha da coleta das 22:00 só alertava ~21h depois |
+
+**Dois modos de falha já vistos, ambos silenciosos** — o Agendador barra antes do
+Python rodar, então **não aparece nada no log da aplicação**:
+
+- `0x800710E0` ("operador ou administrador recusou") — config de energia:
+  `DisallowStartIfOnBatteries=True` / `StartWhenAvailable=False`. Corrigido por
+  `scripts/fix_task_power.ps1` e `fix_task_power_watchdog.ps1`. Aconteceu com a
+  `GarimpoFase1` em 2026-07-12 e com o watchdog em 2026-07-18 — o guardião da
+  coleta falhando exatamente na condição que ele existe para vigiar.
+- `0x80070005` (Access Denied) — `LogonType` `Interactive` em vez de `S4U`, que
+  impede execução headless (tela bloqueada ou usuário deslogado). Corrigido por
+  `scripts/fix_task_logon.ps1`.
+
+Se um dia a coleta "não rodou e não deixou rastro", comece pelo **histórico do
+Agendador**, não pelo log da aplicação.
+
+### 10.4 O que atravessa a fronteira, e o que não
+
+O `feature_store.db` **fica na máquina de coleta** e é a única fonte do `n` real.
+Nada fora dela o enxerga. A ponte é o `h6_status.json`, gravado pelo
+`quality_snapshot` só quando o estado muda, e **commitado à mão**. Sem esse commit,
+qualquer acompanhamento externo — inclusive o cron semanal — continua vendo o
+estado antigo.
+
+---
+
+## 11. O padrão que vale levar para a próxima sessão
 
 Ao longo da revisão de 2026-08-21, os defeitos encontrados quase nunca foram
 código quebrado. Foram **afirmações desatualizadas ou vazias**: documentação
