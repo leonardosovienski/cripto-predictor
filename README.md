@@ -108,7 +108,10 @@ GarimpoInvestimentos/
 │                             construção — pré-requisito do B9),
 │                             hypothesis_loop (LLM propõe hipótese, motor
 │                             determinístico avalia — B9; NÃO registra trial,
-│                             NÃO emite veredito, NÃO promove nada)
+│                             NÃO emite veredito, NÃO promove nada),
+│                             ground_truth_harness (afere o pipeline INTEIRO
+│                             contra verdade plantada: erro de medição, perda
+│                             de amostra, sensibilidade e especificidade)
 ├── services/              ← ingestion, features, inference, backtest, reporting
 ├── providers/             ← contratos de provider da camada de aplicação
 ├── v3/                    ← HMM de regimes, funding/OI, walk-forward com custos
