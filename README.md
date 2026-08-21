@@ -112,7 +112,10 @@ GarimpoInvestimentos/
 ├── services/              ← ingestion, features, inference, backtest, reporting
 ├── providers/             ← contratos de provider da camada de aplicação
 ├── v3/                    ← HMM de regimes, funding/OI, walk-forward com custos
-├── trading/               ← contrato econômico, execução, microestrutura, portfólio, store —
+├── trading/               ← contrato econômico, execução, microestrutura, portfólio, store,
+│                             signal_adapter (SignalRecord→TradeIntent, recusa família
+│                             congelada), report (visão única), cost_policy (escolhe o
+│                             modelo de custo pelo instrumento e recusa o errado) —
 │                             infraestrutura construída por OVERRIDE de governança
 │                             2026-08-14 (docs/HYPOTHESES.md), ANTES de qualquer edge
 │                             validado; não autoriza capital, não muda nenhum gate

@@ -31,6 +31,18 @@ def job_config(name: str, *, timeout_seconds: float | None = None) -> JobConfig:
         "watchdog": [sys.executable, "-m", "GarimpoInvestimentos.observation_watchdog"],
         "v3-daily": [sys.executable, "-m", "GarimpoInvestimentos.v3.daily"],
         "observation-daily": [sys.executable, "-m", "GarimpoInvestimentos.observation_quality"],
+        # Renovacao condicional do atestado de poder. A validade e de 7 dias e a
+        # renovacao era 100% manual — vencido, o Experiment Registry recusa
+        # QUALQUER trial nova. Agendar este job diariamente renova sozinho perto
+        # do vencimento, sem gravar todo dia. Nao afrouxa nada: o atestado so e
+        # gravado se o controle positivo passar, como sempre.
+        "attest-renew": [
+            sys.executable,
+            "-m",
+            "scripts.attest_harness",
+            "--if-expiring-within",
+            "2",
+        ],
         "observation-live": [
             sys.executable,
             "-m",
@@ -92,6 +104,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             "observation-daily",
             "observation-live",
             "microstructure-live",
+            "attest-renew",
         ),
     )
     parser.add_argument("--timeout", type=float)

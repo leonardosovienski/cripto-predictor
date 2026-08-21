@@ -129,3 +129,52 @@ def test_lock_prevents_concurrent_duplicate(tmp_path):
     thread.join()
     assert second.run_status == RunStatus.SKIPPED
     assert first[0].run_status == RunStatus.SUCCEEDED
+
+
+def test_job_attest_renew_existe_e_e_condicional():
+    """A validade do atestado é de 7 dias e a renovação era 100% manual —
+    vencido, o Experiment Registry recusa QUALQUER trial nova. O job renova
+    perto do vencimento em vez de gravar todo dia."""
+    from GarimpoInvestimentos.jobs import job_config
+
+    cfg = job_config("attest-renew")
+    assert "attest_harness" in " ".join(cfg.command)
+    assert "--if-expiring-within" in cfg.command, "renovacao incondicional gravaria todo dia"
+
+
+def test_expira_em_trata_ausente_ou_ilegivel_como_EXPIRADO(tmp_path, monkeypatch):
+    """Na dúvida, renovar: o controle positivo roda de novo e custa segundos.
+    Assumir validade de um arquivo que não dá para ler seria o erro caro."""
+    import scripts.attest_harness as AH
+
+    faltando = tmp_path / "nao_existe.json"
+    monkeypatch.setattr(AH, "PHASE1_ATTESTATION_PATH", faltando)
+    monkeypatch.setattr(AH, "attestation_path_for", lambda _p: faltando)
+    assert AH._expira_em(1.0) is True
+
+    corrompido = tmp_path / "corrompido.json"
+    corrompido.write_text("{lixo", encoding="utf-8")
+    monkeypatch.setattr(AH, "PHASE1_ATTESTATION_PATH", corrompido)
+    monkeypatch.setattr(AH, "attestation_path_for", lambda _p: corrompido)
+    assert AH._expira_em(1.0) is True
+
+
+def test_expira_em_respeita_a_janela(tmp_path, monkeypatch):
+    import json
+    from datetime import UTC, datetime, timedelta
+
+    import scripts.attest_harness as AH
+
+    def _grava(dias):
+        p = tmp_path / "att.json"
+        expira = (datetime.now(UTC) + timedelta(days=dias)).isoformat()
+        p.write_text(json.dumps({"expires_at": expira}), encoding="utf-8")
+        monkeypatch.setattr(AH, "PHASE1_ATTESTATION_PATH", p)
+        monkeypatch.setattr(AH, "attestation_path_for", lambda _p: p)
+
+    _grava(10)
+    assert AH._expira_em(2.0) is False  # folga grande -> nao renova
+    _grava(1)
+    assert AH._expira_em(2.0) is True  # dentro da janela -> renova
+    _grava(-1)
+    assert AH._expira_em(2.0) is True  # ja expirou -> renova
