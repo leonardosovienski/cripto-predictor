@@ -82,7 +82,7 @@ reescrito.
 | Feature Store | OHLCV + sinais (Fear&Greed) alinhados por `published_at` (zero lookahead); features materializadas; tabela `predictions` append-only (migração 0016) |
 | Análise | LLM sobre mercado offline + notícias live; carimbo do **Juiz** (provider:modelo:hash-do-prompt) e da **Fonte** (`direct`\|`dpl:fallback`\|`dpl:consensus`); ensemble multi-sample opcional (`LLM_ENSEMBLE_N`) |
 | Backtest | Spearman(score, retorno D+1/7/30) com IC95% (block bootstrap pareado, `block_length` overlap-aware), estratificado por divergência e por Fonte; **DSR** contra o máximo-por-sorte das tentativas |
-| Governança | Controle positivo (edge sintético → "validado"; ruído → "RUÍDO"); `trials.json` versionado; charters com checksum; migrações aditivas (ADR-017) |
+| Governança | Controle positivo (edge sintético → "validado"; ruído → "RUÍDO"); `trials.json` versionado; charters com checksum; migrações aditivas (ADR-017); **PBO/CSCV** ao lado do DSR (perguntas complementares: o DSR desconta por N tentativas, o PBO mede se a SELEÇÃO entre configurações é frágil) |
 | V3 | GaussianHMM 3 estados com decodificação **causal** (auditada), sinais de funding/OI, WFA com custos (taker+slippage+funding real) |
 | Operação | Jobs via `predictor_ops` (lock, heartbeat, artefato esperado), watchdogs, painel diário `quality_snapshot` com histórico append-only |
 
@@ -101,7 +101,11 @@ GarimpoInvestimentos/
 ├── dpl/                   ← contratos, providers, routers, feature_store, migrações,
 │                             macro_calendar.py (calendário FOMC — B1/H7)
 ├── analyzers/             ← ai_insights (LLM), indicators, prefilter, score_engine,
-│                             backtest (inclui os gates da H6), trials (DSR), equivalence
+│                             backtest (inclui os gates da H6), trials (DSR), equivalence,
+│                             pbo (Probabilidade de Overfitting via CSCV — B10),
+│                             judge_calibration (régua por juiz — B11a),
+│                             factor_dsl (fatores point-in-time, causal por
+│                             construção — pré-requisito do B9)
 ├── services/              ← ingestion, features, inference, backtest, reporting
 ├── providers/             ← contratos de provider da camada de aplicação
 ├── v3/                    ← HMM de regimes, funding/OI, walk-forward com custos
