@@ -1,5 +1,14 @@
 # Auditoria de Look-ahead — RegimeEngine (HMM da V3) · Risco nº 1
 
+> ## ⚠️ ERRATA 2026-08-21
+>
+> O veredito desta auditoria (**sem look-ahead**) continua válido e é a base do NO-GO
+> da família H1-H3. Só o endereço mudou: o objeto auditado não está mais na branch
+> `claude/v3-quant-wip` (que não existe), e sim na `main`, no mesmo caminho
+> `GarimpoInvestimentos/v3/regime_engine.py`.
+>
+> Índice: [ERRATA_2026-08-21.md](ERRATA_2026-08-21.md).
+
 > Passo 5.1 do plano. Auditor: linha de sessões de arquitetura. Data: 2026-07-02.
 > Objeto: `GarimpoInvestimentos/v3/regime_engine.py` + uso no `backtest_v3.py`
 > (branch `claude/v3-quant-wip`).

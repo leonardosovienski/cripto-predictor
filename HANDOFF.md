@@ -21,7 +21,9 @@
 >    `uv sync --locked --all-extras`.
 >
 > Estado científico e operacional corrente: [README.md](README.md) e
-> [docs/RELATORIO_FINAL.md](docs/RELATORIO_FINAL.md) §9.
+> [docs/RELATORIO_FINAL.md](docs/RELATORIO_FINAL.md) §9. Índice consolidado das
+> divergências de todos os documentos datados:
+> [docs/ERRATA_2026-08-21.md](docs/ERRATA_2026-08-21.md).
 
 > **Hardening operacional 2026-07-20:** `scripts/feature_store_backup.py`
 > fecha o gap local de backup/restore do `output/feature_store.db`: snapshot

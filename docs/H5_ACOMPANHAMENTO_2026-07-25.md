@@ -1,5 +1,17 @@
 # H5 — acompanhamento operacional de 2026-07-25
 
+> ## ⚠️ ERRATA 2026-08-21
+>
+> Nota operacional de 2026-07-25, escrita antes do gate. **O gate rodou em 2026-07-28
+> e a H5 foi REFUTADA (NO-GO)**: Spearman −0,166 [IC95 −0,266; −0,057] com n=440 — o
+> IC não cruza zero, mas na direção oposta à hipótese; Sharpe por trade −0,312; DSR
+> 0,00 contra corte 0,95. Os números de cobertura desta nota (410 previsões, 15 lotes)
+> são do dia dela. E o fecho sobre a credencial SerpAPI
+> (`BLOCKED_PENDING_SECRET_ROTATION`) foi superado: estado atual é
+> `ROTATED_CONFIRMED_BY_OWNER_2026-08-19`.
+>
+> Índice: [ERRATA_2026-08-21.md](ERRATA_2026-08-21.md).
+
 Esta nota registra qualidade de coleta e proveniencia sem alterar H5, seus
 parametros, o Scheduler ou o criterio do gate de 28/07/2026.
 

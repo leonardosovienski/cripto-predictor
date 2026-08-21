@@ -1,5 +1,15 @@
 # Plano de Reconciliação — V3 quantitativa × linha mergeada (DPL + discovery)
 
+> ## ⚠️ ERRATA 2026-08-21 — plano EXECUTADO
+>
+> Este plano dizia "merge só após aprovação deste documento". **A aprovação veio e o
+> merge aconteceu**: `GarimpoInvestimentos/v3/` está na `main`, e nenhuma das branches
+> do inventário do §1 (`v3-quant-wip`, `merge-dpl-discovery`) existe mais. O documento
+> permanece como registro de como a unificação foi planejada e quais colisões foram
+> resolvidas — não como trabalho pendente.
+>
+> Índice: [ERRATA_2026-08-21.md](ERRATA_2026-08-21.md).
+
 > Passo 4.1 do plano. Pré-requisito de qualquer merge entre `claude/v3-quant-wip`
 > (`3507809`, resgate da linha V3 que estava não-commitada no checkout de main) e
 > `claude/merge-dpl-discovery` (linha principal, 113 verdes). **Merge só após

@@ -1,5 +1,11 @@
 # Decisão de Merge — DPL (Fases 1-3) + `--discover`
 
+> Status: **aceito e implementado** (merge `e8b2fa3`, 2026-07-02) · registrado
+> retroativamente em 2026-08-21, no formato de status do ADR-015. As branches citadas
+> no contexto abaixo não existem mais — o conteúdo está na `main`
+> ([ERRATA_2026-08-21.md](ERRATA_2026-08-21.md) §1). As decisões D1-D3 seguem valendo
+> e estão refletidas no código.
+
 > ADR informal. Contexto: `claude/clever-mclean-16f6d8` (DPL) e `claude/frosty-goldstine-1092c9`
 > (`--discover`, commit `799cd27`) divergem de `a78580c` e ambas modificam `main.py`.
 > Princípio orientador: **o discovery escolhe O QUE analisar; a DPL fornece OS DADOS.**
