@@ -8,11 +8,14 @@ veredito oficial (h6_spearman_verdict), não de uma reimplementação do filtro.
 
 import json
 from datetime import UTC, datetime
+from pathlib import Path
 
 import pytest
 
 from GarimpoInvestimentos import quality_snapshot
 from GarimpoInvestimentos.dpl import FeatureStore
+
+ROOT = Path(__file__).resolve().parents[1]
 
 
 def _row(ativo, ts, score, juiz, fonte="dpl:fallback", price=50000.0):
@@ -289,20 +292,20 @@ def test_escrita_e_idempotente_e_preserva_o_primeiro_observed_at(tmp_path):
     de ruído e treina o revisor a ignorá-lo."""
     destino = tmp_path / "h6_status.json"
 
-    assert quality_snapshot.write_h6_status(_snap(6), destino) is True
+    assert quality_snapshot.write_h6_status(_snap(6), destino) == quality_snapshot.H6_WRITTEN
     primeiro = json.loads(destino.read_text(encoding="utf-8"))
     assert primeiro["observed_at"] == "2026-08-21T00:00:00+00:00"
 
     # mesmo estado, execução posterior: arquivo NÃO é tocado
     mtime = destino.stat().st_mtime_ns
     inalterado = _snap(6, checked_at="2026-08-22T00:00:00+00:00")
-    assert quality_snapshot.write_h6_status(inalterado, destino) is False
+    assert quality_snapshot.write_h6_status(inalterado, destino) == quality_snapshot.H6_UNCHANGED
     assert destino.stat().st_mtime_ns == mtime
     assert json.loads(destino.read_text(encoding="utf-8"))["observed_at"] == primeiro["observed_at"]
 
     # n mudou: grava e carimba quando ESTE estado foi visto pela primeira vez
     mudou = _snap(7, checked_at="2026-08-23T00:00:00+00:00")
-    assert quality_snapshot.write_h6_status(mudou, destino) is True
+    assert quality_snapshot.write_h6_status(mudou, destino) == quality_snapshot.H6_WRITTEN
     depois = json.loads(destino.read_text(encoding="utf-8"))
     assert depois["n"] == 7
     assert depois["observed_at"] == "2026-08-23T00:00:00+00:00"
@@ -311,12 +314,169 @@ def test_escrita_e_idempotente_e_preserva_o_primeiro_observed_at(tmp_path):
 def test_arquivo_corrompido_e_reescrito_em_vez_de_explodir(tmp_path):
     destino = tmp_path / "h6_status.json"
     destino.write_text("{lixo", encoding="utf-8")
-    assert quality_snapshot.write_h6_status(_snap(6), destino) is True
+    assert quality_snapshot.write_h6_status(_snap(6), destino) == quality_snapshot.H6_WRITTEN
     assert json.loads(destino.read_text(encoding="utf-8"))["n"] == 6
 
 
-def test_artefato_fica_fora_de_output_que_e_gitignored():
-    """Todo o ponto do artefato: OUTPUT_DIR é gitignored, então gravar lá seria
-    reproduzir exatamente o problema que ele existe para resolver."""
-    assert quality_snapshot.OUTPUT_DIR not in quality_snapshot.H6_STATUS_PATH.parents
-    assert quality_snapshot.H6_STATUS_PATH.suffix == ".json"  # .jsonl é gitignored
+def test_arquivo_com_bytes_nao_utf8_tambem_e_reescrito(tmp_path):
+    """read_text(encoding='utf-8') levanta UnicodeDecodeError, que NÃO é
+    OSError nem JSONDecodeError. A primeira versão do guard só pegava essas
+    duas e o painel inteiro morria por causa de um byte solto no arquivo."""
+    destino = tmp_path / "h6_status.json"
+    destino.write_bytes(b'{"n": 6, "x": "\xff\xfe"}')
+    assert quality_snapshot.write_h6_status(_snap(6), destino) == quality_snapshot.H6_WRITTEN
+    assert json.loads(destino.read_text(encoding="utf-8"))["n"] == 6
+
+
+def test_artefato_nao_e_capturado_por_nenhuma_regra_do_gitignore():
+    """Todo o ponto do artefato é ser VERSIONADO — se o .gitignore o capturar,
+    a ponte produção->git volta a estar quebrada, e em silêncio.
+
+    A versão anterior deste teste comparava H6_STATUS_PATH.parents com
+    OUTPUT_DIR e era uma TAUTOLOGIA: OUTPUT_DIR é o diretório de dados do
+    usuário (platformdirs, ex. ~/.local/share/cripto-predictor/output), nunca
+    um ancestral do pacote — a asserção não podia falhar e portanto não
+    guardava nada. Esta versão confronta as regras reais do .gitignore.
+
+    Aproximação consciente: aplica fnmatch aos padrões, sem implementar
+    negação (`!`) nem a semântica completa do Git. Cobre o caso realista —
+    alguém adiciona `*.json`, `h6_status.json` ou `GarimpoInvestimentos/h6_*`."""
+    import fnmatch
+
+    alvo = quality_snapshot.H6_STATUS_PATH.relative_to(ROOT).as_posix()
+    for linha in (ROOT / ".gitignore").read_text(encoding="utf-8").splitlines():
+        padrao = linha.strip()
+        if not padrao or padrao.startswith(("#", "!")):
+            continue
+        limpo = padrao.rstrip("/")
+        capturado = (
+            fnmatch.fnmatch(alvo, limpo)
+            or fnmatch.fnmatch(alvo, f"{limpo}/*")
+            or fnmatch.fnmatch(quality_snapshot.H6_STATUS_PATH.name, limpo)
+            or any(fnmatch.fnmatch(parte, limpo) for parte in alvo.split("/")[:-1])
+        )
+        assert not capturado, f".gitignore ('{padrao}') captura {alvo} — a ponte quebra"
+
+
+def test_estado_degradado_nao_apaga_veredito_ja_publicado(tmp_path):
+    """O achado mais grave da revisão. Previsões são append-only, então o n da
+    H6 não cai por evolução legítima do dado — cai quando a EXECUÇÃO foi
+    degradada (banco vazio/errado, falha de preço engolida), que produz n=0 sem
+    erro nenhum. Sem a trava, isso sobrescrevia 'n=31 / validado' com
+    'n=0 / veredito=null', resetava observed_at e ainda pedia commit: o
+    veredito sumia sem rastro, do único lugar onde ele era visível de fora."""
+    destino = tmp_path / "h6_status.json"
+    publicado = _snap(
+        31,
+        h6={"n": 31, "rho": 0.21, "ic_lower": 0.05, "ic_upper": 0.36, "veredito": "validado"},
+        checked_at="2026-09-01T00:00:00+00:00",
+    )
+    assert quality_snapshot.write_h6_status(publicado, destino) == quality_snapshot.H6_WRITTEN
+
+    degradado = _snap(0, h6=None, checked_at="2026-09-02T00:00:00+00:00")
+    assert (
+        quality_snapshot.write_h6_status(degradado, destino)
+        == quality_snapshot.H6_REFUSED_REGRESSION
+    )
+    intacto = json.loads(destino.read_text(encoding="utf-8"))
+    assert intacto["n"] == 31
+    assert intacto["veredito"] == "validado"
+    assert intacto["observed_at"] == "2026-09-01T00:00:00+00:00"
+
+    # avanço legítimo continua passando
+    avanco = _snap(32, h6={"n": 32, "veredito": "validado"}, checked_at="2026-09-03T00:00:00+00:00")
+    assert quality_snapshot.write_h6_status(avanco, destino) == quality_snapshot.H6_WRITTEN
+    assert json.loads(destino.read_text(encoding="utf-8"))["n"] == 32
+
+
+def test_reset_deliberado_exige_intencao_explicita(tmp_path):
+    """A trava não pode virar prisão: existe uma via para reset, mas ela obriga
+    a dizer que é isso que se quer."""
+    destino = tmp_path / "h6_status.json"
+    quality_snapshot.write_h6_status(_snap(31, h6={"n": 31, "veredito": "validado"}), destino)
+    zerado = _snap(0, h6=None, checked_at="2026-09-02T00:00:00+00:00")
+    assert (
+        quality_snapshot.write_h6_status(zerado, destino, allow_regression=True)
+        == quality_snapshot.H6_WRITTEN
+    )
+    assert json.loads(destino.read_text(encoding="utf-8"))["n"] == 0
+
+
+def test_ponta_a_ponta_build_snapshot_publica_e_depois_recusa_banco_vazio(db_path, tmp_path):
+    """Caminho REAL: FeatureStore -> build_snapshot -> write_h6_status.
+
+    Os testes acima do artefato alimentam dicts sintéticos e nunca tocam o
+    banco — provam a lógica de escrita, não a integração. Este exercita a
+    cadeia inteira e reproduz o cenário que a revisão pegou: um banco com
+    previsões publica um estado; o MESMO código apontado para um banco vazio
+    (path errado, volume não montado, coleta que não rodou) calcula n=0 sem
+    levantar exceção nenhuma e tentaria sobrescrever o que foi publicado.
+    """
+    import asyncio
+    from datetime import timedelta
+
+    from GarimpoInvestimentos.dpl.contracts import MarketDataPoint
+
+    destino = tmp_path / "h6_status.json"
+    now = datetime(2026, 8, 21, tzinfo=UTC)
+    # DEPOIS do registered_at da H6 (2026-07-20): com data anterior a trava
+    # anti-data-snooping zera o n e o teste passaria sem exercitar a contagem.
+    pred = datetime(2026, 8, 1, tzinfo=UTC)
+    with FeatureStore(db_path) as store:
+        store.write_predictions(
+            [_row("bitcoin", pred.strftime("%Y-%m-%d %H:%M:%S"), 70.0, "gemini:m:h")]
+        )
+        # OHLCV cobrindo previsão + horizontes. _realized_price é offline-first:
+        # consulta a store e só cai na rede quando falta o dia. Sem isto o teste
+        # sairia buscando preço em coingecko — a suíte deste projeto é offline,
+        # e a versão anterior deste teste levava 36s por causa exatamente disso.
+        store.write_raw(
+            [
+                MarketDataPoint(
+                    symbol="bitcoin",
+                    timestamp=pred + timedelta(days=d),
+                    open=50000.0,
+                    high=50100.0,
+                    low=49900.0,
+                    close=50000.0 + d,
+                    volume=10.0,
+                    source="dpl:fallback",
+                    interval="1d",
+                    published_at=pred + timedelta(days=d),
+                )
+                for d in range(0, 32)
+            ]
+        )
+
+    snap = asyncio.run(quality_snapshot.build_snapshot(now=now))
+    assert quality_snapshot.write_h6_status(snap, destino) == quality_snapshot.H6_WRITTEN
+    publicado = json.loads(destino.read_text(encoding="utf-8"))
+    assert publicado["gate"] == quality_snapshot.H6_MIN_N
+    assert publicado["trial"] == quality_snapshot.H6_TRIAL_NAME
+    assert publicado["n"] == 1  # a previsão elegível foi de fato contada
+    assert publicado["gate_atingido"] is False
+    # abaixo do gate o veredito segue em silêncio, mesmo vindo do caminho real
+    assert publicado["rho"] is None
+
+    # simula o estado já publicado ter avançado além do gate...
+    publicado_maduro = dict(publicado, n=31, gate_atingido=True, veredito="validado", rho=0.2)
+    destino.write_text(json.dumps(publicado_maduro, indent=2, sort_keys=True), encoding="utf-8")
+
+    # ...e agora o painel roda contra um banco VAZIO, sem erro nenhum
+    vazio = tmp_path / "outro.db"
+    with FeatureStore(vazio):
+        pass
+    import GarimpoInvestimentos.analyzers.backtest as bt
+
+    original, bt.FEATURE_STORE_DB = bt.FEATURE_STORE_DB, vazio
+    try:
+        snap_vazio = asyncio.run(quality_snapshot.build_snapshot(now=now))
+    finally:
+        bt.FEATURE_STORE_DB = original
+    assert snap_vazio["sample"]["h6_valid_n"] == 0  # nenhuma exceção: só zero
+
+    assert (
+        quality_snapshot.write_h6_status(snap_vazio, destino)
+        == quality_snapshot.H6_REFUSED_REGRESSION
+    )
+    assert json.loads(destino.read_text(encoding="utf-8"))["veredito"] == "validado"
