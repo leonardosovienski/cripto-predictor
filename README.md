@@ -115,7 +115,12 @@ GarimpoInvestimentos/
 ├── core/                  ← paths, cache, history (store-first), logger, api_guard
 ├── output/reporter.py     ← exportação CSV/XLSX
 ├── macro_calendar.json    ← calendário FOMC 2026 (sourced/citado — ver source_note)
-└── trials.json            ← registro VERSIONADO de tentativas (denominador do DSR)
+├── trials.json            ← registro VERSIONADO de tentativas (denominador do DSR)
+└── h6_status.json         ← estado publicado da H6 (n, gate, veredito quando abrir).
+                              Ponte produção→git: o n real vem do feature_store.db,
+                              que é gitignored — sem este arquivo, nada fora da
+                              máquina de coleta enxerga o n. Gerado pelo
+                              quality_snapshot; commitado à mão quando muda.
 charters/                  ← estado científico, definição congelada da H6, charters de coleta
 observation_plans/         ← planos e ativações COLLECTION_ONLY (imutáveis, com checksum)
 scripts/                   ← atestado do harness, backup, scan de segredos, CI check
@@ -194,6 +199,11 @@ uv run python -m GarimpoInvestimentos.analyzers.backtest
 uv run python -m GarimpoInvestimentos.analyzers.equivalence --assets bitcoin,solana  # DPL vs direto
 uv run python -m GarimpoInvestimentos.quality_snapshot                               # painel diário
 ```
+
+O `quality_snapshot` também grava `GarimpoInvestimentos/h6_status.json` — **só quando o
+estado da H6 muda**, para não gerar commit de ruído diário. Esse arquivo é a única via
+pela qual o `n` da H6 sai da máquina de coleta: o `feature_store.db` que o produz é
+gitignored. Commite-o quando ele mudar; é o que qualquer acompanhamento externo lê.
 
 Em produção (Windows Task Scheduler), `run_sinal_diario.bat` e `run_garimpo_fase1.bat`
 encapsulam esse fluxo — inclusive o `uv sync` com os três extras juntos, porque

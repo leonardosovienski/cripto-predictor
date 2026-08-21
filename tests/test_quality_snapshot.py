@@ -244,3 +244,79 @@ def test_history_record_extrai_campos_pedidos():
     assert record["pipeline_status"] == "DEGRADED"
     assert record["providers"] == {"gemini": 4, "groq": 4}
     assert record["h6_valid_n"] == 8
+
+
+# --- ponte produção -> git: artefato versionado do estado da H6 -------------
+# O n real da H6 é calculado do feature_store.db, que é gitignored. Sem um
+# artefato versionado, nenhum acompanhamento externo (revisão, handoff, o cron
+# semanal "Watch H6 n>=30") enxerga o número — só o valor escrito à mão em
+# docs/HYPOTHESES.md, que envelhece em silêncio.
+
+
+def _snap(n, gate=30, h6=None, checked_at="2026-08-21T00:00:00+00:00"):
+    return {
+        "checked_at": checked_at,
+        "h6": h6,
+        "sample": {"h6_valid_n": n, "h6_gate": gate, "h6_fonte_esperada": "dpl:fallback"},
+    }
+
+
+def test_payload_abaixo_do_gate_nao_expoe_rho_nem_veredito():
+    """h6_spearman_verdict devolve rho/IC como None abaixo de n>=30 DE PROPÓSITO,
+    para não tratar correlação imatura como sinal. O artefato preserva esse
+    silêncio em vez de contorná-lo."""
+    payload = quality_snapshot.h6_status_payload(_snap(6, h6={"n": 6, "veredito": "aguardando"}))
+    assert payload["n"] == 6
+    assert payload["gate"] == 30
+    assert payload["gate_atingido"] is False
+    assert payload["rho"] is None
+    assert payload["ic_lower"] is None
+    assert payload["ic_upper"] is None
+    assert payload["trial"] == quality_snapshot.H6_TRIAL_NAME
+
+
+def test_payload_publica_veredito_quando_o_gate_abre():
+    h6 = {"n": 31, "rho": 0.21, "ic_lower": 0.05, "ic_upper": 0.36, "veredito": "validado"}
+    payload = quality_snapshot.h6_status_payload(_snap(31, h6=h6))
+    assert payload["gate_atingido"] is True
+    assert payload["rho"] == 0.21
+    assert payload["ic_lower"] == 0.05
+    assert payload["veredito"] == "validado"
+
+
+def test_escrita_e_idempotente_e_preserva_o_primeiro_observed_at(tmp_path):
+    """Roda todo dia; um arquivo versionado que muda só no timestamp gera commit
+    de ruído e treina o revisor a ignorá-lo."""
+    destino = tmp_path / "h6_status.json"
+
+    assert quality_snapshot.write_h6_status(_snap(6), destino) is True
+    primeiro = json.loads(destino.read_text(encoding="utf-8"))
+    assert primeiro["observed_at"] == "2026-08-21T00:00:00+00:00"
+
+    # mesmo estado, execução posterior: arquivo NÃO é tocado
+    mtime = destino.stat().st_mtime_ns
+    inalterado = _snap(6, checked_at="2026-08-22T00:00:00+00:00")
+    assert quality_snapshot.write_h6_status(inalterado, destino) is False
+    assert destino.stat().st_mtime_ns == mtime
+    assert json.loads(destino.read_text(encoding="utf-8"))["observed_at"] == primeiro["observed_at"]
+
+    # n mudou: grava e carimba quando ESTE estado foi visto pela primeira vez
+    mudou = _snap(7, checked_at="2026-08-23T00:00:00+00:00")
+    assert quality_snapshot.write_h6_status(mudou, destino) is True
+    depois = json.loads(destino.read_text(encoding="utf-8"))
+    assert depois["n"] == 7
+    assert depois["observed_at"] == "2026-08-23T00:00:00+00:00"
+
+
+def test_arquivo_corrompido_e_reescrito_em_vez_de_explodir(tmp_path):
+    destino = tmp_path / "h6_status.json"
+    destino.write_text("{lixo", encoding="utf-8")
+    assert quality_snapshot.write_h6_status(_snap(6), destino) is True
+    assert json.loads(destino.read_text(encoding="utf-8"))["n"] == 6
+
+
+def test_artefato_fica_fora_de_output_que_e_gitignored():
+    """Todo o ponto do artefato: OUTPUT_DIR é gitignored, então gravar lá seria
+    reproduzir exatamente o problema que ele existe para resolver."""
+    assert quality_snapshot.OUTPUT_DIR not in quality_snapshot.H6_STATUS_PATH.parents
+    assert quality_snapshot.H6_STATUS_PATH.suffix == ".json"  # .jsonl é gitignored
