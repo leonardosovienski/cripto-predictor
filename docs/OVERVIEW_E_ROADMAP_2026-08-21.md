@@ -24,6 +24,7 @@
 | `docs/PANORAMA_2026-08-21.md` | inventário detalhado + avaliação crítica do projeto | para profundidade |
 | `docs/ERRATA_2026-08-21.md` | o que os docs datados afirmam de errado, e a correção | ao ler qualquer doc com data no nome |
 | `charters/scientific_state.json` | os invariantes, em máquina | é lido por código; não editar à mão |
+| `docs/CRON_H6_PROMPT.md` | o prompt do cron semanal da H6 (cópia de referência; a UI é a fonte viva) | ao mexer no acompanhamento |
 | `docs/SECURITY_INCIDENT_SERPAPI.md` | incidente de credencial, já rotacionado | contexto |
 
 **Regra de leitura para todo doc datado:** qualquer arquivo com data no nome é um
@@ -267,7 +268,7 @@ dias de maturação do D+7 para as últimas previsões.
 |---|---|---|---|
 | 0.1 | **Renovar o atestado de poder.** `uv run cripto-predictor-job attest-renew` (ou `python -m scripts.attest_harness`). Expira em **2026-08-28T10:44Z** nos dois arquivos (`trials.harness_attestation.json` e `trials.phase1_harness_attestation.json`) | **2026-08-28** | Nenhuma trial nova pode ser registrada; o registry fecha |
 | 0.2 | **Agendar** o `attest-renew` diariamente (`--if-expiring-within 2` já embutido: só grava perto do vencimento) | junto com 0.1 | O prazo volta a ser manual e vai vencer de novo |
-| 0.3 | **Colar o novo prompt do cron** de acompanhamento na UI | disparo em **seg 2026-08-24 12:00 UTC** | O cron roda com o prompt velho |
+| 0.3 | **Colar o novo prompt do cron** de acompanhamento na UI — o texto pronto está em [`CRON_H6_PROMPT.md`](CRON_H6_PROMPT.md) | disparo em **seg 2026-08-24 12:00 UTC** | O cron roda com o prompt velho, que procura o `n` em número escrito à mão |
 | 0.4 | Verificar a revogação das chaves antigas do SerpAPI | sem prazo | `EXTERNAL_BLOCKER` segue aberto na auditoria formal |
 
 ### Fase 1 — A coleta (o trabalho principal)
