@@ -42,7 +42,7 @@ A **V3 quantitativa** (HMM de regimes + funding/OI + walk-forward com custos) vi
 [docs/RECONCILIACAO_V3.md](docs/RECONCILIACAO_V3.md) foi executada, e a branch
 `claude/v3-quant-wip` citada naquele plano não existe mais.
 
-## Status do projeto (2026-08-19)
+## Status do projeto (2026-08-21)
 
 **Pesquisa. Nenhuma recomendação de capital real.** Nota da auditoria: **6,0/10**
 ([docs/ARQUITETURA_CONSOLIDADA.md](docs/ARQUITETURA_CONSOLIDADA.md) §5). Modo atual:
@@ -140,7 +140,7 @@ GarimpoInvestimentos/
 charters/                  ← estado científico, definição congelada da H6, charters de coleta
 observation_plans/         ← planos e ativações COLLECTION_ONLY (imutáveis, com checksum)
 scripts/                   ← atestado do harness, backup, scan de segredos, CI check
-tests/                     ← 616 verdes com `--all-extras`; 601 verdes + 2 skips com
+tests/                     ← 738 verdes com `--all-extras`; 723 verdes + 2 skips com
                               `--extra test` (skips = numpy/hmmlearn, cobertos no CI)
 docs/                      ← ADRs e auditorias (ver HANDOFF)
 ```
@@ -176,12 +176,12 @@ principal, e `DATA_DIR`, `OUTPUT_DIR` e `CACHE_DIR` são configuráveis.
 
 ```bash
 # suíte offline, sem chaves:
-uv sync --locked --extra test     # 601 verdes + 2 skips (numpy/hmmlearn ausentes)
+uv sync --locked --extra test     # 723 verdes + 2 skips (numpy/hmmlearn ausentes)
 uv build                          # necessário: test_distribution_security.py inspeciona dist/
 uv run pytest -q
 
 # suíte completa, sem skips:
-uv sync --locked --all-extras && uv build && uv run pytest -q   # 616 verdes
+uv sync --locked --all-extras && uv build && uv run pytest -q   # 738 verdes
 ```
 
 Extras disponíveis: `llm`, `v3`, `excel`, `science` e `test`.
@@ -247,7 +247,14 @@ e fica congelado.
 
 1. **Observação prospectiva** — acumular coleta diária (`--ingest --discover` + análise)
    até a H6 atingir `n >= 30` maduras e o gate pré-registrado poder rodar. O `n` real
-   vive no `feature_store.db` de produção, não em ambiente de auditoria.
+   vive no `feature_store.db` de produção, não em ambiente de auditoria; a única via
+   pela qual ele sai de lá é `GarimpoInvestimentos/h6_status.json`, gravado pelo
+   `quality_snapshot` e **commitado à mão**.
+   O critério diz "`n >= 30` antes de calcular veredito"; ele **não** diz "pare em 30".
+   O poder do gate foi medido em 2026-08-21 (B12 em `docs/HYPOTHESES.md`): em `n=30`
+   um efeito real de rho=0,2 é detectado em apenas **14,7%** das vezes, e o mesmo
+   critério — sem nenhuma alteração — só fica bem dimensionado por volta de `n≈250`.
+   Um "RUÍDO" em n=30 é ausência de evidência, não evidência de ausência.
 2. Rodar `python -m scripts.freeze_h6_definition --check` antes de cada deploy enquanto
    a H6 estiver ativa — hash divergente é bloqueante até investigação humana.
 3. **H7** — CPI/PPI ainda vazios em `macro_calendar.json` (fonte primária indisponível
@@ -255,10 +262,16 @@ e fica congelado.
    release H.10 oficial do Fed; integração V3-vs-Fase1 a decidir. Nenhuma coleta começou.
 4. **Pivot de pesquisa da V3** — o NO-GO líquido fecha a família funding/OI + HMM como
    formulada (`frozen_families`); hipótese nova exige trial nova e atestado de poder.
-5. Camada `trading/` — gaps conhecidos: sem adapter `SignalRecord`→`TradeIntent`, sem
-   venue real (`ExchangeAdapter` só tem implementação simulada), e dois modelos de custo
-   não reconciliados (`v3/costs.py` bps fixo × `trading/microstructure.py` walk-the-book,
-   este último **não calibrado**).
+5. Camada `trading/` — gap remanescente: **sem venue real** (`ExchangeAdapter` só tem
+   implementação simulada), o que é decisão humana adjacente a capital, não tarefa
+   técnica. Os outros dois gaps fecharam em 2026-08-21: o adapter
+   `SignalRecord`→`TradeIntent` existe (`trading/signal_adapter.py`, e RECUSA converter
+   sinal de família congelada), e os modelos de custo ganharam ponto de entrada único
+   (`trading/cost_policy.py`) — que ao ser implementado dissolveu a premissa do gap:
+   `v3/costs.py` e `trading/microstructure.py` não são respostas concorrentes à mesma
+   pergunta, são respostas a **instrumentos** diferentes (perp com funding × spot
+   walk-the-book); fundi-los cobraria funding de spot. O dispatcher escolhe pelo
+   instrumento e recusa que o modelo não calibrado sustente veredito científico.
 6. Verificação externa da revogação das chaves antigas da SerpAPI (ver banner no topo).
 
 Qualquer ativação real exige, sem exceção: atestado do harness
@@ -272,6 +285,9 @@ declarado, e dado coletado **depois** do registro — nunca reaproveitando hist�
 [HANDOFF.md](HANDOFF.md) (era pré-DPL) ·
 [docs/CONFERENCIA_GERAL.md](docs/CONFERENCIA_GERAL.md) ·
 [docs/RELATORIO_FINAL.md](docs/RELATORIO_FINAL.md) (fechamento canônico).
+
+**Partida frio — leia primeiro:** [docs/OVERVIEW_E_ROADMAP_2026-08-21.md](docs/OVERVIEW_E_ROADMAP_2026-08-21.md)
+reúne o estado do projeto e o roadmap da fase de coleta num documento só.
 
 Panorama geral do estado atual — o que existe, o que falta e o que **não** falta:
 [docs/PANORAMA_2026-08-21.md](docs/PANORAMA_2026-08-21.md).
