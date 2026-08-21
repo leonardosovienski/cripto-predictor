@@ -109,6 +109,9 @@ GarimpoInvestimentos/
 │                             hypothesis_loop (LLM propõe hipótese, motor
 │                             determinístico avalia — B9; NÃO registra trial,
 │                             NÃO emite veredito, NÃO promove nada),
+│                             gate_power (poder do gate — 'RUÍDO' com poder
+│                             baixo é ausência de evidência, não evidência
+│                             de ausência; NÃO altera gate nenhum),
 │                             ground_truth_harness (afere o pipeline INTEIRO
 │                             contra verdade plantada: erro de medição, perda
 │                             de amostra, sensibilidade e especificidade)
