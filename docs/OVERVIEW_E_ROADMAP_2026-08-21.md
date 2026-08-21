@@ -266,8 +266,8 @@ dias de maturação do D+7 para as últimas previsões.
 
 | # | Ação | Prazo | Se não fizer |
 |---|---|---|---|
-| 0.1 | **Renovar o atestado de poder.** `uv run cripto-predictor-job attest-renew` (ou `python -m scripts.attest_harness`). Expira em **2026-08-28T10:44Z** nos dois arquivos (`trials.harness_attestation.json` e `trials.phase1_harness_attestation.json`) | **2026-08-28** | Nenhuma trial nova pode ser registrada; o registry fecha |
-| 0.2 | **Agendar** o `attest-renew` diariamente (`--if-expiring-within 2` já embutido: só grava perto do vencimento) | junto com 0.1 | O prazo volta a ser manual e vai vencer de novo |
+| 0.1 | **Renovar o atestado de poder.** Expira em **2026-08-28T10:44Z** nos dois arquivos (`trials.harness_attestation.json` e `trials.phase1_harness_attestation.json`). Atenção: `cripto-predictor-job attest-renew` embute `--if-expiring-within 2` e **não grava nada** enquanto faltar mais de 2 dias — é o comportamento correto, não falha. Para forçar agora, rode `python -m scripts.attest_harness` sem a flag; ou simplesmente faça o 0.2, que resolve sozinho | **2026-08-28** | Nenhuma trial nova pode ser registrada; o registry fecha |
+| 0.2 | **Agendar** o `attest-renew` diariamente na máquina de coleta (`--if-expiring-within 2` já embutido: só grava perto do vencimento). **É este item que destranca o 0.1 de forma durável** — um run manual resolve uma vez, o agendamento resolve sempre | junto com 0.1 | O prazo volta a ser manual e vai vencer de novo |
 | 0.3 | **Colar o novo prompt do cron** de acompanhamento na UI — o texto pronto está em [`CRON_H6_PROMPT.md`](CRON_H6_PROMPT.md) | disparo em **seg 2026-08-24 12:00 UTC** | O cron roda com o prompt velho, que procura o `n` em número escrito à mão |
 | 0.4 | Verificar a revogação das chaves antigas do SerpAPI | sem prazo | `EXTERNAL_BLOCKER` segue aberto na auditoria formal |
 
@@ -430,7 +430,15 @@ pode ser sobrescrito por variável de ambiente (nome novo ou legado):
 O default **nunca** escreve dentro do wheel instalado. No Windows isso cai em
 `%LOCALAPPDATA%\cripto-predictor\...`; no Linux, em `~/.local/share/...`.
 
-**Para descobrir os caminhos reais da SUA máquina** — não adivinhe, imprima:
+> **Rode isto NA MÁQUINA DE COLETA.** O comando imprime os caminhos do host onde
+> ele roda — nada mais. Rodado num container de nuvem ou numa sessão remota, ele
+> imprime os caminhos daquele container (`/root/.local/share/...`), que estarão
+> **vazios**, porque o import cria os diretórios ao ser carregado. Isso não é
+> defeito: é o resultado correto para a pergunta errada. O `feature_store.db` não
+> sai da máquina de coleta — ver §10.4.
+
+**Para descobrir os caminhos reais da máquina de coleta** — não adivinhe, imprima
+(lá, não aqui):
 
 ```bash
 uv run python -c "from GarimpoInvestimentos.core.paths import DATA_DIR, OUTPUT_DIR, CACHE_DIR, LOGS_DIR, FEATURE_STORE_DB; from platformdirs import user_state_path; [print(f'{k:18} {v}') for k, v in (('DATA_DIR', DATA_DIR), ('OUTPUT_DIR', OUTPUT_DIR), ('FEATURE_STORE_DB', FEATURE_STORE_DB), ('CACHE_DIR', CACHE_DIR), ('LOGS_DIR', LOGS_DIR), ('STATE (jobs)', user_state_path('cripto-predictor')))]"
@@ -476,6 +484,16 @@ Nada fora dela o enxerga. A ponte é o `h6_status.json`, gravado pelo
 `quality_snapshot` só quando o estado muda, e **commitado à mão**. Sem esse commit,
 qualquer acompanhamento externo — inclusive o cron semanal — continua vendo o
 estado antigo.
+
+> **A ponte nunca transportou nada, e isso é fato verificado.** Em 2026-08-21,
+> `git log --all -- GarimpoInvestimentos/h6_status.json` volta **vazio**: o arquivo
+> nunca existiu em nenhum commit, de nenhum branch. O artefato foi construído no
+> PR #40 e corrigido no #41, mas o passo humano que o atravessa — rodar o
+> `quality_snapshot` na máquina de coleta e commitar — **nunca foi executado**.
+> Consequência prática: hoje o `n` da H6 é invisível fora da máquina de coleta, e o
+> cron semanal não vê "n antigo", vê **arquivo ausente** (e cai no fallback, que é o
+> comportamento correto). Enquanto esse commit não acontecer uma primeira vez, a
+> ponte é infraestrutura sem tráfego.
 
 ---
 
