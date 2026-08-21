@@ -52,7 +52,10 @@ enquanto procura**. Concretamente, o projeto:
    controle positivo (edge plantado + ruído) e grava um atestado que **expira em
    7 dias**. Vencido, o Experiment Registry recusa registrar trial nova.
 5. **Preserva o que refutou.** Nenhuma hipótese é reaberta ou reparametrizada em
-   silêncio; H1–H3 e a família `funding_oi_hmm_v3` estão congeladas por hash.
+   silêncio. O validador Pydantic de `ScientificStateCharter` (`governance.py`)
+   levanta exceção se H1, H2, H3 ou H5 deixarem de ser `CLOSED_NO_GO`, ou se
+   `funding_oi_hmm_v3` sair de `frozen_families`. Separadamente, a **definição da
+   H6** está congelada por hash em `charters/h6_definition_frozen.json`.
 
 ### O que o projeto explicitamente NÃO é
 
@@ -60,7 +63,7 @@ enquanto procura**. Concretamente, o projeto:
   sob **override de governança declarado por escrito antes do código**
   (`docs/HYPOTHESES.md`, "Override de governança 2026-08-14"), e o único
   `ExchangeAdapter` implementado é o `SimulatedExchangeAdapter`.
-- Não tem edge validado. Nenhum. Ver §3.
+- Não tem edge validado. Nenhum. Ver §5.
 - Não usa LLM como decisor de trade. O LLM pontua ativos (H4/H5/H6) e, no
   backlog B9, propõe hipóteses — nunca aperta botão.
 
@@ -109,9 +112,11 @@ o veredito dela não depende disso.
 
 ## 3. O que temos — inventário por camada
 
-`738 testes` coletados (verificado nesta data), `ruff` + `pyright` limpos, CI com
-4 jobs incluindo contract test das wheels instaladas fora do checkout, SBOM e
-Trivy.
+Suíte executada nesta data: **738 verdes com todos os extras** e **723 verdes + 2
+skips** na suíte offline (`--extra test`, sem numpy/hmmlearn). `ruff check` e
+`ruff format --check` limpos. CI com 4 jobs (`quality`, `python-314-experimental`,
+`all-extras`, `container`), incluindo contract test das wheels instaladas fora do
+checkout, SBOM (syft) e Trivy.
 
 **Governança científica** — `analyzers/trials.py` (Experiment Registry, DSR),
 `scripts/attest_harness.py` (atestado com validade), `scripts/freeze_h6_definition.py`
@@ -119,7 +124,8 @@ Trivy.
 `governance.py`.
 
 **Camada de dados (DPL)** — Feature Store **bitemporal**
-(`timestamp × published_at × vintage`) com guardas anti-lookahead, 16 migrações,
+(`timestamp × published_at × vintage`) com guardas anti-lookahead, 12 migrações
+aditivas (numeradas até `_0016`; as primeiras vivem no schema base de `feature_store.py`),
 `predictions` **append-only** (migração `_0016`: DELETE bloqueado por trigger;
 UPDATE permitido com arquivo `PRE_UPDATE_SNAPSHOT`), hash de proveniência de
 conteúdo, backup/restore verificável com runbook, roteador multi-provedor
@@ -190,7 +196,11 @@ temos edge" de "temos um cano furado".
 
 **(b) O gate `n≥30` é cego — poder medido.** Provar que o juiz funciona não prova
 que, com o `n` que a coleta vai ter, ele **consegue ver**. Medido com o critério
-real (`spearman_block_ci` + `overlap_block_length`):
+real — `spearman_block_ci` (de `predictor_core.stats`, o mesmo juiz da Fase 1) com
+`block_length = overlap_block_length(7)`, sobre amostras que reproduzem a
+sobreposição das janelas D+7 (`n_sim=150`, `n_boot=400`; a linha `n=30` reproduz,
+dentro do ruído de simulação, a medição canônica com `n_boot=10.000` e 400
+simulações, que deu 14,2%):
 
 | n | rho=0,0 | rho=0,1 | rho=0,2 | rho=0,3 | rho=0,5 |
 |---|---|---|---|---|---|
@@ -200,7 +210,7 @@ real (`spearman_block_ci` + `overlap_block_length`):
 | 250 | 6,0% | 34,7% | **81,3%** | 100% | 100% |
 | 500 | 8,0% | 65,3% | 97,3% | 100% | 100% |
 
-Em `n=30`, um efeito real de rho=0,2 passa despercebido em **~86% das vezes**. O
+Em `n=30`, um efeito real de rho=0,2 passa despercebido em **~85% das vezes**. O
 poder chega a 80% em `n≈120` (rho=0,3) e `n≈250` (rho=0,2); rho=0,1 não chega nem
 com `n=500`. Falso positivo estável em 6–8%.
 
@@ -300,10 +310,13 @@ Isso é proposital: o Sharpe de n=6 já é o exemplo do erro que essa trava evit
 
 ### Fase 3 — Ramos condicionais (só depois da Fase 2)
 
-- **Se a H6 for refutada:** a família LLM terá 4 refutações. O caminho honesto é
-  o **B4** (meta-análise: o que as refutadas têm em comum?) antes de gastar a
-  quinta tentativa, e/ou promover a **H7** (macro/DXY), cuja infraestrutura já
-  existe e cuja coleta nunca começou.
+- **Se a H6 for refutada:** a linha do LLM terá acumulado **quatro encarnações sem
+  resultado positivo** — `v1-direct-gemini-h7` (ancestral pré-protocolo), H4
+  (encerrada por amostra insuficiente), H5 (NO-GO formal) e H6 —, das quais duas
+  com veredito formal. O caminho honesto é o **B4** (meta-análise: o que as
+  refutadas têm em comum?) antes de gastar a próxima tentativa — que seria a 8ª do
+  registro, e o DSR desconta por ela —, e/ou promover a **H7** (macro/DXY), cuja
+  infraestrutura já existe e cuja coleta nunca começou.
 - **Se a H6 for validada:** `signal_adapter.py` já existe e já recusa família
   congelada; o gargalo passa a ser venue real — **decisão humana, adjacente a
   capital**, não tarefa técnica.
@@ -351,7 +364,9 @@ Antes de qualquer mudança, confira que continua tudo verdadeiro:
 ## 9. Comandos
 
 ```bash
-# suíte (offline, sem chaves)
+# suíte offline, sem chaves (723 verdes + 2 skips; com --all-extras sao 738)
+uv sync --locked --extra test
+uv build                      # test_distribution_security.py inspeciona dist/
 uv run pytest -q
 
 # ciclo de coleta
