@@ -377,6 +377,32 @@
   consegue ler dado futuro (teste de leakage, não só revisão); (2) atestado do harness
   válido; (3) registro em `trials.json` com `metric` declarado; (4) dado coletado
   DEPOIS do registro. Sem os quatro, é infraestrutura — não hipótese.
+
+- **Estado da infraestrutura (2026-08-21).** Construída a pedido explícito do dono,
+  depois de eu registrar a objeção de que o laço não deveria existir antes do
+  pré-registro; ele reafirmou. Registrado aqui como decisão, no mesmo espírito do
+  override de 2026-08-14.
+
+  | Requisito | Estado |
+  |---|---|
+  | (1) DSL com prova de não-leakage | ✅ `analyzers/factor_dsl.py` — invariância sob mutilação do futuro para CADA operação, **com contraprova** |
+  | (2) atestado do harness válido | ✅ renovado 2026-08-21, expira 2026-08-28 |
+  | (3) registro em `trials.json` com `metric` | ❌ **ato humano, deliberadamente não automatizado** |
+  | (4) dado coletado depois do registro | ❌ depende de (3) |
+
+  `analyzers/hypothesis_loop.py` implementa o laço propõe→valida→avalia→registra
+  no traço. Ele **não** escreve em `trials.json`, **não** emite veredito e **não**
+  descarta proposta em silêncio (rejeitada entra no denominador com o motivo).
+  Enquanto (3) e (4) não acontecerem, rodar o laço produz observação exploratória,
+  não hipótese — e nada do que sair dele pode ser citado como resultado.
+
+- **RISCO NOVO que este laço cria, declarado antes de qualquer uso.** Propor
+  hipóteses fica barato e escalável. Gerar 500 fatores e escolher o melhor é
+  data-snooping industrializado — mais rápido que à mão, não mais válido. As
+  contramedidas embutidas: traço append-only contando TODAS as propostas (inclusive
+  rejeitadas) como denominador honesto, e `analyzers/pbo.py` (B10) medindo se a
+  seleção entre elas distingue sinal de sorte. PBO alto sobre as propostas significa
+  parar de propor, não propor mais.
 - RESSALVA de honestidade: o resultado positivo citado na referência (Sharpe OOS
   líquido) é DELES, com o universo e o período DELES. Não é evidência sobre este
   pipeline e não pode ser citado como expectativa.

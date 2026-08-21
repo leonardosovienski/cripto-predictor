@@ -105,7 +105,10 @@ GarimpoInvestimentos/
 │                             pbo (Probabilidade de Overfitting via CSCV — B10),
 │                             judge_calibration (régua por juiz — B11a),
 │                             factor_dsl (fatores point-in-time, causal por
-│                             construção — pré-requisito do B9)
+│                             construção — pré-requisito do B9),
+│                             hypothesis_loop (LLM propõe hipótese, motor
+│                             determinístico avalia — B9; NÃO registra trial,
+│                             NÃO emite veredito, NÃO promove nada)
 ├── services/              ← ingestion, features, inference, backtest, reporting
 ├── providers/             ← contratos de provider da camada de aplicação
 ├── v3/                    ← HMM de regimes, funding/OI, walk-forward com custos
