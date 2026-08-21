@@ -1,5 +1,16 @@
 # Conferência Geral — 2026-07-02
 
+> ## ⚠️ ERRATA 2026-08-21
+>
+> Retrato de 2026-07-02, preservado sem reescrita. Na matriz do §3, o risco 7
+> ("falta CI") e o risco 8 ("rotação recomendada desde 14/06") **fecharam** — há CI
+> com 4 jobs e as chaves foram rotacionadas em 2026-08-19. No §5, "reconciliação V3
+> pendente", "DPL não promovida ao core" e "sem CI" também deixaram de valer; e dos
+> pontos abertos do §6, restam apenas fragmentos (ver índice). O veredito do §4 e a
+> nota do §5 continuam válidos.
+>
+> Índice: [ERRATA_2026-08-21.md](ERRATA_2026-08-21.md).
+
 > Revisão de TODOS os marcos do ciclo (auditoria → consolidação → veredito), com
 > verificação de código, testes, commits e documentação. Método: cada marco foi
 > conferido no repositório (não na memória da conversa); suítes re-executadas hoje.

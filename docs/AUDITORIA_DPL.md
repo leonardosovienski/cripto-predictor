@@ -1,5 +1,18 @@
 # Auditoria Arquitetural Independente — Plataforma DPL (Fases 0–5)
 
+> ## ⚠️ ERRATA 2026-08-21
+>
+> Auditoria de jun/jul-2026, preservada sem reescrita. A branch avaliada
+> (`claude/clever-mclean-16f6d8`) não existe mais — o código está na `main`, em
+> `GarimpoInvestimentos/dpl/`. Dos achados: **C-02 (promoção ao core) fechou** — os
+> contratos, routers e circuit breaker vivem em `predictor_core` e o que restou aqui
+> são compat shims; a proveniência ganhou hash de conteúdo (migração `_0012`). A
+> crítica central da §8 — "maturidade superestimada pelo número de testes verdes;
+> testes provam consistência interna, não correção contra o mundo real" — segue de pé
+> e é uma das razões pelas quais o projeto não autoriza capital.
+>
+> Índice: [ERRATA_2026-08-21.md](ERRATA_2026-08-21.md).
+
 > Auditor externo (não participou da construção). Base: estado real do repositório na
 > branch `claude/clever-mclean-16f6d8` + histórico da conversa. Postura: crítica, não
 > laudatória. Inferências marcadas como **[INFERÊNCIA]**.

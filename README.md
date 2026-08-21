@@ -248,4 +248,6 @@ declarado, e dado coletado **depois** do registro — nunca reaproveitando hist�
 [docs/RELATORIO_FINAL.md](docs/RELATORIO_FINAL.md) (fechamento canônico).
 
 Os documentos datados são **registros históricos** e não são reescritos: correções
-entram como errata ou adendo, preservando o texto original.
+entram como errata ou adendo, preservando o texto original. O índice consolidado do
+que neles já não vale está em
+[docs/ERRATA_2026-08-21.md](docs/ERRATA_2026-08-21.md).

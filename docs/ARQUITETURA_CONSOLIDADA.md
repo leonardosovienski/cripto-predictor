@@ -1,5 +1,16 @@
 # Arquitetura Consolidada — GarimpoInvestimentos + DPL
 
+> ## ⚠️ ERRATA 2026-08-21
+>
+> Retrato de 2026-07-01/02, preservado sem reescrita. Superados desde então: o
+> "**Estado das branches**" do §1 e o "merge pendente de aprovação" do §2 (tudo está
+> na `main`; nenhuma daquelas branches existe), a proveniência "sem hash de conteúdo"
+> do §4 (fechada pela migração `_0012_provenance_content_hash`) e o risco 5 do §6
+> quanto à promoção ao core (C-02, fechada). A nota 6,0/10 do §5 e o veredito NO-GO
+> do §7 continuam válidos.
+>
+> Índice: [ERRATA_2026-08-21.md](ERRATA_2026-08-21.md).
+
 > Estado em 2026-07-01, após o ciclo de auditoria e as 5 tarefas de consolidação.
 > Fontes: auditoria externa (conversa), [AUDITORIA_DPL.md](AUDITORIA_DPL.md) (interna),
 > [DECISAO_MERGE_DPL_DISCOVERY.md](DECISAO_MERGE_DPL_DISCOVERY.md) (ADR do merge).
