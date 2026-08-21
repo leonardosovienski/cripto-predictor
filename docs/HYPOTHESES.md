@@ -442,6 +442,29 @@
   | detecção | 7,5% | 8,2% | **14,2%** | **27,5%** | 60,0% |
 
 - Leitura: em `n=30`, um efeito de rho=0,2 passa despercebido em ~86% das vezes.
+- Tabela estendida (mesmo critério, `n_sim=150`, `n_boot=400` — reproduz a linha
+  `n=30` acima dentro do ruído de simulação, o que valida a redução do `n_boot`):
+
+  | n | rho=0,0 | rho=0,1 | rho=0,2 | rho=0,3 | rho=0,5 |
+  |---|---|---|---|---|---|
+  | 30 | 6,7% | 11,3% | 14,7% | 29,3% | 62,0% |
+  | 60 | 6,0% | 11,3% | 23,3% | 47,3% | 93,3% |
+  | 120 | 7,3% | 24,7% | 59,3% | **82,7%** | 100% |
+  | 250 | 6,0% | 34,7% | **81,3%** | 100% | 100% |
+  | 500 | 8,0% | 65,3% | 97,3% | 100% | 100% |
+
+- **Onde o poder chega a 80%:** rho=0,3 exige `n ≈ 120`; rho=0,2 exige `n ≈ 250`;
+  rho=0,1 não chega nem com `n=500` (65%). A taxa de falso positivo fica em 6-8% em
+  todos os `n` — levemente acima do nominal de 5%, mas estável, sem inflar com o `n`.
+- **Tradução operacional.** A H5 acumulou n=440 em ~18 dias (2026-07-10 a 07-28), ou
+  seja ~24 previsões elegíveis por dia. Nessa taxa, `n=30` chega em ~1,5 dia e `n=250`
+  em ~10 dias de coleta ininterrupta.
+- **O que fazer com isso SEM tocar no gate.** O critério diz "n >= 30 antes de calcular
+  veredito"; ele NÃO diz "pare em 30". A `h6_spearman_verdict` recalcula a cada
+  execução do ciclo. Logo: o primeiro veredito impresso, por volta de n=30, é
+  subdimensionado e não deve ser tratado como final; o mesmo critério, sem nenhuma
+  alteração, fica bem dimensionado por volta de n=250. Nada precisa ser mudado —
+  apenas lido corretamente.
 - **NÃO altera o gate.** A H6 está congelada por hash com `n >= 30` pré-registrado;
   trocar esse número DEPOIS de calcular poder seria ajuste post-hoc de critério —
   exatamente o que o pré-registro existe para impedir. O uso correto é QUALIFICAR a
