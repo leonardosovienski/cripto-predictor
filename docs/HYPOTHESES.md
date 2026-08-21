@@ -423,6 +423,32 @@
 - Ativação: é FERRAMENTA de avaliação, não hipótese — não consome tentativa e não
   precisa de pré-registro. Entra como métrica relatada ao lado do DSR.
 
+### B12 — Poder do gate: 'RUÍDO' com poder baixo não é evidência de ausência
+
+- Mecanismo: o projeto prova que o JUIZ funciona (`scripts/attest_harness.py`, controle
+  positivo com n=120 sintético). Não prova que, com o `n` que a coleta vai ter, o juiz
+  CONSEGUE ver. São perguntas diferentes, e a segunda decide como LER um veredito
+  negativo: poder alto + "RUÍDO" é evidência de ausência de efeito; poder baixo +
+  "RUÍDO" é ausência de evidência, e não diz nada.
+- Agravante estrutural: a coleta é diária e o horizonte é D+7, então previsões
+  consecutivas do mesmo ativo compartilham 6 dos 7 dias de retorno. O `n` efetivo é bem
+  menor que o nominal. O `block_length` do bootstrap já absorve isso na estimativa do
+  IC, mas ninguém tinha medido o que SOBRA de poder depois de absorver.
+- Medido em 2026-08-21 com o critério real (`spearman_block_ci` + `overlap_block_length`,
+  n_boot canônico de 10.000, 400 simulações), no gate pré-registrado `n=30`:
+
+  | rho verdadeiro | 0,0 (falso positivo) | 0,1 | 0,2 | 0,3 | 0,5 |
+  |---|---|---|---|---|---|
+  | detecção | 7,5% | 8,2% | **14,2%** | **27,5%** | 60,0% |
+
+- Leitura: em `n=30`, um efeito de rho=0,2 passa despercebido em ~86% das vezes.
+- **NÃO altera o gate.** A H6 está congelada por hash com `n >= 30` pré-registrado;
+  trocar esse número DEPOIS de calcular poder seria ajuste post-hoc de critério —
+  exatamente o que o pré-registro existe para impedir. O uso correto é QUALIFICAR a
+  leitura do veredito, nunca reescrever a regra que o produz.
+- Ativação: é FERRAMENTA de avaliação, não hipótese. Não consome tentativa e não
+  precisa de pré-registro.
+
 ### B11 — Concordância entre os juízes LLM (diversificação real da partição multi-juiz)
 
 > **Errata de 2026-08-21, no mesmo dia do registro.** Este item nasceu propondo medir
