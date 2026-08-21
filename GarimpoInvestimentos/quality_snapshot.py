@@ -450,27 +450,72 @@ def h6_status_payload(snap: dict, *, observed_at: str | None = None) -> dict:
     }
 
 
-def write_h6_status(snap: dict, path: Path = H6_STATUS_PATH) -> bool:
-    """Grava o estado da H6 só quando ele MUDA. Devolve True se o arquivo mudou.
+# Resultados de write_h6_status. String nomeada em vez de bool porque "não
+# gravei" tem duas causas com significados opostos: nada mudou (rotina) e me
+# RECUSEI a apagar um estado publicado (incidente). Um bool colapsaria as duas.
+H6_WRITTEN = "written"
+H6_UNCHANGED = "unchanged"
+H6_REFUSED_REGRESSION = "refused_regression"
 
-    A idempotência é o ponto: o painel roda todo dia, mas um arquivo versionado
-    que muda diariamente só no timestamp produz commit de ruído e treina quem
-    revisa a ignorá-lo. Por isso `observed_at` é preservado enquanto o estado
-    for o mesmo — ele marca quando aquele estado foi visto PELA PRIMEIRA VEZ,
-    não a última execução (essa fica no histórico append-only, que é local).
+
+def _h6_regride(atual: dict, novo: dict) -> bool:
+    """O novo estado PERDE informação em relação ao publicado?
+
+    As previsões são append-only (migração 0016), então o `n` elegível da H6 não
+    diminui por evolução legítima do dado. Ele diminui quando a EXECUÇÃO foi
+    degradada: banco vazio ou apontado para o lugar errado, ou falha de coleta de
+    preço que derruba as previsões maduras (`enrich_with_realized_prices` depende
+    de rede). Nesses casos o painel calcula n=0 sem erro nenhum.
+    """
+    if not isinstance(atual.get("n"), int):
+        return False
+    if novo["n"] < atual["n"]:
+        return True
+    # Cinto e suspensório: um veredito publicado nunca vira None em silêncio.
+    return atual.get("veredito") is not None and novo["veredito"] is None
+
+
+def write_h6_status(
+    snap: dict, path: Path = H6_STATUS_PATH, *, allow_regression: bool = False
+) -> str:
+    """Publica o estado da H6. Devolve H6_WRITTEN, H6_UNCHANGED ou
+    H6_REFUSED_REGRESSION.
+
+    Idempotência: o painel roda todo dia, mas um arquivo versionado que muda
+    diariamente só no timestamp produz commit de ruído e treina quem revisa a
+    ignorá-lo. Por isso `observed_at` é preservado enquanto o estado for o mesmo
+    — ele marca quando aquele estado foi visto PELA PRIMEIRA VEZ, não a última
+    execução (essa fica no histórico append-only, que é local).
+
+    NÃO-REGRESSÃO: este arquivo é a única janela externa para o n da H6. Uma
+    execução degradada (banco vazio, path errado, falha de preço engolida) produz
+    n=0 sem levantar exceção — e, sem esta trava, sobrescreveria um `n=31 /
+    validado` já publicado com `n=0 / veredito=null`, resetaria `observed_at` e
+    ainda pediria commit. O veredito sumiria sem deixar rastro. Regressão é
+    recusada e reportada; um reset deliberado se faz apagando o arquivo (ou com
+    allow_regression=True, que existe para tornar a intenção explícita).
+
+    Falha de ESCRITA propaga de propósito: não conseguir publicar é exatamente o
+    tipo de coisa que precisa ser barulhenta (mesma postura fail-fast do resto do
+    projeto). Só a LEITURA do arquivo antigo é tolerante — arquivo corrompido é
+    reescrito em vez de travar o painel.
     """
     novo = h6_status_payload(snap)
     if path.exists():
         try:
             atual = json.loads(path.read_text(encoding="utf-8"))
-        except (OSError, json.JSONDecodeError):
+        except (OSError, ValueError):
+            # ValueError cobre json.JSONDecodeError E UnicodeDecodeError (bytes
+            # não-UTF-8): ambos significam "não dá pra confiar no que está lá".
             atual = None
         if isinstance(atual, dict):
             comparavel = {k: v for k, v in novo.items() if k != "observed_at"}
             if {k: v for k, v in atual.items() if k != "observed_at"} == comparavel:
-                return False
+                return H6_UNCHANGED
+            if not allow_regression and _h6_regride(atual, novo):
+                return H6_REFUSED_REGRESSION
     path.write_text(json.dumps(novo, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-    return True
+    return H6_WRITTEN
 
 
 def main() -> int:
@@ -478,10 +523,20 @@ def main() -> int:
     print(render(snap))
     append_history(snap)
     print(f"\n(histórico registrado em {HISTORY_PATH})")
-    if write_h6_status(snap):
+    resultado = write_h6_status(snap)
+    if resultado == H6_WRITTEN:
         print(
             f"(estado da H6 MUDOU -> {H6_STATUS_PATH.name} atualizado; "
             f"commite-o para que o acompanhamento externo enxergue o n)"
+        )
+    elif resultado == H6_REFUSED_REGRESSION:
+        print(
+            f"\n*** {H6_STATUS_PATH.name} NÃO foi tocado: esta execução viu MENOS\n"
+            f"    previsões maduras da H6 do que as já publicadas. Previsões são\n"
+            f"    append-only, então isso indica execução degradada (banco vazio ou\n"
+            f"    errado, falha de coleta de preço), não perda real de dado.\n"
+            f"    Investigue antes de confiar no painel acima. Reset deliberado:\n"
+            f"    apague {H6_STATUS_PATH.name} e rode de novo."
         )
     else:
         print(f"(estado da H6 inalterado — {H6_STATUS_PATH.name} não foi tocado)")
