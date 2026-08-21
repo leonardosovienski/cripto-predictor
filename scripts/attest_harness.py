@@ -30,6 +30,7 @@ Uso:
 """
 
 import argparse
+import json
 import random
 import sys
 from pathlib import Path
@@ -128,12 +129,47 @@ def noise_series(n: int = 400, seed: int = 8) -> list[tuple[float, float]]:
     return [(rng.gauss(0.0, 1.0), rng.gauss(0.0, 0.01)) for _ in range(n)]
 
 
+def _expira_em(dias: float) -> bool:
+    """Algum dos dois atestados expira dentro de `dias`? Ausente ou ilegivel
+    conta como EXPIRADO — na duvida, renovar (o controle positivo roda de novo e
+    o custo e de segundos), nunca assumir validade."""
+    from datetime import UTC, datetime, timedelta
+
+    limite = datetime.now(UTC) + timedelta(days=dias)
+    for caminho in (attestation_path_for(TRIALS_PATH), PHASE1_ATTESTATION_PATH):
+        if not caminho.exists():
+            return True
+        try:
+            expira = json.loads(caminho.read_text(encoding="utf-8"))["expires_at"]
+            if datetime.fromisoformat(expira) <= limite:
+                return True
+        except (OSError, ValueError, KeyError):
+            return True
+    return False
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(
         description="Controle positivo dos juizes GO/NO-GO (V3) e VALIDADO/RUIDO (Fase 1)"
     )
     ap.add_argument("--dry-run", action="store_true", help="roda sem gravar os atestados")
+    ap.add_argument(
+        "--if-expiring-within",
+        type=float,
+        metavar="DIAS",
+        help="so roda se ALGUM atestado expira dentro de DIAS (ou ja expirou/nao existe). "
+        "Existe para agendamento: a validade e de 7 dias e a renovacao era 100%% manual, "
+        "entao um job diario com --if-expiring-within 2 renova sozinho sem gravar todo dia. "
+        "NAO afrouxa nada: o atestado so e gravado se o controle positivo PASSAR, como sempre.",
+    )
     args = ap.parse_args()
+
+    if args.if_expiring_within is not None and not _expira_em(args.if_expiring_within):
+        print(
+            f"atestados validos por mais de {args.if_expiring_within:g} dia(s) — "
+            "nada a fazer (use sem --if-expiring-within para forcar)"
+        )
+        return 0
 
     if args.dry_run:
         # Juiz da Fase 1 primeiro: se ele não tem poder, nenhum atestado deveria
