@@ -347,6 +347,112 @@
   risco de um sinal que não existe é polimento de motor desligado (mesma razão da
   rejeição do Regime Shift Detector na triagem de jul/2026).
 
+### B9 — Inverter o papel do LLM: gerador de HIPÓTESES, não preditor
+
+> Registrado em 2026-08-21, a partir de triagem de literatura externa. **Ressalva de
+> proveniência:** `arxiv.org` está bloqueado pelo proxy de egress deste ambiente, então
+> os papers abaixo foram lidos apenas por RESUMO de busca, não na fonte primária.
+> Confirmar antes de promover.
+
+- Mecanismo: a família H4/H5/H6 usa o LLM como PREDITOR — o `opportunity_score` É a
+  previsão, e o backtest testa esse número. H4 encerrou sem amostra, H5 foi refutada
+  (Spearman −0,166, IC fora de zero na direção OPOSTA) e H6 testa a leitura invertida.
+  A literatura recente sugere um desenho diferente para o mesmo insumo: o LLM propõe
+  HIPÓTESES falsificáveis, mapeadas para recipes executáveis num DSL point-in-time, e
+  um motor determinístico impõe splits, gates, custos e testes. O princípio declarado
+  é a separação de papéis — o agente controla a direção do raciocínio, nunca o
+  protocolo empírico.
+- Referência: Huang, Fan, Hu & Ye, "From Hypotheses to Factors: Constrained LLM Agents
+  in Cryptocurrency Markets" (arXiv 2604.26747, abr/2026). Regularizações contra alpha
+  decay (controle de complexidade, alinhamento semântico hipótese↔fator, imposição de
+  novidade) em Wang et al., "AlphaAgent" (arXiv 2502.16789, KDD 2025).
+- Por que este projeto está bem posicionado: o desenho exige trace append-only de
+  experimentos (`trials.json` + `predictions_archive`/migração 0016), gates
+  determinísticos (DSR, IC95 por block bootstrap, custos) e dados point-in-time
+  (Feature Store bitemporal com guard de `published_at`). Tudo isso JÁ existe. A peça
+  ausente é o DSL de fatores e o laço hipótese→recipe→avaliação.
+- **NÃO reabre H4/H5/H6.** Aquelas seguem fechadas com os vereditos que têm. Esta é
+  uma família nova, com trial nova, e nasce sujeita às mesmas regras.
+- Ativação: (1) DSL implementado e testado, com garantia de que uma recipe não
+  consegue ler dado futuro (teste de leakage, não só revisão); (2) atestado do harness
+  válido; (3) registro em `trials.json` com `metric` declarado; (4) dado coletado
+  DEPOIS do registro. Sem os quatro, é infraestrutura — não hipótese.
+
+- **Estado da infraestrutura (2026-08-21).** Construída a pedido explícito do dono,
+  depois de eu registrar a objeção de que o laço não deveria existir antes do
+  pré-registro; ele reafirmou. Registrado aqui como decisão, no mesmo espírito do
+  override de 2026-08-14.
+
+  | Requisito | Estado |
+  |---|---|
+  | (1) DSL com prova de não-leakage | ✅ `analyzers/factor_dsl.py` — invariância sob mutilação do futuro para CADA operação, **com contraprova** |
+  | (2) atestado do harness válido | ✅ renovado 2026-08-21, expira 2026-08-28 |
+  | (3) registro em `trials.json` com `metric` | ❌ **ato humano, deliberadamente não automatizado** |
+  | (4) dado coletado depois do registro | ❌ depende de (3) |
+
+  `analyzers/hypothesis_loop.py` implementa o laço propõe→valida→avalia→registra
+  no traço. Ele **não** escreve em `trials.json`, **não** emite veredito e **não**
+  descarta proposta em silêncio (rejeitada entra no denominador com o motivo).
+  Enquanto (3) e (4) não acontecerem, rodar o laço produz observação exploratória,
+  não hipótese — e nada do que sair dele pode ser citado como resultado.
+
+- **RISCO NOVO que este laço cria, declarado antes de qualquer uso.** Propor
+  hipóteses fica barato e escalável. Gerar 500 fatores e escolher o melhor é
+  data-snooping industrializado — mais rápido que à mão, não mais válido. As
+  contramedidas embutidas: traço append-only contando TODAS as propostas (inclusive
+  rejeitadas) como denominador honesto, e `analyzers/pbo.py` (B10) medindo se a
+  seleção entre elas distingue sinal de sorte. PBO alto sobre as propostas significa
+  parar de propor, não propor mais.
+- RESSALVA de honestidade: o resultado positivo citado na referência (Sharpe OOS
+  líquido) é DELES, com o universo e o período DELES. Não é evidência sobre este
+  pipeline e não pode ser citado como expectativa.
+
+### B10 — Probabilidade de Overfitting do Backtest (PBO) via CSCV
+
+- Mecanismo: o projeto já desconta múltiplas tentativas com **Deflated Sharpe Ratio**
+  (`analyzers/trials.py` → core), que responde "este Sharpe sobrevive ao máximo
+  esperado por sorte dado N tentativas?". O PBO responde outra pergunta, complementar:
+  "qual a PROBABILIDADE de que a configuração escolhida como melhor seja, de fato,
+  overfit?" — estimada por Combinatorially Symmetric Cross-Validation, particionando a
+  série em S blocos e comparando o ranking IS vs OOS em todas as combinações.
+- Referência: Bailey, Borwein, López de Prado & Zhu, "The Probability of Backtest
+  Overfitting" (SSRN 2326253).
+- Custo: ZERO coleta nova — aplica-se retroativamente ao registro que já existe.
+- Ortogonalidade: alta. Nenhum gate atual mede isto; `grep` confirma que não há
+  `pbo`/`cscv` no código.
+- Ativação: é FERRAMENTA de avaliação, não hipótese — não consome tentativa e não
+  precisa de pré-registro. Entra como métrica relatada ao lado do DSR.
+
+### B11 — Concordância entre os juízes LLM (diversificação real da partição multi-juiz)
+
+> **Errata de 2026-08-21, no mesmo dia do registro.** Este item nasceu propondo medir
+> a CORRELAÇÃO entre os juízes. Ao implementar, verifiquei em código que isso é
+> **não-computável a partir do dado existente**: `provider_for_asset()` é uma partição
+> FIXA por sha256 do nome do ativo, então cada ativo é sempre pontuado pelo MESMO
+> juiz. Não existe nenhuma observação pareada (dois juízes, mesmo ativo, mesma data)
+> em toda a coorte da H5 — e a ausência é por desenho, não por falta de dados. O item
+> foi dividido no que é medível agora e no que exigiria desenho novo.
+
+- Mecanismo: a H5 usa partição fixa por sha256 entre 4 provedores (gemini, groq,
+  cerebras, mistral), sob a premissa implícita de que juízes distintos trazem
+  diversificação. Essa premissa nunca foi medida.
+- **B11a — medível hoje, custo zero: CALIBRAÇÃO.** Se as distribuições de score
+  diferem materialmente entre juízes (nível médio, dispersão, fração acima do
+  limiar), o pooled da H5 mistura estimadores com réguas diferentes. Isso não
+  invalida o veredito já emitido — o critério pré-registrado julgava o pooled e foi
+  executado como estava —, mas QUALIFICA a leitura, do mesmo modo que a limitação
+  do block bootstrap foi qualificada e não reescrita.
+- **B11b — exige desenho novo: CONCORDÂNCIA.** Medir se dois juízes concordam sobre
+  o MESMO ativo exige atribuição sobreposta (ex.: uma fração dos ativos pontuada em
+  duplicata). Isso muda a coleta, logo é hipótese/trial nova, com pré-registro — não
+  se faz retroativamente.
+- Relevância dupla: (a) qualifica retroativamente a leitura da H5; (b) a literatura de
+  alpha decay (B9) aponta homogeneidade entre saídas de LLM como causa de crowding —
+  medir concordância é o primeiro diagnóstico dessa família.
+- Ativação: é MEDIÇÃO descritiva sobre dado existente, não hipótese preditiva. Não
+  consome tentativa. Não altera nenhum veredito já emitido — a H5 continua refutada
+  pelo critério pré-registrado que foi executado na data pré-registrada.
+
 ---
 
 ## Override de governança 2026-08-14 — infraestrutura de execução antes de edge validado
