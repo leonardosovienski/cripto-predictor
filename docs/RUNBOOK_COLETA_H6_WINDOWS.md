@@ -111,6 +111,7 @@ fazer a seguir:
 
 | O que ele imprime | Significa | O que fazer |
 |---|---|---|
+| `(primeira publicacao da H6 -> h6_status.json criado; commite-o...)` | é a **primeira vez** — nunca houve estado publicado | confira o `n` contra o painel, depois **B.3** |
 | `(estado da H6 MUDOU -> h6_status.json atualizado; commite-o...)` | o `n` ou o veredito mudou | **vá para B.3 e commite** |
 | `(estado da H6 inalterado — h6_status.json não foi tocado)` | rotina | nada |
 | `*** h6_status.json NÃO foi tocado: esta execução viu MENOS previsões maduras...` | **incidente** | **pare e investigue** — ver B.4 |
@@ -144,6 +145,14 @@ Get-Content GarimpoInvestimentos\h6_status.json | ConvertFrom-Json |
 `rho`, `ic_lower`, `ic_upper` e `veredito` vêm **`null` enquanto `n < 30`**. Isso
 é a trava funcionando, não dado faltando: `h6_spearman_verdict` devolve `None` de
 propósito abaixo do gate, para não expor correlação prematura como se fosse sinal.
+
+> **Por que a primeira publicação tem linha própria.** A trava de não-regressão
+> só age quando existe um estado anterior para comparar — então a primeira
+> publicação é o único momento em que um `n` degradado passa sem ser questionado.
+> Como o artefato **nunca foi commitado**, essa primeira vez é o caso que você vai
+> encontrar. Se ela vier com `n=0`, o painel imprime um aviso pedindo que você
+> confira o caminho do banco antes de commitar: `n=0` pode ser legítimo, mas é
+> também exatamente o que um banco vazio ou apontado para o lugar errado produz.
 
 ### B.4 Se aparecer a recusa por regressão
 
