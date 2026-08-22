@@ -523,8 +523,34 @@ def main() -> int:
     print(render(snap))
     append_history(snap)
     print(f"\n(histórico registrado em {HISTORY_PATH})")
-    resultado = write_h6_status(snap)
-    if resultado == H6_WRITTEN:
+    # Capturado ANTES da escrita: a trava de nao-regressao so age quando ha um
+    # estado publicado para comparar, entao a PRIMEIRA publicacao e o unico
+    # momento em que um n degradado passa sem ser questionado. Como o artefato
+    # nunca foi commitado (verificado em 2026-08-21, git log --all vazio), essa
+    # primeira vez e o caso que todo mundo vai encontrar.
+    primeira_publicacao = not H6_STATUS_PATH.exists()
+    # Caminho passado explicitamente: o default de write_h6_status e vinculado
+    # na definicao da funcao, entao so o argumento explicito faz main() e a
+    # escrita concordarem sobre QUAL arquivo esta em jogo.
+    resultado = write_h6_status(snap, H6_STATUS_PATH)
+    if resultado == H6_WRITTEN and primeira_publicacao:
+        print(
+            f"(primeira publicacao da H6 -> {H6_STATUS_PATH.name} criado; "
+            f"commite-o para que o acompanhamento externo enxergue o n)"
+        )
+        if snap["sample"]["h6_valid_n"] == 0:
+            # Mesmo nome que _load_rows() usa de fato (ver build_snapshot).
+            import GarimpoInvestimentos.analyzers.backtest as _backtest_module
+
+            print(
+                "\n*** CONFIRA ANTES DE COMMITAR: n=0 na primeira publicacao.\n"
+                "    Pode ser legitimo (nenhuma previsao madura posterior ao\n"
+                "    registro da H6 ainda), mas e tambem o que um banco vazio ou\n"
+                "    apontado para o lugar errado produz — e, sem estado anterior,\n"
+                "    a trava de nao-regressao nao tem com o que comparar. Confira\n"
+                f"    o caminho do banco: {_backtest_module.FEATURE_STORE_DB}"
+            )
+    elif resultado == H6_WRITTEN:
         print(
             f"(estado da H6 MUDOU -> {H6_STATUS_PATH.name} atualizado; "
             f"commite-o para que o acompanhamento externo enxergue o n)"

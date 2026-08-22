@@ -480,3 +480,61 @@ def test_ponta_a_ponta_build_snapshot_publica_e_depois_recusa_banco_vazio(db_pat
         == quality_snapshot.H6_REFUSED_REGRESSION
     )
     assert json.loads(destino.read_text(encoding="utf-8"))["veredito"] == "validado"
+
+
+# --- Mensagem da PRIMEIRA publicação ------------------------------------------
+
+
+def _rodar_main(monkeypatch, capsys, destino, snap):
+    """Roda main() sem tocar banco: só o caminho de publicação/mensagem."""
+    import asyncio
+
+    async def _fake_build(now=None):
+        return snap
+
+    monkeypatch.setattr(quality_snapshot, "build_snapshot", _fake_build)
+    monkeypatch.setattr(quality_snapshot, "render", lambda s: "")
+    monkeypatch.setattr(quality_snapshot, "append_history", lambda s: None)
+    monkeypatch.setattr(quality_snapshot, "H6_STATUS_PATH", destino)
+    assert asyncio.get_event_loop_policy() is not None  # sanidade do runner
+    assert quality_snapshot.main() == 0
+    return capsys.readouterr().out
+
+
+def test_primeira_publicacao_nao_se_anuncia_como_MUDOU(tmp_path, monkeypatch, capsys):
+    """ "MUDOU" pressupoe um estado anterior. Na primeira vez nao ha nenhum — e
+    dizer que mudou treina quem le a commitar sem conferir."""
+    destino = tmp_path / "h6_status.json"
+    saida = _rodar_main(
+        monkeypatch, capsys, destino, _snap(31, h6={"n": 31, "veredito": "validado"})
+    )
+    assert "primeira publicacao" in saida
+    assert "MUDOU" not in saida
+    assert destino.exists()
+
+
+def test_primeira_publicacao_com_n_zero_pede_conferencia(tmp_path, monkeypatch, capsys):
+    """A trava de nao-regressao so age com estado anterior para comparar, entao a
+    PRIMEIRA publicacao e o unico momento em que um n degradado (banco vazio ou
+    apontado errado) passa sem ser questionado. Como o artefato nunca foi
+    commitado, essa primeira vez e o caso que todo mundo vai encontrar."""
+    destino = tmp_path / "h6_status.json"
+    saida = _rodar_main(monkeypatch, capsys, destino, _snap(0))
+    assert "CONFIRA ANTES DE COMMITAR" in saida
+    assert "n=0" in saida
+    assert "feature_store.db" in saida, "precisa dizer QUAL banco conferir"
+
+
+def test_primeira_publicacao_com_n_real_nao_alarma(tmp_path, monkeypatch, capsys):
+    destino = tmp_path / "h6_status.json"
+    saida = _rodar_main(monkeypatch, capsys, destino, _snap(12))
+    assert "primeira publicacao" in saida
+    assert "CONFIRA ANTES DE COMMITAR" not in saida
+
+
+def test_publicacao_seguinte_volta_a_dizer_MUDOU(tmp_path, monkeypatch, capsys):
+    destino = tmp_path / "h6_status.json"
+    _rodar_main(monkeypatch, capsys, destino, _snap(12))
+    saida = _rodar_main(monkeypatch, capsys, destino, _snap(18))
+    assert "MUDOU" in saida
+    assert "primeira publicacao" not in saida
