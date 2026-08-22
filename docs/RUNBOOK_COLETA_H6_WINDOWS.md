@@ -58,6 +58,11 @@ Get-ScheduledTaskInfo -TaskName cripto-attest-renew | Select-Object LastRunTime,
 grava** — comportamento esperado, não falha. A saída deve terminar com
 `"run_status": "SUCCEEDED"`.
 
+> **`LastTaskResult` = 267011 e `LastRunTime` = 30/11/1999 não são falha:** é
+> `SCHED_S_TASK_HAS_NOT_RUN`, o sentinela de "esta tarefa nunca rodou". Ou seja, o
+> `Start-ScheduledTask` não chegou a ser executado. Rode-o **sozinho**, numa linha
+> só, e só então consulte o `Get-ScheduledTaskInfo`.
+
 > **Se você vir `"run_status": "FAILED"` com `LastTaskResult` 0**, o repositório
 > está antes do commit que corrigiu o `exit_statuses` em `jobs.py`. Até
 > 2026-08-21 **todo** job desta suíte reportava `FAILED` ao sair com 0 — inclusive
@@ -79,6 +84,21 @@ A ordem entre A.3 e o bloco B não é crítica. Se o cron disparar antes de o
 ## Bloco B — todo dia (a coleta)
 
 ### B.1 Rodar o ciclo
+
+> **Os dois `.bat` não são intercambiáveis, e a diferença decide a taxa de coleta.**
+> `run_garimpo_fase1.bat` roda `phase1`, que analisa **só o universo que já está na
+> Feature Store** (`phase1.py`: `store.list_symbols("1d") or DEFAULT_ASSETS`). Ele
+> não descobre ativo novo. Quem amplia o universo é `run_sinal_diario.bat`, que faz
+> `--ingest --assets` com os 10 fixos e `--ingest --discover 15`.
+>
+> Consequência prática: com a store contendo só bitcoin e ethereum, o ciclo produz
+> ~2 previsões/dia, e o gate `n>=30` da H6 levaria ~15 dias só para abrir — contra
+> ~1,5 dia na taxa de ~24/dia que a H5 teve. **Se o `n` estiver subindo devagar,
+> confira o tamanho do universo antes de qualquer outra coisa:**
+>
+> ```powershell
+> uv run python -c "from GarimpoInvestimentos.dpl.feature_store import FeatureStore; from GarimpoInvestimentos.core.paths import FEATURE_STORE_DB; print(sorted(FeatureStore(FEATURE_STORE_DB).list_symbols('1d')))"
+> ```
 
 As tarefas do Agendador já fazem isso (`GarimpoFase1`, 22:00). Para rodar à mão,
 **use os `.bat`** — nunca monte um comando próprio com log em arquivo:

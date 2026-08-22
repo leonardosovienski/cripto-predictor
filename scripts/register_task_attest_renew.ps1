@@ -80,4 +80,11 @@ Write-Host "  Get-ScheduledTaskInfo -TaskName $TaskName | Select LastRunTime, La
 Write-Host "LastTaskResult 0 = OK. Com o atestado ainda longe do vencimento, o job"
 Write-Host "roda e NAO grava - isso e o comportamento correto, nao falha."
 
-Read-Host "`nPressione Enter para fechar"
+# NAO usar Read-Host aqui. O runbook manda rodar este script de um PowerShell
+# elevado ja aberto, e nesse modo um prompt no fim ENGOLE a proxima linha colada:
+# em 2026-08-22 o operador colou o bloco inteiro e o `Start-ScheduledTask` virou
+# a resposta do prompt, entao a tarefa nunca foi disparada e o
+# Get-ScheduledTaskInfo mostrou 267011 (SCHED_S_TASK_HAS_NOT_RUN) com
+# LastRunTime 30/11/1999. Parecia falha de registro; era o prompt comendo o
+# comando. Quem executa por duplo-clique perde a janela no fim -- custo aceito,
+# porque o caminho documentado e o do prompt ja aberto.
