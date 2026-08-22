@@ -63,7 +63,10 @@ def test_phase1_exit_code_1_maps_to_partial_not_failed(tmp_path, monkeypatch):
     ficar indisponivel — phase1_watchdog.py so aceita SUCCEEDED/PARTIAL."""
     monkeypatch.setenv("PREDICTOR_OPS_STATE_DIR", str(tmp_path))
     config = jobs.job_config("phase1")
-    assert config.exit_statuses == {1: RunStatus.PARTIAL}
+    assert config.exit_statuses[1] is RunStatus.PARTIAL
+    # E o mapeamento do 1 NAO pode custar o do 0: ver
+    # test_saida_limpa_e_SUCCEEDED_em_todo_job abaixo.
+    assert config.exit_statuses[0] is RunStatus.SUCCEEDED
 
     isolated_failure_job = _job(tmp_path, "import sys; sys.exit(1)")
     isolated_failure_job = JobConfig(
@@ -75,9 +78,48 @@ def test_phase1_exit_code_1_maps_to_partial_not_failed(tmp_path, monkeypatch):
 
 
 def test_other_jobs_do_not_get_the_partial_mapping(tmp_path, monkeypatch):
+    """So o phase1 ganha o 1 -> PARTIAL. Os demais ficam com o default e nada mais.
+
+    A versao anterior deste teste exigia `== {}` e, com isso, TRAVAVA um defeito:
+    dict vazio substitui o default do predictor_ops em vez de completa-lo, entao
+    exit 0 caia no fallback FAILED (runner.py:242).
+    """
     monkeypatch.setenv("PREDICTOR_OPS_STATE_DIR", str(tmp_path))
     for name in ("backtest", "watchdog", "v3-daily", "observation-daily", "observation-live"):
-        assert jobs.job_config(name).exit_statuses == {}
+        mapa = jobs.job_config(name).exit_statuses
+        assert 1 not in mapa, f"{name} nao deve herdar o mapeamento do phase1"
+        assert mapa[0] is RunStatus.SUCCEEDED
+
+
+def test_saida_limpa_e_SUCCEEDED_em_todo_job(tmp_path, monkeypatch):
+    """Contrato mais basico do runner: quem sai com 0 reportou sucesso.
+
+    Nao basta inspecionar o dict — este teste RODA o runner, porque o defeito
+    original vivia na interacao entre o dict e o fallback do predictor_ops, e
+    nenhuma assercao sobre o dict sozinho o teria pego. Consequencia pratica de
+    perder isso: watchdog.py exige `status == "SUCCEEDED"` do backtest diario e
+    observation_watchdog exige SUCCEEDED/PARTIAL — com exit 0 virando FAILED,
+    ambos alarmavam toda noite e afogavam qualquer problema real.
+    """
+    monkeypatch.setenv("PREDICTOR_OPS_STATE_DIR", str(tmp_path))
+    for name in ("phase1", "backtest", "watchdog", "v3-daily", "observation-daily"):
+        base = jobs.job_config(name)
+        limpo = JobConfig(
+            **{
+                **base.model_dump(),
+                "id": f"exit0-{name}",
+                "command": [sys.executable, "-c", "import sys; sys.exit(0)"],
+                "timeout_seconds": 30,
+                "heartbeat_interval_seconds": 0.05,
+                "expected_artifact": None,
+                "runtime": {"root": tmp_path, "lock_stale_after_seconds": 30},
+            }
+        )
+        resultado = run_job(limpo)
+        assert resultado.exit_code == 0
+        assert resultado.run_status is RunStatus.SUCCEEDED, (
+            f"{name}: saida limpa reportada como {resultado.run_status.value}"
+        )
 
 
 def test_live_observation_job_is_collection_only(tmp_path, monkeypatch):

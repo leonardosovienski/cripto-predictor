@@ -24,6 +24,12 @@ def _state_root() -> Path:
     )
 
 
+#: Ponto de partida para `exit_statuses`, espelhando o default do predictor_ops
+#: (`JobConfig.exit_statuses`). Existe como constante para deixar explícito que
+#: qualquer mapeamento por job COMPLETA este dict em vez de substituí-lo.
+_EXIT_STATUSES_PADRAO = {0: RunStatus.SUCCEEDED, 2: RunStatus.PARTIAL}
+
+
 def job_config(name: str, *, timeout_seconds: float | None = None) -> JobConfig:
     commands = {
         "phase1": [sys.executable, "-m", "GarimpoInvestimentos.phase1"],
@@ -77,11 +83,27 @@ def job_config(name: str, *, timeout_seconds: float | None = None) -> JobConfig:
         # juiz falha isoladamente (ex.: um provider sem créditos), mesmo com os
         # demais gravando previsões reais normalmente. Sem este mapeamento,
         # predictor_ops.run_job trata qualquer exit code fora de exit_statuses como
-        # FAILED (models.py: default RunStatus.FAILED) — o job nunca mais reportaria
-        # SUCCEEDED enquanto aquele provider ficar indisponível, mesmo saudável pros
-        # outros. phase1_watchdog.py já aceita SUCCEEDED/PARTIAL como não-violação;
-        # PARTIAL é a leitura correta de "1 gravado, N falha(s) isolada(s)".
-        exit_statuses={1: RunStatus.PARTIAL} if name == "phase1" else {},
+        # FAILED (runner.py:242, `exit_statuses.get(exit_code, FAILED)`) — o job
+        # nunca mais reportaria SUCCEEDED enquanto aquele provider ficar
+        # indisponível, mesmo saudável pros outros. phase1_watchdog.py já aceita
+        # SUCCEEDED/PARTIAL como não-violação; PARTIAL é a leitura correta de
+        # "1 gravado, N falha(s) isolada(s)".
+        #
+        # SEMPRE partir de _EXIT_STATUSES_PADRAO, nunca de {}. O campo tem
+        # default_factory no predictor_ops; passar um dict explícito SUBSTITUI esse
+        # default em vez de completá-lo. Entre 2026-08-19 (#32) e 2026-08-21, este
+        # ponto passava `{}` para todo job que não fosse phase1 e `{1: PARTIAL}`
+        # para o phase1 — o que apagou o `0: SUCCEEDED` do default e fez TODO job
+        # reportar FAILED ao sair com 0, phase1 incluído. Efeito medido: o
+        # watchdog.py exige `status == "SUCCEEDED"` do backtest diário e o
+        # observation_watchdog exige SUCCEEDED/PARTIAL — nenhum dos dois podia ser
+        # satisfeito, então o alarme tocava toda noite e um problema real ficaria
+        # indistinguível do ruído.
+        exit_statuses=(
+            {**_EXIT_STATUSES_PADRAO, 1: RunStatus.PARTIAL}
+            if name == "phase1"
+            else dict(_EXIT_STATUSES_PADRAO)
+        ),
         runtime={"backend": "local", "root": _state_root(), "lock_stale_after_seconds": 86_400},
     )
 

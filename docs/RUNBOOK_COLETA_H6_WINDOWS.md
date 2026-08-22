@@ -55,7 +55,14 @@ Get-ScheduledTaskInfo -TaskName cripto-attest-renew | Select-Object LastRunTime,
 ```
 
 `LastTaskResult` **0** = OK. Com o vencimento ainda longe, o job roda e **não
-grava** — comportamento esperado, não falha.
+grava** — comportamento esperado, não falha. A saída deve terminar com
+`"run_status": "SUCCEEDED"`.
+
+> **Se você vir `"run_status": "FAILED"` com `LastTaskResult` 0**, o repositório
+> está antes do commit que corrigiu o `exit_statuses` em `jobs.py`. Até
+> 2026-08-21 **todo** job desta suíte reportava `FAILED` ao sair com 0 — inclusive
+> o `phase1` — porque o dicionário passado substituía o default do `predictor_ops`
+> em vez de completá-lo. Atualize o repositório; não é falha da tarefa.
 
 ### A.3 Colar o prompt do cron (item 0.3 — prazo seg 2026-08-24 12:00 UTC)
 
