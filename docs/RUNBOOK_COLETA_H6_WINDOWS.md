@@ -201,6 +201,27 @@ rode o painel de novo.
 
 ---
 
+## Bloco B-bis — backup do que já foi coletado
+
+As previsões vivem **só** no `feature_store.db` da máquina de coleta. A tabela é
+append-only (migração `_0016`: `DELETE` bloqueado por trigger, `UPDATE` arquiva o
+estado anterior), então nada se perde por sobrescrita — mas isso não protege
+contra o disco, a máquina ou um `rm`. **Este projeto já perdeu as 440 previsões
+brutas da H5 em definitivo.**
+
+```powershell
+uv run python -m scripts.feature_store_backup create --output C:\predictor\backups\fs-AAAA-MM-DD
+uv run python -m scripts.feature_store_backup verify --backup C:\predictor\backups\fs-AAAA-MM-DD
+```
+
+O `create` usa `sqlite3.Connection.backup`, que é consistente com WAL e com
+escritores concorrentes — dá para rodar com a coleta ativa. O `verify` confere o
+manifesto e o hash. O `restore` exige um destino **inexistente** e nunca
+sobrescreve o banco de produção.
+
+Vale rodar semanalmente, e obrigatoriamente antes de mexer em qualquer coisa que
+toque o banco.
+
 ## Bloco C — vigiar a continuidade
 
 Interrupção de coleta é o modo de falha que **já matou a H4** (encerrada com
