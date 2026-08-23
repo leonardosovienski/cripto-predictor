@@ -31,3 +31,48 @@ def test_pyright_tem_uma_unica_fonte_de_configuracao():
         "pyright deve ter exatamente UMA fonte de configuracao: "
         f"pyrightconfig.json={json_existe}, [tool.pyright] no pyproject={tem_bloco}"
     )
+
+
+def _blocos_bat_com_parenteses_soltos(texto: str) -> list[tuple[int, str]]:
+    """Linhas dentro de um bloco `... (` que contem ( ou ) sem escape ^.
+
+    O cmd.exe conta parenteses ao PARSEAR o bloco inteiro, antes de executar
+    qualquer coisa: um `)` solto no meio fecha o bloco cedo e o resto da linha
+    vira comando. Por isso o defeito nao depende do ramo ser tomado -- ele
+    quebra o script SEMPRE.
+    """
+    achados: list[tuple[int, str]] = []
+    profundidade = 0
+    for numero, linha in enumerate(texto.splitlines(), start=1):
+        sem_escape = linha.replace("^(", "").replace("^)", "")
+        corpo = sem_escape.strip()
+        if profundidade > 0 and corpo not in (")", ") else (") and ("(" in corpo or ")" in corpo):
+            achados.append((numero, linha.strip()))
+        profundidade += sem_escape.count("(") - sem_escape.count(")")
+        profundidade = max(profundidade, 0)
+    return achados
+
+
+def test_bat_nao_tem_parentese_solto_dentro_de_bloco():
+    """Barreira do incidente de 2026-08-22.
+
+    `run_sinal_diario.bat` trazia, dentro de um `if errorlevel 1 (`, um echo com
+    "(GEMINI_API_KEY / SERP_API_KEY)". O `)` fechava o bloco cedo e o cmd
+    abortava com "e foi inesperado neste momento" -- DEPOIS de a ingestao dos 10
+    ativos fixos ter dado certo, entao parecia falha da rede. Efeito real: os
+    passos `--discover` e `--summary` nunca rodaram por esse script desde que ele
+    nasceu (#11), e o universo da Feature Store nunca cresceu por essa via.
+
+    A suite pytest nao executa .bat; esta barreira cobre o que ela nao alcanca,
+    no mesmo espirito da checagem de ASCII dos .ps1 em scripts/ci_check.py.
+    """
+    raiz = Path(__file__).resolve().parents[1]
+    problemas: list[str] = []
+    for bat in sorted(raiz.glob("*.bat")):
+        texto = bat.read_text(encoding="utf-8", errors="replace")
+        for numero, linha in _blocos_bat_com_parenteses_soltos(texto):
+            problemas.append(f"{bat.name}:{numero}: {linha}")
+    assert not problemas, (
+        "parentese sem escape dentro de bloco de .bat (use ^( e ^) ou reescreva):\n"
+        + "\n".join(problemas)
+    )

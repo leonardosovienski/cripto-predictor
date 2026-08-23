@@ -100,6 +100,13 @@ A ordem entre A.3 e o bloco B não é crítica. Se o cron disparar antes de o
 > uv run python -c "from GarimpoInvestimentos.dpl.feature_store import FeatureStore; from GarimpoInvestimentos.core.paths import FEATURE_STORE_DB; print(sorted(FeatureStore(FEATURE_STORE_DB).list_symbols('1d')))"
 > ```
 
+> **Se o `.bat` terminar com `e foi inesperado neste momento`**, é o `cmd.exe`
+> abortando a leitura de um bloco `if ... (` por causa de um parêntese sem escape
+> no texto de um `echo`. O erro aparece **depois** de um passo bem-sucedido, então
+> parece falha de rede — não é. Foi o que quebrou o `--discover` e o `--summary`
+> do `run_sinal_diario.bat` desde que ele nasceu. Corrigido em 2026-08-22, com
+> barreira em `tests/test_repo_hygiene.py`.
+
 As tarefas do Agendador já fazem isso (`GarimpoFase1`, 22:00). Para rodar à mão,
 **use os `.bat`** — nunca monte um comando próprio com log em arquivo:
 
