@@ -18,7 +18,27 @@ from pathlib import Path
 from typing import Any
 
 ROOT = Path(__file__).resolve().parent.parent
-DEFAULT_DATABASE = ROOT / "output" / "feature_store.db"
+
+
+def _default_database() -> Path:
+    """O banco REAL, resolvido como o resto do projeto resolve.
+
+    O default anterior era `<repo>/output/feature_store.db`, um caminho que nao
+    existe em producao: `core.paths` poe o banco sob DATA_DIR (platformdirs, ou
+    a variavel de ambiente), fora do checkout. Quem rodasse o backup sem
+    `--database` recebia "Feature Store ausente" apontando para um lugar que
+    nunca teve banco nenhum -- barulhento, mas confuso, e num utilitario cuja
+    unica razao de existir e nao perder dado. O fallback preserva o
+    comportamento antigo se o pacote nao puder ser importado.
+    """
+    try:
+        from GarimpoInvestimentos.core.paths import FEATURE_STORE_DB
+    except Exception:
+        return ROOT / "output" / "feature_store.db"
+    return FEATURE_STORE_DB
+
+
+DEFAULT_DATABASE = _default_database()
 MANIFEST_NAME = "BACKUP_MANIFEST.json"
 DATABASE_NAME = "feature_store.db"
 SCHEMA_VERSION = "previsao-cripto-feature-store-backup/1.0"

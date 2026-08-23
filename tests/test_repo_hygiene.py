@@ -76,3 +76,18 @@ def test_bat_nao_tem_parentese_solto_dentro_de_bloco():
         "parentese sem escape dentro de bloco de .bat (use ^( e ^) ou reescreva):\n"
         + "\n".join(problemas)
     )
+
+
+def test_backup_aponta_para_o_banco_real():
+    """O default do backup tem que ser o mesmo caminho que o resto do projeto usa.
+
+    Ate 2026-08-23 ele era `<repo>/output/feature_store.db`, que nunca existe em
+    producao (core.paths poe o banco sob DATA_DIR, fora do checkout). Num
+    utilitario cuja unica razao de existir e nao perder dado, um default que
+    aponta para lugar nenhum e o pior tipo de default -- e este projeto ja
+    perdeu as 440 previsoes brutas da H5 em definitivo.
+    """
+    from GarimpoInvestimentos.core.paths import FEATURE_STORE_DB
+    from scripts.feature_store_backup import DEFAULT_DATABASE
+
+    assert DEFAULT_DATABASE == FEATURE_STORE_DB
