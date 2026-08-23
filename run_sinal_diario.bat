@@ -31,7 +31,7 @@ if errorlevel 1 (
 echo === Ingestao (rede): top cripto fixos -^> Feature Store ===
 uv run python -m GarimpoInvestimentos.main --ingest --assets %ATIVOS% --mode fallback
 if errorlevel 1 (
-    echo Ingestao dos ativos fixos falhou. Verifique GarimpoInvestimentos\.env (GEMINI_API_KEY / SERP_API_KEY) e conexao de rede.
+    echo Ingestao dos ativos fixos falhou. Verifique as chaves GEMINI_API_KEY e SERP_API_KEY em GarimpoInvestimentos\.env, e a conexao de rede.
     popd
     exit /b %errorlevel%
 )
