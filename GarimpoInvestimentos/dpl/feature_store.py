@@ -27,7 +27,10 @@ from GarimpoInvestimentos.dpl.contracts import MarketDataPoint
 from GarimpoInvestimentos.dpl.migrations import ADDITIVE_MIGRATIONS
 from GarimpoInvestimentos.dpl.signals import SignalPoint
 
-# Versão do schema da Feature Store (base 0001-0004 + aditivas em dpl/migrations/).
+# Versão SEMÂNTICA do schema da Feature Store — NÃO é o número da última migração:
+# migrações aditivas (0005-0016) podem não alterar a versão exposta. Este valor é
+# travado por tests/test_dpl_migrations.py::test_schema_version_exposto; só suba
+# quando a mudança de schema for visível ao consumidor (ver comentário do teste).
 SCHEMA_VERSION = 11
 
 # Guard de integridade temporal na INSERÇÃO (auditoria jul/2026) — duas pontas:
@@ -117,6 +120,13 @@ class FeatureStore:
         self, db_path: Path | str, *, max_publication_lag: timedelta = MAX_PUBLICATION_LAG
     ):
         self._conn = infra.connect(db_path)
+        # Integridade do ledger (auditoria externa 2026-08-24): com o default
+        # recursive_triggers=OFF, um `INSERT OR REPLACE` executa o DELETE
+        # implícito do REPLACE SEM disparar os triggers BEFORE DELETE da
+        # migração 0016 — buraco silencioso no append-only. Com ON, o REPLACE
+        # dispara o trigger e ABORTA (fail-loud), que é o comportamento
+        # desejado para `predictions`.
+        self._conn.execute("PRAGMA recursive_triggers = ON")
         self._max_publication_lag = max_publication_lag
         # Schema base (0001-0004) + migrações aditivas (0005+, em dpl/migrations/).
         # run_migrations é idempotente por nome → seguro para DBs em qualquer versão.

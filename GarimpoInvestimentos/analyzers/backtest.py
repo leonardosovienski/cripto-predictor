@@ -18,6 +18,7 @@ Uso:
 
 import asyncio
 import csv
+import math
 from datetime import UTC, datetime, timedelta
 
 from predictor_core.net import get_http_client, with_retry
@@ -182,7 +183,7 @@ async def enrich_with_realized_prices(rows: list[dict]) -> list[dict]:
                     out[f"medida_d{h}"] = medida  # régua usada: store:<src> | coingecko
                     out[f"var_d{h}_pct"] = (
                         round((price - row["pred_price"]) / row["pred_price"] * 100, 2)
-                        if price
+                        if price is not None  # era `if price` — falsy-check engoliria 0.0
                         else None
                     )
                 enriched.append(out)
@@ -239,6 +240,69 @@ def _write(enriched: list[dict]) -> None:
     print(f"💾 Backtest gravado em {BACKTEST_CSV}")
 
 
+def _ranks(xs: list[float]) -> list[float]:
+    """Ranks com média para empates (Spearman clássico), stdlib puro."""
+    order = sorted(range(len(xs)), key=lambda i: xs[i])
+    ranks = [0.0] * len(xs)
+    i = 0
+    while i < len(order):
+        j = i
+        while j + 1 < len(order) and xs[order[j + 1]] == xs[order[i]]:
+            j += 1
+        avg = (i + j) / 2 + 1
+        for k in range(i, j + 1):
+            ranks[order[k]] = avg
+        i = j + 1
+    return ranks
+
+
+def _spearman_rho(xs: list[float], ys: list[float]) -> float | None:
+    """Spearman ponto-estimado sem numpy/scipy. None se variância nula."""
+    if len(xs) < 3 or len(xs) != len(ys):
+        return None
+    rx, ry = _ranks(xs), _ranks(ys)
+    n = len(rx)
+    mx, my = sum(rx) / n, sum(ry) / n
+    cov = sum((a - mx) * (b - my) for a, b in zip(rx, ry))
+    vx = sum((a - mx) ** 2 for a in rx)
+    vy = sum((b - my) ** 2 for b in ry)
+    if vx == 0 or vy == 0:
+        return None
+    return cov / (vx * vy) ** 0.5
+
+
+# Monitor de estabilidade do sinal (recomendação de pesquisa externa
+# 2026-08-24): a réplica de Baker-Wurgler (2002-2023) mostra proxies de
+# sentimento TROCANDO de direção entre regimes — e a H6 é uma hipótese de
+# sinal invertido. Sem monitoramento contínuo, o sinal pode virar e ninguém
+# nota até o próximo gate. Janela rolante sobre os pares em ORDEM TEMPORAL.
+ROLLING_WINDOW = 60
+ROLLING_MIN_N = 30
+
+
+def rolling_flip_check(enriched: list[dict], horizon: int) -> tuple[float, float, int] | None:
+    """Compara o Spearman da janela recente (últimos ROLLING_WINDOW pontos)
+    com o da amostra toda no horizonte dado. Retorna (rho_geral, rho_recente,
+    n_janela) quando ambos são computáveis — o chamador decide o alarme."""
+    key = f"var_d{horizon}_pct"
+    rows = [
+        (r.get("pred_date") or datetime.min, r["score"], r[key])
+        for r in enriched
+        if r.get(key) is not None and r.get("score") is not None
+    ]
+    rows.sort(key=lambda t: t[0])
+    if len(rows) < ROLLING_MIN_N + 10:
+        return None
+    overall = _spearman_rho([s for _, s, _ in rows], [v for _, _, v in rows])
+    tail = rows[-ROLLING_WINDOW:]
+    if len(tail) < ROLLING_MIN_N:
+        return None
+    recent = _spearman_rho([s for _, s, _ in tail], [v for _, _, v in tail])
+    if overall is None or recent is None:
+        return None
+    return overall, recent, len(tail)
+
+
 def _report(enriched: list[dict]) -> None:
     for h in HORIZONS:
         # pairs em ORDEM TEMPORAL (enriched preserva a ordem do histórico) — o block
@@ -268,6 +332,16 @@ def _report(enriched: list[dict]) -> None:
             f"D+{h}: Spearman(Score, variação) = {rho:+.3f}  "
             f"[IC95% {lo:+.3f} a {hi:+.3f}]  (n={n}) — {veredito}{marca}"
         )
+        flip = rolling_flip_check(enriched, h)
+        if flip is not None:
+            geral, recente, nj = flip
+            if (geral > 0) != (recente > 0):
+                print(
+                    f"  ⚠️  FLIP DE SINAL em D+{h}: janela recente (n={nj}) "
+                    f"rho={recente:+.3f} vs amostra toda rho={geral:+.3f} — "
+                    "o sinal pode ter invertido de regime (documentado em "
+                    "Baker-Wurgler); investigue antes de confiar no veredito."
+                )
         # Estratificação por divergência LLM-vs-técnico (só no horizonte principal):
         # a matemática prova se as previsões tagueadas (alucinação?) perdem alpha.
         if h == PRIMARY_HORIZON:
@@ -763,8 +837,13 @@ def _metrics(enriched: list[dict], horizon: int) -> None:
         # reportar a melhor fabrica significância — o desconto que ninguém media.
         trials = load_trials()
         if trials and len(rets) >= 3:
-            d = deflated_sharpe_ratio([x / 100 for x in rets], [t.get("sharpe") for t in trials])
-            if not (d["dsr"] != d["dsr"]):  # NaN check sem numpy
+            # Trials abertas têm sharpe=null (ex.: H6 aguardando gate) — não
+            # entram no denominador do máximo-por-sorte (auditoria externa).
+            d = deflated_sharpe_ratio(
+                [x / 100 for x in rets],
+                [t["sharpe"] for t in trials if t.get("sharpe") is not None],
+            )
+            if not math.isnan(d["dsr"]):  # NaN check legível (era d != d)
                 print(
                     f"  DSR (N={d['n_trials']} tentativas registradas): "
                     f"P(SR > máx-por-sorte) = {d['dsr']:.2f} | SR0 = {d['sr0']:.3f} "

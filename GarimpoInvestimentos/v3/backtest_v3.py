@@ -217,9 +217,26 @@ def _equity_curve(returns: list[float]) -> list[float]:
     return equity
 
 
+_FINITE_COERCIONS = 0
+
+
 def _finite(x: float) -> float:
-    """Coage nan/inf para 0.0 — evita NaN inválido no JSONL e em comparações."""
-    return x if (x == x and x not in (float("inf"), float("-inf"))) else 0.0
+    """Coage nan/inf para 0.0 — evita NaN inválido no JSONL e em comparações.
+
+    ATENÇÃO: coerção silenciosa pode inflar métricas (NaN vira 0 = "neutro").
+    Por isso toda coerção é contabilizada em `_FINITE_COERCIONS` e logada —
+    se o contador sair de zero, investigue a origem do NaN em vez de
+    confiar no agregado.
+    """
+    global _FINITE_COERCIONS
+    if x == x and x not in (float("inf"), float("-inf")):
+        return x
+    _FINITE_COERCIONS += 1
+    logging.getLogger(__name__).warning(
+        "_finite coagiu valor não-finito para 0.0 (total=%d) — métricas podem estar infladas",
+        _FINITE_COERCIONS,
+    )
+    return 0.0
 
 
 # ------------------------------------------------------------------ #

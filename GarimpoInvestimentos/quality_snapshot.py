@@ -63,6 +63,12 @@ HISTORY_PATH = OUTPUT_DIR / "quality_snapshot_history.jsonl"
 # h6_spearman_verdict, e não autoriza nada. É observação de estado, publicada.
 H6_STATUS_PATH = Path(__file__).resolve().parent / "h6_status.json"
 
+# Anchor público da cadeia de hash do predictions_archive (migração 0017 +
+# dpl/hash_chain.py): mesma convenção do h6_status.json — commitado à mão
+# quando muda. Quem guarda o manifest de ontem prova que nada anterior foi
+# adulterado (commit-and-reveal de operação solo).
+CHAIN_MANIFEST_PATH = Path(__file__).resolve().parent / "chain_manifest.json"
+
 
 def _directional_stats(enriched: list[dict], horizon: int) -> dict:
     """Acurácia direcional + balanced accuracy no horizonte, sobre previsões
@@ -543,6 +549,44 @@ def main() -> int:
     snap = asyncio.run(build_snapshot())
     print(render(snap))
     append_history(snap)
+    # Selo diário da cadeia de hash do ledger de previsões + manifest público.
+    # Falha de verificação é ALTA VISIBILIDADE por design (adulteração do
+    # histórico invalida toda a ciência downstream) — mas não derruba o painel.
+    try:
+        from GarimpoInvestimentos.core.paths import FEATURE_STORE_DB
+        from GarimpoInvestimentos.dpl.feature_store import FeatureStore
+        from GarimpoInvestimentos.dpl.hash_chain import (
+            chain_manifest,
+            seal_chain,
+            verify_chain,
+        )
+
+        with FeatureStore(FEATURE_STORE_DB) as _store:
+            sealed = seal_chain(_store._conn)
+            report = verify_chain(_store._conn)
+            manifest = chain_manifest(_store._conn)
+        if not report.ok:
+            print(
+                f"\n*** CADEIA DE HASH DO LEDGER QUEBRADA: {report.detail}\n"
+                "    O histórico de previsões pode ter sido adulterado — "
+                "NÃO confie em backtests até investigar."
+            )
+        anterior = None
+        if CHAIN_MANIFEST_PATH.exists():
+            try:
+                anterior = json.loads(CHAIN_MANIFEST_PATH.read_text(encoding="utf-8"))
+            except ValueError:
+                anterior = None
+        if not anterior or anterior.get("head") != manifest.get("head"):
+            CHAIN_MANIFEST_PATH.write_text(
+                json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+            )
+            print(
+                f"(ledger: {sealed} nova(s) linha(s) selada(s) -> "
+                f"{CHAIN_MANIFEST_PATH.name} atualizado; commite-o junto com o h6_status.json)"
+            )
+    except Exception as _chain_exc:  # noqa: BLE001 — painel não pode cair por causa do selo
+        print(f"\n*** Selo da cadeia de hash FALHOU: {type(_chain_exc).__name__}: {_chain_exc}")
     print(f"\n(histórico registrado em {HISTORY_PATH})")
     # Capturado ANTES da escrita: a trava de nao-regressao so age quando ha um
     # estado publicado para comparar, entao a PRIMEIRA publicacao e o unico

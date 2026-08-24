@@ -1,17 +1,19 @@
 import csv
 import logging
 from datetime import datetime, timezone
+
 from openpyxl import Workbook
-from openpyxl.styles import Font, Alignment, PatternFill
-from openpyxl.formatting.rule import CellIsRule
 from openpyxl.chart import BarChart, Reference
 from openpyxl.chart.label import DataLabelList
+from openpyxl.formatting.rule import CellIsRule
+from openpyxl.styles import Alignment, Font, PatternFill
 from openpyxl.utils import get_column_letter
 from openpyxl.worksheet.worksheet import Worksheet
 
 from GarimpoInvestimentos.core.paths import OUTPUT_DIR
 
 _log = logging.getLogger("previsao_cripto.reporter")
+
 
 def export_results(resultados: list[dict]):
     # UTC como o resto do projeto (C7; previsões são carimbadas em UTC desde
@@ -26,14 +28,16 @@ def export_results(resultados: list[dict]):
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
         writer.writeheader()
         for r in resultados:
-            writer.writerow({
-                "Ativo": r.get("ativo", "").upper(),
-                "Sentimento": r.get("sentimento", ""),
-                "Score": round(r.get("score", 0), 2),
-                "Resumo": r.get("resumo", ""),
-                "Data": r.get("data", ""),
-                "Preço USD": round(r.get("price_usd", 0), 2),
-            })
+            writer.writerow(
+                {
+                    "Ativo": r.get("ativo", "").upper(),
+                    "Sentimento": r.get("sentimento", ""),
+                    "Score": round(r.get("score", 0), 2),
+                    "Resumo": r.get("resumo", ""),
+                    "Data": r.get("data", ""),
+                    "Preço USD": round(r.get("price_usd", 0), 2),
+                }
+            )
 
     # XLSX
     wb = Workbook()
@@ -53,14 +57,16 @@ def export_results(resultados: list[dict]):
         cell.alignment = Alignment(horizontal="center", vertical="center")
 
     for r in resultados:
-        ws.append([
-            r.get("ativo", "").upper(),
-            r.get("sentimento", ""),
-            round(r.get("score", 0), 2),
-            r.get("resumo", ""),
-            r.get("data", ""),
-            round(r.get("price_usd", 0), 2),
-        ])
+        ws.append(
+            [
+                r.get("ativo", "").upper(),
+                r.get("sentimento", ""),
+                round(r.get("score", 0), 2),
+                r.get("resumo", ""),
+                r.get("data", ""),
+                round(r.get("price_usd", 0), 2),
+            ]
+        )
 
     for col_idx, col in enumerate(ws.columns, start=1):
         max_length = 0
@@ -80,15 +86,15 @@ def export_results(resultados: list[dict]):
 
     ws.conditional_formatting.add(
         f"{score_col}{start_row}:{score_col}{end_row}",
-        CellIsRule(operator="greaterThan", formula=["70"], fill=green_fill)
+        CellIsRule(operator="greaterThan", formula=["70"], fill=green_fill),
     )
     ws.conditional_formatting.add(
         f"{score_col}{start_row}:{score_col}{end_row}",
-        CellIsRule(operator="between", formula=["50", "70"], fill=yellow_fill)
+        CellIsRule(operator="between", formula=["50", "70"], fill=yellow_fill),
     )
     ws.conditional_formatting.add(
         f"{score_col}{start_row}:{score_col}{end_row}",
-        CellIsRule(operator="lessThan", formula=["50"], fill=red_fill)
+        CellIsRule(operator="lessThan", formula=["50"], fill=red_fill),
     )
 
     chart = BarChart()
@@ -113,4 +119,6 @@ def export_results(resultados: list[dict]):
     wb.save(xlsx_filename)
 
     _log.info("Resultados exportados: CSV -> %s", csv_filename)
-    _log.info("Resultados exportados: XLSX -> %s (com grafico e formatacao condicional)", xlsx_filename)
+    _log.info(
+        "Resultados exportados: XLSX -> %s (com grafico e formatacao condicional)", xlsx_filename
+    )
