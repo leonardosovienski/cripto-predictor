@@ -202,10 +202,16 @@ async def run():
 
     _write(enriched)
     _report(enriched)
-    _metrics(enriched, PRIMARY_HORIZON)
+    # h6_spearman_verdict roda ANTES de _metrics (nao apos, como no commit
+    # anterior) para que _metrics saiba o n elegivel ATUAL da H6 e decida se o
+    # sharpe auxiliar dela entra na variancia do DSR (ver _metrics). A funcao
+    # em si e frozen (scripts/freeze_h6_definition.py) e nao muda: so o PONTO
+    # em que e chamada, e so uma vez — chama-la de novo duplicaria o print e o
+    # emit_event que ela ja faz.
+    h6_result = h6_spearman_verdict(enriched, PRIMARY_HORIZON)
+    _metrics(enriched, PRIMARY_HORIZON, h6_valid_n=h6_result["n"] if h6_result else None)
     close_trial_sharpes(enriched, PRIMARY_HORIZON)
     close_h6_inverted_signal(enriched, PRIMARY_HORIZON)
-    h6_result = h6_spearman_verdict(enriched, PRIMARY_HORIZON)
     if h6_result is not None:
         print_h6_power_context(h6_result["n"], h6_result.get("veredito"))
 
@@ -718,11 +724,24 @@ def h6_spearman_verdict(enriched: list[dict], horizon: int, *, trials_path=None)
     return {"n": n, "rho": rho, "ic_lower": lo, "ic_upper": hi, "veredito": veredito}
 
 
-def _metrics(enriched: list[dict], horizon: int) -> None:
+def _metrics(enriched: list[dict], horizon: int, *, h6_valid_n: int | None = None) -> None:
     """Precisão direcional, hit rate e estratégia vs benchmark BTC no horizonte principal.
 
     Nota: ignora custos de transação e usa amostra pequena — interpretar com cautela
     até o n crescer.
+
+    `h6_valid_n`: n elegível ATUAL da H6, mesmo critério/gate de
+    `h6_spearman_verdict` (H6_MIN_N=30). Decisão registrada em 2026-08-24
+    (docs/HYPOTHESES.md): o sharpe auxiliar que `close_h6_inverted_signal`
+    grava em trials.json amadurece com n>=3 — gate PRÓPRIO, deliberadamente
+    mais permissivo que o resto do projeto (ver docstring da função). Usar
+    esse número na VARIÂNCIA do DSR abaixo — que decide o SR0 contra o qual
+    QUALQUER trial, passada (H5, já julgada) ou futura, é medida — deixaria um
+    valor que o próprio projeto trata como "ainda não é sinal" mover o corte
+    de significância de tentativas inteiramente diferentes. Por isso o sharpe
+    da H6 é excluído da variância enquanto `h6_valid_n < H6_MIN_N` (mas
+    continua contando no N de tentativas — `len(trial_sharpes)` não muda: a
+    tentativa aconteceu, só o valor ainda não é confiável).
     """
     threshold = settings.LIMIAR_SCORE_MINIMO
     key = f"var_d{horizon}_pct"
@@ -763,7 +782,13 @@ def _metrics(enriched: list[dict], horizon: int) -> None:
         # reportar a melhor fabrica significância — o desconto que ninguém media.
         trials = load_trials()
         if trials and len(rets) >= 3:
-            d = deflated_sharpe_ratio([x / 100 for x in rets], [t.get("sharpe") for t in trials])
+            trial_sharpes = [t.get("sharpe") for t in trials]
+            if h6_valid_n is not None and h6_valid_n < H6_MIN_N:
+                trial_sharpes = [
+                    None if t.get("name") == H6_TRIAL_NAME else s
+                    for t, s in zip(trials, trial_sharpes, strict=True)
+                ]
+            d = deflated_sharpe_ratio([x / 100 for x in rets], trial_sharpes)
             if not (d["dsr"] != d["dsr"]):  # NaN check sem numpy
                 print(
                     f"  DSR (N={d['n_trials']} tentativas registradas): "

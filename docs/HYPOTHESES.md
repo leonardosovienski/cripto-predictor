@@ -188,6 +188,36 @@
 > `<state_root>/cripto-backtest/heartbeat.json` (corrigido em `watchdog.py`
 > no mesmo commit desta errata, junto com o mesmo defeito no caminho do
 > banco que o watchdog lia).
+>
+> **Decisão de 2026-08-24 — o efeito colateral de 2026-07-28 (parágrafo
+> acima, "0,447 com ele, 0,332 sem") deixou de ser só uma nota.** Até aqui, o
+> Sharpe auxiliar da H6 (`+0,3479` então, com n tão baixo quanto 3 —
+> `close_h6_inverted_signal` amadurece esse número com o gate PRÓPRIO dela,
+> `n≥3`, deliberadamente mais permissivo que o resto do projeto) sempre
+> entrava na variância entre tentativas que determina o `SR0` — o corte de
+> significância contra o qual QUALQUER trial, passada (H5) ou futura, é
+> medida. Um número que o próprio critério pré-registrado da H6 recusa tratar
+> como sinal (por isso o gate `n≥30` do veredito) movia mesmo assim o corte
+> usado para julgar tentativas inteiramente diferentes.
+>
+> A partir de `analyzers/backtest.py::_metrics` (não a definição congelada —
+> `close_h6_inverted_signal`/`h6_spearman_verdict` continuam intocadas, hash
+> conferido em `scripts/freeze_h6_definition.py --check`), o Sharpe da H6 é
+> **excluído da variância enquanto o `n` elegível dela (o mesmo de
+> `h6_spearman_verdict`, não o gate n≥3 do Sharpe auxiliar) for menor que
+> `H6_MIN_N=30`** — mas continua contando no `N` de tentativas do DSR
+> (`len(trial_sharpes)` não muda): a tentativa aconteceu; só o valor ainda não
+> é confiável o bastante para pesar no benchmark. Ao atingir n≥30, o Sharpe
+> volta a contar normalmente, sem exceção — a mesma régua que já vale para
+> expor `rho`/IC no veredito da H6 passa a valer para o denominador do DSR.
+>
+> Isto NÃO reabre o veredito já publicado de H5 (REFUTADA/NO-GO,
+> 2026-07-28): o Sharpe de `v2-dpl-multi-h7` é −0,312, negativo, e o DSR fica
+> ~0 contra qualquer `SR0` positivo — o parágrafo de 2026-07-28 já havia
+> verificado isso antes de registrar aquele veredito. O `trials.json` também
+> não foi editado à mão: o registro da H6 continua sendo escrito só por
+> `close_h6_inverted_signal` (frozen), como sempre foi — a mudança está em
+> como o SR0 é CALCULADO a partir dele, não no arquivo.
 - Data do registro: 2026-07-20 (ANTES de qualquer resultado dedicado a esta
   configuração).
 - Hipótese: as 3 encarnações anteriores da mesma família (H4/`v2-dpl-gemini-h7`,

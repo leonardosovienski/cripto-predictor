@@ -8,10 +8,12 @@ denominador for interpretável).
 """
 
 import json
+import re
 from typing import TypedDict
 
 import pytest
 
+from GarimpoInvestimentos.analyzers import backtest
 from GarimpoInvestimentos.analyzers.backtest import (
     H6_MIN_N,
     H6_TRIAL_NAME,
@@ -179,6 +181,49 @@ def test_backtest_nunca_cria_trial_nova(tmp_path):
     ]
     assert close_trial_sharpes(enriched, 7, trials_path=p, threshold=70) == {}
     assert len(load_trials(p)) == 1
+
+
+def _pred_forte(var, ativo="ethereum"):
+    """score acima do LIMIAR_SCORE_MINIMO padrao (60.0) — entra na estrategia
+    "score >= limiar" que _metrics usa para calcular o DSR."""
+    return {"score": 90, "var_d7_pct": var, "ativo": ativo}
+
+
+def test_metrics_exclui_sharpe_imaturo_da_h6_da_variancia_do_dsr(monkeypatch, capsys):
+    """Decisao de 2026-08-24 (docs/HYPOTHESES.md): o sharpe auxiliar que
+    close_h6_inverted_signal grava em trials.json amadurece com n>=3 — gate
+    PROPRIO, bem mais permissivo que o n>=30 que o resto do projeto exige
+    antes de tratar a H6 como sinal. Ele nao deve mover o SR0 (o corte de
+    significancia contra o qual QUALQUER trial e medida, passada ou futura)
+    enquanto imaturo — mas a tentativa continua contando no N."""
+    trials = [
+        {"name": "a", "sharpe": -0.5},
+        {"name": "b", "sharpe": -0.3},
+        {"name": H6_TRIAL_NAME, "sharpe": 5.0},  # outlier imaturo
+    ]
+    monkeypatch.setattr(backtest, "load_trials", lambda *a, **k: trials)
+    enriched = [_pred_forte(2.0), _pred_forte(-1.0), _pred_forte(3.0)]
+
+    def _dsr_line(h6_valid_n):
+        backtest._metrics(enriched, 7, h6_valid_n=h6_valid_n)
+        saida = capsys.readouterr().out
+        return next(l for l in saida.splitlines() if "DSR" in l)
+
+    linha_imatura = _dsr_line(6)  # n=6 < H6_MIN_N=30
+    linha_sem_info = _dsr_line(None)  # comportamento antigo: sharpe sempre conta
+    linha_madura = _dsr_line(H6_MIN_N)  # gate atingido: volta a contar
+
+    # N de tentativas nunca muda — a tentativa aconteceu, só o valor é que some.
+    assert "N=3 tentativas" in linha_imatura
+    assert "N=3 tentativas" in linha_sem_info
+    assert "N=3 tentativas" in linha_madura
+
+    sr0_imatura = float(re.search(r"SR0 = ([\d.]+)", linha_imatura).group(1))
+    sr0_sem_info = float(re.search(r"SR0 = ([\d.]+)", linha_sem_info).group(1))
+    sr0_madura = float(re.search(r"SR0 = ([\d.]+)", linha_madura).group(1))
+
+    assert sr0_imatura < sr0_sem_info, "outlier imaturo da H6 deveria ter sido excluído"
+    assert sr0_madura == sr0_sem_info, "acima do gate, a H6 volta a contar normalmente"
 
 
 def test_backtest_divide_eras_entre_trial_encerrada_e_sucessora(tmp_path):
