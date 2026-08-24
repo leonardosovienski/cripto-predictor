@@ -209,10 +209,40 @@ estado anterior), então nada se perde por sobrescrita — mas isso não protege
 contra o disco, a máquina ou um `rm`. **Este projeto já perdeu as 440 previsões
 brutas da H5 em definitivo.**
 
+**Agende (uma vez, PowerShell elevado)** — domingos 20:00, num horário livre
+entre o watchdog das 19:00 e o `attest-renew` das 21:00:
+
 ```powershell
-uv run python -m scripts.feature_store_backup create --output C:\predictor\backups\fs-AAAA-MM-DD
-uv run python -m scripts.feature_store_backup verify --backup C:\predictor\backups\fs-AAAA-MM-DD
+.\scripts\register_task_backup.ps1
 ```
+
+Teste sem esperar o domingo — o `Start-ScheduledTask` numa linha **sozinha**:
+
+```powershell
+Start-ScheduledTask -TaskName cripto-backup-featurestore
+```
+
+```powershell
+Get-ScheduledTaskInfo -TaskName cripto-backup-featurestore | Select-Object LastRunTime, LastTaskResult
+```
+
+O destino sai em `DATA_DIR\backups\fs-AAAA-MM-DD-HHMMSS`, com carimbo de tempo,
+então execuções sucessivas nunca colidem e **nenhum backup é sobrescrito**.
+
+**À mão, quando quiser:**
+
+```powershell
+uv run cripto-predictor-job backup
+```
+
+```powershell
+uv run python -m scripts.feature_store_backup verify --backup <a pasta que ele imprimiu>
+```
+
+> **Um backup falho reporta `FAILED`, nunca `PARTIAL`.** O script sai com 2 em
+> qualquer falha, e no mapa padrão dos jobs `2` significa `PARTIAL` — que os
+> watchdogs aceitam como saudável. O job `backup` tem mapa próprio: só `0` vale.
+> Não existe backup parcial.
 
 O `create` usa `sqlite3.Connection.backup`, que é consistente com WAL e com
 escritores concorrentes — dá para rodar com a coleta ativa. O `verify` confere o
