@@ -82,6 +82,8 @@ reescrito.
 | Feature Store | OHLCV + sinais (Fear&Greed) alinhados por `published_at` (zero lookahead); features materializadas; tabela `predictions` append-only (migração 0016) |
 | Análise | LLM sobre mercado offline + notícias live; carimbo do **Juiz** (provider:modelo:hash-do-prompt) e da **Fonte** (`direct`\|`dpl:fallback`\|`dpl:consensus`); ensemble multi-sample opcional (`LLM_ENSEMBLE_N`) |
 | Backtest | Spearman(score, retorno D+1/7/30) com IC95% (block bootstrap pareado, `block_length` overlap-aware), estratificado por divergência e por Fonte; **DSR** contra o máximo-por-sorte das tentativas |
+| Integridade do ledger | Cadeia de hash SHA-256 sobre `predictions_archive` (migração 0017 + `dpl/hash_chain.py`): tamper-evidence do histórico; anchor público em `chain_manifest.json`, selado pelo `quality_snapshot` diário e commitado à mão quando muda (mesma convenção do `h6_status.json`) |
+| Estabilidade do sinal | Rolling-Spearman com alarme de **flip de sinal** no backtest — a literatura (réplica de Baker-Wurgler) documenta proxies de sentimento invertendo de direção entre regimes |
 | Governança | Controle positivo (edge sintético → "validado"; ruído → "RUÍDO"); `trials.json` versionado; charters com checksum; migrações aditivas (ADR-017); **PBO/CSCV** ao lado do DSR (perguntas complementares: o DSR desconta por N tentativas, o PBO mede se a SELEÇÃO entre configurações é frágil) |
 | V3 | GaussianHMM 3 estados com decodificação **causal** (auditada), sinais de funding/OI, WFA com custos (taker+slippage+funding real) |
 | Operação | Jobs via `predictor_ops` (lock, heartbeat, artefato esperado), watchdogs, painel diário `quality_snapshot` com histórico append-only |
@@ -214,6 +216,7 @@ uv run python -m GarimpoInvestimentos.analyzers.backtest
 # validações avulsas:
 uv run python -m GarimpoInvestimentos.analyzers.equivalence --assets bitcoin,solana  # DPL vs direto
 uv run python -m GarimpoInvestimentos.quality_snapshot                               # painel diário
+uv run python -m scripts.diagnose_h6_mechanism                    # mecanismo da H6: score × passado × reversal ingênuo (exploratório)
 ```
 
 O `quality_snapshot` também grava `GarimpoInvestimentos/h6_status.json` — **só quando o

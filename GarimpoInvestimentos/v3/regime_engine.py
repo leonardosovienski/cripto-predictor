@@ -89,6 +89,15 @@ try:
             a_sum = np.reshape(a_sum, shape)
         a /= a_sum
 
+    # Monkey-patch do hmmlearn: o `normalize` original levanta em linhas com
+    # soma zero; a versão acima tolera (soma 0 → 1). Necessário para a
+    # decodificação causal `_forward_causal` com emissões degeneradas.
+    # FRÁGIL a upgrades: validado contra a versão pinada em uv.lock; se o
+    # hmmlearn mudar a assinatura/semântica de `normalize`, este patch deve
+    # ser revisto (há teste: tests/test_v3_hmm_no_lookahead.py).
+    import hmmlearn as _hmmlearn_pkg
+
+    _HMMLEARN_PATCHED_VERSION = _hmmlearn_pkg.__version__
     _hmmlearn_utils.normalize = _hmmlearn_normalize
     if hasattr(_hmmlearn_base, "normalize"):
         _hmmlearn_base.normalize = _hmmlearn_normalize

@@ -18,6 +18,7 @@ from predictor_core.obs import emit_event
 
 from GarimpoInvestimentos.dpl.alignment import AlignmentEngine
 from GarimpoInvestimentos.dpl.feature_engineering import derive_features
+from GarimpoInvestimentos.security.redaction import safe_redact_text
 from GarimpoInvestimentos.dpl.feature_store import FeatureStore
 from GarimpoInvestimentos.dpl.signals import SignalProvider
 
@@ -140,7 +141,13 @@ async def ingest_crypto(
                 domain,
                 "data.signal_failed",
                 metrics={},
-                metadata={"signal": sp.name, "error": type(exc).__name__},
+                metadata={
+                    "signal": sp.name,
+                    "error": type(exc).__name__,
+                    # Mensagem redatada: exceptions de HTTP podem carregar URL com
+                    # chave de API (lição do incidente SerpAPI) — nunca logar cru.
+                    "error_msg": safe_redact_text(str(exc))[:300],
+                },
             )
 
     aligned = AlignmentEngine().align(points, signals, max_staleness)
