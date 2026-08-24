@@ -220,3 +220,14 @@ def test_expira_em_respeita_a_janela(tmp_path, monkeypatch):
     assert AH._expira_em(2.0) is True  # dentro da janela -> renova
     _grava(-1)
     assert AH._expira_em(2.0) is True  # ja expirou -> renova
+
+
+def test_quality_snapshot_e_um_job_declarado(tmp_path, monkeypatch):
+    """Sem este job agendado, o historico local (quality_snapshot_history.jsonl)
+    nunca existe fora de uma execucao manual — e watchdog._check_h6_bridge nao
+    tem com o que comparar o que esta publicado em h6_status.json."""
+    monkeypatch.setenv("PREDICTOR_OPS_STATE_DIR", str(tmp_path))
+    config = jobs.job_config("quality-snapshot")
+    assert config.command[-1] == "GarimpoInvestimentos.quality_snapshot"
+    assert config.expected_artifact is None
+    assert config.exit_statuses[0] is RunStatus.SUCCEEDED

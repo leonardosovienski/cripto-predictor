@@ -59,6 +59,13 @@ def job_config(name: str, *, timeout_seconds: float | None = None) -> JobConfig:
             "create",
             "--output-root",
         ],
+        # Publica o painel diario e o estado da H6 (h6_status.json LOCAL,
+        # historico append-only). Nao commita nada sozinho — quem decide o que
+        # entra no git continua sendo humano (H6_status.json e' commitado a
+        # mao, por design). O que este job destrava e' a DETECCAO: sem ele
+        # rodando toda noite, o historico local nunca existe, e o watchdog
+        # (_check_h6_bridge) nao tem com o que comparar o que esta publicado.
+        "quality-snapshot": [sys.executable, "-m", "GarimpoInvestimentos.quality_snapshot"],
         "observation-live": [
             sys.executable,
             "-m",
@@ -144,6 +151,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             "microstructure-live",
             "attest-renew",
             "backup",
+            "quality-snapshot",
         ),
     )
     parser.add_argument("--timeout", type=float)

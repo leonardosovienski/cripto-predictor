@@ -129,7 +129,7 @@
   zero), mistral −0,023 (n=20, IC cruza zero = ruído p/ ele). Mesmo padrão
   que encerrou a H4. Motivou o pré-registro da H6 (inversão do sinal).
 
-### H6 — Sinal invertido do LLM prevê retorno D+7 (status: **coletando — n=6 de 30**)
+### H6 — Sinal invertido do LLM prevê retorno D+7 (status: **coletando — ver `GarimpoInvestimentos/h6_status.json`**)
 
 > **Errata de 2026-07-28.** O status abaixo dizia "registrada — não ativada" e
 > o item (2) das condições dizia que o código "não existe ainda — nem no
@@ -167,6 +167,27 @@
 > que o Sharpe de n=6 já ilustrou acima. Não roda produção ainda: isto é
 > implementação, não resultado — o estado real de n permanece o mesmo até a
 > próxima leitura de `logs/operations/GarimpoBacktest.log`.
+
+> **Errata de 2026-08-24 — o cabeçalho acima ficou desatualizado, e a
+> correção é estrutural, não pontual.** O cabeçalho desta seção chegou a
+> afirmar "n=6 de 30" muito depois de o `n` real já ter mudado — o número
+> só é atualizado quando alguém edita este arquivo, e ninguém tem obrigação
+> de lembrar disso a cada execução do ciclo noturno. É o mesmo defeito, em
+> forma de prosa, que `GarimpoInvestimentos/h6_status.json` (PR #40) existe
+> para resolver em forma de dado: uma única fonte, publicada por commit
+> humano, em vez de um número copiado à mão em documentos que divergem.
+>
+> O cabeçalho não cita mais um `n` — cita o arquivo. **Última leitura
+> commitada, 2026-08-22T14:14:51Z: n=0** (legítimo: zero previsões haviam
+> maturado em D+7 até aquele momento; não é banco vazio). Para o número
+> atual, leia `h6_status.json`, nunca este parágrafo.
+>
+> A referência ao log em `logs/operations/GarimpoBacktest.log`, no
+> parágrafo acima, também ficou obsoleta — esse caminho é de uma era
+> pré-`predictor_ops`; o heartbeat real do backtest vive em
+> `<state_root>/cripto-backtest/heartbeat.json` (corrigido em `watchdog.py`
+> no mesmo commit desta errata, junto com o mesmo defeito no caminho do
+> banco que o watchdog lia).
 - Data do registro: 2026-07-20 (ANTES de qualquer resultado dedicado a esta
   configuração).
 - Hipótese: as 3 encarnações anteriores da mesma família (H4/`v2-dpl-gemini-h7`,

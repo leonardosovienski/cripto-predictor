@@ -35,6 +35,7 @@ from GarimpoInvestimentos.analyzers.backtest import (
     PRIMARY_HORIZON,
     _load_rows,
     enrich_with_realized_prices,
+    h6_power_context,
     h6_spearman_verdict,
     overlap_block_length,
 )
@@ -246,6 +247,11 @@ async def build_snapshot(now: datetime | None = None) -> dict:
     h6_result = None
     if with_price:
         h6_result = h6_spearman_verdict(with_price, PRIMARY_HORIZON)
+    # Contexto de LEITURA, calculado fora de h6_spearman_verdict de proposito
+    # (ver print_h6_power_context em analyzers/backtest.py): tabela estatica
+    # publicada em docs/HYPOTHESES.md B12, nao uma simulacao nova a cada
+    # execucao. Nao muda o veredito nem o gate — so qualifica quem le.
+    h6_power = h6_power_context(h6_result["n"]) if h6_result else None
 
     score_buckets = _score_buckets(with_price, PRIMARY_HORIZON)
     by_provider_quality = _by_provider_quality(with_price, PRIMARY_HORIZON)
@@ -262,6 +268,7 @@ async def build_snapshot(now: datetime | None = None) -> dict:
         # rho/IC como None de propósito), mas descartaria o VEREDITO no dia em
         # que o gate abrisse. Guardado inteiro para o artefato versionado.
         "h6": h6_result,
+        "h6_power": h6_power,
         "pipeline": {
             "predictions_persisted": len(rows_real),
             "predictions_today": predictions_today,
@@ -330,6 +337,15 @@ def render(snap: dict) -> str:
         f"  Mature D+{PRIMARY_HORIZON} predictions:         {s['mature_d7']}",
         f"  H6 valid n (fonte={s['h6_fonte_esperada']}, pred_date>registered_at): {s['h6_valid_n']}",
         f"  H6 gate:                        {s['h6_valid_n']} / {s['h6_gate']}",
+    ]
+    poder = snap.get("h6_power")
+    if poder is not None:
+        pd_ = poder["poder"]
+        lines.append(
+            f"  H6 poder aprox. (n_ref={poder['n_referencia']}, B12):  "
+            f"rho=0,2 -> {pd_[0.2]:.0%}  |  rho=0,3 -> {pd_[0.3]:.0%}"
+        )
+    lines += [
         "",
         "Predictive quality",
         "-------------------",
@@ -436,6 +452,7 @@ def h6_status_payload(snap: dict, *, observed_at: str | None = None) -> dict:
     silêncio em vez de contorná-lo.
     """
     h6 = snap.get("h6") or {}
+    poder = snap.get("h6_power")
     return {
         "trial": H6_TRIAL_NAME,
         "observed_at": observed_at or snap["checked_at"],
@@ -447,6 +464,10 @@ def h6_status_payload(snap: dict, *, observed_at: str | None = None) -> dict:
         "ic_lower": h6.get("ic_lower"),
         "ic_upper": h6.get("ic_upper"),
         "veredito": h6.get("veredito"),
+        # Contexto de LEITURA (tabela estatica publicada, docs/HYPOTHESES.md
+        # B12) — nunca decide o veredito nem o gate. None abaixo de n=30.
+        # {"n_referencia": int, "poder": {rho: taxa}, "fonte": str} ou None.
+        "poder": poder,
     }
 
 

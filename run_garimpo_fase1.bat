@@ -29,5 +29,12 @@ if exist "%PROJECT_DIR%.venv\Scripts\python.exe" (set "PYTHON=%PROJECT_DIR%.venv
 if errorlevel 1 exit /b %errorlevel%
 "%PYTHON%" -m GarimpoInvestimentos.jobs backtest
 set "RESULT=%errorlevel%"
+
+rem Publica o painel diario e o historico local da H6 fora do git -
+rem quality_snapshot_history.jsonl. h6_status.json continua exigindo commit
+rem a mao. Roda por conta propria: falha aqui NAO deve mascarar o resultado
+rem do phase1/backtest, que e' o que decide o exit code desta tarefa.
+"%PYTHON%" -m GarimpoInvestimentos.jobs quality-snapshot
+
 popd
 exit /b %RESULT%

@@ -205,7 +205,9 @@ async def run():
     _metrics(enriched, PRIMARY_HORIZON)
     close_trial_sharpes(enriched, PRIMARY_HORIZON)
     close_h6_inverted_signal(enriched, PRIMARY_HORIZON)
-    h6_spearman_verdict(enriched, PRIMARY_HORIZON)
+    h6_result = h6_spearman_verdict(enriched, PRIMARY_HORIZON)
+    if h6_result is not None:
+        print_h6_power_context(h6_result["n"], h6_result.get("veredito"))
 
 
 def _write(enriched: list[dict]) -> None:
@@ -500,6 +502,67 @@ def close_trial_sharpes(
 H6_TRIAL_NAME = "h6-sinal-invertido-d7"
 H6_LIVE_FONTE = "dpl:fallback"  # fonte real da coleta em curso (H5/multi-juiz)
 H6_MIN_N = 30  # n mínimo do critério pré-registrado (idêntico ao H4/H5)
+
+#: Referência ESTÁTICA publicada em docs/HYPOTHESES.md (B12), medida em
+#: 2026-08-21 com o critério canônico (spearman_block_ci + overlap_block_length,
+#: n_sim=150, n_boot=400 — reproduz a medição de referência com n_boot=10.000
+#: dentro do ruído de simulação, o que valida a redução). NÃO é recalculada em
+#: runtime: Monte Carlo novo a cada noite teria ruído de simulação próprio, e
+#: um "poder" que oscila de execução em execução confundiria mais do que
+#: ajudaria — isto é contexto de leitura, não uma medição científica nova.
+#: Para recalcular do zero (outro horizonte, outra grade de rho), use
+#: `GarimpoInvestimentos.analyzers.gate_power.power_table()` diretamente.
+H6_PUBLISHED_POWER_TABLE: dict[int, dict[float, float]] = {
+    30: {0.0: 0.067, 0.1: 0.113, 0.2: 0.147, 0.3: 0.293, 0.5: 0.620},
+    60: {0.0: 0.060, 0.1: 0.113, 0.2: 0.233, 0.3: 0.473, 0.5: 0.933},
+    120: {0.0: 0.073, 0.1: 0.247, 0.2: 0.593, 0.3: 0.827, 0.5: 1.000},
+    250: {0.0: 0.060, 0.1: 0.347, 0.2: 0.813, 0.3: 1.000, 0.5: 1.000},
+    500: {0.0: 0.080, 0.1: 0.653, 0.2: 0.973, 0.3: 1.000, 0.5: 1.000},
+}
+
+
+def h6_power_context(n: int) -> dict | None:
+    """Poder aproximado no `n` atual — NÃO muda o gate, NÃO decide o veredito,
+    só qualifica a leitura de quem olhar o resultado. Lê `H6_PUBLISHED_POWER_
+    TABLE` pelo maior `n` tabulado que seja <= n (leitura CONSERVADORA: nunca
+    superestima o poder que o `n` atual de fato tem). Devolve None abaixo de
+    n=30 — nenhum ponto tabulado alcançável ainda."""
+    aplicaveis = [k for k in H6_PUBLISHED_POWER_TABLE if k <= n]
+    if not aplicaveis:
+        return None
+    referencia = max(aplicaveis)
+    return {
+        "n_referencia": referencia,
+        "poder": dict(H6_PUBLISHED_POWER_TABLE[referencia]),
+        "fonte": "docs/HYPOTHESES.md B12 (tabela estatica, nao recalculada em runtime)",
+    }
+
+
+def print_h6_power_context(n: int, veredito: str | None = None) -> dict | None:
+    """Imprime o poder aproximado do gate no `n` atual, AO LADO do veredito que
+    `h6_spearman_verdict` já imprimiu — nunca de dentro dela. Esta função fica
+    deliberadamente fora do bloco que `scripts/freeze_h6_definition.py`
+    congela: enriquecer a LEITURA de um resultado nunca deveria forçar
+    re-congelar a definição científica da H6 (threshold, horizonte, fonte,
+    trava anti-data-snooping) — são preocupações independentes. Devolve o
+    contexto de poder (ou None abaixo de n=30), para quem quiser reaproveitar
+    o valor em vez de só o texto impresso."""
+    poder = h6_power_context(n)
+    if poder is None:
+        return None
+    p_ = poder["poder"]
+    print(
+        f"   poder aprox. (n_ref={poder['n_referencia']}, tabela estática "
+        f"docs/HYPOTHESES.md B12): rho=0,2 → {p_[0.2]:.0%}  |  "
+        f"rho=0,3 → {p_[0.3]:.0%}"
+    )
+    if veredito and veredito.startswith("RUIDO"):
+        print(
+            f"   lembrete: em n={n}, RUÍDO pode ser ausência de evidência, "
+            f"não evidência de ausência — poder para rho=0,2 é só "
+            f"{p_[0.2]:.0%} aqui (docs/HYPOTHESES.md B12)."
+        )
+    return poder
 
 
 def close_h6_inverted_signal(
