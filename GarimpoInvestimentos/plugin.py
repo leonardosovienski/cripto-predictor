@@ -31,17 +31,23 @@ class CryptoPredictorPlugin:
         )
 
     def capabilities(self) -> dict[str, object]:
-        """Expose the research-only boundary to the ecosystem gateway."""
+        """Expose the current research boundary without promoting capital."""
         return {
             "domain": self.domain,
             "supports_prediction": False,
             "supports_settlement": False,
             "supports_collection": False,
-            "scientific_status": "NO_GO",
+            "scientific_status": "ACTIVE_HYPOTHESIS",
+            "predictive_status": "INCONCLUSIVE",
+            "economic_status": "HISTORICAL_NO_GO",
+            "capital_permission": "FORBIDDEN",
             "extra": {
-                "mode": "research",
-                "secret_rotation_pending": True,
+                "mode": "PROSPECTIVE_OBSERVATION",
+                "active_hypothesis": "H6",
+                "security_status": "ROTATED_CONFIRMED_BY_OWNER_2026-08-19",
+                "old_key_revocation_external_check_pending": True,
                 "trading": False,
+                "source_of_scientific_truth": "README.md",
             },
         }
 
