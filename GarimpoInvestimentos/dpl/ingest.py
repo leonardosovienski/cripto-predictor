@@ -18,9 +18,9 @@ from predictor_core.obs import emit_event
 
 from GarimpoInvestimentos.dpl.alignment import AlignmentEngine
 from GarimpoInvestimentos.dpl.feature_engineering import derive_features
-from GarimpoInvestimentos.security.redaction import safe_redact_text
 from GarimpoInvestimentos.dpl.feature_store import FeatureStore
 from GarimpoInvestimentos.dpl.signals import SignalProvider
+from GarimpoInvestimentos.security.redaction import safe_redact_text
 
 
 class _OhlcvFacade(Protocol):

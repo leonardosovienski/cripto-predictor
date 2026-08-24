@@ -240,8 +240,6 @@ def _write(enriched: list[dict]) -> None:
     print(f"💾 Backtest gravado em {BACKTEST_CSV}")
 
 
-
-
 def _ranks(xs: list[float]) -> list[float]:
     """Ranks com média para empates (Spearman clássico), stdlib puro."""
     order = sorted(range(len(xs)), key=lambda i: xs[i])
@@ -282,9 +280,7 @@ ROLLING_WINDOW = 60
 ROLLING_MIN_N = 30
 
 
-def rolling_flip_check(
-    enriched: list[dict], horizon: int
-) -> tuple[float, float, int] | None:
+def rolling_flip_check(enriched: list[dict], horizon: int) -> tuple[float, float, int] | None:
     """Compara o Spearman da janela recente (últimos ROLLING_WINDOW pontos)
     com o da amostra toda no horizonte dado. Retorna (rho_geral, rho_recente,
     n_janela) quando ambos são computáveis — o chamador decide o alarme."""
@@ -305,6 +301,7 @@ def rolling_flip_check(
     if overall is None or recent is None:
         return None
     return overall, recent, len(tail)
+
 
 def _report(enriched: list[dict]) -> None:
     for h in HORIZONS:

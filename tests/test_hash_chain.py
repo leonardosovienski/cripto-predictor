@@ -60,9 +60,7 @@ def test_chain_detects_retroactive_edit(tmp_path):
         store.write_predictions([_pred(), _pred(ts="2026-08-21 12:00:00", score=60.0)])
         assert seal_chain(store._conn) == 2
         # Adultera a PRIMEIRA linha do archive (muda o score registrado).
-        store._conn.execute(
-            "UPDATE predictions_archive SET score = 999.0 WHERE archive_id = 1"
-        )
+        store._conn.execute("UPDATE predictions_archive SET score = 999.0 WHERE archive_id = 1")
         report = verify_chain(store._conn)
         assert not report.ok and report.first_bad_archive_id == 1
 
@@ -80,9 +78,7 @@ def test_seal_refuses_to_extend_broken_chain(tmp_path):
     with _store(tmp_path) as store:
         store.write_predictions([_pred()])
         seal_chain(store._conn)
-        store._conn.execute(
-            "UPDATE predictions_archive SET score = 1.0 WHERE archive_id = 1"
-        )
+        store._conn.execute("UPDATE predictions_archive SET score = 1.0 WHERE archive_id = 1")
         store.write_predictions([_pred(ts="2026-08-21 12:00:00")])
         with pytest.raises(RuntimeError, match="NÃO verifica"):
             seal_chain(store._conn)

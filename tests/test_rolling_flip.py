@@ -55,8 +55,7 @@ def test_rolling_flip_amostra_pequena_retorna_none():
 def test_mechanism_espelho_do_passado():
     # score == retorno passado (espelho) e futuro anti-correlacionado
     rows = [
-        {"score": float(i), "past_ret_pct": float(i), "fut_ret_pct": float(-i)}
-        for i in range(30)
+        {"score": float(i), "past_ret_pct": float(i), "fut_ret_pct": float(-i)} for i in range(30)
     ]
     m = compute_mechanism(rows)
     assert m["n"] == 30

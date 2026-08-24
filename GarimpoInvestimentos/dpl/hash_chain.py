@@ -163,9 +163,7 @@ def chain_manifest(conn: sqlite3.Connection) -> dict:
     return {
         "schema": 1,
         "sealed_at": datetime.now(UTC).isoformat(timespec="seconds"),
-        "entries": conn.execute(
-            "SELECT COUNT(*) FROM predictions_archive_chain"
-        ).fetchone()[0],
+        "entries": conn.execute("SELECT COUNT(*) FROM predictions_archive_chain").fetchone()[0],
         "head_archive_id": cur[0] if cur else None,
         "head": cur[1] if cur else None,
     }
