@@ -5,7 +5,8 @@
   "ic_lower": null,
   "ic_upper": null,
   "n": 0,
-  "observed_at": "2026-08-22T14:14:51.158336+00:00",
+  "observed_at": "2026-08-24T07:01:23.302044+00:00",
+  "poder": null,
   "rho": null,
   "trial": "h6-sinal-invertido-d7",
   "veredito": "aguardando n>=30 (n=0)"
