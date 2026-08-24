@@ -247,7 +247,41 @@
 - Resultado: **imaturo** — última evidência versionada: Sharpe auxiliar +0,3479
   com n=6; o gate pré-registrado exige n>=30 e IC95 positivo. Sem veredito.
 
-### H7 — Calendário macro (FOMC/CPI/PPI) + DXY como contexto exógeno de regime (status: **registrada — infraestrutura de coleta implementada, coleta real não iniciada**)
+### H7 — Calendário macro (FOMC/CPI/PPI) + DXY como contexto exógeno de regime (status: **registrada — PARADA deliberadamente, ver Decisão de 2026-08-24; infraestrutura parcial, coleta real não iniciada**)
+
+> **Decisão de 2026-08-24 — parar, não ativar.** H7 está registrada desde
+> 2026-08-14 mas nunca virou trial ativa em `trials.json` — corretamente,
+> pelo próprio "Estado de governança" abaixo: ativar antes de fechar a
+> integração (V3 vs. Fase 1) gastaria uma tentativa sem critério fixo, e o
+> pré-registro existe exatamente pra impedir isso. O que faltava era uma
+> decisão explícita sobre o que fazer com ela enquanto isso não acontece —
+> ficar em limbo indefinido não é neutro: ninguém revisita silenciosamente,
+> e a lista de pendências abaixo ("Resultado (preenchido DEPOIS)") já tem
+> nove dias sem nenhum item novo resolvido.
+>
+> Duas razões concretas para **parar agora em vez de ativar**, e nenhuma
+> para ativar antes delas: (1) a infraestrutura tem um buraco de dado real
+> não contornável nesta sessão — CPI/PPI sem fonte primária confiável — e
+> um `fetch()` do `DXYProvider` nunca confirmado ao vivo de ponta a ponta;
+> ativar sobre uma integração incompleta arriscaria calibrar a formulação
+> com dado que depois não poderia ser reaproveitado como OOS (a própria
+> seção já registra essa trava). (2) Ativar cria uma trial em `trials.json`
+> — mesmo sem Sharpe ainda (contando só no N, não na variância, mesmo
+> princípio da decisão de H6 acima) — no exato momento em que a H6 está
+> finalmente produzindo dado real; aumentar o N de tentativas sem um
+> pipeline pronto para produzir um Sharpe confiável em troca só infla o
+> `SR0` (o corte que TODAS as trials, incluindo a H6 em maturação, precisam
+> superar) sem nenhum ganho de informação correspondente.
+>
+> **Condição de reativação, por escrito (não "quando alguém lembrar")**:
+> reabrir H7 exige, primeiro, resolver os cinco itens já listados em
+> "Resultado" abaixo — calendário CPI/PPI completo de fonte primária,
+> `DXYProvider().fetch()` confirmado ao vivo, ambiente com rede/chaves
+> liberadas para `--ingest`/coleta, e a escolha V3-vs-Fase1 decidida por
+> escrito ANTES de qualquer dado — e só registrar a trial em `trials.json`
+> depois disso, nunca antes. Até lá, o status desta seção é **parada**, não
+> "em progresso": ninguém deve investir mais tempo nela sem que uma dessas
+> pendências mude primeiro.
 - Data do registro: 2026-08-14 (ANTES de qualquer coleta ou resultado). Promove o
   item B1 do backlog condicional (abaixo) — ativação estava liberada desde o
   veredito da H4 (2026-07-10), formalizada agora.
