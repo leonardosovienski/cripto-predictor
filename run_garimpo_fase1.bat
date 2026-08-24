@@ -25,9 +25,24 @@ if errorlevel 1 (
 )
 
 if exist "%PROJECT_DIR%.venv\Scripts\python.exe" (set "PYTHON=%PROJECT_DIR%.venv\Scripts\python.exe") else (set "PYTHON=python")
+
+rem Descoberta de candidatos, ANTES do phase1, para o universo crescer no mesmo
+rem ciclo noturno em vez de ficar preso para sempre nos ativos originais -
+rem phase1 so analisa o que a store JA TEM, nunca descobre nada sozinho. So
+rem ingestao (rede), sem LLM. Nao-fatal: uma falha de rede na descoberta nao
+rem deve impedir o phase1/backtest de rodar com o universo que ja existe.
+"%PYTHON%" -m GarimpoInvestimentos.jobs discover
+
 "%PYTHON%" -m GarimpoInvestimentos.jobs phase1
 if errorlevel 1 exit /b %errorlevel%
 "%PYTHON%" -m GarimpoInvestimentos.jobs backtest
 set "RESULT=%errorlevel%"
+
+rem Publica o painel diario e o historico local da H6 fora do git -
+rem quality_snapshot_history.jsonl. h6_status.json continua exigindo commit
+rem a mao. Roda por conta propria: falha aqui NAO deve mascarar o resultado
+rem do phase1/backtest, que e' o que decide o exit code desta tarefa.
+"%PYTHON%" -m GarimpoInvestimentos.jobs quality-snapshot
+
 popd
 exit /b %RESULT%

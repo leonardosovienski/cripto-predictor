@@ -27,14 +27,31 @@ import urllib.request
 from datetime import UTC, datetime
 from pathlib import Path
 
+from GarimpoInvestimentos.core.paths import DATA_DIR, FEATURE_STORE_DB, LOGS_DIR
+from GarimpoInvestimentos.jobs import _state_root
+
 ROOT = Path(__file__).resolve().parent.parent
 
 
-LOG = Path(os.getenv("GARIMPO_LOGS_DIR", ROOT / "logs")) / "watchdog.log"
-ALERTA = Path(os.getenv("GARIMPO_ALERT_PATH", ROOT / "output" / "ALERTA_COLETA_CRIPTO.txt"))
+# ATE 2026-08-24 estas duas constantes (e o path hardcoded dentro de main(),
+# ver DB_PATH abaixo) apontavam para ROOT/logs e ROOT/output -- o CHECKOUT,
+# nao o banco/logs reais. core.paths resolve DATA_DIR/OUTPUT_DIR/LOGS_DIR via
+# platformdirs (ou variavel de ambiente), fora do checkout; e' onde o banco
+# de producao de fato vive (confirmado em 2026-08-22: C:\predictor\data\...,
+# nao C:\predictor\prod\...). Com o path antigo, este watchdog NUNCA
+# encontrava previsoes reais e reportava "0 previsoes gravadas" -- ou pior,
+# achava um output/feature_store.db vazio/antigo deixado no checkout e lia
+# dado errado em silencio. GARIMPO_LOGS_DIR/GARIMPO_ALERT_PATH continuam
+# valendo, para quem ja os tiver configurado.
+LOG = Path(os.getenv("GARIMPO_LOGS_DIR", str(LOGS_DIR))) / "watchdog.log"
+ALERTA = (
+    Path(os.getenv("GARIMPO_ALERT_PATH", str(DATA_DIR / "output"))) / "ALERTA_COLETA_CRIPTO.txt"
+)
+DB_PATH = FEATURE_STORE_DB
 JUIZES_ESPERADOS = 4
 JANELA_HORAS = 27  # > 24h para tolerar o offset UTC do nome do arquivo
 MARCADOR_CONCLUSAO = "=== concluído:"
+H6_BRIDGE_STALE_DIAS = 3  # ver _check_h6_bridge
 
 
 def contagem_previsoes_reais(db_path: Path, dia_iso: str) -> tuple[int, int]:
@@ -68,13 +85,91 @@ def log(msg: str) -> None:
         f.write(f"{stamp} {msg}\n")
 
 
+def _check_h6_bridge(problemas: list[str]) -> None:
+    """A ponte producao->git do `n` da H6 (`GarimpoInvestimentos/h6_status.json`)
+    so atravessa por commit humano (decisao registrada em 2026-08-21: artefato
+    + commit manual, nao push automatizado). Ate 2026-08-22 ela nunca tinha
+    sido atravessada NENHUMA vez -- nao porque fosse dificil, mas porque nada
+    avisava que ela estava parada.
+
+    Este check compara o `n` LOCAL, lido do historico append-only que o job
+    `quality-snapshot` grava a cada execucao (`quality_snapshot_history.jsonl`,
+    fora do git), com o `n` PUBLICADO no `h6_status.json` committed. Se o local
+    ja avancou e o arquivo publicado ficou parado por dias, reclama -- sem
+    tentar commitar sozinho: quem decide o que entra no git continua sendo
+    humano, este check so impede que a decisao seja esquecida em silencio."""
+    history_path = DATA_DIR / "output" / "quality_snapshot_history.jsonl"
+    status_path = ROOT / "GarimpoInvestimentos" / "h6_status.json"
+
+    if not history_path.exists():
+        return  # quality-snapshot ainda nao rodou aqui; nada para comparar
+
+    ultima = None
+    try:
+        with open(history_path, encoding="utf-8") as f:
+            for linha in f:
+                linha = linha.strip()
+                if linha:
+                    ultima = json.loads(linha)
+    except (OSError, json.JSONDecodeError):
+        return  # historico ilegivel nao e' motivo para alarmar sobre A PONTE
+    if ultima is None:
+        return
+
+    n_local = ultima.get("h6_valid_n")
+    if not isinstance(n_local, int):
+        return
+
+    if not status_path.exists():
+        if n_local > 0:
+            problemas.append(
+                f"h6_status.json nunca foi publicado, mas a coleta local ja tem "
+                f"n={n_local} previsao(oes) madura(s) da H6 — rode "
+                f"quality_snapshot e commite o arquivo"
+            )
+        return
+
+    try:
+        publicado = json.loads(status_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as e:
+        problemas.append(f"h6_status.json ilegivel: {e}")
+        return
+
+    n_publicado = publicado.get("n")
+    if not isinstance(n_publicado, int):
+        return
+
+    observed_raw = str(publicado.get("observed_at") or "")
+    try:
+        observed_at = datetime.fromisoformat(observed_raw.replace("Z", "+00:00"))
+        idade_dias = (datetime.now(UTC) - observed_at).total_seconds() / 86400
+    except ValueError:
+        idade_dias = None
+
+    if n_local > n_publicado and idade_dias is not None and idade_dias > H6_BRIDGE_STALE_DIAS:
+        problemas.append(
+            f"h6_status.json desatualizado ha {idade_dias:.1f} dia(s) "
+            f"(publicado n={n_publicado}, local n={n_local}) — commite o "
+            f"arquivo atualizado para que o acompanhamento externo enxergue"
+        )
+
+
 def _check_backtest_heartbeat(problemas: list[str]) -> None:
-    """O backtest diário (GarimpoBacktest, 2ª etapa da GarimpoFase1) pode falhar
-    em silêncio — o exit code do .bat vai para o Task Scheduler, que ninguém lê
-    todo dia. O heartbeat JSON do operational_runner é a evidência barata."""
-    hb = ROOT / "logs" / "operations" / "GarimpoBacktest.heartbeat.json"
+    """O backtest diário (job `cripto-backtest`, 2ª etapa da GarimpoFase1) pode
+    falhar em silêncio — o exit code do .bat vai para o Task Scheduler, que
+    ninguém lê todo dia. O heartbeat JSON do predictor_ops é a evidência barata.
+
+    ATE 2026-08-24 este check olhava `ROOT/logs/operations/
+    GarimpoBacktest.heartbeat.json` e a chave `status` — um path e um nome de
+    campo de uma era PRE-predictor_ops. O runner real (`predictor_ops.runner.
+    run_job`) escreve em `<state_root>/<job.id>/heartbeat.json` (job.id =
+    "cripto-backtest") com a chave `run_status`, verificado rodando um job de
+    verdade e lendo o heartbeat gravado. Com o path/chave antigos, esta funcao
+    reportava "backtest diario nunca rodou" TODO dia, tenha o backtest rodado
+    ou nao — o alerta nunca discriminava nada."""
+    hb = _state_root() / "cripto-backtest" / "heartbeat.json"
     if not hb.exists():
-        problemas.append("GarimpoBacktest.heartbeat.json inexistente — backtest diario nunca rodou")
+        problemas.append("heartbeat.json do backtest inexistente — backtest diario nunca rodou")
         return
     idade_h = (datetime.now().timestamp() - hb.stat().st_mtime) / 3600
     if idade_h > JANELA_HORAS:
@@ -83,7 +178,7 @@ def _check_backtest_heartbeat(problemas: list[str]) -> None:
         )
         return
     try:
-        status = json.loads(hb.read_text(encoding="utf-8")).get("status")
+        status = json.loads(hb.read_text(encoding="utf-8")).get("run_status")
     except Exception as e:
         problemas.append(f"heartbeat do backtest ilegivel: {e}")
         return
@@ -139,7 +234,7 @@ def main() -> int:
 
     juizes = 0
     try:
-        n, juizes = contagem_previsoes_reais(ROOT / "output" / "feature_store.db", hoje_iso)
+        n, juizes = contagem_previsoes_reais(DB_PATH, hoje_iso)
         if n == 0:
             if coleta_concluida and prefilter_skips > 0:
                 log(
@@ -160,6 +255,7 @@ def main() -> int:
         problemas.append(f"feature_store.db ilegivel: {e}")
 
     _check_backtest_heartbeat(problemas)
+    _check_h6_bridge(problemas)
 
     if problemas:
         for p in problemas:

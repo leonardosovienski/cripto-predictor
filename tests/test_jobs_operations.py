@@ -10,6 +10,7 @@ import pytest
 from predictor_ops import JobConfig, RunStatus, run_job
 
 from GarimpoInvestimentos import jobs
+from GarimpoInvestimentos.core.paths import FEATURE_STORE_DB
 from GarimpoInvestimentos.v3 import daily
 
 
@@ -220,3 +221,28 @@ def test_expira_em_respeita_a_janela(tmp_path, monkeypatch):
     assert AH._expira_em(2.0) is True  # dentro da janela -> renova
     _grava(-1)
     assert AH._expira_em(2.0) is True  # ja expirou -> renova
+
+
+def test_quality_snapshot_e_um_job_declarado(tmp_path, monkeypatch):
+    """Sem este job agendado, o historico local (quality_snapshot_history.jsonl)
+    nunca existe fora de uma execucao manual — e watchdog._check_h6_bridge nao
+    tem com o que comparar o que esta publicado em h6_status.json."""
+    monkeypatch.setenv("PREDICTOR_OPS_STATE_DIR", str(tmp_path))
+    config = jobs.job_config("quality-snapshot")
+    assert config.command[-1] == "GarimpoInvestimentos.quality_snapshot"
+    assert config.expected_artifact is None
+    assert config.exit_statuses[0] is RunStatus.SUCCEEDED
+
+
+def test_discover_e_um_job_declarado(tmp_path, monkeypatch):
+    """Sem este job agendado, o unico caminho que amplia o universo era
+    run_sinal_diario.bat, que nunca chegou a ser registrado no Task Scheduler —
+    o universo ficava travado para sempre nos ativos originais. So ingestao
+    (rede): main.py --ingest retorna antes de chamar qualquer LLM."""
+    monkeypatch.setenv("PREDICTOR_OPS_STATE_DIR", str(tmp_path))
+    config = jobs.job_config("discover")
+    assert config.command[-2:] == ["--mode", "fallback"]
+    assert "--discover" in config.command
+    assert "--ingest" in config.command
+    assert config.expected_artifact == FEATURE_STORE_DB
+    assert config.exit_statuses[0] is RunStatus.SUCCEEDED

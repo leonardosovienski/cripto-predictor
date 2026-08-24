@@ -85,16 +85,29 @@ A ordem entre A.3 e o bloco B não é crítica. Se o cron disparar antes de o
 
 ### B.1 Rodar o ciclo
 
-> **Os dois `.bat` não são intercambiáveis, e a diferença decide a taxa de coleta.**
-> `run_garimpo_fase1.bat` roda `phase1`, que analisa **só o universo que já está na
-> Feature Store** (`phase1.py`: `store.list_symbols("1d") or DEFAULT_ASSETS`). Ele
-> não descobre ativo novo. Quem amplia o universo é `run_sinal_diario.bat`, que faz
-> `--ingest --assets` com os 10 fixos e `--ingest --discover 15`.
+> **Errata de 2026-08-24.** Até esta data, `run_garimpo_fase1.bat` rodava só
+> `phase1`, que analisa **apenas o universo que já está na Feature Store**
+> (`phase1.py`: `store.list_symbols("1d") or DEFAULT_ASSETS`) — não descobria
+> ativo novo. Quem ampliava o universo era `run_sinal_diario.bat`
+> (`--ingest --discover 15`), mas essa tarefa **nunca chegou a ser registrada
+> no Task Scheduler** (só `GarimpoFase1`/22:00 estava agendada — ver Bloco C).
+> Ou seja: o universo real de produção ficou travado nos ativos originais
+> indefinidamente, sem que nada avisasse.
 >
-> Consequência prática: com a store contendo só bitcoin e ethereum, o ciclo produz
-> ~2 previsões/dia, e o gate `n>=30` da H6 levaria ~15 dias só para abrir — contra
-> ~1,5 dia na taxa de ~24/dia que a H5 teve. **Se o `n` estiver subindo devagar,
-> confira o tamanho do universo antes de qualquer outra coisa:**
+> A partir de 2026-08-24, `run_garimpo_fase1.bat` encadeia `jobs discover`
+> (mesma chamada de descoberta, só ingestão/rede, sem LLM) **antes** de
+> `phase1`, de forma não-fatal — uma falha de rede na descoberta não impede
+> phase1/backtest de rodar com o que já existe. O universo agora cresce
+> sozinho na MESMA tarefa já agendada, sem depender de registrar uma segunda
+> tarefa no Agendador. `run_sinal_diario.bat` continua existindo para rodar a
+> descoberta + análise completa à mão, mas deixou de ser o único caminho de
+> crescimento do universo.
+>
+> Consequência prática do defeito antigo: com a store contendo só bitcoin e
+> ethereum, o ciclo produzia ~2 previsões/dia, e o gate `n>=30` da H6 levaria
+> ~15 dias só para abrir — contra ~1,5 dia na taxa de ~24/dia que a H5 teve.
+> **Se o `n` estiver subindo devagar mesmo após esta correção, confira o
+> tamanho do universo antes de qualquer outra coisa:**
 >
 > ```powershell
 > uv run python -c "from GarimpoInvestimentos.dpl.feature_store import FeatureStore; from GarimpoInvestimentos.core.paths import FEATURE_STORE_DB; print(sorted(FeatureStore(FEATURE_STORE_DB).list_symbols('1d')))"
@@ -111,7 +124,7 @@ As tarefas do Agendador já fazem isso (`GarimpoFase1`, 22:00). Para rodar à m�
 **use os `.bat`** — nunca monte um comando próprio com log em arquivo:
 
 ```powershell
-.\run_garimpo_fase1.bat    # jobs phase1 + jobs backtest
+.\run_garimpo_fase1.bat    # jobs discover (não-fatal) + jobs phase1 + jobs backtest + jobs quality-snapshot
 ```
 
 ```powershell

@@ -256,10 +256,11 @@ def test_history_record_extrai_campos_pedidos():
 # docs/HYPOTHESES.md, que envelhece em silêncio.
 
 
-def _snap(n, gate=30, h6=None, checked_at="2026-08-21T00:00:00+00:00"):
+def _snap(n, gate=30, h6=None, checked_at="2026-08-21T00:00:00+00:00", h6_power=None):
     return {
         "checked_at": checked_at,
         "h6": h6,
+        "h6_power": h6_power,
         "sample": {"h6_valid_n": n, "h6_gate": gate, "h6_fonte_esperada": "dpl:fallback"},
     }
 
@@ -285,6 +286,98 @@ def test_payload_publica_veredito_quando_o_gate_abre():
     assert payload["rho"] == 0.21
     assert payload["ic_lower"] == 0.05
     assert payload["veredito"] == "validado"
+
+
+def test_payload_nao_inclui_poder_quando_ausente_do_snapshot():
+    payload = quality_snapshot.h6_status_payload(_snap(6, h6={"n": 6, "veredito": "aguardando"}))
+    assert payload["poder"] is None
+
+
+def test_payload_inclui_poder_quando_o_snapshot_o_calculou():
+    poder = {"n_referencia": 30, "poder": {0.2: 0.147, 0.3: 0.293}, "fonte": "B12"}
+    payload = quality_snapshot.h6_status_payload(
+        _snap(31, h6={"n": 31, "veredito": "validado"}, h6_power=poder)
+    )
+    assert payload["poder"] == poder
+
+
+def test_render_mostra_poder_quando_presente():
+    snap = _snap(45, h6={"n": 45, "veredito": "RUIDO (IC cruza 0)"})
+    snap["h6_power"] = {"n_referencia": 30, "poder": {0.2: 0.147, 0.3: 0.293}, "fonte": "B12"}
+    snap["pipeline"] = {
+        "predictions_persisted": 25,
+        "predictions_today": 17,
+        "llm_fallbacks_recent": 0.1,
+        "status": "HEALTHY",
+        "last_successful_run": "2026-08-24 02:00:00",
+        "watchdog_violations": [],
+        "watchdog_degraded": [],
+    }
+    snap["sample"]["total_predictions"] = 25
+    snap["sample"]["maturity_stage"] = "IMMATURE"
+    snap["sample"]["mature_d1"] = 8
+    snap["sample"]["mature_d7"] = 0
+    snap["predictive_quality"] = {
+        "accuracy_d1": 0.75,
+        "accuracy_d7": None,
+        "balanced_accuracy_d1": 0.5,
+        "balanced_accuracy_d7": None,
+        "spearman_d7": None,
+        "majority_baseline_d7": None,
+        "score_buckets_d7": [],
+    }
+    snap["by_asset"] = {}
+    snap["by_provider"] = {}
+    snap["by_fonte"] = {}
+    snap["by_provider_quality_d7"] = {}
+    snap["historical_state"] = {
+        "H5": "UNKNOWN",
+        "H6": "UNKNOWN",
+        "V3_frozen_families": [],
+        "capital_authorized": None,
+    }
+    saida = quality_snapshot.render(snap)
+    linha = next(l for l in saida.splitlines() if "poder aprox" in l)
+    assert "n_ref=30" in linha
+    assert "rho=0,2 -> 15%" in linha or "rho=0,2 -> 14%" in linha  # arredondamento
+
+
+def test_render_omite_poder_quando_ausente():
+    snap = _snap(6, h6={"n": 6, "veredito": "aguardando"})
+    snap["pipeline"] = {
+        "predictions_persisted": 6,
+        "predictions_today": 6,
+        "llm_fallbacks_recent": 0.0,
+        "status": "HEALTHY",
+        "last_successful_run": "2026-08-24 02:00:00",
+        "watchdog_violations": [],
+        "watchdog_degraded": [],
+    }
+    snap["sample"]["total_predictions"] = 6
+    snap["sample"]["maturity_stage"] = "VERY_EARLY"
+    snap["sample"]["mature_d1"] = 0
+    snap["sample"]["mature_d7"] = 0
+    snap["predictive_quality"] = {
+        "accuracy_d1": None,
+        "accuracy_d7": None,
+        "balanced_accuracy_d1": None,
+        "balanced_accuracy_d7": None,
+        "spearman_d7": None,
+        "majority_baseline_d7": None,
+        "score_buckets_d7": [],
+    }
+    snap["by_asset"] = {}
+    snap["by_provider"] = {}
+    snap["by_fonte"] = {}
+    snap["by_provider_quality_d7"] = {}
+    snap["historical_state"] = {
+        "H5": "UNKNOWN",
+        "H6": "UNKNOWN",
+        "V3_frozen_families": [],
+        "capital_authorized": None,
+    }
+    saida = quality_snapshot.render(snap)
+    assert "poder aprox" not in saida
 
 
 def test_escrita_e_idempotente_e_preserva_o_primeiro_observed_at(tmp_path):
