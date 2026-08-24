@@ -49,6 +49,16 @@ def job_config(name: str, *, timeout_seconds: float | None = None) -> JobConfig:
             "--if-expiring-within",
             "2",
         ],
+        # Backup semanal do Feature Store. Sem argumento: --output-root cai na
+        # raiz padrao (DATA_DIR/backups) e o nome carrega carimbo de tempo, entao
+        # a tarefa agendada nunca colide com o backup da semana anterior.
+        "backup": [
+            sys.executable,
+            "-m",
+            "scripts.feature_store_backup",
+            "create",
+            "--output-root",
+        ],
         "observation-live": [
             sys.executable,
             "-m",
@@ -99,9 +109,15 @@ def job_config(name: str, *, timeout_seconds: float | None = None) -> JobConfig:
         # observation_watchdog exige SUCCEEDED/PARTIAL — nenhum dos dois podia ser
         # satisfeito, então o alarme tocava toda noite e um problema real ficaria
         # indistinguível do ruído.
+        # O backup e a excecao ao padrao: nao existe "backup parcial". O script
+        # sai com 2 em qualquer falha, e 2 -> PARTIAL no default faria um backup
+        # que NAO aconteceu ser lido como saudavel pelos watchdogs (que aceitam
+        # SUCCEEDED/PARTIAL). Aqui so o 0 vale.
         exit_statuses=(
             {**_EXIT_STATUSES_PADRAO, 1: RunStatus.PARTIAL}
             if name == "phase1"
+            else {0: RunStatus.SUCCEEDED}
+            if name == "backup"
             else dict(_EXIT_STATUSES_PADRAO)
         ),
         runtime={"backend": "local", "root": _state_root(), "lock_stale_after_seconds": 86_400},
@@ -127,6 +143,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             "observation-live",
             "microstructure-live",
             "attest-renew",
+            "backup",
         ),
     )
     parser.add_argument("--timeout", type=float)

@@ -39,6 +39,18 @@ def _default_database() -> Path:
 
 
 DEFAULT_DATABASE = _default_database()
+
+
+def _default_backup_root() -> Path:
+    """Onde os backups automaticos caem, ao lado dos dados e nunca no checkout."""
+    try:
+        from GarimpoInvestimentos.core.paths import DATA_DIR
+    except Exception:
+        return ROOT / "backups"
+    return DATA_DIR / "backups"
+
+
+DEFAULT_BACKUP_ROOT = _default_backup_root()
 MANIFEST_NAME = "BACKUP_MANIFEST.json"
 DATABASE_NAME = "feature_store.db"
 SCHEMA_VERSION = "previsao-cripto-feature-store-backup/1.0"
@@ -151,11 +163,41 @@ def restore_backup(backup: Path, destination_root: Path) -> Path:
         raise
 
 
+def timestamped_output(root: Path, *, now: datetime | None = None) -> Path:
+    """`<root>/fs-AAAA-MM-DD-HHMMSS`, para agendamento.
+
+    `create_backup` recusa destino existente de proposito (nao sobrescreve
+    backup). Isso e certo para uso manual e fatal para uso agendado: sem um nome
+    novo a cada execucao, a tarefa falharia da segunda vez em diante e ninguem
+    perceberia ate precisar do backup.
+    """
+    carimbo = (now or datetime.now(UTC)).strftime("%Y-%m-%d-%H%M%S")
+    candidato = root / f"fs-{carimbo}"
+    # Duas execucoes dentro do MESMO segundo colidiriam, e create_backup recusa
+    # destino existente (corretamente -- nao sobrescreve backup). Em vez de
+    # transformar "rodei duas vezes seguidas" em falha, escolhe o proximo nome
+    # livre. A garantia de nao-sobrescrita continua intacta: nunca reusamos uma
+    # pasta que ja existe.
+    sufixo = 2
+    while candidato.exists() and sufixo <= 100:
+        candidato = root / f"fs-{carimbo}-{sufixo}"
+        sufixo += 1
+    return candidato
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Backup verificavel do Feature Store")
     commands = parser.add_subparsers(dest="command", required=True)
     create = commands.add_parser("create")
-    create.add_argument("--output", required=True, type=Path)
+    destino = create.add_mutually_exclusive_group(required=True)
+    destino.add_argument("--output", type=Path, help="pasta EXATA do backup")
+    destino.add_argument(
+        "--output-root",
+        type=Path,
+        nargs="?",
+        const=DEFAULT_BACKUP_ROOT,
+        help=f"pasta-mae; o nome vira fs-AAAA-MM-DD-HHMMSS (padrao: {DEFAULT_BACKUP_ROOT})",
+    )
     create.add_argument("--database", type=Path, default=DEFAULT_DATABASE)
     verify = commands.add_parser("verify")
     verify.add_argument("--backup", required=True, type=Path)
@@ -165,7 +207,8 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
     try:
         if args.command == "create":
-            result = {"backup": str(create_backup(args.output, database=args.database))}
+            saida = args.output or timestamped_output(args.output_root)
+            result = {"backup": str(create_backup(saida, database=args.database))}
         elif args.command == "verify":
             result = {
                 "verified": str(args.backup.resolve()),
