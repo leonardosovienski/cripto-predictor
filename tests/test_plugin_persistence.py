@@ -14,7 +14,10 @@ def test_plugin_capabilities_keep_research_domain_out_of_prediction():
     capabilities = CryptoPredictorPlugin().capabilities()
     assert capabilities["domain"] == "crypto"
     assert capabilities["supports_prediction"] is False
-    assert capabilities["scientific_status"] == "NO_GO"
+    assert capabilities["scientific_status"] == "ACTIVE_HYPOTHESIS"
+    assert capabilities["predictive_status"] == "INCONCLUSIVE"
+    assert capabilities["economic_status"] == "HISTORICAL_NO_GO"
+    assert capabilities["capital_permission"] == "FORBIDDEN"
 
 
 def test_persistence_interfaces_are_importable_contracts():
