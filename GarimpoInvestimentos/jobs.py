@@ -66,6 +66,28 @@ def job_config(name: str, *, timeout_seconds: float | None = None) -> JobConfig:
         # rodando toda noite, o historico local nunca existe, e o watchdog
         # (_check_h6_bridge) nao tem com o que comparar o que esta publicado.
         "quality-snapshot": [sys.executable, "-m", "GarimpoInvestimentos.quality_snapshot"],
+        # Descoberta de candidatos (rede, CoinGecko: momentum + trending) -> Feature
+        # Store. Sem isto, o UNICO lugar que amplia o universo era
+        # run_sinal_diario.bat, que nunca foi agendado no Task Scheduler (so
+        # GarimpoFase1/22:00 esta agendada, e phase1.py so analisa o universo que
+        # a store JA TEM — nao descobre nada, ver RUNBOOK_COLETA_H6_WINDOWS.md
+        # B.1). Sem descoberta rodando sozinha, o universo fica travado nos
+        # ativos originais para sempre e o `n` da H6 cresce numa fracao do que
+        # poderia (RUNBOOK: ~2/dia com 2 ativos vs ~24/dia que a H5 teve com o
+        # universo cheio). So ingestao (rede) — nunca chama LLM (main.py --ingest
+        # retorna antes da analise); ver run_garimpo_fase1.bat, que encadeia este
+        # job ANTES de `phase1`, para o mesmo ciclo noturno ja analisar o que
+        # acabou de ser descoberto.
+        "discover": [
+            sys.executable,
+            "-m",
+            "GarimpoInvestimentos.main",
+            "--ingest",
+            "--discover",
+            "15",
+            "--mode",
+            "fallback",
+        ],
         "observation-live": [
             sys.executable,
             "-m",
@@ -83,7 +105,7 @@ def job_config(name: str, *, timeout_seconds: float | None = None) -> JobConfig:
     }
     if name not in commands:
         raise ValueError(f"unknown job: {name}")
-    artifact = FEATURE_STORE_DB if name in {"phase1", "backtest"} else None
+    artifact = FEATURE_STORE_DB if name in {"phase1", "backtest", "discover"} else None
     return JobConfig(
         id=f"cripto-{name}",
         command=commands[name],
@@ -152,6 +174,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             "attest-renew",
             "backup",
             "quality-snapshot",
+            "discover",
         ),
     )
     parser.add_argument("--timeout", type=float)

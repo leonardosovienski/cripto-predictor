@@ -10,6 +10,7 @@ import pytest
 from predictor_ops import JobConfig, RunStatus, run_job
 
 from GarimpoInvestimentos import jobs
+from GarimpoInvestimentos.core.paths import FEATURE_STORE_DB
 from GarimpoInvestimentos.v3 import daily
 
 
@@ -230,4 +231,18 @@ def test_quality_snapshot_e_um_job_declarado(tmp_path, monkeypatch):
     config = jobs.job_config("quality-snapshot")
     assert config.command[-1] == "GarimpoInvestimentos.quality_snapshot"
     assert config.expected_artifact is None
+    assert config.exit_statuses[0] is RunStatus.SUCCEEDED
+
+
+def test_discover_e_um_job_declarado(tmp_path, monkeypatch):
+    """Sem este job agendado, o unico caminho que amplia o universo era
+    run_sinal_diario.bat, que nunca chegou a ser registrado no Task Scheduler —
+    o universo ficava travado para sempre nos ativos originais. So ingestao
+    (rede): main.py --ingest retorna antes de chamar qualquer LLM."""
+    monkeypatch.setenv("PREDICTOR_OPS_STATE_DIR", str(tmp_path))
+    config = jobs.job_config("discover")
+    assert config.command[-2:] == ["--mode", "fallback"]
+    assert "--discover" in config.command
+    assert "--ingest" in config.command
+    assert config.expected_artifact == FEATURE_STORE_DB
     assert config.exit_statuses[0] is RunStatus.SUCCEEDED
