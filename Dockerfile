@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1.7
 FROM python:3.14-alpine3.24@sha256:05b2b8b732ecd268fee8727a369f936f022d1321b59befd13c30ede22769dcdc AS build
-RUN apk add --no-cache build-base
+RUN apk upgrade --no-cache && apk add --no-cache build-base
 WORKDIR /build
 RUN python -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
@@ -16,7 +16,8 @@ RUN pip install --no-cache-dir --upgrade pip && \
     pip uninstall -y pip
 
 FROM python:3.14-alpine3.24@sha256:05b2b8b732ecd268fee8727a369f936f022d1321b59befd13c30ede22769dcdc AS runtime
-RUN addgroup -S -g 10001 predictor && adduser -S -D -u 10001 -h /nonexistent -G predictor predictor && \
+RUN apk upgrade --no-cache && \
+    addgroup -S -g 10001 predictor && adduser -S -D -u 10001 -h /nonexistent -G predictor predictor && \
     python -m pip uninstall -y pip setuptools
 COPY --from=build /opt/venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH" PYTHONUTF8=1 PYTHONDONTWRITEBYTECODE=1 OUTPUT_DIR=/var/lib/cripto-predictor/output DATA_DIR=/var/lib/cripto-predictor/data CACHE_DIR=/var/lib/cripto-predictor/cache
