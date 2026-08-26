@@ -80,41 +80,42 @@ def export_results(resultados: list[dict]):
     start_row = 2
     end_row = len(resultados) + 1
 
-    green_fill = PatternFill("solid", fgColor="C6EFCE")
-    yellow_fill = PatternFill("solid", fgColor="FFF3B0")
-    red_fill = PatternFill("solid", fgColor="FFC7CE")
+    if resultados:
+        green_fill = PatternFill("solid", fgColor="C6EFCE")
+        yellow_fill = PatternFill("solid", fgColor="FFF3B0")
+        red_fill = PatternFill("solid", fgColor="FFC7CE")
 
-    ws.conditional_formatting.add(
-        f"{score_col}{start_row}:{score_col}{end_row}",
-        CellIsRule(operator="greaterThan", formula=["70"], fill=green_fill),
-    )
-    ws.conditional_formatting.add(
-        f"{score_col}{start_row}:{score_col}{end_row}",
-        CellIsRule(operator="between", formula=["50", "70"], fill=yellow_fill),
-    )
-    ws.conditional_formatting.add(
-        f"{score_col}{start_row}:{score_col}{end_row}",
-        CellIsRule(operator="lessThan", formula=["50"], fill=red_fill),
-    )
+        ws.conditional_formatting.add(
+            f"{score_col}{start_row}:{score_col}{end_row}",
+            CellIsRule(operator="greaterThan", formula=["70"], fill=green_fill),
+        )
+        ws.conditional_formatting.add(
+            f"{score_col}{start_row}:{score_col}{end_row}",
+            CellIsRule(operator="between", formula=["50", "70"], fill=yellow_fill),
+        )
+        ws.conditional_formatting.add(
+            f"{score_col}{start_row}:{score_col}{end_row}",
+            CellIsRule(operator="lessThan", formula=["50"], fill=red_fill),
+        )
 
-    chart = BarChart()
-    chart.title = "Pontuação de Oportunidade (Score)"
-    chart.y_axis.title = "Ativos"
-    chart.x_axis.title = "Score"
-    chart.style = 13
-    chart.type = "bar"
-    chart.width = 15
-    chart.height = 6
+        chart = BarChart()
+        chart.title = "Pontuação de Oportunidade (Score)"
+        chart.y_axis.title = "Ativos"
+        chart.x_axis.title = "Score"
+        chart.style = 13
+        chart.type = "bar"
+        chart.width = 15
+        chart.height = 6
 
-    data = Reference(ws, min_col=3, min_row=1, max_row=end_row)
-    cats = Reference(ws, min_col=1, min_row=2, max_row=end_row)
-    chart.add_data(data, titles_from_data=True)
-    chart.set_categories(cats)
-    chart.dataLabels = DataLabelList()
-    chart.dataLabels.showVal = True
+        data = Reference(ws, min_col=3, min_row=1, max_row=end_row)
+        cats = Reference(ws, min_col=1, min_row=2, max_row=end_row)
+        chart.add_data(data, titles_from_data=True)
+        chart.set_categories(cats)
+        chart.dataLabels = DataLabelList()
+        chart.dataLabels.showVal = True
 
-    chart_anchor_row = end_row + 3
-    ws.add_chart(chart, f"A{chart_anchor_row}")  # pyright: ignore[reportCallIssue] — stub do openpyxl confunde Worksheet/Chartsheet.add_chart
+        chart_anchor_row = end_row + 3
+        ws.add_chart(chart, f"A{chart_anchor_row}")  # pyright: ignore[reportCallIssue] — stub do openpyxl confunde Worksheet/Chartsheet.add_chart
 
     wb.save(xlsx_filename)
 

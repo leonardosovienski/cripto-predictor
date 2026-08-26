@@ -78,6 +78,14 @@ jobs:
           output-file: sbom.spdx.json
       - run: docker build --tag cripto-predictor:test .
       - run: docker run --rm --read-only --tmpfs /tmp --cap-drop ALL cripto-predictor:test --help
+      - run: >-
+          docker run --rm --read-only --tmpfs /tmp --cap-drop ALL
+          --tmpfs /var/lib/cripto-predictor:rw,noexec,nosuid,size=64m,uid=10001,gid=10001
+          -e GEMINI_API_KEY=test-gemini-key-for-ci-only
+          -e SERP_API_KEY=test-serp-key-for-ci-only
+          -e LLM_PROVIDER=gemini
+          -e GEMINI_MODEL=gemini-2.5-flash
+          cripto-predictor:test --assets bitcoin --no-cache
       - uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
         with:
           image-ref: cripto-predictor:test
