@@ -23,7 +23,9 @@ Uso:  uv run python -m scripts.diagnose_h6_mechanism
 
 from __future__ import annotations
 
-from datetime import timedelta
+from datetime import datetime, timedelta
+
+from GarimpoInvestimentos.dpl.feature_store import FeatureStore
 
 
 def compute_mechanism(rows: list[dict]) -> dict:
@@ -81,35 +83,51 @@ def interpret(m: dict) -> str:
     return "\n".join(lines)
 
 
-def main() -> int:
-    from datetime import datetime
+def load_mechanism_rows(store: FeatureStore, preds: list[dict], *, horizon_days: int) -> list[dict]:
+    """Monta a amostra sem permitir informação indisponível na previsão.
 
+    O retorno passado é uma feature e exige `published_at <= ts` da previsão.
+    O retorno futuro é o desfecho e pode usar o candle posteriormente observado.
+    """
+    rows = []
+    for r in preds:
+        if r.get("score") is None or r.get("price_usd") is None:
+            continue
+        try:
+            pred_dt = datetime.strptime(r["ts"], "%Y-%m-%d %H:%M:%S")
+            price = float(r["price_usd"])
+            score = float(r["score"])
+        except (KeyError, TypeError, ValueError):
+            continue
+        if price <= 0:
+            continue
+        ativo = (r.get("ativo") or "").lower()
+        past = store.close_on(
+            ativo,
+            "1d",
+            pred_dt - timedelta(days=horizon_days),
+            published_as_of=pred_dt,
+        )
+        fut = store.close_on(ativo, "1d", pred_dt + timedelta(days=horizon_days))
+        if not past or not fut:
+            continue
+        rows.append(
+            {
+                "score": score,
+                "past_ret_pct": (price / past[0] - 1) * 100,
+                "fut_ret_pct": (fut[0] / price - 1) * 100,
+            }
+        )
+    return rows
+
+
+def main() -> int:
     from GarimpoInvestimentos.analyzers.backtest import PRIMARY_HORIZON
     from GarimpoInvestimentos.core.paths import FEATURE_STORE_DB
-    from GarimpoInvestimentos.dpl.feature_store import FeatureStore
 
     with FeatureStore(FEATURE_STORE_DB) as store:
         preds = store.read_predictions()
-        rows = []
-        for r in preds:
-            if not r.get("score") or not r.get("price_usd"):
-                continue
-            try:
-                pred_dt = datetime.strptime(r["ts"], "%Y-%m-%d %H:%M:%S")
-            except (KeyError, ValueError, TypeError):
-                continue
-            ativo = (r.get("ativo") or "").lower()
-            past = store.close_on(ativo, "1d", pred_dt - timedelta(days=PRIMARY_HORIZON))
-            fut = store.close_on(ativo, "1d", pred_dt + timedelta(days=PRIMARY_HORIZON))
-            if not past or not fut:
-                continue
-            rows.append(
-                {
-                    "score": r["score"],
-                    "past_ret_pct": (r["price_usd"] / past[0] - 1) * 100,
-                    "fut_ret_pct": (fut[0] / r["price_usd"] - 1) * 100,
-                }
-            )
+        rows = load_mechanism_rows(store, preds, horizon_days=PRIMARY_HORIZON)
     m = compute_mechanism(rows)
     print("Diagnóstico do mecanismo da H6 (EXPLORATÓRIO — não é veredito):\n")
     print(interpret(m))

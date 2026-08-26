@@ -641,7 +641,13 @@ class FeatureStore:
         return [r["symbol"] for r in cur]
 
     def close_on(
-        self, symbol: str, interval: str, day: datetime, *, prefer_consensus: bool = False
+        self,
+        symbol: str,
+        interval: str,
+        day: datetime,
+        *,
+        prefer_consensus: bool = False,
+        published_as_of: datetime | None = None,
     ) -> tuple[float, str] | None:
         """Fecho do candle bruto do DIA (YYYY-MM-DD) — régua OFFLINE do backtest.
 
@@ -649,11 +655,20 @@ class FeatureStore:
         diferente da que gerou a previsão adiciona ruído (a equivalência mediu
         até 7.8pp de diff entre fontes). Se múltiplas fontes têm o dia, prefere
         a que casa com a política da previsão (consenso ou provider único).
+        `published_as_of` ativa o corte point-in-time: candles que ainda não
+        tinham sido publicados naquele instante ficam invisíveis. Sem o corte,
+        preserva a leitura de desfecho realizado usada pelo backtest.
+
         Retorna (close, source) ou None se a store não tem o dia."""
+        params: list[str] = [symbol, interval, day.strftime("%Y-%m-%d")]
+        pit_clause = ""
+        if published_as_of is not None:
+            pit_clause = " AND published_at<=?"
+            params.append(_iso(published_as_of))
         cur = self._conn.execute(
-            """SELECT close, source FROM raw_market_data
-               WHERE symbol=? AND interval=? AND substr(ts,1,10)=?""",
-            (symbol, interval, day.strftime("%Y-%m-%d")),
+            f"""SELECT close, source FROM raw_market_data
+                WHERE symbol=? AND interval=? AND substr(ts,1,10)=?{pit_clause}""",
+            params,
         )
         rows = [(r["close"], r["source"]) for r in cur]
         if not rows:

@@ -70,6 +70,13 @@ def test_close_on_sem_dado_no_dia_e_none(store):
     assert store.close_on("bitcoin", "1d", DAY + timedelta(days=1)) is None
 
 
+def test_close_on_point_in_time_exclui_candle_publicado_depois(store):
+    """Uma feature histórica ingerida tarde não existia no replay daquele instante."""
+    store.write_raw([_candle(DAY, 100.0)])
+    assert store.close_on("bitcoin", "1d", DAY, published_as_of=DAY - timedelta(seconds=1)) is None
+    assert store.close_on("bitcoin", "1d", DAY, published_as_of=DAY) == (100.0, "binance")
+
+
 # --- 1b. _realized_price: offline-first, rede só no fallback --------------------
 
 
