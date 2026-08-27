@@ -117,3 +117,48 @@ def test_anti_lookahead_signal_ts_nao_precede_exchange_ts():
         _fv(fr_z=3.0, oi_d=1.0, exch_ms=1_600_000_000_000), _regime(label="bull", conf=0.8)
     )
     assert s.timestamp_signal_ms >= s.timestamp_exchange_ms
+
+
+# ----------------------------------------------------- thresholds calibráveis (grid-search WFA)
+def test_threshold_default_preserva_comportamento_original():
+    # fr_z=2.5 dispara com o default (2.0) e continua disparando sem overrides
+    s = generate_signal(_fv(fr_z=2.5, oi_d=1.0), _regime(label="bull", conf=0.8))
+    assert s.active is True and s.direction == -1
+
+
+def test_threshold_mais_alto_bloqueia_sinal_que_antes_disparava():
+    s = generate_signal(
+        _fv(fr_z=2.5, oi_d=1.0),
+        _regime(label="bull", conf=0.8),
+        fr_zscore_threshold=3.0,
+    )
+    assert s.active is False and s.reason == "no_signal"
+
+
+def test_threshold_mais_baixo_dispara_sinal_que_antes_nao_disparava():
+    s = generate_signal(
+        _fv(fr_z=1.5, oi_d=1.0),
+        _regime(label="bull", conf=0.8),
+        fr_zscore_threshold=1.0,
+    )
+    assert s.active is True and s.direction == -1
+
+
+def test_min_regime_confidence_override_bloqueia_sinal_antes_valido():
+    # conf=0.65 passa no default (0.60) mas não num override mais exigente
+    s = generate_signal(
+        _fv(fr_z=3.0, oi_d=1.0),
+        _regime(label="bull", conf=0.65),
+        min_regime_confidence=0.70,
+    )
+    assert s.active is False and s.reason == "regime_low_confidence"
+
+
+def test_min_regime_confidence_override_libera_sinal_antes_bloqueado():
+    # conf=0.55 falha no default (0.60) mas passa com override mais permissivo
+    s = generate_signal(
+        _fv(fr_z=3.0, oi_d=1.0),
+        _regime(label="bull", conf=0.55),
+        min_regime_confidence=0.50,
+    )
+    assert s.active is True and s.direction == -1
