@@ -1,0 +1,63 @@
+{
+  "schema_version": "retrospective-research-report/1",
+  "report_date": "2026-08-27",
+  "code_commit": "76bab876b7ec7b2ca7ae9dab1a0d2fd4d3435e07",
+  "status": "RETROSPECTIVE_GATE_FAILED",
+  "capital_authorized": false,
+  "family": "spot_daily_trend_long_cash_v1",
+  "rule": {
+    "decision": "close_D > SMA200_D",
+    "execution": "position applies only to D+1",
+    "positions": [0, 1],
+    "cost_per_position_change": 0.0015,
+    "short_allowed": false,
+    "leverage_allowed": false,
+    "llm_allowed": false
+  },
+  "validation": {
+    "start": "2021-07-19",
+    "end": "2026-07-30",
+    "n_days_per_asset": 1838,
+    "bootstrap": "moving-block",
+    "block_days": 30,
+    "samples": 2000,
+    "seed": 42,
+    "required_assets": ["BTCUSDT", "ETHUSDT"]
+  },
+  "results": {
+    "BTCUSDT": {
+      "gross_return": 1.0923202649537735,
+      "net_return": 0.9469686504713741,
+      "buy_hold_return": 1.0393419072776036,
+      "net_sharpe": 0.371236457310147,
+      "net_max_drawdown": 0.3639888761323149,
+      "net_mean_bps": 3.6249925179957585,
+      "net_mean_ci95_bps": [-5.160669179345188, 13.297340102593544],
+      "active_days": 973,
+      "position_transitions": 48,
+      "top_five_positive_days_share": 0.05200483392695459,
+      "gate_passed": false
+    },
+    "ETHUSDT": {
+      "gross_return": 2.447274454254491,
+      "net_return": 2.305487299524135,
+      "buy_hold_return": 0.023801143862735685,
+      "net_sharpe": 0.5342460556460968,
+      "net_max_drawdown": 0.3846966995851049,
+      "net_mean_bps": 6.504809061799638,
+      "net_mean_ci95_bps": [-4.255641253909024, 16.027036898664605],
+      "active_days": 874,
+      "position_transitions": 28,
+      "top_five_positive_days_share": 0.05735745886625976,
+      "gate_passed": false
+    }
+  },
+  "failed_requirements": [
+    "BTCUSDT net return did not beat buy-and-hold",
+    "BTCUSDT net mean confidence interval crosses zero",
+    "ETHUSDT net mean confidence interval crosses zero",
+    "BTCUSDT maximum drawdown exceeds 30 percent",
+    "ETHUSDT maximum drawdown exceeds 30 percent"
+  ],
+  "interpretation": "Positive retrospective returns are not a validated edge or a forecast. Parameters must not be changed using these same observations and capital remains unauthorized."
+}
