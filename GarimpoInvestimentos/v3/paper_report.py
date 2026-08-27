@@ -33,14 +33,15 @@ from predictor_core.stats import max_drawdown
 from GarimpoInvestimentos.core.paths import DATA_DIR
 from GarimpoInvestimentos.v3.collectors.spot_collector import load_spot_csv
 from GarimpoInvestimentos.v3.feature_builder import build_spot_index
-from GarimpoInvestimentos.v3.timeindex import nearest_value
+from GarimpoInvestimentos.v3.timeindex import SortedTimeIndex
 
 logger = logging.getLogger(__name__)
 
 _DOMAIN = "v3_paper"
 _DATA_ROOT = DATA_DIR / "v3"
 _PAPER_DIR = _DATA_ROOT / "paper"
-_PRICE_TOLERANCE_MS = 300_000  # ±5 min
+_PRICE_TOLERANCE_MS = 300_000
+_SPOT_CANDLE_MS = 3_600_000
 
 
 def _paper_path(symbol: str) -> Path:
@@ -65,8 +66,10 @@ def _load_paper_trades(symbol: str) -> list[dict]:
 
 
 def _closest_price(ts_ms: int, spot_index: dict[int, float]) -> float | None:
-    """Delegado ao helper único (C5) — antes era a 3ª de 3 cópias da mesma lógica."""
-    return nearest_value(spot_index, ts_ms, _PRICE_TOLERANCE_MS)
+    """Ultimo close de 1h disponivel no instante, nunca uma vela futura."""
+    return SortedTimeIndex(spot_index).as_of(
+        ts_ms - _SPOT_CANDLE_MS, _PRICE_TOLERANCE_MS
+    )
 
 
 def _equity_curve(returns: list[float]) -> list[float]:

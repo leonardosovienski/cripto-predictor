@@ -107,7 +107,11 @@ def test_upgrade_de_banco_pre_0016_com_predictions_ja_populado(tmp_path):
     db_path = tmp_path / "feature_store.db"
 
     # Simula o estado "pré-0016": aplica todas as migrações MENOS a append-only.
-    pre_0016 = [(name, sql) for name, sql in ADDITIVE_MIGRATIONS if "0016" not in name]
+    migration_0016 = next(
+        i for i, (name, _sql) in enumerate(ADDITIVE_MIGRATIONS)
+        if name == "0016_predictions_append_only"
+    )
+    pre_0016 = ADDITIVE_MIGRATIONS[:migration_0016]
     conn = sqlite3.connect(str(db_path))
     conn.row_factory = sqlite3.Row
     infra.run_migrations(conn, _MIGRATIONS + pre_0016)
@@ -161,7 +165,11 @@ def test_migration_falha_no_meio_nao_deixa_banco_inconsistente(tmp_path):
     consistente — nem trigger duplicada, nem tabela faltando."""
     db_path = tmp_path / "feature_store.db"
     # Aplica só até a migração anterior à 0016 (simula uma "queda" no meio do deploy).
-    partial = [(name, sql) for name, sql in ADDITIVE_MIGRATIONS if "0016" not in name]
+    migration_0016 = next(
+        i for i, (name, _sql) in enumerate(ADDITIVE_MIGRATIONS)
+        if name == "0016_predictions_append_only"
+    )
+    partial = ADDITIVE_MIGRATIONS[:migration_0016]
     conn = sqlite3.connect(str(db_path))
     infra.run_migrations(conn, _MIGRATIONS + partial)
     conn.close()

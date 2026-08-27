@@ -39,6 +39,20 @@ def _asof_value(
     return sig.value
 
 
+def _available_at(signal: SignalPoint):
+    """Conservative knowledge time for revisions/backfills.
+
+    A revision cannot be used before it was ingested/collected, even when a
+    provider backdates ``published_at`` to the original release estimate.
+    """
+    candidates = [signal.published_at]
+    if signal.vintage is not None:
+        candidates.append(signal.vintage)
+    if signal.ingested_at is not None:
+        candidates.append(signal.ingested_at)
+    return max(candidates)
+
+
 class AlignmentEngine:
     """Materializa a matriz alinhada a partir de candles + sinais de baixa freq."""
 
@@ -56,11 +70,11 @@ class AlignmentEngine:
         signals = signals or {}
         max_staleness = max_staleness or {}
 
-        # Pré-ordena cada série de sinais por published_at (chave do as-of join).
+        # Use effective knowledge time, not only nominal publication time.
         prepared: dict[str, tuple[list[SignalPoint], list]] = {}
         for name, series in signals.items():
-            s = sorted(series, key=lambda x: x.published_at)
-            prepared[name] = (s, [x.published_at for x in s])
+            s = sorted(series, key=_available_at)
+            prepared[name] = (s, [_available_at(x) for x in s])
 
         rows = []
         for candle in sorted(candles, key=lambda c: c.timestamp):

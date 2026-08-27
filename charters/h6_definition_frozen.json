@@ -14,7 +14,7 @@
       "h6_spearman_verdict"
     ]
   },
-  "governing_code_sha256": "ffd36975bcdfae63ac7f53d3b2dbd5cac793c90af36b9cae12482b650fb32c32",
+  "governing_code_sha256": "5582ec23370e58ae0fe961d41a3127674c136027b28ec511034efb0bd99b9f0a",
   "note": "Rode 'python -m scripts.freeze_h6_definition --check' antes de reativar a coleta de H6 e a cada deploy subsequente enquanto H6 estiver ACTIVE_PROSPECTIVE. Um hash divergente é bloqueante até investigação humana.",
   "rules": {
     "min_n_gate": "n >= H6_MIN_N (30) antes de qualquer veredito ser calculado/impresso.",

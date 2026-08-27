@@ -12,6 +12,8 @@ from typing import TypedDict
 
 import pytest
 
+import GarimpoInvestimentos.analyzers.trials as trials_module
+
 from GarimpoInvestimentos.analyzers.backtest import (
     H6_MIN_N,
     H6_TRIAL_NAME,
@@ -47,6 +49,61 @@ def test_trials_json_do_repositorio_conforma_ao_schema():
     trials = load_trials(TRIALS_PATH)
     assert trials, "trials.json do repositório sumiu?"
     assert validate_trials(trials) == []
+
+
+def test_toda_hipotese_fechada_bloqueia_update_antes_do_core(tmp_path, monkeypatch):
+    """Regressão: H4 era CLOSED_INSUFFICIENT_SAMPLE, mas o shim só bloqueava
+    a string literal CLOSED_NO_GO e deixava o core sobrescrever sharpe/notes."""
+    from GarimpoInvestimentos.governance import load_scientific_state
+
+    canonical = tmp_path / "trials.json"
+    canonical.write_text(TRIALS_PATH.read_text(encoding="utf-8"), encoding="utf-8")
+    state = load_scientific_state()
+    reached_core = False
+
+    def should_not_reach_core(*_args, **_kwargs):
+        nonlocal reached_core
+        reached_core = True
+        raise AssertionError("trial fechada alcançou predictor_core")
+
+    monkeypatch.setattr(trials_module, "TRIALS_PATH", canonical)
+    monkeypatch.setattr(
+        "GarimpoInvestimentos.governance.load_scientific_state", lambda: state
+    )
+    monkeypatch.setattr(trials_module, "_core_register", should_not_reach_core)
+
+    h4 = next(t for t in load_trials(canonical) if t["name"] == "v2-dpl-gemini-h7")
+    with pytest.raises(ValueError, match="hipótese fechada"):
+        trials_module.register_trial(
+            h4["name"], params=h4["params"], sharpe=999.0, path=canonical
+        )
+    assert not reached_core
+    unchanged = next(t for t in load_trials(canonical) if t["name"] == h4["name"])
+    assert unchanged == h4
+
+
+def test_h6_imatura_continua_atualizavel(tmp_path, monkeypatch):
+    """O hardening não fecha a H6 por acidente; a decisão científica é separada."""
+    from GarimpoInvestimentos.governance import load_scientific_state
+
+    canonical = tmp_path / "trials.json"
+    canonical.write_text(TRIALS_PATH.read_text(encoding="utf-8"), encoding="utf-8")
+    state = load_scientific_state()
+    reached_core = False
+
+    def core_spy(*_args, **_kwargs):
+        nonlocal reached_core
+        reached_core = True
+        return []
+
+    monkeypatch.setattr(trials_module, "TRIALS_PATH", canonical)
+    monkeypatch.setattr(
+        "GarimpoInvestimentos.governance.load_scientific_state", lambda: state
+    )
+    monkeypatch.setattr(trials_module, "_core_register", core_spy)
+    h6 = next(t for t in load_trials(canonical) if t["name"] == H6_TRIAL_NAME)
+    trials_module.register_trial(h6["name"], params=h6["params"], path=canonical)
+    assert reached_core
 
 
 @pytest.mark.parametrize(
@@ -397,7 +454,7 @@ def test_h6_spearman_detecta_sinal_plantado_quando_n_suficiente(tmp_path):
     r = h6_spearman_verdict(posterior, 7, trials_path=p)
     assert r["n"] >= H6_MIN_N
     assert r["rho"] is not None and r["rho"] > 0
-    assert r["veredito"] == "validado (IC nao cruza 0)"
+    assert r["veredito"] == "VALIDADO (IC positivo nao cruza 0)"
 
 
 def test_h6_spearman_rejeita_ruido_quando_n_suficiente(tmp_path):
@@ -406,7 +463,7 @@ def test_h6_spearman_rejeita_ruido_quando_n_suficiente(tmp_path):
     posterior = [_dated_score(score, fwd, 25) for score, fwd in _h6_noise_pairs()]
     r = h6_spearman_verdict(posterior, 7, trials_path=p)
     assert r["n"] >= H6_MIN_N
-    assert r["veredito"] == "RUIDO (IC cruza 0)"
+    assert r["veredito"] == "INCONCLUSIVO (IC cruza 0)"
 
 
 def test_h6_spearman_nunca_grava_em_trials_json(tmp_path):

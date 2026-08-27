@@ -13,10 +13,9 @@ REFUTADAS. Um adapter ingênuo converteria sinal de família refutada em intenç
 de trade sem que ninguém percebesse: seria transformar "isto não funciona" em
 "pretendo operar isto", em silêncio, por conveniência de tipos.
 
-Por isso `to_trade_intent` EXIGE que a família seja declarada e a confronta com o
-charter. Família congelada => recusa, com o motivo. Existe escape
-(`allow_frozen_family=True`), e ele existe justamente para que passar por cima
-seja um ato explícito, visível no call site e no diff — nunca um default.
+Por isso `to_trade_intent` EXIGE família, trial e fingerprint, confronta a família
+com o charter e incorpora no próprio tipo a política de custo usada. Família
+congelada => recusa sem escape no adapter executável.
 
 === O QUE ISTO NÃO É ===
 
@@ -33,6 +32,7 @@ from __future__ import annotations
 from datetime import UTC, datetime, timedelta
 
 from GarimpoInvestimentos.governance import load_scientific_state
+from GarimpoInvestimentos.trading.cost_policy import cost_model_for
 from GarimpoInvestimentos.trading.contracts import (
     Direction,
     ExitRule,
@@ -58,6 +58,8 @@ def to_trade_intent(
     signal,
     *,
     family: str,
+    trial_id: str,
+    pipeline_fingerprint: str,
     instrument: Instrument,
     holding_period_hours: float,
     entry_window_minutes: float = 30.0,
@@ -67,7 +69,6 @@ def to_trade_intent(
     take_profit_pct: float | None = None,
     slippage_limit_bps: float = 50.0,
     skip_uncertain_regime: bool = True,
-    allow_frozen_family: bool = False,
     charter_path=None,
 ) -> TradeIntent | None:
     """Converte um `SignalRecord` em `TradeIntent`, ou devolve None quando o sinal
@@ -93,13 +94,16 @@ def to_trade_intent(
     o contrato permite".
     """
     estado = load_scientific_state(charter_path) if charter_path else load_scientific_state()
-    if family in estado.frozen_families and not allow_frozen_family:
+    if family in estado.frozen_families:
         raise FrozenFamilyError(
             f"familia '{family}' esta congelada em frozen_families "
             f"({estado.frozen_families}): sinal de hipotese REFUTADA nao vira "
-            "intencao de trade por default. Use allow_frozen_family=True apenas "
-            "para simulacao/auditoria, e deixe isso visivel no call site."
+            "intencao de trade. O adapter executavel nao possui bypass."
         )
+
+    # Uma intenção executável só nasce de modelo calibrado para veredito. Isso
+    # torna impossível esquecer o guard e carregar custo apenas "por convenção".
+    cost_model = cost_model_for(instrument, for_verdict=True)
 
     if not getattr(signal, "active", False):
         return None
@@ -129,6 +133,11 @@ def to_trade_intent(
         holding_period_hours=holding_period_hours,
         target_position_fraction=fracao,
         exit_rule=exit_rule,
+        scientific_family=family,
+        trial_id=trial_id,
+        pipeline_fingerprint=pipeline_fingerprint,
+        cost_model_id="v3.costs.CostModel",
+        estimated_round_trip_friction=cost_model.friction(fracao),
         stop_loss_pct=stop_loss_pct,
         take_profit_pct=take_profit_pct,
         slippage_limit_bps=slippage_limit_bps,

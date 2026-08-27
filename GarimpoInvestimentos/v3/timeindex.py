@@ -44,6 +44,20 @@ class SortedTimeIndex:
                     best = (d, k)
         return self._index[best[1]] if best else None
 
+    def as_of(self, ts: int, tolerance_ms: int = _DEFAULT_TOLERANCE_MS) -> float | None:
+        """Latest value at or before ``ts``; future observations are ineligible."""
+        if not self._keys:
+            return None
+        i = bisect_left(self._keys, ts)
+        if i < len(self._keys) and self._keys[i] == ts:
+            key = self._keys[i]
+        else:
+            i -= 1
+            if i < 0:
+                return None
+            key = self._keys[i]
+        return self._index[key] if ts - key <= tolerance_ms else None
+
 
 def nearest_value(
     index: dict[int, float], ts: int, tolerance_ms: int = _DEFAULT_TOLERANCE_MS

@@ -20,6 +20,12 @@ API_GUARD_MAX_NEWS_ATTEMPTS_PER_PROVIDER=8
 API_GUARD_MAX_LLM_CALLS_PER_PROVIDER=6
 ```
 
+Quando ativo, o consumo e persistido em `DATA_DIR/api_guard_budget.db`, por dia
+UTC, stage e provider. O incremento usa transacao SQLite `BEGIN IMMEDIATE`, de
+modo que processos concorrentes e reinicios compartilham o mesmo teto. Apagar
+esse banco reinicia deliberadamente o orcamento e deve ser tratado como acao
+operacional auditavel.
+
 ## Cobertura
 
 1. Antes da ingestão de cada ativo, impede novas unidades de preço/sinais depois do
@@ -34,5 +40,3 @@ API_GUARD_MAX_LLM_CALLS_PER_PROVIDER=6
 Cada bloqueio emite `api_guard_skipped` no JSONL com etapa, ativo e razão. Como os
 tetos reduzem a população observada, qualquer ativação altera a coleta e exige trial
 forward nova; H5 permanece congelada.
-
-

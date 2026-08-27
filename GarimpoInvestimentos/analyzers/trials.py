@@ -29,7 +29,12 @@ TRIALS_PATH = Path(__file__).resolve().parent.parent / "trials.json"
 
 
 def load_trials(path: Path | None = None) -> list[dict]:
-    return _core_load(path or TRIALS_PATH)
+    target = path or TRIALS_PATH
+    trials = _core_load(target)
+    errors = validate_trials(trials)
+    if errors:
+        raise ValueError(f"{target}: trials.json inválido: " + "; ".join(errors))
+    return trials
 
 
 def register_trial(
@@ -41,6 +46,23 @@ def register_trial(
     path: Path | None = None,
     **extra,
 ) -> list[dict]:
+    target = path or TRIALS_PATH
+    if Path(target).resolve() == TRIALS_PATH.resolve() and Path(target).exists():
+        # The registry and scientific charter are one governance boundary.
+        # Toda hipótese semanticamente fechada é imutável; o core protege
+        # identidade/métrica, mas deliberadamente não conhece este charter.
+        from GarimpoInvestimentos.governance import load_scientific_state
+
+        state = load_scientific_state()
+        closed_trials = {
+            state.hypothesis_trials[h]
+            for h, status in state.hypotheses.items()
+            if status.is_closed
+        }
+        if name in closed_trials:
+            raise ValueError(
+                f"trial {name!r} pertence a hipótese fechada e não pode ser reescrita"
+            )
     return _core_register(
-        name, params=params, sharpe=sharpe, notes=notes, path=path or TRIALS_PATH, **extra
+        name, params=params, sharpe=sharpe, notes=notes, path=target, **extra
     )

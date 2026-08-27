@@ -8,12 +8,20 @@ importável sem ccxt instalado (testes injetam provedores fake).
 
 from __future__ import annotations
 
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 
 from GarimpoInvestimentos.dpl.contracts import DataProvider, MarketDataPoint
 from GarimpoInvestimentos.dpl.providers._validation import require_finite
 
 _SUPPORTED_INTERVALS = {"1m", "5m", "15m", "1h", "4h", "1d"}
+_INTERVAL_DURATION = {
+    "1m": timedelta(minutes=1),
+    "5m": timedelta(minutes=5),
+    "15m": timedelta(minutes=15),
+    "1h": timedelta(hours=1),
+    "4h": timedelta(hours=4),
+    "1d": timedelta(days=1),
+}
 
 
 class CCXTProvider(DataProvider):
@@ -57,8 +65,15 @@ class CCXTProvider(DataProvider):
             except Exception:
                 pass
         points = []
+        collected_at = datetime.now(UTC)
         for ts_ms, o, h, l, c, v in rows:
             ts = datetime.fromtimestamp(ts_ms / 1000, tz=UTC)
+            available_at = ts + _INTERVAL_DURATION[interval]
+            # CCXT timestamps identify candle OPEN. OHLCV final values are not
+            # knowable until the interval closes. Never persist the live candle
+            # as though its final close/high/low/volume were already public.
+            if available_at > collected_at:
+                continue
             kw = {
                 "open": float(o),
                 "high": float(h),
@@ -74,7 +89,7 @@ class CCXTProvider(DataProvider):
                     timestamp=ts,
                     source=self.name,
                     interval=interval,
-                    published_at=ts,
+                    published_at=available_at,
                     **kw,
                 )
             )

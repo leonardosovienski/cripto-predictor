@@ -146,6 +146,15 @@ def _find_closest(target_ms: int, index: dict[int, float], tolerance_ms: int) ->
     return index[best_ts]
 
 
+def _find_asof(target_ms: int, index: dict[int, float], tolerance_ms: int) -> float | None:
+    """Latest observation at or before target; never selects a future value."""
+    eligible = (ts for ts in index if ts <= target_ms)
+    best_ts = max(eligible, default=None)
+    if best_ts is None or target_ms - best_ts > tolerance_ms:
+        return None
+    return index[best_ts]
+
+
 # ------------------------------------------------------------------ #
 # Builder principal                                                   #
 # ------------------------------------------------------------------ #
@@ -203,10 +212,10 @@ def build_feature_vectors(
         funding_zscore = _zscore(fr_window_slice)
 
         # --- 2. Δ log OI ---
-        oi_curr = _find_closest(ts, oi_index, join_tolerance_ms)
+        oi_curr = _find_asof(ts, oi_index, join_tolerance_ms)
         # OI anterior: timestamp do funding anterior
         oi_prev_ts = funding_times_ms[i - 1] if i > 0 else None
-        oi_prev = _find_closest(oi_prev_ts, oi_index, join_tolerance_ms) if oi_prev_ts else None
+        oi_prev = _find_asof(oi_prev_ts, oi_index, join_tolerance_ms) if oi_prev_ts else None
 
         if oi_curr is None or oi_prev is None:
             skipped += 1
@@ -223,9 +232,11 @@ def build_feature_vectors(
 
         # --- 4. Log return 8h (spot) ---
         # Timestamp 8h atrás = funding_times_ms[i-1] (período anterior)
-        spot_curr = _find_closest(ts, spot_index, join_tolerance_ms)
+        # spot_index is keyed by candle OPEN while its value is the final close.
+        # At ts, only the candle opened one hour earlier is closed/available.
+        spot_curr = _find_asof(ts - ms_per_hour, spot_index, join_tolerance_ms)
         spot_prev_ts = funding_times_ms[i - 1]
-        spot_prev = _find_closest(spot_prev_ts, spot_index, join_tolerance_ms)
+        spot_prev = _find_asof(spot_prev_ts - ms_per_hour, spot_index, join_tolerance_ms)
 
         if spot_curr is None or spot_prev is None:
             skipped += 1
@@ -241,7 +252,7 @@ def build_feature_vectors(
         # Janela [ts - 24h, ts] localizada por bisect na série pré-ordenada.
         lo_ts = ts - vol_window_hours * ms_per_hour
         lo_idx = bisect.bisect_left(sorted_spot_ts, lo_ts)
-        hi_idx = bisect.bisect_right(sorted_spot_ts, ts)
+        hi_idx = bisect.bisect_right(sorted_spot_ts, ts - ms_per_hour)
         vol_closes = sorted_spot_closes[lo_idx:hi_idx]
 
         if len(vol_closes) < 2:

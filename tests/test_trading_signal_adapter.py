@@ -33,6 +33,8 @@ class FakeSignal:
 
 def _intent(sinal=None, **kw):
     kw.setdefault("family", "familia_nao_congelada")
+    kw.setdefault("trial_id", "trial-prospectiva-1")
+    kw.setdefault("pipeline_fingerprint", "sha256:test")
     kw.setdefault("instrument", INSTRUMENTO)
     kw.setdefault("holding_period_hours", 24.0)
     return to_trade_intent(sinal or FakeSignal(), **kw)
@@ -48,9 +50,14 @@ def test_familia_congelada_LEVANTA_em_vez_de_devolver_none():
         _intent(family="funding_oi_hmm_v3")
 
 
-def test_escape_da_familia_congelada_existe_mas_precisa_ser_explicito():
-    intent = _intent(family="funding_oi_hmm_v3", allow_frozen_family=True)
-    assert intent is not None
+def test_familia_congelada_nao_tem_bypass_no_adapter_executavel():
+    with pytest.raises(FrozenFamilyError):
+        _intent(family="funding_oi_hmm_v3")
+
+
+def test_adapter_exige_classe_com_politica_de_custo():
+    with pytest.raises(ValueError, match="asset_class desconhecida"):
+        _intent(instrument=Instrument(symbol="X", venue="v", asset_class="unknown"))
 
 
 def test_familia_congelada_e_lida_do_charter_e_nao_de_lista_hardcoded():
@@ -102,6 +109,21 @@ def test_tamanho_e_strength_vezes_teto_e_o_teto_default_e_conservador():
 def test_rastreabilidade_ate_o_sinal_de_origem():
     """`source_signal_id` existia no contrato e nada preenchia."""
     assert _intent(FakeSignal(event_id="evt-xyz")).source_signal_id == "evt-xyz"
+
+
+def test_intencao_carrega_proveniencia_e_custo_materializados():
+    intent = _intent(FakeSignal(strength=0.5))
+    assert intent.scientific_family == "familia_nao_congelada"
+    assert intent.trial_id == "trial-prospectiva-1"
+    assert intent.pipeline_fingerprint == "sha256:test"
+    assert intent.cost_model_id == "v3.costs.CostModel"
+    assert intent.estimated_round_trip_friction > 0
+
+
+def test_spot_nao_calibrado_nao_vira_intencao_executavel():
+    spot = Instrument(symbol="BTCUSDT", venue="binance", asset_class="crypto_spot")
+    with pytest.raises(ValueError, match="NAO CALIBRADO"):
+        _intent(instrument=spot)
 
 
 def test_janela_de_entrada_nunca_comeca_antes_da_geracao():

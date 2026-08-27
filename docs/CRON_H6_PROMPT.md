@@ -44,7 +44,9 @@ FONTE AUTORITATIVA: GarimpoInvestimentos/h6_status.json. É um artefato versiona
 gerado pelo quality_snapshot na máquina de coleta e commitado à mão quando o estado
 muda — é a ponte produção->git. Campos: trial, observed_at (quando ESTE estado foi
 visto pela primeira vez), n, gate, gate_atingido, fonte_esperada, rho, ic_lower,
-ic_upper, veredito.
+ic_upper, veredito, poder, predictive_verdict, economic_verdict,
+cost_model_status e capital_authorized. `economic_verdict=NOT_EVALUATED` indica
+que o gate mede associação preditiva bruta, não rentabilidade líquida negociável.
 
 Como checar (dar fetch no main do repo, já anexado nesta sessão):
 1. Se GarimpoInvestimentos/h6_status.json existir, ele manda. Compare com o que você
@@ -56,9 +58,10 @@ Como checar (dar fetch no main do repo, já anexado nesta sessão):
 
 Quando NOTIFICAR o usuário:
 - gate_atingido == true, ou um veredito publicado: avise citando os números exatos do
-  arquivo (n, rho, IC95, veredito) e lembre que Sharpe isolado ainda precisa passar
-  pelo desconto do DSR (N tentativas) antes de significar coisa alguma. NENHUM gate
-  deste ecossistema autoriza capital.
+  arquivo (n, rho, IC95, predictive_verdict) e lembre que Sharpe isolado ainda
+  precisa passar pelo desconto do DSR. Nunca apresente `predictive_verdict` como
+  viabilidade econômica quando `economic_verdict=NOT_EVALUATED`. NENHUM gate deste
+  ecossistema autoriza capital.
 - n mudou de forma relevante desde a última checagem (ex.: cruzou metade do gate):
   uma linha, sem alarde.
 
@@ -82,8 +85,8 @@ subdimensionado. A qualificação dessa leitura é trabalho humano, com a §7 do
 
 ## Campos do artefato, conferidos no código
 
-`h6_status_payload()` em `GarimpoInvestimentos/quality_snapshot.py` emite exatamente
-os dez campos citados no prompt. `rho`, `ic_lower`, `ic_upper` e `veredito` são
+`h6_status_payload()` em `GarimpoInvestimentos/quality_snapshot.py` emite os quinze
+campos citados no prompt. `rho`, `ic_lower`, `ic_upper` e `veredito` são
 `null` enquanto `n < gate`: `h6_spearman_verdict` devolve `None` de propósito abaixo
 do gate, para não expor correlação prematura como se fosse sinal. O payload preserva
 esse silêncio em vez de contorná-lo — se você vir `rho: null`, é a trava funcionando,

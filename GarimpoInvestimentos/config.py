@@ -109,12 +109,23 @@ class Settings(BaseSettings):
         if self.LLM_ENSEMBLE_N < 1:
             raise ValueError("LLM_ENSEMBLE_N deve ser >= 1")
         provider_keys = {
+            "gemini": "GEMINI_API_KEY",
             "openai": "OPENAI_API_KEY",
             "groq": "GROQ_API_KEY",
             "cerebras": "CEREBRAS_API_KEY",
             "mistral": "MISTRAL_API_KEY",
             "openrouter": "OPENROUTER_API_KEY",
         }
+        allowed_llm = set(provider_keys)
+        unknown_llm = set(self.LLM_MULTI_PROVIDERS) - allowed_llm
+        if self.LLM_PROVIDER != "multi" and self.LLM_PROVIDER not in allowed_llm:
+            raise ValueError(f"LLM_PROVIDER inválido: {self.LLM_PROVIDER!r}")
+        if not self.LLM_MULTI_PROVIDERS or unknown_llm:
+            raise ValueError(
+                f"LLM_MULTI_PROVIDERS inválido: {sorted(unknown_llm) or 'vazio'}"
+            )
+        if len(set(self.LLM_MULTI_PROVIDERS)) != len(self.LLM_MULTI_PROVIDERS):
+            raise ValueError("LLM_MULTI_PROVIDERS não pode conter duplicatas")
         required_news = (
             ["SERP_API_KEY"]
             if "serpapi" in {*self.NEWS_PROVIDERS, self.NEWS_FALLBACK_PROVIDER}
@@ -122,11 +133,11 @@ class Settings(BaseSettings):
         )
         if self.LLM_PROVIDER == "multi":
             required = [
-                provider_keys.get(provider, "GEMINI_API_KEY")
+                provider_keys[provider]
                 for provider in self.LLM_MULTI_PROVIDERS
             ]
         else:
-            required = [provider_keys.get(self.LLM_PROVIDER, "GEMINI_API_KEY")]
+            required = [provider_keys[self.LLM_PROVIDER]]
         # `require_secrets(*names)` (default env=None) lê os.environ CRU — mas o
         # pydantic-settings já resolveu os valores reais (de .env, env var do SO,
         # ou default) nos campos de `self`. Um `.env` correto e completo, mas sem

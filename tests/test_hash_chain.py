@@ -37,6 +37,25 @@ def _pred(ativo="bitcoin", ts="2026-08-20 12:00:00", score=70.0):
     }
 
 
+def _simulate_privileged_trigger_bypass(conn):
+    """Simula adulteracao por operador com privilegio de schema.
+
+    Os triggers impedem o acidente operacional comum; a cadeia precisa ainda
+    detectar quem deliberadamente removeu esses guardas antes de adulterar.
+    """
+    for trigger in (
+        "predictions_archive_block_update",
+        "predictions_archive_block_delete",
+        "predictions_archive_chain_block_update",
+        "predictions_archive_chain_block_delete",
+    ):
+        conn.execute(f"DROP TRIGGER {trigger}")
+    conn.commit()
+    # Um operador com acesso ao arquivo tambem consegue reabrir a conexao sem
+    # enforcement de FK. O teste de delete deve cobrir esse adversario forte.
+    conn.execute("PRAGMA foreign_keys=OFF")
+
+
 def test_seal_and_verify_roundtrip(tmp_path):
     with _store(tmp_path) as store:
         store.write_predictions([_pred()])
@@ -55,32 +74,64 @@ def test_seal_is_idempotent(tmp_path):
         assert verify_chain(store._conn).ok
 
 
-def test_chain_detects_retroactive_edit(tmp_path):
+def test_schema_blocks_retroactive_edit(tmp_path):
     with _store(tmp_path) as store:
         store.write_predictions([_pred(), _pred(ts="2026-08-21 12:00:00", score=60.0)])
         assert seal_chain(store._conn) == 2
         # Adultera a PRIMEIRA linha do archive (muda o score registrado).
-        store._conn.execute("UPDATE predictions_archive SET score = 999.0 WHERE archive_id = 1")
+        with pytest.raises(sqlite3.IntegrityError, match="immutable"):
+            store._conn.execute(
+                "UPDATE predictions_archive SET score = 999.0 WHERE archive_id = 1"
+            )
+
+
+def test_schema_blocks_retroactive_delete(tmp_path):
+    with _store(tmp_path) as store:
+        store.write_predictions([_pred(), _pred(ts="2026-08-21 12:00:00")])
+        assert seal_chain(store._conn) == 2
+        with pytest.raises(sqlite3.IntegrityError, match="immutable"):
+            store._conn.execute("DELETE FROM predictions_archive WHERE archive_id = 1")
+
+
+def test_schema_blocks_breaking_chain_before_extension(tmp_path):
+    with _store(tmp_path) as store:
+        store.write_predictions([_pred()])
+        seal_chain(store._conn)
+        with pytest.raises(sqlite3.IntegrityError, match="immutable"):
+            store._conn.execute("UPDATE predictions_archive SET score = 1.0 WHERE archive_id = 1")
+
+
+def test_hash_chain_detects_edit_after_privileged_bypass(tmp_path):
+    with _store(tmp_path) as store:
+        store.write_predictions([_pred(), _pred(ts="2026-08-21 12:00:00")])
+        seal_chain(store._conn)
+        _simulate_privileged_trigger_bypass(store._conn)
+        store._conn.execute(
+            "UPDATE predictions_archive SET score = 999.0 WHERE archive_id = 1"
+        )
         report = verify_chain(store._conn)
         assert not report.ok and report.first_bad_archive_id == 1
 
 
-def test_chain_detects_retroactive_delete(tmp_path):
+def test_hash_chain_detects_delete_after_privileged_bypass(tmp_path):
     with _store(tmp_path) as store:
         store.write_predictions([_pred(), _pred(ts="2026-08-21 12:00:00")])
-        assert seal_chain(store._conn) == 2
+        seal_chain(store._conn)
+        _simulate_privileged_trigger_bypass(store._conn)
         store._conn.execute("DELETE FROM predictions_archive WHERE archive_id = 1")
         report = verify_chain(store._conn)
-        assert not report.ok and "AUSENTE" in report.detail
+        assert not report.ok and report.first_bad_archive_id == 1
 
 
-def test_seal_refuses_to_extend_broken_chain(tmp_path):
+def test_seal_refuses_to_extend_tampered_chain(tmp_path):
     with _store(tmp_path) as store:
         store.write_predictions([_pred()])
         seal_chain(store._conn)
-        store._conn.execute("UPDATE predictions_archive SET score = 1.0 WHERE archive_id = 1")
-        store.write_predictions([_pred(ts="2026-08-21 12:00:00")])
-        with pytest.raises(RuntimeError, match="NÃO verifica"):
+        _simulate_privileged_trigger_bypass(store._conn)
+        store._conn.execute(
+            "UPDATE predictions_archive SET score = 999.0 WHERE archive_id = 1"
+        )
+        with pytest.raises(RuntimeError, match="selo recusado"):
             seal_chain(store._conn)
 
 

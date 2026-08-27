@@ -4,6 +4,7 @@ import pytest
 
 from GarimpoInvestimentos.analyzers.trials import load_trials
 from GarimpoInvestimentos.governance import (
+    HypothesisStatus,
     SCIENTIFIC_STATE_CHARTER,
     load_scientific_state,
 )
@@ -19,6 +20,28 @@ def test_scientific_state_freezes_no_go_and_fails_closed():
     assert not state.capital_authorized
     assert not state.leverage_authorized
     assert not state.llm_direct_trading_authorized
+
+
+def test_charter_real_cobre_exatamente_o_vocabulario_tipado():
+    state = load_scientific_state()
+    assert state.hypotheses["H4"] is HypothesisStatus.CLOSED_INSUFFICIENT_SAMPLE
+    assert state.hypotheses["H6"] is HypothesisStatus.COLLECTION_ONLY_IMMATURE
+    assert state.hypotheses["H7"] is HypothesisStatus.REGISTERED_NOT_ACTIVATED
+    assert state.hypotheses["H4"].is_closed
+    assert not state.hypotheses["H6"].is_closed
+    # A serialização externa continua idêntica ao JSON versionado.
+    dumped = state.model_dump(mode="json")
+    original = json.loads(SCIENTIFIC_STATE_CHARTER.read_text(encoding="utf-8"))
+    assert dumped["hypotheses"] == original["hypotheses"]
+
+
+def test_scientific_state_rejeita_status_desconhecido_ou_typo(tmp_path):
+    payload = json.loads(SCIENTIFIC_STATE_CHARTER.read_text(encoding="utf-8"))
+    payload["hypotheses"]["H6"] = "COLLECTION_ONLY_IMATURE"
+    path = tmp_path / "state.json"
+    path.write_text(json.dumps(payload), encoding="utf-8")
+    with pytest.raises(ValueError, match="HypothesisStatus|hypotheses.H6"):
+        load_scientific_state(path)
 
 
 def test_hypothesis_trials_mapeia_h1_para_a_trial_hmm_nao_para_v1_direct(tmp_path):

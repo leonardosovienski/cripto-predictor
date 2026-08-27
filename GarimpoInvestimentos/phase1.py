@@ -357,4 +357,6 @@ if __name__ == "__main__":
         sys.exit(asyncio.run(main()))
     except Exception:
         log.exception("erro fatal no orquestrador")
-        sys.exit(1)
+        # 1 is reserved for a genuine partial run with at least one success.
+        # Fatal orchestration/integrity failures must never be mapped to PARTIAL.
+        sys.exit(3)

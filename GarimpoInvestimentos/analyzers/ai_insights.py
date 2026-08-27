@@ -264,8 +264,10 @@ async def _analyze_once(asset_name: str, prompt: str, provider: str) -> dict:
     try:
         if provider in _OPENAI_COMPAT:
             text = await _call_openai(prompt, provider)
-        else:
+        elif provider == "gemini":
             text = await _call_gemini(prompt)
+        else:
+            raise ValueError(f"provider LLM desconhecido: {provider!r}")
 
         text = text.strip()
         if "{" in text and "}" in text:

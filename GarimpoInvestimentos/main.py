@@ -11,9 +11,25 @@ _pre = argparse.ArgumentParser(add_help=False)
 _pre.add_argument("--output-dir")
 _known, _ = _pre.parse_known_args()
 if _known.output_dir:
+    os.environ["OUTPUT_DIR"] = _known.output_dir
     os.environ["GARIMPO_OUTPUT_DIR"] = _known.output_dir
 
 from datetime import timedelta
+from pathlib import Path
+
+from GarimpoInvestimentos.core.paths import FEATURE_STORE_DB, OUTPUT_DIR
+
+# Valide imediatamente, antes das demais importações. Se ``core.paths`` já
+# estava no cache, aceitar a flag produziria escrita silenciosa no lugar errado.
+if _known.output_dir:
+    requested_output = Path(_known.output_dir).expanduser().resolve()
+    if OUTPUT_DIR.resolve() != requested_output:
+        raise RuntimeError(
+            "--output-dir foi aplicado depois de core.paths ter sido carregado; "
+            "inicie pelo entrypoint 'cripto-predictor' ou importe "
+            "GarimpoInvestimentos.main antes de outros módulos do pacote. "
+            f"solicitado={requested_output}, ativo={OUTPUT_DIR.resolve()}"
+        )
 
 from predictor_core.obs import emit_event
 
@@ -32,7 +48,6 @@ from GarimpoInvestimentos.core.cache import load_cache, save_cache
 from GarimpoInvestimentos.core.collection_policy import current_policy_json
 from GarimpoInvestimentos.core.history import append_history, migrate_csv_to_store, utc_stamp
 from GarimpoInvestimentos.core.logger import log_error, log_start, log_success
-from GarimpoInvestimentos.core.paths import FEATURE_STORE_DB
 from GarimpoInvestimentos.dpl import CryptoDataProvider, FeatureStore
 from GarimpoInvestimentos.dpl.feature_engineering import to_hard_data
 from GarimpoInvestimentos.dpl.feature_store import fonte_label
@@ -116,7 +131,7 @@ def parse_args():
 _MODE_TO_CONFIG = {"fallback": "crypto_price", "consensus": "crypto_price_consensus"}
 
 
-async def run_ingest(ativos: list[str], mode: str = "fallback") -> None:
+async def run_ingest(ativos: list[str], mode: str = "fallback") -> tuple[int, int]:
     """Camada de ingestão: única que toca a rede. Popula a Feature Store offline.
 
     `mode` decide a política de preço (fallback sequencial ou consenso multi-fonte) —
@@ -126,6 +141,7 @@ async def run_ingest(ativos: list[str], mode: str = "fallback") -> None:
     facade = CryptoDataProvider(config_key=_MODE_TO_CONFIG[mode])
     fear_greed = FearAndGreedProvider()
     print(f"📥 Ingestão ({mode}) → {FEATURE_STORE_DB}")
+    succeeded = failed = 0
     with FeatureStore(FEATURE_STORE_DB) as store:
         for i, ativo in enumerate(ativos):
             budget = guard_allow("ingest", "assets", settings.API_GUARD_MAX_INGEST_ASSETS)
@@ -149,11 +165,16 @@ async def run_ingest(ativos: list[str], mode: str = "fallback") -> None:
                     max_staleness=SIGNAL_STALENESS,
                 )
                 print(f"  ✅ {ativo.upper()} — {len(aligned)} candles alinhados e materializados")
+                succeeded += 1
             except Exception as e:
+                failed += 1
                 log_error(ativo, e)
                 print(f"  ❌ {ativo.upper()} — falha na ingestão: {e}")
             if i < len(ativos) - 1:
                 await asyncio.sleep(1)  # rate limiting entre ativos
+    if succeeded == 0:
+        raise RuntimeError(f"ingestão não gravou nenhum ativo ({failed} falha(s))")
+    return succeeded, failed
 
 
 async def run():

@@ -773,7 +773,12 @@ def h6_spearman_verdict(enriched: list[dict], horizon: int, *, trials_path=None)
         )
         return {"n": n, "rho": rho, "ic_lower": lo, "ic_upper": hi, "veredito": "IC indisponivel"}
 
-    veredito = "validado (IC nao cruza 0)" if (lo > 0 or hi < 0) else "RUIDO (IC cruza 0)"
+    if lo > 0:
+        veredito = "VALIDADO (IC positivo nao cruza 0)"
+    elif hi < 0:
+        veredito = "REFUTADO_DIRECAO_OPOSTA (IC negativo nao cruza 0)"
+    else:
+        veredito = "INCONCLUSIVO (IC cruza 0)"
     print(
         f"📊 H6 (sinal invertido, Spearman/IC95) D+{horizon}: "
         f"rho={rho:+.3f}  [IC95% {lo:+.3f} a {hi:+.3f}]  (n={n}) — {veredito}"
@@ -789,7 +794,17 @@ def h6_spearman_verdict(enriched: list[dict], horizon: int, *, trials_path=None)
         },
         metadata={"horizon_days": horizon, "veredito": veredito, "trial": H6_TRIAL_NAME},
     )
-    return {"n": n, "rho": rho, "ic_lower": lo, "ic_upper": hi, "veredito": veredito}
+    return {
+        "n": n,
+        "rho": rho,
+        "ic_lower": lo,
+        "ic_upper": hi,
+        "veredito": veredito,
+        "predictive_verdict": veredito,
+        "economic_verdict": "NOT_EVALUATED",
+        "cost_model_status": "GROSS_RETURNS_ONLY",
+        "capital_authorized": False,
+    }
 
 
 def _metrics(enriched: list[dict], horizon: int) -> None:

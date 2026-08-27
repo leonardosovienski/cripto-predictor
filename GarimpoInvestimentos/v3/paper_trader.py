@@ -40,14 +40,15 @@ from GarimpoInvestimentos.v3.collectors.spot_collector import load_spot_csv
 from GarimpoInvestimentos.v3.feature_builder import build_spot_index
 from GarimpoInvestimentos.v3.pipeline import run_symbol, spot_path
 from GarimpoInvestimentos.v3.signal_engine import SignalRecord
-from GarimpoInvestimentos.v3.timeindex import nearest_value
+from GarimpoInvestimentos.v3.timeindex import SortedTimeIndex
 
 logger = logging.getLogger(__name__)
 
 _DOMAIN = "v3_paper"
 _DATA_ROOT = DATA_DIR / "v3"
 _PAPER_DIR = _DATA_ROOT / "paper"
-_PRICE_TOLERANCE_MS = 300_000  # ±5 min para casar o preço de referência
+_PRICE_TOLERANCE_MS = 300_000
+_SPOT_CANDLE_MS = 3_600_000
 
 
 def _paper_path(symbol: str) -> Path:
@@ -55,9 +56,14 @@ def _paper_path(symbol: str) -> Path:
 
 
 def _ref_price(ts_ms: int, spot_index: dict[int, float]) -> float | None:
-    """Close de spot mais próximo de ts_ms (±5 min). None se não houver.
-    Delegado ao helper único (C5) — antes era a 2ª de 3 cópias da mesma lógica."""
-    return nearest_value(spot_index, ts_ms, _PRICE_TOLERANCE_MS)
+    """Ultimo close de 1h que ja era publico no instante ``ts_ms``.
+
+    As chaves do indice sao open-times, embora os valores sejam closes; por
+    isso a vela elegivel abre uma hora antes da decisao.
+    """
+    return SortedTimeIndex(spot_index).as_of(
+        ts_ms - _SPOT_CANDLE_MS, _PRICE_TOLERANCE_MS
+    )
 
 
 def _already_recorded(symbol: str, timestamp_exchange_ms: int) -> bool:

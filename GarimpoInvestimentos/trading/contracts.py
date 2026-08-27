@@ -109,6 +109,11 @@ class TradeIntent:
     holding_period_hours: float
     target_position_fraction: float  # fração do capital em [0, 1]; sinal vem de `direction`
     exit_rule: ExitRule
+    scientific_family: str
+    trial_id: str
+    pipeline_fingerprint: str
+    cost_model_id: str
+    estimated_round_trip_friction: float
     stop_loss_pct: float | None = None
     take_profit_pct: float | None = None
     slippage_limit_bps: float = 50.0
@@ -132,6 +137,16 @@ class TradeIntent:
             raise ValueError("TradeIntent.target_position_fraction deve estar em [0, 1]")
         if self.slippage_limit_bps <= 0:
             raise ValueError("TradeIntent.slippage_limit_bps deve ser > 0")
+        for label in (
+            "scientific_family",
+            "trial_id",
+            "pipeline_fingerprint",
+            "cost_model_id",
+        ):
+            if not str(getattr(self, label)).strip():
+                raise ValueError(f"TradeIntent.{label} não pode ser vazio")
+        if self.estimated_round_trip_friction < 0:
+            raise ValueError("TradeIntent.estimated_round_trip_friction não pode ser negativa")
         if self.exit_rule is ExitRule.PRICE_STOP and self.stop_loss_pct is None:
             raise ValueError("TradeIntent: exit_rule=PRICE_STOP exige stop_loss_pct")
         if self.exit_rule is ExitRule.TAKE_PROFIT and self.take_profit_pct is None:

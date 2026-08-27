@@ -180,7 +180,13 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--timeout", type=float)
     args = parser.parse_args(argv)
     result = execute_job(args.job, timeout_seconds=args.timeout)
-    return 0 if result.run_status in {RunStatus.SUCCEEDED, RunStatus.PARTIAL} else result.exit_code
+    # Preserve PARTIAL for outer schedulers; returning zero used to erase the
+    # distinction at the process boundary.
+    if result.run_status is RunStatus.SUCCEEDED:
+        return 0
+    if result.run_status is RunStatus.PARTIAL:
+        return 1
+    return result.exit_code or 3
 
 
 if __name__ == "__main__":

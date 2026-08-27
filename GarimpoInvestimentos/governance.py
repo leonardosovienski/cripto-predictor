@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+from enum import Enum
 from pathlib import Path
 
 import yaml
@@ -27,6 +28,27 @@ BINANCE_OBSERVATION_ACTIVATION = _artifact(
 SCIENTIFIC_STATE_CHARTER = _artifact("charters", "scientific_state.json")
 
 
+class HypothesisStatus(str, Enum):
+    """Vocabulário fechado do ciclo de vida das hipóteses científicas.
+
+    Não inclui ``ACTIVE`` de propósito: as ocorrências desse valor nos outros
+    contratos pertencem a planos de observação, não a hipóteses. Um novo estado
+    só deve entrar aqui junto com transições e invariantes explicitamente definidas.
+    """
+
+    REGISTERED_NOT_ACTIVATED = "REGISTERED_NOT_ACTIVATED"
+    COLLECTION_ONLY_IMMATURE = "COLLECTION_ONLY_IMMATURE"
+    CLOSED_NO_GO = "CLOSED_NO_GO"
+    CLOSED_INSUFFICIENT_SAMPLE = "CLOSED_INSUFFICIENT_SAMPLE"
+    CLOSED_INSUFFICIENT_DATA_DUE_TO_IRRECOVERABLE_DATA_LOSS = (
+        "CLOSED_INSUFFICIENT_DATA_DUE_TO_IRRECOVERABLE_DATA_LOSS"
+    )
+
+    @property
+    def is_closed(self) -> bool:
+        return self.value.startswith("CLOSED_")
+
+
 class ScientificStateCharter(BaseModel):
     model_config = ConfigDict(frozen=True, extra="forbid")
 
@@ -36,7 +58,7 @@ class ScientificStateCharter(BaseModel):
     leverage_authorized: bool
     llm_direct_trading_authorized: bool
     security_incident: str
-    hypotheses: dict[str, str]
+    hypotheses: dict[str, HypothesisStatus]
     # Rótulo H<N> -> nome real da trial em trials.json. Existe porque "H1" sozinho
     # é ambíguo sem isso: auditoria de 2026-08-19 descobriu que "H1" vinha sendo
     # confundido com `v1-direct-gemini-h7` (o ancestral pré-protocolo da linha LLM,
@@ -286,6 +308,7 @@ __all__ = [
     "BINANCE_OBSERVATION_ACTIVATION",
     "BINANCE_SPOT_MICROSTRUCTURE_CHARTER",
     "FUNDING_OI_CHARTER",
+    "HypothesisStatus",
     "SCIENTIFIC_STATE_CHARTER",
     "ObservationPlan",
     "ObservationActivation",

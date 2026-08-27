@@ -62,15 +62,20 @@ def test_equity_curve_empty():
 
 
 def test_closest_price_exact():
-    assert pr._closest_price(1000, {1000: 42.0}) == 42.0
+    assert pr._closest_price(1000 + 3_600_000, {1000: 42.0}) == 42.0
 
 
 def test_closest_price_within_tolerance():
-    assert pr._closest_price(1000 + 200_000, {1000: 42.0}) == 42.0
+    assert pr._closest_price(1000 + 3_600_000 + 200_000, {1000: 42.0}) == 42.0
 
 
 def test_closest_price_outside_tolerance():
-    assert pr._closest_price(1000 + 999_999, {1000: 42.0}) is None
+    assert pr._closest_price(1000 + 3_600_000 + 999_999, {1000: 42.0}) is None
+
+
+def test_closest_price_rejects_future_candle():
+    idx = {1_000_000: 42.0, 1_200_000: 99.0}
+    assert pr._closest_price(1_150_000 + 3_600_000, idx) == 42.0
 
 
 # ------------------------------------------------------------------ #
@@ -124,8 +129,8 @@ def test_build_report_computes_pnl_with_spot():
             ],
         )
 
-        # spot_index mockado: entrada 100, saída 110
-        fake_spot = {entry_ms: 100.0, exit_ms: 110.0}
+        # O indice usa open-time; o close de saida abre 1h antes de ficar publico.
+        fake_spot = {entry_ms - 3_600_000: 100.0, exit_ms - 3_600_000: 110.0}
 
         with (
             patch.object(pr, "_PAPER_DIR", paper_dir),

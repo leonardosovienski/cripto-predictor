@@ -93,6 +93,7 @@ _STEP_DAYS = 30
 
 _MS_PER_DAY = 86_400_000
 _MS_PER_8H = 28_800_000
+_SPOT_CANDLE_MS = 3_600_000
 _DEFAULT_SLIPPAGE_BPS = 5
 _DEFAULT_TAKER_FEE_BPS = 10  # taker por perna (Risco 4 — custos; ver v3/costs.py)
 _DEFAULT_HORIZON_HOURS = 24
@@ -176,14 +177,18 @@ def _find_spot_return(
     tolerance_ms: int = 300_000,
 ) -> float | None:
     """
-    Calcula o retorno forward do spot a partir de ts_ms.
-    Procura o close em ts_ms e em ts_ms + horizon_hours*3600000.
+    Calcula o retorno forward do spot a partir de ts_ms sem usar o fechamento
+    da vela que abre em ``ts_ms``. O indice usa o open-time da vela de 1h para
+    armazenar seu close; logo, no instante t, o ultimo close publico e t-1h.
     Aceita SortedTimeIndex (O(log n)) ou dict cru (embrulhado na hora).
     """
     if not isinstance(spot_index, SortedTimeIndex):
         spot_index = SortedTimeIndex(spot_index)
-    close_start = spot_index.nearest(ts_ms, tolerance_ms)
-    close_end = spot_index.nearest(ts_ms + horizon_hours * 3_600_000, tolerance_ms)
+    close_start = spot_index.as_of(ts_ms - _SPOT_CANDLE_MS, tolerance_ms)
+    close_end = spot_index.as_of(
+        ts_ms + horizon_hours * _SPOT_CANDLE_MS - _SPOT_CANDLE_MS,
+        tolerance_ms,
+    )
 
     if close_start is None or close_end is None or close_start <= 0:
         return None

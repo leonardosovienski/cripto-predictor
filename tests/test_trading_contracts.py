@@ -35,6 +35,11 @@ def _intent(**overrides):
         holding_period_hours=24.0,
         target_position_fraction=0.1,
         exit_rule=ExitRule.TIME_STOP,
+        scientific_family="prospective_family",
+        trial_id="trial-prospective-1",
+        pipeline_fingerprint="sha256:test",
+        cost_model_id="v3.costs.CostModel",
+        estimated_round_trip_friction=0.0003,
     )
     defaults.update(overrides)
     return TradeIntent(**defaults)
@@ -62,6 +67,19 @@ def test_trade_intent_valid_constructs():
     intent = _intent()
     assert intent.direction is Direction.LONG
     assert intent.instrument is BTC_PERP
+
+
+@pytest.mark.parametrize(
+    "field_name", ["scientific_family", "trial_id", "pipeline_fingerprint", "cost_model_id"]
+)
+def test_trade_intent_rejects_missing_scientific_provenance(field_name):
+    with pytest.raises(ValueError, match=field_name):
+        _intent(**{field_name: " "})
+
+
+def test_trade_intent_rejects_negative_cost():
+    with pytest.raises(ValueError, match="friction"):
+        _intent(estimated_round_trip_friction=-0.01)
 
 
 def test_trade_intent_rejects_naive_datetime():

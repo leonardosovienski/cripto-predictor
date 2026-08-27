@@ -34,13 +34,22 @@ def test_guarda_desligada_emite_um_evento_de_aviso_por_processo(monkeypatch, tmp
     assert len(disabled_events) == 1
 
 
-def test_guarda_bloqueia_antes_da_unidade_seguinte(monkeypatch):
+def test_guarda_bloqueia_antes_da_unidade_seguinte(monkeypatch, tmp_path):
     monkeypatch.setattr(api_guard.settings, "API_GUARD_ENABLED", True)
+    monkeypatch.setattr(api_guard, "_BUDGET_DB", tmp_path / "budget.db")
     api_guard.reset_for_test()
     assert api_guard.allow("news", "serpapi", 1).allowed
     denied = api_guard.allow("news", "serpapi", 1)
     assert not denied.allowed
     assert denied.reason == "budget_exhausted:news:serpapi"
+
+
+def test_orcamento_persiste_entre_reaberturas(monkeypatch, tmp_path):
+    monkeypatch.setattr(api_guard.settings, "API_GUARD_ENABLED", True)
+    monkeypatch.setattr(api_guard, "_BUDGET_DB", tmp_path / "budget.db")
+    assert api_guard.allow("llm", "gemini", 1).allowed
+    # Nenhum estado Python e reutilizado: a segunda chamada rele o SQLite.
+    assert not api_guard.allow("llm", "gemini", 1).allowed
 
 
 def test_news_cache_evita_nova_chamada(monkeypatch):

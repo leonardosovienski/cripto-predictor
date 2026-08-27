@@ -470,6 +470,10 @@ def h6_status_payload(snap: dict, *, observed_at: str | None = None) -> dict:
         "ic_lower": h6.get("ic_lower"),
         "ic_upper": h6.get("ic_upper"),
         "veredito": h6.get("veredito"),
+        "predictive_verdict": h6.get("predictive_verdict", h6.get("veredito")),
+        "economic_verdict": h6.get("economic_verdict", "NOT_EVALUATED"),
+        "cost_model_status": h6.get("cost_model_status", "GROSS_RETURNS_ONLY"),
+        "capital_authorized": False,
         # Contexto de LEITURA (tabela estatica publicada, docs/HYPOTHESES.md
         # B12) — nunca decide o veredito nem o gate. None abaixo de n=30.
         # {"n_referencia": int, "poder": {rho: taxa}, "fonte": str} ou None.
@@ -552,6 +556,7 @@ def main() -> int:
     # Selo diário da cadeia de hash do ledger de previsões + manifest público.
     # Falha de verificação é ALTA VISIBILIDADE por design (adulteração do
     # histórico invalida toda a ciência downstream) — mas não derruba o painel.
+    ledger_integrity_ok = True
     try:
         from GarimpoInvestimentos.core.paths import FEATURE_STORE_DB
         from GarimpoInvestimentos.dpl.feature_store import FeatureStore
@@ -566,6 +571,7 @@ def main() -> int:
             report = verify_chain(_store._conn)
             manifest = chain_manifest(_store._conn)
         if not report.ok:
+            ledger_integrity_ok = False
             print(
                 f"\n*** CADEIA DE HASH DO LEDGER QUEBRADA: {report.detail}\n"
                 "    O histórico de previsões pode ter sido adulterado — "
@@ -586,6 +592,7 @@ def main() -> int:
                 f"{CHAIN_MANIFEST_PATH.name} atualizado; commite-o junto com o h6_status.json)"
             )
     except Exception as _chain_exc:  # noqa: BLE001 — painel não pode cair por causa do selo
+        ledger_integrity_ok = False
         print(f"\n*** Selo da cadeia de hash FALHOU: {type(_chain_exc).__name__}: {_chain_exc}")
     print(f"\n(histórico registrado em {HISTORY_PATH})")
     # Capturado ANTES da escrita: a trava de nao-regressao so age quando ha um
@@ -597,6 +604,9 @@ def main() -> int:
     # Caminho passado explicitamente: o default de write_h6_status e vinculado
     # na definicao da funcao, entao so o argumento explicito faz main() e a
     # escrita concordarem sobre QUAL arquivo esta em jogo.
+    if not ledger_integrity_ok:
+        print("\n*** Publicação de h6_status.json BLOQUEADA por falha de integridade do ledger.")
+        return 3
     resultado = write_h6_status(snap, H6_STATUS_PATH)
     if resultado == H6_WRITTEN and primeira_publicacao:
         print(

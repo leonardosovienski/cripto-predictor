@@ -63,25 +63,24 @@ def test_latest_signal_picks_max_timestamp():
 
 def test_ref_price_exact_match():
     idx = {1000: 50000.0, 2000: 51000.0}
-    assert _ref_price(1000, idx) == 50000.0
+    assert _ref_price(1000 + 3_600_000, idx) == 50000.0
 
 
 def test_ref_price_within_tolerance():
-    # 1000 + 4min (240000ms) está dentro de ±5min → casa com 1000
+    # O close da vela aberta em 1000 fica disponivel em 1000 + 1h.
     idx = {1000: 50000.0}
-    assert _ref_price(1000 + 240_000, idx) == 50000.0
+    assert _ref_price(1000 + 3_600_000 + 240_000, idx) == 50000.0
 
 
 def test_ref_price_outside_tolerance_returns_none():
-    # 1000 + 10min está fora de ±5min → None
     idx = {1000: 50000.0}
-    assert _ref_price(1000 + 600_000, idx) is None
+    assert _ref_price(1000 + 3_600_000 + 600_000, idx) is None
 
 
-def test_ref_price_picks_closest():
+def test_ref_price_never_picks_future_candle():
     idx = {1_000_000: 50000.0, 1_200_000: 51000.0}
-    # alvo 1_150_000: mais próximo de 1_200_000 (50k a 150k vs 50k de distância)
-    assert _ref_price(1_150_000, idx) == 51000.0
+    # A segunda vela esta mais perto, mas ainda nao fechou no instante consultado.
+    assert _ref_price(1_150_000 + 3_600_000, idx) == 50000.0
 
 
 # ------------------------------------------------------------------ #
