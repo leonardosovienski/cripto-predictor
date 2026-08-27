@@ -121,9 +121,7 @@ class Settings(BaseSettings):
         if self.LLM_PROVIDER != "multi" and self.LLM_PROVIDER not in allowed_llm:
             raise ValueError(f"LLM_PROVIDER inválido: {self.LLM_PROVIDER!r}")
         if not self.LLM_MULTI_PROVIDERS or unknown_llm:
-            raise ValueError(
-                f"LLM_MULTI_PROVIDERS inválido: {sorted(unknown_llm) or 'vazio'}"
-            )
+            raise ValueError(f"LLM_MULTI_PROVIDERS inválido: {sorted(unknown_llm) or 'vazio'}")
         if len(set(self.LLM_MULTI_PROVIDERS)) != len(self.LLM_MULTI_PROVIDERS):
             raise ValueError("LLM_MULTI_PROVIDERS não pode conter duplicatas")
         required_news = (
@@ -132,10 +130,7 @@ class Settings(BaseSettings):
             else []
         )
         if self.LLM_PROVIDER == "multi":
-            required = [
-                provider_keys[provider]
-                for provider in self.LLM_MULTI_PROVIDERS
-            ]
+            required = [provider_keys[provider] for provider in self.LLM_MULTI_PROVIDERS]
         else:
             required = [provider_keys[self.LLM_PROVIDER]]
         # `require_secrets(*names)` (default env=None) lê os.environ CRU — mas o

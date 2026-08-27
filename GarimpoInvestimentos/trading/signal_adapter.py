@@ -32,7 +32,6 @@ from __future__ import annotations
 from datetime import UTC, datetime, timedelta
 
 from GarimpoInvestimentos.governance import load_scientific_state
-from GarimpoInvestimentos.trading.cost_policy import cost_model_for
 from GarimpoInvestimentos.trading.contracts import (
     Direction,
     ExitRule,
@@ -40,6 +39,7 @@ from GarimpoInvestimentos.trading.contracts import (
     TradeIntent,
     new_id,
 )
+from GarimpoInvestimentos.trading.cost_policy import cost_model_for
 
 
 class FrozenFamilyError(ValueError):

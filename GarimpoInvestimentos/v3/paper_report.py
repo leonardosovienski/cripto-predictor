@@ -67,9 +67,7 @@ def _load_paper_trades(symbol: str) -> list[dict]:
 
 def _closest_price(ts_ms: int, spot_index: dict[int, float]) -> float | None:
     """Ultimo close de 1h disponivel no instante, nunca uma vela futura."""
-    return SortedTimeIndex(spot_index).as_of(
-        ts_ms - _SPOT_CANDLE_MS, _PRICE_TOLERANCE_MS
-    )
+    return SortedTimeIndex(spot_index).as_of(ts_ms - _SPOT_CANDLE_MS, _PRICE_TOLERANCE_MS)
 
 
 def _equity_curve(returns: list[float]) -> list[float]:

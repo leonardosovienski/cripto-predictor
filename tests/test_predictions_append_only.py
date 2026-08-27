@@ -108,7 +108,8 @@ def test_upgrade_de_banco_pre_0016_com_predictions_ja_populado(tmp_path):
 
     # Simula o estado "pré-0016": aplica todas as migrações MENOS a append-only.
     migration_0016 = next(
-        i for i, (name, _sql) in enumerate(ADDITIVE_MIGRATIONS)
+        i
+        for i, (name, _sql) in enumerate(ADDITIVE_MIGRATIONS)
         if name == "0016_predictions_append_only"
     )
     pre_0016 = ADDITIVE_MIGRATIONS[:migration_0016]
@@ -166,7 +167,8 @@ def test_migration_falha_no_meio_nao_deixa_banco_inconsistente(tmp_path):
     db_path = tmp_path / "feature_store.db"
     # Aplica só até a migração anterior à 0016 (simula uma "queda" no meio do deploy).
     migration_0016 = next(
-        i for i, (name, _sql) in enumerate(ADDITIVE_MIGRATIONS)
+        i
+        for i, (name, _sql) in enumerate(ADDITIVE_MIGRATIONS)
         if name == "0016_predictions_append_only"
     )
     partial = ADDITIVE_MIGRATIONS[:migration_0016]

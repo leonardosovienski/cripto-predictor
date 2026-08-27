@@ -4,8 +4,8 @@ import pytest
 
 from GarimpoInvestimentos.analyzers.trials import load_trials
 from GarimpoInvestimentos.governance import (
-    HypothesisStatus,
     SCIENTIFIC_STATE_CHARTER,
+    HypothesisStatus,
     load_scientific_state,
 )
 

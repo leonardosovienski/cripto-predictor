@@ -55,14 +55,8 @@ def register_trial(
 
         state = load_scientific_state()
         closed_trials = {
-            state.hypothesis_trials[h]
-            for h, status in state.hypotheses.items()
-            if status.is_closed
+            state.hypothesis_trials[h] for h, status in state.hypotheses.items() if status.is_closed
         }
         if name in closed_trials:
-            raise ValueError(
-                f"trial {name!r} pertence a hipótese fechada e não pode ser reescrita"
-            )
-    return _core_register(
-        name, params=params, sharpe=sharpe, notes=notes, path=target, **extra
-    )
+            raise ValueError(f"trial {name!r} pertence a hipótese fechada e não pode ser reescrita")
+    return _core_register(name, params=params, sharpe=sharpe, notes=notes, path=target, **extra)

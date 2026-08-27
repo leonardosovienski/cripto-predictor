@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import json
-from enum import Enum
+from enum import StrEnum
 from pathlib import Path
 
 import yaml
@@ -28,7 +28,7 @@ BINANCE_OBSERVATION_ACTIVATION = _artifact(
 SCIENTIFIC_STATE_CHARTER = _artifact("charters", "scientific_state.json")
 
 
-class HypothesisStatus(str, Enum):
+class HypothesisStatus(StrEnum):
     """Vocabulário fechado do ciclo de vida das hipóteses científicas.
 
     Não inclui ``ACTIVE`` de propósito: as ocorrências desse valor nos outros

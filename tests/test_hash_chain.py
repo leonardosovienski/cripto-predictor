@@ -80,9 +80,7 @@ def test_schema_blocks_retroactive_edit(tmp_path):
         assert seal_chain(store._conn) == 2
         # Adultera a PRIMEIRA linha do archive (muda o score registrado).
         with pytest.raises(sqlite3.IntegrityError, match="immutable"):
-            store._conn.execute(
-                "UPDATE predictions_archive SET score = 999.0 WHERE archive_id = 1"
-            )
+            store._conn.execute("UPDATE predictions_archive SET score = 999.0 WHERE archive_id = 1")
 
 
 def test_schema_blocks_retroactive_delete(tmp_path):
@@ -106,9 +104,7 @@ def test_hash_chain_detects_edit_after_privileged_bypass(tmp_path):
         store.write_predictions([_pred(), _pred(ts="2026-08-21 12:00:00")])
         seal_chain(store._conn)
         _simulate_privileged_trigger_bypass(store._conn)
-        store._conn.execute(
-            "UPDATE predictions_archive SET score = 999.0 WHERE archive_id = 1"
-        )
+        store._conn.execute("UPDATE predictions_archive SET score = 999.0 WHERE archive_id = 1")
         report = verify_chain(store._conn)
         assert not report.ok and report.first_bad_archive_id == 1
 
@@ -128,9 +124,7 @@ def test_seal_refuses_to_extend_tampered_chain(tmp_path):
         store.write_predictions([_pred()])
         seal_chain(store._conn)
         _simulate_privileged_trigger_bypass(store._conn)
-        store._conn.execute(
-            "UPDATE predictions_archive SET score = 999.0 WHERE archive_id = 1"
-        )
+        store._conn.execute("UPDATE predictions_archive SET score = 999.0 WHERE archive_id = 1")
         with pytest.raises(RuntimeError, match="selo recusado"):
             seal_chain(store._conn)
 

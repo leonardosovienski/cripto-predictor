@@ -150,9 +150,7 @@ def test_replay_bypass_de_schema_ainda_e_detectado_pela_cadeia(tmp_path):
             "predictions_archive_chain_block_delete",
         ):
             store._conn.execute(f"DROP TRIGGER {trigger}")
-        store._conn.execute(
-            "UPDATE predictions_archive SET score=999 WHERE archive_id=1"
-        )
+        store._conn.execute("UPDATE predictions_archive SET score=999 WHERE archive_id=1")
         report = verify_chain(store._conn)
         assert not report.ok
         assert report.first_bad_archive_id == 1

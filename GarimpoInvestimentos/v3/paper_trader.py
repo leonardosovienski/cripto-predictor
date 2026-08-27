@@ -61,9 +61,7 @@ def _ref_price(ts_ms: int, spot_index: dict[int, float]) -> float | None:
     As chaves do indice sao open-times, embora os valores sejam closes; por
     isso a vela elegivel abre uma hora antes da decisao.
     """
-    return SortedTimeIndex(spot_index).as_of(
-        ts_ms - _SPOT_CANDLE_MS, _PRICE_TOLERANCE_MS
-    )
+    return SortedTimeIndex(spot_index).as_of(ts_ms - _SPOT_CANDLE_MS, _PRICE_TOLERANCE_MS)
 
 
 def _already_recorded(symbol: str, timestamp_exchange_ms: int) -> bool:

@@ -2,11 +2,10 @@ from datetime import UTC, datetime, timedelta
 
 import pytest
 
-from GarimpoInvestimentos.v3.backtest_v3 import _find_spot_return
-
 from GarimpoInvestimentos.config import Settings
 from GarimpoInvestimentos.dpl.alignment import AlignmentEngine
 from GarimpoInvestimentos.dpl.contracts import MarketDataPoint, SignalPoint
+from GarimpoInvestimentos.v3.backtest_v3 import _find_spot_return
 from GarimpoInvestimentos.v3.feature_builder import _find_asof
 from GarimpoInvestimentos.v3.timeindex import SortedTimeIndex
 
@@ -28,17 +27,31 @@ def test_asof_never_selects_future_neighbor():
 def test_revision_is_not_visible_before_its_vintage():
     candle_ts = datetime(2026, 1, 10, tzinfo=UTC)
     candle = MarketDataPoint(
-        symbol="X", timestamp=candle_ts, open=1, high=1, low=1, close=1,
-        volume=1, source="x", interval="1d", published_at=candle_ts,
+        symbol="X",
+        timestamp=candle_ts,
+        open=1,
+        high=1,
+        low=1,
+        close=1,
+        volume=1,
+        source="x",
+        interval="1d",
+        published_at=candle_ts,
     )
     original = SignalPoint(
-        name="macro", timestamp=candle_ts - timedelta(days=5), value=1,
-        source="x", published_at=candle_ts - timedelta(days=4),
+        name="macro",
+        timestamp=candle_ts - timedelta(days=5),
+        value=1,
+        source="x",
+        published_at=candle_ts - timedelta(days=4),
         vintage=candle_ts - timedelta(days=4),
     )
     revision = SignalPoint(
-        name="macro", timestamp=candle_ts - timedelta(days=5), value=99,
-        source="x", published_at=candle_ts - timedelta(days=4),
+        name="macro",
+        timestamp=candle_ts - timedelta(days=5),
+        value=99,
+        source="x",
+        published_at=candle_ts - timedelta(days=4),
         vintage=candle_ts + timedelta(days=30),
     )
     row = AlignmentEngine().align([candle], {"macro": [original, revision]})[0]

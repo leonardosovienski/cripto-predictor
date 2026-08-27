@@ -13,7 +13,6 @@ from typing import TypedDict
 import pytest
 
 import GarimpoInvestimentos.analyzers.trials as trials_module
-
 from GarimpoInvestimentos.analyzers.backtest import (
     H6_MIN_N,
     H6_TRIAL_NAME,
@@ -67,16 +66,12 @@ def test_toda_hipotese_fechada_bloqueia_update_antes_do_core(tmp_path, monkeypat
         raise AssertionError("trial fechada alcançou predictor_core")
 
     monkeypatch.setattr(trials_module, "TRIALS_PATH", canonical)
-    monkeypatch.setattr(
-        "GarimpoInvestimentos.governance.load_scientific_state", lambda: state
-    )
+    monkeypatch.setattr("GarimpoInvestimentos.governance.load_scientific_state", lambda: state)
     monkeypatch.setattr(trials_module, "_core_register", should_not_reach_core)
 
     h4 = next(t for t in load_trials(canonical) if t["name"] == "v2-dpl-gemini-h7")
     with pytest.raises(ValueError, match="hipótese fechada"):
-        trials_module.register_trial(
-            h4["name"], params=h4["params"], sharpe=999.0, path=canonical
-        )
+        trials_module.register_trial(h4["name"], params=h4["params"], sharpe=999.0, path=canonical)
     assert not reached_core
     unchanged = next(t for t in load_trials(canonical) if t["name"] == h4["name"])
     assert unchanged == h4
@@ -97,9 +92,7 @@ def test_h6_imatura_continua_atualizavel(tmp_path, monkeypatch):
         return []
 
     monkeypatch.setattr(trials_module, "TRIALS_PATH", canonical)
-    monkeypatch.setattr(
-        "GarimpoInvestimentos.governance.load_scientific_state", lambda: state
-    )
+    monkeypatch.setattr("GarimpoInvestimentos.governance.load_scientific_state", lambda: state)
     monkeypatch.setattr(trials_module, "_core_register", core_spy)
     h6 = next(t for t in load_trials(canonical) if t["name"] == H6_TRIAL_NAME)
     trials_module.register_trial(h6["name"], params=h6["params"], path=canonical)
