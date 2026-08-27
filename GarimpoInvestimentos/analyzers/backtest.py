@@ -31,6 +31,7 @@ from GarimpoInvestimentos.core.history import migrate_csv_to_store
 from GarimpoInvestimentos.core.paths import FEATURE_STORE_DB, OUTPUT_DIR
 from GarimpoInvestimentos.dpl import FeatureStore
 from GarimpoInvestimentos.dpl.providers.coingecko import coingecko_auth_headers
+from GarimpoInvestimentos.governance import load_scientific_state
 
 BACKTEST_CSV = OUTPUT_DIR / "garimpo_backtest.csv"
 PRIMARY_HORIZON = settings.SCORE_HORIZON_DAYS  # horizonte ao qual o score se refere
@@ -506,17 +507,19 @@ def close_trial_sharpes(
     na mesma unidade por-período que o DSR consome. Sem trial casada ou n<3, o
     estrato é pulado (nunca cria trial nova — criar tentativa é decisão humana).
 
-    ERAS: quando MAIS DE UMA trial casa (fonte, horizonte) — ex.: a
-    v2-dpl-gemini-h7 encerrada e a v2-dpl-multi-h7 sucessora têm os mesmos
-    params de casamento — o estrato é dividido por época: cada previsão pertence
-    à trial vigente na sua data (fronteira = registered_at da trial seguinte;
-    a primeira absorve a pré-história, cobrindo registros retroativos). Cada era
-    matura a SUA trial — o Sharpe da encerrada congela com os dados dela, e a
-    sucessora nunca herda dados do juiz anterior.
+    ERAS: quando MAIS DE UMA trial casa (fonte, horizonte), o estrato é dividido
+    por época. Trials associadas a qualquer estado ``CLOSED_*`` são excluídas
+    antes do cálculo: seus valores versionados são imutáveis e o backtest noturno
+    não pode tentar "amadurecê-las" novamente. Mecanismos prospectivos, como H6,
+    possuem fechamento separado e continuam sendo executados.
     Retorna {name: sharpe} do que foi atualizado."""
     thr = settings.LIMIAR_SCORE_MINIMO if threshold is None else threshold
     key = f"var_d{horizon}_pct"
     trials = load_trials(trials_path)
+    state = load_scientific_state()
+    closed_trial_names = {
+        state.hypothesis_trials[h] for h, status in state.hypotheses.items() if status.is_closed
+    }
     updated: dict[str, float] = {}
 
     def _registered_at(t: dict) -> datetime:
@@ -533,6 +536,7 @@ def close_trial_sharpes(
             for t in trials
             if t.get("params", {}).get("fonte") == fonte
             and t.get("params", {}).get("horizonte_dias") == horizon
+            and t.get("name") not in closed_trial_names
         ]
         if not matching:
             continue

@@ -231,6 +231,19 @@ def test_backtest_nunca_cria_trial_nova(tmp_path):
     assert len(load_trials(p)) == 1
 
 
+def test_backtest_ignora_trial_fechada_sem_impedir_pipeline(tmp_path):
+    """O fechamento automático não tenta reescrever H5 e devolve controle para H6."""
+    p = tmp_path / "trials.json"
+    p.write_bytes(TRIALS_PATH.read_bytes())
+    before = p.read_bytes()
+    enriched = [_pred(80, 2.0), _pred(75, -1.0), _pred(90, 3.0)]
+
+    updated = close_trial_sharpes(enriched, 7, trials_path=p, threshold=70)
+
+    assert "v2-dpl-multi-h7" not in updated
+    assert p.read_bytes() == before
+
+
 def test_backtest_divide_eras_entre_trial_encerrada_e_sucessora(tmp_path):
     """Duas trials com os MESMOS params de casamento (fonte, horizonte) — caso
     real: v2-dpl-gemini-h7 encerrada e v2-dpl-multi-h7 sucessora. Cada previsão

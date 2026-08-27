@@ -549,7 +549,8 @@ def write_h6_status(
     return H6_WRITTEN
 
 
-def main() -> int:
+def main(*, chain_manifest_path: Path | None = None, feature_store_db: Path | None = None) -> int:
+    manifest_path = chain_manifest_path or CHAIN_MANIFEST_PATH
     snap = asyncio.run(build_snapshot())
     print(render(snap))
     append_history(snap)
@@ -566,7 +567,8 @@ def main() -> int:
             verify_chain,
         )
 
-        with FeatureStore(FEATURE_STORE_DB) as _store:
+        ledger_db = feature_store_db or FEATURE_STORE_DB
+        with FeatureStore(ledger_db) as _store:
             sealed = seal_chain(_store._conn)
             report = verify_chain(_store._conn)
             manifest = chain_manifest(_store._conn)
@@ -578,18 +580,18 @@ def main() -> int:
                 "NÃO confie em backtests até investigar."
             )
         anterior = None
-        if CHAIN_MANIFEST_PATH.exists():
+        if manifest_path.exists():
             try:
-                anterior = json.loads(CHAIN_MANIFEST_PATH.read_text(encoding="utf-8"))
+                anterior = json.loads(manifest_path.read_text(encoding="utf-8"))
             except ValueError:
                 anterior = None
         if not anterior or anterior.get("head") != manifest.get("head"):
-            CHAIN_MANIFEST_PATH.write_text(
+            manifest_path.write_text(
                 json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8"
             )
             print(
                 f"(ledger: {sealed} nova(s) linha(s) selada(s) -> "
-                f"{CHAIN_MANIFEST_PATH.name} atualizado; commite-o junto com o h6_status.json)"
+                f"{manifest_path.name} atualizado; commite-o junto com o h6_status.json)"
             )
     except Exception as _chain_exc:  # noqa: BLE001 — painel não pode cair por causa do selo
         ledger_integrity_ok = False

@@ -590,7 +590,12 @@ def _rodar_main(monkeypatch, capsys, destino, snap):
     monkeypatch.setattr(quality_snapshot, "append_history", lambda s: None)
     monkeypatch.setattr(quality_snapshot, "H6_STATUS_PATH", destino)
     assert asyncio.get_event_loop_policy() is not None  # sanidade do runner
-    assert quality_snapshot.main() == 0
+    manifest_before = quality_snapshot.CHAIN_MANIFEST_PATH.read_bytes()
+    manifest_tmp = destino.with_name("chain_manifest.json")
+    db_tmp = destino.with_name("feature_store.db")
+    assert quality_snapshot.main(chain_manifest_path=manifest_tmp, feature_store_db=db_tmp) == 0
+    assert manifest_tmp.exists()
+    assert quality_snapshot.CHAIN_MANIFEST_PATH.read_bytes() == manifest_before
     return capsys.readouterr().out
 
 
