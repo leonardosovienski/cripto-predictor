@@ -77,6 +77,12 @@ from GarimpoInvestimentos.v3.feature_builder import (
     build_spot_index,
 )
 from GarimpoInvestimentos.v3.regime_engine import RegimeEngine
+from GarimpoInvestimentos.v3.signal_engine import (
+    _FR_ZSCORE_THRESHOLD as _SIGNAL_FR_ZSCORE_THRESHOLD,
+)
+from GarimpoInvestimentos.v3.signal_engine import (
+    _MIN_REGIME_CONFIDENCE as _SIGNAL_MIN_REGIME_CONFIDENCE,
+)
 from GarimpoInvestimentos.v3.signal_engine import generate_signal
 from GarimpoInvestimentos.v3.timeindex import SortedTimeIndex
 
@@ -100,6 +106,11 @@ _DEFAULT_HORIZON_HOURS = 24
 
 _GO_PSR_THRESHOLD = 0.80
 _GO_MAX_DD_THRESHOLD = 0.20  # 20%
+
+# Gestão de risco intratrade (ausente até esta revisão — o sinal só saía no
+# horizonte fixo). 0.0 = desabilitado, preserva o comportamento anterior.
+_DEFAULT_STOP_LOSS_BPS = 0.0
+_DEFAULT_TAKE_PROFIT_BPS = 0.0
 
 # Fração de Kelly homologada para produção (Kelly sweep BTCUSDT, 2026-06-27).
 # Maior fração com veredicto GO: PSR 0.909, IC_lower +0.0205, MaxDD 10.45% (< 20%).
@@ -154,6 +165,8 @@ class WFAResult:
     net_ci_lower: float = 0.0
     net_ci_upper: float = 0.0
     taker_fee_bps: float = _DEFAULT_TAKER_FEE_BPS
+    stop_loss_bps: float = _DEFAULT_STOP_LOSS_BPS
+    take_profit_bps: float = _DEFAULT_TAKE_PROFIT_BPS
 
 
 @dataclass
@@ -193,6 +206,62 @@ def _find_spot_return(
     if close_start is None or close_end is None or close_start <= 0:
         return None
     return math.log(close_end / close_start)
+
+
+def _find_barrier_return(
+    ts_ms: int,
+    horizon_hours: int,
+    direction: int,
+    spot_index: "dict[int, float] | SortedTimeIndex",
+    stop_loss_bps: float = 0.0,
+    take_profit_bps: float = 0.0,
+    tolerance_ms: int = 300_000,
+) -> tuple[float, str] | None:
+    """
+    Retorno de P&L intrabar com saída antecipada por stop-loss/take-profit.
+
+    Caminha hora a hora a partir de ``ts_ms`` (mesma base de close_start de
+    ``_find_spot_return``, sem lookahead — cada candle só é observável no seu
+    próprio close) e sai assim que o retorno log acumulado, projetado na
+    direção do sinal, cruza a barreira de perda ou de ganho. Sem barreira
+    atingida, cai no comportamento antigo: retorno do horizonte cheio.
+
+    stop_loss_bps / take_profit_bps == 0.0 desabilita a respectiva barreira
+    (mantém compatibilidade com o backtest original quando ambos são 0).
+
+    Retorna (retorno_log, motivo) onde motivo ∈ {"stop_loss", "take_profit",
+    "horizon"}, ou None se não houver preço de entrada válido.
+    """
+    if not isinstance(spot_index, SortedTimeIndex):
+        spot_index = SortedTimeIndex(spot_index)
+
+    entry_ts = ts_ms - _SPOT_CANDLE_MS
+    entry_price = spot_index.as_of(entry_ts, tolerance_ms)
+    if entry_price is None or entry_price <= 0:
+        return None
+
+    sl = stop_loss_bps / 10_000.0 if stop_loss_bps > 0 else None
+    tp = take_profit_bps / 10_000.0 if take_profit_bps > 0 else None
+
+    last_return = None
+    n_candles = horizon_hours
+    for h in range(1, n_candles + 1):
+        check_ts = ts_ms + h * _SPOT_CANDLE_MS - _SPOT_CANDLE_MS
+        price = spot_index.as_of(check_ts, tolerance_ms)
+        if price is None or price <= 0:
+            continue
+        r = math.log(price / entry_price)
+        last_return = r
+        directional_r = r * direction
+
+        if sl is not None and directional_r <= -sl:
+            return -sl * direction, "stop_loss"
+        if tp is not None and directional_r >= tp:
+            return tp * direction, "take_profit"
+
+    if last_return is None:
+        return None
+    return last_return, "horizon"
 
 
 def _ms_to_day_offset(ts_ms: int, origin_ms: int) -> int:
@@ -256,6 +325,10 @@ def run_wfa(
     horizon_hours: int = _DEFAULT_HORIZON_HOURS,
     fr_window: int = 90,
     kelly_fraction: float = 1.0,
+    stop_loss_bps: float = _DEFAULT_STOP_LOSS_BPS,
+    take_profit_bps: float = _DEFAULT_TAKE_PROFIT_BPS,
+    fr_zscore_threshold: float = _SIGNAL_FR_ZSCORE_THRESHOLD,
+    min_regime_confidence: float = _SIGNAL_MIN_REGIME_CONFIDENCE,
 ) -> WFAResult:
     """
     Executa Walk Forward Analysis sobre os dados locais coletados pelo pipeline.
@@ -264,6 +337,11 @@ def run_wfa(
     kelly_fraction: escala a posição (direction × strength × kelly_fraction).
         1.0 = Kelly completo (baseline); 0.5/0.25/0.10 = fracionamentos.
         NÃO muda sinal nem modelo — apenas o tamanho da posição.
+
+    stop_loss_bps / take_profit_bps: barreiras intratrade em bps (0 = desliga,
+    comportamento idêntico ao anterior — saída só no horizonte fixo). Não
+    afetam o IC (que mede o sinal cru contra o retorno do horizonte cheio),
+    só o P&L simulado — é gestão de risco, não recalibração de sinal.
     """
     sym_dir = _DATA_ROOT / symbol
 
@@ -406,7 +484,13 @@ def run_wfa(
         costs = CostModel(taker_fee_bps=taker_fee_bps, slippage_bps=slippage_bps)
 
         for fv, regime in oos_pairs:
-            signal = generate_signal(fv, regime, horizon_hours=horizon_hours)
+            signal = generate_signal(
+                fv,
+                regime,
+                horizon_hours=horizon_hours,
+                fr_zscore_threshold=fr_zscore_threshold,
+                min_regime_confidence=min_regime_confidence,
+            )
 
             fwd = _find_spot_return(fv.timestamp_exchange_ms, horizon_hours, spot_ti)
             if fwd is None:
@@ -415,7 +499,21 @@ def run_wfa(
             if signal.active and signal.direction != 0:
                 n_active += 1
                 position = signal.direction * signal.strength * kelly_fraction
-                gross = position * fwd
+
+                # P&L usa o retorno com barreiras (SL/TP corta a cauda quando
+                # configurado); o IC abaixo continua usando `fwd` (retorno
+                # cheio do horizonte) para medir o sinal cru, não a saída.
+                barrier = _find_barrier_return(
+                    fv.timestamp_exchange_ms,
+                    horizon_hours,
+                    signal.direction,
+                    spot_ti,
+                    stop_loss_bps=stop_loss_bps,
+                    take_profit_bps=take_profit_bps,
+                )
+                pnl_return = barrier[0] if barrier is not None else fwd
+
+                gross = position * pnl_return
                 # Risco 4: liquido de fricção round-trip (taker+slippage × 2 pernas)
                 # e do funding REAL vigente na abertura (long paga f>0; short recebe).
                 net = costs.net_return(gross, position, fv.funding_rate_raw, horizon_hours)
@@ -567,6 +665,8 @@ def run_wfa(
         net_ci_lower=net_lo,
         net_ci_upper=net_hi,
         taker_fee_bps=taker_fee_bps,
+        stop_loss_bps=stop_loss_bps,
+        take_profit_bps=take_profit_bps,
     )
 
     _log_summary(result)
@@ -725,6 +825,132 @@ def run_kelly_sweep(
     return sweep
 
 
+@dataclass
+class ThresholdGridResult:
+    """Varredura de thresholds do sinal (fr_zscore, confiança de regime) × WFA.
+
+    Cada combinação roda o WFA completo (retrain do HMM por fold, IS/OOS
+    disjuntos, purge) — não é otimização in-sample: os thresholds nunca veem
+    o OOS antes do veredito daquele fold. Ainda assim, escolher a MELHOR
+    combinação olhando o agregado de TODOS os folds depois de rodar tudo é
+    uma forma de overfitting de seleção (igual ao que backtest.py combate
+    com PBO/CSCV do lado LLM) — trate o "melhor" daqui como candidato a
+    validar numa hipótese pré-registrada nova, nunca como veredicto GO.
+    """
+
+    symbol: str
+    results: list[WFAResult]
+    fr_thresholds: list[float]
+    confidence_thresholds: list[float]
+
+
+def run_threshold_grid(
+    symbol: str,
+    fr_thresholds: list[float],
+    confidence_thresholds: list[float],
+    slippage_bps: float = _DEFAULT_SLIPPAGE_BPS,
+    taker_fee_bps: float = _DEFAULT_TAKER_FEE_BPS,
+    horizon_hours: int = _DEFAULT_HORIZON_HOURS,
+    fr_window: int = 90,
+    kelly_fraction: float = 1.0,
+    stop_loss_bps: float = _DEFAULT_STOP_LOSS_BPS,
+    take_profit_bps: float = _DEFAULT_TAKE_PROFIT_BPS,
+) -> ThresholdGridResult:
+    """Roda WFA para cada combinação (fr_zscore_threshold × min_regime_confidence).
+
+    AVISO METODOLÓGICO (leia antes de usar o resultado para decidir capital):
+    isto substitui thresholds "escolhidos por bom senso" por thresholds
+    "escolhidos pelo melhor agregado OOS observado" — o que resolve a crítica
+    de arbitrariedade, mas troca por um risco de data-snooping se o candidato
+    vencedor for tratado como veredicto em vez de nova hipótese a pré-registrar
+    e testar em dado fresco (mesma disciplina de docs/HYPOTHESES.md).
+    """
+    results: list[WFAResult] = []
+    for fr_t in fr_thresholds:
+        for conf_t in confidence_thresholds:
+            logger.info(
+                "threshold_grid [%s]: fr_zscore_threshold=%.2f min_regime_confidence=%.2f",
+                symbol,
+                fr_t,
+                conf_t,
+            )
+            r = run_wfa(
+                symbol=symbol,
+                slippage_bps=slippage_bps,
+                taker_fee_bps=taker_fee_bps,
+                horizon_hours=horizon_hours,
+                fr_window=fr_window,
+                kelly_fraction=kelly_fraction,
+                stop_loss_bps=stop_loss_bps,
+                take_profit_bps=take_profit_bps,
+                fr_zscore_threshold=fr_t,
+                min_regime_confidence=conf_t,
+            )
+            results.append(r)
+
+    header = (
+        f"\n{'FR_thr':>7}  {'Conf_thr':>9}  {'PSR':>6}  {'IC_low':>7}  "
+        f"{'MaxDD':>7}  {'Sharpe':>7}  {'n_active':>9}  {'Veredicto'}"
+    )
+    logger.info(header)
+    logger.info("─" * len(header))
+    idx = 0
+    for fr_t in fr_thresholds:
+        for conf_t in confidence_thresholds:
+            r = results[idx]
+            idx += 1
+            n_active = sum(f.n_active for f in r.folds)
+            row = (
+                f"{fr_t:>7.2f}  "
+                f"{conf_t:>9.2f}  "
+                f"{r.aggregate_psr:>6.3f}  "
+                f"{r.aggregate_ic_ci_lower:>+7.4f}  "
+                f"{r.aggregate_max_dd:>6.2%}  "
+                f"{r.aggregate_sharpe:>+7.3f}  "
+                f"{n_active:>9d}  "
+                f"{r.final_verdict}"
+            )
+            logger.info(row)
+
+    go_results = [r for r in results if r.final_verdict == "GO"]
+    if go_results:
+        best = max(go_results, key=lambda r: r.aggregate_psr)
+        logger.info(
+            "\n→ MELHOR CANDIDATO (maior PSR entre os GO): PSR=%.3f — "
+            "trate como hipótese nova a pré-registrar, não como veredicto.",
+            best.aggregate_psr,
+        )
+    else:
+        best = max(results, key=lambda r: r.aggregate_psr) if results else None
+        logger.info(
+            "\n→ Nenhuma combinação atingiu GO. Melhor PSR observado: %.3f (ainda NO-GO).",
+            best.aggregate_psr if best else 0.0,
+        )
+
+    grid = ThresholdGridResult(
+        symbol=symbol,
+        results=results,
+        fr_thresholds=fr_thresholds,
+        confidence_thresholds=confidence_thresholds,
+    )
+    emit_event(
+        "v3_cripto",
+        "threshold_grid",
+        metrics={
+            "n_combinations": float(len(results)),
+            "n_go": float(len(go_results)),
+            "best_psr": float(max((r.aggregate_psr for r in results), default=0.0)),
+        },
+        metadata={
+            "symbol": symbol,
+            "fr_thresholds": fr_thresholds,
+            "confidence_thresholds": confidence_thresholds,
+            "verdicts": [r.final_verdict for r in results],
+        },
+    )
+    return grid
+
+
 def _emit_result(r: WFAResult) -> None:
     emit_event(
         "v3_cripto",
@@ -796,6 +1022,32 @@ def _main() -> None:
         help="Varredura de Kelly: simula múltiplas frações de uma vez. Ex: 1.0 0.5 0.25 0.10",
     )
     parser.add_argument(
+        "--stop-loss-bps",
+        type=float,
+        default=_DEFAULT_STOP_LOSS_BPS,
+        help="Stop-loss intratrade em bps, na direção do sinal (default: 0 = desligado).",
+    )
+    parser.add_argument(
+        "--take-profit-bps",
+        type=float,
+        default=_DEFAULT_TAKE_PROFIT_BPS,
+        help="Take-profit intratrade em bps, na direção do sinal (default: 0 = desligado).",
+    )
+    parser.add_argument(
+        "--fr-thresholds",
+        type=float,
+        nargs="+",
+        default=None,
+        help="Varredura de threshold do z-score de funding (grid junto com --confidence-thresholds).",
+    )
+    parser.add_argument(
+        "--confidence-thresholds",
+        type=float,
+        nargs="+",
+        default=None,
+        help="Varredura de confiança mínima de regime (grid junto com --fr-thresholds).",
+    )
+    parser.add_argument(
         "--log-level",
         default="INFO",
         choices=["DEBUG", "INFO", "WARNING", "ERROR"],
@@ -810,7 +1062,21 @@ def _main() -> None:
 
     for symbol in args.symbol:
         try:
-            if args.kelly_fractions:
+            if args.fr_thresholds or args.confidence_thresholds:
+                run_threshold_grid(
+                    symbol=symbol.upper(),
+                    fr_thresholds=args.fr_thresholds or [_SIGNAL_FR_ZSCORE_THRESHOLD],
+                    confidence_thresholds=args.confidence_thresholds
+                    or [_SIGNAL_MIN_REGIME_CONFIDENCE],
+                    slippage_bps=args.slippage_bps,
+                    taker_fee_bps=args.taker_fee_bps,
+                    horizon_hours=args.horizon_hours,
+                    fr_window=args.fr_window,
+                    kelly_fraction=args.kelly_fraction,
+                    stop_loss_bps=args.stop_loss_bps,
+                    take_profit_bps=args.take_profit_bps,
+                )
+            elif args.kelly_fractions:
                 run_kelly_sweep(
                     symbol=symbol.upper(),
                     kelly_fractions=args.kelly_fractions,
@@ -827,6 +1093,8 @@ def _main() -> None:
                     horizon_hours=args.horizon_hours,
                     fr_window=args.fr_window,
                     kelly_fraction=args.kelly_fraction,
+                    stop_loss_bps=args.stop_loss_bps,
+                    take_profit_bps=args.take_profit_bps,
                 )
         except Exception as exc:
             logger.error("backtest_v3 [%s]: ERRO — %s", symbol, exc)

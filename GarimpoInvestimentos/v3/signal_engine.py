@@ -114,6 +114,8 @@ def generate_signal(
     fv: FeatureVector,
     regime: RegimeOutput,
     horizon_hours: int = 24,
+    fr_zscore_threshold: float = _FR_ZSCORE_THRESHOLD,
+    min_regime_confidence: float = _MIN_REGIME_CONFIDENCE,
 ) -> SignalRecord:
     """
     Gera o SignalRecord para um par (FeatureVector, RegimeOutput).
@@ -124,6 +126,11 @@ def generate_signal(
     3. Regime com baixa confiança → FLAT
     4. Condições de sinal: short ou long se atendidas
     5. Caso contrário → FLAT
+
+    fr_zscore_threshold / min_regime_confidence: overrides dos defaults do
+    módulo — existem para permitir calibração via grid-search em WFA (ver
+    backtest_v3.run_threshold_grid). Os defaults preservam o comportamento
+    original quando omitidos.
     """
     now_ms = int(datetime.now(UTC).timestamp() * 1000)
 
@@ -147,7 +154,7 @@ def generate_signal(
         )
 
     regime_confidence = regime.hmm_posterior[regime.hmm_state]
-    if regime_confidence < _MIN_REGIME_CONFIDENCE:
+    if regime_confidence < min_regime_confidence:
         return _flat(
             fv,
             regime,
@@ -162,7 +169,7 @@ def generate_signal(
     strength = round(intensity * regime_confidence, 4)
 
     # Sinal SHORT: longs overcrowded
-    if fr_z >= _FR_ZSCORE_THRESHOLD and oi_d > 0 and regime.hmm_state_label in ("bull", "sideways"):
+    if fr_z >= fr_zscore_threshold and oi_d > 0 and regime.hmm_state_label in ("bull", "sideways"):
         return _signal(
             fv,
             regime,
@@ -174,11 +181,7 @@ def generate_signal(
         )
 
     # Sinal LONG: shorts overcrowded
-    if (
-        fr_z <= -_FR_ZSCORE_THRESHOLD
-        and oi_d > 0
-        and regime.hmm_state_label in ("bear", "sideways")
-    ):
+    if fr_z <= -fr_zscore_threshold and oi_d > 0 and regime.hmm_state_label in ("bear", "sideways"):
         return _signal(
             fv,
             regime,
