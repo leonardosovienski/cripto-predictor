@@ -16,7 +16,9 @@ from predictor_core.stats import max_drawdown
 from GarimpoInvestimentos.v3.backtest_v3 import (
     _MS_PER_8H,
     _SPOT_CANDLE_MS,
+    _calmar_ratio,
     _portfolio_equity_curve,
+    _sortino_ratio,
     _Trade,
 )
 
@@ -85,3 +87,55 @@ def test_slot_ocioso_nao_contribui_retorno():
     trades = [_Trade(entry_ms=0, net_return=0.30, horizon_hours=24)]
     curve = _portfolio_equity_curve(trades, num_slots=3)
     assert curve[-1] == pytest.approx(1.0 + (1.0 / 3.0) * 0.30)
+
+
+def test_sortino_ignora_dispersao_de_ganhos():
+    """
+    Dois conjuntos de retornos com a MESMA média e o MESMO desvio total, mas
+    um deles com toda a variância concentrada em ganhos (upside) — o Sortino
+    do segundo deve ser estritamente maior que o do primeiro, já que só
+    penaliza desvio de retornos negativos.
+    """
+    returns_dispersao_simetrica = [0.10, -0.10, 0.10, -0.10]
+    returns_so_upside_varia = [0.05, 0.05, 0.25, -0.15]  # mesma média/desvio total
+    s1 = _sortino_ratio(returns_dispersao_simetrica)
+    s2 = _sortino_ratio(returns_so_upside_varia)
+    assert s2 > s1
+
+
+def test_sortino_zero_sem_retornos_negativos():
+    # Sem downside, downside_std=0 -> não dá pra dividir; retorna 0.0 (não inf).
+    assert _sortino_ratio([0.05, 0.10, 0.03]) == 0.0
+
+
+def test_sortino_amostra_insuficiente():
+    assert _sortino_ratio([0.05]) == 0.0
+    assert _sortino_ratio([]) == 0.0
+
+
+def test_calmar_usa_retorno_cumulativo_da_curva_nao_media_por_trade():
+    """
+    Calmar = retorno cumulativo do portfólio / |MaxDD| — sobre a MESMA curva
+    usada no MaxDD, não sobre a média aritmética de retorno por trade
+    (grandezas diferentes: uma é do portfólio, a outra é por posição). Um
+    trade perdedor seguido de um vencedor maior gera drawdown real e
+    recuperação — exercita o cálculo de verdade, não só o caso-limite dd=0.
+    """
+    from predictor_core.stats import max_drawdown
+
+    trades = [
+        _Trade(entry_ms=0, net_return=-0.20, horizon_hours=24),
+        _Trade(entry_ms=24 * _SPOT_CANDLE_MS, net_return=0.50, horizon_hours=24),
+    ]
+    curve = _portfolio_equity_curve(trades, num_slots=1)
+    dd = max_drawdown(curve)
+    assert dd > 1e-9
+
+    calmar = _calmar_ratio(curve, dd)
+    cumulative_return = curve[-1] - 1.0
+    assert calmar == pytest.approx(cumulative_return / dd)
+
+
+def test_calmar_zero_para_curva_vazia_ou_sem_drawdown():
+    assert _calmar_ratio([], max_dd=0.1) == 0.0
+    assert _calmar_ratio([1.0, 1.1, 1.2], max_dd=0.0) == 0.0
