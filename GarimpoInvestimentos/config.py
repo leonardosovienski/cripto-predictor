@@ -53,7 +53,11 @@ class Settings(BaseSettings):
     LLM_PREFILTER_ENABLED: bool = False
     LLM_PREFILTER_MIN_VOLUME_USD: float = 10_000_000.0
     LLM_PREFILTER_MIN_ABS_CHANGE_7D: float = 2.0
-    API_GUARD_ENABLED: bool = False
+    # Auditoria 2026-08-28 (V-02): default anterior era False — sem setar a
+    # env var explicitamente, nenhum orçamento de chamadas de API/LLM era
+    # aplicado em produção (ver core/api_guard.py). Fail-closed por padrão;
+    # quem quiser tráfego irrestrito ainda pode setar False explicitamente.
+    API_GUARD_ENABLED: bool = True
     API_GUARD_MAX_INGEST_ASSETS: int = 0
     API_GUARD_MAX_NEWS_ATTEMPTS_PER_PROVIDER: int = 0
     API_GUARD_MAX_LLM_CALLS_PER_PROVIDER: int = 0
