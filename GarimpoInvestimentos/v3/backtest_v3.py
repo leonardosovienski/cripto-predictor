@@ -279,8 +279,8 @@ def _equity_curve(returns: list[float]) -> list[float]:
     portfólio inteiro por período (ex.: paper trading, onde cada retorno é
     sequencial e não-sobreposto). Para o WFA — onde sinais de horizonte
     24h saem a cada 8h e chegam a coexistir 3 posições — use
-    ``_portfolio_equity_curve``, que faz o netting correto via alocação
-    fracionária por slot (V-01, corrigido nesta revisão).
+    ``_portfolio_equity_curve``, que faz o netting correto por
+    contabilidade de eventos de abertura/fechamento (V-01).
     """
     equity: list[float] = []
     acc = 1.0
@@ -299,30 +299,64 @@ class _Trade:
 
 def _portfolio_equity_curve(trades: list["_Trade"], num_slots: int) -> list[float]:
     """
-    Curva de equity com netting de posições concorrentes (corrige V-01).
+    Curva de equity com netting de posições concorrentes (V-01, revisão 2).
 
-    Cada trade recebe uma fração fixa 1/num_slots do capital do portfólio
-    no momento em que abre (nunca 100%, como a composição sequencial
-    antiga assumia implicitamente). O P&L é creditado de volta ao capital
-    no fechamento (entry_ms + horizon_hours), em ordem cronológica de
-    saída — múltiplas posições abertas ao mesmo tempo dividem o mesmo
-    capital em vez de cada uma agir como se fosse dona dele.
+    Contabilidade real por evento de abertura/fechamento — não mais um peso
+    fixo 1/num_slots aplicado multiplicativamente em ordem de fechamento.
+    Cada posição reserva 1/num_slots do EQUITY TOTAL no instante em que
+    abre (não do capital inicial, nem do equity já reduzido por perdas de
+    trades que ainda nem tinham fechado quando esta posição foi aberta) e
+    devolve capital + P&L realizado no fechamento (entry_ms + horizon_hours).
 
-    ``num_slots`` deve refletir quantas posições podem coexistir de fato:
-    horizon_hours / cadência_de_sinal (8h nesta arquitetura) — ver
-    ``run_walk_forward``. Um slot ocioso (sem trade aberto) simplesmente
-    não contribui retorno, como capital parado.
+    Por que a revisão 1 (peso fixo, ver git blame) subestimava perdas
+    correlacionadas: aplicar `acc *= 1 + peso*retorno` em ORDEM DE
+    FECHAMENTO faz cada trade herdar implicitamente a base já reduzida
+    pelos fechamentos anteriores — mesmo que sua alocação tenha sido
+    decidida antes desses fechamentos serem conhecidos (lookahead na
+    contabilidade, não no sinal). Ex.: 3 trades concorrentes, cada um
+    -50%, dividindo 1/3 do capital: contabilidade correta por evento dá
+    equity final 0.500 (perda aditiva de 1/6 por trade, como em
+    sub-contas reais); a composição multiplicativa antiga dava 0.579
+    (perda ~14% menor que a real). Ver tests/test_v3_backtest_barriers.py.
+
+    ``num_slots`` deve refletir o teto físico de concorrência do desenho
+    (horizon_hours / cadência de sinal, 8h nesta arquitetura — ver
+    ``run_wfa``); a cadência fixa garante que nunca mais que num_slots
+    trades estejam abertos ao mesmo tempo, então não há necessidade de
+    rejeitar trade por falta de slot (apenas por falta de caixa, coberto
+    pelo `min(..., cash)` abaixo — nunca deveria disparar na prática).
     """
     if not trades:
         return []
     num_slots = max(1, num_slots)
-    weight = 1.0 / num_slots
-    closes = sorted((t.entry_ms + t.horizon_hours * _SPOT_CANDLE_MS, t.net_return) for t in trades)
+
+    # Eventos: (timestamp, prioridade, trade). Fechamentos (0) processados
+    # antes de aberturas (1) no mesmo instante — libera capital antes de
+    # realocar, evitando negar uma abertura por caixa momentaneamente presa.
+    events: list[tuple[int, int, _Trade]] = []
+    for t in trades:
+        exit_ms = t.entry_ms + t.horizon_hours * _SPOT_CANDLE_MS
+        events.append((t.entry_ms, 1, t))
+        events.append((exit_ms, 0, t))
+    events.sort(key=lambda e: (e[0], e[1]))
+
+    cash = 1.0
+    open_alloc: dict[int, float] = {}  # id(trade) -> capital alocado na abertura
     equity: list[float] = []
-    acc = 1.0
-    for _, net_return in closes:
-        acc *= 1.0 + weight * net_return
-        equity.append(acc)
+
+    for _, kind, t in events:
+        if kind == 0:
+            alloc = open_alloc.pop(id(t), None)
+            if alloc is not None:
+                cash += alloc * (1.0 + t.net_return)
+        else:
+            invested = sum(open_alloc.values())
+            total_equity = cash + invested
+            alloc = min(total_equity / num_slots, cash)
+            cash -= alloc
+            open_alloc[id(t)] = alloc
+        equity.append(cash + sum(open_alloc.values()))
+
     return equity
 
 
