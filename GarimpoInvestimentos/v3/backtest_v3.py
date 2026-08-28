@@ -317,9 +317,7 @@ def _portfolio_equity_curve(trades: list["_Trade"], num_slots: int) -> list[floa
         return []
     num_slots = max(1, num_slots)
     weight = 1.0 / num_slots
-    closes = sorted(
-        (t.entry_ms + t.horizon_hours * _SPOT_CANDLE_MS, t.net_return) for t in trades
-    )
+    closes = sorted((t.entry_ms + t.horizon_hours * _SPOT_CANDLE_MS, t.net_return) for t in trades)
     equity: list[float] = []
     acc = 1.0
     for _, net_return in closes:
