@@ -8,10 +8,13 @@ importável sem ccxt instalado (testes injetam provedores fake).
 
 from __future__ import annotations
 
+import logging
 from datetime import UTC, datetime, timedelta
 
 from GarimpoInvestimentos.dpl.contracts import DataProvider, MarketDataPoint
 from GarimpoInvestimentos.dpl.providers._validation import require_finite
+
+logger = logging.getLogger(__name__)
 
 _SUPPORTED_INTERVALS = {"1m", "5m", "15m", "1h", "4h", "1d"}
 _INTERVAL_DURATION = {
@@ -63,7 +66,10 @@ class CCXTProvider(DataProvider):
             try:
                 await client.close()
             except Exception:
-                pass
+                # Best-effort: um close() com falha não deve mascarar o erro
+                # original do bloco try acima (relançado via `finally`), só
+                # não há ação corretiva possível aqui além de registrar.
+                logger.debug("%s: falha ao fechar client ccxt (ignorada)", self.exchange_id)
         points = []
         collected_at = datetime.now(UTC)
         for ts_ms, o, h, l, c, v in rows:
@@ -108,4 +114,7 @@ class CCXTProvider(DataProvider):
             try:
                 await client.close()
             except Exception:
-                pass
+                # Best-effort: um close() com falha não deve mascarar o erro
+                # original do bloco try acima (relançado via `finally`), só
+                # não há ação corretiva possível aqui além de registrar.
+                logger.debug("%s: falha ao fechar client ccxt (ignorada)", self.exchange_id)

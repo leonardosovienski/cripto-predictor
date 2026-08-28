@@ -143,6 +143,8 @@ class FoldResult:
     sharpe: float
     slippage_bps: float
     verdict: str  # "GO" / "NO-GO" / "INSUFFICIENT_DATA"
+    sortino: float = 0.0
+    calmar: float = 0.0
 
 
 @dataclass
@@ -167,6 +169,12 @@ class WFAResult:
     taker_fee_bps: float = _DEFAULT_TAKER_FEE_BPS
     stop_loss_bps: float = _DEFAULT_STOP_LOSS_BPS
     take_profit_bps: float = _DEFAULT_TAKE_PROFIT_BPS
+    # Sortino/Calmar sobre a curva de portfólio (V-01 revisão 2): só fazem
+    # sentido agora que a equity curve faz netting real de posições
+    # concorrentes — sobre a série ingênua anterior, ambos herdariam o
+    # mesmo viés de MaxDD subestimado.
+    aggregate_sortino: float = 0.0
+    aggregate_calmar: float = 0.0
 
 
 @dataclass
@@ -358,6 +366,43 @@ def _portfolio_equity_curve(trades: list["_Trade"], num_slots: int) -> list[floa
         equity.append(cash + sum(open_alloc.values()))
 
     return equity
+
+
+def _sortino_ratio(returns: list[float]) -> float:
+    """
+    Sortino não-anualizado, na mesma escala do "Sharpe simples" já usado
+    neste módulo (mean/desvio × sqrt(N) sobre a própria amostra de trades,
+    não sobre um período calendário fixo — ``predictor_core.stats.sortino``
+    assume 252 períodos/ano, o que não bate com a cadência de 8h do WFA;
+    reimplementado aqui para consistência com ``fold_sharpe``/``agg_sharpe``).
+
+    Só penaliza desvio de retornos negativos (downside deviation) — dois
+    trades com o mesmo retorno médio e mesma volatilidade total, mas um
+    deles com toda a variância concentrada em ganhos, não devem ser
+    penalizados igualmente pelo Sharpe simples.
+    """
+    if len(returns) < 2:
+        return 0.0
+    mean_r = sum(returns) / len(returns)
+    downside_sq = sum(r**2 for r in returns if r < 0.0)
+    downside_std = math.sqrt(downside_sq / len(returns))
+    if downside_std <= 1e-12:
+        return 0.0
+    return (mean_r / downside_std) * math.sqrt(len(returns))
+
+
+def _calmar_ratio(equity_curve: list[float], max_dd: float) -> float:
+    """
+    Calmar = retorno cumulativo do portfólio / |MaxDD|, sobre a MESMA curva
+    de equity com netting real (``_portfolio_equity_curve``) usada no
+    cálculo de ``max_dd`` — nunca sobre a média de retorno por trade, que
+    mediria uma grandeza diferente (retorno médio por posição, não do
+    portfólio como um todo).
+    """
+    if not equity_curve or max_dd <= 1e-9:
+        return 0.0
+    cumulative_return = equity_curve[-1] - 1.0
+    return cumulative_return / max_dd
 
 
 _FINITE_COERCIONS = 0
@@ -614,7 +659,8 @@ def run_wfa(
         rho, lo, hi = _finite(rho or 0.0), _finite(lo or 0.0), _finite(hi or 0.0)
         fold_psr = _finite(probabilistic_sharpe_ratio(fold_pnl)) if len(fold_pnl) >= 3 else 0.0
         num_slots = max(1, math.ceil(horizon_hours / (_MS_PER_8H / 3_600_000)))
-        fold_dd = max_drawdown(_portfolio_equity_curve(fold_trades, num_slots))
+        fold_equity = _portfolio_equity_curve(fold_trades, num_slots)
+        fold_dd = max_drawdown(fold_equity)
 
         # Sharpe simples
         if len(fold_pnl) >= 2:
@@ -623,6 +669,8 @@ def run_wfa(
             fold_sharpe = (mean_r / std_r) * math.sqrt(len(fold_pnl)) if std_r > 1e-12 else 0.0
         else:
             fold_sharpe = 0.0
+        fold_sortino = _sortino_ratio(fold_pnl)
+        fold_calmar = _calmar_ratio(fold_equity, fold_dd)
 
         # Verdict por fold
         if len(fold_ic_pairs) < 10:
@@ -648,6 +696,8 @@ def run_wfa(
             sharpe=fold_sharpe,
             slippage_bps=slippage_bps,
             verdict=verdict,
+            sortino=fold_sortino,
+            calmar=fold_calmar,
         )
         folds.append(fold_result)
         all_oos_returns.extend(fold_pnl)
@@ -686,7 +736,8 @@ def run_wfa(
         _finite(probabilistic_sharpe_ratio(all_oos_returns)) if len(all_oos_returns) >= 3 else 0.0
     )
     agg_num_slots = max(1, math.ceil(horizon_hours / (_MS_PER_8H / 3_600_000)))
-    agg_dd = max_drawdown(_portfolio_equity_curve(all_oos_trades, agg_num_slots))
+    agg_equity = _portfolio_equity_curve(all_oos_trades, agg_num_slots)
+    agg_dd = max_drawdown(agg_equity)
 
     # Risco 4: bruto vs liquido, com IC95 do retorno LIQUIDO medio (block bootstrap
     # — mesma lente 2 do pedagio; bloco adaptado a amostras curtas).
@@ -711,6 +762,8 @@ def run_wfa(
         )
     else:
         agg_sharpe = 0.0
+    agg_sortino = _sortino_ratio(all_oos_returns)
+    agg_calmar = _calmar_ratio(agg_equity, agg_dd)
 
     if agg_psr >= _GO_PSR_THRESHOLD and agg_lo > 0 and agg_dd < _GO_MAX_DD_THRESHOLD:
         final_verdict = "GO"
@@ -737,6 +790,8 @@ def run_wfa(
         aggregate_ic_ci_lower=agg_lo,
         aggregate_max_dd=agg_dd,
         aggregate_sharpe=agg_sharpe,
+        aggregate_sortino=agg_sortino,
+        aggregate_calmar=agg_calmar,
         final_verdict=final_verdict,
         verdict_reason=verdict_reason,
         fr_window=fr_window,
@@ -801,6 +856,11 @@ def _log_summary(r: WFAResult) -> None:
         _GO_MAX_DD_THRESHOLD * 100,
     )
     logger.info("Sharpe agregado: %.4f", r.aggregate_sharpe)
+    logger.info(
+        "Sortino/Calmar : %.4f / %.4f (sobre a curva de equity com netting)",
+        r.aggregate_sortino,
+        r.aggregate_calmar,
+    )
     logger.info(
         "Retorno medio  : bruto %.6f -> LIQUIDO %.6f por sinal (fee %sbps + slip + funding real)",
         r.aggregate_gross_return,
@@ -1041,6 +1101,9 @@ def _emit_result(r: WFAResult) -> None:
             "aggregate_ic": r.aggregate_ic,
             "aggregate_ic_ci_lower": r.aggregate_ic_ci_lower,
             "aggregate_max_dd": r.aggregate_max_dd,
+            "aggregate_sharpe": r.aggregate_sharpe,
+            "aggregate_sortino": r.aggregate_sortino,
+            "aggregate_calmar": r.aggregate_calmar,
             "n_folds": float(r.n_folds),
             "go_folds": float(sum(1 for f in r.folds if f.verdict == "GO")),
         },
