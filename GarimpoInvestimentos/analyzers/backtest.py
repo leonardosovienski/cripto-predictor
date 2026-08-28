@@ -822,6 +822,11 @@ def _metrics(enriched: list[dict], horizon: int) -> None:
     mature = [r for r in enriched if r.get(key) is not None]
     n = len(mature)
     print(f"\n===== Métricas (horizonte D+{horizon}, n={n}) =====")
+    print(
+        "  [AVISO] retornos BRUTOS — sem taxas/slippage/funding (cost_model_status="
+        "GROSS_RETURNS_ONLY, capital_authorized=False). Não é um veredito de trading; "
+        "para o motor com custos e walk-forward purgado ver GarimpoInvestimentos/v3/backtest_v3.py."
+    )
     if n < 3:
         print("  dados insuficientes — aguarde previsões maduras.")
         return

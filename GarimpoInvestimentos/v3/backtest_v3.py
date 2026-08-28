@@ -275,18 +275,55 @@ def _equity_curve(returns: list[float]) -> list[float]:
     predictor_core.max_drawdown ESPERA equity acumulada, não retornos brutos.
     Composição multiplicativa: equity_t = Π (1 + r_i).
 
-    LIMITAÇÃO CONHECIDA (C3, auditoria 2026-07-09): cada retorno é o P&L de
-    um sinal de 24h, mas os sinais saem a cada 8h — até 3 posições coexistem
-    e aqui elas são compostas como se fossem sequenciais. O MaxDD resultante
-    NÃO é o drawdown de um portfólio realizável (exigiria netting das
-    posições simultâneas); direção do erro ambígua. Corrigir na v2 do
-    backtest (plano de convergência: simulação de equity com posições
-    concorrentes no predictor_core.backtest).
+    Uso restrito a séries de retornos que já representam o P&L do
+    portfólio inteiro por período (ex.: paper trading, onde cada retorno é
+    sequencial e não-sobreposto). Para o WFA — onde sinais de horizonte
+    24h saem a cada 8h e chegam a coexistir 3 posições — use
+    ``_portfolio_equity_curve``, que faz o netting correto via alocação
+    fracionária por slot (V-01, corrigido nesta revisão).
     """
     equity: list[float] = []
     acc = 1.0
     for r in returns:
         acc *= 1.0 + r
+        equity.append(acc)
+    return equity
+
+
+@dataclass
+class _Trade:
+    entry_ms: int
+    net_return: float
+    horizon_hours: int
+
+
+def _portfolio_equity_curve(trades: list["_Trade"], num_slots: int) -> list[float]:
+    """
+    Curva de equity com netting de posições concorrentes (corrige V-01).
+
+    Cada trade recebe uma fração fixa 1/num_slots do capital do portfólio
+    no momento em que abre (nunca 100%, como a composição sequencial
+    antiga assumia implicitamente). O P&L é creditado de volta ao capital
+    no fechamento (entry_ms + horizon_hours), em ordem cronológica de
+    saída — múltiplas posições abertas ao mesmo tempo dividem o mesmo
+    capital em vez de cada uma agir como se fosse dona dele.
+
+    ``num_slots`` deve refletir quantas posições podem coexistir de fato:
+    horizon_hours / cadência_de_sinal (8h nesta arquitetura) — ver
+    ``run_walk_forward``. Um slot ocioso (sem trade aberto) simplesmente
+    não contribui retorno, como capital parado.
+    """
+    if not trades:
+        return []
+    num_slots = max(1, num_slots)
+    weight = 1.0 / num_slots
+    closes = sorted(
+        (t.entry_ms + t.horizon_hours * _SPOT_CANDLE_MS, t.net_return) for t in trades
+    )
+    equity: list[float] = []
+    acc = 1.0
+    for _, net_return in closes:
+        acc *= 1.0 + weight * net_return
         equity.append(acc)
     return equity
 
@@ -406,6 +443,7 @@ def run_wfa(
     folds: list[FoldResult] = []
     all_oos_returns: list[float] = []
     all_gross_returns: list[float] = []
+    all_oos_trades: list[_Trade] = []
     all_ic_pairs: list[tuple[float, float]] = []  # (signal_strength, fwd_return)
 
     fold_idx = 0
@@ -480,6 +518,7 @@ def run_wfa(
         fold_ic_pairs: list[tuple[float, float]] = []
         fold_pnl: list[float] = []
         fold_gross: list[float] = []
+        fold_trades: list[_Trade] = []
         n_active = 0
         costs = CostModel(taker_fee_bps=taker_fee_bps, slippage_bps=slippage_bps)
 
@@ -519,6 +558,13 @@ def run_wfa(
                 net = costs.net_return(gross, position, fv.funding_rate_raw, horizon_hours)
                 fold_gross.append(gross)
                 fold_pnl.append(net)
+                fold_trades.append(
+                    _Trade(
+                        entry_ms=fv.timestamp_exchange_ms,
+                        net_return=net,
+                        horizon_hours=horizon_hours,
+                    )
+                )
                 fold_ic_pairs.append((signal.strength * signal.direction, fwd))
             else:
                 # Posição flat: não contribui para P&L mas é contada
@@ -535,7 +581,8 @@ def run_wfa(
         rho, lo, hi = spearman_block_ci(fold_ic_pairs)
         rho, lo, hi = _finite(rho or 0.0), _finite(lo or 0.0), _finite(hi or 0.0)
         fold_psr = _finite(probabilistic_sharpe_ratio(fold_pnl)) if len(fold_pnl) >= 3 else 0.0
-        fold_dd = max_drawdown(_equity_curve(fold_pnl))  # equity acumulada, não retornos brutos
+        num_slots = max(1, math.ceil(horizon_hours / (_MS_PER_8H / 3_600_000)))
+        fold_dd = max_drawdown(_portfolio_equity_curve(fold_trades, num_slots))
 
         # Sharpe simples
         if len(fold_pnl) >= 2:
@@ -573,6 +620,7 @@ def run_wfa(
         folds.append(fold_result)
         all_oos_returns.extend(fold_pnl)
         all_gross_returns.extend(fold_gross)
+        all_oos_trades.extend(fold_trades)
         all_ic_pairs.extend(fold_ic_pairs)
 
         logger.info(
@@ -605,7 +653,8 @@ def run_wfa(
     agg_psr = (
         _finite(probabilistic_sharpe_ratio(all_oos_returns)) if len(all_oos_returns) >= 3 else 0.0
     )
-    agg_dd = max_drawdown(_equity_curve(all_oos_returns))  # equity acumulada
+    agg_num_slots = max(1, math.ceil(horizon_hours / (_MS_PER_8H / 3_600_000)))
+    agg_dd = max_drawdown(_portfolio_equity_curve(all_oos_trades, agg_num_slots))
 
     # Risco 4: bruto vs liquido, com IC95 do retorno LIQUIDO medio (block bootstrap
     # — mesma lente 2 do pedagio; bloco adaptado a amostras curtas).
