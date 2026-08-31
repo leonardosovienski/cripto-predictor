@@ -10,12 +10,12 @@ from pathlib import Path
 
 EXPECTED = {
     "predictor-core": (
-        "https://github.com/leonardosovienski/core-predictor/releases/download/v2.3.0/predictor_core-2.3.0-py3-none-any.whl",
-        "sha256:e0d29eac348e2be4092dde1b629c101d54973b54b5d43014cdaee69e4e17b3b9",
+        "https://github.com/leonardosovienski/core-predictor/releases/download/v3.0.0/predictor_core-3.0.0-py3-none-any.whl",
+        "sha256:fdc1d3e27b6805a1d125702b6e3bb88f6fa3483791c22ea310bf6c56d5581c4d",
     ),
     "predictor-ops": (
-        "https://github.com/leonardosovienski/predictor-ops/releases/download/v3.1.0/predictor_ops-3.1.0-py3-none-any.whl",
-        "sha256:490ece696f9173bbaa56c2c53a1ff6e5ffab1a7625fb00ac0a5f896c37081b37",
+        "https://github.com/leonardosovienski/predictor-ops/releases/download/v4.0.0/predictor_ops-4.0.0-py3-none-any.whl",
+        "sha256:a79b895492181c88c428ee8984a38d5f3da0d0105f060f89a061376d5cfe2b2b",
     ),
 }
 
@@ -34,8 +34,8 @@ def main() -> int:
     import predictor_core
     import predictor_ops
 
-    assert importlib.metadata.version("predictor-core") == "2.3.0"
-    assert importlib.metadata.version("predictor-ops") == "3.1.0"
+    assert importlib.metadata.version("predictor-core") == "3.0.0"
+    assert importlib.metadata.version("predictor-ops") == "4.0.0"
     for module in (predictor_core, predictor_ops):
         assert "site-packages" in Path(module.__file__).resolve().as_posix().lower()
     entrypoint = next(
