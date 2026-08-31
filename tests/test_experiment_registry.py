@@ -178,12 +178,12 @@ def test_campos_opcionais_do_registry_sao_gravados(tmp_path):
         path=p,
         **_NOGATE,
         features_used=["rsi", "sma_200"],
-        train_period=["2026-01-01", "2026-06-30"],
-        test_period=["2026-07-01", "2026-07-31"],
+        train_period=["2026-01-01T00:00:00Z", "2026-06-30T23:59:59Z"],
+        test_period=["2026-07-01T00:00:00Z", "2026-07-31T23:59:59Z"],
     )
     t = load_trials(p)[0]
     assert t["features_used"] == ["rsi", "sma_200"]
-    assert t["test_period"][0] == "2026-07-01"
+    assert t["test_period"][0] == "2026-07-01T00:00:00Z"
 
 
 # --- fechamento automático do ciclo (backtest → trials.json) -------------------

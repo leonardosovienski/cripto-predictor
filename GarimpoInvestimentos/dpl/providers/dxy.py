@@ -15,14 +15,14 @@ estimativa conservadora (assume o dado mais tarde disponível, nunca mais cedo);
 confirme contra https://www.federalreserve.gov/releases/h10/ antes de depender
 disso para timing fino.
 
-Endpoint validado ao vivo em 2026-08-14 (`curl -v`, dono do projeto): HTTP 200,
-`Content-Type: application/csv`, cabeçalho `observation_date,DTWEXBGS` (o FRED
+Endpoint revalidado ao vivo em 2026-08-31 pelo próprio `DXYProvider`: retornou
+observações válidas de 2026-08-24 a 2026-08-28, com `source=fred`, sem interpolar
+feriados. O CSV usa o cabeçalho `observation_date,DTWEXBGS` (o FRED
 usa `observation_date`, não `DATE`, como nome da primeira coluna — só isso
 tinha ficado errado na primeira versão). `Invoke-WebRequest` do PowerShell
 travou/deu timeout contra o mesmo endpoint que o `curl` respondeu rápido —
 suspeita de inspeção de TLS no proxy corporativo interferindo com um cliente
-especificamente; sem efeito no `httpx` usado aqui, mas vale monitorar se o
-provider apresentar timeouts em produção.
+especificamente; o `httpx` usado aqui respondeu no smoke de 2026-08-31.
 """
 
 from __future__ import annotations

@@ -31,6 +31,7 @@ from predictor_core.stats import spearman_block_ci
 from GarimpoInvestimentos.analyzers.backtest import (
     H6_LIVE_FONTE,
     H6_MIN_N,
+    H6_POWER_TARGET_N,
     H6_TRIAL_NAME,
     PRIMARY_HORIZON,
     _load_rows,
@@ -290,6 +291,9 @@ async def build_snapshot(now: datetime | None = None) -> dict:
             "mature_d7": d7["n"],
             "h6_valid_n": h6_result["n"] if h6_result else 0,
             "h6_gate": H6_MIN_N,
+            "h6_power_target_n": H6_POWER_TARGET_N,
+            "h6_power_adequate": (h6_result["n"] if h6_result else 0) >= H6_POWER_TARGET_N,
+            "capital_evaluation_eligible": False,
             "h6_fonte_esperada": H6_LIVE_FONTE,
             "maturity_stage": _maturity_stage(len(rows_real)),
         },

@@ -28,22 +28,19 @@ def _write_calendar(tmp_path, events: list[dict]):
 # --- calendário shipado -------------------------------------------------------
 
 
-def test_shipped_calendar_has_sourced_fomc_dates_only():
-    """FOMC 2026 foi preenchido com datas sourced/citadas (ver source_note no JSON);
-    CPI/PPI ficam vazios de propósito — a fonte encontrada tinha lacunas demais
-    pra confiar (nenhuma data fabricada/interpolada para completar o buraco)."""
+def test_shipped_calendar_has_complete_sourced_2026_dates():
+    """Datas de release oficiais e versionadas; nenhuma inferência/interpolação."""
     assert DEFAULT_CALENDAR_PATH.exists()
     events = load_macro_calendar()
-    assert len(events) == 8
-    assert all(e.event_type == "FOMC" for e in events)
+    assert len(events) == 33
     assert events == sorted(events, key=lambda e: e.event_date)  # cronológico, sem duplicata
-    assert len({e.event_date for e in events}) == 8
+    assert len({(e.event_type, e.event_date) for e in events}) == 33
     assert {e.event_date.year for e in events} == {2026}
-
-
-def test_shipped_calendar_has_no_cpi_or_ppi_yet():
-    events = load_macro_calendar()
-    assert {e.event_type for e in events} == {"FOMC"}
+    assert {kind: sum(e.event_type == kind for e in events) for kind in ("FOMC", "CPI", "PPI")} == {
+        "FOMC": 8,
+        "CPI": 12,
+        "PPI": 13,
+    }
 
 
 # --- load_macro_calendar ------------------------------------------------------

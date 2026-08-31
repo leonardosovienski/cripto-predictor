@@ -6,13 +6,10 @@ atual olha agenda macro). Fonte: um JSON local versionado, sem rede — datas de
 reunião do FOMC e de divulgação de CPI/PPI são anunciadas pelo Fed/BLS com meses
 de antecedência, então conhecê-las hoje para um evento futuro NÃO é look-ahead.
 
-O arquivo padrão (macro_calendar.json) traz o calendário FOMC 2026 (8 reuniões,
-dia da decisão/coletiva) sourced via WebSearch em 2026-08-14 e corroborado por
-múltiplas fontes independentes — ver `source_note` dentro do próprio JSON para a
-proveniência completa. CPI/PPI ficam deliberadamente vazios: a busca só devolveu
-calendário parcial/com lacunas, e este projeto não fabrica dado que alimenta
-backtest (mesma régua do resto da DPL — sem interpolação, sem inferência).
-Preencha CPI/PPI a partir da fonte oficial quando houver acesso direto a ela:
+O arquivo padrão (macro_calendar.json) traz os calendários FOMC, CPI e PPI de
+2026, verificados nas fontes primárias em 2026-08-31. Ver `source_note` dentro do
+próprio JSON para a proveniência completa. Datas CPI/PPI representam o dia da
+divulgação, não o mês de referência:
   - FOMC (re-verificação/anos futuros): https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm
   - CPI/PPI: https://www.bls.gov/schedule/news_release/cpi.htm / .../ppi.htm
 Datas não confirmadas na fonte primária não entram no arquivo.

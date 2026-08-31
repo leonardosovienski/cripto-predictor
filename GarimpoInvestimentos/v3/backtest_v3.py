@@ -53,6 +53,7 @@ USO (CLI):
 """
 
 import argparse
+import json
 import logging
 import math
 import sys
@@ -67,6 +68,7 @@ from predictor_core.stats import (
 )
 
 from GarimpoInvestimentos.core.paths import DATA_DIR
+from GarimpoInvestimentos.analyzers.trials import TRIALS_PATH, register_trial
 from GarimpoInvestimentos.v3.collectors.funding_collector import load_funding_csv
 from GarimpoInvestimentos.v3.collectors.oi_collector import load_oi_csv
 from GarimpoInvestimentos.v3.collectors.spot_collector import load_spot_csv
@@ -1006,6 +1008,37 @@ def run_threshold_grid(
     vencedor for tratado como veredicto em vez de nova hipótese a pré-registrar
     e testar em dado fresco (mesma disciplina de docs/HYPOTHESES.md).
     """
+    attestation_path = TRIALS_PATH.with_name(f"{TRIALS_PATH.stem}.harness_attestation.json")
+    attestation = json.loads(attestation_path.read_text(encoding="utf-8"))
+    fingerprint = attestation["pipeline_fingerprint"]
+    attempts: list[tuple[str, dict]] = []
+    for fr_t in fr_thresholds:
+        for conf_t in confidence_thresholds:
+            name = f"v3-grid-{symbol.lower()}-fr{fr_t:g}-conf{conf_t:g}"
+            params = {
+                "symbol": symbol,
+                "fr_zscore_threshold": fr_t,
+                "min_regime_confidence": conf_t,
+                "slippage_bps": slippage_bps,
+                "taker_fee_bps": taker_fee_bps,
+                "horizon_hours": horizon_hours,
+                "fr_window": fr_window,
+                "kelly_fraction": kelly_fraction,
+                "stop_loss_bps": stop_loss_bps,
+                "take_profit_bps": take_profit_bps,
+                "selection_family": "threshold_grid",
+            }
+            # Registra TODAS as combinações antes de olhar qualquer resultado.
+            # Atestado expirado ou incompatível bloqueia a grade inteira.
+            register_trial(
+                name,
+                params=params,
+                notes="threshold-grid attempt; candidate-only, never direct GO",
+                metric="psr",
+                pipeline_fingerprint=fingerprint,
+            )
+            attempts.append((name, params))
+
     results: list[WFAResult] = []
     for fr_t in fr_thresholds:
         for conf_t in confidence_thresholds:
@@ -1028,6 +1061,12 @@ def run_threshold_grid(
                 min_regime_confidence=conf_t,
             )
             results.append(r)
+            register_trial(
+                attempts[len(results) - 1][0],
+                params=attempts[len(results) - 1][1],
+                sharpe=r.aggregate_sharpe,
+                notes="threshold-grid attempt completed; candidate-only, never direct GO",
+            )
 
     header = (
         f"\n{'FR_thr':>7}  {'Conf_thr':>9}  {'PSR':>6}  {'IC_low':>7}  "

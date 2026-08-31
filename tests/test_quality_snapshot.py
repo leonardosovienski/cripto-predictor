@@ -50,6 +50,9 @@ def test_snapshot_com_banco_vazio(db_path):
     assert snap["sample"]["total_predictions"] == 0
     assert snap["sample"]["mature_d1"] == 0
     assert snap["sample"]["h6_valid_n"] == 0
+    assert snap["sample"]["h6_power_target_n"] == 250
+    assert snap["sample"]["h6_power_adequate"] is False
+    assert snap["sample"]["capital_evaluation_eligible"] is False
     # não deve quebrar a renderização com amostra vazia
     text = quality_snapshot.render(snap)
     assert "PROJECT QUALITY SNAPSHOT" in text

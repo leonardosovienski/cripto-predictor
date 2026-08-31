@@ -580,6 +580,10 @@ def close_trial_sharpes(
 H6_TRIAL_NAME = "h6-sinal-invertido-d7"
 H6_LIVE_FONTE = "dpl:fallback"  # fonte real da coleta em curso (H5/multi-juiz)
 H6_MIN_N = 30  # n mínimo do critério pré-registrado (idêntico ao H4/H5)
+# O protocolo original continua congelado em 30. Esta segunda trava não muda
+# a hipótese: impede que um veredito com baixo poder seja promovido a avaliação
+# econômica/capital antes do ponto de ~80% de poder para rho=0,2.
+H6_POWER_TARGET_N = 250
 
 #: Referência ESTÁTICA publicada em docs/HYPOTHESES.md (B12), medida em
 #: 2026-08-21 com o critério canônico (spearman_block_ci + overlap_block_length,

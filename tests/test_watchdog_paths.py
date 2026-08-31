@@ -16,6 +16,7 @@ parada.
 from __future__ import annotations
 
 import json
+import sys
 from datetime import UTC, datetime, timedelta
 
 from predictor_ops import JobConfig, run_job
@@ -43,7 +44,7 @@ def test_heartbeat_do_backtest_le_o_schema_real_do_predictor_ops(tmp_path, monke
     monkeypatch.setenv("PREDICTOR_OPS_STATE_DIR", str(tmp_path))
     ok = JobConfig(
         id="cripto-backtest",
-        command=["python3", "-c", "import sys; sys.exit(0)"],
+        command=[sys.executable, "-c", "import sys; sys.exit(0)"],
         timeout_seconds=10,
         heartbeat_interval_seconds=0.05,
         runtime={"root": tmp_path, "lock_stale_after_seconds": 30},
