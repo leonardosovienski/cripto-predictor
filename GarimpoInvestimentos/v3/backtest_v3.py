@@ -67,8 +67,8 @@ from predictor_core.stats import (
     spearman_block_ci,
 )
 
-from GarimpoInvestimentos.core.paths import DATA_DIR
 from GarimpoInvestimentos.analyzers.trials import TRIALS_PATH, register_trial
+from GarimpoInvestimentos.core.paths import DATA_DIR
 from GarimpoInvestimentos.v3.collectors.funding_collector import load_funding_csv
 from GarimpoInvestimentos.v3.collectors.oi_collector import load_oi_csv
 from GarimpoInvestimentos.v3.collectors.spot_collector import load_spot_csv
