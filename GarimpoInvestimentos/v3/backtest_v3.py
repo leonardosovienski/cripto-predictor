@@ -73,6 +73,7 @@ from GarimpoInvestimentos.v3.collectors.funding_collector import load_funding_cs
 from GarimpoInvestimentos.v3.collectors.oi_collector import load_oi_csv
 from GarimpoInvestimentos.v3.collectors.spot_collector import load_spot_csv
 from GarimpoInvestimentos.v3.costs import CostModel
+from GarimpoInvestimentos.v3.economic_gate import decide_cost_aware, estimate_edge
 from GarimpoInvestimentos.v3.feature_builder import (
     build_feature_vectors,
     build_oi_index,
@@ -105,6 +106,8 @@ _SPOT_CANDLE_MS = 3_600_000
 _DEFAULT_SLIPPAGE_BPS = 5
 _DEFAULT_TAKER_FEE_BPS = 10  # taker por perna (Risco 4 — custos; ver v3/costs.py)
 _DEFAULT_HORIZON_HOURS = 24
+_DEFAULT_EDGE_CALIBRATION_SAMPLE = 20
+_DEFAULT_MINIMUM_NET_EDGE = 0.0
 
 _GO_PSR_THRESHOLD = 0.80
 _GO_MAX_DD_THRESHOLD = 0.20  # 20%
@@ -147,6 +150,9 @@ class FoldResult:
     verdict: str  # "GO" / "NO-GO" / "INSUFFICIENT_DATA"
     sortino: float = 0.0
     calmar: float = 0.0
+    n_executed: int = 0
+    edge_calibration_n_long: int = 0
+    edge_calibration_n_short: int = 0
 
 
 @dataclass
@@ -177,6 +183,9 @@ class WFAResult:
     # mesmo viés de MaxDD subestimado.
     aggregate_sortino: float = 0.0
     aggregate_calmar: float = 0.0
+    cost_aware_filter: bool = False
+    minimum_edge_calibration_sample: int = _DEFAULT_EDGE_CALIBRATION_SAMPLE
+    minimum_net_edge: float = _DEFAULT_MINIMUM_NET_EDGE
 
 
 @dataclass
@@ -445,6 +454,9 @@ def run_wfa(
     take_profit_bps: float = _DEFAULT_TAKE_PROFIT_BPS,
     fr_zscore_threshold: float = _SIGNAL_FR_ZSCORE_THRESHOLD,
     min_regime_confidence: float = _SIGNAL_MIN_REGIME_CONFIDENCE,
+    cost_aware_filter: bool = False,
+    minimum_edge_calibration_sample: int = _DEFAULT_EDGE_CALIBRATION_SAMPLE,
+    minimum_net_edge: float = _DEFAULT_MINIMUM_NET_EDGE,
 ) -> WFAResult:
     """
     Executa Walk Forward Analysis sobre os dados locais coletados pelo pipeline.
@@ -458,6 +470,10 @@ def run_wfa(
     comportamento idêntico ao anterior — saída só no horizonte fixo). Não
     afetam o IC (que mede o sinal cru contra o retorno do horizonte cheio),
     só o P&L simulado — é gestão de risco, não recalibração de sinal.
+
+    cost_aware_filter: calibra o retorno signed somente em sinais IS maduros e
+        recusa no OOS quando o limite inferior não supera fee, slippage e
+        funding observável. Não usa retorno ou threshold do próprio OOS.
     """
     sym_dir = _DATA_ROOT / symbol
 
@@ -599,7 +615,40 @@ def run_wfa(
         fold_gross: list[float] = []
         fold_trades: list[_Trade] = []
         n_active = 0
+        n_executed = 0
         costs = CostModel(taker_fee_bps=taker_fee_bps, slippage_bps=slippage_bps)
+
+        # Calibração econômica estritamente IS. O retorno precisa amadurecer
+        # antes do fim da janela IS; sinais no purge/OOS nunca entram aqui.
+        calibration_returns: dict[int, list[float]] = {1: [], -1: []}
+        if cost_aware_filter:
+            for fv, regime in zip(infer_features, regime_all):
+                if not is_start_ms <= fv.timestamp_exchange_ms < is_end_ms:
+                    continue
+                if fv.timestamp_exchange_ms + horizon_hours * _SPOT_CANDLE_MS > is_end_ms:
+                    continue
+                calibration_signal = generate_signal(
+                    fv,
+                    regime,
+                    horizon_hours=horizon_hours,
+                    fr_zscore_threshold=fr_zscore_threshold,
+                    min_regime_confidence=min_regime_confidence,
+                )
+                if not calibration_signal.active or calibration_signal.direction == 0:
+                    continue
+                calibration_fwd = _find_spot_return(
+                    fv.timestamp_exchange_ms, horizon_hours, spot_ti
+                )
+                if calibration_fwd is not None:
+                    calibration_returns[calibration_signal.direction].append(
+                        calibration_signal.direction * calibration_fwd
+                    )
+        edge_estimates = {
+            direction: estimate_edge(
+                values, minimum_sample=minimum_edge_calibration_sample
+            )
+            for direction, values in calibration_returns.items()
+        }
 
         for fv, regime in oos_pairs:
             signal = generate_signal(
@@ -616,6 +665,21 @@ def run_wfa(
 
             if signal.active and signal.direction != 0:
                 n_active += 1
+                if cost_aware_filter:
+                    economic = decide_cost_aware(
+                        edge_estimates[signal.direction],
+                        direction=signal.direction,
+                        funding_rate=fv.funding_rate_raw,
+                        horizon_hours=horizon_hours,
+                        costs=costs,
+                        minimum_net_edge=minimum_net_edge,
+                    )
+                    if economic.action != "SHADOW_TRADE":
+                        fold_gross.append(0.0)
+                        fold_pnl.append(0.0)
+                        fold_ic_pairs.append((signal.strength * signal.direction, fwd))
+                        continue
+                n_executed += 1
                 position = signal.direction * signal.strength * kelly_fraction
 
                 # P&L usa o retorno com barreiras (SL/TP corta a cauda quando
@@ -700,6 +764,9 @@ def run_wfa(
             verdict=verdict,
             sortino=fold_sortino,
             calmar=fold_calmar,
+            n_executed=n_executed,
+            edge_calibration_n_long=len(calibration_returns[1]),
+            edge_calibration_n_short=len(calibration_returns[-1]),
         )
         folds.append(fold_result)
         all_oos_returns.extend(fold_pnl)
@@ -805,6 +872,9 @@ def run_wfa(
         taker_fee_bps=taker_fee_bps,
         stop_loss_bps=stop_loss_bps,
         take_profit_bps=take_profit_bps,
+        cost_aware_filter=cost_aware_filter,
+        minimum_edge_calibration_sample=minimum_edge_calibration_sample,
+        minimum_net_edge=minimum_net_edge,
     )
 
     _log_summary(result)
@@ -821,6 +891,9 @@ def run_wfa(
                 "kelly_fraction": kelly_fraction,
                 "taker_fee_bps": taker_fee_bps,
                 "slippage_bps": slippage_bps,
+                "cost_aware_filter": cost_aware_filter,
+                "minimum_edge_calibration_sample": minimum_edge_calibration_sample,
+                "minimum_net_edge": minimum_net_edge,
                 "net": all_oos_returns,
                 "gross": all_gross_returns,
             }
@@ -874,6 +947,12 @@ def _log_summary(r: WFAResult) -> None:
         r.net_ci_lower,
         r.net_ci_upper,
         "  — cruza zero" if r.net_ci_lower <= 0 <= r.net_ci_upper else "",
+    )
+    logger.info(
+        "Gate econômico : %s | min_n=%d | edge líquido mínimo=%.4f",
+        "ATIVO" if r.cost_aware_filter else "DESATIVADO",
+        r.minimum_edge_calibration_sample,
+        r.minimum_net_edge,
     )
     logger.info("─" * 60)
     logger.info("VEREDICTO: %s", r.final_verdict)
@@ -1153,6 +1232,9 @@ def _emit_result(r: WFAResult) -> None:
             "psr_threshold": _GO_PSR_THRESHOLD,
             "max_dd_threshold": _GO_MAX_DD_THRESHOLD,
             "fr_window": r.fr_window,
+            "cost_aware_filter": r.cost_aware_filter,
+            "minimum_edge_calibration_sample": r.minimum_edge_calibration_sample,
+            "minimum_net_edge": r.minimum_net_edge,
         },
     )
 
@@ -1217,6 +1299,24 @@ def _main() -> None:
         help="Take-profit intratrade em bps, na direção do sinal (default: 0 = desligado).",
     )
     parser.add_argument(
+        "--cost-aware-filter",
+        action="store_true",
+        help=("Ativa a trava econômica experimental calibrada somente no IS; "
+              "desligada por padrão para preservar o backtest V3 congelado."),
+    )
+    parser.add_argument(
+        "--minimum-edge-calibration-sample",
+        type=int,
+        default=_DEFAULT_EDGE_CALIBRATION_SAMPLE,
+        help="Mínimo de sinais IS maduros por direção para permitir trade OOS (default: 20).",
+    )
+    parser.add_argument(
+        "--minimum-net-edge-bps",
+        type=float,
+        default=0.0,
+        help="Margem líquida conservadora adicional exigida, em bps (default: 0).",
+    )
+    parser.add_argument(
         "--fr-thresholds",
         type=float,
         nargs="+",
@@ -1278,6 +1378,9 @@ def _main() -> None:
                     kelly_fraction=args.kelly_fraction,
                     stop_loss_bps=args.stop_loss_bps,
                     take_profit_bps=args.take_profit_bps,
+                    cost_aware_filter=args.cost_aware_filter,
+                    minimum_edge_calibration_sample=args.minimum_edge_calibration_sample,
+                    minimum_net_edge=args.minimum_net_edge_bps / 10_000.0,
                 )
         except Exception as exc:
             logger.error("backtest_v3 [%s]: ERRO — %s", symbol, exc)

@@ -1,5 +1,11 @@
 # cripto-predictor (GarimpoInvestimentos + DPL)
 
+> **Atualização econômica — 2026-09-01.** A V3 possui uma trava experimental
+> fee+slippage+funding calibrada apenas em sinais in-sample já maturados. Ela é
+> deliberadamente opt-in (`--cost-aware-filter`) para não reescrever os backtests
+> congelados. Uma aprovação produz somente `SHADOW_TRADE`; capital continua
+> bloqueado. Detalhes em `HANDOFF.md` e `GarimpoInvestimentos/v3/economic_gate.py`.
+
 > ## Estado do incidente de segurança — `ROTATED_CONFIRMED_BY_OWNER_2026-08-19`
 >
 > Uma credencial SerpAPI apareceu em texto claro em 5 logs históricos de

@@ -1,5 +1,19 @@
 # HANDOFF — GarimpoInvestimentos (Fase 1 + melhorias)
 
+> **Estado técnico corrente — 2026-09-01:** pacote `GarimpoInvestimentos`, Core
+> 3.0.x e Ops 4.0.x por wheels. Referências posteriores a vendors, Core 2.x,
+> Ops 3.x, ambientes antigos ou contagens históricas permanecem apenas como
+> registro da data em que foram escritas.
+
+> ## Trava econômica V3 opt-in (2026-09-01)
+>
+> Adicionado gate que estima retorno signed somente em sinais IS cujo horizonte
+> já maturou e recusa trades OOS quando o limite inferior não cobre fee,
+> slippage, funding observável e hurdle. A revisão cross-domain corrigiu uma
+> incompatibilidade: `cost_aware_filter` agora é **False por padrão** e só liga
+> via `--cost-aware-filter`, preservando os resultados congelados do V3. Saídas
+> aprovadas continuam `SHADOW_TRADE` e `capital_enabled=False`.
+
 > ## ⚠️ ERRATA 2026-08-19 — leia antes dos adendos abaixo
 >
 > Este documento é um **registro histórico da era pré-DPL** e não é reescrito: os
