@@ -59,6 +59,7 @@ TARGET_FIELDS = [
     "notes",
 ]
 
+
 # Mapeamento explícito e conservador legado -> alvo. Só mapeia quando o campo
 # legado responde inequivocamente à pergunta do campo alvo; tudo o mais fica
 # UNKNOWN.
