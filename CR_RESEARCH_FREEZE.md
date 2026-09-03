@@ -97,7 +97,33 @@ preservation_verification:
   #      verificado, backupeado e testado nesta auditoria.
   # Conclusão: não existe banco de produção paralelo/escondido. O
   # feature_store.db verificado é o único real.
-  operational_cost_h6_binance_collection: UNKNOWN  # mesma limitação — requer acesso a billing/infra reais, não verificável do sandbox
+  operational_cost_h6_binance_collection:
+    monetary_cost_usd_per_month: 0.00
+    # Contagem real, não estimativa por cima, derivada de
+    # observation_plans/binance_funding_oi_v1.yaml + collectors/*.py:
+    #   funding_rate: cadence_seconds=28800 (8h) x 2 instrumentos = 6 req/dia
+    #   open_interest: cadence_seconds=3600 (1h) x 2 instrumentos = 48 req/dia
+    #   total: ~54 req/dia no endpoint público fapi.binance.com
+    # GarimpoInvestimentos/v3/collectors/funding_collector.py:37 documenta
+    # explicitamente: "Binance free tier (2400 req/min para dados públicos)"
+    # — sem API key, sem tier pago. 54 req/dia é ~0.04% do limite gratuito
+    # de 2400/min; não existe cobrança da Binance nesse volume.
+    infra_cost: none_dedicated
+    # A máquina onde roda (C:\predictor\prod) é PC pessoal do dono (Windows,
+    # apps pessoais instalados — não é VPS/cloud dedicada). Nenhum custo de
+    # hospedagem é atribuível especificamente a esta coleta.
+    unquantified: [eletricidade marginal, uptime real do PC]
+    # Não verificável sem dados que só o dono tem (fatura de energia,
+    # disponibilidade real da máquina) — não fabricado.
+    non_monetary_risk: >
+      Custo real não é financeiro, é de disponibilidade: se o PC estiver
+      desligado no horário agendado, a coleta simplesmente não roda naquele
+      ciclo (mesmo risco já documentado para os backups do feature_store.db).
+    fully_automatic: true
+    financial_cost: negligible
+    security_risk: low
+    maintenance_burden: negligible
+    conclusion: satisfaz a regra do bloco 17 (custo ≈ zero) — mantido como coleta passiva
 
 sweep_count_audit:
   # Red-team pass (bloco 29, "Trials — algum sweep não foi contado?").
