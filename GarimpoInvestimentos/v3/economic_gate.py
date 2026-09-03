@@ -70,8 +70,12 @@ def decide_cost_aware(
     minimum_net_edge: float = 0.0,
 ) -> EconomicDecision:
     """Return TRADE only if conservative post-cost return clears the hurdle."""
-    if (direction not in {-1, 1} or horizon_hours <= 0 or minimum_net_edge < 0
-            or not math.isfinite(float(funding_rate))):
+    if (
+        direction not in {-1, 1}
+        or horizon_hours <= 0
+        or minimum_net_edge < 0
+        or not math.isfinite(float(funding_rate))
+    ):
         raise ValueError("invalid economic decision inputs")
     friction = costs.friction(float(direction))
     funding_pnl = costs.funding_pnl(float(direction), float(funding_rate), horizon_hours)

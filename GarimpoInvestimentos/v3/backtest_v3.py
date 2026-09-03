@@ -644,9 +644,7 @@ def run_wfa(
                         calibration_signal.direction * calibration_fwd
                     )
         edge_estimates = {
-            direction: estimate_edge(
-                values, minimum_sample=minimum_edge_calibration_sample
-            )
+            direction: estimate_edge(values, minimum_sample=minimum_edge_calibration_sample)
             for direction, values in calibration_returns.items()
         }
 
@@ -1301,8 +1299,10 @@ def _main() -> None:
     parser.add_argument(
         "--cost-aware-filter",
         action="store_true",
-        help=("Ativa a trava econômica experimental calibrada somente no IS; "
-              "desligada por padrão para preservar o backtest V3 congelado."),
+        help=(
+            "Ativa a trava econômica experimental calibrada somente no IS; "
+            "desligada por padrão para preservar o backtest V3 congelado."
+        ),
     )
     parser.add_argument(
         "--minimum-edge-calibration-sample",

@@ -1,5 +1,6 @@
-import pytest
 import inspect
+
+import pytest
 
 from GarimpoInvestimentos.v3 import backtest_v3
 from GarimpoInvestimentos.v3.costs import CostModel
