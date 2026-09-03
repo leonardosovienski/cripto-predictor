@@ -48,16 +48,30 @@ preservation_verification:
   #    recente e validada ao vivo do mesmo fix (2026-08-31) — o trabalho
   #    local ficou redundante, não foi perdido nem precisou de PR novo.
   #
-  # Recorrência: nenhuma automação foi criada nesta rodada para repetir o
-  # backup periodicamente — os dois snapshots acima são um ponto único no
-  # tempo. scripts/register_task_backup.ps1 já existe no repo para agendar
-  # isso via Task Scheduler do Windows; confirmar se já está registrado
-  # nessa máquina é o único item ainda não verificado.
+  # Recorrência (fechada em 2026-09-03, mesma sessão): duas tarefas
+  # registradas no Task Scheduler dessa máquina, ambas testadas com
+  # `Start-ScheduledTask` (não apenas registradas — disparadas manualmente e
+  # confirmadas antes de considerar OK):
+  #   1. cripto-backup-featurestore (scripts/register_task_backup.ps1) —
+  #      domingos 20:00, roda `python -m GarimpoInvestimentos.jobs backup`
+  #      (create --output-root, destino DATA_DIR/backups, local). Testada:
+  #      LastTaskResult=0.
+  #   2. cripto-backup-mirror-onedrive (criada ad-hoc nesta sessão, robocopy
+  #      /MIR de DATA_DIR/backups para OneDrive\cripto-predictor-backups) —
+  #      domingos 20:30, 30 min depois da tarefa 1. Testada duas vezes:
+  #      primeira rodada copiou (LastTaskResult=1, que no robocopy É sucesso
+  #      — "arquivos copiados", não erro; só 0 = "nada novo" e >=8 seriam
+  #      erro real), segunda rodada confirmou nada pendente (LastTaskResult=0).
+  #      Confirmado por Get-ChildItem: as pastas fs-2026-09-03-034452 e
+  #      fs-2026-09-03-034723 (geradas pela tarefa 1) já apareceram
+  #      espelhadas no OneDrive depois da tarefa 2 rodar.
+  # Backup agora é automático E offsite, não apenas um snapshot manual pontual.
   checked_at: "2026-09-03"
   resolved_production_path: "C:\\predictor\\data\\output\\feature_store.db"
   sandbox_has_real_db: false  # continua false no sandbox de auditoria; true na máquina real
   offsite_backup_verified: true
   offsite_backup_sha256: "101303bc4d6f0b7140d4f8f01b2100ebabfa2c92eb3b2dee4d8e19e1923d2f3b"
+  offsite_backup_recurrence: automated  # cripto-backup-featurestore + cripto-backup-mirror-onedrive, testadas e Ready
   operational_cost_h6_binance_collection: UNKNOWN  # mesma limitação — requer acesso a billing/infra reais, não verificável do sandbox
 
 harness_attestation:
