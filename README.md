@@ -1,5 +1,15 @@
 # cripto-predictor (GarimpoInvestimentos + DPL)
 
+> ## 🧊 Projeto cientificamente congelado — comece por `CR_FREEZE_INDEX.md`
+>
+> Este repositório passou por um congelamento científico completo
+> (preservação, harness, evidence registry, componentes reutilizáveis).
+> **Antes de mexer em qualquer coisa aqui — humano ou IA —, leia
+> [`CR_FREEZE_INDEX.md`](CR_FREEZE_INDEX.md)**, o índice de onde está cada
+> parte da auditoria, e depois [`CR_RESEARCH_FREEZE.md`](CR_RESEARCH_FREEZE.md),
+> o manifesto completo. Não reabra hipótese fechada nem crie feature nova sem
+> ler os dois primeiro.
+
 > **Atualização econômica — 2026-09-01.** A V3 possui uma trava experimental
 > fee+slippage+funding calibrada apenas em sinais in-sample já maturados. Ela é
 > deliberadamente opt-in (`--cost-aware-filter`) para não reescrever os backtests
