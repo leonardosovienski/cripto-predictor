@@ -165,9 +165,13 @@ reais são aplicados (CostModel calibrado).
 - **limitations:** poder de 23% (rho=0.2) e 47% (rho=0.3) em n=84 — mesmo
   cruzando o gate de 30, a amostra não é adequada para descartar um efeito
   real pequeno-a-moderado. Distinguir isso de refutação é exatamente o que o
-  bloco 16 do congelamento científico pede. Custo operacional de manter a
-  coleta viva continua não quantificado (fora de alcance desta auditoria —
-  requer acesso a billing/infra real).
+  bloco 16 do congelamento científico pede. Custo operacional da coleta
+  Binance funding/OI (relacionada, não da própria H6) foi quantificado
+  (`CR_RESEARCH_FREEZE.md`, `operational_cost_h6_binance_collection`):
+  ~54 req/dia no endpoint gratuito da Binance (0.04% do limite de
+  2400/min), sem tier pago, sem infra dedicada — custo monetário $0/mês.
+  Ainda não quantificado: eletricidade marginal e uptime real do PC do
+  dono (fora de alcance sem dados que só ele tem).
 - **new_evidence?:** sim — primeira leitura real com n>=30 desde o início da
   coleta. Bloqueio anterior (rate limit não-autenticado do CoinGecko em
   `analyzers/backtest.py:_fetch_price`) resolvido nesta sessão via
