@@ -114,9 +114,12 @@ construção (não apenas por convenção).
   escopo aqui.
 - **new_evidence?:** sim — esta auditoria (2026-09-03) é a primeira a rodar
   os testes de verdade em vez de só ler o código.
-- **decision:** classificado `REUSE` no inventário de componentes — candidato
-  a promoção ao core caso surja um segundo consumidor real fora do domínio
-  cripto.
+- **decision:** classificado `KEEP_DOMAIN_OWNED` no inventário de componentes
+  (ver `component_inventory` em `CR_RESEARCH_FREEZE.md`) — nenhum segundo
+  consumidor real foi confirmado fora deste repositório, então a regra de
+  promoção do bloco 22 não está satisfeita ainda. Candidato natural a `REUSE`
+  se/quando um segundo domínio adotar o mesmo mecanismo — mas isso não foi
+  verificado, só é plausível dado o desenho genérico do componente.
 - **reopen_conditions:** N/A (claim de suporte, não hipótese fechada).
 
 ---

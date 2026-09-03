@@ -99,6 +99,25 @@ preservation_verification:
   # feature_store.db verificado é o único real.
   operational_cost_h6_binance_collection: UNKNOWN  # mesma limitação — requer acesso a billing/infra reais, não verificável do sandbox
 
+sweep_count_audit:
+  # Red-team pass (bloco 29, "Trials — algum sweep não foi contado?").
+  # docs/ARQUITETURA_CONSOLIDADA.md documenta um kelly-sweep de 4 avaliações
+  # (gate de drawdown) por trás do GO histórico de 27/06 (PSR 0.909) da
+  # família H1 — esse sweep NÃO tem entrada própria em trials.json (7
+  # entradas totais, nenhuma nomeada "kelly-sweep").
+  # Risco avaliado: BAIXO. O GO de 27/06 já foi invalidado pelo veredito
+  # oficial NO-GO de 02/07 (com custos completos) — viés de seleção infla
+  # resultado aparentemente POSITIVO, e o resultado que sobreviveu é
+  # negativo. Não contar o sweep não gera falso-positivo aqui.
+  # Ação: NÃO foi criada entrada nova em trials.json para o sweep — isso
+  # exigiria reconstruir os 4 valores de kelly testados sem registro formal
+  # original, o que seria inventar proveniência, não preservá-la. Registrado
+  # aqui como lacuna de contagem conhecida, não corrigido retroativamente.
+  kelly_sweep_evaluations_undocumented_as_trial: 4
+  associated_result: "GO 27/06 pré-custos, já superado por NO-GO oficial 02/07"
+  false_positive_risk: low
+  correction_applied: none  # decisão deliberada — ver nota acima
+
 harness_attestation:
   # scripts/attest_harness.py rodado de verdade em 2026-09-03 (não editado manualmente).
   # O atestado anterior (core_version=2.3.0, passed_at=2026-08-21) estava expirado
@@ -172,6 +191,75 @@ stopped_hypotheses:
     result: "Sharpe −0.5733"
   frozen_families: [funding_oi_hmm_v3]
 
+component_inventory:
+  # Bloco 21-22 do congelamento científico. Regra de promoção (bloco 22):
+  # REUSE só quando second_real_consumer=yes ou justificativa arquitetural
+  # concreta; caso contrário KEEP_DOMAIN_OWNED, mesmo que o componente seja
+  # tecnicamente genérico o bastante para servir outro domínio.
+  #
+  # Correção 2026-09-03: um red-team pass (bloco 29) encontrou que DPL,
+  # hash_chain, PBO e gate_power tinham sido rotulados REUSE em respostas de
+  # chat anteriores desta sessão SEM nenhum segundo consumidor real
+  # confirmado — violação direta da própria regra do bloco 22. Corrigido
+  # para KEEP_DOMAIN_OWNED nos quatro; nenhum tem consumer_count > 1
+  # verificado.
+  - component: GarimpoInvestimentos/dpl/* (Data Provenance Layer bitemporal)
+    tested: true
+    domain_specific: false  # mecanismo é genérico, não amarrado a cripto
+    consumer_count: 1
+    second_real_consumer: false
+    decision: KEEP_DOMAIN_OWNED
+    note: candidato natural a REUSE se outro domínio adotar o mesmo mecanismo; não verificado
+  - component: GarimpoInvestimentos/dpl/hash_chain.py
+    tested: true
+    domain_specific: false
+    consumer_count: 1
+    second_real_consumer: false
+    decision: KEEP_DOMAIN_OWNED
+  - component: GarimpoInvestimentos/analyzers/pbo.py (PBO/CSCV)
+    tested: true
+    domain_specific: false
+    consumer_count: 1
+    second_real_consumer: false
+    decision: KEEP_DOMAIN_OWNED
+  - component: GarimpoInvestimentos/analyzers/gate_power.py
+    tested: true
+    domain_specific: false
+    consumer_count: 1
+    second_real_consumer: false
+    decision: KEEP_DOMAIN_OWNED
+  - component: GarimpoInvestimentos/v3/costs.py (CostModel perp)
+    tested: true
+    domain_specific: true  # funding rate só existe em perp
+    consumer_count: 1
+    second_real_consumer: false
+    decision: KEEP_DOMAIN_OWNED
+  - component: GarimpoInvestimentos/trading/cost_policy.py
+    tested: true
+    domain_specific: false
+    consumer_count: 1
+    second_real_consumer: false
+    decision: KEEP_DOMAIN_OWNED
+  - component: scripts/attest_harness.py
+    tested: true
+    domain_specific: true  # juízes específicos (V3/Fase1), padrão é genérico
+    consumer_count: 1
+    second_real_consumer: false
+    decision: KEEP_DOMAIN_OWNED
+  - component: GarimpoInvestimentos/trials.json (schema legado)
+    tested: false
+    domain_specific: true
+    consumer_count: 1
+    second_real_consumer: false
+    decision: ARCHIVE
+  - component: GarimpoInvestimentos/trading/costs.py (walk-the-book spot)
+    tested: true
+    domain_specific: true
+    consumer_count: 1
+    second_real_consumer: false
+    decision: ARCHIVE
+    note: NAO CALIBRADO, bloqueado por UncalibratedCostModel
+
 preserved_components:
   - GarimpoInvestimentos/dpl/* (Data Provenance Layer bitemporal — ADR-014)
   - GarimpoInvestimentos/dpl/hash_chain.py (cadeia SHA-256 tamper-evident do predictions_archive)
@@ -187,6 +275,7 @@ preserved_components:
   - docs/TRADING_LAYER_INVENTORY.md (classificação módulo a módulo de trading/)
   - scripts/check_reopen_dossier.py (gate técnico do bloco 19 — bloqueia reabertura de frozen_families sem dossiê completo)
   - tests/test_v3_wfa_purge_contract.py (prova por código o gap IS->PURGE->OOS do WFA)
+  - tests/test_permutation_placebo_control.py (bloco 11 — controle de permutação sobre o juiz da Fase 1, faltava)
 
 archived_components:
   - GarimpoInvestimentos/trials.json (schema legado; ver seção Trial Migration — proposta migração não-destrutiva)
