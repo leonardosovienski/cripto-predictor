@@ -7,8 +7,33 @@
 ```yaml
 schema_version: cr-research-freeze/1
 generated_at: 2026-09-02
+updated_at: 2026-09-03  # segunda camada: verificação executável (não apenas leitura de código)
 based_on_charter: charters/scientific_state.json (as_of_commit 9949b510586cafe08c11a4733c19ebf30edf253c)
 core_version_pinned: predictor-core==3.0.0 (pyproject.toml + uv.lock, consistentes)
+
+harness_attestation:
+  # scripts/attest_harness.py rodado de verdade em 2026-09-03 (não editado manualmente).
+  # O atestado anterior (core_version=2.3.0, passed_at=2026-08-21) estava expirado
+  # (expires_at=2026-08-28) e contra Core desatualizado — trocado por reemissão real.
+  v3_judge:
+    metric: psr
+    core_version: "3.0.0"
+    passed_at: "2026-09-03T00:45:53Z"
+    expires_at: "2026-09-10T00:45:53Z"
+    positive_control: GO (sinal plantado detectado — sensibilidade OK)
+    negative_control: NO-GO em ruído puro (especificidade OK)
+  phase1_judge:
+    metric: spearman_ic
+    core_version: "3.0.0"
+    passed_at: "2026-09-03T00:45:43Z"
+    expires_at: "2026-09-10T00:45:43Z"
+    positive_control: VALIDADO (sinal plantado detectado)
+    negative_control: RUIDO rejeitado (IC95 cruza zero)
+  test_suite: "853 passed, 0 failed (uv run pytest tests/, all-extras, 2026-09-03)"
+  # inclui: hash chain (tamper/append), DPL bitemporal (published_at>=timestamp,
+  # rejeição de leitura antes do cutoff), PBO/CSCV (ruído->PBO alto, skill real->PBO baixo),
+  # gate_power (UNDERPOWERED vs REFUTED distintos), no-lookahead do HMM V3.
+  secret_scan: "scripts/scan_secrets.py — 0 findings (2026-09-03)"
 
 active_hypotheses: []
 # Nenhuma hipótese está ACTIVE/PENDING_SAMPLE para capital ou shadow.
