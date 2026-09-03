@@ -1,13 +1,23 @@
 {
   "fonte_esperada": "dpl:fallback",
   "gate": 30,
-  "gate_atingido": false,
-  "ic_lower": null,
-  "ic_upper": null,
-  "n": 0,
-  "observed_at": "2026-08-24T07:01:23.302044+00:00",
-  "poder": null,
-  "rho": null,
+  "gate_atingido": true,
+  "ic_lower": -0.23117222203573654,
+  "ic_upper": 0.12942880780115093,
+  "n": 84,
+  "observed_at": "2026-09-03T05:55:26.867951+00:00",
+  "poder": {
+    "fonte": "docs/HYPOTHESES.md B12 (tabela estatica, nao recalculada em runtime)",
+    "n_referencia": 60,
+    "poder": {
+      "0.0": 0.06,
+      "0.1": 0.113,
+      "0.2": 0.233,
+      "0.3": 0.473,
+      "0.5": 0.933
+    }
+  },
+  "rho": -0.05670370717295617,
   "trial": "h6-sinal-invertido-d7",
-  "veredito": "aguardando n>=30 (n=0)"
+  "veredito": "RUIDO (IC cruza 0)"
 }

@@ -150,26 +150,36 @@ reais são aplicados (CostModel calibrado).
 ## CLAIM-CR-H6
 **Descrição:** Sinal invertido D+7 (H6) tem edge preditivo.
 
-- **state:** PENDING_SAMPLE (não refutado nem confirmado — coleta ainda
-  imatura)
-- **L:** UNKNOWN (n insuficiente para qualquer leitura de força de efeito)
-- **Q:** UNKNOWN — depende de `n >= 30` (H6_MIN_N); última leitura commitada
-  tinha n=0 maturado em D+7
-- **evidence:** `charters/scientific_state.json` — status
-  `COLLECTION_ONLY_IMMATURE`. Definição congelada e verificável via hash
-  (`docs/H6_REFREEZE_2026-08-27.md`,
-  `python -m scripts.freeze_h6_definition --check`).
-- **limitations:** estado atual real de `n` não verificável sem rodar o
-  pipeline de produção (fora de escopo desta auditoria de preservação); custo
-  operacional de manter a coleta viva não quantificado.
-- **new_evidence?:** N/A — ainda em coleta, nenhum veredito pendente foi
-  emitido.
-- **decision:** `CR_PASSIVE_COLLECTION = ENABLED` para H6 — segue
-  `COLLECTION_ONLY`, não autoriza capital/shadow/GO. Nenhuma engenharia nova
-  para aumentar poder é permitida (bloco 18).
-- **reopen_conditions:** N/A — não é uma hipótese fechada, é uma observação
-  passiva em curso. Quando `n >= 30`, isso é evidence update dentro do
-  protocolo já registrado, não reabertura.
+- **state:** INCONCLUSIVE_DUE_TO_POWER (gate operacional de n>=30 atingido em
+  2026-09-03 com n=84, mas poder=23% para rho=0.2 na mesma amostra — não é
+  REFUTED nem VALIDATED sob o esquema de 3 estados de
+  `docs/H6_REFREEZE_2026-08-27.md`)
+- **L:** fraco (rho=-0.057, IC95%[-0.231, +0.129] cruza zero)
+- **Q:** média — n=84 real, prospectivo, mas subdimensionado para efeitos
+  pequenos-a-moderados (tabela de poder do próprio `h6_status.json`)
+- **evidence:** `GarimpoInvestimentos/h6_status.json` — rodada real de
+  `quality_snapshot.py` em 2026-09-03T05:55:26Z na máquina de produção
+  (`C:\predictor\prod`), n=84, gate_atingido=true, veredito "RUIDO (IC cruza
+  0)". `charters/scientific_state.json` continua `COLLECTION_ONLY_IMMATURE`
+  — não alterado, ver decision abaixo.
+- **limitations:** poder de 23% (rho=0.2) e 47% (rho=0.3) em n=84 — mesmo
+  cruzando o gate de 30, a amostra não é adequada para descartar um efeito
+  real pequeno-a-moderado. Distinguir isso de refutação é exatamente o que o
+  bloco 16 do congelamento científico pede. Custo operacional de manter a
+  coleta viva continua não quantificado (fora de alcance desta auditoria —
+  requer acesso a billing/infra real).
+- **new_evidence?:** sim — primeira leitura real com n>=30 desde o início da
+  coleta. Bloqueio anterior (rate limit não-autenticado do CoinGecko em
+  `analyzers/backtest.py:_fetch_price`) resolvido nesta sessão via
+  `COINGECKO_API_KEY` como variável de ambiente real do Windows (mesma classe
+  de bug do `DATA_DIR` — lida via `os.getenv()` direto, não pelo `.env`).
+- **decision:** `CR_PASSIVE_COLLECTION = ENABLED` para H6 — continua
+  `COLLECTION_ONLY`, charter não alterado, não autoriza capital/shadow/GO.
+  Resultado INCONCLUSIVE não é motivo para engenharia nova de poder (bloco
+  18) — é só registro do estado real observado.
+- **reopen_conditions:** N/A — não é uma hipótese fechada, é observação
+  passiva em curso. Este resultado é um evidence update dentro do protocolo
+  já registrado, não reabertura nem fechamento.
 
 ---
 
