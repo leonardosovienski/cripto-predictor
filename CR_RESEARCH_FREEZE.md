@@ -72,6 +72,31 @@ preservation_verification:
   offsite_backup_verified: true
   offsite_backup_sha256: "101303bc4d6f0b7140d4f8f01b2100ebabfa2c92eb3b2dee4d8e19e1923d2f3b"
   offsite_backup_recurrence: automated  # cripto-backup-featurestore + cripto-backup-mirror-onedrive, testadas e Ready
+  #
+  # Investigação adicional (2026-09-03, mesmo dia): confirmado que a máquina
+  # tem MÚLTIPLOS diretórios do projeto (checkout de auditoria em
+  # C:\Users\Superleo13\cripto-predictor; deploy real de produção em
+  # C:\predictor\prod\GarimpoInvestimentos, com seu próprio .venv e .env;
+  # e um caminho legado C:\Claude-projetos\...\previsao-cripto referenciado
+  # só pela tarefa `GarimpoInvestimentos-ColetaDiaria`, que está Disabled —
+  # provavelmente superada por GarimpoFase1/GarimpoV3Daily, que estão Ready
+  # e apontam para C:\predictor\prod). O .env de produção declara
+  # `DATA_DIR=data` (relativo), o que levantou a hipótese de um segundo
+  # feature_store.db em C:\predictor\prod\data. Investigado e descartado
+  # com evidência, não suposição:
+  #   1. C:\predictor\prod\data\output\feature_store.db NÃO existe
+  #      (Get-Item retornou vazio).
+  #   2. GarimpoInvestimentos/core/paths.py lê DATA_DIR via os.getenv()
+  #      direto — não via o carregamento de .env do pydantic-settings usado
+  #      em config.py — então o DATA_DIR=data do arquivo .env nunca chega a
+  #      ser efetivamente lido por essa função; é configuração mortas/sem
+  #      efeito, não um bug ativo.
+  #   3. Confirmado que existe uma variável de ambiente real do Windows
+  #      (User e Machine) DATA_DIR=C:\predictor\data — essa sim é a que
+  #      core/paths.py de fato usa, e bate exatamente com o caminho já
+  #      verificado, backupeado e testado nesta auditoria.
+  # Conclusão: não existe banco de produção paralelo/escondido. O
+  # feature_store.db verificado é o único real.
   operational_cost_h6_binance_collection: UNKNOWN  # mesma limitação — requer acesso a billing/infra reais, não verificável do sandbox
 
 harness_attestation:
