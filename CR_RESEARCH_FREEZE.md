@@ -12,32 +12,52 @@ based_on_charter: charters/scientific_state.json (as_of_commit 9949b510586cafe08
 core_version_pinned: predictor-core==3.0.0 (pyproject.toml + uv.lock, consistentes)
 
 preservation_verification:
-  # CR_PRESERVATION = UNKNOWN permanece UNKNOWN por desenho, não por falta de
-  # tentativa. Resolvido nesta rodada (2026-09-03): o caminho real do único
-  # ativo irreversível é resolvido via GarimpoInvestimentos/core/paths.py
-  # (FEATURE_STORE_DB = DATA_DIR/output/feature_store.db, DATA_DIR via
-  # platformdirs/env var). Neste sandbox (checkout git efêmero, sem vínculo
-  # com a máquina de produção): DATA_DIR resolveu para
-  # /root/.local/share/cripto-predictor e FEATURE_STORE_DB.exists() == False —
-  # ou seja, este ambiente nunca teve o banco real, só bancos de teste
-  # descartáveis em /tmp/pytest-of-root/*. Nenhuma variável de ambiente
-  # presente aponta para storage externo. Isto é isolamento por desenho do
-  # sandbox, não evidência de ausência de backup em produção.
+  # CR_PRESERVATION = PASS. Fechado em 2026-09-03 pelo dono do projeto na
+  # máquina de produção real (Windows), com orientação desta sessão de
+  # auditoria — a sessão de auditoria (sandbox Linux efêmero) não tem acesso
+  # a essa máquina; os comandos abaixo foram executados e o output colado
+  # de volta, não fabricados.
   #
-  # AÇÃO PENDENTE (só executável por quem tem acesso à máquina real de
-  # produção, não por uma sessão de auditoria como esta):
-  #   1. Na máquina onde GarimpoInvestimentos roda de verdade, confirmar o
-  #      valor real de DATA_DIR (ou da env var que o platformdirs resolve).
-  #   2. Rodar: python scripts/feature_store_backup.py --verify
-  #      (o script já existe e tem lógica de integrity_check — só falta
-  #      alguém com acesso ao ambiente real executá-lo).
-  #   3. Confirmar se existe alguma cópia offsite (S3/disco separado/outra
-  #      máquina) do backup gerado, ou configurar uma se não existir.
-  #   4. Atualizar este campo com o resultado real (PASS + evidência, ou
-  #      FAIL + plano de remediação).
+  # 1. Caminho real confirmado: DATA_DIR = C:\predictor\data;
+  #    FEATURE_STORE_DB = C:\predictor\data\output\feature_store.db,
+  #    .exists() == True (6 291 456 bytes em 2026-09-03).
+  # 2. Nenhum backup existia antes desta rodada (pasta DATA_DIR/backups
+  #    estava vazia/ausente) — CR_PRESERVATION teria sido FAIL até este
+  #    passo, não apenas UNKNOWN.
+  # 3. Dois backups criados via `scripts/feature_store_backup.py create`,
+  #    destino OneDrive (offsite real — sobrevive a perda física da máquina,
+  #    diferente do disco C: ou de um segundo disco local como E:):
+  #      C:\Users\Superleo13\OneDrive\cripto-predictor-backups\fs-2026-09-03-030150
+  #      C:\Users\Superleo13\OneDrive\cripto-predictor-backups\fs-2026-09-03-000154
+  # 4. Integridade verificada via `scripts/feature_store_backup.py verify`
+  #    contra o primeiro backup — resultado real:
+  #      sha256: 101303bc4d6f0b7140d4f8f01b2100ebabfa2c92eb3b2dee4d8e19e1923d2f3b
+  #      size_bytes: 6291456
+  #      verified: true
+  # 5. Achado colateral: existiam backups locais antigos (mesmo disco C:,
+  #    não offsite) em C:\predictor\data\output\feature_store_backup_antes_limpeza.db
+  #    (1.28GB, 2026-08-09) e em C:\predictor\data\failed-runs\*.db — não
+  #    apagados, preservados como histórico, mas não contam como cópia
+  #    offsite.
+  # 6. Achado colateral #2: a mesma máquina tinha uma branch git local
+  #    (claude/entender-3-projetos-cfvrck) com 3 commits nunca enviados ao
+  #    GitHub (upstream deletado) — trabalho de migração do DXYProvider
+  #    stooq.com->FRED. Preservada em
+  #    claude/entender-3-projetos-cfvrck-backup-2026-09-03 antes de qualquer
+  #    resolução. Comparação mostrou que o main já tinha uma versão mais
+  #    recente e validada ao vivo do mesmo fix (2026-08-31) — o trabalho
+  #    local ficou redundante, não foi perdido nem precisou de PR novo.
+  #
+  # Recorrência: nenhuma automação foi criada nesta rodada para repetir o
+  # backup periodicamente — os dois snapshots acima são um ponto único no
+  # tempo. scripts/register_task_backup.ps1 já existe no repo para agendar
+  # isso via Task Scheduler do Windows; confirmar se já está registrado
+  # nessa máquina é o único item ainda não verificado.
   checked_at: "2026-09-03"
-  resolved_production_path: "DATA_DIR/output/feature_store.db (via platformdirs — valor real depende da máquina de produção)"
-  sandbox_has_real_db: false
+  resolved_production_path: "C:\\predictor\\data\\output\\feature_store.db"
+  sandbox_has_real_db: false  # continua false no sandbox de auditoria; true na máquina real
+  offsite_backup_verified: true
+  offsite_backup_sha256: "101303bc4d6f0b7140d4f8f01b2100ebabfa2c92eb3b2dee4d8e19e1923d2f3b"
   operational_cost_h6_binance_collection: UNKNOWN  # mesma limitação — requer acesso a billing/infra reais, não verificável do sandbox
 
 harness_attestation:
