@@ -11,6 +11,35 @@ updated_at: 2026-09-03  # segunda camada: verificação executável (não apenas
 based_on_charter: charters/scientific_state.json (as_of_commit 9949b510586cafe08c11a4733c19ebf30edf253c)
 core_version_pinned: predictor-core==3.0.0 (pyproject.toml + uv.lock, consistentes)
 
+preservation_verification:
+  # CR_PRESERVATION = UNKNOWN permanece UNKNOWN por desenho, não por falta de
+  # tentativa. Resolvido nesta rodada (2026-09-03): o caminho real do único
+  # ativo irreversível é resolvido via GarimpoInvestimentos/core/paths.py
+  # (FEATURE_STORE_DB = DATA_DIR/output/feature_store.db, DATA_DIR via
+  # platformdirs/env var). Neste sandbox (checkout git efêmero, sem vínculo
+  # com a máquina de produção): DATA_DIR resolveu para
+  # /root/.local/share/cripto-predictor e FEATURE_STORE_DB.exists() == False —
+  # ou seja, este ambiente nunca teve o banco real, só bancos de teste
+  # descartáveis em /tmp/pytest-of-root/*. Nenhuma variável de ambiente
+  # presente aponta para storage externo. Isto é isolamento por desenho do
+  # sandbox, não evidência de ausência de backup em produção.
+  #
+  # AÇÃO PENDENTE (só executável por quem tem acesso à máquina real de
+  # produção, não por uma sessão de auditoria como esta):
+  #   1. Na máquina onde GarimpoInvestimentos roda de verdade, confirmar o
+  #      valor real de DATA_DIR (ou da env var que o platformdirs resolve).
+  #   2. Rodar: python scripts/feature_store_backup.py --verify
+  #      (o script já existe e tem lógica de integrity_check — só falta
+  #      alguém com acesso ao ambiente real executá-lo).
+  #   3. Confirmar se existe alguma cópia offsite (S3/disco separado/outra
+  #      máquina) do backup gerado, ou configurar uma se não existir.
+  #   4. Atualizar este campo com o resultado real (PASS + evidência, ou
+  #      FAIL + plano de remediação).
+  checked_at: "2026-09-03"
+  resolved_production_path: "DATA_DIR/output/feature_store.db (via platformdirs — valor real depende da máquina de produção)"
+  sandbox_has_real_db: false
+  operational_cost_h6_binance_collection: UNKNOWN  # mesma limitação — requer acesso a billing/infra reais, não verificável do sandbox
+
 harness_attestation:
   # scripts/attest_harness.py rodado de verdade em 2026-09-03 (não editado manualmente).
   # O atestado anterior (core_version=2.3.0, passed_at=2026-08-21) estava expirado
