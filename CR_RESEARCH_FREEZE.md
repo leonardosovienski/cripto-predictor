@@ -95,6 +95,10 @@ preserved_components:
   - charters/*.json, observation_plans/*.yaml (charters de governança de coleta)
   - docs/ADR-014_modelo_bitemporal.md, docs/ADR-015_experiment_registry_e_trava_de_poder.md
   - docs/HYPOTHESES.md, docs/H5_ACOMPANHAMENTO_2026-07-25.md, docs/H6_REFREEZE_2026-08-27.md (trilha de pré-registro/veredito)
+  - docs/EVIDENCE_REGISTRY.md (claims formais: CLAIM-CR-HMM/LLM/TREND/DPL/COSTS/H6)
+  - docs/TRADING_LAYER_INVENTORY.md (classificação módulo a módulo de trading/)
+  - scripts/check_reopen_dossier.py (gate técnico do bloco 19 — bloqueia reabertura de frozen_families sem dossiê completo)
+  - tests/test_v3_wfa_purge_contract.py (prova por código o gap IS->PURGE->OOS do WFA)
 
 archived_components:
   - GarimpoInvestimentos/trials.json (schema legado; ver seção Trial Migration — proposta migração não-destrutiva)
