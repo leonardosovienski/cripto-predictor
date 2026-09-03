@@ -150,11 +150,27 @@ active_hypotheses: []
 passive_observations:
   - id: H6
     trial: h6-sinal-invertido-d7
-    status: COLLECTION_ONLY_IMMATURE (charters/scientific_state.json)
+    status: COLLECTION_ONLY_IMMATURE (charters/scientific_state.json — NÃO alterado; ver nota)
     gate: "n >= 30 (H6_MIN_N), IC95 do Spearman invertido não cruzando zero"
-    last_recorded_state: "GarimpoInvestimentos/h6_status.json — observed_at 2026-08-24T07:01:23Z, n=0, veredito 'aguardando n>=30 (n=0)'"
+    last_recorded_state: "GarimpoInvestimentos/h6_status.json — observed_at 2026-09-03T05:55:26Z, n=84, rho=-0.057, IC95%[-0.231, +0.129], gate_atingido=true, veredito 'RUIDO (IC cruza 0)'"
     frozen_definition_hash: 5582ec23370e58ae0fe961d41a3127674c136027b28ec511034efb0bd99b9f0a (docs/H6_REFREEZE_2026-08-27.md)
-    note: "n=0 na última leitura commitada é estado legítimo (nenhuma previsão maturou em D+7 até aquele ponto), não banco vazio. Estado atual real não verificável sem rodar o pipeline (fora de escopo desta auditoria)."
+    evidence_update_2026-09-03: >
+      Rodada real de quality_snapshot.py na máquina de produção (C:\predictor\prod),
+      após corrigir dois bugs de wiring de env var (DATA_DIR e COINGECKO_API_KEY
+      lidos via os.getenv() direto, não pelo loader de .env — mesma classe de bug
+      nos dois casos, corrigida via variável de ambiente real do Windows, não via
+      alteração de código). n cruzou o gate de 30 pela primeira vez (n=84). Sob o
+      esquema de 3 estados de docs/H6_REFREEZE_2026-08-27.md (VALIDATED se IC_lower>0,
+      REFUTED se IC_upper<0, INCONCLUSIVE se IC cruza zero OU amostra insuficiente),
+      este resultado é INCONCLUSIVE — o IC cruza zero. A tabela de poder do próprio
+      h6_status.json mostra poder=23% para rho=0.2 em n=84: mesmo tendo passado do
+      gate operacional de 30, a amostra segue subdimensionada para um efeito
+      pequeno-a-moderado. Por isso NÃO foi promovido a CLOSED_NO_GO/REFUTED — isso
+      seria o mesmo erro que o bloco 16 do congelamento científico pede para evitar
+      (confundir NO-GO com UNDERPOWERED). H6 continua COLLECTION_ONLY (charter não
+      alterado); isto é um evidence update dentro do protocolo já registrado, não
+      reabertura nem novo ciclo de otimização (bloco 18).
+    note: "n=0 na leitura anterior (24/08) era estado legítimo, não banco vazio — confirmado agora que o pipeline voltou a rodar."
   - id: H6_binance_collection
     plan: observation_plans/binance_funding_oi_v1.yaml
     status: COLLECTION_ONLY (docs/COLLECTION_ONLY_OBSERVATION.md)
