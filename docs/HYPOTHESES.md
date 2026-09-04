@@ -626,6 +626,33 @@
 
 ---
 
+### B13 — Ciclicidade multi-escala (ciclos dentro de ciclos)
+
+- Mecanismo proposto: cripto historicamente mostra estrutura cíclica em múltiplas
+  escalas simultâneas — o ciclo de halving do BTC (~4 anos), regimes de
+  acumulação/distribuição de meses, e microestrutura intradiária — e essas escalas
+  podem interagir (um ciclo maior modulando a amplitude/direção dos menores), não
+  só coexistir. Nenhuma trial até agora (H1-H8) testou estrutura EXPLICITAMENTE
+  multi-escala — H1-H3/H7 usam janelas de features fixas (fr_window), não uma
+  decomposição de ciclos por construção.
+- Por que é backlog e não trial: "ciclos dentro de ciclos" como está descrito é uma
+  intuição, não uma feature operacionalizável. Precisa de decisão de desenho ANTES
+  de qualquer dado contar, exatamente como toda outra trial: qual método de
+  decomposição (ex.: wavelets, decomposição espectral, indicador de fase de
+  halving), qual horizonte por escala, qual métrica de sucesso — e então
+  pré-registro formal com `pipeline_fingerprint`, como H7/H8.
+- Risco de p-hacking específico deste item: ciclos de mercado são um dos alvos
+  mais clássicos de overfitting em finanças (é fácil "ver" um ciclo em qualquer
+  série depois do fato). Qualquer trial nascida daqui precisa do mesmo gate WFA
+  (PSR≥0.80, IC_CI_lower>0, MaxDD<20%) e, dado o risco extra de olhar pra trás
+  pra "achar" o ciclo, provavelmente precisa de um controle adicional de
+  multiplicidade (ex.: PBO via CSCV, como B10) antes de qualquer leitura contar.
+- Ativação: nenhuma. Ideia registrada por pedido do dono (2026-09-04), não
+  operacionalizada. Não consome tentativa, não é trial, não tem
+  `pipeline_fingerprint`, não afeta H1-H8.
+
+---
+
 ## Override de governança 2026-08-14 — infraestrutura de execução antes de edge validado
 
 **Decisão explícita do dono, registrada por honestidade**: construir contrato
