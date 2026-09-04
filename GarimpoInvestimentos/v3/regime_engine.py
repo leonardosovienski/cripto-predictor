@@ -334,6 +334,7 @@ class RegimeEngine:
         covariance_type = _covariance_type_for(self._extra_features)
         last_err: ValueError | None = None
         model = None
+        all_states = None
         for attempt in range(_MAX_FIT_RETRIES):
             seed = 42 + attempt
             candidate = _hmmlearn.GaussianHMM(
@@ -346,16 +347,25 @@ class RegimeEngine:
             )
             try:
                 candidate.fit(X_scaled)
+                # predict() TAMBÉM precisa estar dentro do retry: fit() pode
+                # "convergir" com sucesso mas deixar um estado nunca visitado
+                # (linha de transmat_ com soma zero) — achado em produção
+                # (2026-09-04, H7/H9): 'transmat_ rows must sum to 1' só
+                # aparece aqui, no predict() (decodificação Viterbi), não no
+                # fit(). Deixar predict() fora do laço significava que esse
+                # caso de falha nunca tinha chance de tentar outra seed.
+                candidate_states = candidate.predict(X_scaled)
             except ValueError as exc:
                 last_err = exc
                 logger.warning(
-                    "RegimeEngine.fit: seed=%d nao convergiu para covariancia valida (%s); tentando seed=%d",
+                    "RegimeEngine.fit: seed=%d nao convergiu para modelo valido (%s); tentando seed=%d",
                     seed,
                     exc,
                     seed + 1,
                 )
                 continue
             model = candidate
+            all_states = candidate_states
             if seed != 42:
                 logger.warning(
                     "RegimeEngine.fit: convergiu apenas com seed=%d (default 42 instavel para este dataset/features)",
@@ -364,14 +374,13 @@ class RegimeEngine:
             break
         if model is None:
             raise RuntimeError(
-                f"RegimeEngine.fit: HMM nao convergiu para covariancia valida em "
+                f"RegimeEngine.fit: HMM nao convergiu para modelo valido em "
                 f"{_MAX_FIT_RETRIES} tentativas de seed (42..{42 + _MAX_FIT_RETRIES - 1}). "
                 f"Ultimo erro: {last_err}"
             ) from last_err
         self._model = model
 
         # Rotular estados pelo retorno médio (bull > sideways > bear)
-        all_states = model.predict(X_scaled)
         mean_ret_by_state = {
             i: float(np.array(log_returns)[all_states == i].mean())
             for i in range(N_STATES)

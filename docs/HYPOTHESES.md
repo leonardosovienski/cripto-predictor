@@ -401,6 +401,21 @@
   anterior tinha produzido leitura válida — não é reação a um resultado
   científico do H7, que continua sem nenhum veredito.
 
+  **Correção de infraestrutura 2026-09-04 (segunda rodada) — `predict()` fora
+  do retry.** Com `"diag"` aplicado, o backtest H7 rodou bem mais longe (fold
+  21 de ~60, vs. fold 14 antes) mas ainda quebrou: `'transmat_ rows must sum
+  to 1 (got row sums of [1. 1. 0.])'`. Causa: `fit()` pode "convergir" sem
+  lançar exceção mas deixar um estado nunca visitado (linha de `transmat_`
+  com soma zero) — esse erro só aparece DEPOIS, dentro de `predict()`
+  (decodificação Viterbi usada só para rotular os estados pelo retorno
+  médio), que estava FORA do laço de retry de seeds — então esse caso nunca
+  tinha chance de tentar outra seed. Corrigido: `predict()` agora roda
+  dentro do mesmo `try/except` de `fit()`, tratado com a mesma lógica de
+  retry. Nota: o run do H9 (abaixo) que completou os 61 folds sem travar foi
+  ANTES deste fix — ele simplesmente não bateu nesse bug específico com o
+  dado dele; não é evidência de que a correção funciona. H7 ainda não foi
+  re-executado com ela; o resultado desta seção continua sem veredito.
+
 ---
 
 ### H9 — Razão OI/Volume (crowding especulativo) como covariável exógena do regime (status: **REFUTADA / NO-GO — 2026-09-04**)
