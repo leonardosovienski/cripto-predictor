@@ -325,25 +325,20 @@ class RegimeEngine:
         self._scaler = StandardScaler()
         X_scaled = self._scaler.fit_transform(X)
 
-        # covariance_type="full" com mais dimensões (extra_features) e estados raros
-        # (ex.: "bull" com <5% da amostra) pode convergir, durante o EM, para uma
-        # covariância quase singular — hmmlearn só usa min_covar para inicializar,
-        # não para regularizar cada M-step de covariância "full". A trajetória do EM
-        # é sensível ao random_state; retry com seeds alternativas (prática padrão
-        # em EM/HMM sensível a inicialização) resolve sem mudar covariance_type nem
-        # alterar o sinal. Achado em produção rodando H7 (2026-09-04): fold quebrou
-        # com 'covars must be symmetric, positive-definite' na seed default.
-        # random_state=42 continua a PRIMEIRA tentativa sempre — H1-H3 (sem
-        # extra_features) nunca precisou de retry nos testes/produção, então o
-        # comportamento default permanece byte-idêntico (mesma seed, mesma primeira
-        # tentativa, sem esse laço alterar o resultado quando converge de primeira).
+        # covariance_type varia por instância: "full" (H1-H3, congelado, NUNCA
+        # muda) vs "diag" quando há extra_features — ver _covariance_type_for()
+        # para o achado de produção (2026-09-04) que motivou isso. Retry de
+        # seeds alternativas continua como segunda linha de defesa (EM ainda
+        # pode ser sensível à inicialização mesmo em "diag"), mas a causa raiz
+        # (covariância cruzada subamostrada em "full") é endereçada aqui.
+        covariance_type = _covariance_type_for(self._extra_features)
         last_err: ValueError | None = None
         model = None
         for attempt in range(_MAX_FIT_RETRIES):
             seed = 42 + attempt
             candidate = _hmmlearn.GaussianHMM(
                 n_components=N_STATES,
-                covariance_type=_COVARIANCE_TYPE,
+                covariance_type=covariance_type,
                 n_iter=300,
                 tol=1e-5,
                 random_state=seed,
