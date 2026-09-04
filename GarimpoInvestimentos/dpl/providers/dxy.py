@@ -9,11 +9,25 @@ contorná-lo não é algo que este projeto deveria fazer) para o FRED — dado o
 do Federal Reserve, mesma instituição do calendário FOMC em macro_calendar.json.
 
 `DTWEXBGS` é publicada pelo Fed com defasagem: o release H.10 (foreign exchange
-rates) de um dia útil sai no dia útil seguinte. O lag exato NÃO foi confirmado
-contra o texto oficial do release nesta sessão — `publish_lag_days=1` é a
-estimativa conservadora (assume o dado mais tarde disponível, nunca mais cedo);
-confirme contra https://www.federalreserve.gov/releases/h10/ antes de depender
-disso para timing fino.
+rates) de um dia útil sai no dia útil seguinte. `publish_lag_days=1` é a
+estimativa conservadora (assume o dado mais tarde disponível, nunca mais cedo).
+
+CORREÇÃO 2026-09-04 (pesquisa via WebSearch — leitura direta de
+federalreserve.gov/fred.stlouisfed.org segue bloqueada neste ambiente, então
+isto NÃO é fonte primária lida diretamente, é achado de busca a confirmar se
+algum dia a rede abrir): a tabela semanal oficial do H.10 sai toda
+segunda-feira às 16h15 (semana anterior inteira), mas a série `DTWEXBGS`
+específica no FRED é "daily" e um exemplo concreto mostrou dado de
+sexta-feira publicado na segunda-feira seguinte — ou seja, o lag é em DIAS
+ÚTEIS, não em dias corridos. `publish_lag_days` agora conta dias úteis
+(pula sábado/domingo): para um ponto de sexta-feira, `publish_lag_days=1`
+aponta para a segunda-feira seguinte, não para sábado (que nunca teria dado).
+CORREÇÃO DE RISCO, não só de precisão: a versão anterior (dias corridos)
+para o mesmo N sempre dava um `published_at` IGUAL OU MAIS CEDO que a versão
+em dias úteis — ou seja, o código antigo podia declarar um dado disponível
+antes da hora real (sexta + 1 dia corrido = sábado, quando o dado real só
+sai na segunda), o que É risco de look-ahead, não só desperdício de dado.
+A versão em dias úteis está do lado seguro por construção.
 
 Endpoint revalidado ao vivo em 2026-08-31 pelo próprio `DXYProvider`: retornou
 observações válidas de 2026-08-24 a 2026-08-28, com `source=fred`, sem interpolar
@@ -39,6 +53,21 @@ _BASE_URL = "https://fred.stlouisfed.org/graph/fredgraph.csv"
 _DEFAULT_SERIES = "DTWEXBGS"  # Nominal Broad U.S. Dollar Index (diário)
 
 
+def _add_business_days(day: datetime, n: int) -> datetime:
+    """Soma `n` dias ÚTEIS (pula sábado/domingo) a `day`. `n` deve ser >= 0.
+    Não trata feriados do Fed (só fins de semana) — mais um motivo pra
+    `publish_lag_days` continuar conservador."""
+    if n < 0:
+        raise ValueError("n não pode ser negativo")
+    d = day
+    added = 0
+    while added < n:
+        d += timedelta(days=1)
+        if d.weekday() < 5:  # 0=segunda ... 4=sexta
+            added += 1
+    return d
+
+
 class DXYProvider(SignalProvider):
     """Série diária de um índice de força do dólar do FRED. `name` fixo (casa com
     o alignment engine); `series` é o ID da série FRED — parametrizável caso se
@@ -48,7 +77,7 @@ class DXYProvider(SignalProvider):
 
     def __init__(self, series: str = _DEFAULT_SERIES, publish_lag_days: int = 1):
         self._series = series
-        self._lag = timedelta(days=publish_lag_days)
+        self._lag_business_days = publish_lag_days
 
     @with_retry()
     async def _get_csv(self) -> str:
@@ -79,7 +108,7 @@ class DXYProvider(SignalProvider):
                     timestamp=day,
                     value=value,
                     source="fred",
-                    published_at=day + self._lag,
+                    published_at=_add_business_days(day, self._lag_business_days),
                 )
             )
         if not points:

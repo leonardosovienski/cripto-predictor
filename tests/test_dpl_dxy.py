@@ -127,3 +127,46 @@ def test_dxy_parses_real_fred_response_snippet(monkeypatch):
     points = asyncio.run(provider.fetch(limit=90))
     assert len(points) == 4
     assert points[0].value == 101.4155
+
+
+def test_dxy_publish_lag_skips_weekend(monkeypatch):
+    """CORREÇÃO 2026-09-04: publish_lag_days conta dias ÚTEIS. Um ponto de
+    sexta-feira com lag=1 tem que apontar pra segunda-feira seguinte — nunca
+    pra sábado, que nunca teria dado publicado (isso seria look-ahead: o
+    dado real só existe na segunda, não pode ficar marcado como disponível
+    já no sábado)."""
+    friday_csv = "observation_date,DTWEXBGS\n2026-08-14,103.10\n"  # sexta-feira
+    monkeypatch.setattr(dxy, "get_http_client", lambda *a, **k: _Client(friday_csv))
+    provider = dxy.DXYProvider(publish_lag_days=1)
+    points = asyncio.run(provider.fetch())
+
+    assert len(points) == 1
+    p = points[0]
+    assert p.timestamp.strftime("%A") == "Friday"
+    assert p.published_at.strftime("%A") == "Monday"
+    assert (p.published_at - p.timestamp).days == 3  # sex -> seg = 3 dias corridos
+
+
+def test_dxy_publish_lag_two_business_days_from_friday():
+    """lag=2 dias úteis a partir de sexta cai na terça (pula sáb+dom, conta
+    seg e ter como os 2 dias úteis)."""
+    from datetime import UTC, datetime
+
+    friday = datetime(2026, 8, 14, tzinfo=UTC)  # sexta-feira
+    result = dxy._add_business_days(friday, 2)
+    assert result.strftime("%A") == "Tuesday"
+    assert (result - friday).days == 4
+
+
+def test_add_business_days_rejects_negative_n():
+    from datetime import UTC, datetime
+
+    with pytest.raises(ValueError, match="negativo"):
+        dxy._add_business_days(datetime(2026, 1, 1, tzinfo=UTC), -1)
+
+
+def test_add_business_days_zero_is_noop():
+    from datetime import UTC, datetime
+
+    d = datetime(2026, 8, 14, tzinfo=UTC)
+    assert dxy._add_business_days(d, 0) == d
