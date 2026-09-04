@@ -77,8 +77,11 @@ def test_toda_hipotese_fechada_bloqueia_update_antes_do_core(tmp_path, monkeypat
     assert unchanged == h4
 
 
-def test_h6_imatura_continua_atualizavel(tmp_path, monkeypatch):
-    """O hardening não fecha a H6 por acidente; a decisão científica é separada."""
+def test_h6_fechada_bloqueia_reescrita_pelo_hardening(tmp_path, monkeypatch):
+    """H6 fechou REFUTADA/NO-GO em 2026-09-04 (docs/HYPOTHESES.md, veredito real:
+    IC cruza zero, n=84). O hardening que protege hipóteses fechadas contra
+    reescrita silenciosa (mesmo mecanismo do H1-H3 congelado) precisa bloquear
+    isso de verdade agora que H6 é um caso real fechado, não só sintético."""
     from GarimpoInvestimentos.governance import load_scientific_state
 
     canonical = tmp_path / "trials.json"
@@ -95,8 +98,9 @@ def test_h6_imatura_continua_atualizavel(tmp_path, monkeypatch):
     monkeypatch.setattr("GarimpoInvestimentos.governance.load_scientific_state", lambda: state)
     monkeypatch.setattr(trials_module, "_core_register", core_spy)
     h6 = next(t for t in load_trials(canonical) if t["name"] == H6_TRIAL_NAME)
-    trials_module.register_trial(h6["name"], params=h6["params"], path=canonical)
-    assert reached_core
+    with pytest.raises(ValueError, match="hipótese fechada"):
+        trials_module.register_trial(h6["name"], params=h6["params"], path=canonical)
+    assert not reached_core
 
 
 @pytest.mark.parametrize(
