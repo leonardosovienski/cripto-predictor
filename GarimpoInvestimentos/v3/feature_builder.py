@@ -307,3 +307,13 @@ def build_oi_index(oi_records) -> dict[int, float]:
 def build_spot_index(kline_records) -> dict[int, float]:
     """Constrói índice {open_ms: close} de KlineRecord[]."""
     return {r.open_ms: r.close for r in kline_records}
+
+
+def build_volume_index(kline_records) -> dict[int, float]:
+    """Constrói índice {open_ms: volume} de KlineRecord[]. Separado de
+    build_spot_index (que só devolve close) para não alterar a assinatura usada
+    por paper_trader.py/paper_report.py/pipeline.py — H1-H3 continuam
+    byte-idênticos. Usado por H9 (docs/HYPOTHESES.md): a razão OI/volume
+    precisa do campo `volume` de KlineRecord, que já é coletado
+    (spot_collector.py) mas nunca tinha sido consumido."""
+    return {r.open_ms: r.volume for r in kline_records}

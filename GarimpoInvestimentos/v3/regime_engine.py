@@ -64,7 +64,7 @@ _EMISSION_FEATURES = ("log_return_8h", "realized_vol_24h")  # ordem = colunas de
 # fingerprint auditável — adicionar uma covariável nova exige decidir o nome aqui,
 # não só passar mais uma coluna. Default (extra_features=()) preserva EXATAMENTE o
 # comportamento de H1-H3: mesmas 2 features, mesmo fingerprint, mesmo .pkl válido.
-_SUPPORTED_EXTRA_FEATURES = ("macro_event_dummy", "dxy_return_1d")
+_SUPPORTED_EXTRA_FEATURES = ("macro_event_dummy", "dxy_return_1d", "oi_volume_ratio")
 
 
 class StaleRegimeModelError(RuntimeError):

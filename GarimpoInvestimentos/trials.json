@@ -115,5 +115,22 @@
     "sharpe": null,
     "notes": "H7: covariaveis macro/DXY no HMM da V3. Infraestrutura implementada e testada 2026-09-04 (PRs #81, #83). Registro ANTES de qualquer dado contar (protocolo NEXT_TRIAL_SCIENTIFIC_GATE.md). capital_authorized=false ate veredicto prospectivo liquido de custos. NAO reabre nem reparametriza a familia congelada funding_oi_hmm_v3 (H1-H3) - trial nova, familia nova.",
     "metric": "psr"
+  },
+  {
+    "name": "h9-oi-volume-ratio-hmm-v1",
+    "registered_at": "2026-09-04T18:05:58Z",
+    "params": {
+      "mechanism": "Razao OI notional / volume notional (log-escala) como covariavel exogena na emissao do HMM (v3/regime_engine.py, extra_features). Mede crowding especulativo (OI sustentado por giro real vs. alavancagem parada sem giro) - ortogonal ao nivel/z-score de funding que H1-H3 ja usam.",
+      "family": "oi-volume-crowding-hmm-covariate",
+      "parent_hypotheses": [],
+      "integration": "V3 (a) - covariavel exogena do HMM, mesmo mecanismo extra_features do H7",
+      "success_criterion": "PSR >= 0.80 E IC_CI_lower(Spearman) > 0 E MaxDD < 20%, liquido de custos - mesmo gate de H1-H3/H7",
+      "code_ref": "v3/crowding_features.py (build_oi_volume_ratio), v3/feature_builder.py (build_volume_index), v3/backtest_v3.py --use-oi-volume-ratio",
+      "dado_ja_coletado": true,
+      "decided_by": "owner, 2026-09-04"
+    },
+    "sharpe": null,
+    "notes": "H9: promocao formal de B2 (docs/HYPOTHESES.md) a trial ativa. Mecanismo causal novo por escrito registrado ANTES de qualquer backtest rodar (protocolo NEXT_TRIAL_SCIENTIFIC_GATE.md). Dado 100% ja coletado (spot volume + OI ja no disco de qualquer ativo com historico de H1-H3) - zero coleta prospectiva nova necessaria. capital_authorized=false ate veredicto liquido de custos.",
+    "metric": "psr"
   }
 ]
