@@ -128,3 +128,58 @@ def test_modelo_h7_nao_carrega_como_h1_h3(tmp_path):
 
     with pytest.raises(StaleRegimeModelError):
         RegimeEngine(model_path=path)  # default, sem extra_features
+
+
+def test_fit_tenta_seed_alternativa_se_covariancia_nao_convergir(monkeypatch):
+    """covariance_type='full' com extra_features pode convergir para covariância
+    quase singular ('covars must be symmetric, positive-definite') dependendo do
+    random_state — achado em produção rodando H7 (2026-09-04). fit() deve tentar
+    seeds alternativas (42, 43, 44...) antes de desistir, sem mudar covariance_type
+    nem o sinal."""
+    import GarimpoInvestimentos.v3.regime_engine as regime_engine_mod
+
+    rng = np.random.default_rng(7)
+    rets, vols = _synthetic_series(rng)
+    dxy = rng.normal(0, 1, len(rets)).tolist()
+
+    real_gaussian_hmm = regime_engine_mod._hmmlearn.GaussianHMM
+    seeds_tentadas = []
+
+    class _FlakyGaussianHMM(real_gaussian_hmm):
+        def fit(self, X, lengths=None):
+            seeds_tentadas.append(self.random_state)
+            if len(seeds_tentadas) <= 2:
+                raise ValueError("'covars' must be symmetric, positive-definite")
+            return super().fit(X, lengths)
+
+    monkeypatch.setattr(regime_engine_mod._hmmlearn, "GaussianHMM", _FlakyGaussianHMM)
+
+    eng = RegimeEngine(extra_features=("dxy_return_1d",))
+    eng.fit(rets, vols, extra_covariates=[dxy])
+
+    assert seeds_tentadas == [42, 43, 44]
+    assert eng._model is not None
+    assert eng._model.random_state == 44
+
+
+def test_fit_desiste_apos_max_retries_com_erro_claro(monkeypatch):
+    """Se NENHUMA seed converge dentro do orçamento de tentativas, fit() deve
+    falhar de forma explícita (RuntimeError), não silenciar nem devolver um
+    modelo degenerado."""
+    import GarimpoInvestimentos.v3.regime_engine as regime_engine_mod
+
+    rng = np.random.default_rng(11)
+    rets, vols = _synthetic_series(rng)
+    dxy = rng.normal(0, 1, len(rets)).tolist()
+
+    real_gaussian_hmm = regime_engine_mod._hmmlearn.GaussianHMM
+
+    class _AlwaysFlakyGaussianHMM(real_gaussian_hmm):
+        def fit(self, X, lengths=None):
+            raise ValueError("'covars' must be symmetric, positive-definite")
+
+    monkeypatch.setattr(regime_engine_mod._hmmlearn, "GaussianHMM", _AlwaysFlakyGaussianHMM)
+
+    eng = RegimeEngine(extra_features=("dxy_return_1d",))
+    with pytest.raises(RuntimeError, match="nao convergiu"):
+        eng.fit(rets, vols, extra_covariates=[dxy])

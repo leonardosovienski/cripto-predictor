@@ -43,6 +43,9 @@ ENTROPY_THRESHOLD = 0.85  # H_norm > 0.85 → sistema em modo de observação
 _LOG_N = math.log(N_STATES)
 
 _COVARIANCE_TYPE = "full"  # tipo de covariância do GaussianHMM (usado no fit e no fingerprint)
+_MAX_FIT_RETRIES = (
+    5  # tentativas de random_state alternativa se o EM não convergir p/ covariância válida
+)
 
 # --- Provenância do modelo serializado (espelha o config_hash do wc-predictor) ---
 # Um .pkl é um modelo treinado sob um CONTRATO: features de emissão, nº de estados,
@@ -303,15 +306,54 @@ class RegimeEngine:
         self._scaler = StandardScaler()
         X_scaled = self._scaler.fit_transform(X)
 
-        model = _hmmlearn.GaussianHMM(
-            n_components=N_STATES,
-            covariance_type=_COVARIANCE_TYPE,
-            n_iter=300,
-            tol=1e-5,
-            random_state=42,
-            verbose=False,
-        )
-        model.fit(X_scaled)
+        # covariance_type="full" com mais dimensões (extra_features) e estados raros
+        # (ex.: "bull" com <5% da amostra) pode convergir, durante o EM, para uma
+        # covariância quase singular — hmmlearn só usa min_covar para inicializar,
+        # não para regularizar cada M-step de covariância "full". A trajetória do EM
+        # é sensível ao random_state; retry com seeds alternativas (prática padrão
+        # em EM/HMM sensível a inicialização) resolve sem mudar covariance_type nem
+        # alterar o sinal. Achado em produção rodando H7 (2026-09-04): fold quebrou
+        # com 'covars must be symmetric, positive-definite' na seed default.
+        # random_state=42 continua a PRIMEIRA tentativa sempre — H1-H3 (sem
+        # extra_features) nunca precisou de retry nos testes/produção, então o
+        # comportamento default permanece byte-idêntico (mesma seed, mesma primeira
+        # tentativa, sem esse laço alterar o resultado quando converge de primeira).
+        last_err: ValueError | None = None
+        model = None
+        for attempt in range(_MAX_FIT_RETRIES):
+            seed = 42 + attempt
+            candidate = _hmmlearn.GaussianHMM(
+                n_components=N_STATES,
+                covariance_type=_COVARIANCE_TYPE,
+                n_iter=300,
+                tol=1e-5,
+                random_state=seed,
+                verbose=False,
+            )
+            try:
+                candidate.fit(X_scaled)
+            except ValueError as exc:
+                last_err = exc
+                logger.warning(
+                    "RegimeEngine.fit: seed=%d nao convergiu para covariancia valida (%s); tentando seed=%d",
+                    seed,
+                    exc,
+                    seed + 1,
+                )
+                continue
+            model = candidate
+            if seed != 42:
+                logger.warning(
+                    "RegimeEngine.fit: convergiu apenas com seed=%d (default 42 instavel para este dataset/features)",
+                    seed,
+                )
+            break
+        if model is None:
+            raise RuntimeError(
+                f"RegimeEngine.fit: HMM nao convergiu para covariancia valida em "
+                f"{_MAX_FIT_RETRIES} tentativas de seed (42..{42 + _MAX_FIT_RETRIES - 1}). "
+                f"Ultimo erro: {last_err}"
+            ) from last_err
         self._model = model
 
         # Rotular estados pelo retorno médio (bull > sideways > bear)
