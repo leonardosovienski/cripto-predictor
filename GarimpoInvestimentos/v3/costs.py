@@ -5,6 +5,15 @@ backtest DEVE ser líquido. Três componentes, por trade round-trip:
 
   1. Taxa taker (default 10 bps ≈ 0,10% por perna — ordem a mercado em perp;
      maker seria menor, mas o sinal de 8h não garante fill passivo → conservador).
+     PROVENIÊNCIA NÃO DOCUMENTADA: este valor não foi conferido contra a tabela
+     de fees/tier VIP de nenhuma conta real (a Binance Futures VIP0 cobra 5bps
+     taker padrão — o dobro aqui é deliberadamente conservador, mas a origem
+     exata do número "10" nunca foi registrada nem citada com data/fonte).
+     Não alterar sem nova trial pré-registrada: H1 perdeu por margem estreita
+     (líquido −0,09bps vs. −0,53bps de custo total), então revisar este valor
+     tem efeito material sobre o veredito e cai sob a mesma trava de
+     `frozen_families` — mudança de custo pede o mesmo rigor que mudança de
+     sinal, não é ajuste de infraestrutura livre.
   2. Slippage (default 5 bps por perna — o mesmo estresse que o veredito NO-GO
      do backtest_v3 já usava).
   3. Funding: posição em perpétuo atravessa janelas de 8h; LONG PAGA funding
