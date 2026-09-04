@@ -80,7 +80,22 @@
     },
     "sharpe": 0.3479,
     "notes": "Pre-registro anti-data-snooping anterior ao resultado dedicado. A hipotese nasceu da correlacao negativa observada nas familias anteriores e so aceita previsoes posteriores a registered_at. MATURACAO DEDICADA ATIVA: close_h6_inverted_signal() e h6_spearman_verdict() implementam a leitura invertida sem casar a fonte reserved:* pelo mecanismo generico. Ultima evidencia versionada: Sharpe auxiliar +0.3479 com n=6, IMATURO; o gate exige n>=30 e IC95 positivo. H6 e pesquisa de correlacao, nao gera TradeIntent, nao autoriza shadow/capital e nao permite LLM como decisao direta de trading."
+  },
+  {
+    "name": "h8-llm-hypothesis-generator",
+    "registered_at": "2026-09-04T08:20:59Z",
+    "params": {
+      "mechanism": "LLM propoe hipoteses falsificaveis mapeadas para recipes executaveis no factor_dsl (analyzers/factor_dsl.py); motor deterministico avalia via spearman_block_ci (mesmo mecanismo anti-lookahead/overlap de H4-H6). O LLM controla a DIRECAO do raciocinio, nunca o protocolo empirico.",
+      "family": "llm-hypothesis-generator",
+      "parent_hypotheses": [],
+      "success_criterion": "Spearman IC95% (block bootstrap, overlap-aware) NAO cruzando zero, n>=30 pre-registrado. Leitura de poder (B12) aplicada antes de tratar qualquer veredito com n proximo do piso como final.",
+      "gate_n_min": 30,
+      "selection_family": "llm_hypothesis_loop",
+      "multiplicity_control": "traco append-only de TODAS as propostas (inclusive rejeitadas) via analyzers/hypothesis_loop.py; PBO (analyzers/pbo.py) medido sobre as propostas antes de qualquer selecao ser lida como sinal",
+      "decided_by": "owner, 2026-09-04"
+    },
+    "sharpe": null,
+    "notes": "H8: promocao formal de B9 (docs/HYPOTHESES.md) a trial ativa. Registro ANTES de qualquer dado contar (protocolo NEXT_TRIAL_SCIENTIFIC_GATE.md). capital_authorized=false ate veredicto prospectivo liquido de custos.",
+    "metric": "spearman_ic"
   }
 ]
-
-
