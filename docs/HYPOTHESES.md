@@ -217,7 +217,7 @@
 - Resultado: **imaturo** — última evidência versionada: Sharpe auxiliar +0,3479
   com n=6; o gate pré-registrado exige n>=30 e IC95 positivo. Sem veredito.
 
-### H7 — Calendário macro (FOMC/CPI/PPI) + DXY como contexto exógeno de regime (status: **registrada — infraestrutura de coleta implementada, coleta real não iniciada**)
+### H7 — Calendário macro (FOMC/CPI/PPI) + DXY como contexto exógeno de regime (status: **registrada em `trials.json` 2026-09-04, coleta prospectiva ainda não iniciada**)
 - Data do registro: 2026-08-14 (ANTES de qualquer coleta ou resultado). Promove o
   item B1 do backlog condicional (abaixo) — ativação estava liberada desde o
   veredito da H4 (2026-07-10), formalizada agora.
@@ -320,16 +320,22 @@
      IC_CI_lower>0, líquido de custos (mesmo gate de H1-H3).
   5. ✅ `pipeline_fingerprint` coberto pelo atestado do harness já válido
      (expira 2026-09-10; não precisou renovar).
-  6. ⬜ Registrar em `trials.json` com `registered_at` ANTES de qualquer previsão
-     contar como dado da trial — é o único item que falta agora.
+  6. ✅ **Registrada em `trials.json` em 2026-09-04T08:36:02Z** (nome:
+     `h7-macro-dxy-hmm-v1`), `metric="psr"`, `pipeline_fingerprint` conferido
+     pelo próprio `register_trial()` contra o atestado do V3 válido (expira
+     2026-09-10). `charters/scientific_state.json` atualizado:
+     `hypotheses.H7="REGISTERED_NOT_ACTIVATED"`,
+     `hypothesis_trials.H7="h7-macro-dxy-hmm-v1"`.
 
-  **Ressalva sobre os itens 2-3**: nenhum dos dois foi confirmado por leitura
-  direta da fonte primária NESTA sessão (rede segue bloqueada aqui) — o item 2
-  é evidência já existente no repo (sessão anterior, na máquina do dono), e o
-  item 3 é achado de busca (WebSearch), não fetch direto da página oficial do
-  Fed. Ambos ficam mais fortes se o dono confirmar diretamente
+  **Ressalva sobre os itens 2-3, que persiste mesmo registrada**: nenhum dos
+  dois foi confirmado por leitura direta da fonte primária NESTA sessão (rede
+  segue bloqueada aqui) — o item 2 é evidência já existente no repo (sessão
+  anterior, na máquina do dono), e o item 3 é achado de busca (WebSearch), não
+  fetch direto da página oficial do Fed. O registro em `trials.json` é válido
+  (o mecanismo de proteção do core não exige isso), mas ambos ficam mais
+  fortes se o dono confirmar diretamente
   https://www.federalreserve.gov/releases/h10/ na própria máquina antes de
-  registrar — mas não são mais bloqueadores de registro por si só.
+  tratar qualquer resultado futuro como definitivo.
 
   **Infraestrutura do item 4 implementada e testada em 2026-09-04** (código +
   40 testes novos, suíte inteira 892/892 verde, `ruff check` limpo):
