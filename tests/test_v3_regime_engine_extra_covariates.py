@@ -183,3 +183,36 @@ def test_fit_desiste_apos_max_retries_com_erro_claro(monkeypatch):
     eng = RegimeEngine(extra_features=("dxy_return_1d",))
     with pytest.raises(RuntimeError, match="nao convergiu"):
         eng.fit(rets, vols, extra_covariates=[dxy])
+
+
+def test_fit_tenta_seed_alternativa_se_predict_falhar_apos_fit_ok(monkeypatch):
+    """Achado em produção (2026-09-04, H7): fit() pode 'convergir' sem lançar
+    exceção mas deixar um estado nunca visitado (linha de transmat_ com soma
+    zero) — o erro só aparece depois, no predict() (decodificação Viterbi):
+    'transmat_ rows must sum to 1'. Antes desta correção, predict() rodava
+    FORA do laço de retry, então esse caso nunca tinha chance de tentar outra
+    seed. Agora precisa ter."""
+    import GarimpoInvestimentos.v3.regime_engine as regime_engine_mod
+
+    rng = np.random.default_rng(13)
+    rets, vols = _synthetic_series(rng)
+    dxy = rng.normal(0, 1, len(rets)).tolist()
+
+    real_gaussian_hmm = regime_engine_mod._hmmlearn.GaussianHMM
+    seeds_tentadas = []
+
+    class _FlakyPredictGaussianHMM(real_gaussian_hmm):
+        def predict(self, X, lengths=None):
+            seeds_tentadas.append(self.random_state)
+            if len(seeds_tentadas) <= 2:
+                raise ValueError("transmat_ rows must sum to 1 (got row sums of [1. 1. 0.])")
+            return super().predict(X, lengths)
+
+    monkeypatch.setattr(regime_engine_mod._hmmlearn, "GaussianHMM", _FlakyPredictGaussianHMM)
+
+    eng = RegimeEngine(extra_features=("dxy_return_1d",))
+    eng.fit(rets, vols, extra_covariates=[dxy])
+
+    assert seeds_tentadas == [42, 43, 44]
+    assert eng._model is not None
+    assert eng._model.random_state == 44
