@@ -194,6 +194,26 @@ propósito abaixo do gate, para não expor correlação prematura como se fosse 
 > confira o caminho do banco antes de commitar: `n=0` pode ser legítimo, mas é
 > também exatamente o que um banco vazio ou apontado para o lugar errado produz.
 
+### B.3-bis — Puxar código novo sem perder o estado local
+
+Os jobs agendados (`v3-daily`, `quality-snapshot`, `attest-renew`) escrevem em
+`trials.json`, `h6_status.json` e nos dois atestados **sem commitar** — por
+design (`GarimpoInvestimentos/jobs.py`): quem decide o que entra no git
+continua sendo você. Na prática isso significa que um `git pull` simples
+falha sempre que algum desses jobs já rodou e ainda não foi commitado
+("local changes would be overwritten").
+
+Use `scripts\safe_pull.ps1` em vez de `git pull` direto — ele guarda o
+estado local, puxa, e devolve, sem apagar nada:
+
+```powershell
+.\scripts\safe_pull.ps1
+```
+
+Se ele avisar de conflito ao restaurar (raro — só acontece se o código novo
+tocou exatamente as mesmas linhas que o job local escreveu), o script **não
+descarta o stash**; resolve manualmente e só então `git stash drop`.
+
 ### B.4 Se aparecer a recusa por regressão
 
 Previsões são append-only (migração `_0016`), então o `n` elegível **não diminui
