@@ -403,7 +403,41 @@
 
 ---
 
-## Backlog condicional (ideias — NÃO são tentativas)
+### H9 — Razão OI/Volume (crowding especulativo) como covariável exógena do regime (status: **registrada em `trials.json` 2026-09-04, coleta prospectiva ainda não iniciada**)
+- Data do registro: 2026-09-04 (ANTES de qualquer backtest rodar). Promove o item B2
+  do backlog condicional (abaixo) — ativação exigia "mecanismo causal novo por
+  escrito", escrito agora.
+- Mecanismo causal (por que seria diferente de H1-H3, mesma família de dado):
+  H1-H3 usam o NÍVEL/z-score do funding rate — pressão de carregamento entre
+  longs e shorts. H9 usa a razão OI notional / volume spot — mede algo
+  ORTOGONAL: o quanto do interesse aberto é sustentado por volume real de
+  negociação, vs. posição alavancada acumulada sem giro correspondente
+  ("crowding" especulativo). Um funding rate neutro pode coexistir com OI/volume
+  extremo (muita alavancagem parada, pouco giro) — cenário que H1-H3 não vê.
+  Mecanismo: OI/volume extremo historicamente precede desalavancagem forçada
+  (unwind de posição crowded), o que H1-H3 não captura porque olha só o CUSTO
+  de carregar a posição (funding), não a FRAGILIDADE estrutural dela (OI vs.
+  giro real).
+- Por que isso NÃO é reparametrizar H1-H3 (a família congelada `funding_oi_hmm_v3`
+  não pode ser reaberta): a feature em si é nova (razão, não nível/z-score de
+  funding) e entra como covariável EXÓGENA do HMM (mesmo mecanismo de
+  `extra_features` que o H7 já usa), não como substituição de nenhuma feature
+  congelada. H1-H3 continuam intocados, byte-idênticos.
+- Fonte do dado: 100% já coletado — `KlineRecord.volume` (spot 1h) já existe no
+  provider (`ccxt_base.py`, `spot_collector.py`) e já está no disco de qualquer
+  ativo com histórico de H1-H3, só nunca foi usado (o builder descartava o campo).
+  `oi_notional_usd` já é consumido pelo H1-H3. Zero coleta prospectiva nova
+  necessária — pode ser testado contra dado histórico já em mãos, igual H1-H3
+  (a integridade anti-lookahead vem do próprio método WFA IS/OOS, não da
+  novidade do dado).
+- Critério de sucesso (definido ANTES de rodar): idêntico ao gate de H1-H3/H7 —
+  PSR ≥ 0,80 E IC_CI_lower(Spearman) > 0 E MaxDD < 20%, líquido de custos,
+  via `backtest_v3.py --use-oi-volume-ratio`.
+- Risco de p-hacking a vigiar: esta é a família de dado mais próxima da já
+  refutada (mesmo funding/OI). Se o resultado vier marginal como H1
+  (-0,09bps vs -0,53bps de custo, ver B4 acima), não há espaço para
+  "ajustar" parâmetro algum — vira NO-GO e fecha, igual H1-H3.
+
 
 > Registrado em 2026-07-07 (triagem de propostas externas). Nada daqui entra no
 > `trials.json` nem consome tentativa: são candidatos a hipótese futura, com
@@ -447,6 +481,35 @@
 - Custo ~zero; pode rodar a qualquer momento, MAS com n=3 refutadas da MESMA família
   a resposta hoje é trivial ("custos comem sinais de microestrutura de 24h").
 - Ativação: quando houver ≥2 famílias distintas fechadas (ex.: após veredicto da H4).
+
+**Executada 2026-09-04** (condição de ativação atendida: 2 famílias fechadas —
+`funding_oi_hmm_v3` e a linha LLM-score/H4-H6). Achados, lendo os vereditos já
+registrados em `trials.json`/acima, sem rodar nada novo:
+
+1. **`funding_oi_hmm_v3` (H1-H3): edge existia, mas era minúsculo — morreu no
+   custo, não na direção.** Sharpe entre -0.0022 e -0.0132 nas 3 variantes —
+   perto de zero, não fortemente negativo. H1 especificamente perdeu por
+   margem estreita (líquido -0.09bps vs custo -0.53bps, `costs.py`). Isto é
+   diferente do padrão da linha LLM abaixo.
+2. **Linha LLM-score (H4→H5→H6): o sinal muda de SENTIDO entre tentativas,
+   nunca estabiliza.** H5 (pooled, pré-inversão): Spearman -0.166 [IC95%
+   -0.266, -0.057] — significativo, mas na direção OPOSTA à hipótese
+   original (score alto devia prever alta, previu queda). H6 inverteu a
+   leitura pra capturar exatamente esse padrão oposto — e o resultado, com
+   n=84 real, foi rho=-0.057 [IC95% -0.231, +0.129]: **cruza zero, e ainda
+   por cima o sinal da correlação voltou a ser levemente NEGATIVO**, não
+   positivo como a inversão previa. Ou seja: nem a leitura original nem a
+   invertida têm direção estável — o mais provável é que não haja
+   correlação real nenhuma entre score do LLM e retorno D+7, só ruído que
+   parece ter direção diferente a cada amostra.
+3. **Implicação prática pras próximas hipóteses (H7 em diante):** um
+   candidato só vale a pena testar se o efeito esperado for GRANDE o
+   suficiente pra sobreviver tanto ao custo de transação (H1-H3 mostraram
+   que -0.5bps já mata um edge de -0.09bps) quanto à instabilidade de sinal
+   pequeno (H4-H6 mostraram que |rho|<0.2 numa família não é confiável nem
+   no SINAL, quanto mais na magnitude). Isso não é uma regra formal nova —
+   é contexto pra calibrar expectativa, não pra mudar nenhum gate já
+   definido.
 
 ### B5 — Sentimento textual como série temporal (separar texto do viés do LLM)
 - Sinal: série diária de sentimento das notícias (léxico/contagem), alinhada por

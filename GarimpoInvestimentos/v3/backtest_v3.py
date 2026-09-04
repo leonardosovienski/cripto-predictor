@@ -74,11 +74,13 @@ from GarimpoInvestimentos.v3.collectors.funding_collector import load_funding_cs
 from GarimpoInvestimentos.v3.collectors.oi_collector import load_oi_csv
 from GarimpoInvestimentos.v3.collectors.spot_collector import load_spot_csv
 from GarimpoInvestimentos.v3.costs import CostModel
+from GarimpoInvestimentos.v3.crowding_features import build_oi_volume_ratio
 from GarimpoInvestimentos.v3.economic_gate import decide_cost_aware, estimate_edge
 from GarimpoInvestimentos.v3.feature_builder import (
     build_feature_vectors,
     build_oi_index,
     build_spot_index,
+    build_volume_index,
 )
 from GarimpoInvestimentos.v3.macro_features import (
     build_dxy_return,
@@ -466,6 +468,7 @@ def run_wfa(
     use_macro_dxy: bool = False,
     macro_window_days: int = 1,
     dxy_closes_path: Path | None = None,
+    use_oi_volume_ratio: bool = False,
 ) -> WFAResult:
     """
     Executa Walk Forward Analysis sobre os dados locais coletados pelo pipeline.
@@ -491,6 +494,13 @@ def run_wfa(
         dxy_return_1d (lido de `dxy_closes_path`, um CSV local pré-coletado via
         DXYProvider — este backtest não busca nada na rede) como covariáveis
         extras do RegimeEngine. Exige `dxy_closes_path`.
+
+    use_oi_volume_ratio: H9 (docs/HYPOTHESES.md) — TRIAL NOVA, não
+        reparametrização de H1-H3. Default False preserva o comportamento
+        anterior. True adiciona oi_volume_ratio (razão OI/volume notional,
+        log-escala — crowding especulativo) como covariável extra do
+        RegimeEngine. Dado 100% já coletado (spot_1h.csv já tem volume) —
+        não exige nenhum CSV novo, ao contrário de use_macro_dxy.
     """
     if use_macro_dxy and dxy_closes_path is None:
         raise ValueError("use_macro_dxy=True exige dxy_closes_path (CSV date,close)")
@@ -562,8 +572,9 @@ def run_wfa(
     regime_extra_features: tuple[str, ...] = ()
     _macro_by_ts: dict[int, float] = {}
     _dxy_by_ts: dict[int, float] = {}
+    _oiv_by_ts: dict[int, float] = {}
     if use_macro_dxy:
-        regime_extra_features = ("macro_event_dummy", "dxy_return_1d")
+        regime_extra_features += ("macro_event_dummy", "dxy_return_1d")
         macro_all = build_macro_event_dummy(all_features, window_days=macro_window_days)
         dxy_closes = load_dxy_daily_closes(dxy_closes_path)
         dxy_all = build_dxy_return(all_features, dxy_closes)
@@ -573,14 +584,23 @@ def run_wfa(
             "backtest_v3 [%s]: H7 covariáveis extras ativas (macro_event_dummy, dxy_return_1d)",
             symbol,
         )
+    if use_oi_volume_ratio:
+        regime_extra_features += ("oi_volume_ratio",)
+        volume_index = build_volume_index(kline_records)
+        oiv_all = build_oi_volume_ratio(all_features, volume_index)
+        _oiv_by_ts = {fv.timestamp_exchange_ms: v for fv, v in zip(all_features, oiv_all)}
+        logger.info("backtest_v3 [%s]: H9 covariável extra ativa (oi_volume_ratio)", symbol)
 
     def _extra_covariates(features: list) -> list[list[float]] | None:
-        if not use_macro_dxy:
+        if not regime_extra_features:
             return None
-        return [
-            [_macro_by_ts[fv.timestamp_exchange_ms] for fv in features],
-            [_dxy_by_ts[fv.timestamp_exchange_ms] for fv in features],
-        ]
+        cols = []
+        if use_macro_dxy:
+            cols.append([_macro_by_ts[fv.timestamp_exchange_ms] for fv in features])
+            cols.append([_dxy_by_ts[fv.timestamp_exchange_ms] for fv in features])
+        if use_oi_volume_ratio:
+            cols.append([_oiv_by_ts[fv.timestamp_exchange_ms] for fv in features])
+        return cols
 
     folds: list[FoldResult] = []
     all_oos_returns: list[float] = []
@@ -1392,6 +1412,17 @@ def _main() -> None:
         ),
     )
     parser.add_argument(
+        "--use-oi-volume-ratio",
+        action="store_true",
+        help=(
+            "H9 (docs/HYPOTHESES.md): TRIAL NOVA, não reparametrização de H1-H3. "
+            "Adiciona oi_volume_ratio (razão OI/volume notional, log-escala — "
+            "crowding especulativo) como covariável extra do HMM. Dado já "
+            "coletado (spot_1h.csv já tem volume) — não exige CSV novo. "
+            "Desligado por padrão — comportamento idêntico ao backtest V3 congelado."
+        ),
+    )
+    parser.add_argument(
         "--fr-thresholds",
         type=float,
         nargs="+",
@@ -1459,6 +1490,7 @@ def _main() -> None:
                     use_macro_dxy=args.use_macro_dxy,
                     macro_window_days=args.macro_window_days,
                     dxy_closes_path=args.dxy_closes,
+                    use_oi_volume_ratio=args.use_oi_volume_ratio,
                 )
         except Exception as exc:
             logger.error("backtest_v3 [%s]: ERRO — %s", symbol, exc)
