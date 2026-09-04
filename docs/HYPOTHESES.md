@@ -563,6 +563,22 @@
   3. ✅ Registrado em `trials.json` com `metric` declarado (2026-09-04).
   4. ⬜ Coletar dado GENUINAMENTE NOVO sob esta configuração — só a partir de
      agora conta.
+
+  **Lacuna de infraestrutura fechada em 2026-09-04**: `hypothesis_loop.py` já
+  tinha o motor completo (`run_round`: propõe→valida→registra) e 19 testes,
+  mas nada chamava `evaluate_proposal` sobre as propostas aceitas, e nada
+  agendava o laço pra rodar — item 4 nunca teria como sair de ⬜ sem isso.
+  `analyzers/hypothesis_loop_runner.py` (novo) fecha: carrega FeatureVector já
+  coletados (zero dado novo de mercado), monta `dados`/`retornos`, roda
+  `run_round`, avalia as propostas ACEITAS e anexa a
+  `hypothesis_evaluations.json` (traço append-only, mesmo princípio de
+  `hypothesis_proposals.json`). `--dry-run` existe só pra smoke-test do
+  wiring — grava em arquivos `.dryrun.json` SEPARADOS, nunca no traço real
+  (misturar entrada sintética com proposta real corromperia o denominador
+  honesto que PBO/DSR dependem). Disponibilizado como job
+  (`jobs.py:h8-hypothesis-loop`), **NÃO agendado automaticamente** — decisão
+  do dono, mesma regra de todo outro job. Item 4 continua ⬜ até o dono
+  decidir rodar (cada execução chama o LLM de verdade e gasta cota).
 - `capital_authorized`: false até veredicto prospectivo líquido de custos, com PBO
   medido e reportado ao lado do DSR.
 

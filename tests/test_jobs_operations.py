@@ -246,3 +246,17 @@ def test_discover_e_um_job_declarado(tmp_path, monkeypatch):
     assert "--ingest" in config.command
     assert config.expected_artifact == FEATURE_STORE_DB
     assert config.exit_statuses[0] is RunStatus.SUCCEEDED
+
+
+def test_h8_hypothesis_loop_e_um_job_declarado_nao_agendado_sozinho(tmp_path, monkeypatch):
+    """H8 (docs/HYPOTHESES.md, checklist item 4): disponibilizado como job, mas
+    disponibilizar não é agendar — registrar no Task Scheduler continua decisão
+    do dono, mesma regra de todo outro job. Chama o LLM real por padrão (sem
+    --dry-run) porque um job agendado gera dado que precisa contar de verdade."""
+    monkeypatch.setenv("PREDICTOR_OPS_STATE_DIR", str(tmp_path))
+    config = jobs.job_config("h8-hypothesis-loop")
+    assert config.command[-2:] == ["--symbol", "BTCUSDT"]
+    assert config.command[1:3] == ["-m", "GarimpoInvestimentos.analyzers.hypothesis_loop_runner"]
+    assert "--dry-run" not in config.command
+    assert config.scientific_state == "COLLECTION_ONLY"
+    assert config.exit_statuses[0] is RunStatus.SUCCEEDED

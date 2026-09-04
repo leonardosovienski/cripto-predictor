@@ -102,6 +102,21 @@ def job_config(name: str, *, timeout_seconds: float | None = None) -> JobConfig:
             "BTCUSDT",
             "ETHUSDT",
         ],
+        # H8 (docs/HYPOTHESES.md, checklist item 4): motor propõe->valida->avalia
+        # ja existia (analyzers/hypothesis_loop.py) e era so testado isolado —
+        # nada rodava em producao. Disponibilizado aqui, NAO agendado
+        # automaticamente por este commit: registrar no Task Scheduler continua
+        # decisao do dono, mesma regra de todo outro job (linha ~62 acima).
+        # Chama o LLM real por padrao (sem --dry-run) — cada execucao GASTA cota
+        # de API e ESCREVE no traco append-only real (hypothesis_proposals.json,
+        # hypothesis_evaluations.json). So o dono decide a cadencia.
+        "h8-hypothesis-loop": [
+            sys.executable,
+            "-m",
+            "GarimpoInvestimentos.analyzers.hypothesis_loop_runner",
+            "--symbol",
+            "BTCUSDT",
+        ],
     }
     if name not in commands:
         raise ValueError(f"unknown job: {name}")
@@ -115,7 +130,14 @@ def job_config(name: str, *, timeout_seconds: float | None = None) -> JobConfig:
         provenance={"domain": "crypto", "scientific_change": False},
         scientific_state=(
             "COLLECTION_ONLY"
-            if name in {"v3-daily", "observation-daily", "observation-live", "microstructure-live"}
+            if name
+            in {
+                "v3-daily",
+                "observation-daily",
+                "observation-live",
+                "microstructure-live",
+                "h8-hypothesis-loop",
+            }
             else None
         ),
         # phase1.py sai com 1 (GarimpoInvestimentos/phase1.py:348) sempre que ALGUM
