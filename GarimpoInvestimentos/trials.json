@@ -129,8 +129,8 @@
       "dado_ja_coletado": true,
       "decided_by": "owner, 2026-09-04"
     },
-    "sharpe": null,
-    "notes": "H9: promocao formal de B2 (docs/HYPOTHESES.md) a trial ativa. Mecanismo causal novo por escrito registrado ANTES de qualquer backtest rodar (protocolo NEXT_TRIAL_SCIENTIFIC_GATE.md). Dado 100% ja coletado (spot volume + OI ja no disco de qualquer ativo com historico de H1-H3) - zero coleta prospectiva nova necessaria. capital_authorized=false ate veredicto liquido de custos.",
+    "sharpe": -1.0041,
+    "notes": "H9: promocao formal de B2 (docs/HYPOTHESES.md) a trial ativa. Mecanismo causal novo por escrito registrado ANTES de qualquer backtest rodar. VEREDITO 2026-09-04, WFA real em producao (BTCUSDT, backtest_v3.py --use-oi-volume-ratio): PSR agregado=0.1621 (<0.80), IC Spearman=0.0283 IC_CI_lower=-0.1476 (cruza zero), MaxDD=11.49%, Sharpe agregado=-1.0041. NO-GO pelo criterio pre-registrado (PSR e IC ambos reprovam). Nao autoriza capital.",
     "metric": "psr"
   }
 ]
