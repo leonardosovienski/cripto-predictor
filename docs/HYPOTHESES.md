@@ -403,7 +403,22 @@
 
 ---
 
-### H9 — Razão OI/Volume (crowding especulativo) como covariável exógena do regime (status: **registrada em `trials.json` 2026-09-04, coleta prospectiva ainda não iniciada**)
+### H9 — Razão OI/Volume (crowding especulativo) como covariável exógena do regime (status: **REFUTADA / NO-GO — 2026-09-04**)
+
+> **Veredito 2026-09-04.** Primeiro WFA completo rodado em produção
+> (`backtest_v3.py --use-oi-volume-ratio`, BTCUSDT, dado real, sem crash —
+> a correção `covariance_type="diag"` do H7 funcionou aqui de primeira,
+> nenhum retry de seed necessário). Gate pré-registrado:
+> ```
+> PSR agregado : 0.1621  (exige >= 0.80)
+> IC Spearman  : 0.0283  IC_CI_lower: -0.1476  (exige CI_lower > 0 — CRUZA ZERO)
+> MaxDD        : 11.49%  (dentro do limite — irrelevante, os dois acima já reprovam)
+> Sharpe       : -1.0041
+> ```
+> **VEREDITO: NO-GO.** PSR muito abaixo do corte e o IC cruza zero — nem PSR
+> nem IC atingem o critério pré-registrado. Refutada pelo próprio critério
+> que a trial definiu antes de qualquer dado contar. Não autoriza capital —
+> nenhum gate deste ecossistema autorizaria.
 - Data do registro: 2026-09-04 (ANTES de qualquer backtest rodar). Promove o item B2
   do backlog condicional (abaixo) — ativação exigia "mecanismo causal novo por
   escrito", escrito agora.
@@ -437,6 +452,11 @@
   refutada (mesmo funding/OI). Se o resultado vier marginal como H1
   (-0,09bps vs -0,53bps de custo, ver B4 acima), não há espaço para
   "ajustar" parâmetro algum — vira NO-GO e fecha, igual H1-H3.
+- Resultado: **REFUTADA — PSR=0,162 (<0,80) e IC cruza zero** (ver veredito
+  2026-09-04 no topo desta seção). Terceira família de dado independente
+  (funding/OI-nível, LLM-score, agora OI/volume-crowding) a não passar do
+  gate — reforça o padrão do B4: nenhum sinal testado até aqui tem magnitude
+  suficiente pra sobreviver ao gate estatístico, não só ao custo.
 
 
 > Registrado em 2026-07-07 (triagem de propostas externas). Nada daqui entra no

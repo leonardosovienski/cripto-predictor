@@ -14,7 +14,7 @@
     "H6": "CLOSED_NO_GO",
     "H7": "REGISTERED_NOT_ACTIVATED",
     "H8": "REGISTERED_NOT_ACTIVATED",
-    "H9": "REGISTERED_NOT_ACTIVATED"
+    "H9": "CLOSED_NO_GO"
   },
   "hypothesis_trials": {
     "H1": "v3-hmm-funding-oi-fr90",
