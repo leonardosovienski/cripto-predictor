@@ -12,7 +12,8 @@
     "H4": "CLOSED_INSUFFICIENT_SAMPLE",
     "H5": "CLOSED_NO_GO",
     "H6": "COLLECTION_ONLY_IMMATURE",
-    "H7": "REGISTERED_NOT_ACTIVATED"
+    "H7": "REGISTERED_NOT_ACTIVATED",
+    "H8": "REGISTERED_NOT_ACTIVATED"
   },
   "hypothesis_trials": {
     "H1": "v3-hmm-funding-oi-fr90",
@@ -21,7 +22,8 @@
     "H4": "v2-dpl-gemini-h7",
     "H5": "v2-dpl-multi-h7",
     "H6": "h6-sinal-invertido-d7",
-    "H7": "not_yet_registered_in_trials_json"
+    "H7": "h7-macro-dxy-hmm-v1",
+    "H8": "h8-llm-hypothesis-generator"
   },
   "frozen_families": [
     "funding_oi_hmm_v3"

@@ -97,5 +97,23 @@
     "sharpe": null,
     "notes": "H8: promocao formal de B9 (docs/HYPOTHESES.md) a trial ativa. Registro ANTES de qualquer dado contar (protocolo NEXT_TRIAL_SCIENTIFIC_GATE.md). capital_authorized=false ate veredicto prospectivo liquido de custos.",
     "metric": "spearman_ic"
+  },
+  {
+    "name": "h7-macro-dxy-hmm-v1",
+    "registered_at": "2026-09-04T08:36:02Z",
+    "params": {
+      "mechanism": "Calendario macro (FOMC/CPI/PPI, macro_calendar.json) + retorno 1d do DXY (FRED DTWEXBGS via DXYProvider) como covariaveis extras na emissao do HMM (v3/regime_engine.py, extra_features). Ortogonal a H1-H6: nenhuma trial anterior olhou agenda macro ou cambio.",
+      "family": "macro-dxy-hmm-covariate",
+      "parent_hypotheses": [],
+      "integration": "V3 (a) - covariavel exogena do HMM, nao contexto de prompt LLM (Fase 1 seria trial separada)",
+      "success_criterion": "PSR >= 0.80 E IC_CI_lower(Spearman) > 0 E MaxDD < 20%, liquido de custos - mesmo gate de H1-H3",
+      "macro_window_days_default": 1,
+      "dxy_publish_lag_business_days": 1,
+      "code_ref": "v3/regime_engine.py (extra_features), v3/macro_features.py, v3/backtest_v3.py --use-macro-dxy",
+      "decided_by": "owner, 2026-09-04"
+    },
+    "sharpe": null,
+    "notes": "H7: covariaveis macro/DXY no HMM da V3. Infraestrutura implementada e testada 2026-09-04 (PRs #81, #83). Registro ANTES de qualquer dado contar (protocolo NEXT_TRIAL_SCIENTIFIC_GATE.md). capital_authorized=false ate veredicto prospectivo liquido de custos. NAO reabre nem reparametriza a familia congelada funding_oi_hmm_v3 (H1-H3) - trial nova, familia nova.",
+    "metric": "psr"
   }
 ]

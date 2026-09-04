@@ -217,7 +217,7 @@
 - Resultado: **imaturo** — última evidência versionada: Sharpe auxiliar +0,3479
   com n=6; o gate pré-registrado exige n>=30 e IC95 positivo. Sem veredito.
 
-### H7 — Calendário macro (FOMC/CPI/PPI) + DXY como contexto exógeno de regime (status: **registrada — infraestrutura de coleta implementada, coleta real não iniciada**)
+### H7 — Calendário macro (FOMC/CPI/PPI) + DXY como contexto exógeno de regime (status: **registrada em `trials.json` 2026-09-04, coleta prospectiva ainda não iniciada**)
 - Data do registro: 2026-08-14 (ANTES de qualquer coleta ou resultado). Promove o
   item B1 do backlog condicional (abaixo) — ativação estava liberada desde o
   veredito da H4 (2026-07-10), formalizada agora.
@@ -299,17 +299,43 @@
   critério nem mecanismo acima, só reafirma o que falta em formato acionável):**
   1. ✅ CPI/PPI preenchido em `macro_calendar.json` (verificado em fontes
      primárias 2026-08-31; 33 eventos carregam sem erro via `load_macro_calendar()`).
-  2. ⬜ Validar `DXYProvider().fetch()` ao vivo, ponta a ponta, contra o FRED —
-     precisa rede real, fora deste ambiente.
-  3. ⬜ Confirmar `publish_lag_days` real do release H.10 contra o texto oficial
-     — idem, fora deste ambiente.
+  2. ✅ **Validação ao vivo já registrada no docstring de `dxy.py`**: endpoint
+     revalidado em 2026-08-31, retornou observações válidas de 2026-08-24 a
+     2026-08-28 com `source=fred`, sem interpolar feriados (achado ao revisar
+     o código em 2026-09-04 — o checklist anterior não tinha conferido isso).
+  3. ✅ **`publish_lag_days` corrigido para dias ÚTEIS em 2026-09-04**
+     (`_add_business_days`, `GarimpoInvestimentos/dpl/providers/dxy.py`),
+     depois de pesquisa via WebSearch (fetch direto de federalreserve.gov/
+     fred.stlouisfed.org segue bloqueado neste ambiente — não é fonte
+     primária lida diretamente, é achado de busca): a tabela semanal oficial
+     do H.10 sai segunda-feira 16h15, e a série `DTWEXBGS` específica mostrou
+     um exemplo concreto de dado de sexta publicado na segunda seguinte — lag
+     em dias úteis, não corridos. A versão anterior (dias corridos) podia
+     declarar um dado disponível cedo demais perto de fim de semana (sexta+1
+     dia corrido = sábado, quando o dado real só sai na segunda) — era risco
+     de look-ahead, não só imprecisão. 4 testes novos cobrem sexta→segunda,
+     lag=2 dias úteis, e os casos de borda (`n<0`, `n=0`).
   4. ✅ **Decisão tomada (2026-09-04): integração (a) — covariável exógena do
      HMM em `v3/regime_engine.py`.** Critério de sucesso confirmado: PSR≥0,80 ∧
      IC_CI_lower>0, líquido de custos (mesmo gate de H1-H3).
   5. ✅ `pipeline_fingerprint` coberto pelo atestado do harness já válido
      (expira 2026-09-10; não precisou renovar).
-  6. ⬜ Registrar em `trials.json` com `registered_at` ANTES de qualquer previsão
-     contar como dado da trial — só falta isso e os itens 2-3.
+  6. ✅ **Registrada em `trials.json` em 2026-09-04T08:36:02Z** (nome:
+     `h7-macro-dxy-hmm-v1`), `metric="psr"`, `pipeline_fingerprint` conferido
+     pelo próprio `register_trial()` contra o atestado do V3 válido (expira
+     2026-09-10). `charters/scientific_state.json` atualizado:
+     `hypotheses.H7="REGISTERED_NOT_ACTIVATED"`,
+     `hypothesis_trials.H7="h7-macro-dxy-hmm-v1"`.
+
+  **Ressalva sobre os itens 2-3, que persiste mesmo registrada**: nenhum dos
+  dois foi confirmado por leitura direta da fonte primária NESTA sessão (rede
+  segue bloqueada aqui) — o item 2 é evidência já existente no repo (sessão
+  anterior, na máquina do dono), e o item 3 é achado de busca (WebSearch), não
+  fetch direto da página oficial do Fed. O registro em `trials.json` é válido
+  (o mecanismo de proteção do core não exige isso), mas ambos ficam mais
+  fortes se o dono confirmar diretamente
+  https://www.federalreserve.gov/releases/h10/ na própria máquina antes de
+  tratar qualquer resultado futuro como definitivo.
 
   **Infraestrutura do item 4 implementada e testada em 2026-09-04** (código +
   40 testes novos, suíte inteira 892/892 verde, `ruff check` limpo):
