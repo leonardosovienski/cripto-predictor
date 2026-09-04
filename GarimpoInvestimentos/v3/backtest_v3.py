@@ -58,6 +58,7 @@ import logging
 import math
 import sys
 from dataclasses import dataclass
+from pathlib import Path
 
 from predictor_core.measurement.bootstrap import bootstrap_ci
 from predictor_core.obs import emit_event
@@ -78,6 +79,11 @@ from GarimpoInvestimentos.v3.feature_builder import (
     build_feature_vectors,
     build_oi_index,
     build_spot_index,
+)
+from GarimpoInvestimentos.v3.macro_features import (
+    build_dxy_return,
+    build_macro_event_dummy,
+    load_dxy_daily_closes,
 )
 from GarimpoInvestimentos.v3.regime_engine import RegimeEngine
 from GarimpoInvestimentos.v3.signal_engine import (
@@ -457,6 +463,9 @@ def run_wfa(
     cost_aware_filter: bool = False,
     minimum_edge_calibration_sample: int = _DEFAULT_EDGE_CALIBRATION_SAMPLE,
     minimum_net_edge: float = _DEFAULT_MINIMUM_NET_EDGE,
+    use_macro_dxy: bool = False,
+    macro_window_days: int = 1,
+    dxy_closes_path: Path | None = None,
 ) -> WFAResult:
     """
     Executa Walk Forward Analysis sobre os dados locais coletados pelo pipeline.
@@ -474,7 +483,17 @@ def run_wfa(
     cost_aware_filter: calibra o retorno signed somente em sinais IS maduros e
         recusa no OOS quando o limite inferior não supera fee, slippage e
         funding observável. Não usa retorno ou threshold do próprio OOS.
+
+    use_macro_dxy: H7 (docs/HYPOTHESES.md) — TRIAL NOVA, não reparametrização de
+        H1-H3. Default False preserva EXATAMENTE o comportamento anterior (2
+        features de emissão do HMM, mesmo fingerprint). True adiciona
+        macro_event_dummy (calendário FOMC/CPI/PPI local, sem rede) e
+        dxy_return_1d (lido de `dxy_closes_path`, um CSV local pré-coletado via
+        DXYProvider — este backtest não busca nada na rede) como covariáveis
+        extras do RegimeEngine. Exige `dxy_closes_path`.
     """
+    if use_macro_dxy and dxy_closes_path is None:
+        raise ValueError("use_macro_dxy=True exige dxy_closes_path (CSV date,close)")
     sym_dir = _DATA_ROOT / symbol
 
     funding_records = load_funding_csv(sym_dir / "funding.csv")
@@ -535,6 +554,34 @@ def run_wfa(
         )
     logger.info("backtest_v3 [%s]: %d feature vectors (série contínua)", symbol, len(all_features))
 
+    # H7: covariáveis extras pré-computadas UMA vez sobre a série contínua (mesmo
+    # padrão de `all_features` acima), indexadas por timestamp para fatiar por
+    # fold sem recomputar. Vazio quando use_macro_dxy=False — RegimeEngine()
+    # recebe extra_features=() e o comportamento é idêntico ao de antes desta
+    # mudança (ver test_default_sem_extra_features_bate_com_comportamento_anterior).
+    regime_extra_features: tuple[str, ...] = ()
+    _macro_by_ts: dict[int, float] = {}
+    _dxy_by_ts: dict[int, float] = {}
+    if use_macro_dxy:
+        regime_extra_features = ("macro_event_dummy", "dxy_return_1d")
+        macro_all = build_macro_event_dummy(all_features, window_days=macro_window_days)
+        dxy_closes = load_dxy_daily_closes(dxy_closes_path)
+        dxy_all = build_dxy_return(all_features, dxy_closes)
+        _macro_by_ts = {fv.timestamp_exchange_ms: v for fv, v in zip(all_features, macro_all)}
+        _dxy_by_ts = {fv.timestamp_exchange_ms: v for fv, v in zip(all_features, dxy_all)}
+        logger.info(
+            "backtest_v3 [%s]: H7 covariáveis extras ativas (macro_event_dummy, dxy_return_1d)",
+            symbol,
+        )
+
+    def _extra_covariates(features: list) -> list[list[float]] | None:
+        if not use_macro_dxy:
+            return None
+        return [
+            [_macro_by_ts[fv.timestamp_exchange_ms] for fv in features],
+            [_dxy_by_ts[fv.timestamp_exchange_ms] for fv in features],
+        ]
+
     folds: list[FoldResult] = []
     all_oos_returns: list[float] = []
     all_gross_returns: list[float] = []
@@ -579,10 +626,11 @@ def run_wfa(
             continue
 
         # Treina regime engine SOMENTE sobre IS (sem lookahead)
-        engine = RegimeEngine()
+        engine = RegimeEngine(extra_features=regime_extra_features)
         engine.fit(
             [fv.log_return_8h for fv in is_features],
             [fv.realized_vol_24h for fv in is_features],
+            extra_covariates=_extra_covariates(is_features),
         )
 
         # Inferência causal: alimenta a série contígua de is_start até o fim do OOS.
@@ -594,6 +642,7 @@ def run_wfa(
         regime_all = engine.predict_series(
             [fv.log_return_8h for fv in infer_features],
             [fv.realized_vol_24h for fv in infer_features],
+            extra_covariates=_extra_covariates(infer_features),
         )
         oos_pairs = [
             (fv, rg)
@@ -1317,6 +1366,32 @@ def _main() -> None:
         help="Margem líquida conservadora adicional exigida, em bps (default: 0).",
     )
     parser.add_argument(
+        "--use-macro-dxy",
+        action="store_true",
+        help=(
+            "H7 (docs/HYPOTHESES.md): TRIAL NOVA, não reparametrização de H1-H3. "
+            "Adiciona macro_event_dummy (calendário FOMC/CPI/PPI local) e "
+            "dxy_return_1d (via --dxy-closes) como covariáveis extras do HMM. "
+            "Desligado por padrão — comportamento idêntico ao backtest V3 congelado. "
+            "Exige --dxy-closes."
+        ),
+    )
+    parser.add_argument(
+        "--macro-window-days",
+        type=int,
+        default=1,
+        help="Janela ± dias em torno de evento macro para macro_event_dummy=1.0 (default: 1).",
+    )
+    parser.add_argument(
+        "--dxy-closes",
+        type=Path,
+        default=None,
+        help=(
+            "CSV local (colunas: date,close) com o histórico do DXY, coletado "
+            "offline via DXYProvider. Obrigatório com --use-macro-dxy."
+        ),
+    )
+    parser.add_argument(
         "--fr-thresholds",
         type=float,
         nargs="+",
@@ -1381,6 +1456,9 @@ def _main() -> None:
                     cost_aware_filter=args.cost_aware_filter,
                     minimum_edge_calibration_sample=args.minimum_edge_calibration_sample,
                     minimum_net_edge=args.minimum_net_edge_bps / 10_000.0,
+                    use_macro_dxy=args.use_macro_dxy,
+                    macro_window_days=args.macro_window_days,
+                    dxy_closes_path=args.dxy_closes,
                 )
         except Exception as exc:
             logger.error("backtest_v3 [%s]: ERRO — %s", symbol, exc)

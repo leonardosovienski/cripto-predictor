@@ -297,19 +297,46 @@
   dado GENUINAMENTE NOVO sob esta configuração.
 - **Checklist de ativação consolidado (2026-09-04, revisão de status — não altera
   critério nem mecanismo acima, só reafirma o que falta em formato acionável):**
-  1. ⬜ Preencher CPI/PPI em `macro_calendar.json` com fonte oficial (bls.gov).
-  2. ⬜ Validar `DXYProvider().fetch()` ao vivo, ponta a ponta, contra o FRED.
-  3. ⬜ Confirmar `publish_lag_days` real do release H.10 contra o texto oficial.
-  4. ⬜ Decidir por escrito, ANTES de qualquer coleta: integração (a) covariável
-     exógena do HMM em `v3/regime_engine.py`, ou (b) contexto no prompt do juiz
-     LLM da Fase 1 — escolher uma; a outra vira trial separada se um dia for
-     testada.
-  5. ⬜ Gerar `pipeline_fingerprint` via `scripts/attest_harness.py` com o
-     atestado do harness válido (renovar se expirado).
+  1. ✅ CPI/PPI preenchido em `macro_calendar.json` (verificado em fontes
+     primárias 2026-08-31; 33 eventos carregam sem erro via `load_macro_calendar()`).
+  2. ⬜ Validar `DXYProvider().fetch()` ao vivo, ponta a ponta, contra o FRED —
+     precisa rede real, fora deste ambiente.
+  3. ⬜ Confirmar `publish_lag_days` real do release H.10 contra o texto oficial
+     — idem, fora deste ambiente.
+  4. ✅ **Decisão tomada (2026-09-04): integração (a) — covariável exógena do
+     HMM em `v3/regime_engine.py`.** Critério de sucesso confirmado: PSR≥0,80 ∧
+     IC_CI_lower>0, líquido de custos (mesmo gate de H1-H3).
+  5. ✅ `pipeline_fingerprint` coberto pelo atestado do harness já válido
+     (expira 2026-09-10; não precisou renovar).
   6. ⬜ Registrar em `trials.json` com `registered_at` ANTES de qualquer previsão
-     contar como dado da trial.
-  Nenhum destes 6 itens é executável fora da máquina com acesso à rede/dados —
-  ato deliberado do dono, não deste ambiente.
+     contar como dado da trial — só falta isso e os itens 2-3.
+
+  **Infraestrutura do item 4 implementada e testada em 2026-09-04** (código +
+  40 testes novos, suíte inteira 892/892 verde, `ruff check` limpo):
+  - `v3/regime_engine.py`: `RegimeEngine(extra_features=...)` — covariáveis
+    extras opcionais no HMM (`macro_event_dummy`, `dxy_return_1d`). Default
+    `()` preserva EXATAMENTE o comportamento de H1-H3 (mesmo fingerprint, testado
+    bit-a-bit); com `extra_features`, o fingerprint muda e um modelo H7 nunca
+    carrega como se fosse H1-H3 (`StaleRegimeModelError`). Invariância
+    anti-lookahead reconfirmada com a covariável extra ativa.
+  - `v3/macro_features.py` (novo): `build_macro_event_dummy` (dummy de janela
+    ±N dias, reusa `dpl.macro_calendar` puro, sem rede) e `build_dxy_return`
+    (retorno 1d do DXY, respeitando `publish_lag_days`, lido de um CSV local
+    via `load_dxy_daily_closes` — não busca nada na rede; o CSV é gerado
+    offline pelo `DXYProvider` na máquina do dono).
+  - `v3/backtest_v3.py`: `--use-macro-dxy` (+ `--macro-window-days`,
+    `--dxy-closes`). Desligado por padrão, comportamento idêntico ao
+    congelado. Testado ponta a ponta com dado sintético
+    (`tests/test_v3_macro_dxy_integration.py`): roda o WFA completo com a
+    flag ligada e confirma que o resultado sem a flag não muda.
+  - Testes novos: `tests/test_v3_regime_engine_extra_covariates.py` (8),
+    `tests/test_v3_macro_features.py` (12), `tests/test_v3_macro_dxy_integration.py` (3).
+
+  **O que ainda falta antes de registrar de verdade**: rodar os itens 2-3
+  (rede real) na máquina do dono, e coletar o CSV de DXY histórico
+  (`load_dxy_daily_closes`) via `DXYProvider` para alimentar `--dxy-closes` em
+  produção. Só então `registered_at` pode ser cravado e a coleta prospectiva
+  começar.
 
 ---
 

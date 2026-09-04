@@ -56,19 +56,30 @@ _COVARIANCE_TYPE = "full"  # tipo de covariância do GaussianHMM (usado no fit e
 MODEL_SCHEMA_VERSION = 1
 _EMISSION_FEATURES = ("log_return_8h", "realized_vol_24h")  # ordem = colunas de X no fit
 
+# H7 (macro/DXY, docs/HYPOTHESES.md): covariáveis extras OPCIONAIS na emissão do
+# HMM. Nomeadas explicitamente (não uma lista genérica) para manter o contrato de
+# fingerprint auditável — adicionar uma covariável nova exige decidir o nome aqui,
+# não só passar mais uma coluna. Default (extra_features=()) preserva EXATAMENTE o
+# comportamento de H1-H3: mesmas 2 features, mesmo fingerprint, mesmo .pkl válido.
+_SUPPORTED_EXTRA_FEATURES = ("macro_event_dummy", "dxy_return_1d")
+
 
 class StaleRegimeModelError(RuntimeError):
     """O .pkl carregado foi treinado sob um contrato de features/HMM incompatível
     com o código atual. Retreine o modelo em vez de servir previsões incoerentes."""
 
 
-def _model_fingerprint() -> dict:
-    """Contrato estrutural do modelo — o que torna um .pkl compatível (ou não)."""
+def _model_fingerprint(extra_features: tuple[str, ...] = ()) -> dict:
+    """Contrato estrutural do modelo — o que torna um .pkl compatível (ou não).
+
+    `extra_features` entra no fingerprint por nome: um modelo treinado com H7
+    (macro/DXY) nunca é carregável como se fosse H1-H3 (e vice-versa) — o guard
+    de StaleRegimeModelError em load() já existente protege isso sem código novo."""
     return {
         "schema_version": MODEL_SCHEMA_VERSION,
         "n_states": N_STATES,
         "covariance_type": _COVARIANCE_TYPE,
-        "emission_features": list(_EMISSION_FEATURES),
+        "emission_features": list(_EMISSION_FEATURES) + list(extra_features),
     }
 
 
@@ -232,7 +243,22 @@ class RegimeEngine:
         4. save(path) / load(path)          — persistência do modelo treinado
     """
 
-    def __init__(self, model_path: Path | None = None) -> None:
+    def __init__(
+        self,
+        model_path: Path | None = None,
+        extra_features: tuple[str, ...] = (),
+    ) -> None:
+        """`extra_features`: subconjunto de `_SUPPORTED_EXTRA_FEATURES`, na ordem em
+        que serão concatenadas após [log_return_8h, realized_vol_24h]. Vazio (default)
+        = comportamento idêntico a H1-H3. Usado por H7 (macro/DXY) — ver
+        docs/HYPOTHESES.md."""
+        unknown = set(extra_features) - set(_SUPPORTED_EXTRA_FEATURES)
+        if unknown:
+            raise ValueError(
+                f"extra_features desconhecidas: {sorted(unknown)}. "
+                f"Suportadas: {_SUPPORTED_EXTRA_FEATURES}"
+            )
+        self._extra_features = tuple(extra_features)
         self._model = None
         self._scaler: StandardScaler | None = None
         self._state_map: dict[int, str] = {}  # HMM state idx → label
@@ -247,10 +273,16 @@ class RegimeEngine:
         self,
         log_returns: list[float],
         realized_vols: list[float],
+        extra_covariates: list[list[float]] | None = None,
     ) -> None:
         """
         Treina o HMM via Baum-Welch sobre a série in-sample.
         Exige hmmlearn, numpy, scikit-learn.
+
+        `extra_covariates`: colunas adicionais, na mesma ordem de `extra_features`
+        passado ao construtor. Obrigatório (mesmo nº de colunas) se `extra_features`
+        não é vazio; deve ser None/omitido se `extra_features` é vazio — o par
+        (construtor, chamada) tem que concordar, senão é bug de wiring, não de dado.
         """
         if not _DEPS_OK:
             raise ImportError(
@@ -264,8 +296,10 @@ class RegimeEngine:
                 f"Série muito curta para treinar HMM: {len(log_returns)} obs. "
                 "Mínimo recomendado: 100 (30 dias × 3 períodos/dia)."
             )
+        columns = [log_returns, realized_vols]
+        columns.extend(self._validate_extra_covariates(extra_covariates, len(log_returns)))
 
-        X = np.column_stack([log_returns, realized_vols])
+        X = np.column_stack(columns)
         self._scaler = StandardScaler()
         X_scaled = self._scaler.fit_transform(X)
 
@@ -308,20 +342,48 @@ class RegimeEngine:
     # Inferência — CAUSAL (sem lookahead)                              #
     # ---------------------------------------------------------------- #
 
+    def _validate_extra_covariates(
+        self, extra_covariates: list[list[float]] | None, n: int
+    ) -> list[list[float]]:
+        """Confere que `extra_covariates` bate exatamente com `self._extra_features`
+        (contagem e tamanho de cada coluna). Levanta ValueError em qualquer
+        descompasso — silenciosamente ignorar/preencher seria mascarar um erro de
+        wiring como se fosse comportamento normal."""
+        n_expected = len(self._extra_features)
+        provided = extra_covariates or []
+        if len(provided) != n_expected:
+            raise ValueError(
+                f"extra_covariates tem {len(provided)} coluna(s), esperado "
+                f"{n_expected} (extra_features={self._extra_features})"
+            )
+        for name, col in zip(self._extra_features, provided, strict=True):
+            if len(col) != n:
+                raise ValueError(
+                    f"extra_covariates[{name!r}] tem {len(col)} pontos, "
+                    f"esperado {n} (mesmo tamanho de log_returns)"
+                )
+        return provided
+
     def predict_series(
         self,
         log_returns: list[float],
         realized_vols: list[float],
+        extra_covariates: list[list[float]] | None = None,
     ) -> list[RegimeOutput]:
         """
         Infere o regime para cada ponto da série usando o Forward Algorithm.
         O output[t] usa apenas x_{0:t} — sem lookahead.
         Retorna lista de RegimeOutput alinhada com a série de entrada.
+
+        `extra_covariates`: mesma regra de fit() — precisa bater com as
+        `extra_features` declaradas no construtor.
         """
         if self._model is None or self._scaler is None:
             raise RuntimeError("RegimeEngine não foi treinado. Chame fit() primeiro.")
 
-        X = np.column_stack([log_returns, realized_vols])
+        columns = [log_returns, realized_vols]
+        columns.extend(self._validate_extra_covariates(extra_covariates, len(log_returns)))
+        X = np.column_stack(columns)
         # cast: o stub do sklearn infere um tipo de retorno espúrio p/ transform()
         X_scaled = cast("np.ndarray", self._scaler.transform(X))
         covars = self._model.covars_
@@ -379,7 +441,7 @@ class RegimeEngine:
                     "model": self._model,
                     "scaler": self._scaler,
                     "state_map": self._state_map,
-                    "fingerprint": _model_fingerprint(),
+                    "fingerprint": _model_fingerprint(self._extra_features),
                 },
                 f,
             )
@@ -395,7 +457,7 @@ class RegimeEngine:
         with open(path, "rb") as f:
             data = pickle.load(f)
         saved_fp = data.get("fingerprint")
-        current_fp = _model_fingerprint()
+        current_fp = _model_fingerprint(self._extra_features)
         if saved_fp is None:
             logger.warning(
                 "RegimeEngine: modelo legado em %s sem fingerprint de provenância — "
