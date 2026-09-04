@@ -43,7 +43,9 @@ ENTROPY_THRESHOLD = 0.85  # H_norm > 0.85 → sistema em modo de observação
 _LOG_N = math.log(N_STATES)
 
 _COVARIANCE_TYPE = "full"  # tipo de covariância do GaussianHMM (usado no fit e no fingerprint)
-_MAX_FIT_RETRIES = 5  # tentativas de random_state alternativa se o EM não convergir p/ covariância válida
+_MAX_FIT_RETRIES = (
+    5  # tentativas de random_state alternativa se o EM não convergir p/ covariância válida
+)
 
 # --- Provenância do modelo serializado (espelha o config_hash do wc-predictor) ---
 # Um .pkl é um modelo treinado sob um CONTRATO: features de emissão, nº de estados,
