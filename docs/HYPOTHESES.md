@@ -470,33 +470,36 @@
   líquido) é DELES, com o universo e o período DELES. Não é evidência sobre este
   pipeline e não pode ser citado como expectativa.
 
-#### H8 — [RASCUNHO, NÃO REGISTRADA] Promoção de B9 acima a hipótese formal
+#### H8 — Promoção de B9 a hipótese formal (status: **registrada**, coleta não iniciada)
 
-> Rascunho gerado em 2026-09-04 a pedido do dono, para acelerar a promoção de B9 a
-> trial formal quando os itens (3) e (4) da tabela acima forem decididos. **Isto NÃO
-> é um registro válido** — falta preencher os placeholders abaixo com dado real
-> gerado na máquina do dono e então commitar em `trials.json` com `registered_at`
-> ANTES de qualquer previsão contar como dado da trial. Reabrir esta seção só faz
-> sentido depois de (1) DSL confirmado ainda íntegro e (2) atestado do harness
-> renovado.
+> Registrada em `trials.json` em 2026-09-04T08:20:59Z (`registered_at`), com
+> `metric="spearman_ic"` e `pipeline_fingerprint` conferido pelo próprio
+> `predictor_core.measurement.trials.register_trial` contra o atestado válido da
+> Fase 1 (`trials.phase1_harness_attestation.json`, expira 2026-09-10). Isto É um
+> registro válido — não um rascunho. Qualquer previsão que conte como dado desta
+> trial precisa ser posterior a esse timestamp.
 
 - Mecanismo, contramedidas de risco (PBO/DSR/traço append-only) e ressalva de
   honestidade: ver B9 acima na íntegra — não duplicado aqui.
-- Família e parentesco: família nova; NÃO reabre H4/H5/H6, que seguem fechadas com
-  os vereditos que têm.
-- Critério de sucesso (fixar por escrito ANTES de rodar — placeholder):
-  ⬜ [PSR ≥ 0.80 ∧ IC_lo > 0, líquido de custos, SE a recipe gerada produzir sinal
-  tradeable na V3 — OU métrica equivalente declarada por escrito conforme o tipo de
-  fator que a recipe de fato produzir; não decidir isso depois de ver o resultado].
-- `metric` a declarar no registro: ⬜ [ex. "psr" ou "sharpe", conforme aplicável].
-- `pipeline_fingerprint`: ⬜ [regenerar via `scripts/attest_harness.py`, incluindo
-  hash do DSL/prompt usado pelo LLM para propor hipóteses].
+- Família e parentesco: família nova (`llm-hypothesis-generator`); NÃO reabre
+  H4/H5/H6, que seguem fechadas com os vereditos que têm.
+- Critério de sucesso (fixado por escrito ANTES de qualquer dado, confirmado
+  pelo dono em 2026-09-04): **Spearman IC95% (block bootstrap, overlap-aware —
+  mesmo mecanismo de H4-H6, via `spearman_block_ci` já usado em
+  `hypothesis_loop.evaluate_proposal`) NÃO cruzando zero, `n≥30` pré-registrado.**
+  Leitura de poder da B12 aplicada antes de tratar qualquer veredito com `n`
+  próximo do piso como final — mesma disciplina da H6.
+- `metric`: `spearman_ic` (já era o que `evaluate_proposal` calculava; a
+  decisão só formalizou o gate que o código já implementava).
+- `pipeline_fingerprint`: `69a096c9d86b9fcdc49cad22d43e76a675554b494a7969fbe222065a014c59db`
+  (atestado da Fase 1, mesmo usado por H4-H6).
 - Checklist de ativação:
-  1. ⬜ Confirmar que `analyzers/factor_dsl.py` (prova de não-leakage) segue íntegro.
-  2. ⬜ Renovar o atestado do harness (`scripts/attest_harness.py`) — o de
-     2026-08-21 expirou.
-  3. ⬜ Registrar em `trials.json` com `metric` declarado (ato humano deliberado).
-  4. ⬜ Só então coletar dado GENUINAMENTE NOVO sob esta configuração.
+  1. ✅ `analyzers/factor_dsl.py` (prova de não-leakage) confirmado íntegro
+     (27/27 testes, 2026-09-04).
+  2. ✅ Atestado do harness válido (expira 2026-09-10 — não precisou renovar).
+  3. ✅ Registrado em `trials.json` com `metric` declarado (2026-09-04).
+  4. ⬜ Coletar dado GENUINAMENTE NOVO sob esta configuração — só a partir de
+     agora conta.
 - `capital_authorized`: false até veredicto prospectivo líquido de custos, com PBO
   medido e reportado ao lado do DSR.
 
