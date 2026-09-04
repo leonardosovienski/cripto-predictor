@@ -98,9 +98,7 @@ def test_invariancia_anti_lookahead_preservada_com_extra_covariate():
     eng.fit(rets[:150], vols[:150], extra_covariates=[macro_dummy[:150]])
     full = eng.predict_series(rets, vols, extra_covariates=[macro_dummy])
     cut = 200
-    parcial = eng.predict_series(
-        rets[:cut], vols[:cut], extra_covariates=[macro_dummy[:cut]]
-    )
+    parcial = eng.predict_series(rets[:cut], vols[:cut], extra_covariates=[macro_dummy[:cut]])
     for t in range(cut):
         assert parcial[t].hmm_posterior == full[t].hmm_posterior
 
@@ -109,7 +107,11 @@ def test_fingerprint_muda_com_extra_features():
     base = _model_fingerprint()
     com_macro = _model_fingerprint(("macro_event_dummy",))
     assert base != com_macro
-    assert com_macro["emission_features"] == ["log_return_8h", "realized_vol_24h", "macro_event_dummy"]
+    assert com_macro["emission_features"] == [
+        "log_return_8h",
+        "realized_vol_24h",
+        "macro_event_dummy",
+    ]
 
 
 def test_modelo_h7_nao_carrega_como_h1_h3(tmp_path):
