@@ -140,6 +140,16 @@ reais são aplicados (CostModel calibrado).
 - **limitations:** modelo de custo para spot (`trading/costs.py`,
   walk-the-book) segue explicitamente NÃO CALIBRADO e bloqueado
   (`UncalibratedCostModel`) — não pode sustentar veredito algum.
+- **LACUNA DE PROVENIÊNCIA (2026-09-04, varredura de engenharia):** o "MEASURED/
+  CALIBRATED" acima descreve que o CostModel de perp é testado por código
+  (`test_v3_costs.py`), não que os valores 10bps taker + 5bps slippage foram
+  conferidos contra uma tabela de fees real (tier VIP, data, fonte). Essa
+  citação não existe em nenhum doc do repo. Como H1 perdeu por margem estreita
+  (−0,09bps líquido vs. −0,53bps de custo), isto é relevante para saber quanta
+  folga existe — mas NÃO é convite a reduzir o custo e re-rodar H1 esperando
+  GO: qualquer mudança neste valor está sob a mesma trava de `frozen_families`
+  que protege o sinal, exatamente porque mudar o denominador de um veredito
+  perto do limite é tão sensível a p-hacking quanto mudar o numerador.
 - **new_evidence?:** não desde o fechamento de H1-H3.
 - **decision:** CostModel perp preservado como ativo central do case
   científico (CASE-CR-001).
