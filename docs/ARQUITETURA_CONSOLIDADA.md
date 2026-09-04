@@ -111,8 +111,10 @@ responde "não há edge" com validação em que se pode confiar.
    (4 tentativas). Regra: nenhuma config nova sem registrar a tentativa.
 4. ~~Custos não modelados~~ → **FECHADO** (`1beea4e`): fricção round-trip + funding
    real; **e o fechamento foi decisivo** — ver seção 7.
-5. Herdados da DPL, ainda abertos: consenso nunca fundiu dado real (C-03), equivalência
-   pendente p/ ETH/SOL (429), promoção ao core (C-02), proveniência com hash (ADR-015).
+5. Herdados da DPL: ~~consenso nunca fundiu dado real (C-03)~~, ~~equivalência
+   pendente p/ ETH/SOL (429)~~ — ambos fechados em 2026-09-04 com dado real, ver
+   `docs/RELATORIO_FINAL.md` §10.2. Ainda abertos: promoção ao core (C-02),
+   proveniência com hash (ADR-015).
 
 ## 7. Veredito do passo 5.3 (2026-07-02): **NO-GO — e é o primeiro veredito confiável**
 

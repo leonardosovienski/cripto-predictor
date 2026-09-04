@@ -23,6 +23,13 @@ justamente nos candidatos do discovery — registrado, mitigado pela telemetria
 (`data.fallback`) e pelo carimbo D2. **Gatilho de revisita:** consenso validado ao vivo
 (C-03 resolvido) **e** edge comprovado em algum ativo descoberto.
 
+> Atualização 2026-09-04: **C-03 resolvido para cripto** (consenso Binance+Kraken
+> rodado com dado real, ver `docs/RELATORIO_FINAL.md` §10.2) — metade do gatilho
+> está cumprida. A decisão de NÃO implementar symbol_map dinâmico **continua
+> valendo**: falta ainda "edge comprovado em algum ativo descoberto", que nenhuma
+> hipótese até agora validou (H1-H6 fechadas/inconclusiva). Revisitar só quando
+> as duas condições estiverem satisfeitas juntas.
+
 ## D2 — Carimbo `data_source`: coluna `Fonte`, gravada na montagem do resultado
 
 - **Chave no resultado / coluna CSV+XLSX:** `data_source` / `Fonte` (precedente: `judge`/`Juiz`).
