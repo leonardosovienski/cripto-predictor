@@ -295,6 +295,21 @@
   Fase 1, precisam de chaves reais de LLM/notícias), (4) decidir e
   implementar a integração V3 vs. Fase 1, (5) só então começar a coletar
   dado GENUINAMENTE NOVO sob esta configuração.
+- **Checklist de ativação consolidado (2026-09-04, revisão de status — não altera
+  critério nem mecanismo acima, só reafirma o que falta em formato acionável):**
+  1. ⬜ Preencher CPI/PPI em `macro_calendar.json` com fonte oficial (bls.gov).
+  2. ⬜ Validar `DXYProvider().fetch()` ao vivo, ponta a ponta, contra o FRED.
+  3. ⬜ Confirmar `publish_lag_days` real do release H.10 contra o texto oficial.
+  4. ⬜ Decidir por escrito, ANTES de qualquer coleta: integração (a) covariável
+     exógena do HMM em `v3/regime_engine.py`, ou (b) contexto no prompt do juiz
+     LLM da Fase 1 — escolher uma; a outra vira trial separada se um dia for
+     testada.
+  5. ⬜ Gerar `pipeline_fingerprint` via `scripts/attest_harness.py` com o
+     atestado do harness válido (renovar se expirado).
+  6. ⬜ Registrar em `trials.json` com `registered_at` ANTES de qualquer previsão
+     contar como dado da trial.
+  Nenhum destes 6 itens é executável fora da máquina com acesso à rede/dados —
+  ato deliberado do dono, não deste ambiente.
 
 ---
 
@@ -427,6 +442,36 @@
 - RESSALVA de honestidade: o resultado positivo citado na referência (Sharpe OOS
   líquido) é DELES, com o universo e o período DELES. Não é evidência sobre este
   pipeline e não pode ser citado como expectativa.
+
+#### H8 — [RASCUNHO, NÃO REGISTRADA] Promoção de B9 acima a hipótese formal
+
+> Rascunho gerado em 2026-09-04 a pedido do dono, para acelerar a promoção de B9 a
+> trial formal quando os itens (3) e (4) da tabela acima forem decididos. **Isto NÃO
+> é um registro válido** — falta preencher os placeholders abaixo com dado real
+> gerado na máquina do dono e então commitar em `trials.json` com `registered_at`
+> ANTES de qualquer previsão contar como dado da trial. Reabrir esta seção só faz
+> sentido depois de (1) DSL confirmado ainda íntegro e (2) atestado do harness
+> renovado.
+
+- Mecanismo, contramedidas de risco (PBO/DSR/traço append-only) e ressalva de
+  honestidade: ver B9 acima na íntegra — não duplicado aqui.
+- Família e parentesco: família nova; NÃO reabre H4/H5/H6, que seguem fechadas com
+  os vereditos que têm.
+- Critério de sucesso (fixar por escrito ANTES de rodar — placeholder):
+  ⬜ [PSR ≥ 0.80 ∧ IC_lo > 0, líquido de custos, SE a recipe gerada produzir sinal
+  tradeable na V3 — OU métrica equivalente declarada por escrito conforme o tipo de
+  fator que a recipe de fato produzir; não decidir isso depois de ver o resultado].
+- `metric` a declarar no registro: ⬜ [ex. "psr" ou "sharpe", conforme aplicável].
+- `pipeline_fingerprint`: ⬜ [regenerar via `scripts/attest_harness.py`, incluindo
+  hash do DSL/prompt usado pelo LLM para propor hipóteses].
+- Checklist de ativação:
+  1. ⬜ Confirmar que `analyzers/factor_dsl.py` (prova de não-leakage) segue íntegro.
+  2. ⬜ Renovar o atestado do harness (`scripts/attest_harness.py`) — o de
+     2026-08-21 expirou.
+  3. ⬜ Registrar em `trials.json` com `metric` declarado (ato humano deliberado).
+  4. ⬜ Só então coletar dado GENUINAMENTE NOVO sob esta configuração.
+- `capital_authorized`: false até veredicto prospectivo líquido de custos, com PBO
+  medido e reportado ao lado do DSR.
 
 ### B10 — Probabilidade de Overfitting do Backtest (PBO) via CSCV
 
