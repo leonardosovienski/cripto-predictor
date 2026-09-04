@@ -72,16 +72,35 @@ class StaleRegimeModelError(RuntimeError):
     com o código atual. Retreine o modelo em vez de servir previsões incoerentes."""
 
 
+def _covariance_type_for(extra_features: tuple[str, ...]) -> str:
+    """ "full" para H1-H3 (2 features, comportamento congelado, NUNCA muda).
+    "diag" quando há extra_features (H7+): achado em produção (2026-09-04) —
+    "full" com 4 dimensões e estados raros (às vezes <1% da amostra por fold IS
+    de ~180d/~540 obs) converge, via EM, para covariância quase singular; TODOS
+    os 15 folds do primeiro backtest H7 real dispararam 'Model is not
+    converging', vários colapsaram para 1 estado efetivo. Não é falta de sorte
+    de seed (o retry de seeds alternativas ajudou em 2/15 folds e mesmo assim
+    um fold esgotou o orçamento) — é subamostragem estrutural de "full" nessa
+    janela/dimensionalidade. "diag" estima variância por feature (sem
+    covariância cruzada entre elas), removendo a superfície onde a matriz pode
+    ficar não-positiva-definida. Decisão tomada ANTES de qualquer leitura OOS
+    do H7 contar (nenhum fold produziu veredito válido até aqui) — é correção
+    de infraestrutura, não reação a um resultado científico."""
+    return "diag" if extra_features else _COVARIANCE_TYPE
+
+
 def _model_fingerprint(extra_features: tuple[str, ...] = ()) -> dict:
     """Contrato estrutural do modelo — o que torna um .pkl compatível (ou não).
 
     `extra_features` entra no fingerprint por nome: um modelo treinado com H7
     (macro/DXY) nunca é carregável como se fosse H1-H3 (e vice-versa) — o guard
-    de StaleRegimeModelError em load() já existente protege isso sem código novo."""
+    de StaleRegimeModelError em load() já existente protege isso sem código novo.
+    `covariance_type` também entra — diverge entre H1-H3 ("full") e H7+ ("diag"),
+    então esse fingerprint sozinho já barra qualquer mistura dos dois."""
     return {
         "schema_version": MODEL_SCHEMA_VERSION,
         "n_states": N_STATES,
-        "covariance_type": _COVARIANCE_TYPE,
+        "covariance_type": _covariance_type_for(extra_features),
         "emission_features": list(_EMISSION_FEATURES) + list(extra_features),
     }
 
@@ -306,25 +325,20 @@ class RegimeEngine:
         self._scaler = StandardScaler()
         X_scaled = self._scaler.fit_transform(X)
 
-        # covariance_type="full" com mais dimensões (extra_features) e estados raros
-        # (ex.: "bull" com <5% da amostra) pode convergir, durante o EM, para uma
-        # covariância quase singular — hmmlearn só usa min_covar para inicializar,
-        # não para regularizar cada M-step de covariância "full". A trajetória do EM
-        # é sensível ao random_state; retry com seeds alternativas (prática padrão
-        # em EM/HMM sensível a inicialização) resolve sem mudar covariance_type nem
-        # alterar o sinal. Achado em produção rodando H7 (2026-09-04): fold quebrou
-        # com 'covars must be symmetric, positive-definite' na seed default.
-        # random_state=42 continua a PRIMEIRA tentativa sempre — H1-H3 (sem
-        # extra_features) nunca precisou de retry nos testes/produção, então o
-        # comportamento default permanece byte-idêntico (mesma seed, mesma primeira
-        # tentativa, sem esse laço alterar o resultado quando converge de primeira).
+        # covariance_type varia por instância: "full" (H1-H3, congelado, NUNCA
+        # muda) vs "diag" quando há extra_features — ver _covariance_type_for()
+        # para o achado de produção (2026-09-04) que motivou isso. Retry de
+        # seeds alternativas continua como segunda linha de defesa (EM ainda
+        # pode ser sensível à inicialização mesmo em "diag"), mas a causa raiz
+        # (covariância cruzada subamostrada em "full") é endereçada aqui.
+        covariance_type = _covariance_type_for(self._extra_features)
         last_err: ValueError | None = None
         model = None
         for attempt in range(_MAX_FIT_RETRIES):
             seed = 42 + attempt
             candidate = _hmmlearn.GaussianHMM(
                 n_components=N_STATES,
-                covariance_type=_COVARIANCE_TYPE,
+                covariance_type=covariance_type,
                 n_iter=300,
                 tol=1e-5,
                 random_state=seed,

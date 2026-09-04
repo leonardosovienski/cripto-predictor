@@ -129,7 +129,16 @@
   zero), mistral −0,023 (n=20, IC cruza zero = ruído p/ ele). Mesmo padrão
   que encerrou a H4. Motivou o pré-registro da H6 (inversão do sinal).
 
-### H6 — Sinal invertido do LLM prevê retorno D+7 (status: **coletando — ver `GarimpoInvestimentos/h6_status.json`**)
+### H6 — Sinal invertido do LLM prevê retorno D+7 (status: **REFUTADA / NO-GO — 2026-09-04**)
+
+> **Veredito 2026-09-04.** Gate atingido (`h6_status.json`): n=84 (≥30 exigido),
+> Spearman rho=-0,0567, IC95% [-0,2312, 0,1294] — **o IC CRUZA ZERO**.
+> `veredito: "RUIDO (IC cruza 0)"`. O critério pré-registrado (Spearman IC95 sem
+> cruzar zero, positivo, n≥30, SOB A CONFIGURAÇÃO INVERTIDA) não foi atingido —
+> refutada pelo próprio critério que a trial definiu antes de qualquer dado
+> contar. O Sharpe auxiliar de n=6 (+0,3479) citado nas erratas abaixo nunca foi
+> o veredito; o veredito sempre foi o IC do Spearman em n≥30, e é isso que
+> fechou agora. Não autoriza capital — nenhum gate deste ecossistema autorizaria.
 
 > **Errata de 2026-07-28.** O status abaixo dizia "registrada — não ativada" e
 > o item (2) das condições dizia que o código "não existe ainda — nem no
@@ -214,8 +223,10 @@
 - Critério de sucesso (definido ANTES): idêntico ao da H4/H5 — Spearman IC95
   não cruza zero (positivo desta vez) com n ≥ 30 previsões maduras SOB A
   CONFIGURAÇÃO INVERTIDA; depois, Sharpe líquido por trade + DSR ≥ 0,95.
-- Resultado: **imaturo** — última evidência versionada: Sharpe auxiliar +0,3479
-  com n=6; o gate pré-registrado exige n>=30 e IC95 positivo. Sem veredito.
+- Resultado: **REFUTADA — IC cruza zero em n=84** (ver veredito 2026-09-04 no
+  topo desta seção). Histórico intermediário preservado acima por transparência
+  (n=6, Sharpe auxiliar +0,3479) — nunca foi o veredito, só uma leitura
+  imatura de passagem.
 
 ### H7 — Calendário macro (FOMC/CPI/PPI) + DXY como contexto exógeno de regime (status: **registrada em `trials.json` 2026-09-04, coleta prospectiva ainda não iniciada**)
 - Data do registro: 2026-08-14 (ANTES de qualquer coleta ou resultado). Promove o
@@ -363,6 +374,32 @@
   (`load_dxy_daily_closes`) via `DXYProvider` para alimentar `--dxy-closes` em
   produção. Só então `registered_at` pode ser cravado e a coleta prospectiva
   começar.
+
+  **Correção de infraestrutura 2026-09-04 — instabilidade numérica do HMM,
+  ANTES de qualquer leitura OOS válida.** Primeira execução real do backtest
+  H7 (`--use-macro-dxy`, dado de produção do dono) quebrou: `covariance_type=
+  "full"` com as 4 dimensões (2 originais + 2 do H7) e estados raros (às
+  vezes <1% da amostra num fold IS de ~180d) convergiu, via EM, para
+  covariância quase singular — `'covars' must be symmetric,
+  positive-definite'`. TODOS os 15 folds do run dispararam `Model is not
+  converging`; nenhum produziu veredito válido (a maioria `INSUFFICIENT_DATA`
+  ou "sem sinais ativos no OOS"). Duas correções, nesta ordem:
+  1. Retry de `random_state` alternativo (42→46) antes de desistir — ajudou
+     em 2/15 folds, mas 1 fold esgotou o orçamento mesmo assim. Sintoma
+     tratado, não causa.
+  2. Causa raiz: `covariance_type` agora é **por instância**
+     (`_covariance_type_for()`), não mais uma constante global — `"full"`
+     continua fixo para H1-H3 (sem `extra_features`, comportamento congelado
+     bit-a-bit, nunca muda), `"diag"` para qualquer modelo com
+     `extra_features` (H7+). "diag" estima variância por feature sem
+     covariância cruzada entre elas, o que remove estruturalmente a
+     superfície onde a matriz pode ficar não-positiva-definida. O
+     fingerprint do modelo passou a incluir `covariance_type`, então H1-H3 e
+     H7 continuam mutuamente incarregáveis por dois motivos independentes
+     (features E tipo de covariância).
+  Esta é uma decisão de infraestrutura, tomada porque NENHUM fold do run
+  anterior tinha produzido leitura válida — não é reação a um resultado
+  científico do H7, que continua sem nenhum veredito.
 
 ---
 

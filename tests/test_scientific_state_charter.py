@@ -14,7 +14,7 @@ def test_scientific_state_freezes_no_go_and_fails_closed():
     state = load_scientific_state()
     assert state.hypotheses["H1"] == "CLOSED_NO_GO"
     assert state.hypotheses["H3"] == "CLOSED_NO_GO"
-    assert state.hypotheses["H6"] == "COLLECTION_ONLY_IMMATURE"
+    assert state.hypotheses["H6"] == "CLOSED_NO_GO"
     assert state.hypotheses["H7"] == "REGISTERED_NOT_ACTIVATED"
     assert "funding_oi_hmm_v3" in state.frozen_families
     assert not state.capital_authorized
@@ -25,10 +25,10 @@ def test_scientific_state_freezes_no_go_and_fails_closed():
 def test_charter_real_cobre_exatamente_o_vocabulario_tipado():
     state = load_scientific_state()
     assert state.hypotheses["H4"] is HypothesisStatus.CLOSED_INSUFFICIENT_SAMPLE
-    assert state.hypotheses["H6"] is HypothesisStatus.COLLECTION_ONLY_IMMATURE
+    assert state.hypotheses["H6"] is HypothesisStatus.CLOSED_NO_GO
     assert state.hypotheses["H7"] is HypothesisStatus.REGISTERED_NOT_ACTIVATED
     assert state.hypotheses["H4"].is_closed
-    assert not state.hypotheses["H6"].is_closed
+    assert state.hypotheses["H6"].is_closed
     # A serialização externa continua idêntica ao JSON versionado.
     dumped = state.model_dump(mode="json")
     original = json.loads(SCIENTIFIC_STATE_CHARTER.read_text(encoding="utf-8"))
