@@ -80,8 +80,9 @@ ambientes (3.13/3.14 documentados; falta CI).
    ter n (hoje: 4 previsões, D+7 imaturo).
 3. **Pivot de pesquisa da V3** — hipótese funding/OI+HMM fechada como formulada; novas
    hipóteses nascem registradas no `trials.json` e avaliadas líquidas de custos.
-4. Menores: rotação de chaves (proprietário), C-03 (consenso ao vivo), equivalência
-   ETH/SOL, ADR-015 (proveniência com hash), CI.
+4. Menores: rotação de chaves (proprietário), ~~C-03 (consenso ao vivo)~~,
+   ~~equivalência ETH/SOL~~ (ambos fechados em 2026-09-04, ver §10.2), ADR-015
+   (proveniência com hash), CI.
 
 ## 8. Declaração de fechamento
 
@@ -211,8 +212,8 @@ documentos datados: [ERRATA_2026-08-21.md](ERRATA_2026-08-21.md).
 | "aprovar a reconciliação V3 → promover a `main` (hoje intacta em `a78580c`)" (§7.1) | **executado** | `GarimpoInvestimentos/v3/` está na `main`; nenhuma das branches do plano existe ([RECONCILIACAO_V3.md](RECONCILIACAO_V3.md) traz errata) |
 | "coleta diária até o backtest ter n (hoje: 4 previsões)" (§7.2) | **superado** | H5 fechou em 2026-07-28 com **n=440**: Spearman −0,166 [IC95 −0,266; −0,057], NO-GO. A coleta prospectiva atual serve à H6 |
 | "pivot de pesquisa da V3" (§7.3) | **parcial** | a família `funding_oi_hmm_v3` está em `frozen_families` (charter); H6 e H7 nasceram registradas. Nenhuma hipótese nova validou edge |
-| "C-03 — consenso ao vivo" (§7.4) | **aberto** | sem evidência de que a agregação por consenso tenha fundido dado real; a confiança segue baseada em testes sintéticos ([AUDITORIA_DPL.md](AUDITORIA_DPL.md) C-03) |
-| "equivalência ETH/SOL" (§7.4) | **aberto** | a equivalência foi provada para bitcoin/kaspa/aave (`6416a71`); ETH/SOL seguem pendentes por 429 |
+| "C-03 — consenso ao vivo" (§7.4) | **fechado (2026-09-04)** | `python -m GarimpoInvestimentos.main --ingest --assets bitcoin --mode consensus` rodado na máquina de produção, com `ccxt` instalado (`uv sync --locked --extra v3`): "✅ BITCOIN — 199 candles alinhados e materializados" via consenso Binance+Kraken real, gravados em `feature_store.db`. Deixa de depender só de `test_dpl_aggregation.py` (sintético) — ver [AUDITORIA_DPL.md](AUDITORIA_DPL.md) C-03 |
+| "equivalência ETH/SOL" (§7.4) | **fechado (2026-09-04)** | `python -m GarimpoInvestimentos.analyzers.equivalence --assets bitcoin,ethereum,solana` rodado na máquina de produção: "EQUIVALENTES em todos os ativos" (pior diff relativo 0.00e+00 nos três). Fecha a pendência aberta desde `6416a71` (bitcoin/kaspa/aave) |
 | "regime shift em produção" (§5, aberto 1) | **aberto, irrelevante** | continua sem produção — nenhum capital autorizado |
 
 ### 10.2 Contagens de teste

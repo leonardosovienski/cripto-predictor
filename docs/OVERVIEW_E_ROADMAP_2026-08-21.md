@@ -238,7 +238,9 @@ com `n=500`. Falso positivo estável em 6–8%.
 - **Venue real.** Só `SimulatedExchangeAdapter`. Bloqueado neste ambiente (sem
   credencial, egress restrito) e adjacente a capital — decisão humana.
 - **Consenso validado ao vivo (C-03).** A agregação por mediana nunca fundiu dado real.
+  > Atualização 2026-09-04: fechado para cripto — ver `docs/RELATORIO_FINAL.md` §10.2.
 - **Equivalência ETH/SOL.** Provada para bitcoin/kaspa/aave; ETH/SOL pendentes (429).
+  > Atualização 2026-09-04: fechado — ver `docs/RELATORIO_FINAL.md` §10.2.
 - **CPI/PPI no calendário macro.** `macro_calendar.json` tem 8 eventos, todos
   FOMC; `bls.gov` é bloqueado neste ambiente e a convenção do projeto proíbe
   adivinhar datas.
@@ -337,9 +339,10 @@ Isso é proposital: o Sharpe de n=6 já é o exemplo do erro que essa trava evit
 
 ### Fase 4 — Engenharia sem prazo (não bloqueia nada)
 
-Bloqueado por rede neste ambiente: C-03 (consenso ao vivo), equivalência ETH/SOL
-(429), CPI/PPI no calendário (`bls.gov`). Disponível a qualquer momento: decidir
-o destino de `services/`.
+Bloqueado por rede neste ambiente: ~~C-03 (consenso ao vivo)~~, ~~equivalência
+ETH/SOL (429)~~ (ambos fechados em 2026-09-04 fora deste ambiente, na máquina de
+produção — ver `docs/RELATORIO_FINAL.md` §10.2), CPI/PPI no calendário
+(`bls.gov`). Disponível a qualquer momento: decidir o destino de `services/`.
 
 ---
 

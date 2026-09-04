@@ -199,7 +199,7 @@ Padrões que **de fato** se manifestaram (com evidência):
 |---|-------------|-----------|---------|--------------|-----------|
 | C-01 | Status documentado diverge do código | Briefing diz F4/5 "não iniciado"; commit `c38c4cb` implementa | Decisões tomadas sobre premissa falsa | Sincronizar docs↔repo; tratar HANDOFF/dossiê como fonte derivada do git | Alta |
 | C-02 | DPL não promovida ao core | Reside em `GarimpoInvestimentos/dpl/` | Bloqueia adoção multi-domínio; contradiz ADR-002 | Executar promoção (ADR-009) antes de iniciar stocks como repo separado | Alta |
-| C-03 | Agregação e stocks não validados com dado real | Smokes live falharam (exchanges bloqueadas); COTAHIST/BCB sem golden real | Confiança baseada só em testes sintéticos | Validar em ambiente sem bloqueio; golden de COTAHIST real | Alta |
+| C-03 | Agregação **parcialmente** validada com dado real (2026-09-04) | Consenso Binance+Kraken (`--mode consensus`) rodado na máquina de produção — 199 candles reais fundidos. **COTAHIST/BCB seguem sem golden real** — só a agregação de cripto foi fechada, a parte de stocks continua aberta | Confiança da agregação de cripto deixa de ser só sintética; stocks (COTAHIST/BCB) continuam pendentes | ~~Validar em ambiente sem bloqueio~~ (feito p/ cripto); golden de COTAHIST real ainda falta | Média (rebaixado de Alta — metade do escopo fechado) |
 | C-04 | Migration 0002 alterada in-place | `feature_store.py` mudou PK de `raw_signals` | Quebra idempotência; perigoso com dado durável | Adotar migrações somente-aditivas (ADR-017); nova migração para mudança de PK | Alta |
 | C-05 | Padrão bitemporal não documentado | 3 tempos no código, sem ADR | Erosão por desconhecimento; risco de lookahead acidental | Escrever ADR-014; guia "como não vazar futuro" | Alta |
 | C-06 | Fase 0 aberta | Sem evidência de core testado/commitado | Base canônica frágil | Fechar Fase 0 antes da promoção | Média |
@@ -235,7 +235,9 @@ Padrões que **de fato** se manifestaram (com evidência):
 5. Risco organizacional concreto (bus factor 1, docs divergindo do código).
 
 **Bloqueadores (impedem ir para produção, não para continuar desenvolvendo):**
-- B-1 (C-03): validar agregação e stocks com dados reais + golden COTAHIST.
+- B-1 (C-03): ~~validar agregação~~ (cripto fechado 2026-09-04, ver tabela acima)
+  ~~e stocks~~ com dados reais + golden COTAHIST (stocks/COTAHIST/BCB seguem
+  abertos).
 - B-2 (C-04): corrigir a estratégia de migração antes de qualquer Feature Store durável.
 - B-3 (C-02/C-06): fechar Fase 0 e promover a DPL ao core antes de abrir o repo de stocks.
 

@@ -23,7 +23,7 @@
 | 2 | `--discover` (varredura + filtros + momentum) | `799cd27`; 10 testes; smoke ao vivo (10 candidatos reais) | ✅ |
 | 3 | Controle positivo (edge sintético→validado; ruído→RUÍDO) | `e00e776`; 3 testes; prova de falha sem edge; re-executado verde hoje | ✅ |
 | 4 | DSR + `trials.json` versionado | `ab346d3`; 7 testes; fio no backtest; 4 tentativas registradas, v3-fr90 com veredito preenchido | ✅ |
-| 5 | Equivalência DPL vs direto | `6416a71`; bit-idêntico em candle fechado (btc/kaspa/aave); `change_*` 0,1-7,8pp quantificado; ETH/SOL pendentes (429) | ✅ (parcial declarado) |
+| 5 | Equivalência DPL vs direto | `6416a71`; bit-idêntico em candle fechado (btc/kaspa/aave); `change_*` 0,1-7,8pp quantificado; ETH/SOL fechado 2026-09-04 (diff 0.00e+00, ver `RELATORIO_FINAL.md` §10.2) | ✅ (completo) |
 | 6-8 | DPL Fases 1-3 (fallback, Feature Store+Alignment, agregação+breaker) | Branch `clever-mclean-16f6d8`; 85 verdes @ `80eb744`; smokes reproduzidos independentemente (fallback ao vivo, ingest 200 candles, degradação do consenso) | ✅ |
 | 9 | Correções pós-auditoria (migração 0005 aditiva + teste de preservação) | `789f568`/`9a06a22`; `test_migration_0005_preserva_dados_existentes` | ✅ |
 | 10 | ADR do merge (D1 symbol_map, D2 Fonte, D3 main.py) | `a9465aa`, [DECISAO_MERGE_DPL_DISCOVERY.md](DECISAO_MERGE_DPL_DISCOVERY.md) | ✅ |
@@ -87,8 +87,9 @@ reconciliação V3 pendente, DPL não promovida ao core, sem CI, proveniência p
 1. **Aprovação da reconciliação V3** (RECONCILIACAO_V3.md) → depois, promoção a `main`.
 2. Coleta diária do pipeline LLM (backtest do Garimpo segue "dados insuficientes", n=3).
 3. Pivot de pesquisa da V3 (hipótese atual fechada; novas nascem no trials.json).
-4. C-03 (consenso ao vivo), equivalência ETH/SOL, ADR-015 (hash de proveniência),
-   rotação de chaves antigas, CI.
+4. ~~C-03 (consenso ao vivo)~~, ~~equivalência ETH/SOL~~ (ambos fechados 2026-09-04,
+   ver `RELATORIO_FINAL.md` §10.2), ADR-015 (hash de proveniência), rotação de
+   chaves antigas, CI.
 
 ## 7. Recomendação final
 
