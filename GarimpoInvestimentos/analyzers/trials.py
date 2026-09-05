@@ -46,8 +46,13 @@ class FrozenFamilyError(ValueError):
     """
 
 
-def _reject_frozen_family(name: str, params: dict, frozen_families: tuple[str, ...]) -> None:
-    """Barra o registro de QUALQUER trial cuja `params["family"]` esteja congelada.
+def _reject_frozen_family(
+    name: str,
+    params: dict,
+    frozen_families: tuple[str, ...],
+    existing_names: set[str],
+) -> None:
+    """Barra o registro de uma trial NOVA cuja `params["family"]` esteja congelada.
 
     Fecha o buraco achado na auditoria de 2026-09-05: até então o congelamento
     era aplicado por NOME (só as trials das hipóteses fechadas), nunca por
@@ -58,11 +63,24 @@ def _reject_frozen_family(name: str, params: dict, frozen_families: tuple[str, .
     O caminho de escrita do core (verificado no wheel 3.0.0 pinado) não conhece
     `frozen_families` de propósito — ele é neutro quanto a este charter, então a
     checagem pertence a esta fachada, junto da de hipótese fechada.
+
+    Só vale para trial NOVA (nome ainda não registrado). Atualizar uma trial que
+    já existe é como um veredito é REGISTRADO — foi assim que o H9 foi fechado,
+    re-registrando o mesmo nome com `sharpe` e `notes` preenchidos. Bloquear
+    isso impediria fechar uma hipótese aberta de família congelada, que é o
+    oposto do objetivo. A imutabilidade de `params`/`metric` no core já impede
+    que um update vire reparametrização disfarçada.
+
+    Ressalva honesta: isto fecha o caso HONESTO — quem declara a família
+    corretamente é barrado. Não substitui o dossiê manual contra quem omita ou
+    renomeie a `family` de propósito para escapar do guard.
     """
+    if name in existing_names:
+        return
     family = params.get("family")
     if family and family in frozen_families:
         raise FrozenFamilyError(
-            f"trial {name!r} declara family={family!r}, que está CONGELADA "
+            f"trial nova {name!r} declara family={family!r}, que está CONGELADA "
             f"(frozen_families no charter). Reparametrizar uma família congelada "
             f"exige dossiê de reabertura revisado — veja "
             f"scripts/check_reopen_dossier.py --family {family}."
@@ -91,5 +109,7 @@ def register_trial(
         }
         if name in closed_trials:
             raise ValueError(f"trial {name!r} pertence a hipótese fechada e não pode ser reescrita")
-        _reject_frozen_family(name, params, state.frozen_families)
+        _reject_frozen_family(
+            name, params, state.frozen_families, {t["name"] for t in load_trials(target)}
+        )
     return _core_register(name, params=params, sharpe=sharpe, notes=notes, path=target, **extra)
