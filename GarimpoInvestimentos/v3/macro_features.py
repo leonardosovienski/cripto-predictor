@@ -31,6 +31,39 @@ def _ts_to_date(timestamp_exchange_ms: int) -> date:
     return datetime.fromtimestamp(timestamp_exchange_ms / 1000, tz=UTC).date()
 
 
+def _add_business_days(day: date, n: int) -> date:
+    """Soma `n` dias ÚTEIS (pula sábado/domingo) a `day`. Duplica
+    `dpl.providers.dxy._add_business_days` (mesma lógica, `date` em vez de
+    `datetime`) para não acoplar este módulo puro/sem-rede à cadeia de
+    imports do provider (que traz `predictor_core.net`). Usada aqui como
+    predicado direto — "a observação `o`, publicada com `n` dias úteis de
+    atraso, já estaria disponível na data `day`?" — em vez de tentar
+    inverter a soma com uma subtração (armadilha: subtrair dias úteis de um
+    dia de FIM DE SEMANA não é o inverso de somar dias úteis a partir de um
+    dia útil, porque a soma pula o fim de semana adiante mas a subtração
+    "recua" para o útil mais próximo sem saber que ir pra frente teria
+    pulado esse mesmo fim de semana).
+
+    CORREÇÃO 2026-09-05 (achado por auditoria externa): a implementação
+    original usava `day - timedelta(days=n)` (dias CORRIDOS) como cutoff,
+    e uma tentativa inicial de corrigir para dias úteis usando subtração
+    ingênua (`day - n dias úteis`) ainda dava resultado ERRADO pra pontos de
+    fim de semana — ex.: com lag=1 dia útil, o close de sexta só é publicado
+    na segunda seguinte, mas `subtract_business_days(sábado, 1)` devolvia
+    sexta como cutoff, permitindo usar o close de sexta num ponto de sábado
+    (2 dias antes da publicação real). A checagem direta
+    `_add_business_days(o, lag) <= day` não tem essa armadilha."""
+    if n < 0:
+        raise ValueError("n não pode ser negativo")
+    d = day
+    added = 0
+    while added < n:
+        d += timedelta(days=1)
+        if d.weekday() < 5:  # 0=segunda ... 4=sexta
+            added += 1
+    return d
+
+
 def build_macro_event_dummy(
     feature_vectors: list[FeatureVector],
     *,
@@ -65,15 +98,21 @@ def build_dxy_return(
     publish_lag_days: int = 1,
 ) -> list[float]:
     """Retorno percentual 1d do DXY, alinhado a `feature_vectors`, respeitando
-    `publish_lag_days` (o release H.10 do Fed sai com defasagem — mesma
-    constante conservadora de `DXYProvider`, não recalibrada aqui).
+    `publish_lag_days` EM DIAS ÚTEIS (o release H.10 do Fed sai com defasagem —
+    mesma convenção conservadora de `DXYProvider._add_business_days`, não
+    recalibrada aqui, agora consistente entre os dois módulos).
 
-    Para o ponto no dia D, usa o close mais recente disponível em
-    `D - publish_lag_days` (ou anterior) contra o close do dia anterior a esse —
-    NUNCA um valor cujo `date` seja posterior a `D - publish_lag_days`. Pontos
-    sem dado DXY suficiente (início da série, ou lacuna na coleta) recebem 0.0
-    — é uma decisão CONSERVADORA (covariável neutra), não um erro silencioso:
-    quem chama deve conferir a cobertura de `dxy_daily_closes` antes de treinar.
+    Para o ponto no dia D, usa a observação `o` mais recente cuja data de
+    publicação real (`o` + `publish_lag_days` dias úteis) já ocorreu em D ou
+    antes, contra a observação anterior a essa — NUNCA uma cujo `date`
+    publicado seja posterior a D. Cripto negocia fim de semana; usar dias corridos aqui subestimaria o lag
+    real perto de sábado/domingo (bug real encontrado por auditoria em
+    2026-09-05, corrigido nesta versão — ver `_add_business_days` para o
+    porquê de usar checagem direta em vez de um cutoff único subtraído).
+    Pontos sem dado DXY suficiente (início da série, ou lacuna na coleta)
+    recebem 0.0 — é uma decisão CONSERVADORA (covariável neutra), não um erro
+    silencioso: quem chama deve conferir a cobertura de `dxy_daily_closes`
+    antes de treinar.
     """
     if publish_lag_days < 0:
         raise ValueError("publish_lag_days não pode ser negativo")
@@ -81,8 +120,7 @@ def build_dxy_return(
     out = []
     for fv in feature_vectors:
         day = _ts_to_date(fv.timestamp_exchange_ms)
-        cutoff = day - timedelta(days=publish_lag_days)
-        usable = [d for d in available_dates if d <= cutoff]
+        usable = [d for d in available_dates if _add_business_days(d, publish_lag_days) <= day]
         if len(usable) < 2:
             out.append(0.0)
             continue
