@@ -43,29 +43,20 @@ from __future__ import annotations
 
 import csv
 import io
-from datetime import UTC, datetime, timedelta
+from datetime import UTC, datetime
 
 from predictor_core.net import get_http_client, with_retry
 
+from GarimpoInvestimentos.dpl.business_days import add_business_days
 from GarimpoInvestimentos.dpl.signals import SignalPoint, SignalProvider
 
 _BASE_URL = "https://fred.stlouisfed.org/graph/fredgraph.csv"
 _DEFAULT_SERIES = "DTWEXBGS"  # Nominal Broad U.S. Dollar Index (diário)
 
 
-def _add_business_days(day: datetime, n: int) -> datetime:
-    """Soma `n` dias ÚTEIS (pula sábado/domingo) a `day`. `n` deve ser >= 0.
-    Não trata feriados do Fed (só fins de semana) — mais um motivo pra
-    `publish_lag_days` continuar conservador."""
-    if n < 0:
-        raise ValueError("n não pode ser negativo")
-    d = day
-    added = 0
-    while added < n:
-        d += timedelta(days=1)
-        if d.weekday() < 5:  # 0=segunda ... 4=sexta
-            added += 1
-    return d
+# Alias retrocompatível: a implementação canônica vive em dpl/business_days.py
+# (fonte única — ver o docstring de lá para o look-ahead que a duplicação causou).
+_add_business_days = add_business_days
 
 
 class DXYProvider(SignalProvider):

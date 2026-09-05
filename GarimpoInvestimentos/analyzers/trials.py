@@ -37,6 +37,38 @@ def load_trials(path: Path | None = None) -> list[dict]:
     return trials
 
 
+class FrozenFamilyError(ValueError):
+    """Tentativa de registrar uma trial numa família congelada do charter.
+
+    Reabrir uma família congelada não é proibido em absoluto — é proibido em
+    SILÊNCIO. O caminho legítimo passa por `scripts/check_reopen_dossier.py`,
+    que exige um dossiê de reabertura revisado.
+    """
+
+
+def _reject_frozen_family(name: str, params: dict, frozen_families: tuple[str, ...]) -> None:
+    """Barra o registro de QUALQUER trial cuja `params["family"]` esteja congelada.
+
+    Fecha o buraco achado na auditoria de 2026-09-05: até então o congelamento
+    era aplicado por NOME (só as trials das hipóteses fechadas), nunca por
+    FAMÍLIA. Bastava um nome novo — `v3-hmm-funding-oi-fr45-reopen` com
+    `family="funding_oi_hmm_v3"` — para reparametrizar a família congelada
+    H1-H3 e o registro aceitava. O único guardião de família era
+    `scripts/check_reopen_dossier.py`: manual, opt-in, e nunca invocado pelo CI.
+    O caminho de escrita do core (verificado no wheel 3.0.0 pinado) não conhece
+    `frozen_families` de propósito — ele é neutro quanto a este charter, então a
+    checagem pertence a esta fachada, junto da de hipótese fechada.
+    """
+    family = params.get("family")
+    if family and family in frozen_families:
+        raise FrozenFamilyError(
+            f"trial {name!r} declara family={family!r}, que está CONGELADA "
+            f"(frozen_families no charter). Reparametrizar uma família congelada "
+            f"exige dossiê de reabertura revisado — veja "
+            f"scripts/check_reopen_dossier.py --family {family}."
+        )
+
+
 def register_trial(
     name: str,
     *,
@@ -59,4 +91,5 @@ def register_trial(
         }
         if name in closed_trials:
             raise ValueError(f"trial {name!r} pertence a hipótese fechada e não pode ser reescrita")
+        _reject_frozen_family(name, params, state.frozen_families)
     return _core_register(name, params=params, sharpe=sharpe, notes=notes, path=target, **extra)

@@ -20,9 +20,10 @@ buscam nada na rede. A coleta ao vivo do DXY é responsabilidade do
 from __future__ import annotations
 
 import csv
-from datetime import UTC, date, datetime, timedelta
+from datetime import UTC, date, datetime
 from pathlib import Path
 
+from GarimpoInvestimentos.dpl.business_days import published_at
 from GarimpoInvestimentos.dpl.macro_calendar import MacroEvent, load_macro_calendar
 from GarimpoInvestimentos.v3.feature_builder import FeatureVector
 
@@ -65,24 +66,34 @@ def build_dxy_return(
     publish_lag_days: int = 1,
 ) -> list[float]:
     """Retorno percentual 1d do DXY, alinhado a `feature_vectors`, respeitando
-    `publish_lag_days` (o release H.10 do Fed sai com defasagem — mesma
-    constante conservadora de `DXYProvider`, não recalibrada aqui).
+    `publish_lag_days` em DIAS ÚTEIS (o release H.10 do Fed sai com defasagem —
+    mesma constante conservadora de `DXYProvider`, não recalibrada aqui).
 
-    Para o ponto no dia D, usa o close mais recente disponível em
-    `D - publish_lag_days` (ou anterior) contra o close do dia anterior a esse —
-    NUNCA um valor cujo `date` seja posterior a `D - publish_lag_days`. Pontos
-    sem dado DXY suficiente (início da série, ou lacuna na coleta) recebem 0.0
-    — é uma decisão CONSERVADORA (covariável neutra), não um erro silencioso:
-    quem chama deve conferir a cobertura de `dxy_daily_closes` antes de treinar.
+    Para o ponto no dia D, usa o close mais recente já PUBLICADO em D — isto é,
+    aquele cujo `published_at(date, publish_lag_days) <= D` — contra o close
+    publicado imediatamente antes dele.
+
+    CORREÇÃO 2026-09-05 (auditoria): esta função contava a defasagem em dias
+    CORRIDOS enquanto o `DXYProvider` já contava em dias ÚTEIS desde o PR #83.
+    Duas cópias da mesma regra divergiram e esta ficou com LOOK-AHEAD real: num
+    ponto de sábado, `D - 1 dia corrido` = sexta, então ela usava o close de
+    sexta — que só é publicado na segunda seguinte. Como cripto negocia fim de
+    semana, ~2/7 dos pontos consumiam até 2 dias de informação futura. Agora as
+    duas usam `dpl.business_days` (fonte única), e a disponibilidade é testada
+    pelo predicado direto `published_at <= D`, nunca por um cutoff para trás.
+
+    Pontos sem dado DXY suficiente (início da série, ou lacuna na coleta)
+    recebem 0.0 — decisão CONSERVADORA (covariável neutra), não erro silencioso:
+    use `dxy_coverage()` para medir a fração imputada ANTES de treinar.
     """
     if publish_lag_days < 0:
         raise ValueError("publish_lag_days não pode ser negativo")
     available_dates = sorted(dxy_daily_closes)
+    published = [(published_at(d, publish_lag_days), d) for d in available_dates]
     out = []
     for fv in feature_vectors:
         day = _ts_to_date(fv.timestamp_exchange_ms)
-        cutoff = day - timedelta(days=publish_lag_days)
-        usable = [d for d in available_dates if d <= cutoff]
+        usable = [d for pub, d in published if pub <= day]
         if len(usable) < 2:
             out.append(0.0)
             continue
@@ -90,6 +101,34 @@ def build_dxy_return(
         c_latest, c_prev = dxy_daily_closes[latest], dxy_daily_closes[prev]
         out.append(0.0 if c_prev == 0 else (c_latest - c_prev) / c_prev * 100.0)
     return out
+
+
+def dxy_coverage(
+    feature_vectors: list[FeatureVector],
+    dxy_daily_closes: dict[date, float],
+    *,
+    publish_lag_days: int = 1,
+) -> tuple[int, int]:
+    """`(n_pontos_imputados, n_pontos_total)` para a mesma entrada que
+    `build_dxy_return` receberia.
+
+    O 0.0 que `build_dxy_return` devolve em lacuna NÃO é neutro: entra no
+    `StandardScaler` ajustado no IS e vira uma posição concreta da distribuição,
+    então uma cobertura ruim ensina o HMM um "estado de dado faltante"
+    disfarçado de regime. Esta função existe para que essa fração seja MEDIDA
+    antes do treino em vez de permanecer invisível — deliberadamente separada,
+    para não alterar o valor numérico que `build_dxy_return` já produz (o
+    veredito fechado do H9 e o pré-registro do H7 dependem dele estável).
+    """
+    if publish_lag_days < 0:
+        raise ValueError("publish_lag_days não pode ser negativo")
+    published = [published_at(d, publish_lag_days) for d in sorted(dxy_daily_closes)]
+    imputados = sum(
+        1
+        for fv in feature_vectors
+        if sum(1 for pub in published if pub <= _ts_to_date(fv.timestamp_exchange_ms)) < 2
+    )
+    return imputados, len(feature_vectors)
 
 
 def load_dxy_daily_closes(path: Path) -> dict[date, float]:
@@ -121,6 +160,7 @@ def load_dxy_daily_closes(path: Path) -> dict[date, float]:
 
 __all__ = [
     "build_dxy_return",
+    "dxy_coverage",
     "build_macro_event_dummy",
     "load_dxy_daily_closes",
 ]

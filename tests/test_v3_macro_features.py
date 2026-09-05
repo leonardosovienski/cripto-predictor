@@ -9,6 +9,7 @@ from GarimpoInvestimentos.v3.feature_builder import FeatureVector
 from GarimpoInvestimentos.v3.macro_features import (
     build_dxy_return,
     build_macro_event_dummy,
+    dxy_coverage,
     load_dxy_daily_closes,
 )
 
@@ -114,3 +115,62 @@ class TestLoadDxyDailyCloses:
         p.write_text("date,close\n", encoding="utf-8")
         with pytest.raises(ValueError, match="nenhum dado"):
             load_dxy_daily_closes(p)
+
+
+class TestDxyLookaheadDiasUteis:
+    """Regressão do look-ahead achado na auditoria de 2026-09-05.
+
+    `build_dxy_return` contava a defasagem em dias CORRIDOS enquanto o
+    `DXYProvider` já contava em dias ÚTEIS (PR #83). Num ponto de fim de semana
+    a versão antiga usava o close de sexta, que só é publicado na segunda.
+    """
+
+    # 2026-09-04 = sexta | 05 = sábado | 06 = domingo | 07 = segunda
+    CLOSES = {
+        date(2026, 9, 2): 100.0,  # quarta
+        date(2026, 9, 3): 101.0,  # quinta
+        date(2026, 9, 4): 105.0,  # sexta — publicado só na segunda 07/09
+    }
+
+    def _ret_de_sexta(self) -> float:
+        return (105.0 - 101.0) / 101.0 * 100.0
+
+    @pytest.mark.parametrize("dia", [date(2026, 9, 5), date(2026, 9, 6)])
+    def test_fim_de_semana_nao_enxerga_o_close_de_sexta(self, dia):
+        """Sábado/domingo só conhecem quinta (03/09, publicada sexta)."""
+        out = build_dxy_return([_fv(dia)], self.CLOSES, publish_lag_days=1)
+        assert out != pytest.approx([self._ret_de_sexta()]), (
+            f"{dia}: usou o close de sexta, que só é publicado na segunda — "
+            "look-ahead de dias corridos voltou"
+        )
+        assert out == pytest.approx([(101.0 - 100.0) / 100.0 * 100.0])
+
+    def test_segunda_ja_enxerga_o_close_de_sexta(self):
+        """Na segunda 07/09 o dado de sexta está publicado — usar é correto."""
+        out = build_dxy_return([_fv(date(2026, 9, 7))], self.CLOSES, publish_lag_days=1)
+        assert out == pytest.approx([self._ret_de_sexta()])
+
+    def test_lag_zero_nao_antecipa_publicacao(self):
+        """Com lag=0 o close do próprio dia é conhecido no dia — mas nunca antes."""
+        assert build_dxy_return([_fv(date(2026, 9, 4))], self.CLOSES, publish_lag_days=0) == (
+            pytest.approx([self._ret_de_sexta()])
+        )
+        assert build_dxy_return([_fv(date(2026, 9, 3))], self.CLOSES, publish_lag_days=0) == (
+            pytest.approx([(101.0 - 100.0) / 100.0 * 100.0])
+        )
+
+
+class TestDxyCoverage:
+    def test_conta_pontos_imputados(self):
+        closes = {date(2026, 9, 2): 100.0, date(2026, 9, 3): 101.0}
+        vectors = [_fv(date(2026, 1, 1)), _fv(date(2026, 9, 4)), _fv(date(2026, 9, 7))]
+        imputados, total = dxy_coverage(vectors, closes, publish_lag_days=1)
+        assert (imputados, total) == (1, 3)  # só 01/01 fica sem dado suficiente
+
+    def test_serie_vazia_imputa_tudo(self):
+        vectors = [_fv(date(2026, 9, 7))]
+        assert dxy_coverage(vectors, {}, publish_lag_days=1) == (1, 1)
+
+    def test_lag_negativo_e_erro(self):
+        with pytest.raises(ValueError, match="negativo"):
+            dxy_coverage([], {}, publish_lag_days=-1)
