@@ -819,6 +819,74 @@ prosseguir mesmo assim.
   do padrão provar estável em uso (mesmo caminho que `analyzers/trials.py`
   percorreu antes de virar `predictor_core.measurement.trials`, ADR-015).
 
+## Auditoria externa 2026-09-05 — três achados corrigidos
+
+Pedido explícito do dono: abrir um chat novo e auditar o projeto do zero
+(hipóteses, matemática, infraestrutura, protocolo) de forma cética, sem
+confiar no que já tinha sido dito. Três achados reais, corrigidos nesta
+mesma leva:
+
+1. **Cobertura zero no fix de `covariance_type="diag"` (H7).** A auditoria
+   provou por mutação: revertendo `_covariance_type_for()` pra sempre
+   devolver `"full"` (exatamente a regressão que o squash-merge do GitHub já
+   causou duas vezes nesta sessão, PRs #86 e #90), a suíte inteira continuava
+   verde — nenhum teste percebia. Corrigido: `test_v3_regime_engine_extra_covariates.py`
+   ganhou `test_covariance_type_e_diag_com_extra_features_full_sem`, que
+   falha imediatamente sob a mesma mutação (confirmado manualmente antes de
+   commitar). Sem isso, o fix podia se perder uma terceira vez sem ninguém
+   notar.
+
+2. **Lookahead real em `build_dxy_return` (H7).** A função usava
+   `day - timedelta(days=publish_lag_days)` — dias CORRIDOS — enquanto
+   `DXYProvider.publish_lag_days` já tinha sido corrigido para dias ÚTEIS
+   (2026-09-04, ver correção acima na seção H7). Cripto negocia fim de
+   semana: um close de sexta só é publicado na segunda seguinte, mas o
+   cutoff em dias corridos permitia usá-lo num ponto de sábado ou domingo —
+   até ~2 dias de informação futura. Uma primeira tentativa de correção
+   (subtrair dias úteis do dia do ponto) ainda dava resultado errado pra
+   pontos de fim de semana, por uma armadilha de inversão (ver
+   `_add_business_days` em `macro_features.py`); a correção final usa
+   checagem direta por observação (`data de publicação <= dia do ponto`),
+   não um cutoff único subtraído. Nenhum veredito do H7 foi contaminado —
+   a coleta prospectiva nunca chegou a começar — mas o bug era real e teria
+   afetado qualquer leitura feita antes desta correção. Testes novos:
+   `test_fim_de_semana_nao_usa_close_de_sexta_ainda_nao_publicado` e
+   `test_segunda_ja_pode_usar_close_de_sexta`.
+
+3. **Congelamento de família (H1-H3) aplicado só por NOME, não por
+   família.** `register_trial` (core) valida colisão de nome e imutabilidade
+   de `params`/`metric`, mas nunca inspeciona `params["family"]` nem
+   `frozen_families` — registrar uma trial NOVA (nome nunca visto) com
+   `family: "funding_oi_hmm_v3"` passava sem barreira alguma; o único
+   guardião real era `scripts/check_reopen_dossier.py`, manual e nunca
+   chamado pelo CI. Corrigido no wrapper local
+   (`GarimpoInvestimentos/analyzers/trials.py::register_trial`): trial nova
+   declarando uma `family` presente em `frozen_families` é barrada ANTES de
+   chegar no core. Ressalva honesta: isso fecha o caso de quem declara a
+   família corretamente (por engano ou não) — não substitui o dossiê manual
+   contra alguém que omita ou renomeie a família deliberadamente para
+   escapar do guard.
+
+Duas hipóteses novas foram **propostas** pela auditoria (mecanismo +
+critério escritos ANTES de qualquer código), mas **não registradas** —
+ficam para decisão do dono, e herdam o mesmo aviso: a arquitetura
+HMM+covariável exógena já deu um NO-GO real (H9) e um pendente (H7); um
+terceiro NO-GO na mesma arquitetura seria evidência sobre o método, não
+azar.
+
+- **B14 (proposta, não registrada)** — Assimetria de basis perpétuo↔spot
+  como preditor de reversão: o basis mede quanto alavancado paga por
+  exposição; a ASSIMETRIA entre expansões e contrações captura
+  desalavancagem forçada (direcional), diferente do nível de funding
+  (H1-H3, simétrico, já refutado). Família nova (`basis-asymmetry-hmm-covariate`).
+- **B15 (proposta, não registrada)** — Dispersão de funding entre exchanges
+  como proxy de estresse de liquidez: desvio-padrão do funding entre venues
+  mede fragmentação; picos precedem cascatas de liquidação. Distinto de H9
+  (crowding numa venue só) e H1-H3 (nível agregado).
+
+Ambas usariam o mesmo gate de H1-H3/H7/H9 (PSR≥0,80 E IC_CI_lower>0 E
+MaxDD<20%, líquido de custos) se e quando ativadas.
+
 
 ## Auditoria externa 2026-09-05 — quatro achados corrigidos
 

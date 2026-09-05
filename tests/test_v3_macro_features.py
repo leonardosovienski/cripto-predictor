@@ -90,6 +90,34 @@ class TestDxyReturn:
         with pytest.raises(ValueError, match="negativo"):
             build_dxy_return([], {}, publish_lag_days=-1)
 
+    def test_fim_de_semana_nao_usa_close_de_sexta_ainda_nao_publicado(self):
+        """Achado de auditoria externa (2026-09-05): com publish_lag_days=1 dia
+        ÚTIL, o close de sexta-feira só é publicado na segunda seguinte —
+        NUNCA pode ser usado num ponto de sábado ou domingo (seria olhar
+        ~2 dias no futuro relativo à publicação real). 2026-09-04 é sexta,
+        2026-09-05 sábado, 2026-09-06 domingo (calendário real)."""
+        closes = {
+            date(2026, 9, 2): 100.0,  # quarta
+            date(2026, 9, 3): 101.0,  # quinta — publica sexta 09-04
+            date(2026, 9, 4): 999.0,  # sexta — publica SEGUNDA 09-07, nao antes
+        }
+        sabado = build_dxy_return([_fv(date(2026, 9, 5))], closes, publish_lag_days=1)
+        domingo = build_dxy_return([_fv(date(2026, 9, 6))], closes, publish_lag_days=1)
+        esperado = (101.0 - 100.0) / 100.0 * 100.0  # quinta vs quarta, nunca sexta
+        assert sabado == pytest.approx([esperado])
+        assert domingo == pytest.approx([esperado])
+
+    def test_segunda_ja_pode_usar_close_de_sexta(self):
+        """No dia útil seguinte (segunda), o close de sexta já foi publicado —
+        contraste direto com o teste de fim de semana acima."""
+        closes = {
+            date(2026, 9, 3): 101.0,  # quinta
+            date(2026, 9, 4): 999.0,  # sexta — publica segunda 09-07
+        }
+        segunda = build_dxy_return([_fv(date(2026, 9, 7))], closes, publish_lag_days=1)
+        esperado = (999.0 - 101.0) / 101.0 * 100.0
+        assert segunda == pytest.approx([esperado])
+
 
 class TestLoadDxyDailyCloses:
     def test_le_csv_valido(self, tmp_path):

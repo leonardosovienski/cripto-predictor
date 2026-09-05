@@ -115,6 +115,35 @@ def test_fingerprint_muda_com_extra_features():
     ]
 
 
+def test_covariance_type_e_diag_com_extra_features_full_sem():
+    """Trava de regressão DIRETA para o fix de causa raiz (2026-09-04):
+    covariance_type precisa ser "diag" para qualquer modelo com extra_features
+    e "full" para H1-H3 (default). Este teste teria pego a regressão real que
+    aconteceu duas vezes nesta sessão — o squash-merge do GitHub reverteu
+    silenciosamente _covariance_type_for() para sempre devolver "full" (a
+    constante global antiga), sem que nenhum teste existente até então
+    percebesse (auditoria externa confirmou via mutação: revertendo o fix,
+    a suíte inteira continuava verde). Testa tanto a função pura quanto o
+    modelo real treinado, para não depender só da assinatura interna."""
+    from GarimpoInvestimentos.v3.regime_engine import _covariance_type_for
+
+    assert _covariance_type_for(()) == "full"
+    assert _covariance_type_for(("dxy_return_1d",)) == "diag"
+    assert _covariance_type_for(("macro_event_dummy", "dxy_return_1d")) == "diag"
+
+    rng = np.random.default_rng(31)
+    rets, vols = _synthetic_series(rng)
+    dxy = rng.normal(0, 1, len(rets)).tolist()
+
+    eng_default = RegimeEngine()
+    eng_default.fit(rets, vols)
+    assert eng_default._model.covariance_type == "full"
+
+    eng_h7 = RegimeEngine(extra_features=("dxy_return_1d",))
+    eng_h7.fit(rets, vols, extra_covariates=[dxy])
+    assert eng_h7._model.covariance_type == "diag"
+
+
 def test_modelo_h7_nao_carrega_como_h1_h3(tmp_path):
     """Um .pkl treinado com extra_features não pode ser servido por um
     RegimeEngine() default (e vice-versa) — StaleRegimeModelError."""

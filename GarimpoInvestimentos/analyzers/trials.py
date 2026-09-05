@@ -109,7 +109,27 @@ def register_trial(
         }
         if name in closed_trials:
             raise ValueError(f"trial {name!r} pertence a hipótese fechada e não pode ser reescrita")
-        _reject_frozen_family(
-            name, params, state.frozen_families, {t["name"] for t in load_trials(target)}
-        )
+
+        # ACHADO DE AUDITORIA EXTERNA (2026-09-05): o core valida colisão de
+        # NOME e imutabilidade de params/metric — mas nunca inspeciona
+        # `params["family"]` nem `frozen_families`. Registrar uma trial NOVA
+        # (nome diferente) com `family` igual a uma família congelada (ex.:
+        # `funding_oi_hmm_v3`, H1-H3) passava batido: o único guardião era
+        # `scripts/check_reopen_dossier.py`, manual e nunca chamado pelo CI.
+        # Este guard fecha o caso HONESTO (quem declara a família congelada
+        # corretamente é barrado aqui) — não substitui o dossiê manual para
+        # reaberturas disfarçadas com family omitido ou renomeado.
+        existing_names = {t["name"] for t in load_trials(target)}
+        frozen_family = params.get("family")
+        if (
+            name not in existing_names
+            and frozen_family is not None
+            and frozen_family in state.frozen_families
+        ):
+            raise ValueError(
+                f"trial nova {name!r} declara family={frozen_family!r}, que está em "
+                f"frozen_families ({state.frozen_families}) — família congelada não pode "
+                "receber trial nova silenciosamente. Reabertura exige dossiê explícito "
+                "(scripts/check_reopen_dossier.py) e decisão do dono, não um registro comum."
+            )
     return _core_register(name, params=params, sharpe=sharpe, notes=notes, path=target, **extra)
