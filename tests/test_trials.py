@@ -8,9 +8,12 @@ se tenta mais. Registrar de novo a mesma configuração NÃO conta tentativa nov
 import math
 import random
 
+import pytest
 from predictor_core.stats import probabilistic_sharpe_ratio
 
 from GarimpoInvestimentos.analyzers.trials import (
+    FrozenFamilyError,
+    _reject_frozen_family,
     deflated_sharpe_ratio,
     expected_max_sharpe,
     load_trials,
@@ -86,3 +89,108 @@ def test_registro_semeado_do_projeto_existe_e_tem_2_tentativas():
     trials = load_trials()  # o trials.json versionado
     names = [t["name"] for t in trials]
     assert "v1-direct-gemini-h7" in names and "v2-dpl-gemini-h7" in names
+
+
+# ------------------------------------------------------------------ #
+# Congelamento por FAMÍLIA (auditoria 2026-09-05)                     #
+#                                                                     #
+# Até esta correção o freeze era aplicado só por NOME de trial das    #
+# hipóteses fechadas. Bastava um nome novo declarando a mesma família #
+# para reparametrizar H1-H3 sem que nada barrasse.                    #
+# ------------------------------------------------------------------ #
+
+
+def test_familia_congelada_e_rejeitada_por_nome_novo():
+    """O buraco concreto que a auditoria explorou: nome inédito, família congelada."""
+    with pytest.raises(FrozenFamilyError, match="CONGELADA"):
+        _reject_frozen_family(
+            "v3-hmm-funding-oi-fr45-reopen",
+            {"family": "funding_oi_hmm_v3", "mechanism": "reparametriza", "success_criterion": "x"},
+            ("funding_oi_hmm_v3",),
+            set(),
+        )
+
+
+def test_atualizar_trial_existente_de_familia_congelada_passa():
+    """Registrar de novo um nome JÁ existente é como um veredito é gravado —
+    foi assim que o H9 foi fechado (mesmo nome, `sharpe`/`notes` preenchidos).
+    Bloquear isso impediria FECHAR uma hipótese, o oposto do objetivo."""
+    _reject_frozen_family(
+        "v3-hmm-funding-oi-fr90",
+        {"family": "funding_oi_hmm_v3"},
+        ("funding_oi_hmm_v3",),
+        {"v3-hmm-funding-oi-fr90"},
+    )
+
+
+def test_familia_nao_congelada_passa():
+    _reject_frozen_family("h10-nova", {"family": "basis-asymmetry"}, ("funding_oi_hmm_v3",), set())
+
+
+def test_trial_sem_family_declarada_passa():
+    """Ausência de `family` não é o que este guard controla — não inventa bloqueio.
+    É também a ressalva honesta: quem OMITE a família escapa deste guard, e por
+    isso o dossiê manual continua necessário."""
+    _reject_frozen_family("h10-nova", {"mechanism": "x"}, ("funding_oi_hmm_v3",), set())
+
+
+def test_charter_do_projeto_congela_a_familia_h1_h3():
+    """Amarra o guard ao charter real: se `funding_oi_hmm_v3` sair de
+    frozen_families, este teste cai junto."""
+    from GarimpoInvestimentos.governance import load_scientific_state
+
+    assert "funding_oi_hmm_v3" in load_scientific_state().frozen_families
+
+
+def test_register_trial_bloqueia_familia_congelada_antes_de_chegar_no_core(tmp_path, monkeypatch):
+    """Integração: o guard tem que estar ligado no caminho de escrita real e
+    disparar ANTES do core — um espião no `_core_register` prova que nada da
+    escrita chegou a ser tentado."""
+    import GarimpoInvestimentos.analyzers.trials as trials_mod
+
+    p = tmp_path / "trials.json"
+    p.write_text("[]", encoding="utf-8")
+    monkeypatch.setattr(trials_mod, "TRIALS_PATH", p)
+
+    chegou_no_core = False
+
+    def core_spy(*_args, **_kwargs):
+        nonlocal chegou_no_core
+        chegou_no_core = True
+        return []
+
+    monkeypatch.setattr(trials_mod, "_core_register", core_spy)
+
+    with pytest.raises(FrozenFamilyError, match="funding_oi_hmm_v3"):
+        trials_mod.register_trial(
+            "v3-hmm-funding-oi-fr45-reopen",
+            params={"family": "funding_oi_hmm_v3"},
+            path=p,
+        )
+    assert not chegou_no_core
+    assert p.read_text(encoding="utf-8") == "[]"
+
+
+def test_register_trial_deixa_passar_familia_nao_congelada(tmp_path, monkeypatch):
+    """Contraste direto: família nova não é afetada pelo guard."""
+    import GarimpoInvestimentos.analyzers.trials as trials_mod
+
+    p = tmp_path / "trials.json"
+    p.write_text("[]", encoding="utf-8")
+    monkeypatch.setattr(trials_mod, "TRIALS_PATH", p)
+
+    chegou_no_core = False
+
+    def core_spy(*_args, **_kwargs):
+        nonlocal chegou_no_core
+        chegou_no_core = True
+        return []
+
+    monkeypatch.setattr(trials_mod, "_core_register", core_spy)
+
+    trials_mod.register_trial(
+        "h10-basis-asymmetry-hmm-v1",
+        params={"family": "basis-asymmetry-hmm-covariate"},
+        path=p,
+    )
+    assert chegou_no_core

@@ -23,6 +23,7 @@ pytest.importorskip("sklearn")
 from GarimpoInvestimentos.v3.regime_engine import (
     RegimeEngine,
     StaleRegimeModelError,
+    _covariance_type_for,
     _model_fingerprint,
 )
 
@@ -245,3 +246,76 @@ def test_fit_tenta_seed_alternativa_se_predict_falhar_apos_fit_ok(monkeypatch):
     assert seeds_tentadas == [42, 43, 44]
     assert eng._model is not None
     assert eng._model.random_state == 44
+
+
+# ------------------------------------------------------------------ #
+# Regressão do fix de covariância "diag" (PRs #86/#87)                #
+#                                                                     #
+# A auditoria de 2026-09-05 mediu por MUTAÇÃO que reverter esse fix   #
+# (fazer _covariance_type_for devolver sempre "full") deixava a suíte #
+# inteira VERDE — 915 passando. Foi por isso que ele sumiu em silêncio #
+# no squash-merge do PR #86 e precisou do #87 para voltar: nada        #
+# falhava na sua ausência. Estes testes existem para que uma terceira  #
+# perda seja impossível de passar despercebida.                        #
+# ------------------------------------------------------------------ #
+
+
+def test_covariance_type_e_diag_com_extra_features_e_full_sem():
+    """Trava direta do contrato. H1-H3 (sem extras) permanece "full" —
+    congelado, NUNCA muda. Qualquer extra_feature exige "diag"."""
+    assert _covariance_type_for(()) == "full"
+    for extras in (
+        ("macro_event_dummy",),
+        ("dxy_return_1d",),
+        ("oi_volume_ratio",),
+        ("macro_event_dummy", "dxy_return_1d"),
+    ):
+        assert _covariance_type_for(extras) == "diag", extras
+
+
+def test_fingerprint_carimba_diag_quando_ha_extra_features():
+    """O fingerprint é o que barra misturar um .pkl de H1-H3 com um de H7+.
+    Se o covariance_type voltar a "full" nos extras, os dois viram
+    intercambiáveis de novo e o guard de StaleRegimeModelError afrouxa."""
+    assert _model_fingerprint(())["covariance_type"] == "full"
+    assert _model_fingerprint(("dxy_return_1d",))["covariance_type"] == "diag"
+
+
+def test_modelo_treinado_com_extra_feature_usa_covariancia_diagonal():
+    """Trava COMPORTAMENTAL, não só de constante: o modelo realmente treinado
+    tem que ser diagonal. hmmlearn expõe `covars_` já expandido para (K, D, D)
+    mesmo em "diag", então a diagonalidade é verificável no array final —
+    com "full" as entradas fora da diagonal são não-nulas."""
+    rng = np.random.default_rng(17)
+    rets, vols = _synthetic_series(rng)
+    extra = rng.normal(0.0, 1.0, len(rets)).tolist()
+
+    eng = RegimeEngine(extra_features=("oi_volume_ratio",))
+    eng.fit(rets, vols, extra_covariates=[extra])
+
+    covars = eng._model.covars_
+    assert covars.shape[1] == covars.shape[2] == 3  # 2 emissões + 1 extra
+    fora_da_diagonal = covars - np.stack([np.diag(np.diag(c)) for c in covars])
+    assert np.allclose(fora_da_diagonal, 0.0), (
+        "covariância deveria ser diagonal com extra_features — o fix de "
+        "'diag' (PRs #86/#87) foi revertido?"
+    )
+
+
+def test_predict_last_repassa_extra_covariates():
+    """Regressão do wiring corrigido em 2026-09-05: `predict_last` não
+    repassava `extra_covariates`, então qualquer engine H7/H9 estourava
+    ValueError no caminho de tempo real que o método documenta."""
+    rng = np.random.default_rng(19)
+    rets, vols = _synthetic_series(rng)
+    extra = rng.normal(0.0, 1.0, len(rets)).tolist()
+
+    eng = RegimeEngine(extra_features=("oi_volume_ratio",))
+    eng.fit(rets, vols, extra_covariates=[extra])
+
+    ultimo = eng.predict_last(rets, vols, [extra])
+    assert ultimo is not None
+    assert ultimo.hmm_state_label in ("bull", "bear", "sideways")
+    # e continua exigindo o par correto: omitir a coluna é erro de wiring
+    with pytest.raises(ValueError, match="extra_covariates"):
+        eng.predict_last(rets, vols)

@@ -20,9 +20,10 @@ buscam nada na rede. A coleta ao vivo do DXY é responsabilidade do
 from __future__ import annotations
 
 import csv
-from datetime import UTC, date, datetime, timedelta
+from datetime import UTC, date, datetime
 from pathlib import Path
 
+from GarimpoInvestimentos.dpl.business_days import published_at
 from GarimpoInvestimentos.dpl.macro_calendar import MacroEvent, load_macro_calendar
 from GarimpoInvestimentos.v3.feature_builder import FeatureVector
 
@@ -117,6 +118,7 @@ def build_dxy_return(
     if publish_lag_days < 0:
         raise ValueError("publish_lag_days não pode ser negativo")
     available_dates = sorted(dxy_daily_closes)
+    published = [(published_at(d, publish_lag_days), d) for d in available_dates]
     out = []
     for fv in feature_vectors:
         day = _ts_to_date(fv.timestamp_exchange_ms)
@@ -128,6 +130,34 @@ def build_dxy_return(
         c_latest, c_prev = dxy_daily_closes[latest], dxy_daily_closes[prev]
         out.append(0.0 if c_prev == 0 else (c_latest - c_prev) / c_prev * 100.0)
     return out
+
+
+def dxy_coverage(
+    feature_vectors: list[FeatureVector],
+    dxy_daily_closes: dict[date, float],
+    *,
+    publish_lag_days: int = 1,
+) -> tuple[int, int]:
+    """`(n_pontos_imputados, n_pontos_total)` para a mesma entrada que
+    `build_dxy_return` receberia.
+
+    O 0.0 que `build_dxy_return` devolve em lacuna NÃO é neutro: entra no
+    `StandardScaler` ajustado no IS e vira uma posição concreta da distribuição,
+    então uma cobertura ruim ensina o HMM um "estado de dado faltante"
+    disfarçado de regime. Esta função existe para que essa fração seja MEDIDA
+    antes do treino em vez de permanecer invisível — deliberadamente separada,
+    para não alterar o valor numérico que `build_dxy_return` já produz (o
+    veredito fechado do H9 e o pré-registro do H7 dependem dele estável).
+    """
+    if publish_lag_days < 0:
+        raise ValueError("publish_lag_days não pode ser negativo")
+    published = [published_at(d, publish_lag_days) for d in sorted(dxy_daily_closes)]
+    imputados = sum(
+        1
+        for fv in feature_vectors
+        if sum(1 for pub in published if pub <= _ts_to_date(fv.timestamp_exchange_ms)) < 2
+    )
+    return imputados, len(feature_vectors)
 
 
 def load_dxy_daily_closes(path: Path) -> dict[date, float]:
@@ -159,6 +189,7 @@ def load_dxy_daily_closes(path: Path) -> dict[date, float]:
 
 __all__ = [
     "build_dxy_return",
+    "dxy_coverage",
     "build_macro_event_dummy",
     "load_dxy_daily_closes",
 ]

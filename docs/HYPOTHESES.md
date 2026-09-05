@@ -888,3 +888,100 @@ Ambas usariam o mesmo gate de H1-H3/H7/H9 (PSR≥0,80 E IC_CI_lower>0 E
 MaxDD<20%, líquido de custos) se e quando ativadas.
 
 
+## Auditoria externa 2026-09-05 — quatro achados corrigidos
+
+Pedido explícito do dono: abrir um chat novo e auditar o projeto do zero
+(hipóteses, matemática, infraestrutura, protocolo) de forma cética, sem confiar
+no que já tinha sido dito — inclusive por ele. Duas auditorias independentes
+rodaram em paralelo (PRs #92 e #93) e convergiram nos três primeiros achados,
+o que é confirmação cruzada de que são reais. Consolidados aqui:
+
+1. **Cobertura zero no fix de `covariance_type="diag"` (H7).** Provado por
+   MUTAÇÃO: revertendo `_covariance_type_for()` para sempre devolver `"full"`
+   — exatamente a regressão que o squash-merge do GitHub já causou duas vezes
+   (PRs #86 e #90) — a suíte inteira continuava VERDE, 915 testes passando.
+   Nenhum teste percebia. Era por isso que o fix sumia em silêncio e precisou
+   ser reaplicado. Corrigido: `test_v3_regime_engine_extra_covariates.py` ganhou
+   travas de contrato (`_covariance_type_for`, fingerprint) e uma trava
+   COMPORTAMENTAL que confere que a matriz de covariância treinada é de fato
+   diagonal. Sob a mesma mutação, 3 testes agora falham.
+
+2. **Lookahead real em `build_dxy_return` (H7).** A função usava
+   `day - timedelta(days=publish_lag_days)` — dias CORRIDOS — enquanto o
+   `DXYProvider` já tinha sido corrigido para dias ÚTEIS no PR #83. Duas cópias
+   da mesma regra que divergiram. Cripto negocia fim de semana: o close de sexta
+   só é publicado na segunda, mas o cutoff em dias corridos permitia usá-lo num
+   ponto de sábado ou domingo — até ~2 dias de informação futura, em ~2/7 dos
+   pontos. Contradizia o parâmetro pré-registrado do H7
+   (`dxy_publish_lag_business_days: 1`).
+
+   Nenhum veredito foi contaminado — a coleta prospectiva do H7 nunca começou —
+   mas qualquer leitura feita antes desta correção teria sido.
+
+   A correção ataca a CAUSA RAIZ, não só o sintoma: a regra passou a viver num
+   módulo único (`dpl/business_days.py`), consumido pelo provider e pelas
+   features. Uma armadilha registrada para quem mexer nisso: subtrair dias úteis
+   do dia do ponto NÃO é o inverso de somar dias úteis à observação (a soma pula
+   o fim de semana adiante; a subtração recua para o dia útil mais próximo sem
+   saber disso). Por isso a disponibilidade é testada pelo predicado direto
+   `published_at(observação) <= dia do ponto`, nunca por um cutoff subtraído.
+
+3. **Congelamento de família (H1-H3) aplicado só por NOME.** `register_trial`
+   valida colisão de nome e imutabilidade de `params`/`metric`, mas nunca
+   inspecionava `params["family"]` nem `frozen_families` — verificado no wheel
+   3.0.0 pinado, não só no `main` do core. Registrar uma trial NOVA com
+   `family: "funding_oi_hmm_v3"` passava sem barreira; o único guardião era
+   `scripts/check_reopen_dossier.py`, manual e nunca chamado pelo CI. Corrigido
+   no wrapper local: trial nova declarando família congelada é barrada ANTES de
+   chegar ao core (`FrozenFamilyError`).
+
+   Duas ressalvas honestas: (a) o guard só vale para trial NOVA — atualizar uma
+   já existente é como um veredito é gravado (foi assim que o H9 foi fechado), e
+   bloquear isso impediria FECHAR uma hipótese; (b) fecha o caso de quem declara
+   a família corretamente, mas não substitui o dossiê manual contra quem omita
+   ou renomeie a `family` de propósito.
+
+4. **`predict_last` quebrado para H7/H9** (achado só no PR #93). O wrapper não
+   repassava `extra_covariates`, então qualquer engine com `extra_features`
+   estourava `ValueError` de wiring no caminho de tempo real que o próprio
+   método documenta. Latente (sem chamadores hoje), corrigido e coberto.
+
+Também adicionado `dxy_coverage()`: o `0.0` que `build_dxy_return` devolve em
+lacuna NÃO é neutro — entra no `StandardScaler` ajustado no IS e vira uma
+posição concreta da distribuição, então cobertura ruim ensina o HMM um "estado
+de dado faltante" disfarçado de regime. A função é separada de propósito, para
+não alterar nenhum valor que `build_dxy_return` já produz: o veredito fechado do
+H9 e o pré-registro do H7 têm que continuar reproduzíveis.
+
+Um falso positivo, registrado para memória: a primeira auditoria reportou um bug
+numérico no `sharpe` do PBO (variância zero devolvendo valor finito enorme em vez
+de `-inf`). Era artefato de rodar em Python 3.11 — o `sum()` compensado do 3.12+
+zera a variância corretamente, e o projeto exige >=3.13. Não havia bug. Fica como
+lembrete de conferir o ambiente antes de acreditar numa falha de teste.
+
+### B14 — Assimetria de basis perpétuo↔spot (proposta, NÃO registrada)
+
+**Mecanismo (escrito antes de qualquer código):** o basis (perp − spot) mede
+quanto o alavancado paga por exposição. A ASSIMETRIA entre expansões e
+contrações captura desalavancagem forçada, que é direcional — diferente do
+NÍVEL de funding que H1-H3 usam, que é simétrico e já foi refutado. Família
+nova: `basis-asymmetry-hmm-covariate`. Dado já coletado.
+
+**Critério de sucesso (definido antes de ver dado):** PSR ≥ 0,80 E
+IC_CI_lower(Spearman) > 0 E MaxDD < 20%, líquido de custos — mesmo gate de
+H1-H3/H7/H9.
+
+### B15 — Dispersão de funding entre exchanges (proposta, NÃO registrada)
+
+**Mecanismo (escrito antes de qualquer código):** o desvio-padrão do funding
+entre venues mede fragmentação de liquidez; picos precedem cascatas de
+liquidação. Distinto de H9 (crowding numa venue só) e de H1-H3 (nível
+agregado). Dado já coletado.
+
+**Critério de sucesso:** idem B14.
+
+**Aviso que ambas herdam:** a arquitetura HMM + covariável exógena já produziu
+um NO-GO real (H9) e tem um pendente (H7). Um terceiro NO-GO na mesma
+arquitetura não é azar — é evidência sobre a arquitetura, e o B4 (meta-análise
+dos NO-GO) merece prioridade sobre promover B14/B15. Nenhuma das duas foi
+registrada em `trials.json`: registro exige `decided_by: owner`.

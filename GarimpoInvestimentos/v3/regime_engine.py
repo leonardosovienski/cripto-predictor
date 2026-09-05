@@ -484,12 +484,19 @@ class RegimeEngine:
         self,
         log_returns: list[float],
         realized_vols: list[float],
+        extra_covariates: list[list[float]] | None = None,
     ) -> RegimeOutput | None:
         """
         Infere apenas o regime do último ponto — wrapper conveniente
         para uso em tempo real (alimentar a janela completa, receber apenas o último).
+
+        `extra_covariates`: mesma regra de fit()/predict_series() — precisa bater
+        com as `extra_features` declaradas no construtor. Antes da auditoria de
+        2026-09-05 este wrapper não repassava o argumento, então qualquer engine
+        H7/H9 (extra_features não vazio) levantava ValueError de wiring ao ser
+        usada pelo caminho de tempo real que este método documenta.
         """
-        series = self.predict_series(log_returns, realized_vols)
+        series = self.predict_series(log_returns, realized_vols, extra_covariates)
         return series[-1] if series else None
 
     # ---------------------------------------------------------------- #
