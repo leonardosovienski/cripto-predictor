@@ -103,6 +103,67 @@ def test_h6_fechada_bloqueia_reescrita_pelo_hardening(tmp_path, monkeypatch):
     assert not reached_core
 
 
+def test_trial_nova_declarando_familia_congelada_e_barrada(tmp_path, monkeypatch):
+    """Achado de auditoria externa (2026-09-05): o core valida colisão de NOME
+    e imutabilidade de params, mas nunca inspeciona `params['family']` nem
+    `frozen_families` — uma trial NOVA (nome nunca visto) podia declarar
+    honestamente `family: 'funding_oi_hmm_v3'` (a família congelada de H1-H3)
+    e passar sem barreira nenhuma. Este teste prova o caso concreto que a
+    auditoria demonstrou: registrar 'v3-hmm-funding-oi-fr45-reopen' com essa
+    family precisa ser bloqueado ANTES de chegar no core."""
+    from GarimpoInvestimentos.governance import load_scientific_state
+
+    canonical = tmp_path / "trials.json"
+    canonical.write_text(TRIALS_PATH.read_text(encoding="utf-8"), encoding="utf-8")
+    state = load_scientific_state()
+    assert "funding_oi_hmm_v3" in state.frozen_families
+    reached_core = False
+
+    def core_spy(*_args, **_kwargs):
+        nonlocal reached_core
+        reached_core = True
+        return []
+
+    monkeypatch.setattr(trials_module, "TRIALS_PATH", canonical)
+    monkeypatch.setattr("GarimpoInvestimentos.governance.load_scientific_state", lambda: state)
+    monkeypatch.setattr(trials_module, "_core_register", core_spy)
+
+    with pytest.raises(ValueError, match="frozen_families"):
+        trials_module.register_trial(
+            "v3-hmm-funding-oi-fr45-reopen",
+            params={"family": "funding_oi_hmm_v3", "note": "tentativa de reabertura disfarcada"},
+            path=canonical,
+        )
+    assert not reached_core
+
+
+def test_trial_nova_com_familia_nao_congelada_passa_normalmente(tmp_path, monkeypatch):
+    """Contraste direto: uma trial nova com family que NÃO está em
+    frozen_families não deve ser afetada pelo guard novo."""
+    from GarimpoInvestimentos.governance import load_scientific_state
+
+    canonical = tmp_path / "trials.json"
+    canonical.write_text(TRIALS_PATH.read_text(encoding="utf-8"), encoding="utf-8")
+    state = load_scientific_state()
+    reached_core = False
+
+    def core_spy(*_args, **_kwargs):
+        nonlocal reached_core
+        reached_core = True
+        return []
+
+    monkeypatch.setattr(trials_module, "TRIALS_PATH", canonical)
+    monkeypatch.setattr("GarimpoInvestimentos.governance.load_scientific_state", lambda: state)
+    monkeypatch.setattr(trials_module, "_core_register", core_spy)
+
+    trials_module.register_trial(
+        "h10-basis-asymmetry-hmm-v1",
+        params={"family": "basis-asymmetry-hmm-covariate", "note": "familia nova, nao congelada"},
+        path=canonical,
+    )
+    assert reached_core
+
+
 @pytest.mark.parametrize(
     "mutacao,erro",
     [
