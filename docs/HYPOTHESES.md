@@ -531,6 +531,64 @@ registrados em `trials.json`/acima, sem rodar nada novo:
    é contexto pra calibrar expectativa, não pra mudar nenhum gate já
    definido.
 
+**Atualização 2026-09-05 — terceira família fechada (H9) muda a leitura.**
+O B4 acima rodou com 2 famílias. Desde então o H9 fechou
+(`oi-volume-crowding-hmm-covariate`), e ele NÃO segue o padrão descrito no
+achado 1. Meta-pesquisa sobre vereditos já registrados — não roda nada novo,
+não consome tentativa, não reabre nem reparametriza nada.
+
+4. **O modo de falha do H9 é DIFERENTE, não mais do mesmo.** O achado 1 dizia
+   que o edge "morria no custo": Sharpe perto de zero (-0,0022 e -0,0132 em
+   H1/H3). O H9 deu **Sharpe = -1,0041** — cerca de 76x mais negativo que a
+   pior variante de H1-H3. Isso não é um edge minúsculo comido pelo custo; é
+   desempenho ativamente ruim. Acrescentar a covariável exógena não deixou de
+   ajudar: coincidiu com uma piora de ordem de magnitude.
+
+5. **O veredito do H9 mistura TRÊS mudanças simultâneas.** Indo de H1-H3 para
+   H9, variaram ao mesmo tempo:
+   - (a) entrou uma covariável exógena — a hipótese sob teste;
+   - (b) `covariance_type` mudou de `"full"` para `"diag"`, forçado pelo próprio
+     caminho de código de `extra_features` (ver `_covariance_type_for`);
+   - (c) passou a existir imputação silenciosa de `0.0` em pontos sem join,
+     valor que não é neutro depois do `StandardScaler` (ver `dxy_coverage`,
+     auditoria 2026-09-05).
+
+   O critério pré-registrado testava (a). O experimento variou (a)+(b)+(c).
+
+   **O veredito NO-GO continua válido e não está em discussão:** o critério foi
+   definido antes do dado, o resultado reprovou nos dois eixos, a hipótese está
+   fechada e não autoriza capital. O que NÃO se sustenta é a atribuição causal
+   — "crowding OI/volume não tem sinal" não é conclusão suportada, porque (b) e
+   (c) são confundidores não controlados. H9 refutou uma ESTRATÉGIA, não uma
+   feature.
+
+6. **O H7 herda exatamente o mesmo confundidor.** Ele usa o mesmo caminho de
+   `extra_features`, logo carrega (b) e (c) por construção. Se a degradação vem
+   do MECANISMO e não da covariável, o H7 produzirá um NO-GO que não diz nada
+   sobre DXY — gastando coleta prospectiva para medir um artefato de
+   infraestrutura.
+
+7. **Falta o controle — e ele nunca foi rodado.** Não há, em lugar nenhum do
+   repositório, um run de `backtest_v3.py` com `extra_features=()` no mesmo
+   símbolo, período e harness do H9. Sem isso, `-1,0041` não tem referência: os
+   `-0,0022` de H1 vêm de outro período e outro caminho de código, não são
+   comparáveis. O número existe, mas está solto.
+
+   Um controle assim separaria as duas explicações:
+   - baseline também ≈ -1,0 → a covariável é inocente; o que mudou foi
+     período/harness, e o H9 mediu isso, não crowding;
+   - baseline ≈ 0 → acrescentar covariável exógena degrada de verdade, e o H7
+     tende ao mesmo destino por razão mecânica, não científica.
+
+   Custo ~zero (dado já coletado, nenhuma coleta prospectiva). **Não executado
+   aqui de propósito:** roda a configuração da família congelada `funding_oi_hmm_v3`,
+   e mesmo sendo medição de diagnóstico — não altera parâmetro, não registra
+   trial, não reabre hipótese — encostar nela é decisão do dono, não de quem
+   audita.
+
+**Recomendação de sequência:** rodar esse controle ANTES de iniciar a coleta do
+H7. É a diferença entre o H7 testar DXY e o H7 testar o próprio `extra_features`.
+
 ### B5 — Sentimento textual como série temporal (separar texto do viés do LLM)
 - Sinal: série diária de sentimento das notícias (léxico/contagem), alinhada por
   `published_at`, testável como feature independente do score consolidado do LLM.
