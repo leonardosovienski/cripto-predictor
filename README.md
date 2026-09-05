@@ -76,13 +76,17 @@ travado em código por `charters/scientific_state.json`):
 | H3 | Horizonte 48h amortiza a fricção | `v3-hmm-funding-oi-fr90-h48` | **CLOSED_NO_GO** — edge bruto vira negativo; MaxDD 50,3% |
 | H4 | Score do LLM prevê retorno D+7 | `v2-dpl-gemini-h7` | **CLOSED_INSUFFICIENT_SAMPLE** — coleta encerrada com n=5 |
 | H5 | Idem, partição multi-juiz | `v2-dpl-multi-h7` | **CLOSED_NO_GO** — Spearman −0,166 [−0,266; −0,057], n=440 (IC não cruza zero, mas na direção oposta) |
-| H6 | Leitura **invertida** do score do LLM | `h6-sinal-invertido-d7` | **ATIVA / IMATURA** — definição congelada por hash; gate exige n≥30 |
-| H7 | Calendário macro (FOMC/CPI/PPI) + DXY | não registrada | **REGISTERED_NOT_ACTIVATED** — infra pronta, coleta não iniciada |
+| H6 | Leitura **invertida** do score do LLM | `h6-sinal-invertido-d7` | **CLOSED_NO_GO** — rho −0,057 [−0,231; +0,129] com n=84: cruza zero, e o sinal voltou a ser negativo, não positivo como a inversão previa |
+| H7 | Calendário macro (FOMC/CPI/PPI) + DXY | `h7-macro-dxy-hmm-v1` | **REGISTERED_NOT_ACTIVATED** — infra pronta; backtest TENTADO em 2026-09-04 e abortado por bug de infraestrutura (corrigido no PR #91), sem veredito válido |
+| H8 | LLM como GERADOR de hipóteses (não preditor) | `h8-llm-hypothesis-generator` | **REGISTERED_NOT_ACTIVATED** — loop propor→avaliar→traçar implementado; coleta não iniciada |
+| H9 | Razão OI/volume (crowding especulativo) | `h9-oi-volume-ratio-hmm-v1` | **CLOSED_NO_GO** — PSR 0,162; IC cruza zero. Ressalva registrada: 44 dos 45 folds saíram `INSUFFICIENT_DATA`, então o agregado repousa sobre UMA janela |
 
 O NO-GO da V3 é o primeiro veredito *confiável* do projeto: HMM auditado sem
 look-ahead, custos modelados, controle positivo provando que o pipeline detecta edge
-quando ele existe, e DSR descontando as 7 tentativas registradas em
-`GarimpoInvestimentos/trials.json`.
+quando ele existe, e DSR descontando as tentativas registradas em
+`GarimpoInvestimentos/trials.json` — **26** desde a reconciliação de 2026-09-05, que
+trouxe para o registro versionado as 16 tentativas da varredura de threshold que
+existiam só na máquina de produção (o N do desconto estava subestimado até então).
 
 **Limitação registrada:** `HISTORICAL_REPRODUCIBILITY = LIMITED` — os dados brutos da
 H5 foram perdidos, então a reanálise retrospectiva não é reproduzível. O IC histórico

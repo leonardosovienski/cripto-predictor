@@ -228,7 +228,7 @@
   (n=6, Sharpe auxiliar +0,3479) — nunca foi o veredito, só uma leitura
   imatura de passagem.
 
-### H7 — Calendário macro (FOMC/CPI/PPI) + DXY como contexto exógeno de regime (status: **registrada em `trials.json` 2026-09-04, coleta prospectiva ainda não iniciada**)
+### H7 — Calendário macro (FOMC/CPI/PPI) + DXY como contexto exógeno de regime (status: **registrada em `trials.json` 2026-09-04; backtest TENTADO e abortado por bug de infraestrutura em 2026-09-04, sem veredito válido — `REGISTERED_NOT_ACTIVATED`**)
 - Data do registro: 2026-08-14 (ANTES de qualquer coleta ou resultado). Promove o
   item B1 do backlog condicional (abaixo) — ativação estava liberada desde o
   veredito da H4 (2026-07-10), formalizada agora.
