@@ -1017,6 +1017,95 @@ de `-inf`). Era artefato de rodar em Python 3.11 — o `sum()` compensado do 3.1
 zera a variância corretamente, e o projeto exige >=3.13. Não havia bug. Fica como
 lembrete de conferir o ambiente antes de acreditar numa falha de teste.
 
+**Correção 2026-09-05 (mesma data, algumas horas depois) — o achado 4 acima
+estava incompleto.** Ao inspecionar o log real do run do H9
+(`h9_backtest_result.log`, máquina de produção), apareceu o que faltava:
+
+```
+Folds: 45 | GO: 0 | NO-GO: 1
+```
+
+**44 dos 45 folds saíram `INSUFFICIENT_DATA`.** A condição, em
+`backtest_v3.py`, é `len(fold_ic_pairs) < 10`: em 44 de 45 janelas OOS a
+estratégia gerou MENOS DE 10 sinais avaliáveis. Não é dado ausente — é sinal
+que quase nunca dispara.
+
+Ou seja: o `PSR=0,1621` e o `Sharpe=-1,0041` registrados como veredito do H9
+não são um agregado sobre 45 janelas independentes. São, na prática, o
+resultado de UMA janela. O achado 4 acima atribuía a "piora de 76x" a um modo
+de falha diferente; a explicação real é mais simples e mais séria — não há
+agregado robusto ali para comparar com H1-H3.
+
+**O NO-GO segue válido e a hipótese segue fechada:** o critério pré-registrado
+reprovou, e nada disto reabre H9. Mas a FORÇA EVIDENCIAL do veredito é muito
+menor do que o número "45 folds" sugere, e isso não estava documentado.
+
+**Consequência direta para o H7:** ele usa o mesmo gerador de sinal e a mesma
+cadência. Vai encontrar a mesma escassez. A pergunta que importa deixou de ser
+"DXY tem sinal?" e passou a ser "este gerador dispara o suficiente para medir
+qualquer coisa?". Rodar a coleta prospectiva do H7 antes de responder isso é
+gastar tempo de calendário para reencontrar `INSUFFICIENT_DATA`.
+
+**O H7 já foi tentado, e abortou.** `h7_backtest_result.log` (2026-09-04
+17:35) termina em `ERRO - transmat_ rows must sum to 1 (got row sums of
+[1. 1. 0.])` - exatamente a falha que o PR #91 corrigiu ao mover `predict()`
+para dentro do laço de retry, mergeado às 21:51 do mesmo dia. O status
+`REGISTERED_NOT_ACTIVATED` no charter está correto (nenhum veredito válido
+saiu), mas "coleta não iniciada" é impreciso: foi tentada e quebrou por bug de
+infraestrutura, já corrigido.
+
+### Reconciliação do registro — 2026-09-05
+
+Auditoria do estado local de produção contra o `main` revelou que o registro
+público estava **incompleto**, o que enfraquecia um controle anti-p-hacking:
+
+- **16 tentativas da varredura de threshold** (`v3-grid-btcusdt-fr{1.5,2,2.5,3}
+  -conf{0.55,0.6,0.65,0.7}`), registradas em produção em 2026-09-04T02:32:31Z
+  por `run_threshold_grid`, existiam APENAS na máquina local. O `trials.json`
+  versionado tinha 10 trials; o local tinha 26.
+
+  Isto importa porque o **Deflated Sharpe desconta pelo número de tentativas**.
+  A nota da H5 registra `DSR 0.00 (SR0 0.447, N=7 tentativas)`. Com a grade, N
+  passa de 7 para 23+. O registro público subestimava a multiplicidade em 16
+  tentativas — exatamente a grandeza que o controle existe para medir.
+
+  As 16 entradas foram restauradas no `trials.json` versionado, com os Sharpes
+  medidos no run original. Nenhuma foi re-executada e nenhuma é veredito: todas
+  carregam `selection_family: threshold_grid` e a nota
+  `candidate-only, never direct GO`. A melhor delas atingiu PSR 0,664 — abaixo
+  do corte de 0,80.
+
+- **Causa raiz, em cadeia.** O `scripts/safe_pull.ps1` (PR #84) foi criado
+  justamente para eliminar o stash/pull/pop manual sobre o `trials.json`. Ele
+  nunca rodou: estava salvo em UTF-8 sem BOM com travessões dentro de strings,
+  e o Windows PowerShell 5.1 lê `.ps1` sem BOM como ANSI/cp1252, onde os bytes
+  do travessão viram uma ASPA DUPLA que fecha a string e quebra o parser. Sem o
+  script, os conflitos foram resolvidos à mão; uma dessas resoluções leu o
+  `trials.json` com codepage OEM (cp850) e regravou em UTF-8, corrompendo os
+  travessões das notas para `ÔÇö` — mojibake dentro do registro científico.
+
+  Corrigido: `safe_pull.ps1` agora é ASCII puro com BOM UTF-8, e
+  `tests/test_registry_e_scripts_encoding.py` trava as duas pontas (todo `.ps1`
+  ASCII-puro-ou-com-BOM; `trials.json` sem mojibake, sem nomes duplicados e com
+  as 16 tentativas da grade presentes). Validado por mutação: reverter qualquer
+  uma das três condições faz um teste falhar.
+
+- **EM ABERTO, para decisão do dono — Sharpes divergentes de hipóteses
+  FECHADAS.** O registro local traz valores diferentes dos versionados:
+
+  | trial | versionado | local |
+  |---|---|---|
+  | `v2-dpl-multi-h7` (H5) | -0,312 | **-0,4186** |
+  | `h6-sinal-invertido-d7` (H6) | 0,3479 | **0,4766** |
+
+  Ambas as hipóteses estão `CLOSED_NO_GO`, e `register_trial` proíbe reescrever
+  trial de hipótese fechada. Os valores locais são provavelmente mais maduros
+  (mais previsões acumuladas), mas sobrescrever resultado de hipótese fechada é
+  precisamente o que a imutabilidade existe para impedir — e fazê-lo por
+  iniciativa de quem audita seria pior do que a divergência. Fica REGISTRADO
+  aqui e NÃO aplicado: cabe ao dono decidir, e a decisão deve ser documentada
+  junto do motivo.
+
 ### B14 — Assimetria de basis perpétuo↔spot (proposta, NÃO registrada)
 
 **Mecanismo (escrito antes de qualquer código):** o basis (perp − spot) mede

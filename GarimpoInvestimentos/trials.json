@@ -117,6 +117,326 @@
     "metric": "psr"
   },
   {
+    "name": "v3-grid-btcusdt-fr1.5-conf0.55",
+    "registered_at": "2026-09-04T02:32:31Z",
+    "params": {
+      "symbol": "BTCUSDT",
+      "fr_zscore_threshold": 1.5,
+      "min_regime_confidence": 0.55,
+      "slippage_bps": 5,
+      "taker_fee_bps": 10,
+      "horizon_hours": 24,
+      "fr_window": 90,
+      "kelly_fraction": 1.0,
+      "stop_loss_bps": 0.0,
+      "take_profit_bps": 0.0,
+      "selection_family": "threshold_grid"
+    },
+    "sharpe": -0.4528968654106664,
+    "notes": "threshold-grid attempt completed; candidate-only, never direct GO",
+    "metric": "psr"
+  },
+  {
+    "name": "v3-grid-btcusdt-fr1.5-conf0.6",
+    "registered_at": "2026-09-04T02:32:31Z",
+    "params": {
+      "symbol": "BTCUSDT",
+      "fr_zscore_threshold": 1.5,
+      "min_regime_confidence": 0.6,
+      "slippage_bps": 5,
+      "taker_fee_bps": 10,
+      "horizon_hours": 24,
+      "fr_window": 90,
+      "kelly_fraction": 1.0,
+      "stop_loss_bps": 0.0,
+      "take_profit_bps": 0.0,
+      "selection_family": "threshold_grid"
+    },
+    "sharpe": -0.4489995860698807,
+    "notes": "threshold-grid attempt completed; candidate-only, never direct GO",
+    "metric": "psr"
+  },
+  {
+    "name": "v3-grid-btcusdt-fr1.5-conf0.65",
+    "registered_at": "2026-09-04T02:32:31Z",
+    "params": {
+      "symbol": "BTCUSDT",
+      "fr_zscore_threshold": 1.5,
+      "min_regime_confidence": 0.65,
+      "slippage_bps": 5,
+      "taker_fee_bps": 10,
+      "horizon_hours": 24,
+      "fr_window": 90,
+      "kelly_fraction": 1.0,
+      "stop_loss_bps": 0.0,
+      "take_profit_bps": 0.0,
+      "selection_family": "threshold_grid"
+    },
+    "sharpe": -0.46264037405977926,
+    "notes": "threshold-grid attempt completed; candidate-only, never direct GO",
+    "metric": "psr"
+  },
+  {
+    "name": "v3-grid-btcusdt-fr1.5-conf0.7",
+    "registered_at": "2026-09-04T02:32:31Z",
+    "params": {
+      "symbol": "BTCUSDT",
+      "fr_zscore_threshold": 1.5,
+      "min_regime_confidence": 0.7,
+      "slippage_bps": 5,
+      "taker_fee_bps": 10,
+      "horizon_hours": 24,
+      "fr_window": 90,
+      "kelly_fraction": 1.0,
+      "stop_loss_bps": 0.0,
+      "take_profit_bps": 0.0,
+      "selection_family": "threshold_grid"
+    },
+    "sharpe": -0.2913793723559785,
+    "notes": "threshold-grid attempt completed; candidate-only, never direct GO",
+    "metric": "psr"
+  },
+  {
+    "name": "v3-grid-btcusdt-fr2-conf0.55",
+    "registered_at": "2026-09-04T02:32:31Z",
+    "params": {
+      "symbol": "BTCUSDT",
+      "fr_zscore_threshold": 2.0,
+      "min_regime_confidence": 0.55,
+      "slippage_bps": 5,
+      "taker_fee_bps": 10,
+      "horizon_hours": 24,
+      "fr_window": 90,
+      "kelly_fraction": 1.0,
+      "stop_loss_bps": 0.0,
+      "take_profit_bps": 0.0,
+      "selection_family": "threshold_grid"
+    },
+    "sharpe": -1.0193817682403503,
+    "notes": "threshold-grid attempt completed; candidate-only, never direct GO",
+    "metric": "psr"
+  },
+  {
+    "name": "v3-grid-btcusdt-fr2-conf0.6",
+    "registered_at": "2026-09-04T02:32:31Z",
+    "params": {
+      "symbol": "BTCUSDT",
+      "fr_zscore_threshold": 2.0,
+      "min_regime_confidence": 0.6,
+      "slippage_bps": 5,
+      "taker_fee_bps": 10,
+      "horizon_hours": 24,
+      "fr_window": 90,
+      "kelly_fraction": 1.0,
+      "stop_loss_bps": 0.0,
+      "take_profit_bps": 0.0,
+      "selection_family": "threshold_grid"
+    },
+    "sharpe": -0.997482858126533,
+    "notes": "threshold-grid attempt completed; candidate-only, never direct GO",
+    "metric": "psr"
+  },
+  {
+    "name": "v3-grid-btcusdt-fr2-conf0.65",
+    "registered_at": "2026-09-04T02:32:31Z",
+    "params": {
+      "symbol": "BTCUSDT",
+      "fr_zscore_threshold": 2.0,
+      "min_regime_confidence": 0.65,
+      "slippage_bps": 5,
+      "taker_fee_bps": 10,
+      "horizon_hours": 24,
+      "fr_window": 90,
+      "kelly_fraction": 1.0,
+      "stop_loss_bps": 0.0,
+      "take_profit_bps": 0.0,
+      "selection_family": "threshold_grid"
+    },
+    "sharpe": -1.0016080870518194,
+    "notes": "threshold-grid attempt completed; candidate-only, never direct GO",
+    "metric": "psr"
+  },
+  {
+    "name": "v3-grid-btcusdt-fr2-conf0.7",
+    "registered_at": "2026-09-04T02:32:31Z",
+    "params": {
+      "symbol": "BTCUSDT",
+      "fr_zscore_threshold": 2.0,
+      "min_regime_confidence": 0.7,
+      "slippage_bps": 5,
+      "taker_fee_bps": 10,
+      "horizon_hours": 24,
+      "fr_window": 90,
+      "kelly_fraction": 1.0,
+      "stop_loss_bps": 0.0,
+      "take_profit_bps": 0.0,
+      "selection_family": "threshold_grid"
+    },
+    "sharpe": -0.816114649882817,
+    "notes": "threshold-grid attempt completed; candidate-only, never direct GO",
+    "metric": "psr"
+  },
+  {
+    "name": "v3-grid-btcusdt-fr2.5-conf0.55",
+    "registered_at": "2026-09-04T02:32:31Z",
+    "params": {
+      "symbol": "BTCUSDT",
+      "fr_zscore_threshold": 2.5,
+      "min_regime_confidence": 0.55,
+      "slippage_bps": 5,
+      "taker_fee_bps": 10,
+      "horizon_hours": 24,
+      "fr_window": 90,
+      "kelly_fraction": 1.0,
+      "stop_loss_bps": 0.0,
+      "take_profit_bps": 0.0,
+      "selection_family": "threshold_grid"
+    },
+    "sharpe": -0.32213007606878613,
+    "notes": "threshold-grid attempt completed; candidate-only, never direct GO",
+    "metric": "psr"
+  },
+  {
+    "name": "v3-grid-btcusdt-fr2.5-conf0.6",
+    "registered_at": "2026-09-04T02:32:31Z",
+    "params": {
+      "symbol": "BTCUSDT",
+      "fr_zscore_threshold": 2.5,
+      "min_regime_confidence": 0.6,
+      "slippage_bps": 5,
+      "taker_fee_bps": 10,
+      "horizon_hours": 24,
+      "fr_window": 90,
+      "kelly_fraction": 1.0,
+      "stop_loss_bps": 0.0,
+      "take_profit_bps": 0.0,
+      "selection_family": "threshold_grid"
+    },
+    "sharpe": -0.30741380025938864,
+    "notes": "threshold-grid attempt completed; candidate-only, never direct GO",
+    "metric": "psr"
+  },
+  {
+    "name": "v3-grid-btcusdt-fr2.5-conf0.65",
+    "registered_at": "2026-09-04T02:32:31Z",
+    "params": {
+      "symbol": "BTCUSDT",
+      "fr_zscore_threshold": 2.5,
+      "min_regime_confidence": 0.65,
+      "slippage_bps": 5,
+      "taker_fee_bps": 10,
+      "horizon_hours": 24,
+      "fr_window": 90,
+      "kelly_fraction": 1.0,
+      "stop_loss_bps": 0.0,
+      "take_profit_bps": 0.0,
+      "selection_family": "threshold_grid"
+    },
+    "sharpe": -0.31240355897087335,
+    "notes": "threshold-grid attempt completed; candidate-only, never direct GO",
+    "metric": "psr"
+  },
+  {
+    "name": "v3-grid-btcusdt-fr2.5-conf0.7",
+    "registered_at": "2026-09-04T02:32:31Z",
+    "params": {
+      "symbol": "BTCUSDT",
+      "fr_zscore_threshold": 2.5,
+      "min_regime_confidence": 0.7,
+      "slippage_bps": 5,
+      "taker_fee_bps": 10,
+      "horizon_hours": 24,
+      "fr_window": 90,
+      "kelly_fraction": 1.0,
+      "stop_loss_bps": 0.0,
+      "take_profit_bps": 0.0,
+      "selection_family": "threshold_grid"
+    },
+    "sharpe": -0.3242229738942118,
+    "notes": "threshold-grid attempt completed; candidate-only, never direct GO",
+    "metric": "psr"
+  },
+  {
+    "name": "v3-grid-btcusdt-fr3-conf0.55",
+    "registered_at": "2026-09-04T02:32:31Z",
+    "params": {
+      "symbol": "BTCUSDT",
+      "fr_zscore_threshold": 3.0,
+      "min_regime_confidence": 0.55,
+      "slippage_bps": 5,
+      "taker_fee_bps": 10,
+      "horizon_hours": 24,
+      "fr_window": 90,
+      "kelly_fraction": 1.0,
+      "stop_loss_bps": 0.0,
+      "take_profit_bps": 0.0,
+      "selection_family": "threshold_grid"
+    },
+    "sharpe": 0.4168910928796441,
+    "notes": "threshold-grid attempt completed; candidate-only, never direct GO",
+    "metric": "psr"
+  },
+  {
+    "name": "v3-grid-btcusdt-fr3-conf0.6",
+    "registered_at": "2026-09-04T02:32:31Z",
+    "params": {
+      "symbol": "BTCUSDT",
+      "fr_zscore_threshold": 3.0,
+      "min_regime_confidence": 0.6,
+      "slippage_bps": 5,
+      "taker_fee_bps": 10,
+      "horizon_hours": 24,
+      "fr_window": 90,
+      "kelly_fraction": 1.0,
+      "stop_loss_bps": 0.0,
+      "take_profit_bps": 0.0,
+      "selection_family": "threshold_grid"
+    },
+    "sharpe": 0.4261517685604436,
+    "notes": "threshold-grid attempt completed; candidate-only, never direct GO",
+    "metric": "psr"
+  },
+  {
+    "name": "v3-grid-btcusdt-fr3-conf0.65",
+    "registered_at": "2026-09-04T02:32:31Z",
+    "params": {
+      "symbol": "BTCUSDT",
+      "fr_zscore_threshold": 3.0,
+      "min_regime_confidence": 0.65,
+      "slippage_bps": 5,
+      "taker_fee_bps": 10,
+      "horizon_hours": 24,
+      "fr_window": 90,
+      "kelly_fraction": 1.0,
+      "stop_loss_bps": 0.0,
+      "take_profit_bps": 0.0,
+      "selection_family": "threshold_grid"
+    },
+    "sharpe": 0.4261517685604436,
+    "notes": "threshold-grid attempt completed; candidate-only, never direct GO",
+    "metric": "psr"
+  },
+  {
+    "name": "v3-grid-btcusdt-fr3-conf0.7",
+    "registered_at": "2026-09-04T02:32:31Z",
+    "params": {
+      "symbol": "BTCUSDT",
+      "fr_zscore_threshold": 3.0,
+      "min_regime_confidence": 0.7,
+      "slippage_bps": 5,
+      "taker_fee_bps": 10,
+      "horizon_hours": 24,
+      "fr_window": 90,
+      "kelly_fraction": 1.0,
+      "stop_loss_bps": 0.0,
+      "take_profit_bps": 0.0,
+      "selection_family": "threshold_grid"
+    },
+    "sharpe": 0.35093863357583294,
+    "notes": "threshold-grid attempt completed; candidate-only, never direct GO",
+    "metric": "psr"
+  },
+  {
     "name": "h9-oi-volume-ratio-hmm-v1",
     "registered_at": "2026-09-04T18:05:58Z",
     "params": {
