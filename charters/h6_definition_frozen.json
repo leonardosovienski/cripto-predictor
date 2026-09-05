@@ -1,7 +1,7 @@
 {
   "H6_DEFINITION_FROZEN": true,
-  "as_of_commit": "3f133f2f7e8186cfafcf42b0e80cbe8ff8f9b33a",
-  "generated_at": "2026-08-19T04:10:20.653003+00:00",
+  "as_of_commit": "6f308e08ab0d9960b2a339b3db919d29856a2b54",
+  "generated_at": "2026-09-05T21:51:34.541012+00:00",
   "governing_code": {
     "constants": {
       "H6_LIVE_FONTE": "\"dpl:fallback\"",
@@ -25,13 +25,13 @@
   "trial_id": "h6-sinal-invertido-d7",
   "trials_json_entry": {
     "name": "h6-sinal-invertido-d7",
-    "notes": "Pre-registro anti-data-snooping anterior ao resultado dedicado. A hipotese nasceu da correlacao negativa observada nas familias anteriores e so aceita previsoes posteriores a registered_at. MATURACAO DEDICADA ATIVA: close_h6_inverted_signal() e h6_spearman_verdict() implementam a leitura invertida sem casar a fonte reserved:* pelo mecanismo generico. Ultima evidencia versionada: Sharpe auxiliar +0.3479 com n=6, IMATURO; o gate exige n>=30 e IC95 positivo. H6 e pesquisa de correlacao, nao gera TradeIntent, nao autoriza shadow/capital e nao permite LLM como decisao direta de trading.",
+    "notes": "Pre-registro anti-data-snooping anterior ao resultado dedicado. A hipotese nasceu da correlacao negativa observada nas familias anteriores e so aceita previsoes posteriores a registered_at. MATURACAO DEDICADA ATIVA: close_h6_inverted_signal() e h6_spearman_verdict() implementam a leitura invertida sem casar a fonte reserved:* pelo mecanismo generico. Ultima evidencia versionada: Sharpe auxiliar +0.3479 com n=6, IMATURO; o gate exige n>=30 e IC95 positivo. H6 e pesquisa de correlacao, nao gera TradeIntent, nao autoriza shadow/capital e nao permite LLM como decisao direta de trading. || VEREDITO 2026-09-04 — REFUTADA / NO-GO com n=84 real: rho -0.057 [IC95 -0.231; +0.129] — CRUZA ZERO, e o sinal voltou a ser levemente NEGATIVO, nao positivo como a inversao previa. || RECONCILIACAO 2026-09-05: campo `sharpe` atualizado de 0.3479 para 0.4766 — valor medido pelos jobs de producao, presente no trials.json local que nunca havia sido publicado. Decisao EXPLICITA do dono, tomada depois de a objecao ser levantada e reafirmada: `register_trial` PROIBE reescrever trial de hipotese fechada, e esta escrita foi feita direto no arquivo via PR revisado — o guard existe para impedir reescrita automatica/acidental, nao decisao humana documentada. O VEREDITO NAO MUDA: o gate da H6 e o Spearman IC95 acima, NAO o Sharpe, que sempre foi auxiliar e nunca foi criterio de decisao. RESSALVA DE PROVENIENCIA, registrada por honestidade: o valor anterior vinha carimbado com n=6 (IMATURO); o n por tras de +0.4766 NAO esta documentado em lugar nenhum do repositorio e nao foi possivel recupera-lo nesta auditoria. O numero e o que os jobs mediram, mas sua MATURIDADE E DESCONHECIDA — nao o trate como evidencia sem antes recuperar o n.",
     "params": {
       "fonte": "reserved:h6-inversao-sinal",
       "horizonte_dias": 7
     },
     "registered_at": "2026-07-20T07:01:59Z",
-    "sharpe": 0.3479
+    "sharpe": 0.4766
   },
-  "trials_json_entry_sha256": "ab16f1aab4c845d66beb0adc2ce54379e4b966573542a18f80e82c5f24bc060f"
+  "trials_json_entry_sha256": "106a1e4914d95aa6681be3cc3d5bcf3fc2575bafe7d34f82e9abb5e10007e717"
 }

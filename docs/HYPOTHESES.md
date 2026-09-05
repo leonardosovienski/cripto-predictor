@@ -1090,21 +1090,56 @@ público estava **incompleto**, o que enfraquecia um controle anti-p-hacking:
   as 16 tentativas da grade presentes). Validado por mutação: reverter qualquer
   uma das três condições faz um teste falhar.
 
-- **EM ABERTO, para decisão do dono — Sharpes divergentes de hipóteses
-  FECHADAS.** O registro local traz valores diferentes dos versionados:
+- **RESOLVIDO 2026-09-05 (mesmo dia) — Sharpes divergentes de hipóteses FECHADAS
+  foram reconciliados, por decisão explícita do dono.**
 
-  | trial | versionado | local |
+  | trial | antes | depois |
   |---|---|---|
   | `v2-dpl-multi-h7` (H5) | -0,312 | **-0,4186** |
   | `h6-sinal-invertido-d7` (H6) | 0,3479 | **0,4766** |
 
-  Ambas as hipóteses estão `CLOSED_NO_GO`, e `register_trial` proíbe reescrever
-  trial de hipótese fechada. Os valores locais são provavelmente mais maduros
-  (mais previsões acumuladas), mas sobrescrever resultado de hipótese fechada é
-  precisamente o que a imutabilidade existe para impedir — e fazê-lo por
-  iniciativa de quem audita seria pior do que a divergência. Fica REGISTRADO
-  aqui e NÃO aplicado: cabe ao dono decidir, e a decisão deve ser documentada
-  junto do motivo.
+  Ambos são valores medidos pelos jobs de produção, presentes no `trials.json`
+  local que nunca havia sido publicado. A objeção foi levantada — `register_trial`
+  PROÍBE reescrever trial de hipótese fechada — e o dono a reafirmou. A escrita foi
+  feita direto no arquivo, por PR revisado: o guard existe para impedir reescrita
+  automática/acidental, não decisão humana documentada. Cada registro recebeu nota
+  de proveniência com o valor anterior, a decisão e o motivo.
+
+  **NENHUM VEREDITO MUDOU.** H5 e H6 seguem `CLOSED_NO_GO`. O gate da H5 é o
+  Spearman IC95 pooled (-0,166 [-0,266; -0,057], direção oposta à hipótese); o da
+  H6 é o Spearman IC95 (rho -0,057 [-0,231; +0,129], n=84, cruza zero). O Sharpe
+  sempre foi auxiliar em ambas, nunca critério de decisão.
+
+  **A H6 exigiu quebrar um selo criptográfico — registrado aqui em destaque.**
+  `charters/h6_definition_frozen.json` congela por SHA256 duas coisas: (a) o código
+  de `close_h6_inverted_signal`/`h6_spearman_verdict`, e (b) a entrada do H6 no
+  `trials.json` — incluindo o campo `sharpe` e o texto das notas. A suíte pegou a
+  divergência (`test_h6_spearman_verdict_continua_confere_com_o_snapshot_congelado`),
+  que é exatamente o que essa trava existe para fazer.
+
+  O snapshot foi regenerado. O que justifica isso, na regra do próprio
+  `scripts/freeze_h6_definition.py` ("ou foi mudança inofensiva e o snapshot deve
+  ser regenerado com justificativa no commit, ou a definição mudou e H6 precisaria
+  virar trial NOVA"):
+
+  - divergiu **somente** `trials_json_entry_sha256`;
+  - `governing_code_sha256` permaneceu **byte-idêntico**
+    (`5582ec23...b99b9f0a` antes e depois) — a semântica científica do H6 não se
+    moveu;
+  - `params` (fonte, horizonte_dias) e `registered_at` intocados — o que está sendo
+    testado não mudou;
+  - a regra `no_silent_change` do selo enumera "threshold, horizonte, ativos,
+    provider, score transformation ou filtro"; um resultado registrado não é
+    nenhum deles;
+  - o `note` do selo o vincula à janela em que "H6 estiver ACTIVE_PROSPECTIVE", e a
+    H6 está fechada desde 2026-09-04 — a coleta que o selo protegia terminou.
+
+  **RESSALVA DE PROVENIÊNCIA, em aberto:** o valor antigo da H6 vinha carimbado com
+  `n=6, IMATURO`. O `n` por trás de `+0,4766` **não está documentado em lugar nenhum
+  do repositório** e não foi possível recuperá-lo nesta auditoria. O número é o que
+  os jobs mediram; sua maturidade é DESCONHECIDA. Não o trate como evidência antes
+  de recuperar o `n` — e se ele vier a ser recuperado, registre-o aqui.
+
 
 ### B14 — Assimetria de basis perpétuo↔spot (proposta, NÃO registrada)
 
