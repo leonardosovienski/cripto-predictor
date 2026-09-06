@@ -172,8 +172,10 @@ GarimpoInvestimentos/
 charters/                  ← estado científico, definição congelada da H6, charters de coleta
 observation_plans/         ← planos e ativações COLLECTION_ONLY (imutáveis, com checksum)
 scripts/                   ← atestado do harness, backup, scan de segredos, CI check
-tests/                     ← 738 verdes com `--all-extras`; 723 verdes + 2 skips com
-                              `--extra test` (skips = numpy/hmmlearn, cobertos no CI)
+tests/                     ← 978 verdes com `--all-extras`; 944 verdes + 4 skips com
+                              `--extra test`. Repare no total: 978 contra 948 — 30 testes
+                              não chegam a ser COLETADOS sem os extras. Só o CI
+                              (`all-extras`) exercita o núcleo HMM; ver docs/POLITICA_DE_MERGE.md
 docs/                      ← ADRs e auditorias (ver HANDOFF)
 ```
 
@@ -208,12 +210,12 @@ principal, e `DATA_DIR`, `OUTPUT_DIR` e `CACHE_DIR` são configuráveis.
 
 ```bash
 # suíte offline, sem chaves:
-uv sync --locked --extra test     # 723 verdes + 2 skips (numpy/hmmlearn ausentes)
+uv sync --locked --extra test     # 944 verdes + 4 skips (numpy/hmmlearn ausentes)
 uv build                          # necessário: test_distribution_security.py inspeciona dist/
 uv run pytest -q
 
 # suíte completa, sem skips:
-uv sync --locked --all-extras && uv build && uv run pytest -q   # 738 verdes
+uv sync --locked --all-extras && uv build && uv run pytest -q   # 978 verdes
 ```
 
 Extras disponíveis: `llm`, `v3`, `excel`, `science` e `test`.
