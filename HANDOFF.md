@@ -1,9 +1,48 @@
 # HANDOFF — GarimpoInvestimentos (Fase 1 + melhorias)
 
-> **Estado técnico corrente — 2026-09-01:** pacote `GarimpoInvestimentos`, Core
-> 3.0.x e Ops 4.0.x por wheels. Referências posteriores a vendors, Core 2.x,
+> **Estado técnico corrente — 2026-09-06:** pacote `GarimpoInvestimentos`, Core
+> **3.0.0** e Ops **4.1.0** por wheels. Referências posteriores a vendors, Core 2.x,
 > Ops 3.x, ambientes antigos ou contagens históricas permanecem apenas como
-> registro da data em que foram escritas.
+> registro da data em que foram escritas. (A linha "Core 3.0.x e Ops 4.0.x" do
+> checkpoint de 2026-09-01 está superada quanto ao Ops.)
+
+> ## PENDÊNCIA — o bump do Core para 3.2.0 é trabalho, não troca de pin (2026-09-06)
+>
+> Ops subiu para 4.1.0 nesta data (aditivo; suíte 945 verdes). **O Core segue em
+> 3.0.0 de propósito.** O 3.2.0 mudou contrato: `register_trial` passou a exigir
+> atestado de controle positivo também no caminho de ATUALIZAÇÃO de
+> `status`/`sharpe`, que antes era isento. Medido em 2026-09-06, cinco pontos
+> deste repositório quebram com `PowerAttestationMissingError`:
+>
+> | teste | caminho que quebra |
+> |---|---|
+> | `test_experiment_registry.py::test_reexecucao_mesma_config_atualiza_sharpe_preservando_registro` | reexecução da mesma config atualiza sharpe |
+> | `test_experiment_registry.py::test_backtest_fecha_sharpe_da_trial_casada` | fecho de sharpe pós-backtest |
+> | `test_experiment_registry.py::test_backtest_divide_eras_entre_trial_encerrada_e_sucessora` | divisão de eras |
+> | `test_experiment_registry.py::test_h6_matura_com_dado_posterior_ao_registro_e_score_baixo` | maturação da H6 |
+> | `test_trials.py::test_registro_roundtrip_e_dedup_por_nome` | roundtrip do registro |
+>
+> Subir exige emitir atestado nesses cinco pontos — mudança no caminho científico
+> do registro de trials, com revisão humana linha a linha. Não é bump de rotina.
+>
+> **E o pin não vive num lugar só.** Medido ao subir o Ops nesta data, o mesmo pin
+> aparece em CINCO arquivos, nenhum derivado do outro — cada um se edita à mão:
+>
+> | arquivo | o que guarda |
+> |---|---|
+> | `pyproject.toml` | faixa (`>=`) + url em `[tool.uv.sources]` |
+> | `uv.lock` | url + sha256 resolvidos |
+> | `Dockerfile` | url da wheel, instalada antes do `pip install .[...]` |
+> | `.github/workflows/ci.yml` | url da wheel no passo `wheel-contract` |
+> | `scripts/verify_installed_wheels.py` | url, sha256 E versão esperada |
+>
+> Mais a cópia em `tests/test_core_integrity.py`. Trocar só o `pyproject` **passa
+> na suíte local e quebra o CI** com `ResolutionImpossible`, porque a suíte não
+> enxerga Dockerfile nem workflow. Foi o que derrubou os jobs `container` e
+> `quality` do PR do bump do Ops, em duas rodadas seguidas.
+> O que se ganha: DSR que trava em vez de degenerar em PSR silencioso, e recusa
+> de atestado com árvore suja. Contexto completo:
+> `brasileirao-predictor/docs/AUDITORIA_DOCS_VS_CODIGO_2026-09-06.md`, achado A1.
 
 > ## Trava econômica V3 opt-in (2026-09-01)
 >
