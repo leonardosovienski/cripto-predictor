@@ -24,6 +24,22 @@
 >
 > Subir exige emitir atestado nesses cinco pontos — mudança no caminho científico
 > do registro de trials, com revisão humana linha a linha. Não é bump de rotina.
+>
+> **E o pin não vive num lugar só.** Medido ao subir o Ops nesta data, o mesmo pin
+> aparece em CINCO arquivos, nenhum derivado do outro — cada um se edita à mão:
+>
+> | arquivo | o que guarda |
+> |---|---|
+> | `pyproject.toml` | faixa (`>=`) + url em `[tool.uv.sources]` |
+> | `uv.lock` | url + sha256 resolvidos |
+> | `Dockerfile` | url da wheel, instalada antes do `pip install .[...]` |
+> | `.github/workflows/ci.yml` | url da wheel no passo `wheel-contract` |
+> | `scripts/verify_installed_wheels.py` | url, sha256 E versão esperada |
+>
+> Mais a cópia em `tests/test_core_integrity.py`. Trocar só o `pyproject` **passa
+> na suíte local e quebra o CI** com `ResolutionImpossible`, porque a suíte não
+> enxerga Dockerfile nem workflow. Foi o que derrubou os jobs `container` e
+> `quality` do PR do bump do Ops, em duas rodadas seguidas.
 > O que se ganha: DSR que trava em vez de degenerar em PSR silencioso, e recusa
 > de atestado com árvore suja. Contexto completo:
 > `brasileirao-predictor/docs/AUDITORIA_DOCS_VS_CODIGO_2026-09-06.md`, achado A1.
