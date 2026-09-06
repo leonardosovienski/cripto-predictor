@@ -103,6 +103,12 @@ linha do tempo, o diagnóstico e as duas caixas de branch protection que fecham 
 controle do H7/H9 nunca rodado) estão listadas em
 [docs/HYPOTHESES.md](docs/HYPOTHESES.md), seção "Lacunas conhecidas e NÃO corrigidas".
 
+**Onde as coisas estão na máquina de coleta** — caminhos dos bancos, tarefas
+agendadas, logs de resultado, snapshots pré-limpeza e o que só roda lá:
+[docs/MAQUINA_DE_PRODUCAO.md](docs/MAQUINA_DE_PRODUCAO.md). O Feature Store é
+gitignored, então esse mapa é a única forma de essa informação existir fora da
+máquina.
+
 ## Funcionalidades
 
 | Camada | O que faz |

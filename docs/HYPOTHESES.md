@@ -1140,6 +1140,33 @@ público estava **incompleto**, o que enfraquecia um controle anti-p-hacking:
   os jobs mediram; sua maturidade é DESCONHECIDA. Não o trate como evidência antes
   de recuperar o `n` — e se ele vier a ser recuperado, registre-o aqui.
 
+  **PISTA CONCRETA, encontrada em 2026-09-06.** Ao revisar as branches antes de
+  apagá-las, apareceram cinco scripts que existiam **só** numa branch de backup
+  (`claude/entender-3-projetos-cfvrck-backup-2026-09-03`) e em nenhum outro lugar
+  do repositório. Eles registram que a máquina de produção guarda um snapshot do
+  Feature Store **anterior a uma limpeza**:
+
+  ```
+  C:\predictor\data\output\feature_store_backup_antes_limpeza.db
+  C:\predictor\data\failed-runs\feature_store-*-2026-08-09.db   (3 arquivos)
+  ```
+
+  Um deles, `check_backup.py`, faz exatamente a consulta que responde esta
+  ressalva — total de `predictions`, quebra por fonte e intervalo de `ts`. Os
+  cinco foram preservados em `scripts/forense/` antes de as branches serem
+  apagadas; o mapa completo da máquina está em `docs/MAQUINA_DE_PRODUCAO.md`.
+
+  Rodar na máquina de produção:
+
+  ```powershell
+  cd C:\predictor\prod
+  python scripts\forense\check_backup.py
+  ```
+
+  **Não testado** — os bancos não existem fora da máquina, então não há como
+  verificar daqui se o `n` está mesmo lá. É a pista mais concreta que existe,
+  não uma resposta.
+
 
 ### Lacunas conhecidas e NÃO corrigidas — 2026-09-06
 

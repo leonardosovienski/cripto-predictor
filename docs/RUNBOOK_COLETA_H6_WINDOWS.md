@@ -10,6 +10,10 @@
 > **Este documento não autoriza nada.** Nenhum gate deste ecossistema autoriza
 > capital, alavancagem ou decisão direta de trading por LLM.
 
+> **Mapa dos caminhos:** este runbook diz *como rodar*. Onde cada banco, log,
+> snapshot e tarefa agendada vive na máquina está em
+> [`MAQUINA_DE_PRODUCAO.md`](MAQUINA_DE_PRODUCAO.md).
+
 Os comandos estão em blocos `powershell` prontos para colar. Todos assumem que
 você está na raiz do repositório, salvo indicação em contrário.
 
