@@ -1214,8 +1214,39 @@ decisão do dono. Registrados aqui para não serem redescobertos do zero.
    ambiente de auditoria.
 
    O runbook para rodá-lo na máquina de produção (dois braços, baseline e
-   `--use-oi-volume-ratio`, na MESMA janela) foi entregue ao dono. Enquanto não
-   rodar, o `Sharpe=-1,0041` do H9 permanece sem referência.
+   `--use-oi-volume-ratio`, na MESMA janela) está em
+   `docs/MAQUINA_DE_PRODUCAO.md`, seção "O controle do H7/H9, quando for rodar".
+   Enquanto não rodar, o `Sharpe=-1,0041` do H9 permanece sem referência.
+
+4. **Duas flags do backtest registram trials sem confirmação.**
+   `--fr-thresholds` e `--confidence-thresholds` desviam para
+   `run_threshold_grid`, que chama `register_trial` para TODA a grade **antes**
+   de rodar o WFA (`v3/backtest_v3.py:1179`). Uma grade 4×4 gasta 16 tentativas
+   do denominador do DSR no instante em que o comando roda.
+
+   O comportamento está **certo** — registrar antes de ver o resultado é o que
+   impede escolher o vencedor depois. O problema é que nada avisa, e
+   `docs/RISK_MGMT_E_CALIBRACAO_2026-08-27.md` apresenta exatamente esse comando
+   na seção "Como rodar" **sem mencionar o efeito colateral**. Foi assim que as
+   16 trials `v3-grid-btcusdt-*` nasceram em 2026-09-04 e ficaram um dia inteiro
+   só na máquina de produção, subestimando o N do DSR no registro público.
+
+   Não corrigido: aquele documento é um retrato datado e a convenção do projeto
+   é não reescrever registro histórico. O aviso foi para
+   `docs/MAQUINA_DE_PRODUCAO.md`, que é documento vivo. Se algum dia a
+   convenção admitir errata em doc datado, este é um caso claro.
+
+5. **O atestado de poder é chaveado pela versão do core, não só pelo prazo.**
+   `trials.harness_attestation.json` carrega `core_version: "3.0.0"`, enquanto
+   o `pyproject.toml` permite `predictor-core>=3.0.0,<4`. Qualquer bump de minor
+   dentro do intervalo permitido invalida o atestado e **bloqueia todo registro
+   de trial** até nova aferição.
+
+   Fail-closed é o comportamento correto — harness não aferido não deve registrar
+   hipótese. Não corrigido porque não é defeito: é expectativa não documentada.
+   A falha se apresenta como recusa de registro, não como "sua dependência subiu
+   de versão", e isso custa tempo de diagnóstico. Descoberto por acidente na
+   auditoria de 2026-09-05.
 
 ### B14 — Assimetria de basis perpétuo↔spot (proposta, NÃO registrada)
 
