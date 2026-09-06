@@ -87,6 +87,18 @@ tinha checks verdes, só que contra a base errada.
   HMM. Sem ele, 4 testes viram skip — inclusive
   `test_v3_hmm_no_lookahead.py`, que guarda a afirmação científica central do
   projeto. Quem roda `uv sync --extra test` local vê "verde" sem ter testado HMM.
+
+  E os 4 skips **subestimam** o buraco. Medido em 2026-09-06 no `main` (`3d2e18b`):
+
+  ```
+  uv sync --locked --all-extras   ->  978 passed
+  uv sync --locked --extra test   ->  944 passed, 4 skipped   (total coletado: 948)
+  ```
+
+  A diferença de 30 não aparece como skip: são testes que **nem chegam a ser
+  coletados** sem os extras. O skip é visível e conta como aviso; a não-coleta é
+  silenciosa. Um `pytest -q` local pode terminar verde tendo executado 3% menos
+  testes do que o autor imagina — e é justamente a fatia que cobre o HMM.
 - `tests/test_registry_e_scripts_encoding.py` e
   `tests/test_readme_reflete_charter.py` travam classes de deriva que já
   aconteceram de verdade.
