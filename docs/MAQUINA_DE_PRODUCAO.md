@@ -70,6 +70,26 @@ Get-ScheduledTaskInfo -TaskName cripto-attest-renew | Select-Object LastRunTime,
 
 `LastTaskResult` **0** = OK.
 
+### O atestado trava por versão do core, não só por prazo
+
+Todo mundo sabe que o atestado expira (7 dias). O que **não estava escrito em
+lugar nenhum**: ele também é chaveado pela **versão do core**.
+
+```
+trials.harness_attestation.json  ->  "core_version": "3.0.0"
+pyproject.toml                   ->  "predictor-core>=3.0.0,<4"
+```
+
+O intervalo permitido é toda a linha 3.x, mas o atestado vale para **uma versão
+exata**. Um bump de minor — `3.1.0`, um Dependabot, um `uv lock --upgrade` —
+invalida o atestado e **bloqueia todo registro de trial** até alguém rodar
+`scripts/attest_harness.py` de novo.
+
+O comportamento é fail-closed e está **correto**: um harness não aferido não
+deve poder registrar hipótese. O problema é de expectativa — a falha aparece
+como recusa de registro, não como "sua dependência subiu de versão". Descoberto
+por acidente na auditoria de 2026-09-05, ao errar a versão do core.
+
 ### Rotina obsoleta
 
 Existe uma rotina agendada **fora da máquina** (na conta Claude, não no Windows)
@@ -159,6 +179,119 @@ Registrado porque foi tentado e falhou num ambiente de auditoria:
   A única via pela qual esse número sai da máquina é
   `GarimpoInvestimentos/h6_status.json`, gerado pelo `quality_snapshot` e
   **commitado à mão**.
+
+## ⚠️ Rodar o backtest sem registrar trial sem querer
+
+**Duas flags do `backtest_v3` registram trials de verdade no `trials.json` e
+consomem o atestado de poder — sem confirmação, antes de qualquer resultado
+aparecer.** Verificado no código (`v3/backtest_v3.py`, `register_trial` nas
+linhas 1179 e 1210, ambas dentro de `run_threshold_grid`):
+
+```
+--fr-thresholds           -> desvia para run_threshold_grid  -> REGISTRA
+--confidence-thresholds   -> desvia para run_threshold_grid  -> REGISTRA
+```
+
+O registro acontece **antes** de o WFA rodar (comentário no próprio código:
+*"Registra TODAS as combinações antes de olhar qualquer resultado"*). Isso é
+deliberado e correto — é o que impede escolher o vencedor depois de ver o
+resultado. Mas significa que **uma grade 4×4 gasta 16 tentativas do denominador
+do DSR** no instante em que você aperta enter.
+
+Foi exatamente assim que as 16 trials `v3-grid-btcusdt-*` nasceram em
+2026-09-04T02:32:31Z e ficaram só nesta máquina até a reconciliação de
+2026-09-05.
+
+**`--kelly-fractions` NÃO registra** (`run_kelly_sweep` não chama
+`register_trial`) — mas é outra varredura, então trata-se de multiplicidade que
+o registro não vê. Use com a mesma consciência.
+
+O caminho simples **não registra nada**:
+
+```powershell
+.\.venv\Scripts\python.exe -m GarimpoInvestimentos.v3.backtest_v3 --symbol BTCUSDT
+```
+
+### A armadilha documental
+
+`docs/RISK_MGMT_E_CALIBRACAO_2026-08-27.md` §"Como rodar" apresenta exatamente
+o comando da grade:
+
+```
+--fr-thresholds 1.5 2.0 2.5 3.0 --confidence-thresholds 0.55 0.60 0.65 0.70
+```
+
+**sem dizer que ele registra 16 trials.** Aquele documento é um retrato datado,
+e a convenção do projeto é não reescrever registro histórico — então o aviso
+mora aqui. Quem seguir aquele doc ao pé da letra gasta 16 tentativas sem saber.
+
+## O controle do H7/H9, quando for rodar
+
+Nunca foi rodado (ver `docs/HYPOTHESES.md`, "Lacunas conhecidas"). Só roda nesta
+máquina, porque depende do histórico de OI. **Os dois braços na mesma janela** —
+rodar só o baseline num período diferente reintroduz o confundidor que o
+controle existe para eliminar:
+
+```powershell
+cd C:\predictor\prod
+.\.venv\Scripts\python.exe -m GarimpoInvestimentos.v3.backtest_v3 --symbol BTCUSDT 2>&1 | Tee-Object controle_A_baseline.log
+.\.venv\Scripts\python.exe -m GarimpoInvestimentos.v3.backtest_v3 --symbol BTCUSDT --use-oi-volume-ratio 2>&1 | Tee-Object controle_B_oivol.log
+```
+
+Todo o resto no default (fee 10bps, slippage 5bps, horizonte 24h, `fr-window`
+90) — idêntico ao que o H9 usou. **Nenhuma outra flag**, pelas razões da seção
+acima.
+
+Extrair o que importa:
+
+```powershell
+Select-String -Path controle_A_baseline.log,controle_B_oivol.log -Pattern "Folds:|PSR agregado|IC Spearman|Max Drawdown|Sharpe agregado"
+git status --short GarimpoInvestimentos/trials.json   # tem que sair VAZIO
+```
+
+**Checagem de validade antes de interpretar:** o braço B precisa reproduzir
+`Sharpe ≈ −1,0041 / PSR ≈ 0,1621`. Se não bater, o harness mudou e a comparação
+está contaminada — investigue isso antes de ler qualquer coisa.
+
+| Resultado | Leitura |
+|---|---|
+| A ≈ B ≈ −1,0 | a covariável é inocente; o −1,0041 vem do período/harness. O H9 mediu isso, não crowding, e o H7 devolveria o mesmo |
+| A ≈ 0 e B ≈ −1,0 | acrescentar covariável exógena degrada de verdade; o H7 está condenado por razão mecânica |
+| A pior que B | inesperado — a covariável estaria ajudando, e o desenho do teste precisa de revisão |
+
+Nada disso reabre o H9: ele segue `CLOSED_NO_GO`. O braço B é diagnóstico, não
+veredito.
+
+## Estado local desta máquina em 2026-09-05
+
+Registrado porque é a origem de uma cadeia de problemas reais, e some se
+ninguém anotar.
+
+**O `main` local estava `[ahead 7, behind 5]`** — 7 commits locais não enviados,
+5 do remoto não incorporados. Os locais eram resoluções manuais de conflito:
+
+```
+75cea8c Merge branch 'main' ...
+baad153 resolve trials.json conflict: merge H9 registration with local state
+62cc323 resolve stash conflict: preserve H6 real verdict (n=84, RUIDO) ...
+1804213 resolve trials.json conflict: merge H7/H8 upstream registration with local SL/TP grid results
+```
+
+Foram essas resoluções à mão — feitas porque o `safe_pull.ps1` não rodava — que
+corromperam o encoding do registro científico.
+
+**Arquivos não versionados presentes na raiz:**
+
+| Arquivo | O que é |
+|---|---|
+| `h9_backtest_result.log` | evidência primária do veredito do H9 |
+| `h7_backtest_result.log` | a tentativa abortada do H7 |
+| `grid_thresholds_log.txt` | a varredura de 16 thresholds |
+| `dxy_history.csv` | **a série do DXY existe aqui** — o H7 era executável |
+| `check_predictions.py`, `dump_methods.py`, `test_covtype.py` | sondas avulsas, mesma natureza das de `scripts/forense/` |
+
+`dxy_history.csv` merece destaque: enquanto o charter dizia "coleta não
+iniciada", o dado do H7 já estava na máquina e o backtest já tinha sido tentado.
 
 ## Sincronizar extras: os três juntos, sempre
 
