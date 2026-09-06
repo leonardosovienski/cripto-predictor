@@ -1141,6 +1141,55 @@ público estava **incompleto**, o que enfraquecia um controle anti-p-hacking:
   de recuperar o `n` — e se ele vier a ser recuperado, registre-o aqui.
 
 
+### Lacunas conhecidas e NÃO corrigidas — 2026-09-06
+
+Achados da auditoria de 2026-09-05 que ficaram **documentados mas não
+implementados**, porque corrigi-los muda a régua de uma hipótese ou depende de
+decisão do dono. Registrados aqui para não serem redescobertos do zero.
+
+1. **O dedup do H8 subestima a multiplicidade.**
+   `analyzers/hypothesis_loop.parse_proposals` deduplica propostas por
+   `recipe_fingerprint` — hash da receita EXATA. Duas propostas semanticamente
+   equivalentes (operandos comutativos em ordem diferente, z-score de uma feature
+   já escalada) produzem fingerprints diferentes e contam como tentativas
+   distintas.
+
+   Isso importa porque o traço append-only de propostas é o denominador que o
+   PBO/DSR usa para descontar seleção. Fingerprint exato **infla** o número de
+   tentativas aparentes e, ao mesmo tempo, **deixa passar** duplicatas reais como
+   se fossem exploração nova — nas duas direções, o controle mede errado.
+
+   NÃO corrigido: o H8 já está registrado (`h8-llm-hypothesis-generator`) com
+   `multiplicity_control` declarado. Mudar como a multiplicidade é contada é
+   mudar a régua de uma hipótese registrada — decisão científica do dono, não
+   correção de bug. Relevante ANTES de a coleta do H8 começar, não depois.
+
+2. **`build_macro_event_dummy` usa janela ±N — antes E depois do evento.**
+   Marcar 1.0 no dia seguinte a um FOMC é trivialmente causal; marcar 1.0 no dia
+   ANTERIOR só é legítimo porque FOMC/CPI/PPI têm data **anunciada com
+   antecedência**. A função é causal por uma propriedade do CALENDÁRIO, não do
+   código.
+
+   Consequência: se `macro_calendar.json` algum dia for preenchido
+   retroativamente — com datas de divulgação real em vez de datas agendadas
+   ex-ante — a mesma função vira look-ahead sem que nada no código mude. Não há
+   teste que detecte isso, porque o dado é que muda, não a lógica.
+
+   NÃO corrigido: hoje o calendário é agendado e a suposição vale. Fica como
+   pré-condição a conferir se a origem do calendário mudar.
+
+3. **O controle do H7/H9 (`extra_features=()`) continua não rodado.**
+   Ver o item 7 do B4 acima. Tentativa de rodá-lo em 2026-09-05 falhou por dois
+   motivos independentes, ambos externos ao código: a série histórica de OI não
+   existe fora da máquina de produção (o endpoint REST da Binance só serve ~30
+   dias — ver `v3/collectors/oi_collector.py`), e o arquivo público que a
+   reconstruiria (`data.binance.vision`) está bloqueado pela política de rede do
+   ambiente de auditoria.
+
+   O runbook para rodá-lo na máquina de produção (dois braços, baseline e
+   `--use-oi-volume-ratio`, na MESMA janela) foi entregue ao dono. Enquanto não
+   rodar, o `Sharpe=-1,0041` do H9 permanece sem referência.
+
 ### B14 — Assimetria de basis perpétuo↔spot (proposta, NÃO registrada)
 
 **Mecanismo (escrito antes de qualquer código):** o basis (perp − spot) mede
