@@ -93,6 +93,16 @@ H5 foram perdidos, então a reanálise retrospectiva não é reproduzível. O IC
 dela foi *qualificado* (bootstrap sem `block_length` overlap-aware na época), nunca
 reescrito.
 
+**Ação de governança pendente:** o `main` foi corrompido silenciosamente três vezes
+em 2026-09-04/05 — duas por hunks perdidos no squash-merge, uma por dois PRs
+sobrepostos mergeados com o CI ainda rodando. O CI **já** roda no `main`; o que falta
+é *esperar por ele*. Ver [docs/POLITICA_DE_MERGE.md](docs/POLITICA_DE_MERGE.md) para a
+linha do tempo, o diagnóstico e as duas caixas de branch protection que fecham o buraco.
+
+**Lacunas conhecidas e não corrigidas** (dedup do H8, suposição do calendário macro,
+controle do H7/H9 nunca rodado) estão listadas em
+[docs/HYPOTHESES.md](docs/HYPOTHESES.md), seção "Lacunas conhecidas e NÃO corrigidas".
+
 ## Funcionalidades
 
 | Camada | O que faz |
