@@ -72,9 +72,13 @@ def load_histories(directory: Path):
             idx = (EPOCH + timedelta(days=opened // DAY) - BASE).days
             if opened % DAY or not 0 <= idx < len(values) or idx in seen:
                 raise ValueError("invalid or duplicate candle day")
+            seen.add(idx)
+            if any(not math.isfinite(v) or v <= 0 for v in (candle[5], candle[6])):
+                # Zero-volume provider placeholders are already ineligible under
+                # the fixed rule, including placeholders with stale close times.
+                continue
             if not opened <= candle[7] < opened + DAY:
                 raise ValueError("invalid UTC close time")
-            seen.add(idx)
             if candle[7] != opened + DAY - 1:
                 # An early halt is an incomplete day, not a full-day close or a fatal
                 # universe error. Preserve raw data and leave this day missing.

@@ -169,6 +169,7 @@ def test_partial_day_is_preserved_as_missing_without_dropping_symbol(tmp_path, m
         [first, 100, 101, 99, 100, 100000, 10000000, first + b.DAY - 1],
         [first + b.DAY, 100, 101, 99, 100, 100000, 10000000, first + b.DAY + 3600000 - 1],
     ]
+    rows.append([first + 2 * b.DAY, 100, 100, 100, 100, 0, 0, first + b.DAY - 1])
     payload = gzip.compress(json.dumps({"rows": rows}).encode())
     (directory / "pairs/BTCUSDT.json.gz").write_bytes(payload)
     manifest = {
@@ -182,3 +183,4 @@ def test_partial_day_is_preserved_as_missing_without_dropping_symbol(tmp_path, m
     assert "BTCUSDT" in data
     assert np.isfinite(data["BTCUSDT"][0]).all()
     assert np.isnan(data["BTCUSDT"][1]).all()
+    assert np.isnan(data["BTCUSDT"][2]).all()

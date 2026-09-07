@@ -3,7 +3,8 @@
   "initial_execution": "Stopped during input validation, before candidate features were scored or evaluation returns attached.",
   "finding": "200 recorded daily candles end earlier than 23:59:59.999 UTC. The raw responses preserve actual early halt/close times; they are not full daily bars.",
   "handling": "Leave partial days missing in the calculation arrays, retain the symbol and original raw/normalized data, and apply the existing requirement for complete past windows. Censor affected selected outcomes unless a previously documented exact-horizon identity resolution supplies the valuation. Never forward-fill or replace an early halt by a regular daily close.",
-  "invalid_timestamp": "A close before its open or after the daily interval remains a hard data error.",
+  "invalid_timestamp": "For a candle with positive reported volume, a close before its open or after the daily interval remains a hard data error. Zero-volume placeholders are missing under the existing positive-volume rule before any close price can be used.",
+  "second_pre_score_validation_finding": "Of the 200 nonstandard close times, one KLAYUSDT row opened 2024-10-30 with a stale 2024-10-28 close time and zero base/quote volume. It is a provider placeholder, preserved in raw data and unused in features or returns. The other 199 rows close within their own day. No scoring or evaluation result had been produced at either input-validation failure.",
   "model_and_parameters_changed": false,
   "raw_data_changed": false,
   "interpretation": "Input handling correction to enforce the already-registered complete-day rule; no result-driven strategy change. The original training artifact remains unchanged, including its historical limitations."
