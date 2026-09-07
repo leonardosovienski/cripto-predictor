@@ -421,6 +421,34 @@ def quoted_book(source: PublicSource, symbol: str) -> tuple[dict, dict]:
     return book, metadata
 
 
+def catalog_changes(previous: dict, current: dict) -> list[dict]:
+    return [
+        {
+            "symbol": symbol,
+            "previous": previous.get(symbol, "MISSING"),
+            "current": current.get(symbol, "MISSING"),
+        }
+        for symbol in sorted(set(previous) | set(current))
+        if previous.get(symbol, "MISSING") != current.get(symbol, "MISSING")
+    ]
+
+
+def attach_catalog_changes(snap: dict, ledger: Ledger):
+    prior = next((r for r in reversed(ledger.rows) if r["payload"].get("snapshot")), None)
+    if prior:
+        path = Path(prior["payload"]["snapshot"])
+        if sha(path.read_bytes()) != prior["payload"]["snapshot_sha256"]:
+            raise ValueError("prior snapshot hash mismatch")
+        previous = json.loads(path.read_text())
+        snap["sample_status_changes"] = catalog_changes(
+            previous["sample_status"], snap["sample_status"]
+        )
+        snap["compared_with_ledger_sha256"] = prior["sha256"]
+    else:
+        snap["sample_status_changes"] = None
+        snap["compared_with_ledger_sha256"] = None
+
+
 def portfolio_specs(snap: dict) -> dict:
     selected = [{"symbol": s, "weight": 0.2} for s in snap["selected"]]
     eligible = [s["symbol"] for s in snap["ranked"]] if snap["minimum_universe_met"] else []
@@ -525,6 +553,7 @@ def run(args):
         try:
             if args.mode == "preflight":
                 snap = snapshot(source, anchor_for(now()), args.base_data_dir, args.training)
+                attach_catalog_changes(snap, ledger)
                 run_id = "preflight-" + uuid.uuid4().hex
                 path = args.data_dir / "snapshots" / f"{run_id}.json"
                 write_json(path, snap)
@@ -565,6 +594,7 @@ def run(args):
                                 snap = snapshot(
                                     source, slot_time, args.base_data_dir, args.training
                                 )
+                                attach_catalog_changes(snap, ledger)
                                 if not in_window(now(), slot_time):
                                     raise ValueError("acquisition finished after entry window")
                                 path = args.data_dir / "snapshots" / f"{slot_time.date()}.json"

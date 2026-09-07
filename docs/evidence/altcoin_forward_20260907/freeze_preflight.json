@@ -1,7 +1,7 @@
 {
-  "known_at": "2026-09-07T19:56:06.456729+00:00",
+  "known_at": "2026-09-07T19:50:06.367667+00:00",
   "repository_files": {
-    "scripts/observe_altcoin_forward.py": "679ef8813ea0e738d0fdcc3b38cd4df864aa9e81dfe6efc04de475f9332d69f9",
+    "scripts/observe_altcoin_forward.py": "f11bad2e5ad546eed7e492a83921452fd61702e3669a3bf45a3a91528b198f3c",
     "scripts/check_altcoin_forward_design.py": "92777628e212d699ef8725f254ebc11e32e0ffd495a655228e8abc5689548a7a",
     "scripts/prepare_altcoin_payoff.py": "0c349fe67d4466db008cf1728c57767ee01fce9c122f85e539eeff6f8af30ad0",
     "scripts/research_altcoin_analogs.py": "22b5456ae7c56c09b51cb295b784fad7b9b5685241f9fa54a31e5cb6a1aa7626",
@@ -12,7 +12,5 @@
   },
   "acquisition_sha256": "b0823fd898bb46043f1d6d328b74d033f1bfbddfe98ea13ea11fad7b82d35f6e",
   "training_sha256": "42e5bfadec6414c4148ccd4f048329256483e91715fd9e78542633d8a5a5e972",
-  "note": "Exact byte hashes; changing code/input requires a documented new freeze before later decisions. Local hashes do not supply independent trusted timestamps.",
-  "previous_freeze_sha256": "a7ace3244d4804ecf3883e5a5abfbc4408f8516c9868f162dff54ff927adae88",
-  "amendment": "Add current-catalog status diffs and verification of the preceding snapshot; no signal, price, cost or selection changes. Forty-four tests pass. Before first prospective decision. Original preflight used freeze_preflight.json and remains preserved."
+  "note": "Exact byte hashes; changing code/input requires a documented new freeze before later decisions. Local hashes do not supply independent trusted timestamps."
 }

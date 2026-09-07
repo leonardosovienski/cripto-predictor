@@ -162,6 +162,7 @@ def setup_tick(tmp_path, monkeypatch, instant):
         "selected": ["AUSDT"],
         "cash_weight": 0.8,
         "minimum_universe_met": True,
+        "sample_status": {"AUSDT": "TRADING"},
     }
     monkeypatch.setattr(f, "snapshot", lambda *_: snap)
 
@@ -232,3 +233,14 @@ def test_acquisition_failure_is_recorded_not_silently_dropped(tmp_path, monkeypa
     row = f.Ledger(args.data_dir / "ledger.jsonl").rows[0]
     assert row["payload"]["status"] == "ACQUISITION_FAILED"
     assert row["payload"]["prospective"] is False
+
+
+def test_catalog_diff_preserves_suspension_and_removal():
+    changes = f.catalog_changes(
+        {"A": "TRADING", "B": "TRADING", "C": "BREAK"}, {"A": "BREAK", "C": "BREAK", "D": "TRADING"}
+    )
+    assert changes == [
+        {"symbol": "A", "previous": "TRADING", "current": "BREAK"},
+        {"symbol": "B", "previous": "TRADING", "current": "MISSING"},
+        {"symbol": "D", "previous": "MISSING", "current": "TRADING"},
+    ]
