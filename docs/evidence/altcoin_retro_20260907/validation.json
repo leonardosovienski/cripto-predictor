@@ -1,0 +1,46 @@
+{
+  "recorded_at_utc": "2026-09-07T22:43:39.844877+00:00",
+  "python": "3.13.14",
+  "versions": {
+    "numpy": "2.5.1",
+    "scikit-learn": "1.9.0",
+    "scipy": "1.18.0",
+    "httpx": "0.28.1",
+    "joblib": "1.5.3",
+    "threadpoolctl": "3.6.0",
+    "pytest": "8.4.2"
+  },
+  "targeted_tests_passed": 53,
+  "test_files": [
+    "tests/test_altcoin_retro.py",
+    "tests/test_altcoin_payoff.py",
+    "tests/test_altcoin_analogs.py",
+    "tests/test_altcoin_forward.py"
+  ],
+  "test_execution": "Executed before publication; independent auditor records no test claims.",
+  "ruff": "PASS",
+  "pyright": "PASS",
+  "full_offline_replay": "BYTE_IDENTICAL",
+  "replay_file_sha256": {
+    "results.json": "9f70b6aa9a43d9541638d5f96a7b91c9383a3d0af5a265bce8be9bc75333dad0",
+    "weekly_results.json": "033c80a0d8fa1c9dc27670e49b5658e6e894fdd5fb4097f545b9fb5cb4f05132",
+    "decisions.json": "fc68054d7dd3cbb390d994068daa38433f85f1f9462b0684da4d832eb11981f2",
+    "scores.json.gz": "1e50d0009a24201c9c7a48752b86946838e43fa87956d7dbc025617e44d13243"
+  },
+  "scoring_freeze_verified": true,
+  "protected_files_unchanged_against": "3eabcf4a6b5a68b0c7d39e1346599cea99fbe8a2",
+  "protected_file_sha256": {
+    "charters/scientific_state.json": "f9d20abdef2fa77df98784a90f5d4c2e1a45907e6438ffa9d8235e5a9e063c75",
+    "GarimpoInvestimentos/trials.json": "7193b15df347b8243a65ab92449503dd64f90a9777207aadc8c80da2e0ac844b",
+    "GarimpoInvestimentos/v3/costs.py": "8b35cbc6e000896720ca12c075e86938187cb826be0b573c81a42754aecf21e1",
+    "CR_FREEZE_INDEX.md": "f24d05e8748f50302c37abd562356f2d7c5ce585482938cbdfc9c94fd0124820",
+    "CR_RESEARCH_FREEZE.md": "0bf34ab59e4111a1910a38a07387719727750f68e3bfb8504de866a2b43b4a26",
+    "scripts/observe_altcoin_forward.py": "3b7a49369cdba7ff5c0f883359b37fe648636f01cb17ed1d7229d5f187183386",
+    "scripts/prepare_altcoin_payoff.py": "0c349fe67d4466db008cf1728c57767ee01fce9c122f85e539eeff6f8af30ad0",
+    "scripts/research_altcoin_analogs.py": "22b5456ae7c56c09b51cb295b784fad7b9b5685241f9fa54a31e5cb6a1aa7626",
+    "scripts/collect_altcoin_analogs.py": "ca1dfd1f8f93d6174c23829c8729c6c772376de0ef4af28b2738ada261b96e7f",
+    "docs/evidence/altcoin_profit_20260907/freeze.json": "4a98d527c43b4aa385cf1393353de64a0c35a60681e53b1e152f4d9faba941cf"
+  },
+  "audit_script_sha256": "d87ca28157fd55deb658a4a1072a9e237822e6c0ca1d1f1619b244302a28ebac",
+  "formal_attestation": false
+}

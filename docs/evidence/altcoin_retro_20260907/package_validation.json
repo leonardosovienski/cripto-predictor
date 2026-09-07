@@ -1,0 +1,68 @@
+{
+  "archive_sha256": "327a717ef910f39b38d4e2afc7abbffab236aace4846dd3a952aef09d2fe1983",
+  "archive_bytes": 67209500,
+  "extracted_package_tests": {
+    "passed": 53,
+    "output": ".....................................................                    [100%]\n53 passed in 2.83s\n"
+  },
+  "extracted_package_backtest": "PASS",
+  "extracted_package_independent_audit": "PASS",
+  "package_integrity_and_reproduced_results": "PASS: 2974 packaged files checked; 5 reproduced files byte-identical.",
+  "packaging_correction": "Initial verification failed because Windows decoded a UTF-8 filename manifest as cp1252. Added explicit UTF-8 to package checker. Only checker and packaging provenance changed; all data, model, tests and result files kept identical hashes.",
+  "post_correction_changed_files": [
+    "provenance/deliver_retro.py",
+    "verify_reproduction.py"
+  ],
+  "initial_execution_log": [
+    {
+      "command": [
+        "-m",
+        "pytest",
+        "-q",
+        "tests"
+      ],
+      "exit_code": 0,
+      "stdout": ".....................................................                    [100%]\n53 passed in 2.83s\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "-m",
+        "scripts.backtest_altcoin_payoff",
+        "--data-dir",
+        "data",
+        "--training",
+        "training/samples_identity_corrected.json.gz",
+        "--output-dir",
+        "reproduced"
+      ],
+      "exit_code": 0,
+      "stdout": "Scoring 13996 past-feature observations across 140 weeks.\n{\n  \"overall\": {\n    \"weeks\": 140,\n    \"active_weeks\": 0,\n    \"cash_weeks\": 140,\n    \"selected_holdings\": 0,\n    \"censored_selected_holdings\": 0,\n    \"average_exposure\": 0.0,\n    \"trade_stats_primary\": {\n      \"complete\": 0,\n      \"wins\": 0,\n      \"losses\": 0,\n      \"zero\": 0,\n      \"win_rate_among_complete\": null,\n      \"mean_gain\": null,\n      \"mean_loss\": null,\n      \"profit_factor_return_units\": null\n    },\n    \"cost_scenarios\": {\n      \"0\": {\n        \"compounded_return\": 0.0,\n        \"ending_5000_usdt\": 5000.0,\n        \"simulated_profit_5000_usdt\": 0.0,\n        \"max_drawdown_weekly_endpoints\": 0.0\n      },\n      \"10\": {\n        \"compounded_return\": 0.0,\n        \"ending_5000_usdt\": 5000.0,\n        \"simulated_profit_5000_usdt\": 0.0,\n        \"max_drawdown_weekly_endpoints\": 0.0\n      },\n      \"40\": {\n        \"compounded_return\": 0.0,\n        \"ending_5000_usdt\": 5000.0,\n        \"simulated_profit_5000_usdt\": 0.0,\n        \"max_drawdown_weekly_endpoints\": 0.0\n      },\n      \"90\": {\n        \"compounded_return\": 0.0,\n        \"ending_5000_usdt\": 5000.0,\n        \"simulated_profit_5000_usdt\": 0.0,\n        \"max_drawdown_weekly_endpoints\": 0.0\n      }\n    },\n    \"missing_scenarios\": {\n      \"total_loss\": {\n        \"compounded_return\": 0.0,\n        \"ending_5000_usdt\": 5000.0,\n        \"simulated_profit_5000_usdt\": 0.0,\n        \"max_drawdown_weekly_endpoints\": 0.0\n      },\n      \"flat_gross\": {\n        \"compounded_return\": 0.0,\n        \"ending_5000_usdt\": 5000.0,\n        \"simulated_profit_5000_usdt\": 0.0,\n        \"max_drawdown_weekly_endpoints\": 0.0\n      }\n    },\n    \"uncertainty_primary\": {\n      \"interval\": null,\n      \"reason\": \"NO_TRADING_EVIDENCE_OR_CENSORED\"\n    },\n    \"realized_profit\": null,\n    \"investor_net_brl_profit\": null,\n    \"decision\": \"NO_TRADING_EVIDENCE_RULE_ABSTAINS\"\n  },\n  \"score_status_counts\": {\n    \"ABSTAIN_NO_POSITIVE_MARGIN\": 12730,\n    \"ABSTAIN_CENSORED_NEIGHBOR\": 1265,\n    \"ABSTAIN_TOO_FEW_DISTINCT_WEEKS\": 1\n  },\n  \"score_range\": [\n    -0.441968596682271,\n    -0.020747962122169755\n  ]\n}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "-m",
+        "scripts.audit_altcoin_retro",
+        "--data-dir",
+        "data",
+        "--results-dir",
+        "reproduced",
+        "--training",
+        "training/samples_identity_corrected.json.gz"
+      ],
+      "exit_code": 0,
+      "stdout": "{\n  \"raw_response_hash_checks\": 1133,\n  \"raw_retrieval_interval\": [\n    \"2026-09-07T18:50:08.596033+00:00\",\n    \"2026-09-07T22:26:11.828067+00:00\"\n  ],\n  \"raw_bars_used_in_independent_feature_checks\": 3881,\n  \"independent_raw_feature_vectors\": 32,\n  \"independent_numpy_neighbor_and_stdlib_score_checks\": 32,\n  \"neighbor_boundary_ties\": 0,\n  \"max_feature_difference\": 3.3306690738754696e-16,\n  \"max_score_difference\": 2.7755575615628914e-17,\n  \"decimal_weekly_portfolio_checks\": 560,\n  \"selected_trade_price_return_checks\": 0,\n  \"selected_trade_price_check_limitation\": \"Zero selected trades means there are no executed-position price returns to audit, not evidence of perfect fills.\",\n  \"partial_or_placeholder_candles\": 200,\n  \"qualifying_before_minimum_universe\": 0,\n  \"positive_neighbor_mean_before_uncertainty_penalty\": 1448,\n  \"software_validation\": \"Recorded separately in validation.json; this auditor does not run pytest, Ruff or Pyright.\",\n  \"outcome\": \"SAVED_RESULT_CONFIRMED\",\n  \"formal_attestation\": false\n}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "verify_reproduction.py"
+      ],
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\Superleo13\\Documents\\Codex\\2026-09-07\\files-mentioned-by-the-user-cripto\\work\\altcoin-retro-package-check\\verify_reproduction.py\", line 6, in <module>\n    manifest = json.loads((root / \"FILES_SHA256.json\").read_text())\n                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^\n  File \"C:\\Users\\Superleo13\\AppData\\Roaming\\uv\\python\\cpython-3.13-windows-x86_64-none\\Lib\\pathlib\\_local.py\", line 546, in read_text\n    return PathBase.read_text(self, encoding, errors, newline)\n           ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\Superleo13\\AppData\\Roaming\\uv\\python\\cpython-3.13-windows-x86_64-none\\Lib\\pathlib\\_abc.py\", line 633, in read_text\n    return f.read()\n           ~~~~~~^^\n  File \"C:\\Users\\Superleo13\\AppData\\Roaming\\uv\\python\\cpython-3.13-windows-x86_64-none\\Lib\\encodings\\cp1252.py\", line 23, in decode\n    return codecs.charmap_decode(input,self.errors,decoding_table)[0]\n           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nUnicodeDecodeError: 'charmap' codec can't decode byte 0x81 in position 67420: character maps to <undefined>\n"
+    }
+  ],
+  "final_status": "PASS"
+}

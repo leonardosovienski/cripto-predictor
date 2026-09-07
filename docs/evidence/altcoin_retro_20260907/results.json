@@ -1,0 +1,319 @@
+{
+  "id": "discovery-altcoin-net-payoff-retro-20260907-v5",
+  "protocol_sha256": "70f8c98429b6f34138afbec70c6f5eb3254d341ff896c3b82c06964b2d37b1bc",
+  "decisions_sha256": "fc68054d7dd3cbb390d994068daa38433f85f1f9462b0684da4d832eb11981f2",
+  "training_sha256": "42e5bfadec6414c4148ccd4f048329256483e91715fd9e78542633d8a5a5e972",
+  "input_acquisition_sha256": "ca3897824e62fce6b8b944f17af4d6220a28ef66765e83208a43d3c68fabc53d",
+  "historical_catalog_symbols": 661,
+  "daily_bars": 727447,
+  "evaluated_feature_observations": 13996,
+  "start_entry": "2024-01-01",
+  "last_entry": "2026-08-31",
+  "last_exit": "2026-09-06",
+  "overall": {
+    "weeks": 140,
+    "active_weeks": 0,
+    "cash_weeks": 140,
+    "selected_holdings": 0,
+    "censored_selected_holdings": 0,
+    "average_exposure": 0.0,
+    "trade_stats_primary": {
+      "complete": 0,
+      "wins": 0,
+      "losses": 0,
+      "zero": 0,
+      "win_rate_among_complete": null,
+      "mean_gain": null,
+      "mean_loss": null,
+      "profit_factor_return_units": null
+    },
+    "cost_scenarios": {
+      "0": {
+        "compounded_return": 0.0,
+        "ending_5000_usdt": 5000.0,
+        "simulated_profit_5000_usdt": 0.0,
+        "max_drawdown_weekly_endpoints": 0.0
+      },
+      "10": {
+        "compounded_return": 0.0,
+        "ending_5000_usdt": 5000.0,
+        "simulated_profit_5000_usdt": 0.0,
+        "max_drawdown_weekly_endpoints": 0.0
+      },
+      "40": {
+        "compounded_return": 0.0,
+        "ending_5000_usdt": 5000.0,
+        "simulated_profit_5000_usdt": 0.0,
+        "max_drawdown_weekly_endpoints": 0.0
+      },
+      "90": {
+        "compounded_return": 0.0,
+        "ending_5000_usdt": 5000.0,
+        "simulated_profit_5000_usdt": 0.0,
+        "max_drawdown_weekly_endpoints": 0.0
+      }
+    },
+    "missing_scenarios": {
+      "total_loss": {
+        "compounded_return": 0.0,
+        "ending_5000_usdt": 5000.0,
+        "simulated_profit_5000_usdt": 0.0,
+        "max_drawdown_weekly_endpoints": 0.0
+      },
+      "flat_gross": {
+        "compounded_return": 0.0,
+        "ending_5000_usdt": 5000.0,
+        "simulated_profit_5000_usdt": 0.0,
+        "max_drawdown_weekly_endpoints": 0.0
+      }
+    },
+    "uncertainty_primary": {
+      "interval": null,
+      "reason": "NO_TRADING_EVIDENCE_OR_CENSORED"
+    },
+    "realized_profit": null,
+    "investor_net_brl_profit": null,
+    "decision": "NO_TRADING_EVIDENCE_RULE_ABSTAINS"
+  },
+  "by_entry_year": {
+    "2024": {
+      "weeks": 53,
+      "active_weeks": 0,
+      "cash_weeks": 53,
+      "selected_holdings": 0,
+      "censored_selected_holdings": 0,
+      "average_exposure": 0.0,
+      "trade_stats_primary": {
+        "complete": 0,
+        "wins": 0,
+        "losses": 0,
+        "zero": 0,
+        "win_rate_among_complete": null,
+        "mean_gain": null,
+        "mean_loss": null,
+        "profit_factor_return_units": null
+      },
+      "cost_scenarios": {
+        "0": {
+          "compounded_return": 0.0,
+          "ending_5000_usdt": 5000.0,
+          "simulated_profit_5000_usdt": 0.0,
+          "max_drawdown_weekly_endpoints": 0.0
+        },
+        "10": {
+          "compounded_return": 0.0,
+          "ending_5000_usdt": 5000.0,
+          "simulated_profit_5000_usdt": 0.0,
+          "max_drawdown_weekly_endpoints": 0.0
+        },
+        "40": {
+          "compounded_return": 0.0,
+          "ending_5000_usdt": 5000.0,
+          "simulated_profit_5000_usdt": 0.0,
+          "max_drawdown_weekly_endpoints": 0.0
+        },
+        "90": {
+          "compounded_return": 0.0,
+          "ending_5000_usdt": 5000.0,
+          "simulated_profit_5000_usdt": 0.0,
+          "max_drawdown_weekly_endpoints": 0.0
+        }
+      },
+      "missing_scenarios": {
+        "total_loss": {
+          "compounded_return": 0.0,
+          "ending_5000_usdt": 5000.0,
+          "simulated_profit_5000_usdt": 0.0,
+          "max_drawdown_weekly_endpoints": 0.0
+        },
+        "flat_gross": {
+          "compounded_return": 0.0,
+          "ending_5000_usdt": 5000.0,
+          "simulated_profit_5000_usdt": 0.0,
+          "max_drawdown_weekly_endpoints": 0.0
+        }
+      },
+      "uncertainty_primary": {
+        "interval": null,
+        "reason": "NO_TRADING_EVIDENCE_OR_CENSORED"
+      },
+      "realized_profit": null,
+      "investor_net_brl_profit": null,
+      "decision": "NO_TRADING_EVIDENCE_RULE_ABSTAINS"
+    },
+    "2025": {
+      "weeks": 52,
+      "active_weeks": 0,
+      "cash_weeks": 52,
+      "selected_holdings": 0,
+      "censored_selected_holdings": 0,
+      "average_exposure": 0.0,
+      "trade_stats_primary": {
+        "complete": 0,
+        "wins": 0,
+        "losses": 0,
+        "zero": 0,
+        "win_rate_among_complete": null,
+        "mean_gain": null,
+        "mean_loss": null,
+        "profit_factor_return_units": null
+      },
+      "cost_scenarios": {
+        "0": {
+          "compounded_return": 0.0,
+          "ending_5000_usdt": 5000.0,
+          "simulated_profit_5000_usdt": 0.0,
+          "max_drawdown_weekly_endpoints": 0.0
+        },
+        "10": {
+          "compounded_return": 0.0,
+          "ending_5000_usdt": 5000.0,
+          "simulated_profit_5000_usdt": 0.0,
+          "max_drawdown_weekly_endpoints": 0.0
+        },
+        "40": {
+          "compounded_return": 0.0,
+          "ending_5000_usdt": 5000.0,
+          "simulated_profit_5000_usdt": 0.0,
+          "max_drawdown_weekly_endpoints": 0.0
+        },
+        "90": {
+          "compounded_return": 0.0,
+          "ending_5000_usdt": 5000.0,
+          "simulated_profit_5000_usdt": 0.0,
+          "max_drawdown_weekly_endpoints": 0.0
+        }
+      },
+      "missing_scenarios": {
+        "total_loss": {
+          "compounded_return": 0.0,
+          "ending_5000_usdt": 5000.0,
+          "simulated_profit_5000_usdt": 0.0,
+          "max_drawdown_weekly_endpoints": 0.0
+        },
+        "flat_gross": {
+          "compounded_return": 0.0,
+          "ending_5000_usdt": 5000.0,
+          "simulated_profit_5000_usdt": 0.0,
+          "max_drawdown_weekly_endpoints": 0.0
+        }
+      },
+      "uncertainty_primary": {
+        "interval": null,
+        "reason": "NO_TRADING_EVIDENCE_OR_CENSORED"
+      },
+      "realized_profit": null,
+      "investor_net_brl_profit": null,
+      "decision": "NO_TRADING_EVIDENCE_RULE_ABSTAINS"
+    },
+    "2026": {
+      "weeks": 35,
+      "active_weeks": 0,
+      "cash_weeks": 35,
+      "selected_holdings": 0,
+      "censored_selected_holdings": 0,
+      "average_exposure": 0.0,
+      "trade_stats_primary": {
+        "complete": 0,
+        "wins": 0,
+        "losses": 0,
+        "zero": 0,
+        "win_rate_among_complete": null,
+        "mean_gain": null,
+        "mean_loss": null,
+        "profit_factor_return_units": null
+      },
+      "cost_scenarios": {
+        "0": {
+          "compounded_return": 0.0,
+          "ending_5000_usdt": 5000.0,
+          "simulated_profit_5000_usdt": 0.0,
+          "max_drawdown_weekly_endpoints": 0.0
+        },
+        "10": {
+          "compounded_return": 0.0,
+          "ending_5000_usdt": 5000.0,
+          "simulated_profit_5000_usdt": 0.0,
+          "max_drawdown_weekly_endpoints": 0.0
+        },
+        "40": {
+          "compounded_return": 0.0,
+          "ending_5000_usdt": 5000.0,
+          "simulated_profit_5000_usdt": 0.0,
+          "max_drawdown_weekly_endpoints": 0.0
+        },
+        "90": {
+          "compounded_return": 0.0,
+          "ending_5000_usdt": 5000.0,
+          "simulated_profit_5000_usdt": 0.0,
+          "max_drawdown_weekly_endpoints": 0.0
+        }
+      },
+      "missing_scenarios": {
+        "total_loss": {
+          "compounded_return": 0.0,
+          "ending_5000_usdt": 5000.0,
+          "simulated_profit_5000_usdt": 0.0,
+          "max_drawdown_weekly_endpoints": 0.0
+        },
+        "flat_gross": {
+          "compounded_return": 0.0,
+          "ending_5000_usdt": 5000.0,
+          "simulated_profit_5000_usdt": 0.0,
+          "max_drawdown_weekly_endpoints": 0.0
+        }
+      },
+      "uncertainty_primary": {
+        "interval": null,
+        "reason": "NO_TRADING_EVIDENCE_OR_CENSORED"
+      },
+      "realized_profit": null,
+      "investor_net_brl_profit": null,
+      "decision": "NO_TRADING_EVIDENCE_RULE_ABSTAINS"
+    }
+  },
+  "score_status_counts": {
+    "ABSTAIN_NO_POSITIVE_MARGIN": 12730,
+    "ABSTAIN_CENSORED_NEIGHBOR": 1265,
+    "ABSTAIN_TOO_FEW_DISTINCT_WEEKS": 1
+  },
+  "week_status_counts": {
+    "NO_POSITIVE_SCORE": 140
+  },
+  "score_range": [
+    -0.441968596682271,
+    -0.020747962122169755
+  ],
+  "censored_selected": [],
+  "coverage": {
+    "empty_histories": [
+      "BCCUSDT",
+      "BCHABCUSDT",
+      "BCHSVUSDT",
+      "BKRWUSDT",
+      "ERDUSDT",
+      "STORMUSDT",
+      "USDSOLDUSDT",
+      "VENUSDT"
+    ],
+    "histories_ending_before_cutoff": 186,
+    "histories_with_internal_gaps": [
+      "BNXUSDT",
+      "BTCSTUSDT",
+      "COCOSUSDT",
+      "CVCUSDT",
+      "DREPUSDT",
+      "FTTUSDT",
+      "KEYUSDT",
+      "LUNAUSDT",
+      "QUICKUSDT",
+      "STRAXUSDT",
+      "SUNUSDT",
+      "VIDTUSDT"
+    ]
+  },
+  "claim": "One adaptive historical diagnostic. Returns use daily price proxies and assumed transaction costs, not historical executable fills or investor net BRL profit. No external benchmark; no parameter search or untouched-test claim. All-cash results contain no evidence about winning trades or market risk.",
+  "model_changed": false,
+  "active_automation_changed": false,
+  "orders": false
+}

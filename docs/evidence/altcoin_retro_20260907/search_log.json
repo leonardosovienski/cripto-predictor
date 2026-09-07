@@ -1,0 +1,14 @@
+{
+  "protocol_registration_commit": "3a89023",
+  "initial_evaluator_freeze_commit": "3d887ae",
+  "partial_day_loader_fix_before_scoring": "653f04f",
+  "zero_volume_placeholder_fix_before_scoring": "903f280",
+  "new_historical_performance_trials": 1,
+  "model_parameter_searches": 0,
+  "model_changes": 0,
+  "first_two_attempts": "Failed while loading inputs, before scoring or results; fixes preserve invalid days as missing.",
+  "post_result_work": "Independent arithmetic audit, deterministic replay, packaging; no retuning.",
+  "decision": "NO_TRADING_EVIDENCE_RULE_ABSTAINS",
+  "promoted": false,
+  "active_automation_changed": false
+}

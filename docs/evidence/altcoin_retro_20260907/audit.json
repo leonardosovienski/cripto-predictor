@@ -1,0 +1,22 @@
+{
+  "raw_response_hash_checks": 1133,
+  "raw_retrieval_interval": [
+    "2026-09-07T18:50:08.596033+00:00",
+    "2026-09-07T22:26:11.828067+00:00"
+  ],
+  "raw_bars_used_in_independent_feature_checks": 3881,
+  "independent_raw_feature_vectors": 32,
+  "independent_numpy_neighbor_and_stdlib_score_checks": 32,
+  "neighbor_boundary_ties": 0,
+  "max_feature_difference": 3.3306690738754696e-16,
+  "max_score_difference": 2.7755575615628914e-17,
+  "decimal_weekly_portfolio_checks": 560,
+  "selected_trade_price_return_checks": 0,
+  "selected_trade_price_check_limitation": "Zero selected trades means there are no executed-position price returns to audit, not evidence of perfect fills.",
+  "partial_or_placeholder_candles": 200,
+  "qualifying_before_minimum_universe": 0,
+  "positive_neighbor_mean_before_uncertainty_penalty": 1448,
+  "software_validation": "Recorded separately in validation.json; this auditor does not run pytest, Ruff or Pyright.",
+  "outcome": "SAVED_RESULT_CONFIRMED",
+  "formal_attestation": false
+}
