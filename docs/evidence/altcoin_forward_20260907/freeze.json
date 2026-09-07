@@ -1,0 +1,16 @@
+{
+  "known_at": "2026-09-07T19:50:06.367667+00:00",
+  "repository_files": {
+    "scripts/observe_altcoin_forward.py": "f11bad2e5ad546eed7e492a83921452fd61702e3669a3bf45a3a91528b198f3c",
+    "scripts/check_altcoin_forward_design.py": "92777628e212d699ef8725f254ebc11e32e0ffd495a655228e8abc5689548a7a",
+    "scripts/prepare_altcoin_payoff.py": "0c349fe67d4466db008cf1728c57767ee01fce9c122f85e539eeff6f8af30ad0",
+    "scripts/research_altcoin_analogs.py": "22b5456ae7c56c09b51cb295b784fad7b9b5685241f9fa54a31e5cb6a1aa7626",
+    "scripts/collect_altcoin_analogs.py": "ca1dfd1f8f93d6174c23829c8729c6c772376de0ef4af28b2738ada261b96e7f",
+    "docs/evidence/altcoin_forward_20260907/protocol.json": "e7a9253c1feac547accd84a9e06b00302004e54e94a56e71a6b3733dcf5b5d09",
+    "docs/evidence/altcoin_analogs_20260907/protocol.json": "fa5e8a6a29d0e7dda4711e82b4bf11c4026c2101ba079a763200a284ac410ab4",
+    "docs/evidence/altcoin_payoff_20260907/protocol.json": "071a50b6ffbc535d226c73a02a1211f1bd4512554fd4844d039b6226c6a3da15"
+  },
+  "acquisition_sha256": "b0823fd898bb46043f1d6d328b74d033f1bfbddfe98ea13ea11fad7b82d35f6e",
+  "training_sha256": "42e5bfadec6414c4148ccd4f048329256483e91715fd9e78542633d8a5a5e972",
+  "note": "Exact byte hashes; changing code/input requires a documented new freeze before later decisions. Local hashes do not supply independent trusted timestamps."
+}
