@@ -1,0 +1,11 @@
+{
+  "id": "observar-altcoins-semanalmente",
+  "name": "Observar altcoins semanalmente",
+  "status": "ACTIVE",
+  "target_thread_id": "01a07d06-406f-7781-adad-0d0ea3ae9424",
+  "schedule_unchanged": "Domingos às 21h America/Sao_Paulo; primeira janela 13/09/2026.",
+  "objective": "Lucro líquido absoluto, sem comparação com outros investimentos.",
+  "current_profile": "altcoin_profit_20260907",
+  "current_data_directory": "work/altcoin-profit-data",
+  "notification_intent": "Somente mudança relevante, conclusão, falha ou informação necessária."
+}

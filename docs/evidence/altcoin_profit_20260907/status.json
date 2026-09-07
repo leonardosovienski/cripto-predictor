@@ -1,0 +1,17 @@
+{
+  "updated_at": "2026-09-07T21:24:52.671172+00:00",
+  "protocol_id": "discovery-altcoin-absolute-profit-20260907-v4",
+  "universe_mode": "all_current_spot_usdt",
+  "external_comparisons": false,
+  "mode": "tick",
+  "ledger_rows": 2,
+  "ledger_head": "efa036d2929369ffa190dd1d9c6124572f46247a443a163c05beb1b67b8934e0",
+  "prospective_decisions": 0,
+  "matured_observations": 0,
+  "first_entry_utc": "2026-09-14T00:00:00+00:00",
+  "last_due_utc": "2026-12-07T00:00:00+00:00",
+  "pilot_finished": false,
+  "execution_ready": false,
+  "formal_promotion": false,
+  "capital": false
+}

@@ -1,0 +1,153 @@
+{
+  "objective": "ABSOLUTE_NET_PROFIT",
+  "external_investment_comparison": false,
+  "null_net_return": 0,
+  "minimum_profit_requested_by_user": null,
+  "grid": [
+    {
+      "annual_net_return_scenario": 0.01,
+      "weekly_log_sd_assumed": 0.01,
+      "dependence_multiplier_assumed": 1,
+      "weeks_normal_design": 21443
+    },
+    {
+      "annual_net_return_scenario": 0.01,
+      "weekly_log_sd_assumed": 0.01,
+      "dependence_multiplier_assumed": 4,
+      "weeks_normal_design": 85772
+    },
+    {
+      "annual_net_return_scenario": 0.01,
+      "weekly_log_sd_assumed": 0.03,
+      "dependence_multiplier_assumed": 1,
+      "weeks_normal_design": 192980
+    },
+    {
+      "annual_net_return_scenario": 0.01,
+      "weekly_log_sd_assumed": 0.03,
+      "dependence_multiplier_assumed": 4,
+      "weeks_normal_design": 771920
+    },
+    {
+      "annual_net_return_scenario": 0.01,
+      "weekly_log_sd_assumed": 0.05,
+      "dependence_multiplier_assumed": 1,
+      "weeks_normal_design": 536054
+    },
+    {
+      "annual_net_return_scenario": 0.01,
+      "weekly_log_sd_assumed": 0.05,
+      "dependence_multiplier_assumed": 4,
+      "weeks_normal_design": 2144216
+    },
+    {
+      "annual_net_return_scenario": 0.05,
+      "weekly_log_sd_assumed": 0.01,
+      "dependence_multiplier_assumed": 1,
+      "weeks_normal_design": 892
+    },
+    {
+      "annual_net_return_scenario": 0.05,
+      "weekly_log_sd_assumed": 0.01,
+      "dependence_multiplier_assumed": 4,
+      "weeks_normal_design": 3568
+    },
+    {
+      "annual_net_return_scenario": 0.05,
+      "weekly_log_sd_assumed": 0.03,
+      "dependence_multiplier_assumed": 1,
+      "weeks_normal_design": 8027
+    },
+    {
+      "annual_net_return_scenario": 0.05,
+      "weekly_log_sd_assumed": 0.03,
+      "dependence_multiplier_assumed": 4,
+      "weeks_normal_design": 32108
+    },
+    {
+      "annual_net_return_scenario": 0.05,
+      "weekly_log_sd_assumed": 0.05,
+      "dependence_multiplier_assumed": 1,
+      "weeks_normal_design": 22296
+    },
+    {
+      "annual_net_return_scenario": 0.05,
+      "weekly_log_sd_assumed": 0.05,
+      "dependence_multiplier_assumed": 4,
+      "weeks_normal_design": 89184
+    },
+    {
+      "annual_net_return_scenario": 0.1,
+      "weekly_log_sd_assumed": 0.01,
+      "dependence_multiplier_assumed": 1,
+      "weeks_normal_design": 234
+    },
+    {
+      "annual_net_return_scenario": 0.1,
+      "weekly_log_sd_assumed": 0.01,
+      "dependence_multiplier_assumed": 4,
+      "weeks_normal_design": 936
+    },
+    {
+      "annual_net_return_scenario": 0.1,
+      "weekly_log_sd_assumed": 0.03,
+      "dependence_multiplier_assumed": 1,
+      "weeks_normal_design": 2104
+    },
+    {
+      "annual_net_return_scenario": 0.1,
+      "weekly_log_sd_assumed": 0.03,
+      "dependence_multiplier_assumed": 4,
+      "weeks_normal_design": 8416
+    },
+    {
+      "annual_net_return_scenario": 0.1,
+      "weekly_log_sd_assumed": 0.05,
+      "dependence_multiplier_assumed": 1,
+      "weeks_normal_design": 5843
+    },
+    {
+      "annual_net_return_scenario": 0.1,
+      "weekly_log_sd_assumed": 0.05,
+      "dependence_multiplier_assumed": 4,
+      "weeks_normal_design": 23372
+    },
+    {
+      "annual_net_return_scenario": 0.2,
+      "weekly_log_sd_assumed": 0.01,
+      "dependence_multiplier_assumed": 1,
+      "weeks_normal_design": 64
+    },
+    {
+      "annual_net_return_scenario": 0.2,
+      "weekly_log_sd_assumed": 0.01,
+      "dependence_multiplier_assumed": 4,
+      "weeks_normal_design": 256
+    },
+    {
+      "annual_net_return_scenario": 0.2,
+      "weekly_log_sd_assumed": 0.03,
+      "dependence_multiplier_assumed": 1,
+      "weeks_normal_design": 575
+    },
+    {
+      "annual_net_return_scenario": 0.2,
+      "weekly_log_sd_assumed": 0.03,
+      "dependence_multiplier_assumed": 4,
+      "weeks_normal_design": 2300
+    },
+    {
+      "annual_net_return_scenario": 0.2,
+      "weekly_log_sd_assumed": 0.05,
+      "dependence_multiplier_assumed": 1,
+      "weeks_normal_design": 1597
+    },
+    {
+      "annual_net_return_scenario": 0.2,
+      "weekly_log_sd_assumed": 0.05,
+      "dependence_multiplier_assumed": 4,
+      "weeks_normal_design": 6388
+    }
+  ],
+  "limitation": "Planning assumptions only, not forecasts, user profit targets, a calibrated horizon or a formal attestation. Arbitrarily small positive net return has no fixed finite evidence horizon. Twelve observation windows test operation; they do not establish profitability automatically."
+}
