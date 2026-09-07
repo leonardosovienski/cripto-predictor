@@ -288,7 +288,32 @@ def event_catalog(source: PublicSource, catalog_id: int) -> dict:
     }
 
 
-def snapshot(source: PublicSource, anchor: datetime, base_data: Path, training: Path) -> dict:
+def universe_symbols(exchange: dict, manifest: dict, excluded: set[str], mode: str):
+    excluded = set(excluded)
+    if mode == "legacy_sample":
+        sampled = set(manifest["selected"])
+    elif mode == "all_current_spot_usdt":
+        sampled = {
+            s["symbol"]
+            for s in exchange["symbols"]
+            if s["quoteAsset"] == "USDT"
+            and s["status"] == "TRADING"
+            and s.get("isSpotTradingAllowed") is True
+        }
+        excluded.discard("BTC")
+    else:
+        raise ValueError("unregistered universe mode")
+    current = sorted(s["symbol"] for s in exchange["symbols"] if eligibility(s, sampled, excluded))
+    return sampled, current
+
+
+def snapshot(
+    source: PublicSource,
+    anchor: datetime,
+    base_data: Path,
+    training: Path,
+    universe_mode: str = "legacy_sample",
+) -> dict:
     clock, clock_meta = source.get("time")
     if not isinstance(clock, dict):
         raise ValueError("invalid public clock response")
@@ -307,8 +332,7 @@ def snapshot(source: PublicSource, anchor: datetime, base_data: Path, training: 
         (ROOT / "docs/evidence/altcoin_analogs_20260907/protocol.json").read_text()
     )
     excluded = set(original_protocol["data"]["exclude_bases"]) | {"RLUSD"}
-    sampled = set(manifest["selected"])
-    current = sorted(s["symbol"] for s in exchange["symbols"] if eligibility(s, sampled, excluded))
+    sampled, current = universe_symbols(exchange, manifest, excluded, universe_mode)
     statuses = {s["symbol"]: s["status"] for s in exchange["symbols"] if s["symbol"] in sampled}
     start = int((anchor - timedelta(days=91)).timestamp() * 1000)
     end = int((anchor - timedelta(days=1)).timestamp() * 1000) - 1
@@ -336,7 +360,7 @@ def snapshot(source: PublicSource, anchor: datetime, base_data: Path, training: 
             return symbol, None, None, str(error), True
 
     with ThreadPoolExecutor(max_workers=6) as pool:
-        histories = list(pool.map(history, ["BTCUSDT"] + current))
+        histories = list(pool.map(history, ["BTCUSDT"] + [s for s in current if s != "BTCUSDT"]))
     btc = histories[0][1]
     if btc is None:
         raise ValueError("BTC reference history unavailable")
@@ -344,7 +368,8 @@ def snapshot(source: PublicSource, anchor: datetime, base_data: Path, training: 
     if failures:
         raise ValueError(f"acquisition failures must not shrink selection universe: {failures}")
     candidates, rejected = [], []
-    for symbol, bars, metadata, error, _ in histories[1:]:
+    history_by_symbol = {row[0]: row for row in histories}
+    for symbol, bars, metadata, error, _ in [history_by_symbol[s] for s in current]:
         features = None if bars is None else extract_features(bars, btc, 91)
         if features is None:
             rejected.append(
@@ -449,8 +474,10 @@ def attach_catalog_changes(snap: dict, ledger: Ledger):
         snap["compared_with_ledger_sha256"] = None
 
 
-def portfolio_specs(snap: dict) -> dict:
+def portfolio_specs(snap: dict, comparisons: bool = True) -> dict:
     selected = [{"symbol": s, "weight": 0.2} for s in snap["selected"]]
+    if not comparisons:
+        return {"payoff": {"positions": selected, "cash_weight": snap["cash_weight"]}}
     eligible = [s["symbol"] for s in snap["ranked"]] if snap["minimum_universe_met"] else []
     basket = [{"symbol": s, "weight": 1 / len(eligible)} for s in eligible]
     return {
@@ -531,8 +558,8 @@ def settle(source: PublicSource, entry: dict, due: datetime, missed: bool) -> di
     return result
 
 
-def verify_freeze(base_data: Path, training: Path):
-    freeze = json.loads((EVIDENCE / "freeze.json").read_text())
+def verify_freeze(base_data: Path, training: Path, evidence: Path = EVIDENCE):
+    freeze = json.loads((evidence / "freeze.json").read_text())
     paths = {
         **{str(ROOT / k): v for k, v in freeze["repository_files"].items()},
         str(base_data / "acquisition.json"): freeze["acquisition_sha256"],
@@ -541,18 +568,23 @@ def verify_freeze(base_data: Path, training: Path):
     for path, digest in paths.items():
         if sha(Path(path).read_bytes()) != digest:
             raise ValueError(f"frozen input/code changed: {path}")
-    return sha((EVIDENCE / "freeze.json").read_bytes())
+    return sha((evidence / "freeze.json").read_bytes())
 
 
 def run(args):
-    freeze_hash = verify_freeze(args.base_data_dir, args.training)
-    protocol = json.loads((EVIDENCE / "protocol.json").read_text())
+    evidence = getattr(args, "evidence_dir", EVIDENCE)
+    freeze_hash = verify_freeze(args.base_data_dir, args.training, evidence)
+    protocol = json.loads((evidence / "protocol.json").read_text(encoding="utf-8"))
+    universe_mode = protocol.get("universe_mode", "legacy_sample")
+    comparisons = protocol.get("comparisons", True)
     with exclusive(args.data_dir):
         ledger = Ledger(args.data_dir / "ledger.jsonl")
         source = PublicSource(args.data_dir)
         try:
             if args.mode == "preflight":
-                snap = snapshot(source, anchor_for(now()), args.base_data_dir, args.training)
+                snap = snapshot(
+                    source, anchor_for(now()), args.base_data_dir, args.training, universe_mode
+                )
                 attach_catalog_changes(snap, ledger)
                 run_id = "preflight-" + uuid.uuid4().hex
                 path = args.data_dir / "snapshots" / f"{run_id}.json"
@@ -568,7 +600,7 @@ def run(args):
                         "freeze_sha256": freeze_hash,
                     },
                 )
-                specs = portfolio_specs(snap)
+                specs = portfolio_specs(snap, comparisons)
                 specs["cost_probe_1000"] = {
                     "positions": [{"symbol": s["symbol"], "weight": 0.2} for s in snap["ranked"]],
                     "cash_weight": None,
@@ -592,14 +624,18 @@ def run(args):
                         else:
                             try:
                                 snap = snapshot(
-                                    source, slot_time, args.base_data_dir, args.training
+                                    source,
+                                    slot_time,
+                                    args.base_data_dir,
+                                    args.training,
+                                    universe_mode,
                                 )
                                 attach_catalog_changes(snap, ledger)
                                 if not in_window(now(), slot_time):
                                     raise ValueError("acquisition finished after entry window")
                                 path = args.data_dir / "snapshots" / f"{slot_time.date()}.json"
                                 write_json(path, snap)
-                                specs = portfolio_specs(snap)
+                                specs = portfolio_specs(snap, comparisons)
                                 ledger.append(
                                     "DECISION",
                                     slot,
@@ -657,6 +693,9 @@ def run(args):
                     slot_time += timedelta(days=7)
             summary = {
                 "updated_at": now().isoformat(),
+                "protocol_id": protocol["id"],
+                "universe_mode": universe_mode,
+                "external_comparisons": comparisons,
                 "mode": args.mode,
                 "ledger_rows": len(ledger.rows),
                 "ledger_head": ledger.rows[-1]["sha256"] if ledger.rows else None,
@@ -689,6 +728,7 @@ def main():
     parser.add_argument("--base-data-dir", type=Path, required=True)
     parser.add_argument("--training", type=Path, required=True)
     parser.add_argument("--data-dir", type=Path, required=True)
+    parser.add_argument("--evidence-dir", type=Path, default=EVIDENCE)
     run(parser.parse_args())
 
 

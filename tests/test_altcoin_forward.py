@@ -244,3 +244,39 @@ def test_catalog_diff_preserves_suspension_and_removal():
         {"symbol": "B", "previous": "TRADING", "current": "MISSING"},
         {"symbol": "D", "previous": "MISSING", "current": "TRADING"},
     ]
+
+
+def test_all_current_universe_can_include_unsampled_coins_and_btc():
+    def market(base, status="TRADING"):
+        return {
+            "symbol": base + "USDT",
+            "baseAsset": base,
+            "quoteAsset": "USDT",
+            "status": status,
+            "isSpotTradingAllowed": True,
+        }
+
+    exchange = {
+        "symbols": [
+            market("AAA"),
+            market("NEW"),
+            market("BTC"),
+            market("RLUSD"),
+            market("OLD", "BREAK"),
+        ]
+    }
+    manifest = {"selected": ["AAAUSDT"]}
+    excluded = {"BTC", "RLUSD"}
+    _, current = f.universe_symbols(exchange, manifest, excluded, "all_current_spot_usdt")
+    assert current == ["AAAUSDT", "BTCUSDT", "NEWUSDT"]
+    assert excluded == {"BTC", "RLUSD"}
+    assert f.universe_symbols(exchange, manifest, excluded, "legacy_sample")[1] == ["AAAUSDT"]
+    with pytest.raises(ValueError):
+        f.universe_symbols(exchange, manifest, excluded, "whatever")
+
+
+def test_absolute_profit_does_not_create_comparison_portfolios():
+    snap = {"selected": ["AAAUSDT"], "cash_weight": 0.8}
+    assert f.portfolio_specs(snap, comparisons=False) == {
+        "payoff": {"positions": [{"symbol": "AAAUSDT", "weight": 0.2}], "cash_weight": 0.8}
+    }
