@@ -1,0 +1,82 @@
+{
+  "screen_id": "discovery-altcoin-analogs-20260907-v1",
+  "family": "cross_sectional_spot_pre_rally_analogs_v1",
+  "mode": "DISCOVERY",
+  "status": "PREREGISTERED_BEFORE_BULK_DATA_AND_OUTCOMES",
+  "user_authorization": "2026-09-07: faz isso, following the proposed historical pre-rally comparison with losers and temporal evaluation.",
+  "novelty": "Cross-sectional selection among many spot pairs from price/volume patterns before rallies, relative to the contemporaneous opportunity set. No funding, OI, HMM, LLM or re-run of H1-H9; frozen_families is unchanged.",
+  "prior_information": "BTC/ETH funding carry screen already consumed 2025-09/2026-09 daily prices. Availability probes read one 2023-01-01 BTC and LUNA daily candle and an empty BTT API response. Archive prefix availability was inspected without return analysis. All results remain exploratory, not untouched Proof.",
+  "gates": {
+    "G1_deployment": "KILL_UNDER_CURRENT_ENVELOPE: no live execution or venue/account friction validation. The user separately authorizes this cheap, reversible offline research screen.",
+    "G2_G7_deployment": "NOT_PASSED; this screen cannot authorize escalation or capital.",
+    "mechanism": "Delayed attention/flows might cause similar pre-rally price and volume states to precede further buying. Buyers of later inventory would pay; this is a hypothesis, with systematic and retail competition and no demonstrated proprietary advantage.",
+    "half_life": "UNKNOWN; evaluate only 7-day outcomes with a full 24-hour information delay.",
+    "data_fidelity": "Daily OHLCV can study slow selection but does not measure intraday fills, book depth, outages, queue, historical fee tiers or capacity.",
+    "live_data": "Public spot klines endpoint; parity, historical archive revisions and actual known_at require prospective validation.",
+    "research_budget": "One fixed model, one target, one horizon, no outcome-driven retuning. At most 240 randomly-like sampled altcoin symbols plus BTC benchmark; public data only. Register failures, pivots and coverage. Stop after this screen; next independent protocol required for refinements."
+  },
+  "data": {
+    "start": "2020-10-01",
+    "cutoff_exclusive": "2026-09-07T00:00:00Z",
+    "interval": "1d",
+    "symbol_catalog": "All paginated S3 archive prefixes under data/spot/monthly/klines/, including inactive symbols. Do not use current exchangeInfo to construct historical eligibility.",
+    "universe": "USDT quote; exclude BTC (reference), leveraged suffixes UP/DOWN/BULL/BEAR, and the fixed base exclusion list. Sort remaining symbols by SHA256(screen_id + ':' + symbol), take first 240. No outcome or present market-cap selection. Sampling is conditional on the current public archive retaining the symbol; completeness is not guaranteed.",
+    "max_assets": 240,
+    "exclude_bases": ["BTC", "USDC", "BUSD", "TUSD", "USDP", "PAX", "DAI", "FDUSD", "USDS", "USDSB", "SUSD", "UST", "USTC", "AEUR", "EUR", "EURCV", "EURI", "USD1", "USDE", "XUSD", "USDD", "VAI", "WBTC", "PAXG", "XAUT", "BIDR", "IDRT", "BRL", "TRY", "RUB", "UAH", "GBP", "AUD", "NGN", "ZAR", "PLN", "RON", "ARS", "MXN"],
+    "source_priority": "Public REST klines for selected symbols, paginated to cutoff. Archive monthly 1d ZIP fallback for empty/error symbols. Preserve missing intervals rather than forward-fill. Save all raw responses, retrieval UTC, URL, hash and coverage failures.",
+    "archive_unit": "Normalize millisecond and microsecond open/close timestamps using magnitude; archive spot switched to microseconds in 2025.",
+    "bitemporal": "event_time is exchange candle time. Actual known_at is retrieval UTC in this run. Historical availability at close + 24h is an explicit simulation assumption, never a claim that this machine observed it then. No future candle fields."
+  },
+  "schedule": {
+    "decision": "Mondays 00:00 UTC, plus current Monday 2026-09-07 snapshot.",
+    "features_end": "Saturday candle close, i.e. Sunday 00:00 UTC minus timestamp precision; Monday execution imposes 24h+ delay.",
+    "train": "Entries in 2021-01-01 through 2023-12-31, whose whole 7-day outcomes finish before 2024-01-01.",
+    "evaluation_1": "2024 entries with complete 7-day calendar window before 2025-01-01. No tuning from this segment.",
+    "evaluation_2": "2025-01-01 onward, complete 7-day calendar windows before cutoff. Fixed training set and scaler; no refit on evaluation data.",
+    "purge": "No training outcome may extend into evaluation. Omit cross-year boundary weeks from the earlier segment. Weekly outcomes do not overlap within a symbol. Cross-asset observations from the same week are dependent."
+  },
+  "eligibility": {
+    "past_only": "90 consecutive complete positive-price, positive-volume daily bars ending at the features_end day. Median prior 30-day quote volume >= 5,000,000 USDT. Eligibility is recomputed for every decision date using only these past bars.",
+    "minimum_universe_per_week": 10,
+    "survival": "Do not require any future bar or current TRADING status. Missing entry/exit/intervening outcome bars receive -100% return in the conservative primary screen, are counted explicitly and cause data-fidelity caution. This is a stress assumption, not a measured delisting recovery. Show a separate missing-entry-cash sensitivity if triggered; never drop failed holdings.",
+    "identity": "Symbols are treated separately, no retrospective stitching of migrations or renames. Archive retention and symbol reuse remain limitations."
+  },
+  "features": [
+    "log close return 1d",
+    "log close return 7d minus BTC log return 7d",
+    "log close return 30d minus BTC log return 30d",
+    "log(mean quote volume last 7d / mean quote volume preceding 23d)",
+    "standard deviation of daily log returns over 30d, population ddof=0",
+    "log(close / maximum high over 30d)",
+    "mean(high-low)/close over 7d",
+    "BTC log close return 30d"
+  ],
+  "model": {
+    "kind": "Euclidean nearest neighbors, uniform weights",
+    "n_neighbors": 200,
+    "scaling": "Training-only median and IQR for each feature; zero IQR replaced by 1; clip scaled values to [-5,5].",
+    "target": "1 if next 7-day open-to-close gross return >= 20% AND exceeds contemporaneous BTC return by >= 10 percentage points; 0 otherwise. All eligible non-rallies, negative returns and missing-outcome failures enter as controls.",
+    "score": "Fraction of positive labels among the 200 nearest training observations. Uncalibrated analog frequency, not a guaranteed or calibrated forward probability. No training evaluation score is evidence.",
+    "ranking": "Descending score, then symbol lexicographically. No expected-return, threshold or parameter search."
+  },
+  "portfolio": {
+    "selection": "Top 5 eligible symbols, equal initial weights, long spot only, 7-day holds. Full weekly close/reopen for every method, including retained names. If fewer than 10 eligible symbols, all methods sit in zero-yield USDT cash that week.",
+    "price_proxy": "Monday daily open to Sunday daily close; these are accounting reference prices, not observed executable fills. One full-day feature delay. No leverage, intraday stops, high-price exits or perfect timing.",
+    "costs_per_side_bps": {"fee_assumed": 10, "slippage_assumed": 10, "combined_stress": [50, 100]},
+    "cost_identity": "net factor per holding = (1 + gross_return) * (1 - side_cost) / (1 + side_cost); initial fee reduces quantity and exit fee reduces proceeds. Missing-price total loss remains -100%.",
+    "controls": ["equal-weight all eligible sampled altcoins", "top 5 by prior 30-day BTC-relative momentum", "BTC with the same weekly round trips", "zero-yield USDT cash"],
+    "currency": "STRATEGY_PNL_CURRENCY=USDT; treat USDT/USD parity only as an assumption. Selection comparisons are in USDT. REPORTING_CURRENCY=BRL for conditional capital-value illustration with explicitly flat FX=5.1253 from the prior dated screen. FX gains are not alpha; operator benchmark, tax, conversion route, risk premium and execution costs remain UNKNOWN.",
+    "economic_reference": "US$5000 fully paid spot, no separate margin, C/N=1 while invested. Existing same-day conditional BRL benchmark R$2900.34/year on R$25626.50 (11.3177%) before risk premium and actual attention/FX costs; illustrative attention adds R$1200/year. This current constant-rate reference is not a synchronized historical benchmark or a future expected return. Measured friction absent => MIN_GROSS_EDGE_WORTH_PURSUING UNKNOWN."
+  },
+  "evaluation": {
+    "primary": "Mean paired weekly log wealth-factor difference: analog portfolio minus equal-weight eligible basket in evaluation_2, after base costs.",
+    "uncertainty": "Circular 4-week block bootstrap, 5000 repetitions, seed 20260907, 95% percentile CI. Same weeks resampled for both methods; never count coins as independent trials. Conditional on this fixed discovery model, not full search-history-adjusted Proof.",
+    "secondary": ["same paired comparison against momentum", "target hit rate lift relative to eligible basket", "compounded return", "annualized geometric return using actual weeks", "weekly endpoint maximum drawdown", "both evaluation segments separately", "cost stresses 50/100 bps each side", "number of missing outcomes", "current complete rank with nearest winner and non-winner examples"],
+    "power_before_outcomes": "At most about 52 and 87 evaluation weeks. Conservative effective n=floor(n_weeks/4). A normal-design 80%-power, two-sided-5% MDE is (1.96+0.842)/sqrt(effective_n) weekly paired standard deviations: approximately 0.777 SD for 52 weeks and 0.611 SD for 87 weeks. Report exact count and observed-scale descriptive MDE; this design cannot refute small effects. No DSR will be computed from one model or incompatible legacy Sharpe trials.",
+    "decision": "PROMISING only if primary 95% CI lower bound >0, mean differences versus equal basket and momentum are positive in both segments, evaluation_2 target lift >1, and evaluation_2 advantage over basket remains positive at 50bps/side. Otherwise REJECT_FOR_THIS_SPECIFICATION if evaluation_2 primary point estimate <=0; otherwise INCONCLUSIVE. Fewer than 40 evaluated weeks in either segment or fewer than 100 training positives => UNDERPOWERED. Material acquisition/identity failures may override to INCONCLUSIVE_DATA_FIDELITY. No verdict confirms alpha, deployment or universal no-edge.",
+    "after_failure": "Save research-only current ranking with explicit negative/inconclusive verdict; do not present it as buy recommendations, do not retune, and do not automatically activate monitoring."
+  },
+  "required_controls": ["timestamp ms/us normalization", "future-price perturbation leaves past features/selection unchanged", "training labels finish before evaluation", "positive-pattern synthetic detection", "permuted-label synthetic null", "missing outcome cannot silently disappear", "fee identity", "universe hash reproducibility", "output manifest hashes"],
+  "capital_authorized": false,
+  "production_changes": false
+}
