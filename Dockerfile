@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1.7
-FROM python:3.14-alpine3.24@sha256:05b2b8b732ecd268fee8727a369f936f022d1321b59befd13c30ede22769dcdc AS build
+FROM python:3.14-alpine3.24@sha256:c6ead215bfd31f1e433d968853b7a769989117115b728874824e6c0a27cb96fc AS build
 RUN apk upgrade --no-cache && apk add --no-cache build-base
 WORKDIR /build
 RUN python -m venv /opt/venv
@@ -15,7 +15,7 @@ RUN pip install --no-cache-dir --upgrade pip && \
         ".[llm,excel,v3]" && \
     pip uninstall -y pip
 
-FROM python:3.14-alpine3.24@sha256:05b2b8b732ecd268fee8727a369f936f022d1321b59befd13c30ede22769dcdc AS runtime
+FROM python:3.14-alpine3.24@sha256:c6ead215bfd31f1e433d968853b7a769989117115b728874824e6c0a27cb96fc AS runtime
 RUN apk upgrade --no-cache && \
     addgroup -S -g 10001 predictor && adduser -S -D -u 10001 -h /nonexistent -G predictor predictor && \
     python -m pip uninstall -y pip setuptools
