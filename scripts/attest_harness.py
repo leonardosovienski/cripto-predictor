@@ -33,6 +33,7 @@ import argparse
 import json
 import random
 import sys
+import tempfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -188,39 +189,45 @@ def main() -> int:
         print("controle positivo PASSOU (dry-run; atestados nao gravados)")
         return 0
 
-    # Cada juiz grava o SEU atestado, com a SUA metrica — arquivos irmaos
-    # distintos, um por familia de trial (measurement/trials.py so casa uma
-    # trial nova contra o atestado cujo metric+pipeline_fingerprint batem).
-    rec_phase1 = attest_pipeline_power(
-        judge_phase1,
-        phase1_edge_series,
-        phase1_noise_series,
-        attestation_path=PHASE1_ATTESTATION_PATH,
-        note="Juiz da Fase 1 (analyzers/backtest._report): VALIDADO/RUIDO via "
-        "Spearman IC95 block bootstrap nao cruza zero, seeds 21/22, n=120 "
-        "— edge plantado e ruido",
-        edge_verdict="VALIDADO",
-        null_verdict="RUIDO",
-        metric=_METRIC_PHASE1,
-    )
-    print("juiz Fase 1 (Spearman IC95): sensibilidade e especificidade OK")
-    print(f"atestado da Fase 1 gravado em {PHASE1_ATTESTATION_PATH} ({rec_phase1['passed_at']})")
+    # Core 3.2 recusa árvore suja. O primeiro arquivo canônico alterado
+    # sujaria o repo e impediria atestar o segundo juiz. Os dois controles
+    # rodam em staging externo contra a mesma árvore limpa; só então publicamos.
+    with tempfile.TemporaryDirectory(prefix="cripto-attest-") as directory:
+        staged_phase1 = Path(directory) / "phase1.json"
+        staged_v3 = Path(directory) / "v3.json"
+        # Cada juiz grava o SEU atestado, com a SUA metrica — arquivos irmaos
+        # distintos, um por familia de trial (measurement/trials.py so casa uma
+        # trial nova contra o atestado cujo metric+pipeline_fingerprint batem).
+        rec_phase1 = attest_pipeline_power(
+            judge_phase1,
+            phase1_edge_series,
+            phase1_noise_series,
+            attestation_path=staged_phase1,
+            repo=ROOT,
+            note="Juiz da Fase 1 (analyzers/backtest._report): VALIDADO/RUIDO via "
+            "Spearman IC95 block bootstrap nao cruza zero, seeds 21/22, n=120 "
+            "— edge plantado e ruido",
+            edge_verdict="VALIDADO",
+            null_verdict="RUIDO",
+            metric=_METRIC_PHASE1,
+        )
+        print("juiz Fase 1 (Spearman IC95): sensibilidade e especificidade OK")
 
-    rec_v3 = attest_pipeline_power(
-        judge_go_nogo,
-        edge_series,
-        noise_series,
-        attestation_path=attestation_path_for(TRIALS_PATH),
-        note="Juiz V3 (backtest_v3): GO/NO-GO via PSR>=0.80 & IC_lower>0, "
-        "seeds 7/8, n=400 — edge plantado e ruido",
-        edge_verdict="GO",
-        metric=_METRIC_V3,
-    )
-    print("juiz V3 (PSR & IC_lower): sensibilidade e especificidade OK")
-    print(
-        f"controle positivo PASSOU — atestado gravado em "
-        f"{attestation_path_for(TRIALS_PATH)} ({rec_v3['passed_at']})"
-    )
+        rec_v3 = attest_pipeline_power(
+            judge_go_nogo,
+            edge_series,
+            noise_series,
+            attestation_path=staged_v3,
+            repo=ROOT,
+            note="Juiz V3 (backtest_v3): GO/NO-GO via PSR>=0.80 & IC_lower>0, "
+            "seeds 7/8, n=400 — edge plantado e ruido",
+            edge_verdict="GO",
+            metric=_METRIC_V3,
+        )
+        print("juiz V3 (PSR & IC_lower): sensibilidade e especificidade OK")
+        PHASE1_ATTESTATION_PATH.write_bytes(staged_phase1.read_bytes())
+        attestation_path_for(TRIALS_PATH).write_bytes(staged_v3.read_bytes())
+    print(f"atestados emitidos: Fase 1 {rec_phase1['passed_at']}; V3 {rec_v3['passed_at']}")
     return 0
 
 

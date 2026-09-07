@@ -5,13 +5,13 @@ variância nula) e CRESCE com o nº de tentativas — logo o DSR só pode cair q
 se tenta mais. Registrar de novo a mesma configuração NÃO conta tentativa nova.
 """
 
-import math
 import random
 
 import pytest
 from predictor_core.stats import probabilistic_sharpe_ratio
 
 from GarimpoInvestimentos.analyzers.trials import (
+    DeflationNotEstimableError,
     FrozenFamilyError,
     _reject_frozen_family,
     deflated_sharpe_ratio,
@@ -44,37 +44,37 @@ def test_benchmark_cresce_com_tentativas_e_variancia():
 # ---------- deflated_sharpe_ratio ----------
 
 
-def test_uma_tentativa_dsr_equivale_ao_psr():
-    rets = _returns()
-    d = deflated_sharpe_ratio(rets, [0.3])
-    assert d["sr0"] == 0.0 and d["n_trials"] == 1
-    assert d["dsr"] == probabilistic_sharpe_ratio(rets, benchmark_sharpe=0.0)
+@pytest.mark.parametrize("sharpes", [[], [0.3], [None, float("inf"), 0.3]])
+def test_dsr_sem_variancia_estimavel_bloqueia_em_vez_de_publicar_psr(sharpes):
+    with pytest.raises(DeflationNotEstimableError):
+        deflated_sharpe_ratio(_returns(), sharpes)
 
 
 def test_mais_tentativas_so_reduzem_o_dsr():
     rets = _returns()
-    um = deflated_sharpe_ratio(rets, [0.3])
+    psr = probabilistic_sharpe_ratio(rets, benchmark_sharpe=0.0)
     dez = deflated_sharpe_ratio(rets, [0.3, -0.1, 0.2, 0.05, -0.3, 0.4, 0.1, -0.2, 0.25, 0.0])
     assert dez["sr0"] > 0
-    assert dez["dsr"] < um["dsr"]  # o desconto existe e aperta
+    assert dez["dsr"] < psr
 
 
-def test_sharpes_nulos_ou_infinitos_contam_no_n_mas_nao_na_variancia():
+def test_sharpes_ausentes_contam_no_n_sem_entrar_na_variancia():
     rets = _returns()
-    d = deflated_sharpe_ratio(rets, [None, float("inf"), 0.3])
-    assert d["n_trials"] == 3
-    assert math.isfinite(d["sr0"])  # var só dos finitos (1 → var 0 → sr0 0)
-    assert d["sr0"] == 0.0
+    complete = deflated_sharpe_ratio(rets, [0.3, -0.1])
+    missing = deflated_sharpe_ratio(rets, [0.3, -0.1, None, float("inf")])
+    assert missing["n_trials"] == 4 and missing["n_sharpes"] == 2
+    assert missing["sr0"] > complete["sr0"]
+    assert missing["dsr"] < complete["dsr"]
 
 
 # ---------- registro versionado ----------
 
 
-def test_registro_roundtrip_e_dedup_por_nome(tmp_path):
+def test_registro_roundtrip_e_dedup_por_nome(tmp_path, registry_attestation):
     p = tmp_path / "trials.json"
     # criação usa bypass explícito da trava de poder (mecânica do registro;
     # a trava tem testes próprios em test_experiment_registry)
-    register_trial("cfg-a", params={"h": 7}, sharpe=0.1, path=p, power_attestation=False)
+    register_trial("cfg-a", params={"h": 7}, sharpe=0.1, path=p, **registry_attestation(p))
     register_trial("cfg-b", params={"h": 30}, path=p, power_attestation=False)
     register_trial(
         "cfg-a", params={"h": 7}, sharpe=0.15, notes="reavaliada com mais n", path=p

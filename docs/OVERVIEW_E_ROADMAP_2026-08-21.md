@@ -1,5 +1,13 @@
 # Overview e Roadmap — 2026-08-21
 
+> **Errata CRIPTO v1.2 — 2026-09-07:** H6 não é refutação estatística:
+> IC95 cruza zero e o poder em n=84 é 23% para rho=0,2. O estado corrente é
+> CLOSED_INSUFFICIENT_SAMPLE; H9 recebe a mesma classe (só 1/45 folds avaliável).
+> Ambos continuam encerrados. Referências históricas a CLOSED_NO_GO ou coleta
+> H6 aberta ficam superadas por `charters/scientific_state.json` e pela errata
+> de `docs/HYPOTHESES.md`. Não houve mudança de coleta, parâmetros ou selos.
+
+
 > **Para que serve este documento.** Ele é o ponto de partida frio: escrito para
 > que um leitor (ou uma sessão nova) que não acompanhou nada consiga entender o
 > projeto inteiro e saber exatamente o que fazer a seguir, sem depender de

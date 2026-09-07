@@ -20,7 +20,7 @@ preditivo sobre BTC/ETH perp após custos.
 
 - **state:** REFUTED
 - **L:** fraco (nenhuma sub-série sobreviveu à reanálise independente)
-- **Q:** alta (pré-registrado, custos reais via CostModel calibrado, WFA com
+- **Q:** média (pré-registrado, custos assumidos via CostModel testado, WFA com
   purge, reanálise independente em base estendida)
 - **evidence:** H1 (v3-hmm-funding-oi-fr90) CLOSED_NO_GO — líquido −0.09bps/sinal
   BTC, PSR 0.445; ETH PSR 0.051. H2 (fr21) CLOSED_NO_GO — PSR 0.215, líquido
@@ -50,7 +50,8 @@ prospectiva acima do acaso.
 - **Q:** alta para H5 (n=440, prospectivo real, não retrospectivo); baixa para
   H4 (n=5, amostra insuficiente por decisão operacional, não por desenho)
 - **evidence:** H5 (v2-dpl-multi-h7) CLOSED_NO_GO — Spearman pooled −0.166
-  [IC95 −0.266; −0.057], n=440, DSR 0.00 vs corte 0.95, acurácia direcional
+  [IC95 −0.266; −0.057], n=440, DSR histórico 0.00 (recalibração exata pendente dos retornos
+  originais; errata P0-A 2026-09-07), acurácia direcional
   45.2% (abaixo do acaso). H4 (v2-dpl-gemini-h7) CLOSED_INSUFFICIENT_SAMPLE —
   coleta interrompida em n=5 por risco de estouro de cota, sem veredito
   estatístico possível.
@@ -58,8 +59,8 @@ prospectiva acima do acaso.
   nada — não deve ser lido como "LLM não funciona", só como "não foi possível
   testar".
 - **new_evidence?:** não.
-- **decision:** ambas encerradas. H5 é o resultado forte (negativo,
-  bem-poderizado); H4 é inconclusivo por desenho interrompido, não por
+- **decision:** ambas encerradas. H5 tem evidência negativa na direção testada;
+  n=440, isoladamente, não demonstra poder para todos os efeitos/regimes; H4 é inconclusivo por desenho interrompido, não por
   refutação.
 - **reopen_conditions:** mesmas do CLAIM-CR-HMM (dossiê + atestado de poder).
   Para H4 especificamente, exigiria também resolver o risco operacional de
@@ -71,8 +72,8 @@ prospectiva acima do acaso.
 **Descrição:** Trend-following / momentum / SMA200 tem edge sobre cripto
 após custos.
 
-- **state:** REFUTED (por decisão de escopo do dono, ver docs/HYPOTHESES.md —
-  não há trial numerada dedicada em trials.json com o mesmo rigor de H1-H5)
+- **state:** CLOSED_BY_SCOPE / INCONCLUSIVE — decisão de escopo não é refutação
+  científica; não há trial dedicada com evidência equivalente a H1-H5.
 - **L:** UNKNOWN — não há trial formal registrada com PSR/DSR para esta
   família especificamente nesta auditoria; a decisão de não promoção está
   documentada em `docs/HYPOTHESES.md`, não em `trials.json`.
@@ -125,35 +126,26 @@ construção (não apenas por convenção).
 ---
 
 ## CLAIM-CR-COSTS
-**Descrição:** Ganhos brutos aparentes em backtests desaparecem quando custos
-reais são aplicados (CostModel calibrado).
+**Descrição:** O modelo de custos assumido reduz o resultado simulado; a fricção
+executável em conta real ainda não foi medida.
 
-- **state:** SUPPORTED
-- **L:** forte
-- **Q:** alta — CostModel classificado `MEASURED/CALIBRATED` para perp (taker
-  10bps + slippage 5bps/perna + funding real), testado nesta auditoria
-  (`test_v3_costs.py`, 5/5 passando)
-- **evidence:** H1 é o caso mais direto: sinal bruto existia, mas líquido de
-  custos ficou negativo (−0.09bps BTC). `test_costs_turn_small_predictive_edge_into_no_trade`
-  e `test_edge_menor_que_custo_vira_prejuizo_liquido` provam isso por código,
-  não só por resultado histórico.
-- **limitations:** modelo de custo para spot (`trading/costs.py`,
-  walk-the-book) segue explicitamente NÃO CALIBRADO e bloqueado
-  (`UncalibratedCostModel`) — não pode sustentar veredito algum.
-- **LACUNA DE PROVENIÊNCIA (2026-09-04, varredura de engenharia):** o "MEASURED/
-  CALIBRATED" acima descreve que o CostModel de perp é testado por código
-  (`test_v3_costs.py`), não que os valores 10bps taker + 5bps slippage foram
-  conferidos contra uma tabela de fees real (tier VIP, data, fonte). Essa
-  citação não existe em nenhum doc do repo. Como H1 perdeu por margem estreita
-  (−0,09bps líquido vs. −0,53bps de custo), isto é relevante para saber quanta
-  folga existe — mas NÃO é convite a reduzir o custo e re-rodar H1 esperando
-  GO: qualquer mudança neste valor está sob a mesma trava de `frozen_families`
-  que protege o sinal, exatamente porque mudar o denominador de um veredito
-  perto do limite é tão sensível a p-hacking quanto mudar o numerador.
-- **new_evidence?:** não desde o fechamento de H1-H3.
-- **decision:** CostModel perp preservado como ativo central do case
-  científico (CASE-CR-001).
-- **reopen_conditions:** N/A (claim de suporte).
+- **state:** SUPPORTED_UNDER_ASSUMED_COST_MODEL
+- **L:** forte para a identidade contábil; fraco para atribuir a perda real a fees.
+- **Q:** baixa para calibração econômica; testes validam aritmética, não execução.
+- **classification:** ASSUMED / UNCALIBRATED (fee 10bps e slippage 5bps por perna).
+- **evidence:** H1 bruto +0,44bps/sinal, líquido −0,09bps sob o modelo congelado.
+  Funding usa a taxa vigente na abertura repetida pelo horizonte; não equivale a
+  pagamentos realizados. Sensibilidade e proveniência: `HYPOTHESES.md`, P0-B
+  de 2026-09-07. O FAQ público ilustra 2bps maker e 5bps taker; sua própria
+  ressalva diz que são taxas hipotéticas. Fee efetiva da conta: UNKNOWN.
+- **limitations:** posição média absoluta e decomposição de funding de H1-H3 não
+  foram preservadas em um artefato identificado; o agregado não permite calcular
+  PSR/MaxDD sob nova fee. Spot segue `UncalibratedCostModel`.
+- **new_evidence?:** correção de proveniência, sem reexecução científica.
+- **decision:** retirados Q alta e MEASURED/CALIBRATED; valores em `v3/costs.py`
+  preservados integralmente. H1-H3 e a família permanecem fechadas.
+- **reopen_conditions:** mudar parâmetros exige proposta pré-registrada,
+  dossiê e evidência independente; a proposta P0-B não autoriza a execução.
 
 ---
 
@@ -170,8 +162,9 @@ reais são aplicados (CostModel calibrado).
 - **evidence:** `GarimpoInvestimentos/h6_status.json` — rodada real de
   `quality_snapshot.py` em 2026-09-03T05:55:26Z na máquina de produção
   (`C:\predictor\prod`), n=84, gate_atingido=true, veredito "RUIDO (IC cruza
-  0)". `charters/scientific_state.json` continua `COLLECTION_ONLY_IMMATURE`
-  — não alterado, ver decision abaixo.
+  0)". `charters/scientific_state.json` era `CLOSED_NO_GO` na base auditada;
+  a afirmação anterior de que continuava COLLECTION_ONLY_IMMATURE era falsa.
+  Errata 2026-09-07: `CLOSED_INSUFFICIENT_SAMPLE`, sem reativação.
 - **limitations:** poder de 23% (rho=0.2) e 47% (rho=0.3) em n=84 — mesmo
   cruzando o gate de 30, a amostra não é adequada para descartar um efeito
   real pequeno-a-moderado. Distinguir isso de refutação é exatamente o que o
@@ -187,13 +180,15 @@ reais são aplicados (CostModel calibrado).
   `analyzers/backtest.py:_fetch_price`) resolvido nesta sessão via
   `COINGECKO_API_KEY` como variável de ambiente real do Windows (mesma classe
   de bug do `DATA_DIR` — lida via `os.getenv()` direto, não pelo `.env`).
-- **decision:** `CR_PASSIVE_COLLECTION = ENABLED` para H6 — continua
-  `COLLECTION_ONLY`, charter não alterado, não autoriza capital/shadow/GO.
-  Resultado INCONCLUSIVE não é motivo para engenharia nova de poder (bloco
-  18) — é só registro do estado real observado.
-- **reopen_conditions:** N/A — não é uma hipótese fechada, é observação
-  passiva em curso. Este resultado é um evidence update dentro do protocolo
-  já registrado, não reabertura nem fechamento.
+- **decision:** manter a não promoção operacional registrada em 2026-09-04,
+  corrigindo sua causa para `CLOSED_INSUFFICIENT_SAMPLE` / UNDERPOWERED. O
+  fechamento existe em `HYPOTHESES.md` e na reconciliação de 2026-09-05; não há
+  ali justificativa de poder que permita chamar o IC cruzando zero de refutação.
+  A coleta Binance é um plano independente e continua intocada. A disponibilidade
+  desse feed não significa que H6 esteja aberta para maturação automática.
+- **reopen_conditions:** H6 está encerrada; a afirmação anterior de “N/A, não é
+  hipótese fechada” foi retirada. Qualquer nova inferência exige novidade material,
+  poder dimensionado, protocolo e evidência independente. Nenhuma reabertura aqui.
 
 ---
 

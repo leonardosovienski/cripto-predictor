@@ -1,5 +1,10 @@
 # CASE-CR-001 — Custos líquidos comem um edge bruto positivo (H1/H2/H3)
 
+> **Errata 2026-09-07:** custos ASSUMED/UNCALIBRATED; teste aritmético não mede
+> fees, slippage ou fills reais. H1 perdeu sob esse cenário, mas a atribuição
+> exclusiva a custos reais não está demonstrada. Ver CLAIM-CR-COSTS e P0-B.
+
+
 **Fonte:** `GarimpoInvestimentos/trials.json` (v3-hmm-funding-oi-fr90/fr21/fr90-h48),
 `docs/HYPOTHESES.md`, `GarimpoInvestimentos/v3/costs.py`.
 

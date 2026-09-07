@@ -27,3 +27,35 @@ for _k, _v in _TEST_CREDS.items():
 # emit_event agora é chamado por cache.py/logger.py durante os testes — redireciona
 # o JSONL para a pasta de build dos testes para não poluir o cwd do projeto.
 os.environ.setdefault("PREDICTOR_EVENTS_PATH", str(ROOT / "tests" / "_events_test.jsonl"))
+
+
+import pytest
+
+
+@pytest.fixture
+def registry_attestation(tmp_path):
+    """Executa o juiz real sobre controles sintéticos; só escreve no tmp do teste."""
+    from predictor_core.testing.harness import attest_pipeline_power
+
+    from scripts.attest_harness import judge_phase1, phase1_edge_series, phase1_noise_series
+
+    def emit(path):
+        att = path.with_name(path.stem + ".phase1_harness_attestation.json")
+        record = attest_pipeline_power(
+            judge_phase1,
+            phase1_edge_series,
+            phase1_noise_series,
+            attestation_path=att,
+            edge_verdict="VALIDADO",
+            null_verdict="RUIDO",
+            metric="spearman_ic",
+            repo=tmp_path,
+            note="Controle real do juiz em fixture sintética; não autoriza registro canônico.",
+        )
+        return {
+            "metric": "spearman_ic",
+            "power_attestation": att,
+            "pipeline_fingerprint": record["pipeline_fingerprint"],
+        }
+
+    return emit

@@ -10,7 +10,7 @@ COPY charters ./charters
 COPY observation_plans ./observation_plans
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir \
-        "predictor-core @ https://github.com/leonardosovienski/core-predictor/releases/download/v3.0.0/predictor_core-3.0.0-py3-none-any.whl" \
+        "predictor-core @ https://github.com/leonardosovienski/core-predictor/releases/download/v3.2.0/predictor_core-3.2.0-py3-none-any.whl" \
         "predictor-ops @ https://github.com/leonardosovienski/predictor-ops/releases/download/v4.1.0/predictor_ops-4.1.0-py3-none-any.whl" \
         ".[llm,excel,v3]" && \
     pip uninstall -y pip

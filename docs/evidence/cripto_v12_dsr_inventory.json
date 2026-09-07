@@ -1,0 +1,302 @@
+{
+  "as_of": "2026-09-07",
+  "base_commit": "3c104ce",
+  "scope": "All versioned Markdown numeric mentions of DSR/SR0; thresholds and historical claims distinguished in HYPOTHESES.md P0-A.",
+  "decision": "Do not use historical DSR as current evidence until original returns, ledger snapshot and comparable Sharpe bases are recovered.",
+  "current_ledger_sha256": "7193b15df347b8243a65ab92449503dd64f90a9777207aadc8c80da2e0ac844b",
+  "n_trials": 26,
+  "n_finite_sharpes": 23,
+  "diagnostic_sr0_filtered": 0.9524130493332158,
+  "diagnostic_sr0_all": 0.9777608299827842,
+  "diagnostic_valid_for_inference": false,
+  "mentions": [
+    {
+      "path": "CR_RESEARCH_FREEZE.md",
+      "line_at_audit": 233,
+      "text": "result: \"Spearman pooled −0.166 [IC95 −0.266; −0.057], n=440; DSR 0.00 vs corte 0.95; acurácia direcional 45.2%\"",
+      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
+    },
+    {
+      "path": "HANDOFF-2026-07-02.md",
+      "line_at_audit": 27,
+      "text": "| 01-02/07 | **Merge DPL+discovery** (`e8b2fa3`): carimbo **Fonte**, `--discover` exige `--ingest`, universo da análise = Feature Store. **DSR + trials.json** (`ab346d3`). **Equivalência DPL vs direto** (`6416a71`): indicadores bit-idênticos em candle fechado; `change_*` diverge 0,1-7,8pp (semântico). |",
+      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
+    },
+    {
+      "path": "HANDOFF-2026-07-02.md",
+      "line_at_audit": 34,
+      "text": "| **`claude/merge-dpl-discovery`** | **Linha principal.** DPL + discovery + Fonte + DSR + Feature-Store-como-histórico | 117 verdes (py 3.14) |",
+      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
+    },
+    {
+      "path": "HANDOFF.md",
+      "line_at_audit": 4,
+      "text": "> seis pins consistentes, DSR estrito e N incluindo Sharpes ausentes. H6/H9",
+      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
+    },
+    {
+      "path": "HANDOFF.md",
+      "line_at_audit": 281,
+      "text": "> rate score≥60 = 24%; estratégia retorno médio −6,87%, Sharpe −0,33; DSR",
+      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
+    },
+    {
+      "path": "HANDOFF.md",
+      "line_at_audit": 326,
+      "text": "backtest (Spearman+IC95+DSR) morava no `run_daily.ps1` da ColetaDiaria (18:00),",
+      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
+    },
+    {
+      "path": "HANDOFF.md",
+      "line_at_audit": 344,
+      "text": "ERRADA (motivo do NO-GO); hit rate 20%, estratégia −7,67% vs BTC +0,60%, DSR",
+      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
+    },
+    {
+      "path": "README.md",
+      "line_at_audit": 53,
+      "text": "predictions (histórico oficial) → BACKTEST (Spearman IC95% + DSR)",
+      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
+    },
+    {
+      "path": "README.md",
+      "line_at_audit": 120,
+      "text": "| Backtest | Spearman(score, retorno D+1/7/30) com IC95% (block bootstrap pareado, `block_length` overlap-aware), estratificado por divergência e por Fonte; **DSR** contra o máximo-por-sorte das tentativas |",
+      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
+    },
+    {
+      "path": "README.md",
+      "line_at_audit": 123,
+      "text": "| Governança | Controle positivo (edge sintético → \"validado\"; ruído → \"RUÍDO\"); `trials.json` versionado; charters com checksum; migrações aditivas (ADR-017); **PBO/CSCV** ao lado do DSR (perguntas complementares: o DSR desconta por N tentativas, o PBO mede se a SELEÇÃO entre configurações é frágil) |",
+      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
+    },
+    {
+      "path": "README.md",
+      "line_at_audit": 142,
+      "text": "│                             backtest (inclui os gates da H6), trials (DSR), equivalence,",
+      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
+    },
+    {
+      "path": "README.md",
+      "line_at_audit": 251,
+      "text": "# 3) BACKTEST (absorve CSV legado automaticamente; estratifica por Fonte; imprime DSR)",
+      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
+    },
+    {
+      "path": "docs/ARQUITETURA_CONSOLIDADA.md",
+      "line_at_audit": 68,
+      "text": "- Passo 5.3 (veredito com custos + DSR): re-execução do WFA de BTC/ETH em andamento —",
+      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
+    },
+    {
+      "path": "docs/ARQUITETURA_CONSOLIDADA.md",
+      "line_at_audit": 98,
+      "text": "| Validação estatística | 7,0 | Governança completa (controle positivo + DSR + look-ahead auditado + custos); edge NÃO demonstrado — e agora o NO-GO é confiável |",
+      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
+    },
+    {
+      "path": "docs/ARQUITETURA_CONSOLIDADA.md",
+      "line_at_audit": 110,
+      "text": "3. ~~Múltiplos testes sem correção~~ → **FECHADO** (`ab346d3`): DSR + `trials.json`",
+      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
+    },
+    {
+      "path": "docs/ARQUITETURA_CONSOLIDADA.md",
+      "line_at_audit": 129,
+      "text": "| DSR (N=4 tentativas) | **≤ 0,445** (corte: 0,95) | ≪ 0,45 |",
+      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
+    },
+    {
+      "path": "docs/CONFERENCIA_GERAL.md",
+      "line_at_audit": 25,
+      "text": "| 4 | DSR + `trials.json` versionado | `ab346d3`; 7 testes; fio no backtest; 4 tentativas registradas, v3-fr90 com veredito preenchido | ✅ |",
+      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
+    },
+    {
+      "path": "docs/CONFERENCIA_GERAL.md",
+      "line_at_audit": 36,
+      "text": "| 17 | WFA final com custos + DSR + controle positivo | Executado 2026-07-02: **NO-GO BTC e ETH** (ver §4) | ✅ **concluído** |",
+      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
+    },
+    {
+      "path": "docs/CONFERENCIA_GERAL.md",
+      "line_at_audit": 59,
+      "text": "| 2 | Falso GO por múltiplos testes | **FECHADO** | DSR + trials.json; o \"GO\" pré-custos de 27/06 foi efetivamente desmascarado |",
+      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
+    },
+    {
+      "path": "docs/CONFERENCIA_GERAL.md",
+      "line_at_audit": 66,
+      "text": "| 9 | Decisão de arquitetura por anedota | **FECHADO (processo)** | Gates formais (pedágio+DSR+controle positivo); dois NO-GO aceitos com base em número |",
+      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
+    },
+    {
+      "path": "docs/CONFERENCIA_GERAL.md",
+      "line_at_audit": 72,
+      "text": "PSR 0,445; DSR ≤ 0,445 (corte 0,95); IC do líquido cruza zero; MaxDD 29%. ETHUSDT pior",
+      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
+    },
+    {
+      "path": "docs/ERRATA_2026-08-21.md",
+      "line_at_audit": 55,
+      "text": "| \"DPL não promovida ao core\" (C-02) | **fechado** | contratos, routers, circuit breaker, trials/DSR e stats vivem em `predictor_core`; os módulos locais são compat shims |",
+      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
+    },
+    {
+      "path": "docs/EVIDENCE_REGISTRY.md",
+      "line_at_audit": 53,
+      "text": "[IC95 −0.266; −0.057], n=440, DSR histórico 0.00 (recalibração exata pendente dos retornos",
+      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
+    },
+    {
+      "path": "docs/H5_ACOMPANHAMENTO_2026-07-25.md",
+      "line_at_audit": 7,
+      "text": "> IC não cruza zero, mas na direção oposta à hipótese; Sharpe por trade −0,312; DSR",
+      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
+    },
+    {
+      "path": "docs/HYPOTHESES.md",
+      "line_at_audit": 66,
+      "text": "estratificado por Fonte; depois disso, Sharpe líquido por trade + DSR ≥ 0,95.",
+      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
+    },
+    {
+      "path": "docs/HYPOTHESES.md",
+      "line_at_audit": 89,
+      "text": "> DSR            0.00  contra corte 0.95   (SR0 0.447, N=7)",
+      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
+    },
+    {
+      "path": "docs/HYPOTHESES.md",
+      "line_at_audit": 119,
+      "text": "também reportado por juiz); depois, Sharpe líquido por trade + DSR ≥ 0,95.",
+      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
+    },
+    {
+      "path": "docs/HYPOTHESES.md",
+      "line_at_audit": 126,
+      "text": "−0,6725 (n=45). DSR 0,00, não passa o corte 0,95. Estratégia (score≥60)",
+      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
+    },
+    {
+      "path": "docs/HYPOTHESES.md",
+      "line_at_audit": 167,
+      "text": "> é o que mais infla a variância entre tentativas, e portanto o `SR0` do",
+      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
+    },
+    {
+      "path": "docs/HYPOTHESES.md",
+      "line_at_audit": 169,
+      "text": "> o Sharpe dela é −0,312, negativo, e o DSR fica ~0 com qualquer `SR0`",
+      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
+    },
+    {
+      "path": "docs/HYPOTHESES.md",
+      "line_at_audit": 233,
+      "text": "CONFIGURAÇÃO INVERTIDA; depois, Sharpe líquido por trade + DSR ≥ 0,95.",
+      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
+    },
+    {
+      "path": "docs/HYPOTHESES.md",
+      "line_at_audit": 649,
+      "text": "determinísticos (DSR, IC95 por block bootstrap, custos) e dados point-in-time",
+      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
+    },
+    {
+      "path": "docs/HYPOTHESES.md",
+      "line_at_audit": 1079,
+      "text": "A nota da H5 registra `DSR 0.00 (SR0 0.447, N=7 tentativas)`. Com a grade, N",
+      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
+    },
+    {
+      "path": "docs/NEXT_TRIAL_SCIENTIFIC_GATE.md",
+      "line_at_audit": 10,
+      "text": "- declarar autocorrelacao, overlap D+7 e regra de multiplicidade/DSR;",
+      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
+    },
+    {
+      "path": "docs/OVERVIEW_E_ROADMAP_2026-08-21.md",
+      "line_at_audit": 93,
+      "text": "| **H5** — idem, partição multi-juiz | `v2-dpl-multi-h7` | **CLOSED_NO_GO** | Spearman **−0,166** [−0,266; −0,057], n=440. O IC não cruza zero — **na direção oposta**. Acurácia direcional 45,2%. DSR 0,00 contra corte 0,95 |",
+      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
+    },
+    {
+      "path": "docs/OVERVIEW_E_ROADMAP_2026-08-21.md",
+      "line_at_audit": 117,
+      "text": "n=6 não existe IC que decida coisa alguma. Ele também é o que mais infla o `SR0`",
+      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
+    },
+    {
+      "path": "docs/OVERVIEW_E_ROADMAP_2026-08-21.md",
+      "line_at_audit": 322,
+      "text": "certo) e **DSR ≥ 0,95** contra o `N` de tentativas do `trials.json` — que hoje",
+      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
+    },
+    {
+      "path": "docs/OVERVIEW_E_ROADMAP_2026-08-21.md",
+      "line_at_audit": 334,
+      "text": "registro, e o DSR desconta por ela —, e/ou promover a **H7** (macro/DXY), cuja",
+      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
+    },
+    {
+      "path": "docs/OVERVIEW_E_ROADMAP_2026-08-21.md",
+      "line_at_audit": 392,
+      "text": "uv run python -m GarimpoInvestimentos.analyzers.backtest            # juiz + DSR + H6",
+      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
+    },
+    {
+      "path": "docs/PANORAMA_2026-08-21.md",
+      "line_at_audit": 69,
+      "text": "| `analyzers/` | 2.326 | LLM, backtest, DSR, PBO, DSL de fatores, laço de hipóteses, calibração |",
+      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
+    },
+    {
+      "path": "docs/PANORAMA_2026-08-21.md",
+      "line_at_audit": 103,
+      "text": "7 tentativas no denominador do DSR. Família `funding_oi_hmm_v3` congelada.",
+      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
+    },
+    {
+      "path": "docs/RECONCILIACAO_V3.md",
+      "line_at_audit": 23,
+      "text": "| Núcleo | `dpl/` (Feature Store bitemporal, routers, providers), `discovery`, DSR/trials, equivalência | `v3/` (regime_engine HMM causal, signal_engine, paper_trader, backtest_v3, collectors funding/OI/vision) |",
+      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
+    },
+    {
+      "path": "docs/RELATORIO_FINAL.md",
+      "line_at_audit": 11,
+      "text": "--discover `799cd27` (2) · controle positivo `e00e776` (3) · DSR+trials `ab346d3` (4) ·",
+      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
+    },
+    {
+      "path": "docs/RELATORIO_FINAL.md",
+      "line_at_audit": 59,
+      "text": "**Fechados (6):** look-ahead HMM · múltiplos testes (DSR/trials) · pipeline sem poder",
+      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
+    },
+    {
+      "path": "docs/RELATORIO_FINAL.md",
+      "line_at_audit": 69,
+      "text": "por sinal, n=3.958; PSR 0,445; **DSR ≤ 0,445**, registrado em `trials.json`",
+      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
+    },
+    {
+      "path": "docs/TRIAL_TEMPLATE_MULTI_NEWS_PREFILTER.md",
+      "line_at_audit": 41,
+      "text": "\"notes\": \"Criterio: Spearman IC95 nao cruza zero com n>=30 maduro; depois Sharpe liquido por trade + DSR>=0.95. Nao misturar com H5.\"",
+      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
+    },
+    {
+      "path": "docs/case_studies/CASE-CR-002-llm-prospectivo-negativo.md",
+      "line_at_audit": 16,
+      "text": "Sharpe líquido por trade + DSR ≥ 0.95.",
+      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
+    },
+    {
+      "path": "docs/case_studies/CASE-CR-002-llm-prospectivo-negativo.md",
+      "line_at_audit": 28,
+      "text": "na direção OPOSTA à hipótese. Sharpe/trade −0.312 (n=134). DSR 0.00 contra",
+      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
+    }
+  ]
+}

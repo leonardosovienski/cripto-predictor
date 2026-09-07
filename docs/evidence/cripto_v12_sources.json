@@ -1,0 +1,111 @@
+[
+  {
+    "name": "fees",
+    "url": "https://www.binance.com/bapi/futures/v1/public/future/common/trade-fee",
+    "accessed_at": "2026-09-07T18:07:45.963200+00:00",
+    "status": 404,
+    "sha256": "8cfd2b9e52063870642e7b71f7fd78c52269714ae9165c0d76608074bd1cc3d8",
+    "data": {
+      "status": 404,
+      "path": "/v1/public/future/common/trade-fee",
+      "error": "Not Found",
+      "timestamp": 1788804467088,
+      "message": "No message available"
+    },
+    "interpretation": "UNAVAILABLE_NO_INFERRED_VALUE"
+  },
+  {
+    "name": "funding",
+    "url": "https://fapi.binance.com/fapi/v1/fundingRate?symbol=BTCUSDT&limit=3",
+    "accessed_at": "2026-09-07T18:07:45.963623+00:00",
+    "status": 200,
+    "sha256": "c70e9bb20d3f0c25a5a525cae3d30b5b597c5f1d95fb9f8f74aa0ca3549bdd7b",
+    "data": [
+      {
+        "symbol": "BTCUSDT",
+        "fundingTime": 1788739200004,
+        "fundingRate": "0.00002792",
+        "markPrice": "80303.33555472",
+        "rateType": "Regular"
+      },
+      {
+        "symbol": "BTCUSDT",
+        "fundingTime": 1788768000000,
+        "fundingRate": "0.00003113",
+        "markPrice": "79355.30000000",
+        "rateType": "Regular"
+      },
+      {
+        "symbol": "BTCUSDT",
+        "fundingTime": 1788796800003,
+        "fundingRate": "0.00002185",
+        "markPrice": "78776.74225362",
+        "rateType": "Regular"
+      }
+    ],
+    "interpretation": "AVAILABILITY_ONLY_NOT_ALPHA"
+  },
+  {
+    "name": "treasury",
+    "url": "https://www.tesourodireto.com.br/json/br/com/b3/tesourodireto/service/api/treasurybondsinfo.json",
+    "accessed_at": "2026-09-07T18:07:45.963793+00:00",
+    "status": 410,
+    "sha256": "283bb9deef02e6843abfb538efa1eca70801bd8a701c3f98191e123496339247",
+    "data": "NON_JSON",
+    "interpretation": "UNAVAILABLE_NO_INFERRED_VALUE"
+  },
+  {
+    "name": "selic",
+    "url": "https://api.bcb.gov.br/dados/serie/bcdata.sgs.432/dados/ultimos/1?formato=json",
+    "accessed_at": "2026-09-07T18:07:45.963902+00:00",
+    "status": 200,
+    "sha256": "e3c4daac32eab22c323500b18394ff9e399066fd82c6d95b0aafe2de23917ef3",
+    "data": [
+      {
+        "data": "16/09/2026",
+        "valor": "14.00"
+      }
+    ],
+    "interpretation": "REJECTED_FUTURE_EVENT_DATE"
+  },
+  {
+    "name": "selic_effective",
+    "url": "https://api.bcb.gov.br/dados/serie/bcdata.sgs.1178/dados/ultimos/1?formato=json",
+    "accessed_at": "2026-09-07T18:07:45.964286+00:00",
+    "status": 200,
+    "sha256": "237a3c38cb4aeed080854035825af2863b1f934070f886d6827f0b931a756e03",
+    "data": [
+      {
+        "data": "04/09/2026",
+        "valor": "13.90"
+      }
+    ],
+    "interpretation": "OBSERVED_AS_OF_2026_09_04_NOT_FORWARD_GUARANTEE"
+  },
+  {
+    "name": "selic_bounded",
+    "url": "https://api.bcb.gov.br/dados/serie/bcdata.sgs.432/dados?formato=json&dataInicial=04%2F09%2F2026&dataFinal=07%2F09%2F2026",
+    "accessed_at": "2026-09-07T18:18:04.668167+00:00",
+    "status": 200,
+    "sha256": "2d1442c6b94bc1c4a4421387c01a38322ebeea0c69cb83f43712beba61b846f1",
+    "data": [
+      {
+        "data": "04/09/2026",
+        "valor": "14.00"
+      },
+      {
+        "data": "05/09/2026",
+        "valor": "14.00"
+      },
+      {
+        "data": "06/09/2026",
+        "valor": "14.00"
+      },
+      {
+        "data": "07/09/2026",
+        "valor": "14.00"
+      }
+    ],
+    "interpretation": "OBSERVED_POLICY_RATE_WITH_EVENT_DATE_CUTOFF"
+  }
+]

@@ -1,5 +1,12 @@
 # HANDOFF — GarimpoInvestimentos (Fase 1 + melhorias)
 
+> **Delta CRIPTO v1.2 — 2026-09-07:** Core 3.2.0 preparado em worktree isolado;
+> seis pins consistentes, DSR estrito e N incluindo Sharpes ausentes. H6/H9
+> encerradas por insuficiência de amostra; custos assumidos reclassificados.
+> Rodada, validação e limitações: `docs/HYPOTHESES.md`, errata 2026-09-07.
+> Produção permanece intacta; as notas de 06/09 abaixo são históricas.
+
+
 > **Estado técnico corrente — 2026-09-06:** pacote `GarimpoInvestimentos`, Core
 > **3.0.0** e Ops **4.1.0** por wheels. Referências posteriores a vendors, Core 2.x,
 > Ops 3.x, ambientes antigos ou contagens históricas permanecem apenas como

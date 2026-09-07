@@ -129,7 +129,15 @@
   zero), mistral −0,023 (n=20, IC cruza zero = ruído p/ ele). Mesmo padrão
   que encerrou a H4. Motivou o pré-registro da H6 (inversão do sinal).
 
-### H6 — Sinal invertido do LLM prevê retorno D+7 (status: **REFUTADA / NO-GO — 2026-09-04**)
+### H6 — Sinal invertido do LLM prevê retorno D+7 (status: **CLOSED_INSUFFICIENT_SAMPLE — errata 2026-09-07**)
+
+> **Errata CRIPTO v1.2 — 2026-09-07:** H6 não é refutação estatística:
+> IC95 cruza zero e o poder em n=84 é 23% para rho=0,2. O estado corrente é
+> CLOSED_INSUFFICIENT_SAMPLE; H9 recebe a mesma classe (só 1/45 folds avaliável).
+> Ambos continuam encerrados. Referências históricas a CLOSED_NO_GO ou coleta
+> H6 aberta ficam superadas por `charters/scientific_state.json` e pela errata
+> de `docs/HYPOTHESES.md`. Não houve mudança de coleta, parâmetros ou selos.
+
 
 > **Veredito 2026-09-04.** Gate atingido (`h6_status.json`): n=84 (≥30 exigido),
 > Spearman rho=-0,0567, IC95% [-0,2312, 0,1294] — **o IC CRUZA ZERO**.
@@ -223,7 +231,7 @@
 - Critério de sucesso (definido ANTES): idêntico ao da H4/H5 — Spearman IC95
   não cruza zero (positivo desta vez) com n ≥ 30 previsões maduras SOB A
   CONFIGURAÇÃO INVERTIDA; depois, Sharpe líquido por trade + DSR ≥ 0,95.
-- Resultado: **REFUTADA — IC cruza zero em n=84** (ver veredito 2026-09-04 no
+- Resultado histórico, superado pela errata 2026-09-07: **REFUTADA — IC cruza zero em n=84** (ver veredito 2026-09-04 no
   topo desta seção). Histórico intermediário preservado acima por transparência
   (n=6, Sharpe auxiliar +0,3479) — nunca foi o veredito, só uma leitura
   imatura de passagem.
@@ -403,7 +411,10 @@
 
 ---
 
-### H9 — Razão OI/Volume (crowding especulativo) como covariável exógena do regime (status: **REFUTADA / NO-GO — 2026-09-04**)
+### H9 — Razão OI/Volume (crowding especulativo) como covariável exógena do regime (status: **CLOSED_INSUFFICIENT_SAMPLE — errata 2026-09-07**)
+
+> Um fold avaliável não isola a covariável nem demonstra ausência de efeito.
+> Histórico abaixo preservado; fechamento mantido sem refutação causal.
 
 > **Veredito 2026-09-04.** Primeiro WFA completo rodado em produção
 > (`backtest_v3.py --use-oi-volume-ratio`, BTCUSDT, dado real, sem crash —
@@ -1274,3 +1285,260 @@ um NO-GO real (H9) e tem um pendente (H7). Um terceiro NO-GO na mesma
 arquitetura não é azar — é evidência sobre a arquitetura, e o B4 (meta-análise
 dos NO-GO) merece prioridade sobre promover B14/B15. Nenhuma das duas foi
 registrada em `trials.json`: registro exige `decided_by: owner`.
+
+## Errata e decisões CRIPTO v1.2 — 2026-09-07
+
+Base auditada: `3c104ce` (origin/main). Trabalho isolado da produção. Esta seção
+substitui interpretações causais conflitantes acima, sem reescrever observações
+históricas, parâmetros, trials ou hashes congelados.
+
+### P0-D / P0-C — causa científica versus encerramento operacional
+
+O fechamento de H6 EXISTE: foi publicado em 2026-09-04, reafirmado pela
+reconciliação de 05/09. Sua justificativa confundiu “não passou o gate de
+validação” com “refutada”. O protocolo de 27/08 exige IC inteiramente negativo
+para refutação direcional; o IC observado cruza zero. Não há teste de
+equivalência/futilidade com poder adequado sustentando ausência de efeito.
+Corrigido o charter para `CLOSED_INSUFFICIENT_SAMPLE`: mantém a decisão de
+não promover e o bloqueio de reescrita, mas retira a inferência de refutação.
+H9 recebe a mesma classe operacional, por apenas um fold avaliável. Nenhuma
+das duas foi reaberta, nem qualquer job de coleta foi alterado.
+
+| Hipótese | Diagnóstico causal sustentado | Decisão / limitação |
+|---|---|---|
+| H1 | COST_FAILURE_UNDER_ASSUMED_MODEL; bruto histórico positivo pequeno | CLOSED_NO_GO; causalidade exclusiva de fee real não demonstrada; reanálise forward também negativa |
+| H2 | INCONCLUSIVE quanto à atribuição causal; edge insuficiente no cenário testado | CLOSED_NO_GO; +0,07 → −0,37bps; PSR 0,215; poder não documentado |
+| H3 | NO_GROSS_EDGE_IN_TESTED_CONFIGURATION | CLOSED_NO_GO; bruto −0,35bps, PSR 0,192, MaxDD 50,3%; fee não explica a origem do bruto negativo |
+| H4 | LOW_POWER / coleta interrompida | CLOSED_INSUFFICIENT_SAMPLE, n=5; não refuta feature/LLM |
+| H5 | OPPOSITE_DIRECTION_EVIDENCE na amostra prospectiva especificada | CLOSED_NO_GO; rho −0,166, IC95 [−0,266; −0,057], n=440. Não prova ausência universal de alpha; DSR histórico não é confirmação atual |
+| H6 | INCONCLUSIVE_DUE_TO_POWER / UNDERPOWERED | CLOSED_INSUFFICIENT_SAMPLE; n=84, IC95 [−0,231; +0,129], poder 23% para rho=0,2 |
+| H7 | HARNESS_FAILURE_NO_VALID_RESULT | REGISTERED_NOT_ACTIVATED; tentativa abortou por matriz de transição; correção do bug não é evidência sobre DXY |
+| H8 | NOT_TESTED | REGISTERED_NOT_ACTIVATED; pipeline implementado não demonstra valor de hipóteses geradas |
+| H9 | INCONCLUSIVE / LOW_EFFECTIVE_SAMPLE | CLOSED_INSUFFICIENT_SAMPLE; 44/45 folds insuficientes, sem ablação que isole OI/volume |
+
+`CONFIRMED_NO_EDGE` irrestrito não é sustentado para nenhuma feature isolada
+por esta rodada. A decisão de manter `funding_oi_hmm_v3` congelada é preservada
+pelos múltiplos resultados negativos existentes. O claim TREND foi corrigido:
+decisão de escopo sem trial não é refutação estatística.
+
+### P0-B — fees, unidades e sensibilidade sem reexecutar H1-H3
+
+Fontes públicas consultadas em **2026-09-07**:
+
+| Insumo | Observado / fonte | Classificação |
+|---|---|---|
+| USDⓈ-M maker 0,02% = 2bps; taker 0,05% = 5bps por perna | [FAQ Binance](https://www.binance.com/en/support/faq/detail/360033544231), atualizado 2026-05-01 | Exemplos públicos explicitamente hipotéticos, NÃO fee confirmada de conta |
+| Desconto BNB de 10% em USDⓈ-M | mesmo FAQ | Regra condicionada a BNB suficiente; cenário 1,8/4,5bps, sem assumir elegibilidade |
+| Tabela atual por tier | [Fee Rate Table](https://www.binance.com/en/fee/futureFee) retornou “No records found”; sonda pública auxiliar retornou 404 | UNKNOWN; não substituir por exemplo do FAQ |
+| Fee específica do operador | [User Commission Rate](https://developers.binance.com/docs/derivatives/usds-margined-futures/account/rest-api/User-Commission-Rate), endpoint USER_DATA assinado | UNKNOWN sem conta/consulta autorizada; exemplo JSON de API não é tabela comercial |
+| Modelo V3 | 10bps fee + 5bps slippage/perna; funding corrente repetido | ASSUMED/UNCALIBRATED; arquivo byte-idêntico ao freeze |
+
+**Correção de unidade:** os números H1/H2/H3 em bps/sinal são retornos sobre
+capital ponderados pela posição. A fee é bps de nocional POR PERNA. Não se
+subtrai 5bps diretamente de −0,09bps/sinal. Denote `a_i = média(|position|)`
+sobre exatamente os mesmos sinais do agregado original. Mantendo posições,
+funding e slippage fixos, a identidade exata é:
+
+`net_i(f) [bps/sinal] = net_i(10) + 2 × (10 − f) × a_i`.
+
+| Fee f, bps/perna | H1 líquido, bps/sinal | H2 | H3 |
+|---|---|---|---|
+| 10 (congelada) | −0,09 | −0,37 | −0,75 |
+| 5 (exemplo público) | −0,09 + 10a₁ | −0,37 + 10a₂ | −0,75 + 10a₃ |
+| 2 (cenário, NÃO fill maker assumido) | −0,09 + 16a₁ | −0,37 + 16a₂ | −0,75 + 16a₃ |
+| 0 (limite matemático) | −0,09 + 20a₁ | −0,37 + 20a₂ | −0,75 + 20a₃ |
+
+No cenário de 5bps, o líquido cruza zero somente se `a₁>0,009`, `a₂>0,037`
+ou `a₃>0,075`, respectivamente. Isto NÃO diz que cruza PSR/IC/MaxDD ou o
+hurdle econômico. `a_i`, retornos por sinal e funding realizado por sinal
+das três execuções originais: UNKNOWN. Não é possível separá-los do custo
+total agregado porque funding é assinado. O `wfa_returns.json` atualmente
+presente em produção não identifica H1/H2/H3 e não contém posições: recusado
+como substituto silencioso da amostra original. A busca cobriu artefatos
+versionados e os arquivos de resultados locais identificáveis, sem rodar WFA.
+
+**Decisão:** Q de CLAIM-CR-COSTS rebaixada; H1 é sensível a uma premissa
+não calibrada, mas a hipótese/família segue encerrada. PSR sob nova fee é
+UNKNOWN; nenhum GO foi inferido da sensibilidade algébrica.
+
+**Proposta de pré-registro `cost-provenance-v1` — DRAFT_NOT_REGISTERED:**
+pergunta exclusiva: qual a fricção de uma estrutura especificada? Universo
+BTCUSDT/ETHUSDT USDⓈ-M, sem escolha posterior por performance; código de
+estratégia/posição e dados de H1-H3 não serão reexecutados. Fixar antes da
+coleta independente: venue/conta/tier, tamanho nocional, tipo de ordem, horários,
+known_at, endpoint de fee e protocolo de mensuração. Comparar a referência
+congelada 10bps com a tarifa efetivamente observada, sem selecionar fee que
+resgate resultado. Orçamentos separados: análise contábil DISCOVERY sem capital;
+fills realizados só após autorização própria. Missing fee/fill → UNKNOWN;
+sem fee autenticada e sem fills não existe MEASURED_EXPECTED_FRICTION.
+Pré-definir precisão/IC e tamanho amostral após a estrutura ser conhecida,
+antes de observar seus resultados. Desfechos: erro de proveniência, amplitude
+de custo e decisão de envelope; nunca reabertura de `funding_oi_hmm_v3`.
+
+### P0-A — DSR instalado, migração e retificação dos números
+
+Core 3.0.0 encontrado em `C:/predictor/prod/.venv`; checkout antigo do usuário
+tinha Core 2.2.0. O ambiente isolado reproduziu o lock 3.0.0 e a degeneração:
+retornos `[0.01, -0.02, 0.03, 0.01]`, Sharpes `[None, 0.3]` → N=2,
+SR0=0, DSR=0,7450734876819202 (PSR puro). A release vigente verificada foi
+[Core 3.2.0](https://github.com/leonardosovienski/core-predictor/releases/tag/v3.2.0).
+Sua função permanece permissiva por padrão: apenas trocar a wheel NÃO basta.
+O domínio agora chama `strict=True`, tratando não estimável como UNKNOWN.
+
+Migrados os seis arquivos: pyproject, uv.lock, Dockerfile, CI,
+verify_installed_wheels e test_core_integrity. SHA256 da wheel:
+`9166dd6bd3be99668c0eb8bd3c59a92061e765186608465c0caf48a2417e3009`.
+Os cinco caminhos de update listados no HANDOFF agora executam controles
+sintéticos reais e encaminham o atestado correspondente à métrica gravada;
+validade, versão e fingerprint continuam verificados pelo Core. A emissão dos
+dois atestados usa staging externo para que o primeiro arquivo não suje a
+árvore antes do segundo controle. Não há `allow_dirty=True` na emissão canônica.
+
+**Achado adicional material:** `run_wfa` calcula `aggregate_sharpe` como
+`mean/population_std × sqrt(n)`, e `run_threshold_grid` grava esse número no
+campo `sharpe` do ledger. O registro também contém Sharpes por trade e outras
+frequências. Assim, sua variância conjunta NÃO está em uma unidade comum.
+Não corrigimos esses resultados congelados sem n e séries originais.
+O relatório agora exige `params.sharpe_basis` compatível com seu horizonte
+para cada Sharpe finito; metadado desconhecido ou incompatível → DSR UNKNOWN.
+Nenhum metadado foi inventado retroativamente para liberar o cálculo.
+
+| Número publicado / diagnóstico | Resultado desta auditoria |
+|---|---|
+| SR0 com N filtrado (23 Sharpes finitos) | 0,9524130493332158, reprodução aritmética do ledger atual |
+| SR0 contando todas as 26 tentativas | 0,9777608299827842, reprodução aritmética corrigida de N |
+| Validade dos dois SR0 acima | INVALID_FOR_INFERENCE: unidades/períodos incompatíveis; números de diagnóstico, não benchmarks científicos |
+| DSR H5 histórico 0,00, SR0 0,447, N=7 | Revalidação exata UNKNOWN: não foram localizados retornos congelados + snapshot de ledger usados naquela publicação |
+| H1/ETH, DSR histórico ≤ PSR | São limites publicados, não uma série DSR reconstruível; não promovem alpha |
+| DSRs em HANDOFF e relatórios históricos de outras datas | NOT_RECOMPUTABLE_FROM_SUMMARY: Sharpe/n agregado não determina assimetria/curtose exigidas pelo PSR/DSR |
+
+O inventário de ocorrências numéricas publicadas está em
+`docs/evidence/cripto_v12_dsr_inventory.json`. Tentativas com Sharpe null
+continuam em N. Converter t-like para Sharpe requer n e convenção original;
+normalizar períodos distintos exige protocolo próprio. Nem usar a série WFA
+atual sem identidade, nem criar retornos sintéticos com o mesmo Sharpe,
+recalcula legitimamente uma publicação passada. Portanto não alegamos ter
+recalculado DSRs irrecuperáveis. Todos ficam retirados de uso como evidência
+atual até recuperação dos inputs; o NO-GO direcional da H5 permanece sustentado
+pelo Spearman prospectivo, independentemente de DSR.
+
+### §8–§10 — moedas e custo de oportunidade, as of 2026-09-07
+
+Fontes consultadas em 2026-09-07. OBSERVADO: [PTAX fechamento
+04/09](https://ptax.bcb.gov.br/ptax_internet/consultarUltimaCotacaoDolar.do),
+USD compra 5,1247 / venda 5,1253 BRL. Reporting currency fixada para esta
+rodada: BRL. US$5.000 = R$25.626,50 usando PTAX venda como marca contábil,
+nunca como cotação executável. P&L de carry em USDT, com referência USD e risco
+de descolamento USDT/USD explícito. Benchmark em BRL. Hedge: NENHUM modelado.
+Exposição cambial: aproximadamente US$5.000 de principal + P&L líquido, sem
+hedge; ±10% de USD/BRL representa ±R$2.562,65 sobre o principal, sem alpha.
+
+| Campo obrigatório | Valor / ressalva |
+|---|---|
+| BENCHMARK_SOURCE | Candidato concreto: [Tesouro Reserva via BB](https://www.tesourodireto.com.br/tesouro-reserva), 100% Selic. Conta BB e escolha efetiva pelo operador: UNKNOWN. Não foi aberta conta. |
+| BENCHMARK_GROSS_RATE | Selic efetiva anualizada 13,90% em 04/09, [BCB SGS 1178](https://api.bcb.gov.br/dados/serie/bcdata.sgs.1178/dados/ultimos/1?formato=json). Meta 14,00% é referência macro separada. Projeção de 365 dias a taxa constante é cenário, não retorno contratado. |
+| BENCHMARK_TAX | Cenário PF, resgate após 365 dias: IR 17,5% do rendimento; IOF zero após 30 dias ([B3](https://www.b3.com.br/pt_br/produtos-e-servicos/tesouro-direto/tesouro-direto/perguntas-frequentes/)). Perfil tributário efetivo: UNKNOWN. |
+| BENCHMARK_FEES | Custódia B3 0,20% a.a., isenção até R$10.000. Taxa adicional do intermediário e isenção já consumida pelo CPF: UNKNOWN. |
+| BENCHMARK_NET_RETURN | Efetivamente acessível ao operador: UNKNOWN. Cenário descrito abaixo, com taxa do intermediário zero e isenção integral disponível, produz 11,318%–11,346% em um ano. |
+| AS_OF_DATE | 2026-09-07; câmbio e Selic efetiva com data do último dia útil disponível, 2026-09-04. |
+
+Controle temporal: SGS432 `/ultimos/1` devolveu data 16/09/2026 (futura no
+momento da consulta), logo foi rejeitada. Consulta delimitada 04–07/09 confirmou
+meta 14,00%. A indicação da constituição “desde 06/08” não foi promovida a dado
+histórico confirmado. O endpoint antigo de preços do Tesouro retornou 410;
+a página corrente de títulos não expôs cotação de Tesouro Selic. Não se
+inventou spread para completar o benchmark.
+
+FX_CONVERSION_COST: **UNKNOWN** para entrada e saída (spread, taxa, tributos,
+rede e rota não escolhidos). PTAX não mede esse custo; a marcação não assume
+conversão gratuita. Prêmio de risco exigido por venue/colateral/stablecoin:
+UNKNOWN, decisão do operador. Custo fixo operacional e atenção reais: UNKNOWN.
+Estimar 2h/mês a R$50/h produz R$1.200/ano apenas como sensibilidade explícita.
+
+**Cálculo reproduzível do cenário**, sem misturar taxa com moeda:
+
+- Capital marcado C=5.000×5,1253=R$25.626,50.
+- Rendimento bruto, taxa constante 13,9%: R$3.562,0835/ano.
+- IR do cenário: 17,5% do rendimento. Custódia entre R$31,253 e R$38,377167,
+  limitando a base entre saldo inicial e saldo final bruto; não é simulação
+  exata de apropriação diária/tributação de cada fluxo.
+- Ganho líquido ilustrativo: R$2.900,34–R$2.907,47/ano.
+- ANNUAL_REQUIRED_VALUE real = BENCHMARK_NET_RETURN×C + prêmio de risco +
+  custo fixo + atenção: **UNKNOWN**. No cenário, sem os três acréscimos,
+  a referência é R$2.900,34–R$2.907,47; com a atenção ilustrativa,
+  R$4.100,34–R$4.107,47, antes de prêmio de risco, FX e custos fixos.
+- Estrutura ilustrativa spot integralmente pago + margem integral separada:
+  C=N_spot+M, M=N_spot; logo C/N=2 por construção desta estrutura, não por lei.
+  N=R$12.813,25; hurdle ilustrativo 22,635%–22,691% sobre esse nocional antes
+  dos acréscimos. Colateral eficiente só muda o fator quando venue e regras
+  forem conhecidos. Não há leverage autorizada nem medida.
+
+O valor real exigido não virou um número preciso com campos faltantes. O
+cenário é referência condicional; não é limite inferior universal, pois o
+benchmark futuro e a elegibilidade do operador também não estão fixados.
+MIN_GROSS_EDGE_WORTH_PURSUING permanece UNKNOWN por fricção não medida.
+FX_CONVERSION_COST será incluído uma única vez nos custos fixos e não também
+como desconto duplicado no retorno do benchmark.
+
+### Funding carry, gates, oportunidades e ranking
+
+Novidade material proposta: captar pagamentos de funding mantendo spot comprado
+e perp vendido, alvo FINANCING_PREMIUM / STRUCTURAL_CONSTRAINT. H1-H3 testaram
+funding/OI como preditor de direção; isso não mede essa transferência de valor.
+Distinção causal aceita para preparar dossiê, não para autorizar reabertura.
+`docs/reopen_dossiers/funding_carry_structural_v1.json` contém os seis campos
+do gate vigente e protocolo preliminar. Passar no validador só comprova
+completude documental. Não modifica `frozen_families`, não registra trial e
+não autoriza execução econômica antes dos insumos acima serem conhecidos.
+
+**G1 — FAIL para executar hoje:** sem venue/adapter real, nenhuma estrutura
+de colateral verificável ou autorização de capital. Veredito:
+`KILL_UNDER_CURRENT_ENVELOPE` para deployment; `BACKLOG` para a tese. G2–G7
+**NOT_RUN**, obedecendo à regra do primeiro gate que reprova. Além disso, G2
+estaria UNKNOWN sem benchmark efetivo e fricção; não tratá-lo como aprovado.
+A tese de dez perguntas não foi aprofundada antes de fechar esses insumos.
+
+Apenas disponibilidade pública foi sondada: [funding BTCUSDT gratuito](https://fapi.binance.com/fapi/v1/fundingRate?symbol=BTCUSDT&limit=3)
+respondeu HTTP 200 em 07/09 às 18:07 UTC. Três settlements não estimam
+estabilidade, APY futuro ou P&L capturável; não foram usados para um backtest.
+`known_at` é a hora da consulta, distinto de `fundingTime`. A sonda independente
+não substitui nem redireciona o coletor prospectivo existente.
+
+| Família | Fidelidade, concorrência e half-life | Lacuna / primeiro gate |
+|---|---|---|
+| Structural/carry | Funding 8h pesquisa pagamentos; sem fills/book/margem, execução UNKNOWN. Competição profissional em basis/carry; vantagem própria não demonstrada. Half-life econômica UNKNOWN (settlement 8h não é half-life). | Venue, colateral e custos reais; G1 bloqueia deployment; G2 não computável |
+| Predictive | OHLCV diário/OI1h/funding8h permitem apenas mecanismos lentos; competição sistemática, sem vantagem demonstrada. Half-life deve ser medida por alvo; 24/48h de forecast não prova duração do edge. | Família HMM congelada; H7/H8 sem evidência; não priorizar mais busca adaptativa |
+| Execution/MM | Sem L2/tape/queue, latência e fill model: INCONCLUSIVE_DATA_FIDELITY. Competidores com infraestrutura mais rápida. | G1 KILL_UNDER_CURRENT_ENVELOPE; feed+venue+host apropriado destravam |
+| Cross-venue | Sem execução simultânea e capital pré-posicionado; concorrência automatizada; half-life UNKNOWN com dado atual. | G1 KILL_UNDER_CURRENT_ENVELOPE; duas venues+capital+execução destravam |
+| Options/on-chain | known_at defensável e histórico equivalente ainda UNKNOWN; APY divulgado não mede edge. | HOLD_ON_DATA; futura comparação depende de proveniência gratuita e estrutura |
+
+**FREE_ALPHA_CANDIDATE — lending de stablecoin sem alavancagem:**
+classe FINANCING_PREMIUM; tomadores pagam juros, potencialmente por segmentação
+de crédito/colateral. Protocolo e cadeia não escolhidos, concorrência de
+depositantes e fundos; contrato/oráculo, supply/borrow, utilização, custos de
+rede e known_at são dados necessários. Feed live específico, capital mínimo,
+edge bruto/líquido, half-life e capacidade: UNKNOWN. Pesquisa pública inicial
+gratuita; falsificação mais barata é demonstrar um caminho autorizado para
+custódia/execução e depois comparar juros líquidos com o hurdle em BRL.
+Confiança baixa; tempo até veredito de envelope: esta rodada; até evidência
+deployable: UNKNOWN. **BACKLOG, G1 KILL_UNDER_CURRENT_ENVELOPE** (nenhuma wallet,
+venue ou infraestrutura de contrato autorizada). Não se examinou APY para
+escolher um vencedor; G2–G7 não foram rodados. Candidato registrado e morto
+barato sob o envelope, sem afirmar que não existe alpha na classe.
+
+**Expected Value of Research — ranking qualitativo, não EV financeiro inventado:**
+1. Correção DSR/causal já executada: impede conclusões ilegítimas a custo limitado.
+2. Structural/carry: próxima frente exploratória apenas quando estrutura e
+   benchmark forem conhecidos; mecanismo de pagamento mais direto, mas nenhuma
+   vantagem ou expectativa líquida demonstrada hoje.
+3. Predictive H7/H8: BACKLOG, abaixo de carry; dado/gerador precisa sustentar
+   identificação e poder antes de qualquer novo resultado. HMM congelado.
+4. Lending FREE_ALPHA_CANDIDATE: BACKLOG sob G1. Nenhum candidato novo passou
+   G1–G7, portanto nenhum qualifica para Proof.
+
+CURRENT_NEXT_IRREVERSIBLE_DECISION: **NONE_AUTHORIZED**. Próxima decisão
+externa necessária para deployment é escolher/autorizar estrutura de venue,
+custódia e capital depois da evidência de execução requerida. Para concluir o
+hurdle, dependem do operador: alternativa efetivamente acessível, rota/custo FX,
+prêmio de risco e custo de atenção. Esta rodada não gasta, transfere, abre
+conta, altera coleta, aprova ou mergeia em nome de terceiros.

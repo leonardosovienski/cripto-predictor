@@ -78,8 +78,8 @@ def test_toda_hipotese_fechada_bloqueia_update_antes_do_core(tmp_path, monkeypat
 
 
 def test_h6_fechada_bloqueia_reescrita_pelo_hardening(tmp_path, monkeypatch):
-    """H6 fechou REFUTADA/NO-GO em 2026-09-04 (docs/HYPOTHESES.md, veredito real:
-    IC cruza zero, n=84). O hardening que protege hipóteses fechadas contra
+    """H6 permanece encerrada por amostra insuficiente (errata 2026-09-07):
+    IC cruza zero, n=84; o rótulo causal não libera reescrita. O hardening que protege hipóteses fechadas contra
     reescrita silenciosa (mesmo mecanismo do H1-H3 congelado) precisa bloquear
     isso de verdade agora que H6 é um caso real fechado, não só sintético."""
     from GarimpoInvestimentos.governance import load_scientific_state
@@ -203,11 +203,15 @@ def test_schema_rejeita_nome_duplicado():
 # --- governança de identidade (N+1) -------------------------------------------
 
 
-def test_reexecucao_mesma_config_atualiza_sharpe_preservando_registro(tmp_path):
+def test_reexecucao_mesma_config_atualiza_sharpe_preservando_registro(
+    tmp_path, registry_attestation
+):
     p = tmp_path / "trials.json"
-    register_trial("t-a", params=PARAMS, path=p, **_NOGATE)
+    register_trial("t-a", params=PARAMS, path=p, **registry_attestation(p))
     original = load_trials(p)[0]["registered_at"]
-    register_trial("t-a", params=PARAMS, sharpe=0.12, notes="maturou", path=p)  # update: sem trava
+    register_trial(
+        "t-a", params=PARAMS, sharpe=0.12, notes="maturou", path=p
+    )  # update: atestado validado pelo Core
     trials = load_trials(p)
     assert len(trials) == 1
     assert trials[0]["sharpe"] == 0.12
@@ -258,9 +262,9 @@ def _pred(score, var, fonte="dpl:fallback"):
     return {"score": score, "var_d7_pct": var, "fonte": fonte}
 
 
-def test_backtest_fecha_sharpe_da_trial_casada(tmp_path):
+def test_backtest_fecha_sharpe_da_trial_casada(tmp_path, registry_attestation):
     p = tmp_path / "trials.json"
-    register_trial("v2-teste", params=PARAMS, path=p, **_NOGATE)
+    register_trial("v2-teste", params=PARAMS, path=p, **registry_attestation(p))
     enriched = [
         _pred(80, 2.0),
         _pred(75, -1.0),
@@ -309,7 +313,7 @@ def test_backtest_ignora_trial_fechada_sem_impedir_pipeline(tmp_path):
     assert p.read_bytes() == before
 
 
-def test_backtest_divide_eras_entre_trial_encerrada_e_sucessora(tmp_path):
+def test_backtest_divide_eras_entre_trial_encerrada_e_sucessora(tmp_path, registry_attestation):
     """Duas trials com os MESMOS params de casamento (fonte, horizonte) — caso
     real: v2-dpl-gemini-h7 encerrada e v2-dpl-multi-h7 sucessora. Cada previsão
     matura a trial VIGENTE na sua data (fronteira = registered_at da sucessora);
@@ -318,8 +322,8 @@ def test_backtest_divide_eras_entre_trial_encerrada_e_sucessora(tmp_path):
     from datetime import datetime
 
     p = tmp_path / "trials.json"
-    register_trial("era-1", params=PARAMS, path=p, **_NOGATE)
-    register_trial("era-2", params=PARAMS, path=p, **_NOGATE)
+    register_trial("era-1", params=PARAMS, path=p, **registry_attestation(p))
+    register_trial("era-2", params=PARAMS, path=p, **registry_attestation(p))
     trials = _json.loads(p.read_text(encoding="utf-8"))
     trials[0]["registered_at"] = "2026-07-01T00:00:00Z"
     trials[1]["registered_at"] = "2026-07-10T00:00:00Z"
@@ -375,9 +379,9 @@ def test_h6_ignora_dado_anterior_ao_registro_mesmo_com_score_baixo(tmp_path):
     assert load_trials(p)[0]["sharpe"] is None
 
 
-def test_h6_matura_com_dado_posterior_ao_registro_e_score_baixo(tmp_path):
+def test_h6_matura_com_dado_posterior_ao_registro_e_score_baixo(tmp_path, registry_attestation):
     p = tmp_path / "trials.json"
-    register_trial(H6_TRIAL_NAME, params=H6_PARAMS, path=p, **_NOGATE)
+    register_trial(H6_TRIAL_NAME, params=H6_PARAMS, path=p, **registry_attestation(p))
     trials = json.loads(p.read_text(encoding="utf-8"))
     trials[0]["registered_at"] = "2026-07-20T00:00:00Z"
     p.write_text(json.dumps(trials), encoding="utf-8")

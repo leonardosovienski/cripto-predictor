@@ -15,8 +15,8 @@ ROOT = Path(__file__).resolve().parents[1]
 # truth is the lockfile itself.
 EXPECTED = {
     "predictor-core": (
-        "https://github.com/leonardosovienski/core-predictor/releases/download/v3.0.0/predictor_core-3.0.0-py3-none-any.whl",
-        "sha256:fdc1d3e27b6805a1d125702b6e3bb88f6fa3483791c22ea310bf6c56d5581c4d",
+        "https://github.com/leonardosovienski/core-predictor/releases/download/v3.2.0/predictor_core-3.2.0-py3-none-any.whl",
+        "sha256:9166dd6bd3be99668c0eb8bd3c59a92061e765186608465c0caf48a2417e3009",
     ),
     "predictor-ops": (
         "https://github.com/leonardosovienski/predictor-ops/releases/download/v4.1.0/predictor_ops-4.1.0-py3-none-any.whl",
@@ -26,7 +26,7 @@ EXPECTED = {
 
 
 def test_shared_versions_are_exactly_compatible():
-    assert importlib.metadata.version("predictor-core") == "3.0.0"
+    assert importlib.metadata.version("predictor-core") == "3.2.0"
     assert importlib.metadata.version("predictor-ops") == "4.1.0"
 
 

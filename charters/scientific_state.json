@@ -11,10 +11,10 @@
     "H3": "CLOSED_NO_GO",
     "H4": "CLOSED_INSUFFICIENT_SAMPLE",
     "H5": "CLOSED_NO_GO",
-    "H6": "CLOSED_NO_GO",
+    "H6": "CLOSED_INSUFFICIENT_SAMPLE",
     "H7": "REGISTERED_NOT_ACTIVATED",
     "H8": "REGISTERED_NOT_ACTIVATED",
-    "H9": "CLOSED_NO_GO"
+    "H9": "CLOSED_INSUFFICIENT_SAMPLE"
   },
   "hypothesis_trials": {
     "H1": "v3-hmm-funding-oi-fr90",
@@ -30,5 +30,5 @@
   "frozen_families": [
     "funding_oi_hmm_v3"
   ],
-  "notes": "H1-H3/V3 cannot be reopened or reparameterized silently. Any materially new hypothesis requires a new trial and valid power attestation. Correção 2026-08-19: 'H1' era confundido com a trial 'v1-direct-gemini-h7' (ancestral pré-protocolo da linha LLM, sem rótulo formal). O H1 real é 'v3-hmm-funding-oi-fr90' (docs/HYPOTHESES.md) — ver hypothesis_trials para o mapeamento explícito H<N> -> nome real em trials.json, que existe justamente para impedir essa ambiguidade se repetir."
+  "notes": "H1-H3/V3 cannot be reopened or reparameterized silently. Any materially new hypothesis requires a new trial and valid power attestation. Correção 2026-08-19: 'H1' era confundido com a trial 'v1-direct-gemini-h7' (ancestral pré-protocolo da linha LLM, sem rótulo formal). O H1 real é 'v3-hmm-funding-oi-fr90' (docs/HYPOTHESES.md) — ver hypothesis_trials para o mapeamento explícito H<N> -> nome real em trials.json, que existe justamente para impedir essa ambiguidade se repetir. Errata CRIPTO v1.2, 2026-09-07: H6 e H9 permanecem encerradas, agora CLOSED_INSUFFICIENT_SAMPLE. H6: INCONCLUSIVE_DUE_TO_POWER (n=84, IC cruza zero, poder 23% para rho=0.2); H9: INCONCLUSIVE (44/45 folds insuficientes). A decisão de não promoção de 2026-09-04 é mantida; sua leitura como refutação científica é retirada. Ver docs/HYPOTHESES.md, errata 2026-09-07. Isto não reativa hipóteses nem altera coleta, ledger, selos ou frozen_families."
 }

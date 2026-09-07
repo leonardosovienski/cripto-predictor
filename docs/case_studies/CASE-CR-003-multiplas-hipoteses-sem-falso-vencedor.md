@@ -1,4 +1,4 @@
-# CASE-CR-003 — Sete hipóteses, zero GO: disciplina de múltiplas tentativas sem
+# CASE-CR-003 — Nove hipóteses, zero GO: disciplina de múltiplas tentativas sem
 promover um falso vencedor
 
 **Fonte:** `charters/scientific_state.json`, `GarimpoInvestimentos/trials.json`,
@@ -6,7 +6,7 @@ promover um falso vencedor
 `GarimpoInvestimentos/analyzers/pbo.py`.
 
 ## Claim
-Ao longo de sete hipóteses registradas (H1–H7), nenhuma foi promovida a capital
+Ao longo de nove hipóteses registradas (H1–H9), nenhuma foi promovida a capital
 real, e o projeto manteve controles estruturais (trava de poder, PBO/CSCV,
 registro append-only) para impedir que a família com melhor número aparente
 fosse escolhida por acaso amostral.
@@ -36,8 +36,10 @@ Status real por hipótese (charter, campo `hypotheses`):
 | H3 | v3-hmm-funding-oi-fr90-h48 | CLOSED_NO_GO |
 | H4 | v2-dpl-gemini-h7 | CLOSED_INSUFFICIENT_SAMPLE |
 | H5 | v2-dpl-multi-h7 | CLOSED_NO_GO |
-| H6 | h6-sinal-invertido-d7 | COLLECTION_ONLY_IMMATURE |
-| H7 | (não registrada em trials.json) | REGISTERED_NOT_ACTIVATED |
+| H6 | h6-sinal-invertido-d7 | CLOSED_INSUFFICIENT_SAMPLE — UNDERPOWERED |
+| H7 | h7-macro-dxy-hmm-v1 | REGISTERED_NOT_ACTIVATED |
+| H8 | h8-llm-hypothesis-generator | REGISTERED_NOT_ACTIVATED |
+| H9 | h9-oi-volume-ratio-hmm-v1 | CLOSED_INSUFFICIENT_SAMPLE — 1/45 folds avaliável |
 
 Nenhuma linha é GO. Nenhuma foi "resgatada" via reparametrização pós-hoc — a
 H3 (horizonte 48h), por exemplo, é tratada como aprendizado ("o sinal é de

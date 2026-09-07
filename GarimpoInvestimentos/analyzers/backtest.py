@@ -25,7 +25,12 @@ from predictor_core.net import get_http_client, with_retry
 from predictor_core.obs import emit_event
 from predictor_core.stats import spearman_block_ci
 
-from GarimpoInvestimentos.analyzers.trials import deflated_sharpe_ratio, load_trials, register_trial
+from GarimpoInvestimentos.analyzers.trials import (
+    DeflationNotEstimableError,
+    load_trials,
+    register_trial,
+    registry_deflated_sharpe_ratio,
+)
 from GarimpoInvestimentos.config import settings
 from GarimpoInvestimentos.core.history import migrate_csv_to_store
 from GarimpoInvestimentos.core.paths import FEATURE_STORE_DB, OUTPUT_DIR
@@ -865,18 +870,22 @@ def _metrics(enriched: list[dict], horizon: int) -> None:
         # reportar a melhor fabrica significância — o desconto que ninguém media.
         trials = load_trials()
         if trials and len(rets) >= 3:
-            # Trials abertas têm sharpe=null (ex.: H6 aguardando gate) — não
-            # entram no denominador do máximo-por-sorte (auditoria externa).
-            d = deflated_sharpe_ratio(
-                [x / 100 for x in rets],
-                [t["sharpe"] for t in trials if t.get("sharpe") is not None],
-            )
-            if not math.isnan(d["dsr"]):  # NaN check legível (era d != d)
-                print(
-                    f"  DSR (N={d['n_trials']} tentativas registradas): "
-                    f"P(SR > máx-por-sorte) = {d['dsr']:.2f} | SR0 = {d['sr0']:.3f} "
-                    f"— {'passa' if d['dsr'] >= 0.95 else 'NÃO passa'} o corte 0.95"
+            # Tentativas sem Sharpe contam em N, mas não na variância.
+            try:
+                d = registry_deflated_sharpe_ratio(
+                    [x / 100 for x in rets], trials, sharpe_basis=f"per_trade_d{horizon}"
                 )
+            except DeflationNotEstimableError as exc:
+                print(f"  DSR: UNKNOWN (N={len(trials)}) — {exc}; promoção bloqueada")
+            else:
+                if not math.isnan(d["dsr"]):
+                    print(
+                        f"  DSR (N={d['n_trials']} tentativas registradas, "
+                        f"{d['n_sharpes']} Sharpes finitos): "
+                        f"P(SR > máx-por-sorte) = {d['dsr']:.2f} | SR0 = {d['sr0']:.3f} "
+                        f"— {'passa' if d['dsr'] >= 0.95 else 'NÃO passa'} o corte 0.95"
+                    )
+
     else:
         print(f"  Hit rate (score ≥ {threshold}): nenhum sinal forte ainda")
 

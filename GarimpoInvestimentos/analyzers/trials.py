@@ -12,20 +12,73 @@ positivo (testing.harness.attest_pipeline_power) — o arquivo irmão
 que prova que o juiz GO/NO-GO detecta edge plantado e rejeita ruído.
 """
 
+import json
+import math
 from pathlib import Path
 
 from predictor_core.measurement.trials import (  # noqa: F401 — re-export
+    DeflationNotEstimableError,
     PowerAttestationMissingError,
     attestation_path_for,
-    deflated_sharpe_ratio,
     expected_max_sharpe,
     validate_trials,
 )
+from predictor_core.measurement.trials import deflated_sharpe_ratio as _core_dsr
 from predictor_core.measurement.trials import load_trials as _core_load
 from predictor_core.measurement.trials import register_trial as _core_register
 
 # Versionado junto do código (dentro do pacote) — viaja com o repositório.
 TRIALS_PATH = Path(__file__).resolve().parent.parent / "trials.json"
+
+
+def deflated_sharpe_ratio(returns: list, trial_sharpes: list) -> dict:
+    """Não publica PSR sob rótulo DSR quando a variância não é estimável."""
+    return _core_dsr(returns, trial_sharpes, strict=True)
+
+
+def registry_deflated_sharpe_ratio(returns: list, trials: list[dict], *, sharpe_basis: str) -> dict:
+    """Recusa variância entre Sharpes sem unidade/período comparáveis.
+
+    O ledger histórico mistura Sharpe por trade e mean/std * sqrt(n) do WFA.
+    Não normalizamos sem o n original, nem alteramos resultados congelados.
+    """
+    for trial in trials:
+        sharpe = trial.get("sharpe")
+        if sharpe is not None and math.isfinite(sharpe):
+            if trial.get("params", {}).get("sharpe_basis") != sharpe_basis:
+                raise DeflationNotEstimableError(
+                    f"base/unidade de Sharpe não comprovada para {trial['name']!r}; "
+                    f"esperado {sharpe_basis!r}"
+                )
+    return deflated_sharpe_ratio(returns, [trial.get("sharpe") for trial in trials])
+
+
+def _update_attestation(target: Path, name: str, extra: dict) -> dict:
+    """Encaminha o atestado da métrica já registrada; o Core valida sua vigência.
+
+    Não emite atestados, não inventa métrica e não libera família fechada.
+    Chamadores que fornecem explicitamente o atestado preservam esse contrato.
+    """
+    if "power_attestation" in extra or "pipeline_fingerprint" in extra:
+        return extra
+    trial = next((t for t in load_trials(target) if t["name"] == name), None)
+    if trial is None or not trial.get("metric"):
+        return extra
+    metric = trial["metric"]
+    att = (
+        target.with_name(target.stem + ".phase1_harness_attestation.json")
+        if metric == "spearman_ic"
+        else attestation_path_for(target)
+    )
+    try:
+        record = json.loads(att.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        record = {}
+    return {
+        **extra,
+        "power_attestation": att,
+        "pipeline_fingerprint": record.get("pipeline_fingerprint"),
+    }
 
 
 def load_trials(path: Path | None = None) -> list[dict]:
@@ -112,4 +165,6 @@ def register_trial(
         _reject_frozen_family(
             name, params, state.frozen_families, {t["name"] for t in load_trials(target)}
         )
+    if sharpe is not None or "status" in extra:
+        extra = _update_attestation(Path(target), name, extra)
     return _core_register(name, params=params, sharpe=sharpe, notes=notes, path=target, **extra)

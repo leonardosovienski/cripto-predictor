@@ -9,7 +9,7 @@ schema_version: cr-research-freeze/1
 generated_at: 2026-09-02
 updated_at: 2026-09-03  # segunda camada: verificação executável (não apenas leitura de código)
 based_on_charter: charters/scientific_state.json (as_of_commit 9949b510586cafe08c11a4733c19ebf30edf253c)
-core_version_pinned: predictor-core==3.0.0 (pyproject.toml + uv.lock, consistentes)
+core_version_pinned: predictor-core==3.2.0 (pyproject.toml + uv.lock, consistentes)
 
 preservation_verification:
   # CR_PRESERVATION = PASS. Fechado em 2026-09-03 pelo dono do projeto na
@@ -173,13 +173,14 @@ active_hypotheses: []
 # capital_authorized=false, leverage_authorized=false, llm_direct_trading_authorized=false
 # (charters/scientific_state.json).
 
-passive_observations:
+closed_observations:
   - id: H6
     trial: h6-sinal-invertido-d7
-    status: COLLECTION_ONLY_IMMATURE (charters/scientific_state.json — NÃO alterado; ver nota)
+    status: CLOSED_INSUFFICIENT_SAMPLE (errata 2026-09-07; INCONCLUSIVE_DUE_TO_POWER)
     gate: "n >= 30 (H6_MIN_N), IC95 do Spearman invertido não cruzando zero"
     last_recorded_state: "GarimpoInvestimentos/h6_status.json — observed_at 2026-09-03T05:55:26Z, n=84, rho=-0.057, IC95%[-0.231, +0.129], gate_atingido=true, veredito 'RUIDO (IC cruza 0)'"
     frozen_definition_hash: 5582ec23370e58ae0fe961d41a3127674c136027b28ec511034efb0bd99b9f0a (docs/H6_REFREEZE_2026-08-27.md)
+    errata_2026-09-07: "O texto de 03/09 abaixo é histórico. O charter fechou H6 em 04/09; a causa agora é amostra insuficiente. Não há reabertura nem mudança da coleta."
     evidence_update_2026-09-03: >
       Rodada real de quality_snapshot.py na máquina de produção (C:\predictor\prod),
       após corrigir dois bugs de wiring de env var (DATA_DIR e COINGECKO_API_KEY
@@ -197,6 +198,8 @@ passive_observations:
       alterado); isto é um evidence update dentro do protocolo já registrado, não
       reabertura nem novo ciclo de otimização (bloco 18).
     note: "n=0 na leitura anterior (24/08) era estado legítimo, não banco vazio — confirmado agora que o pipeline voltou a rodar."
+
+passive_observations:
   - id: H6_binance_collection
     plan: observation_plans/binance_funding_oi_v1.yaml
     status: COLLECTION_ONLY (docs/COLLECTION_ONLY_OBSERVATION.md)

@@ -18,7 +18,7 @@ em `CR_RESEARCH_FREEZE.md` e o gate técnico em `scripts/check_reopen_dossier.py
 
 | Arquivo | O que contém |
 |---|---|
-| **`CR_RESEARCH_FREEZE.md`** (raiz) | O documento mestre. Hipóteses ativas (nenhuma), observações passivas (H6, H6_binance_collection, H7), hipóteses encerradas (H1-H5 + ancestral), componentes preservados/arquivados, inventário formal de componentes (REUSE/KEEP_DOMAIN_OWNED/ARCHIVE), atestado do harness, verificação de preservação (backup real, testado), auditoria de sweep, política de reabertura |
+| **`CR_RESEARCH_FREEZE.md`** (raiz) | O documento mestre. Hipóteses ativas (nenhuma), observação passiva Binance; H7/H8 registradas sem ativação; hipóteses encerradas (H1-H6, H9 + ancestral), componentes preservados/arquivados, inventário formal de componentes (REUSE/KEEP_DOMAIN_OWNED/ARCHIVE), atestado do harness, verificação de preservação (backup real, testado), auditoria de sweep, política de reabertura |
 
 ## 3. Governança e reabertura
 
@@ -75,7 +75,7 @@ em `CR_RESEARCH_FREEZE.md` e o gate técnico em `scripts/check_reopen_dossier.py
 | Arquivo | O que contém |
 |---|---|
 | `scripts/attest_harness.py` | Reemite o atestado de controle positivo/negativo dos 2 juízes (V3/PSR, Fase1/Spearman) |
-| `GarimpoInvestimentos/trials.harness_attestation.json` | Atestado real, `core_version: 3.0.0`, reemitido nesta rodada (não editado manualmente) |
+| `GarimpoInvestimentos/trials.harness_attestation.json` | Atestado histórico Core 3.0.0; migração/reemissão Core 3.2.0: errata P0-A em HYPOTHESES.md |
 | `GarimpoInvestimentos/trials.phase1_harness_attestation.json` | Idem, juiz Fase1 |
 
 ## 9. Segurança
