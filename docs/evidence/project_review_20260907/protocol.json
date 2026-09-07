@@ -1,0 +1,16 @@
+{
+  "id": "project-quality-review-20260907-v6",
+  "base_commit": "5d28a63c1b2a147d17054ace3914de698a7959a4",
+  "authorization": "User requests a complete final review, implementation of justified corrections, execution and validation, and an honest assessment of quality and profit.",
+  "mode": "SOFTWARE_AND_EVIDENCE_AUDIT",
+  "scope": ["Review all prior conclusions against the user's absolute-profit objective", "Recompute both original carry assets from frozen raw observations with Decimal and no external benchmark", "Revalidate existing historical results without model or threshold search", "Repair observer crash locking and add complete coverage-aware hypothetical accounting", "Validate installation, tests, lint, typing, build, package integrity and scheduled observation configuration"],
+  "economic_correction": "The previous passive carry rejection depended on a benchmark the user subsequently rejected. Preserve that original report and reclassify its same existing cashflows under absolute profit. A positive price-proxy scenario is not actual investor net profit or certified margin viability.",
+  "model": "Keep the existing scorer, training, ranking, eligibility and thresholds fixed. Zero historical entries is a failed demonstration of profitability, not justification for threshold tuning in this audit.",
+  "operational_amendment": "Version observer fixes in a separate v6 profile and data directory before any prospective decisions. Keep v4 protocol, freeze, data and ledgers intact; preserve scheduled dates and notification preferences.",
+  "new_historical_model_performance_searches": 0,
+  "already_consumed_evidence": true,
+  "independent_validation_claim": false,
+  "stopping_rule": "Complete justified fixes and their verification; publish favorable and unfavorable evidence together. No forced trades, unbounded strategy search, capital, leverage, production changes or reopened frozen families. Future outcomes cannot be manufactured during this audit.",
+  "capital_authorized": false,
+  "orders": false
+}
