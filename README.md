@@ -1,5 +1,8 @@
 # cripto-predictor (GarimpoInvestimentos + DPL)
 
+> **Estado desta linha após revisão — 07/09/2026:** [resultado consolidado](docs/PROJECT_STATE_20260907.md).
+> O seletor de altcoins não operou no histórico; carry tem cenários positivos após custos assumidos, sem lucro real comprovado. Pesquisa/observação autorizada separadamente; as famílias científicas antigas continuam congeladas.
+
 > ## 🧊 Projeto cientificamente congelado — comece por `CR_FREEZE_INDEX.md`
 >
 > Este repositório passou por um congelamento científico completo

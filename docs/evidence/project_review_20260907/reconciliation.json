@@ -1,0 +1,46 @@
+{
+  "live_preflight": {
+    "sample_size": 487,
+    "currently_trading_after_exclusions": 472,
+    "eligible": 44,
+    "selected": [],
+    "raw_response_hashes": 616,
+    "independent_book_entry_checks": 44,
+    "offline_snapshot_replay": "EXACT_EXCEPT_NEW_EXECUTION_TIMESTAMP_AND_LEDGER_LINK_FIELDS",
+    "freeze_sha256": "2bc8f67c704780acff78973404c7a8f5915d05d90f8b05bba72d16aa360a25f6",
+    "ledger_integrity": "PASS",
+    "prospective": false
+  },
+  "historical_replay": {
+    "status": "BYTE_IDENTICAL",
+    "sha256": {
+      "results.json": "9f70b6aa9a43d9541638d5f96a7b91c9383a3d0af5a265bce8be9bc75333dad0",
+      "weekly_results.json": "033c80a0d8fa1c9dc27670e49b5658e6e894fdd5fb4097f545b9fb5cb4f05132",
+      "decisions.json": "fc68054d7dd3cbb390d994068daa38433f85f1f9462b0684da4d832eb11981f2",
+      "scores.json.gz": "1e50d0009a24201c9c7a48752b86946838e43fa87956d7dbc025617e44d13243"
+    }
+  },
+  "protected_files_unchanged": {
+    "charters/scientific_state.json": "f9d20abdef2fa77df98784a90f5d4c2e1a45907e6438ffa9d8235e5a9e063c75",
+    "GarimpoInvestimentos/trials.json": "7193b15df347b8243a65ab92449503dd64f90a9777207aadc8c80da2e0ac844b",
+    "GarimpoInvestimentos/v3/costs.py": "8b35cbc6e000896720ca12c075e86938187cb826be0b573c81a42754aecf21e1",
+    "charters/h6_definition_frozen.json": "301c1acd549c99d543085486a5559414b00001290f1ae28a63cfa2b66aa0b23f",
+    "GarimpoInvestimentos/h6_status.json": "1ec2d8460466db156283a9a2535adbb579e811f8dd6e9881802980ce8d0482b1",
+    "CR_RESEARCH_FREEZE.md": "0bf34ab59e4111a1910a38a07387719727750f68e3bfb8504de866a2b43b4a26",
+    "CR_FREEZE_INDEX.md": "f24d05e8748f50302c37abd562356f2d7c5ce585482938cbdfc9c94fd0124820",
+    "scripts/prepare_altcoin_payoff.py": "0c349fe67d4466db008cf1728c57767ee01fce9c122f85e539eeff6f8af30ad0",
+    "scripts/research_altcoin_analogs.py": "22b5456ae7c56c09b51cb295b784fad7b9b5685241f9fa54a31e5cb6a1aa7626",
+    "docs/evidence/altcoin_profit_20260907/freeze.json": "4a98d527c43b4aa385cf1393353de64a0c35a60681e53b1e152f4d9faba941cf",
+    "docs/evidence/altcoin_profit_20260907/protocol.json": "f708725abc533404a1236dab4e0d2939d62c8471ab71888a99c10cc40cc7321b"
+  },
+  "prior_reproduction_archives_unchanged": {
+    "ALTCOINS_REPRODUCAO.zip": "56e24223d6e97e9240d7f0af907010b68ddaee6a734a12de7bf570fda8361789",
+    "CRIPTO_ACOMPANHAMENTO_REPRODUCAO.zip": "93d3a741ed0706eead5bdc2d17016d9484adb8b94d806aceb22a3fe4e92ae3eb",
+    "CRIPTO_CONTINUACAO_REPRODUCAO.zip": "2e3a7a5901baa6a29cd72a458a8c32b72792d8f4eb505a4af17e298277779db9",
+    "CRIPTO_LUCRO_ABSOLUTO_REPRODUCAO.zip": "079b160fd7596c791d1041c268e47591f91bba7c7915db352a4a32cffab51fc3",
+    "CRIPTO_TESTE_HISTORICO_REPRODUCAO.zip": "327a717ef910f39b38d4e2afc7abbffab236aace4846dd3a952aef09d2fe1983",
+    "FUNDING_CARRY_REPRODUCAO.zip": "d0a4444ce97b56ded07f290036181f6c6b41c45c5967c7b589a7ead21cb7997d"
+  },
+  "model_tuning": false,
+  "orders": false
+}

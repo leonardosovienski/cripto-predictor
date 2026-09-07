@@ -73,7 +73,9 @@ def test_single_writer(tmp_path):
         with pytest.raises(FileExistsError):
             with f.exclusive(tmp_path):
                 pytest.fail("second writer entered")
-    assert not (tmp_path / "observer.lock").exists()
+    # The persistent file is metadata; a released OS lock permits another run.
+    with f.exclusive(tmp_path):
+        pass
 
 
 def rows_for(anchor):
@@ -233,6 +235,10 @@ def test_acquisition_failure_is_recorded_not_silently_dropped(tmp_path, monkeypa
     row = f.Ledger(args.data_dir / "ledger.jsonl").rows[0]
     assert row["payload"]["status"] == "ACQUISITION_FAILED"
     assert row["payload"]["prospective"] is False
+    import json
+
+    status = json.loads((args.data_dir / "status.json").read_text())
+    assert "acquisition failure" in status["last_run_error"]
 
 
 def test_catalog_diff_preserves_suspension_and_removal():
@@ -280,3 +286,35 @@ def test_absolute_profit_does_not_create_comparison_portfolios():
     assert f.portfolio_specs(snap, comparisons=False) == {
         "payoff": {"positions": [{"symbol": "AAAUSDT", "weight": 0.2}], "cash_weight": 0.8}
     }
+
+
+def test_complete_twelve_week_observer_cycle_reports_cost_losses(tmp_path, monkeypatch):
+    import json
+
+    first = datetime(2026, 9, 14, 0, 10, tzinfo=UTC)
+    args, clock = setup_tick(tmp_path, monkeypatch, first)
+    for week in range(13):
+        clock[0] = first + timedelta(weeks=week)
+        f.run(args)
+    status = json.loads((args.data_dir / "status.json").read_text())
+    quality = status["observation_quality"]
+    assert status["pilot_finished"] is True
+    assert status["prospective_decisions"] == status["matured_observations"] == 12
+    assert quality["known_due_weeks"] == quality["active_due_weeks"] == 12
+    assert quality["missing_due_weeks"] == 0
+    assert quality["standardized_pilot_profit_usdt"] < 0
+    assert quality["quality"] == "NONPOSITIVE_HYPOTHETICAL_MARKS"
+    before = (args.data_dir / "ledger.jsonl").read_bytes()
+    f.run(args)
+    assert (args.data_dir / "ledger.jsonl").read_bytes() == before
+
+
+def test_calendar_completion_without_observations_is_not_zero_profit(tmp_path, monkeypatch):
+    import json
+
+    args, _ = setup_tick(tmp_path, monkeypatch, datetime(2026, 12, 7, 0, 10, tzinfo=UTC))
+    f.run(args)
+    status = json.loads((args.data_dir / "status.json").read_text())
+    assert status["pilot_finished"] is True
+    assert status["observation_quality"]["missing_due_weeks"] == 12
+    assert status["observation_quality"]["standardized_pilot_profit_usdt"] is None

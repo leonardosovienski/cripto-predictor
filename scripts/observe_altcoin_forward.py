@@ -14,6 +14,7 @@ import math
 import os
 import time
 import uuid
+from collections import Counter
 from concurrent.futures import ThreadPoolExecutor
 from contextlib import contextmanager
 from datetime import UTC, datetime, timedelta
@@ -22,6 +23,11 @@ from pathlib import Path
 
 import httpx
 import numpy as np
+
+if os.name == "nt":
+    import msvcrt
+else:
+    import fcntl
 
 from scripts.collect_altcoin_analogs import time_ms
 from scripts.prepare_altcoin_payoff import is_known_leveraged_symbol, payoff_summary
@@ -56,14 +62,27 @@ def write_json(path: Path, value) -> None:
 def exclusive(directory: Path):
     directory.mkdir(parents=True, exist_ok=True)
     lock = directory / "observer.lock"
-    fd = os.open(lock, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+    # Keep a stable inode: removing a lock file can let concurrent processes
+    # lock different files at the same path. The OS releases this lock on crash.
+    fd = os.open(lock, os.O_CREAT | os.O_RDWR)
     try:
+        if os.fstat(fd).st_size == 0:
+            os.write(fd, b" ")
+        os.lseek(fd, 0, os.SEEK_SET)
+        try:
+            if os.name == "nt":
+                msvcrt.locking(fd, msvcrt.LK_NBLCK, 1)
+            else:
+                fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except OSError as error:
+            raise FileExistsError("observer already running") from error
+        os.ftruncate(fd, 0)
+        os.lseek(fd, 0, os.SEEK_SET)
         os.write(fd, encoded({"pid": os.getpid(), "known_at": now().isoformat()}))
         os.fsync(fd)
         yield
     finally:
         os.close(fd)
-        lock.unlink()
 
 
 class Ledger:
@@ -571,6 +590,113 @@ def verify_freeze(base_data: Path, training: Path, evidence: Path = EVIDENCE):
     return sha((evidence / "freeze.json").read_bytes())
 
 
+def observation_quality(ledger: Ledger, protocol: dict, instant: datetime) -> dict:
+    """Describe fixed-5000 weekly observations, preserving every missing slot.
+
+    Each entry uses 5000 USDT as a sizing reference again. Summed weekly marks
+    are not the compounded equity of a funded account with changing sizes.
+    """
+    first = datetime.fromisoformat(protocol["start_utc"])
+    last = datetime.fromisoformat(protocol["last_entry_utc"])
+    slots = [first + timedelta(weeks=i) for i in range((last - first).days // 7 + 1)]
+    known, missing, statuses = [], [], Counter()
+    cash_due = active_due = selected_count = 0
+    for anchor in slots:
+        slot = anchor.isoformat()
+        decision = ledger.find("DECISION", slot)
+        selected = []
+        if decision:
+            statuses[decision["payload"]["status"]] += 1
+            selected = (
+                decision["payload"].get("portfolios", {}).get("payoff", {}).get("positions", [])
+            )
+            selected_count += len(selected)
+        if instant < anchor + timedelta(days=7):
+            continue
+        outcome = ledger.find("OUTCOME", slot)
+        result = None if outcome is None else outcome["payload"]["portfolios"]["payoff"]
+        value = None if result is None else result["net_return_by_extra_slippage_bps"]["10"]
+        if result is not None and ((value is None) != (result["status"] == "CENSORED")):
+            raise ValueError("outcome status/return mismatch")
+        if value is None:
+            missing.append(
+                {
+                    "slot": slot,
+                    "reason": result["status"]
+                    if result
+                    else decision["payload"]["status"]
+                    if decision
+                    else "NO_DECISION",
+                }
+            )
+            continue
+        if not decision or not decision["payload"].get("prospective"):
+            raise ValueError("outcome lacks a prospective decision")
+        if not math.isfinite(value) or value < -1 or (not selected and value != 0):
+            raise ValueError("invalid observed return or nonzero cash return")
+        known.append(Decimal(str(value)) * 5000)
+        active_due += bool(selected)
+        cash_due += not selected
+    due = len(known) + len(missing)
+    observed_sum = float(sum(known, Decimal(0))) if known else None
+    all_complete = due == len(slots) and not missing
+    return {
+        "expected_slots": len(slots),
+        "due_slots": due,
+        "known_due_weeks": len(known),
+        "missing_due_weeks": len(missing),
+        "missing_slots": missing,
+        "decision_status_counts": dict(statuses),
+        "cash_due_weeks": cash_due,
+        "active_due_weeks": active_due,
+        "selected_holdings": selected_count,
+        "coverage_complete_for_due_weeks": bool(due) and not missing,
+        "standardized_completed_week_profit_usdt": observed_sum,
+        "standardized_pilot_profit_usdt": observed_sum if all_complete else None,
+        "accounting": "Sum of independent weekly marks at a fixed 5000 USDT sizing reference; not compounded account equity. Primary scenario assumes 10bps fees and 10bps extra slippage per leg, plus displayed book costs. Missing weeks are not zero.",
+        "quality": "INCOMPLETE_OBSERVATIONS"
+        if missing
+        else "AWAITING_NEW_OBSERVATIONS"
+        if not known
+        else "NO_TRADING_EVIDENCE_RULE_ABSTAINS"
+        if not active_due
+        else "POSITIVE_HYPOTHETICAL_MARKS_NOT_VERIFIED_PROFIT"
+        if observed_sum is not None and observed_sum > 0
+        else "NONPOSITIVE_HYPOTHETICAL_MARKS",
+        "realized_profit": None,
+        "investor_net_brl_profit": None,
+    }
+
+
+def save_status(args, ledger, protocol, error=None):
+    summary = {
+        "updated_at": now().isoformat(),
+        "protocol_id": protocol["id"],
+        "universe_mode": protocol.get("universe_mode", "legacy_sample"),
+        "external_comparisons": protocol.get("comparisons", True),
+        "mode": args.mode,
+        "ledger_rows": len(ledger.rows),
+        "ledger_head": ledger.rows[-1]["sha256"] if ledger.rows else None,
+        "prospective_decisions": sum(
+            r["kind"] == "DECISION" and r["payload"].get("prospective") is True for r in ledger.rows
+        ),
+        "matured_observations": sum(r["kind"] == "OUTCOME" for r in ledger.rows),
+        "first_entry_utc": protocol["start_utc"],
+        "last_due_utc": protocol["last_due_utc"],
+        "pilot_finished": now() >= datetime.fromisoformat(protocol["last_due_utc"])
+        and all(
+            ledger.find("OUTCOME", r["slot"]) for r in ledger.rows if r["kind"] == "ENTRY_MARKS"
+        ),
+        "observation_quality": observation_quality(ledger, protocol, now()),
+        "last_run_error": error,
+        "execution_ready": False,
+        "formal_promotion": False,
+        "capital": False,
+    }
+    write_json(args.data_dir / "status.json", summary)
+    return summary
+
+
 def run(args):
     evidence = getattr(args, "evidence_dir", EVIDENCE)
     freeze_hash = verify_freeze(args.base_data_dir, args.training, evidence)
@@ -691,33 +817,11 @@ def run(args):
                             },
                         )
                     slot_time += timedelta(days=7)
-            summary = {
-                "updated_at": now().isoformat(),
-                "protocol_id": protocol["id"],
-                "universe_mode": universe_mode,
-                "external_comparisons": comparisons,
-                "mode": args.mode,
-                "ledger_rows": len(ledger.rows),
-                "ledger_head": ledger.rows[-1]["sha256"] if ledger.rows else None,
-                "prospective_decisions": sum(
-                    r["kind"] == "DECISION" and r["payload"].get("prospective") is True
-                    for r in ledger.rows
-                ),
-                "matured_observations": sum(r["kind"] == "OUTCOME" for r in ledger.rows),
-                "first_entry_utc": protocol["start_utc"],
-                "last_due_utc": protocol["last_due_utc"],
-                "pilot_finished": now() >= datetime.fromisoformat(protocol["last_due_utc"])
-                and all(
-                    ledger.find("OUTCOME", r["slot"])
-                    for r in ledger.rows
-                    if r["kind"] == "ENTRY_MARKS"
-                ),
-                "execution_ready": False,
-                "formal_promotion": False,
-                "capital": False,
-            }
-            write_json(args.data_dir / "status.json", summary)
+            summary = save_status(args, ledger, protocol)
             print(json.dumps(summary, indent=2))
+        except (httpx.HTTPError, ValueError, KeyError) as error:
+            save_status(args, ledger, protocol, f"{type(error).__name__}: {error}")
+            raise
         finally:
             source.close()
 

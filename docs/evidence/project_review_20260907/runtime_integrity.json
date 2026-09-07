@@ -1,0 +1,50 @@
+{
+  "numpy": {
+    "version": "2.5.1",
+    "files_checked": 950,
+    "missing": [],
+    "mismatches": []
+  },
+  "scikit-learn": {
+    "version": "1.9.0",
+    "files_checked": 1060,
+    "missing": [],
+    "mismatches": []
+  },
+  "scipy": {
+    "version": "1.18.0",
+    "files_checked": 1536,
+    "missing": [],
+    "mismatches": []
+  },
+  "httpx": {
+    "version": "0.28.1",
+    "files_checked": 31,
+    "missing": [],
+    "mismatches": []
+  },
+  "predictor-core": {
+    "version": "3.2.0",
+    "files_checked": 46,
+    "missing": [],
+    "mismatches": []
+  },
+  "predictor-ops": {
+    "version": "4.1.0",
+    "files_checked": 20,
+    "missing": [],
+    "mismatches": []
+  },
+  "distlib": {
+    "version": "0.4.3",
+    "files_checked": 27,
+    "missing": [],
+    "mismatches": []
+  },
+  "virtualenv": {
+    "version": "21.7.1",
+    "files_checked": 115,
+    "missing": [],
+    "mismatches": []
+  }
+}

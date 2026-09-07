@@ -1,5 +1,8 @@
 # HANDOFF — GarimpoInvestimentos (Fase 1 + melhorias)
 
+> **Revisão final — 07/09/2026:** consultar [estado consolidado](docs/PROJECT_STATE_20260907.md).
+> Perfil corrente do observador: `altcoin_reviewed_20260907` (v6 operacional), mesma regra e datas. Carry reclassificado pelo objetivo de lucro absoluto; nenhuma promoção para capital.
+
 > **Delta CRIPTO v1.2 — 2026-09-07:** Core 3.2.0 preparado em worktree isolado;
 > seis pins consistentes, DSR estrito e N incluindo Sharpes ausentes. H6/H9
 > encerradas por insuficiência de amostra; custos assumidos reclassificados.

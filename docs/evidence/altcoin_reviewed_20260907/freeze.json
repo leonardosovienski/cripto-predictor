@@ -1,0 +1,16 @@
+{
+  "known_at": "2026-09-07T23:12:31.157069+00:00",
+  "repository_files": {
+    "scripts/observe_altcoin_forward.py": "33f077582c49ec253db250ffd7aa8f40f1ab451479c839b6b5245b336abc4911",
+    "scripts/plan_absolute_profit.py": "c7b20fd1cefef2dd5153f93d665bc861498aef2c64eedcb3be529258a678955b",
+    "scripts/prepare_altcoin_payoff.py": "0c349fe67d4466db008cf1728c57767ee01fce9c122f85e539eeff6f8af30ad0",
+    "scripts/research_altcoin_analogs.py": "22b5456ae7c56c09b51cb295b784fad7b9b5685241f9fa54a31e5cb6a1aa7626",
+    "scripts/collect_altcoin_analogs.py": "ca1dfd1f8f93d6174c23829c8729c6c772376de0ef4af28b2738ada261b96e7f",
+    "docs/evidence/altcoin_analogs_20260907/protocol.json": "fa5e8a6a29d0e7dda4711e82b4bf11c4026c2101ba079a763200a284ac410ab4",
+    "docs/evidence/altcoin_payoff_20260907/protocol.json": "071a50b6ffbc535d226c73a02a1211f1bd4512554fd4844d039b6226c6a3da15",
+    "docs/evidence/altcoin_reviewed_20260907/protocol.json": "3a00ae198fbfeebd4a8a69ea763c21edd9ddac6ff94961eb3f93186f783e851a"
+  },
+  "acquisition_sha256": "b0823fd898bb46043f1d6d328b74d033f1bfbddfe98ea13ea11fad7b82d35f6e",
+  "training_sha256": "42e5bfadec6414c4148ccd4f048329256483e91715fd9e78542633d8a5a5e972",
+  "note": "Operational fixes only, before prospective decisions. v4 files and evidence unchanged. New profile reviewed_20260907; scores and marks retain their prior economic assumptions."
+}

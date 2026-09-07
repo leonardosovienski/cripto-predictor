@@ -1,10 +1,8 @@
 """Recovery and honest coverage/accounting, including complete inactivity."""
 
-import json
 import subprocess
 import sys
 from datetime import UTC, datetime, timedelta
-from pathlib import Path
 
 import pytest
 
@@ -41,20 +39,36 @@ def test_existing_unlocked_lock_file_is_not_a_running_process(tmp_path):
 
 
 def record(log, slot, net, symbols=()):
-    portfolios = {"payoff": {"positions": [{"symbol": s, "weight": 0.2} for s in symbols],
-                              "cash_weight": 1 - 0.2 * len(symbols)}}
-    log.append("DECISION", slot, {"prospective": True, "status": "RECORDED_BEFORE_QUOTES",
-                                  "portfolios": portfolios})
+    portfolios = {
+        "payoff": {
+            "positions": [{"symbol": s, "weight": 0.2} for s in symbols],
+            "cash_weight": 1 - 0.2 * len(symbols),
+        }
+    }
+    log.append(
+        "DECISION",
+        slot,
+        {"prospective": True, "status": "RECORDED_BEFORE_QUOTES", "portfolios": portfolios},
+    )
     log.append("ENTRY_MARKS", slot, portfolios)
-    log.append("OUTCOME", slot, {"portfolios": {"payoff": {
-        "status": "CENSORED" if net is None else "HYPOTHETICAL_MARKS_COMPLETE",
-        "net_return_by_extra_slippage_bps": {str(s): net for s in f.SLIPS},
-    }}})
+    log.append(
+        "OUTCOME",
+        slot,
+        {
+            "portfolios": {
+                "payoff": {
+                    "status": "CENSORED" if net is None else "HYPOTHETICAL_MARKS_COMPLETE",
+                    "net_return_by_extra_slippage_bps": {str(s): net for s in f.SLIPS},
+                }
+            }
+        },
+    )
 
 
 def test_no_observations_does_not_claim_zero_profit(tmp_path):
-    summary = f.observation_quality(f.Ledger(tmp_path / "ledger.jsonl"), protocol(),
-                                    datetime(2026, 9, 7, tzinfo=UTC))
+    summary = f.observation_quality(
+        f.Ledger(tmp_path / "ledger.jsonl"), protocol(), datetime(2026, 9, 7, tzinfo=UTC)
+    )
     assert summary["expected_slots"] == 12
     assert summary["known_due_weeks"] == 0
     assert summary["standardized_completed_week_profit_usdt"] is None
@@ -66,8 +80,11 @@ def test_all_missed_slots_are_unknown_profit(tmp_path):
     log = f.Ledger(tmp_path / "ledger.jsonl")
     first = datetime.fromisoformat(config["start_utc"])
     for i in range(12):
-        log.append("DECISION", (first + timedelta(weeks=i)).isoformat(),
-                   {"status": "MISSED_ENTRY", "prospective": False})
+        log.append(
+            "DECISION",
+            (first + timedelta(weeks=i)).isoformat(),
+            {"status": "MISSED_ENTRY", "prospective": False},
+        )
     summary = f.observation_quality(log, config, first + timedelta(weeks=12))
     assert summary["missing_due_weeks"] == 12
     assert summary["coverage_complete_for_due_weeks"] is False
