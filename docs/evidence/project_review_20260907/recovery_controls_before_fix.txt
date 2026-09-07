@@ -14,7 +14,7 @@ tmp_path = WindowsPath('C:/Users/Superleo13/AppData/Local/Temp/pytest-of-Superle
 >       with f.exclusive(tmp_path):
              ^^^^^^^^^^^^^^^^^^^^^
 
-tests\test_altcoin_observer_review.py:31: 
+tests\test_altcoin_observer_review.py:31:
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 ..\..\..\..\..\..\AppData\Roaming\uv\python\cpython-3.13-windows-x86_64-none\Lib\contextlib.py:141: in __enter__
     return next(self.gen)
@@ -41,7 +41,7 @@ tmp_path = WindowsPath('C:/Users/Superleo13/AppData/Local/Temp/pytest-of-Superle
 >       with f.exclusive(tmp_path):
              ^^^^^^^^^^^^^^^^^^^^^
 
-tests\test_altcoin_observer_review.py:39: 
+tests\test_altcoin_observer_review.py:39:
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 ..\..\..\..\..\..\AppData\Roaming\uv\python\cpython-3.13-windows-x86_64-none\Lib\contextlib.py:141: in __enter__
     return next(self.gen)
