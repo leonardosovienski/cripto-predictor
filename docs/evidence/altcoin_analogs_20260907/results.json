@@ -1,0 +1,1677 @@
+{
+  "screen_id": "discovery-altcoin-analogs-20260907-v1",
+  "mode": "DISCOVERY",
+  "decision": "REJECT_FOR_THIS_SPECIFICATION",
+  "no_capital_or_live_activation": true,
+  "protocol_sha256": "fa5e8a6a29d0e7dda4711e82b4bf11c4026c2101ba079a763200a284ac410ab4",
+  "data_known_at": {
+    "start": "2026-09-07T18:50:10.190368+00:00",
+    "end": "2026-09-07T18:51:36.534359+00:00"
+  },
+  "coverage": {
+    "catalog_pairs": 3710,
+    "catalog_usdt_pairs": 735,
+    "sampled_altcoins": 240,
+    "downloaded_daily_bars": 251930,
+    "archive_fallback_pairs": [
+      "BCHABCUSDT",
+      "BCHSVUSDT"
+    ],
+    "coverage_issues": [
+      {
+        "symbol": "BCHABCUSDT",
+        "source": "ARCHIVE",
+        "rest_error": null,
+        "rows": 0,
+        "first_open_ms": null,
+        "last_open_ms": null,
+        "missing_internal_days": 0,
+        "duplicate_rows": 0,
+        "finalized_at_utc": "2026-09-07T18:51:33.848259+00:00"
+      },
+      {
+        "symbol": "BCHSVUSDT",
+        "source": "ARCHIVE",
+        "rest_error": null,
+        "rows": 0,
+        "first_open_ms": null,
+        "last_open_ms": null,
+        "missing_internal_days": 0,
+        "duplicate_rows": 0,
+        "finalized_at_utc": "2026-09-07T18:50:18.392165+00:00"
+      },
+      {
+        "symbol": "BNXUSDT",
+        "source": "REST",
+        "rest_error": null,
+        "rows": 1226,
+        "first_open_ms": 1635984000000,
+        "last_open_ms": 1742256000000,
+        "missing_internal_days": 5,
+        "duplicate_rows": 0,
+        "finalized_at_utc": "2026-09-07T18:50:45.248700+00:00"
+      },
+      {
+        "symbol": "COCOSUSDT",
+        "source": "REST",
+        "rest_error": null,
+        "rows": 968,
+        "first_open_ms": 1601510400000,
+        "last_open_ms": 1685318400000,
+        "missing_internal_days": 3,
+        "duplicate_rows": 0,
+        "finalized_at_utc": "2026-09-07T18:50:31.244511+00:00"
+      },
+      {
+        "symbol": "FTTUSDT",
+        "source": "REST",
+        "rest_error": null,
+        "rows": 1857,
+        "first_open_ms": 1601510400000,
+        "last_open_ms": 1788652800000,
+        "missing_internal_days": 310,
+        "duplicate_rows": 0,
+        "finalized_at_utc": "2026-09-07T18:51:23.584636+00:00"
+      },
+      {
+        "symbol": "VIDTUSDT",
+        "source": "REST",
+        "rest_error": null,
+        "rows": 1308,
+        "first_open_ms": 1631145600000,
+        "last_open_ms": 1744761600000,
+        "missing_internal_days": 8,
+        "duplicate_rows": 0,
+        "finalized_at_utc": "2026-09-07T18:51:12.092217+00:00"
+      }
+    ],
+    "current_eligible": 14
+  },
+  "training": {
+    "observations": 5204,
+    "distinct_symbols": 121,
+    "weeks": 156,
+    "positive_targets": 504,
+    "negative_controls": 4700,
+    "target_base_rate": 0.09684857801691008,
+    "missing_outcome_count": 6
+  },
+  "evaluation": {
+    "evaluation_1": {
+      "start": "2024-01-01",
+      "last_entry": "2024-12-23",
+      "cost_scenarios": {
+        "20": {
+          "methods": {
+            "analogs": {
+              "compounded_return": -0.5509804934045783,
+              "annualized_geometric_return": -0.5522134299796618,
+              "max_drawdown_weekly_endpoints": -0.7400542780676302,
+              "positive_weeks": 26,
+              "weeks": 52,
+              "mean_weekly_return": -0.0033408790520341597,
+              "ending_wealth_per_unit": 0.44901950659542167,
+              "conditional_5000_usdt_pnl": -2754.902467022892,
+              "conditional_brl_pnl_at_flat_5_1253": -14119.701614232428
+            },
+            "equal_basket": {
+              "compounded_return": -0.3721436490374521,
+              "annualized_geometric_return": -0.3731463910475188,
+              "max_drawdown_weekly_endpoints": -0.68890474599796,
+              "positive_weeks": 25,
+              "weeks": 52,
+              "mean_weekly_return": -0.0004923438903258244,
+              "ending_wealth_per_unit": 0.6278563509625479,
+              "conditional_5000_usdt_pnl": -1860.7182451872607,
+              "conditional_brl_pnl_at_flat_5_1253": -9536.739222058268
+            },
+            "momentum": {
+              "compounded_return": -0.6706900716418414,
+              "annualized_geometric_return": -0.6719438018008745,
+              "max_drawdown_weekly_endpoints": -0.8255394151234539,
+              "positive_weeks": 25,
+              "weeks": 52,
+              "mean_weekly_return": -0.010638435911458173,
+              "ending_wealth_per_unit": 0.3293099283581586,
+              "conditional_5000_usdt_pnl": -3353.4503582092066,
+              "conditional_brl_pnl_at_flat_5_1253": -17187.43912092965
+            },
+            "btc": {
+              "compounded_return": 0.800579848004155,
+              "annualized_geometric_return": 0.8042199812526107,
+              "max_drawdown_weekly_endpoints": -0.2978781765054952,
+              "positive_weeks": 26,
+              "weeks": 52,
+              "mean_weekly_return": 0.013775244390170138,
+              "ending_wealth_per_unit": 1.800579848004155,
+              "conditional_5000_usdt_pnl": 4002.8992400207753,
+              "conditional_brl_pnl_at_flat_5_1253": 20516.05947487848
+            },
+            "cash": {
+              "compounded_return": 0.0,
+              "annualized_geometric_return": 0.0,
+              "max_drawdown_weekly_endpoints": 0.0,
+              "positive_weeks": 0,
+              "weeks": 52,
+              "mean_weekly_return": 0.0,
+              "ending_wealth_per_unit": 1.0,
+              "conditional_5000_usdt_pnl": 0.0,
+              "conditional_brl_pnl_at_flat_5_1253": 0.0
+            }
+          },
+          "paired_contrasts": {
+            "equal_basket": {
+              "mean_weekly_log_difference": -0.006447020547419292,
+              "ci95_block4": [
+                -0.0250430218204883,
+                0.011970603299043205
+              ],
+              "n_paired_weeks": 52,
+              "effective_n_power_heuristic": 13,
+              "mde80_in_weekly_sd": 0.777134974911546,
+              "mde80_weekly_log_difference_descriptive": 0.05517090954568128
+            },
+            "momentum": {
+              "mean_weekly_log_difference": 0.0059628267791511196,
+              "ci95_block4": [
+                -0.013363226738151,
+                0.027713416948595665
+              ],
+              "n_paired_weeks": 52,
+              "effective_n_power_heuristic": 13,
+              "mde80_in_weekly_sd": 0.777134974911546,
+              "mde80_weekly_log_difference_descriptive": 0.06040353947295415
+            }
+          }
+        },
+        "50": {
+          "methods": {
+            "analogs": {
+              "compounded_return": -0.6713273484780822,
+              "annualized_geometric_return": -0.6725808304335906,
+              "max_drawdown_weekly_endpoints": -0.7880246073814399,
+              "positive_weeks": 23,
+              "weeks": 52,
+              "mean_weekly_return": -0.009303007015112249,
+              "ending_wealth_per_unit": 0.32867265152191777,
+              "conditional_5000_usdt_pnl": -3356.6367423904107,
+              "conditional_brl_pnl_at_flat_5_1253": -17203.770295773575
+            },
+            "equal_basket": {
+              "compounded_return": -0.5404226127938094,
+              "annualized_geometric_return": -0.5416479594874709,
+              "max_drawdown_weekly_endpoints": -0.7440709127259819,
+              "positive_weeks": 25,
+              "weeks": 52,
+              "mean_weekly_return": -0.006471512113994994,
+              "ending_wealth_per_unit": 0.45957738720619057,
+              "conditional_5000_usdt_pnl": -2702.1130639690473,
+              "conditional_brl_pnl_at_flat_5_1253": -13849.140086760559
+            },
+            "momentum": {
+              "compounded_return": -0.7589521930870333,
+              "annualized_geometric_return": -0.760127044496684,
+              "max_drawdown_weekly_endpoints": -0.8577343350728774,
+              "positive_weeks": 24,
+              "weeks": 52,
+              "mean_weekly_return": -0.016556909061271382,
+              "ending_wealth_per_unit": 0.2410478069129667,
+              "conditional_5000_usdt_pnl": -3794.760965435167,
+              "conditional_brl_pnl_at_flat_5_1253": -19449.28837614486
+            },
+            "btc": {
+              "compounded_return": 0.31798584299297583,
+              "annualized_geometric_return": 0.31923609935425534,
+              "max_drawdown_weekly_endpoints": -0.3883836953658004,
+              "positive_weeks": 25,
+              "weeks": 52,
+              "mean_weekly_return": 0.007710725834311222,
+              "ending_wealth_per_unit": 1.3179858429929758,
+              "conditional_5000_usdt_pnl": 1589.929214964879,
+              "conditional_brl_pnl_at_flat_5_1253": 8148.864205459495
+            },
+            "cash": {
+              "compounded_return": 0.0,
+              "annualized_geometric_return": 0.0,
+              "max_drawdown_weekly_endpoints": 0.0,
+              "positive_weeks": 0,
+              "weeks": 52,
+              "mean_weekly_return": 0.0,
+              "ending_wealth_per_unit": 1.0,
+              "conditional_5000_usdt_pnl": 0.0,
+              "conditional_brl_pnl_at_flat_5_1253": 0.0
+            }
+          },
+          "paired_contrasts": {
+            "equal_basket": {
+              "mean_weekly_log_difference": -0.00644702054741929,
+              "ci95_block4": [
+                -0.0250430218204883,
+                0.011970603299043212
+              ],
+              "n_paired_weeks": 52,
+              "effective_n_power_heuristic": 13,
+              "mde80_in_weekly_sd": 0.777134974911546,
+              "mde80_weekly_log_difference_descriptive": 0.05517090954568129
+            },
+            "momentum": {
+              "mean_weekly_log_difference": 0.0059628267791511265,
+              "ci95_block4": [
+                -0.013363226738150984,
+                0.027713416948595672
+              ],
+              "n_paired_weeks": 52,
+              "effective_n_power_heuristic": 13,
+              "mde80_in_weekly_sd": 0.777134974911546,
+              "mde80_weekly_log_difference_descriptive": 0.060403539472954154
+            }
+          }
+        },
+        "100": {
+          "methods": {
+            "analogs": {
+              "compounded_return": -0.8046032826317934,
+              "annualized_geometric_return": -0.8056957828792461,
+              "max_drawdown_weekly_endpoints": -0.8491251989568482,
+              "positive_weeks": 23,
+              "weeks": 52,
+              "mean_weekly_return": -0.019161178993667382,
+              "ending_wealth_per_unit": 0.19539671736820663,
+              "conditional_5000_usdt_pnl": -4023.0164131589668,
+              "conditional_brl_pnl_at_flat_5_1253": -20619.166022363654
+            },
+            "equal_basket": {
+              "compounded_return": -0.7267800882704156,
+              "annualized_geometric_return": -0.7279947459538614,
+              "max_drawdown_weekly_endpoints": -0.8178408840449435,
+              "positive_weeks": 24,
+              "weeks": 52,
+              "mean_weekly_return": -0.016357859572933415,
+              "ending_wealth_per_unit": 0.27321991172958443,
+              "conditional_5000_usdt_pnl": -3633.900441352078,
+              "conditional_brl_pnl_at_flat_5_1253": -18624.829932061806
+            },
+            "momentum": {
+              "compounded_return": -0.8566964729754581,
+              "annualized_geometric_return": -0.8576493646073469,
+              "max_drawdown_weekly_endpoints": -0.8987415302031054,
+              "positive_weeks": 23,
+              "weeks": 52,
+              "mean_weekly_return": -0.02634289931888361,
+              "ending_wealth_per_unit": 0.14330352702454185,
+              "conditional_5000_usdt_pnl": -4283.482364877291,
+              "conditional_brl_pnl_at_flat_5_1253": -21954.13216470558
+            },
+            "btc": {
+              "compounded_return": -0.2164541039051967,
+              "annualized_geometric_return": -0.21711017158244195,
+              "max_drawdown_weekly_endpoints": -0.5269321822631126,
+              "positive_weeks": 21,
+              "weeks": 52,
+              "mean_weekly_return": -0.002316745441218133,
+              "ending_wealth_per_unit": 0.7835458960948033,
+              "conditional_5000_usdt_pnl": -1082.2705195259834,
+              "conditional_brl_pnl_at_flat_5_1253": -5546.961093726523
+            },
+            "cash": {
+              "compounded_return": 0.0,
+              "annualized_geometric_return": 0.0,
+              "max_drawdown_weekly_endpoints": 0.0,
+              "positive_weeks": 0,
+              "weeks": 52,
+              "mean_weekly_return": 0.0,
+              "ending_wealth_per_unit": 1.0,
+              "conditional_5000_usdt_pnl": 0.0,
+              "conditional_brl_pnl_at_flat_5_1253": 0.0
+            }
+          },
+          "paired_contrasts": {
+            "equal_basket": {
+              "mean_weekly_log_difference": -0.006447020547419284,
+              "ci95_block4": [
+                -0.025043021820488277,
+                0.011970603299043215
+              ],
+              "n_paired_weeks": 52,
+              "effective_n_power_heuristic": 13,
+              "mde80_in_weekly_sd": 0.777134974911546,
+              "mde80_weekly_log_difference_descriptive": 0.05517090954568129
+            },
+            "momentum": {
+              "mean_weekly_log_difference": 0.005962826779151135,
+              "ci95_block4": [
+                -0.01336322673815098,
+                0.027713416948595686
+              ],
+              "n_paired_weeks": 52,
+              "effective_n_power_heuristic": 13,
+              "mde80_in_weekly_sd": 0.777134974911546,
+              "mde80_weekly_log_difference_descriptive": 0.060403539472954154
+            }
+          }
+        }
+      },
+      "mean_weekly_target_rates": {
+        "analogs": 0.13076923076923078,
+        "equal_basket": 0.08816658397944074,
+        "momentum": 0.07692307692307693
+      },
+      "target_lift_vs_basket": 1.4832062768783738,
+      "eligible_count_range": [
+        25,
+        82
+      ],
+      "cash_weeks": 0,
+      "missing_outcomes": {
+        "analogs": 1,
+        "equal_basket": 3,
+        "momentum": 0
+      },
+      "brier_score_all_eligible": 0.0772777840143691,
+      "brier_constant_training_rate": 0.07744652387828539
+    },
+    "evaluation_2": {
+      "start": "2025-01-06",
+      "last_entry": "2026-08-31",
+      "cost_scenarios": {
+        "20": {
+          "methods": {
+            "analogs": {
+              "compounded_return": -0.986670392673801,
+              "annualized_geometric_return": -0.924949726173188,
+              "max_drawdown_weekly_endpoints": -0.9874043990170841,
+              "positive_weeks": 25,
+              "weeks": 87,
+              "mean_weekly_return": -0.042266804420088344,
+              "ending_wealth_per_unit": 0.013329607326199007,
+              "conditional_5000_usdt_pnl": -4933.351963369005,
+              "conditional_brl_pnl_at_flat_5_1253": -25284.90881785516
+            },
+            "equal_basket": {
+              "compounded_return": -0.9324094294433172,
+              "annualized_geometric_return": -0.8012899315801647,
+              "max_drawdown_weekly_endpoints": -0.9354876803010868,
+              "positive_weeks": 24,
+              "weeks": 87,
+              "mean_weekly_return": -0.02572937469181342,
+              "ending_wealth_per_unit": 0.06759057055668287,
+              "conditional_5000_usdt_pnl": -4662.0471472165855,
+              "conditional_brl_pnl_at_flat_5_1253": -23894.390243629165
+            },
+            "momentum": {
+              "compounded_return": -0.9729330647842553,
+              "annualized_geometric_return": -0.8852244060599325,
+              "max_drawdown_weekly_endpoints": -0.9734234217163275,
+              "positive_weeks": 20,
+              "weeks": 87,
+              "mean_weekly_return": -0.03543753507001892,
+              "ending_wealth_per_unit": 0.02706693521574461,
+              "conditional_5000_usdt_pnl": -4864.6653239212765,
+              "conditional_brl_pnl_at_flat_5_1253": -24932.869184693718
+            },
+            "btc": {
+              "compounded_return": -0.5263497433005074,
+              "annualized_geometric_return": -0.36121515698997575,
+              "max_drawdown_weekly_endpoints": -0.5904081742488646,
+              "positive_weeks": 32,
+              "weeks": 87,
+              "mean_weekly_return": -0.007238347068847113,
+              "ending_wealth_per_unit": 0.47365025669949257,
+              "conditional_5000_usdt_pnl": -2631.7487165025373,
+              "conditional_brl_pnl_at_flat_5_1253": -13488.501696690455
+            },
+            "cash": {
+              "compounded_return": 0.0,
+              "annualized_geometric_return": 0.0,
+              "max_drawdown_weekly_endpoints": 0.0,
+              "positive_weeks": 0,
+              "weeks": 87,
+              "mean_weekly_return": 0.0,
+              "ending_wealth_per_unit": 1.0,
+              "conditional_5000_usdt_pnl": 0.0,
+              "conditional_brl_pnl_at_flat_5_1253": 0.0
+            }
+          },
+          "paired_contrasts": {
+            "equal_basket": {
+              "mean_weekly_log_difference": -0.01866069895006676,
+              "ci95_block4": [
+                -0.03425551450158139,
+                -0.004530407479918937
+              ],
+              "n_paired_weeks": 87,
+              "effective_n_power_heuristic": 21,
+              "mde80_in_weekly_sd": 0.6114465284412507,
+              "mde80_weekly_log_difference_descriptive": 0.042537178693909446
+            },
+            "momentum": {
+              "mean_weekly_log_difference": -0.00814166901559875,
+              "ci95_block4": [
+                -0.02150408280036293,
+                0.004211634993342017
+              ],
+              "n_paired_weeks": 87,
+              "effective_n_power_heuristic": 21,
+              "mde80_in_weekly_sd": 0.6114465284412507,
+              "mde80_weekly_log_difference_descriptive": 0.035240134521503735
+            }
+          }
+        },
+        "50": {
+          "methods": {
+            "analogs": {
+              "compounded_return": -0.9916523372311365,
+              "annualized_geometric_return": -0.9433172558383284,
+              "max_drawdown_weekly_endpoints": -0.9920167811358681,
+              "positive_weeks": 23,
+              "weeks": 87,
+              "mean_weekly_return": -0.04737723375468486,
+              "ending_wealth_per_unit": 0.00834766276886341,
+              "conditional_5000_usdt_pnl": -4958.261686155683,
+              "conditional_brl_pnl_at_flat_5_1253": -25412.578620053722
+            },
+            "equal_basket": {
+              "compounded_return": -0.9576714245547736,
+              "annualized_geometric_return": -0.8499215073274539,
+              "max_drawdown_weekly_endpoints": -0.9593560415004294,
+              "positive_weeks": 23,
+              "weeks": 87,
+              "mean_weekly_return": -0.030938732807723465,
+              "ending_wealth_per_unit": 0.04232857544522635,
+              "conditional_5000_usdt_pnl": -4788.3571227738685,
+              "conditional_brl_pnl_at_flat_5_1253": -24541.76676135291
+            },
+            "momentum": {
+              "compounded_return": -0.9830493395762965,
+              "annualized_geometric_return": -0.9133141653510591,
+              "max_drawdown_weekly_endpoints": -0.9830541246477836,
+              "positive_weeks": 18,
+              "weeks": 87,
+              "mean_weekly_return": -0.04058881786885778,
+              "ending_wealth_per_unit": 0.016950660423703467,
+              "conditional_5000_usdt_pnl": -4915.246697881483,
+              "conditional_brl_pnl_at_flat_5_1253": -25192.113900651966
+            },
+            "btc": {
+              "compounded_return": -0.7033766624511351,
+              "annualized_geometric_return": -0.5175490243480589,
+              "max_drawdown_weekly_endpoints": -0.7230125886507748,
+              "positive_weeks": 29,
+              "weeks": 87,
+              "mean_weekly_return": -0.012558320610372351,
+              "ending_wealth_per_unit": 0.2966233375488649,
+              "conditional_5000_usdt_pnl": -3516.8833122556753,
+              "conditional_brl_pnl_at_flat_5_1253": -18025.082040304012
+            },
+            "cash": {
+              "compounded_return": 0.0,
+              "annualized_geometric_return": 0.0,
+              "max_drawdown_weekly_endpoints": 0.0,
+              "positive_weeks": 0,
+              "weeks": 87,
+              "mean_weekly_return": 0.0,
+              "ending_wealth_per_unit": 1.0,
+              "conditional_5000_usdt_pnl": 0.0,
+              "conditional_brl_pnl_at_flat_5_1253": 0.0
+            }
+          },
+          "paired_contrasts": {
+            "equal_basket": {
+              "mean_weekly_log_difference": -0.01866069895006675,
+              "ci95_block4": [
+                -0.03425551450158138,
+                -0.004530407479918925
+              ],
+              "n_paired_weeks": 87,
+              "effective_n_power_heuristic": 21,
+              "mde80_in_weekly_sd": 0.6114465284412507,
+              "mde80_weekly_log_difference_descriptive": 0.042537178693909446
+            },
+            "momentum": {
+              "mean_weekly_log_difference": -0.008141669015598747,
+              "ci95_block4": [
+                -0.021504082800362923,
+                0.004211634993342024
+              ],
+              "n_paired_weeks": 87,
+              "effective_n_power_heuristic": 21,
+              "mde80_in_weekly_sd": 0.6114465284412507,
+              "mde80_weekly_log_difference_descriptive": 0.035240134521503735
+            }
+          }
+        },
+        "100": {
+          "methods": {
+            "analogs": {
+              "compounded_return": -0.9961735553251646,
+              "annualized_geometric_return": -0.9644963802432633,
+              "max_drawdown_weekly_endpoints": -0.9962666820828658,
+              "positive_weeks": 18,
+              "weeks": 87,
+              "mean_weekly_return": -0.05582715156535461,
+              "ending_wealth_per_unit": 0.0038264446748353447,
+              "conditional_5000_usdt_pnl": -4980.867776625823,
+              "conditional_brl_pnl_at_flat_5_1253": -25528.441615540334
+            },
+            "equal_basket": {
+              "compounded_return": -0.9805972094716273,
+              "annualized_geometric_return": -0.9059973221777564,
+              "max_drawdown_weekly_endpoints": -0.9811821613765218,
+              "positive_weeks": 22,
+              "weeks": 87,
+              "mean_weekly_return": -0.039552225930070024,
+              "ending_wealth_per_unit": 0.01940279052837271,
+              "conditional_5000_usdt_pnl": -4902.986047358137,
+              "conditional_brl_pnl_at_flat_5_1253": -25129.27438852466
+            },
+            "momentum": {
+              "compounded_return": -0.9922300689295749,
+              "annualized_geometric_return": -0.9457037418143839,
+              "max_drawdown_weekly_endpoints": -0.9922300689295749,
+              "positive_weeks": 15,
+              "weeks": 87,
+              "mean_weekly_return": -0.04910628546693811,
+              "ending_wealth_per_unit": 0.007769931070425066,
+              "conditional_5000_usdt_pnl": -4961.150344647875,
+              "conditional_brl_pnl_at_flat_5_1253": -25427.383861423754
+            },
+            "btc": {
+              "compounded_return": -0.8640322660578346,
+              "annualized_geometric_return": -0.6978135719407272,
+              "max_drawdown_weekly_endpoints": -0.8701618453950783,
+              "positive_weeks": 26,
+              "weeks": 87,
+              "mean_weekly_return": -0.021354712505765854,
+              "ending_wealth_per_unit": 0.13596773394216546,
+              "conditional_5000_usdt_pnl": -4320.161330289173,
+              "conditional_brl_pnl_at_flat_5_1253": -22142.1228661311
+            },
+            "cash": {
+              "compounded_return": 0.0,
+              "annualized_geometric_return": 0.0,
+              "max_drawdown_weekly_endpoints": 0.0,
+              "positive_weeks": 0,
+              "weeks": 87,
+              "mean_weekly_return": 0.0,
+              "ending_wealth_per_unit": 1.0,
+              "conditional_5000_usdt_pnl": 0.0,
+              "conditional_brl_pnl_at_flat_5_1253": 0.0
+            }
+          },
+          "paired_contrasts": {
+            "equal_basket": {
+              "mean_weekly_log_difference": -0.01866069895006676,
+              "ci95_block4": [
+                -0.03425551450158139,
+                -0.0045304074799189355
+              ],
+              "n_paired_weeks": 87,
+              "effective_n_power_heuristic": 21,
+              "mde80_in_weekly_sd": 0.6114465284412507,
+              "mde80_weekly_log_difference_descriptive": 0.04253717869390946
+            },
+            "momentum": {
+              "mean_weekly_log_difference": -0.008141669015598745,
+              "ci95_block4": [
+                -0.021504082800362926,
+                0.004211634993342026
+              ],
+              "n_paired_weeks": 87,
+              "effective_n_power_heuristic": 21,
+              "mde80_in_weekly_sd": 0.6114465284412507,
+              "mde80_weekly_log_difference_descriptive": 0.03524013452150374
+            }
+          }
+        }
+      },
+      "mean_weekly_target_rates": {
+        "analogs": 0.0717948717948718,
+        "equal_basket": 0.052749539455601915,
+        "momentum": 0.06153846153846155
+      },
+      "target_lift_vs_basket": 1.3610521065363976,
+      "eligible_count_range": [
+        6,
+        59
+      ],
+      "cash_weeks": 9,
+      "missing_outcomes": {
+        "analogs": 3,
+        "equal_basket": 4,
+        "momentum": 1
+      },
+      "brier_score_all_eligible": 0.054511754473161034,
+      "brier_constant_training_rate": 0.05466405132243546
+    }
+  },
+  "current_signal": {
+    "as_of_assumed_utc": "2026-09-07T00:00:00Z",
+    "features_through_day": "2026-09-05",
+    "horizon_days": 7,
+    "score_semantics": "uncalibrated frequency in 200 historical neighbors; research ranking, not a buy recommendation",
+    "ranking": [
+      {
+        "date": "2026-09-07",
+        "symbol": "HEMIUSDT",
+        "period": "current",
+        "features_available_assumed_utc": "2026-09-06T00:00:00Z",
+        "features": [
+          -0.27259182672819093,
+          -0.06708131707978456,
+          0.5448297163001967,
+          0.8103110677920919,
+          0.13474394478304785,
+          -0.73422720630341,
+          0.3751835997497766,
+          0.21599454608317997
+        ],
+        "median_quote_volume_30d": 11448467.071109999,
+        "gross_return": null,
+        "btc_gross_return": null,
+        "target": null,
+        "missing_outcome": null,
+        "score": 0.285,
+        "nearest_winners": [
+          {
+            "symbol": "WNXMUSDT",
+            "entry_date": "2021-05-24",
+            "gross_return_7d": 0.23695953483655052,
+            "btc_gross_return_7d": 0.02767560977860195,
+            "distance": 3.4847352172514308
+          },
+          {
+            "symbol": "HNTUSDT",
+            "entry_date": "2021-05-24",
+            "gross_return_7d": 0.38582399152617164,
+            "btc_gross_return_7d": 0.02767560977860195,
+            "distance": 3.5235252051718664
+          },
+          {
+            "symbol": "MATICUSDT",
+            "entry_date": "2021-05-24",
+            "gross_return_7d": 0.7374331351462176,
+            "btc_gross_return_7d": 0.02767560977860195,
+            "distance": 3.7706521625000207
+          }
+        ],
+        "nearest_non_winners": [
+          {
+            "symbol": "FLMUSDT",
+            "entry_date": "2022-07-25",
+            "gross_return_7d": 0.17721518987341778,
+            "btc_gross_return_7d": 0.031721923911498084,
+            "distance": 2.0812929799888944
+          },
+          {
+            "symbol": "FLMUSDT",
+            "entry_date": "2023-09-25",
+            "gross_return_7d": -0.007100591715976323,
+            "btc_gross_return_7d": 0.06644902792133167,
+            "distance": 2.442802942363731
+          },
+          {
+            "symbol": "DARUSDT",
+            "entry_date": "2022-05-02",
+            "gross_return_7d": -0.26464946334779627,
+            "btc_gross_return_7d": -0.11515830546410222,
+            "distance": 2.7092545045718577
+          }
+        ],
+        "positive_neighbors": 57,
+        "neighbor_count": 200
+      },
+      {
+        "date": "2026-09-07",
+        "symbol": "ICPUSDT",
+        "period": "current",
+        "features_available_assumed_utc": "2026-09-06T00:00:00Z",
+        "features": [
+          0.07829576437924579,
+          0.051163121569986564,
+          0.02567855788041129,
+          0.16404981540288588,
+          0.03485866389843731,
+          -0.018192445306564827,
+          0.06626545412189025,
+          0.21599454608317997
+        ],
+        "median_quote_volume_30d": 5137226.64987,
+        "gross_return": null,
+        "btc_gross_return": null,
+        "target": null,
+        "missing_outcome": null,
+        "score": 0.165,
+        "nearest_winners": [
+          {
+            "symbol": "XLMUSDT",
+            "entry_date": "2021-08-09",
+            "gross_return_7d": 0.36177997700108033,
+            "btc_gross_return_7d": 0.0725997594210761,
+            "distance": 0.5505370976263635
+          },
+          {
+            "symbol": "ICPUSDT",
+            "entry_date": "2023-12-11",
+            "gross_return_7d": 0.8841671149363455,
+            "btc_gross_return_7d": -0.05514678176275134,
+            "distance": 0.5718277297023502
+          },
+          {
+            "symbol": "EOSUSDT",
+            "entry_date": "2021-08-09",
+            "gross_return_7d": 0.3256723716381418,
+            "btc_gross_return_7d": 0.0725997594210761,
+            "distance": 0.6042353126635877
+          }
+        ],
+        "nearest_non_winners": [
+          {
+            "symbol": "IOTAUSDT",
+            "entry_date": "2022-03-28",
+            "gross_return_7d": 0.02935800776787767,
+            "btc_gross_return_7d": -0.008977794368127068,
+            "distance": 0.459727629531158
+          },
+          {
+            "symbol": "ICPUSDT",
+            "entry_date": "2023-04-17",
+            "gross_return_7d": -0.10743120777722859,
+            "btc_gross_return_7d": -0.0895591635081866,
+            "distance": 0.5216122405977334
+          },
+          {
+            "symbol": "EOSUSDT",
+            "entry_date": "2023-12-11",
+            "gross_return_7d": -0.046539379474940246,
+            "btc_gross_return_7d": -0.05514678176275134,
+            "distance": 0.6259195714185363
+          }
+        ],
+        "positive_neighbors": 33,
+        "neighbor_count": 200
+      },
+      {
+        "date": "2026-09-07",
+        "symbol": "PEPEUSDT",
+        "period": "current",
+        "features_available_assumed_utc": "2026-09-06T00:00:00Z",
+        "features": [
+          0.02240990139958411,
+          -0.031287484553419,
+          0.034528742915955146,
+          -0.11067174945608044,
+          0.06123686562304291,
+          -0.2336148511815052,
+          0.0814970383375796,
+          0.21599454608317997
+        ],
+        "median_quote_volume_30d": 24534741.66768368,
+        "gross_return": null,
+        "btc_gross_return": null,
+        "target": null,
+        "missing_outcome": null,
+        "score": 0.165,
+        "nearest_winners": [
+          {
+            "symbol": "FLOWUSDT",
+            "entry_date": "2023-02-13",
+            "gross_return_7d": 0.29941860465116266,
+            "btc_gross_return_7d": 0.1142846255940011,
+            "distance": 0.33162811326682967
+          },
+          {
+            "symbol": "BALUSDT",
+            "entry_date": "2021-08-30",
+            "gross_return_7d": 0.2510242085661081,
+            "btc_gross_return_7d": 0.0612912115853399,
+            "distance": 0.5986083973399136
+          },
+          {
+            "symbol": "DUSKUSDT",
+            "entry_date": "2022-03-28",
+            "gross_return_7d": 0.22654052671950908,
+            "btc_gross_return_7d": -0.008977794368127068,
+            "distance": 0.6485120579232877
+          }
+        ],
+        "nearest_non_winners": [
+          {
+            "symbol": "COCOSUSDT",
+            "entry_date": "2022-03-28",
+            "gross_return_7d": 0.12846988402543946,
+            "btc_gross_return_7d": -0.008977794368127068,
+            "distance": 0.45747391717996483
+          },
+          {
+            "symbol": "FTTUSDT",
+            "entry_date": "2021-03-29",
+            "gross_return_7d": 0.12960283881534074,
+            "btc_gross_return_7d": 0.043464721084520486,
+            "distance": 0.47261042349044186
+          },
+          {
+            "symbol": "REEFUSDT",
+            "entry_date": "2023-02-13",
+            "gross_return_7d": 0.10698689956331875,
+            "btc_gross_return_7d": 0.1142846255940011,
+            "distance": 0.5347654172385353
+          }
+        ],
+        "positive_neighbors": 33,
+        "neighbor_count": 200
+      },
+      {
+        "date": "2026-09-07",
+        "symbol": "AAVEUSDT",
+        "period": "current",
+        "features_available_assumed_utc": "2026-09-06T00:00:00Z",
+        "features": [
+          0.03059266486713229,
+          0.038484494766718766,
+          0.1876124471048537,
+          0.06625982479418761,
+          0.051755975510850045,
+          -0.07638501298577413,
+          0.059362786354934804,
+          0.21599454608317997
+        ],
+        "median_quote_volume_30d": 13509776.81574,
+        "gross_return": null,
+        "btc_gross_return": null,
+        "target": null,
+        "missing_outcome": null,
+        "score": 0.155,
+        "nearest_winners": [
+          {
+            "symbol": "EOSUSDT",
+            "entry_date": "2022-08-15",
+            "gross_return_7d": 0.20306513409961702,
+            "btc_gross_return_7d": -0.11477520288826482,
+            "distance": 0.6185704442425328
+          },
+          {
+            "symbol": "FTTUSDT",
+            "entry_date": "2021-08-30",
+            "gross_return_7d": 0.34114418408275293,
+            "btc_gross_return_7d": 0.0612912115853399,
+            "distance": 0.6579838517639617
+          },
+          {
+            "symbol": "CAKEUSDT",
+            "entry_date": "2022-03-28",
+            "gross_return_7d": 0.20792079207920788,
+            "btc_gross_return_7d": -0.008977794368127068,
+            "distance": 0.6643160178500526
+          }
+        ],
+        "nearest_non_winners": [
+          {
+            "symbol": "FLMUSDT",
+            "entry_date": "2021-09-06",
+            "gross_return_7d": -0.2071051615394517,
+            "btc_gross_return_7d": -0.11074160575366987,
+            "distance": 0.5208006562246711
+          },
+          {
+            "symbol": "MATICUSDT",
+            "entry_date": "2023-02-13",
+            "gross_return_7d": 0.1961974110032363,
+            "btc_gross_return_7d": 0.1142846255940011,
+            "distance": 0.5304732821584127
+          },
+          {
+            "symbol": "UNIUSDT",
+            "entry_date": "2023-12-11",
+            "gross_return_7d": -0.08205904617713866,
+            "btc_gross_return_7d": -0.05514678176275134,
+            "distance": 0.5393440134540443
+          }
+        ],
+        "positive_neighbors": 31,
+        "neighbor_count": 200
+      },
+      {
+        "date": "2026-09-07",
+        "symbol": "ONGUSDT",
+        "period": "current",
+        "features_available_assumed_utc": "2026-09-06T00:00:00Z",
+        "features": [
+          -0.014496008651673232,
+          -0.28660379030784217,
+          0.6091951783017131,
+          -0.5408643093400939,
+          0.2542530307696514,
+          -0.997584221449344,
+          0.1982062125905569,
+          0.21599454608317997
+        ],
+        "median_quote_volume_30d": 5500575.493465,
+        "gross_return": null,
+        "btc_gross_return": null,
+        "target": null,
+        "missing_outcome": null,
+        "score": 0.135,
+        "nearest_winners": [
+          {
+            "symbol": "VTHOUSDT",
+            "entry_date": "2021-03-01",
+            "gross_return_7d": 0.4426743905382573,
+            "btc_gross_return_7d": 0.12933987177325523,
+            "distance": 2.852000843549744
+          },
+          {
+            "symbol": "CFXUSDT",
+            "entry_date": "2023-03-13",
+            "gross_return_7d": 1.4774088187261838,
+            "btc_gross_return_7d": 0.27160680151195216,
+            "distance": 3.1675769840922485
+          },
+          {
+            "symbol": "GTOUSDT",
+            "entry_date": "2021-04-26",
+            "gross_return_7d": 0.41335249960070275,
+            "btc_gross_return_7d": 0.15308632565101088,
+            "distance": 3.3848542549520797
+          }
+        ],
+        "nearest_non_winners": [
+          {
+            "symbol": "CTXCUSDT",
+            "entry_date": "2021-12-27",
+            "gross_return_7d": 0.09150023223409187,
+            "btc_gross_return_7d": -0.06872017753451076,
+            "distance": 2.0624494218498497
+          },
+          {
+            "symbol": "MTLUSDT",
+            "entry_date": "2021-04-12",
+            "gross_return_7d": -0.22535903573260385,
+            "btc_gross_return_7d": -0.06414778295565915,
+            "distance": 2.5779768281330884
+          },
+          {
+            "symbol": "MITHUSDT",
+            "entry_date": "2022-08-01",
+            "gross_return_7d": 0.03572691899540148,
+            "btc_gross_return_7d": -0.005235581867725325,
+            "distance": 2.7050136227880865
+          }
+        ],
+        "positive_neighbors": 27,
+        "neighbor_count": 200
+      },
+      {
+        "date": "2026-09-07",
+        "symbol": "ASTERUSDT",
+        "period": "current",
+        "features_available_assumed_utc": "2026-09-06T00:00:00Z",
+        "features": [
+          0.047439725071560565,
+          0.08552151883002874,
+          0.04251614906832124,
+          0.6951728814638222,
+          0.03030687265026146,
+          -0.11764002528788793,
+          0.07427428658551609,
+          0.21599454608317997
+        ],
+        "median_quote_volume_30d": 7227948.19675,
+        "gross_return": null,
+        "btc_gross_return": null,
+        "target": null,
+        "missing_outcome": null,
+        "score": 0.12,
+        "nearest_winners": [
+          {
+            "symbol": "FTMUSDT",
+            "entry_date": "2023-11-06",
+            "gross_return_7d": 0.25720789074355066,
+            "btc_gross_return_7d": 0.058615516043264204,
+            "distance": 0.6313989749526685
+          },
+          {
+            "symbol": "FILUSDT",
+            "entry_date": "2023-11-06",
+            "gross_return_7d": 0.25158150851581507,
+            "btc_gross_return_7d": 0.058615516043264204,
+            "distance": 0.7622510783352862
+          },
+          {
+            "symbol": "REEFUSDT",
+            "entry_date": "2021-08-09",
+            "gross_return_7d": 0.23473007427114534,
+            "btc_gross_return_7d": 0.0725997594210761,
+            "distance": 0.8201150768400421
+          }
+        ],
+        "nearest_non_winners": [
+          {
+            "symbol": "FLOWUSDT",
+            "entry_date": "2022-03-28",
+            "gross_return_7d": 0.09224011713030755,
+            "btc_gross_return_7d": -0.008977794368127068,
+            "distance": 0.49437003548442865
+          },
+          {
+            "symbol": "EGLDUSDT",
+            "entry_date": "2023-02-20",
+            "gross_return_7d": -0.023101018010963204,
+            "btc_gross_return_7d": -0.029566781515385054,
+            "distance": 0.5681854998282772
+          },
+          {
+            "symbol": "FILUSDT",
+            "entry_date": "2023-11-13",
+            "gross_return_7d": -0.05094302936029549,
+            "btc_gross_return_7d": 0.007978873374338002,
+            "distance": 0.5836165789800425
+          }
+        ],
+        "positive_neighbors": 24,
+        "neighbor_count": 200
+      },
+      {
+        "date": "2026-09-07",
+        "symbol": "FILUSDT",
+        "period": "current",
+        "features_available_assumed_utc": "2026-09-06T00:00:00Z",
+        "features": [
+          0.0353000643948792,
+          0.12232468878548122,
+          -0.1045596324598629,
+          0.5257879178586151,
+          0.04605052628580061,
+          -0.08799551967449955,
+          0.0758544938760053,
+          0.21599454608317997
+        ],
+        "median_quote_volume_30d": 5332538.9592565,
+        "gross_return": null,
+        "btc_gross_return": null,
+        "target": null,
+        "missing_outcome": null,
+        "score": 0.12,
+        "nearest_winners": [
+          {
+            "symbol": "REEFUSDT",
+            "entry_date": "2021-08-09",
+            "gross_return_7d": 0.23473007427114534,
+            "btc_gross_return_7d": 0.0725997594210761,
+            "distance": 0.6270621619043856
+          },
+          {
+            "symbol": "FTMUSDT",
+            "entry_date": "2023-11-06",
+            "gross_return_7d": 0.25720789074355066,
+            "btc_gross_return_7d": 0.058615516043264204,
+            "distance": 0.8116658672095343
+          },
+          {
+            "symbol": "CAKEUSDT",
+            "entry_date": "2021-08-09",
+            "gross_return_7d": 0.21201657458563528,
+            "btc_gross_return_7d": 0.0725997594210761,
+            "distance": 0.8449834318386275
+          }
+        ],
+        "nearest_non_winners": [
+          {
+            "symbol": "ALGOUSDT",
+            "entry_date": "2022-03-28",
+            "gross_return_7d": -0.01464391066160975,
+            "btc_gross_return_7d": -0.008977794368127068,
+            "distance": 0.5064062875739972
+          },
+          {
+            "symbol": "CAKEUSDT",
+            "entry_date": "2023-07-03",
+            "gross_return_7d": -0.07663077897403425,
+            "btc_gross_return_7d": -0.01490380187229201,
+            "distance": 0.5158910323589636
+          },
+          {
+            "symbol": "TFUELUSDT",
+            "entry_date": "2021-09-06",
+            "gross_return_7d": -0.18265541059094403,
+            "btc_gross_return_7d": -0.11074160575366987,
+            "distance": 0.54604245178725
+          }
+        ],
+        "positive_neighbors": 24,
+        "neighbor_count": 200
+      },
+      {
+        "date": "2026-09-07",
+        "symbol": "UNIUSDT",
+        "period": "current",
+        "features_available_assumed_utc": "2026-09-06T00:00:00Z",
+        "features": [
+          0.13061688278942715,
+          0.38875043026135087,
+          0.3462139871735532,
+          1.3656648100547415,
+          0.052971070042090104,
+          -0.02839550175557731,
+          0.12110153719853377,
+          0.21599454608317997
+        ],
+        "median_quote_volume_30d": 24679146.733145,
+        "gross_return": null,
+        "btc_gross_return": null,
+        "target": null,
+        "missing_outcome": null,
+        "score": 0.12,
+        "nearest_winners": [
+          {
+            "symbol": "CELOUSDT",
+            "entry_date": "2021-08-30",
+            "gross_return_7d": 0.28330206378986866,
+            "btc_gross_return_7d": 0.0612912115853399,
+            "distance": 0.7217729673769684
+          },
+          {
+            "symbol": "HNTUSDT",
+            "entry_date": "2021-11-01",
+            "gross_return_7d": 0.543950361944157,
+            "btc_gross_return_7d": 0.032198794743409476,
+            "distance": 1.1956173708135442
+          },
+          {
+            "symbol": "CAKEUSDT",
+            "entry_date": "2023-12-25",
+            "gross_return_7d": 0.22425952045134,
+            "btc_gross_return_7d": -0.016466510821906644,
+            "distance": 1.9614101688776546
+          }
+        ],
+        "nearest_non_winners": [
+          {
+            "symbol": "NEOUSDT",
+            "entry_date": "2021-02-15",
+            "gross_return_7d": 0.2495732331853875,
+            "btc_gross_return_7d": 0.18172117313809433,
+            "distance": 0.8960360298685843
+          },
+          {
+            "symbol": "EOSUSDT",
+            "entry_date": "2021-02-15",
+            "gross_return_7d": 0.006988589252576061,
+            "btc_gross_return_7d": 0.18172117313809433,
+            "distance": 0.9766286860292573
+          },
+          {
+            "symbol": "ATOMUSDT",
+            "entry_date": "2021-08-23",
+            "gross_return_7d": -0.029748283752860538,
+            "btc_gross_return_7d": -0.009573466029721867,
+            "distance": 1.1428093927160992
+          }
+        ],
+        "positive_neighbors": 24,
+        "neighbor_count": 200
+      },
+      {
+        "date": "2026-09-07",
+        "symbol": "PUMPUSDT",
+        "period": "current",
+        "features_available_assumed_utc": "2026-09-06T00:00:00Z",
+        "features": [
+          -0.09930210677872299,
+          -0.29629700206297305,
+          0.2584448373371683,
+          -0.08926477410850463,
+          0.08222089430791683,
+          -0.34933224903776966,
+          0.11020608873738667,
+          0.21599454608317997
+        ],
+        "median_quote_volume_30d": 25883811.5641955,
+        "gross_return": null,
+        "btc_gross_return": null,
+        "target": null,
+        "missing_outcome": null,
+        "score": 0.115,
+        "nearest_winners": [
+          {
+            "symbol": "SANDUSDT",
+            "entry_date": "2021-03-22",
+            "gross_return_7d": 0.4373280279951328,
+            "btc_gross_return_7d": -0.027443542948090704,
+            "distance": 1.351770488702513
+          },
+          {
+            "symbol": "TCTUSDT",
+            "entry_date": "2021-04-05",
+            "gross_return_7d": 0.28122082722094155,
+            "btc_gross_return_7d": 0.03093398320779639,
+            "distance": 1.4200835992644718
+          },
+          {
+            "symbol": "EOSUSDT",
+            "entry_date": "2021-04-26",
+            "gross_return_7d": 0.3048912174052152,
+            "btc_gross_return_7d": 0.15308632565101088,
+            "distance": 1.6664701448802985
+          }
+        ],
+        "nearest_non_winners": [
+          {
+            "symbol": "MDTUSDT",
+            "entry_date": "2023-03-20",
+            "gross_return_7d": -0.09920867526377486,
+            "btc_gross_return_7d": -0.00017230981304383608,
+            "distance": 0.8889654430605288
+          },
+          {
+            "symbol": "RUNEUSDT",
+            "entry_date": "2023-12-11",
+            "gross_return_7d": -0.16633813495072014,
+            "btc_gross_return_7d": -0.05514678176275134,
+            "distance": 1.1988424057961382
+          },
+          {
+            "symbol": "FILUSDT",
+            "entry_date": "2022-08-15",
+            "gross_return_7d": -0.22114216281895505,
+            "btc_gross_return_7d": -0.11477520288826482,
+            "distance": 1.3764736486446016
+          }
+        ],
+        "positive_neighbors": 23,
+        "neighbor_count": 200
+      },
+      {
+        "date": "2026-09-07",
+        "symbol": "TUTUSDT",
+        "period": "current",
+        "features_available_assumed_utc": "2026-09-06T00:00:00Z",
+        "features": [
+          0.17983089548150277,
+          -0.2858881260621621,
+          -0.07996627326007016,
+          -1.2381823291223428,
+          0.3292446811651865,
+          -2.387673829639724,
+          0.19203041417880176,
+          0.21599454608317997
+        ],
+        "median_quote_volume_30d": 29231123.88683,
+        "gross_return": null,
+        "btc_gross_return": null,
+        "target": null,
+        "missing_outcome": null,
+        "score": 0.095,
+        "nearest_winners": [
+          {
+            "symbol": "WINGUSDT",
+            "entry_date": "2022-08-29",
+            "gross_return_7d": 0.22222222222222232,
+            "btc_gross_return_7d": 0.022739766235877923,
+            "distance": 4.019261175910992
+          },
+          {
+            "symbol": "MFTUSDT",
+            "entry_date": "2021-03-01",
+            "gross_return_7d": 0.2669411019632679,
+            "btc_gross_return_7d": 0.12933987177325523,
+            "distance": 5.799991932375042
+          },
+          {
+            "symbol": "DODOUSDT",
+            "entry_date": "2021-05-24",
+            "gross_return_7d": 0.4883286647992531,
+            "btc_gross_return_7d": 0.02767560977860195,
+            "distance": 5.877617483979418
+          }
+        ],
+        "nearest_non_winners": [
+          {
+            "symbol": "WINGUSDT",
+            "entry_date": "2022-08-22",
+            "gross_return_7d": -0.11740216486261446,
+            "btc_gross_return_7d": -0.09114269381457196,
+            "distance": 4.154291638306183
+          },
+          {
+            "symbol": "DARUSDT",
+            "entry_date": "2022-05-23",
+            "gross_return_7d": -0.11405406458905853,
+            "btc_gross_return_7d": -0.02726057662376591,
+            "distance": 4.467873045703304
+          },
+          {
+            "symbol": "LOOMUSDT",
+            "entry_date": "2023-10-30",
+            "gross_return_7d": -0.0987291501191423,
+            "btc_gross_return_7d": 0.014076397183793832,
+            "distance": 4.658614616814166
+          }
+        ],
+        "positive_neighbors": 19,
+        "neighbor_count": 200
+      },
+      {
+        "date": "2026-09-07",
+        "symbol": "XLMUSDT",
+        "period": "current",
+        "features_available_assumed_utc": "2026-09-06T00:00:00Z",
+        "features": [
+          0.024216923681942,
+          0.002278920268947101,
+          -0.08548817030875294,
+          -0.20748108762468745,
+          0.03578143100396639,
+          -0.19098430723116902,
+          0.04651383394201033,
+          0.21599454608317997
+        ],
+        "median_quote_volume_30d": 10301244.51275,
+        "gross_return": null,
+        "btc_gross_return": null,
+        "target": null,
+        "missing_outcome": null,
+        "score": 0.075,
+        "nearest_winners": [
+          {
+            "symbol": "KLAYUSDT",
+            "entry_date": "2023-02-13",
+            "gross_return_7d": 0.6700872242175475,
+            "btc_gross_return_7d": 0.1142846255940011,
+            "distance": 0.40791472296174586
+          },
+          {
+            "symbol": "CAKEUSDT",
+            "entry_date": "2023-12-18",
+            "gross_return_7d": 0.2678890876565294,
+            "btc_gross_return_7d": 0.039078527329784674,
+            "distance": 0.6759812340462723
+          },
+          {
+            "symbol": "SANDUSDT",
+            "entry_date": "2023-12-04",
+            "gross_return_7d": 0.30411407199625984,
+            "btc_gross_return_7d": 0.09549747750064674,
+            "distance": 0.7173506136561132
+          }
+        ],
+        "nearest_non_winners": [
+          {
+            "symbol": "EGLDUSDT",
+            "entry_date": "2023-04-17",
+            "gross_return_7d": -0.10090256884980331,
+            "btc_gross_return_7d": -0.0895591635081866,
+            "distance": 0.3640967520042332
+          },
+          {
+            "symbol": "ANKRUSDT",
+            "entry_date": "2023-04-17",
+            "gross_return_7d": -0.1423930698429886,
+            "btc_gross_return_7d": -0.0895591635081866,
+            "distance": 0.4394958064315576
+          },
+          {
+            "symbol": "ENSUSDT",
+            "entry_date": "2023-12-25",
+            "gross_return_7d": 0.033119658119658224,
+            "btc_gross_return_7d": -0.016466510821906644,
+            "distance": 0.4848843232969428
+          }
+        ],
+        "positive_neighbors": 15,
+        "neighbor_count": 200
+      },
+      {
+        "date": "2026-09-07",
+        "symbol": "BMTUSDT",
+        "period": "current",
+        "features_available_assumed_utc": "2026-09-06T00:00:00Z",
+        "features": [
+          -0.016366977464205245,
+          -0.2480214610961798,
+          0.14430159365707307,
+          0.9917184228911249,
+          0.22087391010690352,
+          -0.8749643931053422,
+          0.08663209352619713,
+          0.21599454608317997
+        ],
+        "median_quote_volume_30d": 6210743.511747001,
+        "gross_return": null,
+        "btc_gross_return": null,
+        "target": null,
+        "missing_outcome": null,
+        "score": 0.06,
+        "nearest_winners": [
+          {
+            "symbol": "HARDUSDT",
+            "entry_date": "2021-03-08",
+            "gross_return_7d": 0.4619166369789811,
+            "btc_gross_return_7d": 0.15716914993217102,
+            "distance": 3.632952146188578
+          },
+          {
+            "symbol": "CFXUSDT",
+            "entry_date": "2023-02-13",
+            "gross_return_7d": 3.1752767527675276,
+            "btc_gross_return_7d": 0.1142846255940011,
+            "distance": 3.858625260599467
+          },
+          {
+            "symbol": "CFXUSDT",
+            "entry_date": "2023-03-13",
+            "gross_return_7d": 1.4774088187261838,
+            "btc_gross_return_7d": 0.27160680151195216,
+            "distance": 4.127499934221623
+          }
+        ],
+        "nearest_non_winners": [
+          {
+            "symbol": "SFPUSDT",
+            "entry_date": "2021-10-25",
+            "gross_return_7d": 0.0011804981702279171,
+            "btc_gross_return_7d": 0.0073551959156132884,
+            "distance": 2.927328478995287
+          },
+          {
+            "symbol": "CFXUSDT",
+            "entry_date": "2021-10-04",
+            "gross_return_7d": 0.02989840348330919,
+            "btc_gross_return_7d": 0.1340039141070717,
+            "distance": 2.9343757007260987
+          },
+          {
+            "symbol": "MITHUSDT",
+            "entry_date": "2022-08-01",
+            "gross_return_7d": 0.03572691899540148,
+            "btc_gross_return_7d": -0.005235581867725325,
+            "distance": 2.983727846211221
+          }
+        ],
+        "positive_neighbors": 12,
+        "neighbor_count": 200
+      },
+      {
+        "date": "2026-09-07",
+        "symbol": "BICOUSDT",
+        "period": "current",
+        "features_available_assumed_utc": "2026-09-06T00:00:00Z",
+        "features": [
+          -0.05111550080543055,
+          -0.030878268415824035,
+          -0.7673221131585006,
+          -1.071152344907777,
+          0.12722265509011743,
+          -1.3862943611198906,
+          0.1274164060091926,
+          0.21599454608317997
+        ],
+        "median_quote_volume_30d": 5396354.845389999,
+        "gross_return": null,
+        "btc_gross_return": null,
+        "target": null,
+        "missing_outcome": null,
+        "score": 0.055,
+        "nearest_winners": [
+          {
+            "symbol": "ARPAUSDT",
+            "entry_date": "2023-06-19",
+            "gross_return_7d": 0.2612785973914904,
+            "btc_gross_return_7d": 0.15651796242821758,
+            "distance": 3.1744327832966386
+          },
+          {
+            "symbol": "DODOUSDT",
+            "entry_date": "2021-07-05",
+            "gross_return_7d": 0.30355220667384275,
+            "btc_gross_return_7d": -0.029163914324731866,
+            "distance": 3.1935662611552034
+          },
+          {
+            "symbol": "CTKUSDT",
+            "entry_date": "2021-09-27",
+            "gross_return_7d": 0.2646864686468646,
+            "btc_gross_return_7d": 0.11675173594619204,
+            "distance": 3.288712678681748
+          }
+        ],
+        "nearest_non_winners": [
+          {
+            "symbol": "LOOMUSDT",
+            "entry_date": "2023-11-13",
+            "gross_return_7d": -0.06698962985390966,
+            "btc_gross_return_7d": 0.007978873374338002,
+            "distance": 1.860100174936901
+          },
+          {
+            "symbol": "YFIIUSDT",
+            "entry_date": "2022-12-19",
+            "gross_return_7d": -0.008999513539808768,
+            "btc_gross_return_7d": 0.005562458928251468,
+            "distance": 1.9746073005495366
+          },
+          {
+            "symbol": "LOOMUSDT",
+            "entry_date": "2023-11-06",
+            "gross_return_7d": 0.16427249493258134,
+            "btc_gross_return_7d": 0.058615516043264204,
+            "distance": 1.9963435585555989
+          }
+        ],
+        "positive_neighbors": 11,
+        "neighbor_count": 200
+      },
+      {
+        "date": "2026-09-07",
+        "symbol": "RLUSDUSDT",
+        "period": "current",
+        "features_available_assumed_utc": "2026-09-06T00:00:00Z",
+        "features": [
+          0.0002000400086686979,
+          -0.020967914376109346,
+          -0.21709405141659674,
+          -0.018282629268381683,
+          0.0001922319052526417,
+          -0.001598881124069306,
+          0.0005142071975534532,
+          0.21599454608317997
+        ],
+        "median_quote_volume_30d": 51758688.2478,
+        "gross_return": null,
+        "btc_gross_return": null,
+        "target": null,
+        "missing_outcome": null,
+        "score": 0.03,
+        "nearest_winners": [
+          {
+            "symbol": "MATICUSDT",
+            "entry_date": "2023-11-06",
+            "gross_return_7d": 0.29694954460026035,
+            "btc_gross_return_7d": 0.058615516043264204,
+            "distance": 1.438554063943167
+          },
+          {
+            "symbol": "TFUELUSDT",
+            "entry_date": "2021-10-25",
+            "gross_return_7d": 0.20251872021783535,
+            "btc_gross_return_7d": 0.0073551959156132884,
+            "distance": 1.5025200595553714
+          },
+          {
+            "symbol": "HNTUSDT",
+            "entry_date": "2021-10-25",
+            "gross_return_7d": 0.38406488549618323,
+            "btc_gross_return_7d": 0.0073551959156132884,
+            "distance": 1.5302177218095903
+          }
+        ],
+        "nearest_non_winners": [
+          {
+            "symbol": "XLMUSDT",
+            "entry_date": "2023-12-25",
+            "gross_return_7d": 0.024622716441620174,
+            "btc_gross_return_7d": -0.016466510821906644,
+            "distance": 0.9623749057925549
+          },
+          {
+            "symbol": "KLAYUSDT",
+            "entry_date": "2022-03-28",
+            "gross_return_7d": -0.007627118644067732,
+            "btc_gross_return_7d": -0.008977794368127068,
+            "distance": 1.0341581816670729
+          },
+          {
+            "symbol": "XLMUSDT",
+            "entry_date": "2023-02-06",
+            "gross_return_7d": -0.06380638063806376,
+            "btc_gross_return_7d": -0.050118803065114625,
+            "distance": 1.052598765116215
+          }
+        ],
+        "positive_neighbors": 6,
+        "neighbor_count": 200
+      }
+    ]
+  },
+  "model": {
+    "training_median": [
+      0.0001385470985332967,
+      -0.01784294858922482,
+      -0.029676794286264997,
+      -0.18917666871315764,
+      0.06423499786107113,
+      -0.28751448440166016,
+      0.09963936965633938,
+      -0.00807383849267121
+    ],
+    "training_iqr": [
+      0.05140739337893885,
+      0.13639482093452326,
+      0.3544230947115836,
+      0.805184928803313,
+      0.03641373202012263,
+      0.32836325720487275,
+      0.06152910999144874,
+      0.28125620851865973
+    ],
+    "features": [
+      "log_return_1d",
+      "excess_log_return_7d",
+      "excess_log_return_30d",
+      "log_volume_acceleration",
+      "volatility_30d",
+      "log_distance_30d_high",
+      "mean_range_7d",
+      "btc_log_return_30d"
+    ],
+    "neighbors": 200
+  },
+  "limitations": [
+    "Retrospective Discovery only; existing project may already have seen parts of these periods.",
+    "Archive retention and pair reuse prevent a claim of complete historical membership or perfect survivorship correction.",
+    "Daily open/close and assumed fees/slippage are accounting proxies, not fills.",
+    "24-hour historical availability is simulated; actual known_at is retrieval in 2026.",
+    "Weekly endpoint drawdown understates possible intraday drawdown.",
+    "USDT returns are not BRL purchasing-power alpha; benchmark/tax/FX/risk/attention constraints remain open.",
+    "One fixed model; block CIs are not adjusted for all historical project research or market-wide model selection."
+  ]
+}

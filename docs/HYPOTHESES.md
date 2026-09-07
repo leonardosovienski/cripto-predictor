@@ -1600,3 +1600,56 @@ da vela final posteriores ao corte foram descartados. Reabertura só com
 mudança material em remuneração, benchmark ou estrutura mensurável.
 Resultados, cenários e fontes canônicos: `docs/evidence/funding_carry_screen_20260907/`.
 Nenhuma migração adicional de runtime ou reexecução de H1-H9 foi feita.
+
+### Altcoins por analogias anteriores às altas — Discovery, 2026-09-07
+
+O usuário autorizou construir e executar a comparação de padrões anteriores
+às altas com controles e avaliação temporal. Nova família exploratória:
+`cross_sectional_spot_pre_rally_analogs_v1`; não usa funding/OI/HMM/LLM e não
+reabre H1-H9. G1 de deployment continua bloqueado. Nenhum gate de capital ou
+promoção foi aprovado. Esta falsificação barata tem ledger de Discovery em
+`docs/evidence/altcoin_analogs_20260907/search_log.json`, sem ativação formal
+de hipótese ou uso de atestado de outro harness.
+
+Protocolo `444aa02`, antes da coleta em lote; código/controles sintéticos
+`acaa925`, antes do primeiro resultado. Um kNN200 fixo, oito features diárias,
+alvo de alta >=20% em sete dias e excesso >=10pp sobre BTC. Universo de 240
+pares amostrados por hash do catálogo histórico, incluindo símbolos antigos;
+elegibilidade por histórico e volume conhecidos antes de cada decisão.
+Treinamento 2021–2023: 5.204 observações, 504 alvos, 4.700 controles. Avaliações
+de 52 semanas em 2024 e 87 semanas em 2025–2026, com um dia de atraso e sem
+retuning. Arquivos brutos: 251.930 velas, 395 respostas com proveniência.
+
+**Decisão de prioridade: DO_NOT_PROMOTE_THIS_SELECTOR.** A especificação de
+stress pré-fixada recebeu `REJECT_FOR_THIS_SPECIFICATION`: retornos simulados
+-55,10% e -98,67%, contra -37,21% e -93,24% da cesta equivalente. Encontrar
+mais episódios-alvo (7,18% versus 5,27% no segundo segmento) não compensou as
+perdas. Diferença média semanal de log-retorno contra a cesta: -0,01866;
+IC95% por blocos de quatro semanas [-0,03426; -0,00453], condicional a esta
+busca e sem alegação de Proof ou refutação universal de efeitos pequenos.
+
+**Fidelidade de P&L executável: INCONCLUSIVE_DATA_FIDELITY.** A regra atribuiu
+-100% a desfechos sem velas completas, como stress. Entre eles há migrações
+FTM/S e BNX/FORM 1:1 comprovadas em anúncios oficiais; ausência do símbolo
+antigo não mede perda total. Auditoria posterior separada, mantendo sinais,
+posições e treinamento: custos zerados e retorno zero nas lacunas ainda dão
+-26,88% e -96,49%, abaixo da cesta equivalente. Esses diagnósticos não são
+novas trials independentes nem avaliação real dos tokens migrados. As cifras
+do stress original não podem ser anunciadas como perdas reais. O filtro por
+sufixo também excluiu JUP/SYRUP: limitação registrada, sem troca adaptativa
+da amostra. Retenção do arquivo e known_at histórico seguem limitações.
+
+O ranking de 07/09/2026 existe como artefato de pesquisa, com 14 elegíveis,
+frequência não calibrada e exemplos de vizinhos que atingiram/não atingiram
+o alvo; não é sinal promovido. Para nova rodada: corrigir identidade e
+rótulos de migração, definir universo negociável e saída, registrar nova
+hipótese e reservar evidência nova. Trocar o alvo para payoff líquido é
+pesquisa adaptativa nova; os períodos consumidos não voltam a ser intocados.
+Sem DSR estimável com uma única tentativa compatível, nenhum DSR foi emitido.
+
+Validação: 11 controles/testes novos e oito testes do gate de freeze passaram;
+9.430 retornos conferidos contra strings de preços brutos usando Decimal,
+seis carteiras reconstruídas independentemente; Ruff/Pyright passaram.
+Produção, coleta, ledger H1-H9, scientific_state, costs e selos preservados.
+Resultados originais e diagnóstico permanecem separados em `results.json`
+e `audit.json` no diretório de evidência. Nenhuma ordem ou capital ativado.

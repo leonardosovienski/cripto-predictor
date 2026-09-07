@@ -1,0 +1,3184 @@
+{
+  "access_date": "2026-09-07",
+  "documentation": [
+    {
+      "url": "https://github.com/binance/binance-public-data",
+      "supports": "Public historical archive, all-symbol files, ms/us timestamp transition and possible archive revisions."
+    },
+    {
+      "url": "https://developers.binance.com/en/docs/catalog/core-trading-spot-trading/api/rest-api/market",
+      "supports": "Public daily klines with OHLC, base/quote volume and timestamps."
+    },
+    {
+      "url": "https://www.binance.com/en/support/announcement/detail/aec6fcbc84b749eeab6690e6bcac2f3d",
+      "supports": "FTM to S migration 1:1, old spot trading ended 2025-01-13; missing old-symbol bars do not prove total loss."
+    },
+    {
+      "url": "https://www.binance.com/en/support/announcement/detail/7d5accdcf8f446f3ba3d79f8747a28e2",
+      "supports": "BNX to FORM completed 1:1; trading resumed under FORM in March 2025."
+    }
+  ],
+  "raw_requests": [
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=MTLUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:08.576524+00:00",
+      "http_status": 200,
+      "sha256": "d54553c08573639c6492a767a361e7efb6f18aaf9a9d014beb7377fac0a00489",
+      "bytes": 166543,
+      "server_date": "Mon, 07 Sep 2026 18:51:08 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=TFUELUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:39.308516+00:00",
+      "http_status": 200,
+      "sha256": "03ebd9252774a5845989440bf4e07d9e33f827c0a9718a6aa8a8f09c165b968a",
+      "bytes": 169753,
+      "server_date": "Mon, 07 Sep 2026 18:50:39 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=MBOXUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:24.632220+00:00",
+      "http_status": 200,
+      "sha256": "b05137ba2b3f240346bc7614df3c1c92b0992b4d2e94847f39d07ee77775867b",
+      "bytes": 167602,
+      "server_date": "Mon, 07 Sep 2026 18:51:24 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=WNXMUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:00.211420+00:00",
+      "http_status": 200,
+      "sha256": "57f0bc2f91e9bfea514c993965edd3f5a174588383992f4ba60b08bea1f08eb5",
+      "bytes": 165179,
+      "server_date": "Mon, 07 Sep 2026 18:51:00 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=NOTUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:15.569985+00:00",
+      "http_status": 200,
+      "sha256": "6d1fe109480dcfb9adac6c53f575897999ecea867c74d22cc807f32c50ef1f98",
+      "bytes": 136477,
+      "server_date": "Mon, 07 Sep 2026 18:50:15 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=GTOUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:21.265919+00:00",
+      "http_status": 200,
+      "sha256": "0df44c4e8cae9ec8fd7c6a02ad87b39fa22b3d3238f04a7a7db283b1561701cf",
+      "bytes": 133647,
+      "server_date": "Mon, 07 Sep 2026 18:50:21 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=TURTLEUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:13.771525+00:00",
+      "http_status": 200,
+      "sha256": "f60398eb95d38efd96654a320f548bc87cb71054b3aecf4e5b9080a3c86be174",
+      "bytes": 53333,
+      "server_date": "Mon, 07 Sep 2026 18:50:13 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=ENJUSDT&interval=1d&startTime=1687910400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:25.241760+00:00",
+      "http_status": 200,
+      "sha256": "ba9e171d3e1700a9c58483f53c30336474e80b45c344a1ee1ef671627452b6da",
+      "bytes": 168169,
+      "server_date": "Mon, 07 Sep 2026 18:50:25 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=ADXUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:16.706802+00:00",
+      "http_status": 200,
+      "sha256": "95070eb5bef809c1be678e42d19d0675dfd562be56b26d16123c65c678f4869d",
+      "bytes": 166393,
+      "server_date": "Mon, 07 Sep 2026 18:51:16 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=ATOMUSDT&interval=1d&startTime=1687910400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:48.991259+00:00",
+      "http_status": 200,
+      "sha256": "00415807616b3b12da9a4d9f91f60cce3fc887035a74e67cfa06425abc5fe239",
+      "bytes": 168701,
+      "server_date": "Mon, 07 Sep 2026 18:50:49 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=SCRTUSDT&interval=1d&startTime=1729123200000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:32.550958+00:00",
+      "http_status": 200,
+      "sha256": "e975948455a744898cda3baeca1e6f4266fa913950884d132bdfaa02d3587631",
+      "bytes": 114084,
+      "server_date": "Mon, 07 Sep 2026 18:51:32 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=HIGHUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:25.303752+00:00",
+      "http_status": 200,
+      "sha256": "88ccd5c3bad8add998abe65e11bd0d5914f9b30a97b3c7872cfcbe724ceccfcb",
+      "bytes": 167324,
+      "server_date": "Mon, 07 Sep 2026 18:51:25 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=CELOUSDT&interval=1d&startTime=1782604800000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:20.814338+00:00",
+      "http_status": 200,
+      "sha256": "8a37ed9f89457d386fbd72260a58d37168cc3bdf72bd850a919ca40c0e083e6a",
+      "bytes": 11749,
+      "server_date": "Mon, 07 Sep 2026 18:50:21 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=ONGUSDT&interval=1d&startTime=1687910400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:17.370507+00:00",
+      "http_status": 200,
+      "sha256": "f39d0ca1a7a330760ebfc9498ddef15a04ede546875328a57a0cce8edaccf96a",
+      "bytes": 166208,
+      "server_date": "Mon, 07 Sep 2026 18:51:17 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=UNFIUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:04.168039+00:00",
+      "http_status": 200,
+      "sha256": "23da8e04a215fc53353ac59912c548476fefd842cd4152bfd9e5ed60a30efc79",
+      "bytes": 168040,
+      "server_date": "Mon, 07 Sep 2026 18:51:04 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=ESPUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:45.671985+00:00",
+      "http_status": 200,
+      "sha256": "b8b1f4430675cf1d4c29dcc5527ecdd7300a2131a042b5de0ed320c0502d2730",
+      "bytes": 34786,
+      "server_date": "Mon, 07 Sep 2026 18:50:45 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=CVXUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:48.238906+00:00",
+      "http_status": 200,
+      "sha256": "275bdfafba7af3134c637f2608ad7a37442780a902704cc5c88ee31fbb4a3475",
+      "bytes": 165017,
+      "server_date": "Mon, 07 Sep 2026 18:50:47 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=CGPTUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:21.755434+00:00",
+      "http_status": 200,
+      "sha256": "330768058bee84caa2f5e66cd81315261b1692f09c0535198d0c5f775d702455",
+      "bytes": 101404,
+      "server_date": "Mon, 07 Sep 2026 18:51:21 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=EOSUSDT&interval=1d&startTime=1687910400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:52.282703+00:00",
+      "http_status": 200,
+      "sha256": "b9e3c5eafd3408c2d2fbab440ad9036869e2bae4329f2a88dfab8655065a1fce",
+      "bytes": 118738,
+      "server_date": "Mon, 07 Sep 2026 18:50:52 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=FXSUSDT&interval=1d&startTime=1725494400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:12.734206+00:00",
+      "http_status": 200,
+      "sha256": "c780ef181e4cdc1c494cd343b16e1429c89955bdd986515d370750d670add7b5",
+      "bytes": 82191,
+      "server_date": "Mon, 07 Sep 2026 18:51:12 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=ELFUSDT&interval=1d&startTime=1717459200000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:46.118397+00:00",
+      "http_status": 200,
+      "sha256": "f28fc6718dacf111051ba68dcf29749c007532e1e2fc48bc4f4df8fd3e385f3f",
+      "bytes": 53205,
+      "server_date": "Mon, 07 Sep 2026 18:50:46 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=MCUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:34.970861+00:00",
+      "http_status": 200,
+      "sha256": "f7efe2d06c4cd37bf5c6d323dce68c33d0e47a6a58de985229d7521858fa1b24",
+      "bytes": 116704,
+      "server_date": "Mon, 07 Sep 2026 18:51:35 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=AMATBUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:51.827922+00:00",
+      "http_status": 200,
+      "sha256": "7703f8ffcf26117b8a3e9ba28bfa1f588bdc33087d14568ef75b2e944790f0f0",
+      "bytes": 6511,
+      "server_date": "Mon, 07 Sep 2026 18:50:52 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=PERPUSDT&interval=1d&startTime=1702512000000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:33.808426+00:00",
+      "http_status": 200,
+      "sha256": "6cb786552034ae22ea3f43307599c7cadbb07318d0c7adba6f626350f43af112",
+      "bytes": 116761,
+      "server_date": "Mon, 07 Sep 2026 18:50:34 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=WINGUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:14.288290+00:00",
+      "http_status": 200,
+      "sha256": "be19096fd61d1949e7191bab936cf7e34e7b4de2c8a645fae55e34b9cbedccc7",
+      "bytes": 166132,
+      "server_date": "Mon, 07 Sep 2026 18:51:14 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=WIFUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:14.670981+00:00",
+      "http_status": 200,
+      "sha256": "a3679fa7032c20627b37108afbe49fb9cc2abc4c9eaa15b5845d9010e1d17053",
+      "bytes": 157973,
+      "server_date": "Mon, 07 Sep 2026 18:50:14 GMT"
+    },
+    {
+      "url": "https://s3-ap-northeast-1.amazonaws.com/data.binance.vision?prefix=data%2Fspot%2Fmonthly%2Fklines%2F&max-keys=1000&delimiter=%2F&marker=data%2Fspot%2Fmonthly%2Fklines%2FDLTETH%2F",
+      "retrieved_at_utc": "2026-09-07T18:50:09.106709+00:00",
+      "http_status": 200,
+      "sha256": "4fc2ba78bc1ca4dc388ba6146680ac677f6feb1ba5d3ccd923ff5baefbcf6037",
+      "bytes": 83566,
+      "server_date": "Mon, 07 Sep 2026 18:50:10 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=BARUSDT&interval=1d&startTime=1705363200000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:35.853453+00:00",
+      "http_status": 200,
+      "sha256": "bdc81aec71effef4307e4dfbbf74648fe3b7ab247e991e6c000d6eb1fcddd181",
+      "bytes": 158740,
+      "server_date": "Mon, 07 Sep 2026 18:51:36 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=MDTUSDT&interval=1d&startTime=1774310400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:36.867260+00:00",
+      "http_status": 200,
+      "sha256": "25ba889ac1f230d296b2661d11743305f453050a912b07fa2b3e8406919edce4",
+      "bytes": 5164,
+      "server_date": "Mon, 07 Sep 2026 18:50:37 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=ROBOUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:22.351180+00:00",
+      "http_status": 200,
+      "sha256": "f09b0088e025089c827c2048224e0c0120eafb5d34eb823cc5e3c363caeee9a2",
+      "bytes": 31830,
+      "server_date": "Mon, 07 Sep 2026 18:50:22 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=STEEMUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:16.652465+00:00",
+      "http_status": 200,
+      "sha256": "15a18fce1b5469e59608272e9f1d5e9f4bde54ae83784cecbc21d58050b4b374",
+      "bytes": 165790,
+      "server_date": "Mon, 07 Sep 2026 18:50:16 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=MOVRUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:26.119150+00:00",
+      "http_status": 200,
+      "sha256": "03c27eb664b86e28ff97ef00de1b5e6293bad55e5e5393b4aa0c2cc38abd4353",
+      "bytes": 166811,
+      "server_date": "Mon, 07 Sep 2026 18:50:26 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=NPXSUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:17.298576+00:00",
+      "http_status": 200,
+      "sha256": "d2e98dfc4486e21231541d7a0d843a1bcea52beef29d95dd3455749a60754642",
+      "bytes": 32194,
+      "server_date": "Mon, 07 Sep 2026 18:50:17 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=CAKEUSDT&interval=1d&startTime=1786492800000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:28.794821+00:00",
+      "http_status": 200,
+      "sha256": "ace9755d5e00b6a210894ab7a6088a380cd980d8220ab7b5c87053e8e2a61ac8",
+      "bytes": 4339,
+      "server_date": "Mon, 07 Sep 2026 18:51:28 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=FORUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:06.153611+00:00",
+      "http_status": 200,
+      "sha256": "1c92e8fbb4f4fc40d3f4dbd523284ffed2072b8938fa83b371210fa2b80ff4f1",
+      "bytes": 167694,
+      "server_date": "Mon, 07 Sep 2026 18:51:06 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=RADUSDT&interval=1d&startTime=1719964800000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:56.465609+00:00",
+      "http_status": 200,
+      "sha256": "be2c3585fd38707d72d37c1ba6be2f9c225d785d2a54d36169b83d5f258c6eaa",
+      "bytes": 131841,
+      "server_date": "Mon, 07 Sep 2026 18:50:56 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=FORUSDT&interval=1d&startTime=1715817600000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:07.235155+00:00",
+      "http_status": 200,
+      "sha256": "43f844ffee6fa36c11b4972c8429248ce40fa0b9ac032944df8c1630f5d7538b",
+      "bytes": 17472,
+      "server_date": "Mon, 07 Sep 2026 18:51:07 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=VIDTUSDT&interval=1d&startTime=1718236800000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:12.073615+00:00",
+      "http_status": 200,
+      "sha256": "767257171dadb36d09ed5fd60a55097bbe07d098d6f18e1bcd6df3cb3c610d49",
+      "bytes": 52502,
+      "server_date": "Mon, 07 Sep 2026 18:51:12 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=BTCUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:35.427008+00:00",
+      "http_status": 200,
+      "sha256": "df0add06877694cf170cde72f2b365c206be892422392c0378d75cb48da286bf",
+      "bytes": 187915,
+      "server_date": "Mon, 07 Sep 2026 18:51:35 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=NULSUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:59.765680+00:00",
+      "http_status": 200,
+      "sha256": "dad1f329686601b7f58ba9faa93a16b02da85b228945fe8ba17dacef83f83afd",
+      "bytes": 166150,
+      "server_date": "Mon, 07 Sep 2026 18:50:59 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=ACMUSDT&interval=1d&startTime=1700524800000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:56.905311+00:00",
+      "http_status": 200,
+      "sha256": "0cdc6a1965f701a75747ea4c051aa81ebb3983613a0adc3bc00d7e9ba73b5080",
+      "bytes": 164210,
+      "server_date": "Mon, 07 Sep 2026 18:50:57 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=HOLOUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:43.252826+00:00",
+      "http_status": 200,
+      "sha256": "0bfa774112645db4a7af4628c7523095511a1e5978b936b5bee52e6d02fca6bd",
+      "bytes": 60475,
+      "server_date": "Mon, 07 Sep 2026 18:50:43 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=BNXUSDT&interval=1d&startTime=1722816000000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:45.234831+00:00",
+      "http_status": 200,
+      "sha256": "18aed5f64439951ed2760bd505a5400306e2db6cc7625fd4417d9ecd6735a02e",
+      "bytes": 38395,
+      "server_date": "Mon, 07 Sep 2026 18:50:45 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=BNXUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:43.938345+00:00",
+      "http_status": 200,
+      "sha256": "a054dd231e1ded1f4ba201adeb66e08e417f719e848a943b64dae3ec507423b5",
+      "bytes": 169260,
+      "server_date": "Mon, 07 Sep 2026 18:50:44 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=DOCKUSDT&interval=1d&startTime=1687910400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:12.909622+00:00",
+      "http_status": 200,
+      "sha256": "711f4db92a8f70b0abd01df82141bb201569ea994f9cf37450ac258f97f65ad5",
+      "bytes": 65400,
+      "server_date": "Mon, 07 Sep 2026 18:50:13 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=TROYUSDT&interval=1d&startTime=1687910400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:35.876964+00:00",
+      "http_status": 200,
+      "sha256": "32c8db21b224c409a6cb58483f4d327402b13b54542d43118a695dbab30aa151",
+      "bytes": 113111,
+      "server_date": "Mon, 07 Sep 2026 18:51:35 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=AVAUSDT&interval=1d&startTime=1692576000000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:36.669521+00:00",
+      "http_status": 200,
+      "sha256": "fe0c230c2ff133f61dc911a72b0b7ced50fcc70fd9ee48750195e821d0a903cc",
+      "bytes": 164906,
+      "server_date": "Mon, 07 Sep 2026 18:50:36 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=BEAMXUSDT&interval=1d&startTime=1786320000000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:15.153854+00:00",
+      "http_status": 200,
+      "sha256": "d496dad83cbb8986a96c6b16757a77807ed0950a1cad5e15a94cc9965c221267",
+      "bytes": 4735,
+      "server_date": "Mon, 07 Sep 2026 18:51:15 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=BELUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:10.997170+00:00",
+      "http_status": 200,
+      "sha256": "c8410e4d1894fc8b7a43dfe352197bc7f2c06c82bc5b70bcdd39dad3671867ff",
+      "bytes": 167590,
+      "server_date": "Mon, 07 Sep 2026 18:50:11 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=NOKBUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:23.231316+00:00",
+      "http_status": 200,
+      "sha256": "ba763c7a2423ed82bd0c5d3bdf76a14cf01268c7ca6d03898eeb0a7017e6a7a1",
+      "bytes": 8690,
+      "server_date": "Mon, 07 Sep 2026 18:50:23 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=RAMPUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:38.853564+00:00",
+      "http_status": 200,
+      "sha256": "db065516c7443eeda1858b2edd32147f8dc4757ac1bd73391334ea96649250da",
+      "bytes": 79236,
+      "server_date": "Mon, 07 Sep 2026 18:50:39 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=AMPUSDT&interval=1d&startTime=1724025600000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:24.406956+00:00",
+      "http_status": 200,
+      "sha256": "c26ced2851a354cdded4c5969f31e14005e116d62e722ef631ef0124cb4e8c58",
+      "bytes": 128027,
+      "server_date": "Mon, 07 Sep 2026 18:51:24 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=SPCXBUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:27.251066+00:00",
+      "http_status": 200,
+      "sha256": "e68da8cb6366f5945425802e00311fde5e5beb3b4b2dc1e597b7601441bfafca",
+      "bytes": 15157,
+      "server_date": "Mon, 07 Sep 2026 18:51:27 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=BTCUSDT&interval=1d&startTime=1687910400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:36.128007+00:00",
+      "http_status": 200,
+      "sha256": "652c46f6a32ade11d6f3f85f4f05d43b62b832ea2b6cb47f513c1e1e91400f3b",
+      "bytes": 187412,
+      "server_date": "Mon, 07 Sep 2026 18:51:36 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=ICPUSDT&interval=1d&startTime=1707091200000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:39.530637+00:00",
+      "http_status": 200,
+      "sha256": "cbd78a3adea79856c397c05dc09ab04e8b25bf24b211b21a9fad43bc2048e011",
+      "bytes": 160396,
+      "server_date": "Mon, 07 Sep 2026 18:50:39 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=VIBUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:00.644703+00:00",
+      "http_status": 200,
+      "sha256": "8aba525cb502812fab1d72fc9b28d94045a1759eb83b7b990042b78d249b5d81",
+      "bytes": 134151,
+      "server_date": "Mon, 07 Sep 2026 18:51:00 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=BIOUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:58.881900+00:00",
+      "http_status": 200,
+      "sha256": "b66df51a8e95810442136ce8d3bc4b5198d4d3f4b6ee015e2233516e243b2eeb",
+      "bytes": 104490,
+      "server_date": "Mon, 07 Sep 2026 18:50:59 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=ANKRUSDT&interval=1d&startTime=1687910400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:12.250354+00:00",
+      "http_status": 200,
+      "sha256": "a400e9fefca5ac00d62ea8a206aef19228393a76ed27cd58c99e1fc5412c9232",
+      "bytes": 169658,
+      "server_date": "Mon, 07 Sep 2026 18:50:12 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=STRATUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:51.470560+00:00",
+      "http_status": 200,
+      "sha256": "535f71f83f5bb1d40533050312151e8af1eead97b97afbe6b811a4966a0abffd",
+      "bytes": 6962,
+      "server_date": "Mon, 07 Sep 2026 18:50:51 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=CTXCUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:10.554904+00:00",
+      "http_status": 200,
+      "sha256": "722a8661d082a6c2727590584d4380faf7332cc8c33f9154917a39aed857a7ec",
+      "bytes": 167274,
+      "server_date": "Mon, 07 Sep 2026 18:51:10 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=GNSUSDT&interval=1d&startTime=1762992000000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:46.370982+00:00",
+      "http_status": 200,
+      "sha256": "63f2d39884d22b1c8c08fda281790a4345eecc535556bb47e6350c78f47e12c2",
+      "bytes": 48066,
+      "server_date": "Mon, 07 Sep 2026 18:50:46 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=AMBUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:13.380336+00:00",
+      "http_status": 200,
+      "sha256": "035fe032ef32ed0644b93ac1931b9b132a8213cb44532336b412a1a5df14f64d",
+      "bytes": 123898,
+      "server_date": "Mon, 07 Sep 2026 18:50:13 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=PHBUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:25.509498+00:00",
+      "http_status": 200,
+      "sha256": "6bb901b74450063ff71f721c5cb9b8ad4f5d38b279f19230377f7bf618425c86",
+      "bytes": 167625,
+      "server_date": "Mon, 07 Sep 2026 18:51:25 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=FTTUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:22.207892+00:00",
+      "http_status": 200,
+      "sha256": "b1ae9ed2979295c8d11411e803810eda839ae0871f8c978aa234bea565227842",
+      "bytes": 170133,
+      "server_date": "Mon, 07 Sep 2026 18:51:22 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=YFIIUSDT&interval=1d&startTime=1687910400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:17.569566+00:00",
+      "http_status": 200,
+      "sha256": "ceaa7e16ca351347ae1d3f4c466d7b5f944a192ddf3564dc7cf69e0f2076dddc",
+      "bytes": 9295,
+      "server_date": "Mon, 07 Sep 2026 18:51:17 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=AMPUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:23.094404+00:00",
+      "http_status": 200,
+      "sha256": "3ccaccf56303dd2a74b6c2fe84561b6d1b1f5991ff00ddab5e14d14f2a56c4e2",
+      "bytes": 170147,
+      "server_date": "Mon, 07 Sep 2026 18:51:23 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=TUTUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:14.453067+00:00",
+      "http_status": 200,
+      "sha256": "126f09cc2a0533e27171f9082f80bfc32e014ae2a524f84b87583db556b82c7c",
+      "bytes": 89881,
+      "server_date": "Mon, 07 Sep 2026 18:50:14 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=BMNRBUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:34.890960+00:00",
+      "http_status": 200,
+      "sha256": "4820e0ead40aee234bf07d7e003e222720efd6ba3a02bc792a0de286c7b4f2a9",
+      "bytes": 5381,
+      "server_date": "Mon, 07 Sep 2026 18:50:35 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=ENSUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:29.252697+00:00",
+      "http_status": 200,
+      "sha256": "0a467200ddb5282563039ef620642cf4f1960b2ab347fea4c2742273ae059060",
+      "bytes": 170065,
+      "server_date": "Mon, 07 Sep 2026 18:50:28 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=AVAUSDT&interval=1d&startTime=1778976000000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:37.759447+00:00",
+      "http_status": 200,
+      "sha256": "6f7d464992e84df4de6bb7a64f0d6cd6b41ef7f49efc4e2a3d75b164ae059d64",
+      "bytes": 18406,
+      "server_date": "Mon, 07 Sep 2026 18:50:37 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=EDUUSDT&interval=1d&startTime=1769040000000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:29.184264+00:00",
+      "http_status": 200,
+      "sha256": "c38bc8aa10eb39ebed5a5ac8d5502dc568ddbb30f824e0c01ca87bbf1c8fd47c",
+      "bytes": 38122,
+      "server_date": "Mon, 07 Sep 2026 18:50:29 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=PLTRBUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:14.048848+00:00",
+      "http_status": 200,
+      "sha256": "ec5b14e30f758e1b77134e67e1b531b27127ecfe116186b297ccb76e0ddaf1d4",
+      "bytes": 11292,
+      "server_date": "Mon, 07 Sep 2026 18:51:14 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=CHESSUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:08.346403+00:00",
+      "http_status": 200,
+      "sha256": "8c11b3e5e957b9f26dcee2905e68a5de914f91a75cb70d4a2b72ae08c6c1be73",
+      "bytes": 166865,
+      "server_date": "Mon, 07 Sep 2026 18:51:08 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=ACMUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:55.593159+00:00",
+      "http_status": 200,
+      "sha256": "6a2ccf76f40476cffe1456a43d331701477970236d68dce3ece8e6b0bd5c056e",
+      "bytes": 164041,
+      "server_date": "Mon, 07 Sep 2026 18:50:55 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=BOMEUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:27.926664+00:00",
+      "http_status": 200,
+      "sha256": "6fef862172ca2ecc650305e3fe12c3213e6d0b9b67f391a1cbce117a2a507237",
+      "bytes": 147578,
+      "server_date": "Mon, 07 Sep 2026 18:51:28 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=BTTUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:20.380223+00:00",
+      "http_status": 200,
+      "sha256": "1529f8197fb11ce8d5a73fcd0c0e9f2f6663a5d897353e4b2207714dffee20e6",
+      "bytes": 84025,
+      "server_date": "Mon, 07 Sep 2026 18:50:20 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=OCEANUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:22.657347+00:00",
+      "http_status": 200,
+      "sha256": "78be67f93a2aafd7e9cf3f260ba33425962576636f888a535f31c82fa4b1dc7c",
+      "bytes": 169308,
+      "server_date": "Mon, 07 Sep 2026 18:51:22 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=ALGOUSDT&interval=1d&startTime=1687910400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:48.771360+00:00",
+      "http_status": 200,
+      "sha256": "eacec42f649975d1aa39ae41c7f15c2bdb10fc60276955642461c38277ded8e4",
+      "bytes": 170755,
+      "server_date": "Mon, 07 Sep 2026 18:50:48 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=VOXELUSDT&interval=1d&startTime=1725840000000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:41.496254+00:00",
+      "http_status": 200,
+      "sha256": "433b91f0ba700db07f61ec7fc179627b4b0aa69ada1608ea580142517ba3bd06",
+      "bytes": 78245,
+      "server_date": "Mon, 07 Sep 2026 18:50:41 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=CTXCUSDT&interval=1d&startTime=1687910400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:11.868499+00:00",
+      "http_status": 200,
+      "sha256": "1a5cdea07c3883ee8ace5b4933b5558dbaa869ead3020c05e86c2f9b9dcd61eb",
+      "bytes": 110522,
+      "server_date": "Mon, 07 Sep 2026 18:51:12 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=ALPINEUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:23.026151+00:00",
+      "http_status": 200,
+      "sha256": "57255e5aef631bd25f0a0d69b6de3866265501448d4ca8edc07a26aa9642d59f",
+      "bytes": 165342,
+      "server_date": "Mon, 07 Sep 2026 18:50:23 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=ONGUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:16.052189+00:00",
+      "http_status": 200,
+      "sha256": "f943c11cdebdd477872c7dbb458fff50239a102b4c424b0c4648df98045a8ba1",
+      "bytes": 165051,
+      "server_date": "Mon, 07 Sep 2026 18:51:16 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=POLSUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:51.628802+00:00",
+      "http_status": 200,
+      "sha256": "5dfdbf3a17d752c443d3dbb2c39bec1a8b6c806eee4461313175eb53ed677bff",
+      "bytes": 164707,
+      "server_date": "Mon, 07 Sep 2026 18:50:51 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=MBOXUSDT&interval=1d&startTime=1715731200000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:25.941539+00:00",
+      "http_status": 200,
+      "sha256": "fb3c52e9a1709752a33c0fe358ed7004a3bdb9edf24647359bc8680ddef359ac",
+      "bytes": 128932,
+      "server_date": "Mon, 07 Sep 2026 18:51:26 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=FLOWUSDT&interval=1d&startTime=1714003200000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:58.016614+00:00",
+      "http_status": 200,
+      "sha256": "329cdae62128a336fea79866346203c858bdbdeeecc5e0ee3df8e2a167f2f14a",
+      "bytes": 144408,
+      "server_date": "Mon, 07 Sep 2026 18:50:58 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=SNXUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:06.894897+00:00",
+      "http_status": 200,
+      "sha256": "8d505bbb18b20fbd49ae9168c0b94e631a68f051d32b44b9ca0a61137daea85f",
+      "bytes": 169276,
+      "server_date": "Mon, 07 Sep 2026 18:51:06 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=TNSRUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:34.470659+00:00",
+      "http_status": 200,
+      "sha256": "7aacd0443ce3969226871288ce6f9a7241e22f8224d49bb8357250705b64412b",
+      "bytes": 148423,
+      "server_date": "Mon, 07 Sep 2026 18:50:34 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=COWUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:14.958027+00:00",
+      "http_status": 200,
+      "sha256": "3ad332fdaf39052b55777b2802503ecc345c4f709efbcc08fc653a215c968bc0",
+      "bytes": 111952,
+      "server_date": "Mon, 07 Sep 2026 18:51:15 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=GIGGLEUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:48.537572+00:00",
+      "http_status": 200,
+      "sha256": "218f265d8cba4d727f01ae0f51573eb692ae669780469c89683493c0f53a36f3",
+      "bytes": 54014,
+      "server_date": "Mon, 07 Sep 2026 18:50:48 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=ORCLBUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:53.597225+00:00",
+      "http_status": 200,
+      "sha256": "105fc0018a4c7be338103c41bfd2139e89451f1702e8cb71cb047a18bfa31d47",
+      "bytes": 7750,
+      "server_date": "Mon, 07 Sep 2026 18:50:53 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=ANKRUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:11.151412+00:00",
+      "http_status": 200,
+      "sha256": "e68e443280d140a3caedd61083ad49c56bdcdfaad9980a9a74ff2708d0e9af67",
+      "bytes": 171661,
+      "server_date": "Mon, 07 Sep 2026 18:50:11 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=COCOSUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:31.179282+00:00",
+      "http_status": 200,
+      "sha256": "289002040b4ab2cc97e552671c936b26d67c319b78b6035caeaa1d4a1015e4ef",
+      "bytes": 162470,
+      "server_date": "Mon, 07 Sep 2026 18:50:31 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=HMSTRUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:16.238202+00:00",
+      "http_status": 200,
+      "sha256": "a3a80f51817539aef8e35829cd4e08c683c7d35d69c2e66a8c8843a7436b9442",
+      "bytes": 114395,
+      "server_date": "Mon, 07 Sep 2026 18:50:16 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=AAVEUSDT&interval=1d&startTime=1689120000000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:20.229675+00:00",
+      "http_status": 200,
+      "sha256": "7a57fe803b2ffb2dd3524c5e0fb739593994c0ba86b801db9822514adcf601bf",
+      "bytes": 173844,
+      "server_date": "Mon, 07 Sep 2026 18:51:20 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=OGUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:53.671589+00:00",
+      "http_status": 200,
+      "sha256": "f112c79d0939d1f7d30380007507aa4ac83f1bc449aaef9276c2b6ef8ff87e89",
+      "bytes": 165095,
+      "server_date": "Mon, 07 Sep 2026 18:50:53 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=RADUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:55.365478+00:00",
+      "http_status": 200,
+      "sha256": "a3c6ee5fd2fd11555908bd638706dd7bbbb5ab99bc0f4ae9cc84adeb29a12b4f",
+      "bytes": 166188,
+      "server_date": "Mon, 07 Sep 2026 18:50:55 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=CAKEUSDT&interval=1d&startTime=1700092800000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:27.502943+00:00",
+      "http_status": 200,
+      "sha256": "6d671aa1be77c204aef00d16334a4193f7dbe05013f94f0dce1b6077f492c556",
+      "bytes": 168988,
+      "server_date": "Mon, 07 Sep 2026 18:51:27 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=UNIUSDT&interval=1d&startTime=1774310400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:10.101326+00:00",
+      "http_status": 200,
+      "sha256": "7459e6d9287e6cbb011f486d5d9c332295e34d1ebdbf64e936bae17808f72be1",
+      "bytes": 28233,
+      "server_date": "Mon, 07 Sep 2026 18:51:10 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=BMTUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:16.859287+00:00",
+      "http_status": 200,
+      "sha256": "572bd690894f7897576a59a901fbad020c57d0d2adbbc1ca2429df59e0a79dbc",
+      "bytes": 90590,
+      "server_date": "Mon, 07 Sep 2026 18:50:17 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=LOOMUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:18.396860+00:00",
+      "http_status": 200,
+      "sha256": "aea1ef747844460dd16a9a9521ab4d08092b2543d7c9b360af658e5b98d59b15",
+      "bytes": 87937,
+      "server_date": "Mon, 07 Sep 2026 18:50:18 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=AUCTIONUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:17.530047+00:00",
+      "http_status": 200,
+      "sha256": "8416c83f88c43ea4bb90e277b188c8cbd3d23f266b7dffb7263d6d3229ab9b40",
+      "bytes": 165878,
+      "server_date": "Mon, 07 Sep 2026 18:50:17 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=DUSKUSDT&interval=1d&startTime=1774310400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:43.690353+00:00",
+      "http_status": 200,
+      "sha256": "18819b73df41f2936e3b357abf2e4be7f773d9c8b63b9079c8e065f3342c7da4",
+      "bytes": 27717,
+      "server_date": "Mon, 07 Sep 2026 18:50:43 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=PIVXUSDT&interval=1d&startTime=1786492800000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:55.435879+00:00",
+      "http_status": 200,
+      "sha256": "959bdafa82f77a228bf42a23a282d38517a7741f92ed00b840e7035535d058d6",
+      "bytes": 989,
+      "server_date": "Mon, 07 Sep 2026 18:50:55 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=LINEAUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:29.841803+00:00",
+      "http_status": 200,
+      "sha256": "cb8f5bbceb1ab2071d3aeaa0fcce1104d3b6539cfd4b55a56b0f49bf3c5410e1",
+      "bytes": 62137,
+      "server_date": "Mon, 07 Sep 2026 18:50:30 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=SOPHUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:18.239660+00:00",
+      "http_status": 200,
+      "sha256": "7888924f452e0e45eb698bb292002ca9317bec4081e2a212d874e5ff895fb6a5",
+      "bytes": 78537,
+      "server_date": "Mon, 07 Sep 2026 18:51:18 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=DEGOUSDT&interval=1d&startTime=1701734400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:21.328684+00:00",
+      "http_status": 200,
+      "sha256": "cf0c47577c47e9ace5d8e45888ce769b9e104d33f2588c8694f84f9f301e2c2d",
+      "bytes": 145405,
+      "server_date": "Mon, 07 Sep 2026 18:51:21 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=BARUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:34.744755+00:00",
+      "http_status": 200,
+      "sha256": "a74bd9c6cfd9c9a06666c4b2fbd963cecd9a8a731163a2c71d0952207311b3d6",
+      "bytes": 164362,
+      "server_date": "Mon, 07 Sep 2026 18:51:34 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=CVXUSDT&interval=1d&startTime=1726617600000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:49.420890+00:00",
+      "http_status": 200,
+      "sha256": "c38ad69042106e2261e5f139d3b6594cdf9c1b845e6cffd1a105ed2895d497c4",
+      "bytes": 118416,
+      "server_date": "Mon, 07 Sep 2026 18:50:49 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=AVAUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:35.355988+00:00",
+      "http_status": 200,
+      "sha256": "4d7114e4fd293fef94e63ec52d7150d814e897922be7e3c30c34169b6179bb45",
+      "bytes": 164587,
+      "server_date": "Mon, 07 Sep 2026 18:50:35 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=BELUSDT&interval=1d&startTime=1774310400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:13.545845+00:00",
+      "http_status": 200,
+      "sha256": "c9f06f594c86f7a02ac439e0ff2978251bb85c75193c557006952ae96e340a24",
+      "bytes": 27674,
+      "server_date": "Mon, 07 Sep 2026 18:50:13 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=WBETHUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:27.706565+00:00",
+      "http_status": 200,
+      "sha256": "d2502ef8e3dfc584429ecd2f98e9e6bb46f3f68a6011cbf84c13524a41751022",
+      "bytes": 170311,
+      "server_date": "Mon, 07 Sep 2026 18:51:27 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=PEPEUSDT&interval=1d&startTime=1769644800000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:05.255230+00:00",
+      "http_status": 200,
+      "sha256": "1ec55ae50950ae76e3a338be5841a2491fadee3253d701d05e3e3c28c7e85764",
+      "bytes": 37607,
+      "server_date": "Mon, 07 Sep 2026 18:51:05 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=MULTIUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:22.151487+00:00",
+      "http_status": 200,
+      "sha256": "bb84c8208f6bb3539e05b1988c3ad97778c2697f581cb72e05c9db660859ee61",
+      "bytes": 112488,
+      "server_date": "Mon, 07 Sep 2026 18:50:22 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=SPELLUSDT&interval=1d&startTime=1726704000000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:21.930929+00:00",
+      "http_status": 200,
+      "sha256": "c816763b645f0b97baffd1029fffeef3b17039ef2f3cba791b423f9676be78ac",
+      "bytes": 123607,
+      "server_date": "Mon, 07 Sep 2026 18:50:22 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=1INCHUSDT&interval=1d&startTime=1695254400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:19.840165+00:00",
+      "http_status": 200,
+      "sha256": "2e27de4e239634426b9c965b219746d4715a61f6aa6bb7817e9bc444dc79a5a0",
+      "bytes": 167885,
+      "server_date": "Mon, 07 Sep 2026 18:51:19 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=ACXUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:30.121273+00:00",
+      "http_status": 200,
+      "sha256": "1908840c061e379bf47774b42bea098d9118953eea8645165f51eab55b1c6a22",
+      "bytes": 103099,
+      "server_date": "Mon, 07 Sep 2026 18:51:30 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=BARDUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:21.975719+00:00",
+      "http_status": 200,
+      "sha256": "190a7d66ef7f5e748d62cc713a27177fcca104e00504f1588c3440050bd6f860",
+      "bytes": 59233,
+      "server_date": "Mon, 07 Sep 2026 18:51:22 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=TFUELUSDT&interval=1d&startTime=1687910400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:40.627566+00:00",
+      "http_status": 200,
+      "sha256": "9235c0df21aaf6cd738623ada2b57074197ef51fd7ee398f3182d44332965092",
+      "bytes": 167837,
+      "server_date": "Mon, 07 Sep 2026 18:50:40 GMT"
+    },
+    {
+      "url": "https://s3-ap-northeast-1.amazonaws.com/data.binance.vision?prefix=data%2Fspot%2Fmonthly%2Fklines%2F&max-keys=1000&delimiter=%2F&marker=data%2Fspot%2Fmonthly%2Fklines%2FMBLBTC%2F",
+      "retrieved_at_utc": "2026-09-07T18:50:09.641523+00:00",
+      "http_status": 200,
+      "sha256": "5ff33c4f9be230ee626e9d9685508e38dae3d6b093352627451fa2dd9e2f6bd9",
+      "bytes": 83645,
+      "server_date": "Mon, 07 Sep 2026 18:50:10 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=METUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:11.791426+00:00",
+      "http_status": 200,
+      "sha256": "90663cf4b5404fc8c377efd1aefe1711b2d27301837c2e2ea348bf4875105a12",
+      "bytes": 49728,
+      "server_date": "Mon, 07 Sep 2026 18:50:11 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=RESOLVUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:42.818467+00:00",
+      "http_status": 200,
+      "sha256": "b875811dac66a565f1f8219182efe8f71465f6a9ff6539b99ed6f5159d37c368",
+      "bytes": 76590,
+      "server_date": "Mon, 07 Sep 2026 18:50:43 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=UNIUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:07.709144+00:00",
+      "http_status": 200,
+      "sha256": "1860647438f04be63f6fe8658d4bb403dc8b6cc3846b374a956a55d7fe95d2bc",
+      "bytes": 171190,
+      "server_date": "Mon, 07 Sep 2026 18:51:07 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=OCEANUSDT&interval=1d&startTime=1687910400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:23.956548+00:00",
+      "http_status": 200,
+      "sha256": "d286d50aeabf3cf897567757caf91562eb3ad6d79daada38542d27ac52e36e10",
+      "bytes": 62402,
+      "server_date": "Mon, 07 Sep 2026 18:51:24 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=DUSKUSDT&interval=1d&startTime=1687910400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:42.383866+00:00",
+      "http_status": 200,
+      "sha256": "609642427087e0224490995425f8ad0ee42d5a5732e29f0cc21eb1c436e0712c",
+      "bytes": 167825,
+      "server_date": "Mon, 07 Sep 2026 18:50:42 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=IOTAUSDT&interval=1d&startTime=1774310400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:04.599007+00:00",
+      "http_status": 200,
+      "sha256": "c76e5cdbbeb5d2f022aeabc758aaaaf6b205add9f58c82b675ec8f33708566b4",
+      "bytes": 27932,
+      "server_date": "Mon, 07 Sep 2026 18:51:04 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=LTOUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:28.146970+00:00",
+      "http_status": 200,
+      "sha256": "772526147ee5c1fabd3917514814192fbe0af72d9f715d52851551ff6da8e5b5",
+      "bytes": 167279,
+      "server_date": "Mon, 07 Sep 2026 18:51:28 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=FLUXUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:03.734126+00:00",
+      "http_status": 200,
+      "sha256": "20306fddf3bcd2063d72f9f434a059e853c9daa882a22e1957ff7fa2023333b9",
+      "bytes": 166606,
+      "server_date": "Mon, 07 Sep 2026 18:51:03 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=PERPUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:32.524978+00:00",
+      "http_status": 200,
+      "sha256": "799a4c05188b63f31615fb1aa98cd37a45363061e8c80676c023abe04c5795dd",
+      "bytes": 167025,
+      "server_date": "Mon, 07 Sep 2026 18:50:32 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=SCRUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:46.156311+00:00",
+      "http_status": 200,
+      "sha256": "17f54425d7de1b50bbceb2f6266ebeaf755d38913d6d82397b752ce8c7f6f726",
+      "bytes": 116451,
+      "server_date": "Mon, 07 Sep 2026 18:50:46 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=BALUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:38.425430+00:00",
+      "http_status": 200,
+      "sha256": "5f54d1bc1000758d798d900428f3273070398a0c185186d558ec610aeba43740",
+      "bytes": 166481,
+      "server_date": "Mon, 07 Sep 2026 18:50:38 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=1000CATUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:24.559832+00:00",
+      "http_status": 200,
+      "sha256": "8472e97a3af3d2975c0194c99c08fcc2b9b843af3e715282e8488223411b8fdf",
+      "bytes": 106923,
+      "server_date": "Mon, 07 Sep 2026 18:50:24 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=KEEPUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:35.171056+00:00",
+      "http_status": 200,
+      "sha256": "249dc60e62a4a93e5aa4700400ba33108b5a83f543beadd982764bc5358500e1",
+      "bytes": 41674,
+      "server_date": "Mon, 07 Sep 2026 18:51:35 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=QNTBUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:23.289130+00:00",
+      "http_status": 200,
+      "sha256": "64302f2a169502bb8dda30a40241297c3d358eb00a977998c305f08e22bf1b6d",
+      "bytes": 7508,
+      "server_date": "Mon, 07 Sep 2026 18:51:23 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=REQUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:31.391404+00:00",
+      "http_status": 200,
+      "sha256": "d0491d0b03c9ded40cf27d0e078585d96846ae0190dfb18ca6b40d9260860558",
+      "bytes": 166736,
+      "server_date": "Mon, 07 Sep 2026 18:50:31 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=AERGOUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:34.036805+00:00",
+      "http_status": 200,
+      "sha256": "d7bd01e30617b237d12148b29dc0e4bdd05b021a80b70c5149b11fa7f412dad7",
+      "bytes": 115467,
+      "server_date": "Mon, 07 Sep 2026 18:50:34 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=FILUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:26.991699+00:00",
+      "http_status": 200,
+      "sha256": "a897a61396f9e645feeeb164ed3e960736b14929c1523bf256025a5428800675",
+      "bytes": 172927,
+      "server_date": "Mon, 07 Sep 2026 18:50:27 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=REQUSDT&interval=1d&startTime=1715817600000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:32.985906+00:00",
+      "http_status": 200,
+      "sha256": "62605f5772e52f68879138b34d4b0c7d60065df90c208d930bec2fc9b949180b",
+      "bytes": 139291,
+      "server_date": "Mon, 07 Sep 2026 18:50:32 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=2ZUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:21.036490+00:00",
+      "http_status": 200,
+      "sha256": "43e21e14d9829f8439e171d19590a62afa40ab60e39e790422d7d681448cd068",
+      "bytes": 56966,
+      "server_date": "Mon, 07 Sep 2026 18:50:21 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=FLMUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:18.115619+00:00",
+      "http_status": 200,
+      "sha256": "8803528c05fb3aa7635544d5f25c6f48652e7ba4d23d32be833b667b601253f6",
+      "bytes": 168525,
+      "server_date": "Mon, 07 Sep 2026 18:50:17 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=DATAUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:31.016820+00:00",
+      "http_status": 200,
+      "sha256": "a5d08d0e8e607633643f5ca3fc68921a2bb73e45dad70557dff1ac8915b31ba2",
+      "bytes": 167763,
+      "server_date": "Mon, 07 Sep 2026 18:51:31 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=MITHUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:22.436038+00:00",
+      "http_status": 200,
+      "sha256": "a62ca1d3aa57960259d90b116968f2678f5ea10f3b7ba50b5036f422bd2b6ab2",
+      "bytes": 137977,
+      "server_date": "Mon, 07 Sep 2026 18:51:22 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=ACMUSDT&interval=1d&startTime=1786924800000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:58.206680+00:00",
+      "http_status": 200,
+      "sha256": "a47e35c38525106d94b086a303f0d295ca8ad191d4e8debe9c85f43103021c05",
+      "bytes": 3440,
+      "server_date": "Mon, 07 Sep 2026 18:50:58 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=REEFUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:57.353178+00:00",
+      "http_status": 200,
+      "sha256": "42bd718fc76701840ff86675e8875d556e4ead1556432a3543e2f7bcfa72d226",
+      "bytes": 173174,
+      "server_date": "Mon, 07 Sep 2026 18:50:57 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=TURBOUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:29.699077+00:00",
+      "http_status": 200,
+      "sha256": "e9019e37ddc054a177931cf3c8763085c350ea77a9616af14d8b16384482a9dc",
+      "bytes": 124654,
+      "server_date": "Mon, 07 Sep 2026 18:51:29 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=AXTIBUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:44.618586+00:00",
+      "http_status": 200,
+      "sha256": "f71391578f64b4e7441a3745cf1b6540ffbbe59701abe269ea9de72e55ac428c",
+      "bytes": 7712,
+      "server_date": "Mon, 07 Sep 2026 18:50:44 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=BCHABCUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:31.877275+00:00",
+      "http_status": 200,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "bytes": 2,
+      "server_date": "Mon, 07 Sep 2026 18:51:32 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=CTKUSDT&interval=1d&startTime=1776556800000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:44.357496+00:00",
+      "http_status": 200,
+      "sha256": "230c7d752b61fe1e240c3ec4aef3dc25da884b1c5962df65d0b0f084b77a6041",
+      "bytes": 22869,
+      "server_date": "Mon, 07 Sep 2026 18:50:44 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=1INCHUSDT&interval=1d&startTime=1781654400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:21.089764+00:00",
+      "http_status": 200,
+      "sha256": "3d4615f444a5938161a17d7d906c139b935da84b55b5c09626e26c31b745a0f8",
+      "bytes": 13551,
+      "server_date": "Mon, 07 Sep 2026 18:51:21 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=KAVAUSDT&interval=1d&startTime=1687910400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:01.304332+00:00",
+      "http_status": 200,
+      "sha256": "31cf9615a38bcd4d7cee4815619eaffbf683b067c255b2c23b3d80cd31f082ee",
+      "bytes": 168084,
+      "server_date": "Mon, 07 Sep 2026 18:51:01 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=PYPLBUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:39.949598+00:00",
+      "http_status": 200,
+      "sha256": "35cb051a456e9c88fc547dd904ad0fea9f64ea952845118fdd890307706a69c3",
+      "bytes": 6332,
+      "server_date": "Mon, 07 Sep 2026 18:50:40 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=OGUSDT&interval=1d&startTime=1782086400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:56.026282+00:00",
+      "http_status": 200,
+      "sha256": "0e575cf987e329bff98abd4337f9b2559929e9a6696a957714d9565e3860fa7d",
+      "bytes": 12499,
+      "server_date": "Mon, 07 Sep 2026 18:50:56 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=POLSUSDT&interval=1d&startTime=1707782400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:52.929020+00:00",
+      "http_status": 200,
+      "sha256": "0ee00e9754152a58426d694fb177ecae80c5629eee13afc5741951f90a93f89f",
+      "bytes": 26707,
+      "server_date": "Mon, 07 Sep 2026 18:50:53 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=ANTUSDT&interval=1d&startTime=1687910400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:37.322909+00:00",
+      "http_status": 200,
+      "sha256": "fde8bb2a54923841334bf89e8b3b54f14c8eb28f83853c2c6c37309ae3520599",
+      "bytes": 39008,
+      "server_date": "Mon, 07 Sep 2026 18:50:37 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=BICOUSDT&interval=1d&startTime=1725408000000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:17.806190+00:00",
+      "http_status": 200,
+      "sha256": "c283b8d588207318c57ca122a8db927a3d008b6085c7b1fc1726a7d05c6ba115",
+      "bytes": 122443,
+      "server_date": "Mon, 07 Sep 2026 18:51:18 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=LDOUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:30.287723+00:00",
+      "http_status": 200,
+      "sha256": "3adf8c9f8c303ee06c6d3947de2d2fda61db802cb12a360d6a7a4b1e8c5666d8",
+      "bytes": 169632,
+      "server_date": "Mon, 07 Sep 2026 18:50:30 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=CUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:19.563725+00:00",
+      "http_status": 200,
+      "sha256": "3372ff472ab5d57a112f53916693c398bed63b0625540728a4183f5b4e30206b",
+      "bytes": 69688,
+      "server_date": "Mon, 07 Sep 2026 18:51:19 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=OOKIUSDT&interval=1d&startTime=1726704000000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:50.520808+00:00",
+      "http_status": 200,
+      "sha256": "710228c7bfba628f03469eee694b9c46ac0d4055e37ecc599af0f8919adf9d11",
+      "bytes": 8427,
+      "server_date": "Mon, 07 Sep 2026 18:50:50 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=LOKAUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:55.811174+00:00",
+      "http_status": 200,
+      "sha256": "55cba27a8c144bfdd883d4607cc16f6e00e40d9fe9fe465856d298a1465d54b9",
+      "bytes": 167381,
+      "server_date": "Mon, 07 Sep 2026 18:50:56 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=DFUSDT&interval=1d&startTime=1718841600000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:25.057621+00:00",
+      "http_status": 200,
+      "sha256": "ec53bc3a576377cc8160906c8e433934daa24216cb08628f27d3573338f0492b",
+      "bytes": 101304,
+      "server_date": "Mon, 07 Sep 2026 18:51:25 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=XLMUSDT&interval=1d&startTime=1687910400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:07.973025+00:00",
+      "http_status": 200,
+      "sha256": "43ec71a29c256bcd12f327eea5cd927e3ef45f60495920f8d5563a554ca73c32",
+      "bytes": 171570,
+      "server_date": "Mon, 07 Sep 2026 18:51:07 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=ZAMAUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:12.513590+00:00",
+      "http_status": 200,
+      "sha256": "459e69ef65f125b9e5300ce36d66a62c7591543b4bae5ac9fc599f6eba672b45",
+      "bytes": 37216,
+      "server_date": "Mon, 07 Sep 2026 18:51:12 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=DODOUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:31.448916+00:00",
+      "http_status": 200,
+      "sha256": "3624dc860265dc5fe6731e5d85d4e9df9b408acadf21e4f9584c9ff8b2e491d7",
+      "bytes": 168543,
+      "server_date": "Mon, 07 Sep 2026 18:51:31 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=XLMUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:06.190076+00:00",
+      "http_status": 200,
+      "sha256": "359d1a7659b96bea23b064957a0ceaf7f866cc15c74837a0d5f97bd279d7151c",
+      "bytes": 172203,
+      "server_date": "Mon, 07 Sep 2026 18:51:06 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=LPTUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:43.488290+00:00",
+      "http_status": 200,
+      "sha256": "f6f6007ef07cfb1bb612b964993d3ea17d10c1d5ba5dad47dc7f7ce98341bc29",
+      "bytes": 166243,
+      "server_date": "Mon, 07 Sep 2026 18:50:43 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=DODOUSDT&interval=1d&startTime=1786492800000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:34.068888+00:00",
+      "http_status": 200,
+      "sha256": "99f667eb2cb31724422b8dc612359fbfed2db9a42f7b75b4837d0343a3513d46",
+      "bytes": 4376,
+      "server_date": "Mon, 07 Sep 2026 18:51:34 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=JTOUSDT&interval=1d&startTime=1788307200000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:42.588602+00:00",
+      "http_status": 200,
+      "sha256": "00b1ad15f1c5758e10f496a4b27257d64aa04000774f07f17376f381577ccfe4",
+      "bytes": 841,
+      "server_date": "Mon, 07 Sep 2026 18:50:42 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=HOODBUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:26.309523+00:00",
+      "http_status": 200,
+      "sha256": "b9dd58ec608dabb233af968c31ba246bc301f1b7fa0f02fa053ba537511fd220",
+      "bytes": 8840,
+      "server_date": "Mon, 07 Sep 2026 18:50:26 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=ENSUSDT&interval=1d&startTime=1722902400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:30.502379+00:00",
+      "http_status": 200,
+      "sha256": "9d6c4437a7b79deadc964fea2b4a516429fcaef587968246c7b3547ce08ac7d8",
+      "bytes": 128139,
+      "server_date": "Mon, 07 Sep 2026 18:50:30 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=SANDUSDT&interval=1d&startTime=1687910400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:53.888029+00:00",
+      "http_status": 200,
+      "sha256": "3bebe9d7539390c84e37ae5d647a55a71219fd46046c37432a40e8e21f99f2d8",
+      "bytes": 169768,
+      "server_date": "Mon, 07 Sep 2026 18:50:53 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=VELODROMEUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:10.734993+00:00",
+      "http_status": 200,
+      "sha256": "b4fa0594b1cfc60c584af6b63be9651932716c61df9186defefe2aed1fbf7d96",
+      "bytes": 105855,
+      "server_date": "Mon, 07 Sep 2026 18:50:10 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=RUNEUSDT&interval=1d&startTime=1687910400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:04.388862+00:00",
+      "http_status": 200,
+      "sha256": "29a19f8826ab283027a2ffcd53ac954e5db4e994484ab3f770100672617feebd",
+      "bytes": 170413,
+      "server_date": "Mon, 07 Sep 2026 18:51:04 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=IOTAUSDT&interval=1d&startTime=1687910400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:03.285828+00:00",
+      "http_status": 200,
+      "sha256": "ca3287f5b661b3cc66dadffa1ffbcc19a44c428fc08b687ac67f4ce729d3d88c",
+      "bytes": 169121,
+      "server_date": "Mon, 07 Sep 2026 18:51:03 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=PUMPUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:24.834745+00:00",
+      "http_status": 200,
+      "sha256": "76934f6ab3d2a8ae52b84ad6bd6198745f5f79e4cb42f4773a2f8f5f92f3df35",
+      "bytes": 59217,
+      "server_date": "Mon, 07 Sep 2026 18:51:25 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=WAXPUSDT&interval=1d&startTime=1716076800000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:29.901550+00:00",
+      "http_status": 200,
+      "sha256": "f00ed791c067397ae0a104ab478bbaf852eeb8c8c87f5976fe50d4570bbe5531",
+      "bytes": 140936,
+      "server_date": "Mon, 07 Sep 2026 18:51:30 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=CVPUSDT&interval=1d&startTime=1719705600000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:15.316453+00:00",
+      "http_status": 200,
+      "sha256": "fb6438b6af6b09ecf8ed6ec4ff885e712decbf584c8816564e302908cbf7855a",
+      "bytes": 9804,
+      "server_date": "Mon, 07 Sep 2026 18:50:15 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=FTMUSDT&interval=1d&startTime=1687910400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:57.559985+00:00",
+      "http_status": 200,
+      "sha256": "da8317e1184b8c8720c89770d72a4fbe0dbf5567a16fc15fea577144bdd412a0",
+      "bytes": 97617,
+      "server_date": "Mon, 07 Sep 2026 18:50:57 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=LOKAUSDT&interval=1d&startTime=1729036800000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:57.114845+00:00",
+      "http_status": 200,
+      "sha256": "12b1cf86157f7b05fd5ec5f0e9459c8979b714921ade28a314b69dccaa3e177a",
+      "bytes": 47792,
+      "server_date": "Mon, 07 Sep 2026 18:50:57 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=FRONTUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:29.417058+00:00",
+      "http_status": 200,
+      "sha256": "f594ec220d66196783903b8006fcebfb83bda1793c348e8c2ce53079a1a29a57",
+      "bytes": 166664,
+      "server_date": "Mon, 07 Sep 2026 18:50:29 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=LQTYUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:11.557744+00:00",
+      "http_status": 200,
+      "sha256": "32d7b6e6ea85ce374d80add0bac41895aafdf7f41cda1f299eb7a710c85d5a46",
+      "bytes": 167452,
+      "server_date": "Mon, 07 Sep 2026 18:50:11 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=ANKRUSDT&interval=1d&startTime=1774310400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:13.327961+00:00",
+      "http_status": 200,
+      "sha256": "90144e2c54961f43b01d4e4e710e52d600b3a051ed540d6eb8658125a2a059d8",
+      "bytes": 27948,
+      "server_date": "Mon, 07 Sep 2026 18:50:13 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=ASTERUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:19.938514+00:00",
+      "http_status": 200,
+      "sha256": "aa1199dda4f3fb6562cde4e48724789a055c890f65110eccaef3e01cfd7d4ab6",
+      "bytes": 57516,
+      "server_date": "Mon, 07 Sep 2026 18:50:20 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=EGLDUSDT&interval=1d&startTime=1774310400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:00.426989+00:00",
+      "http_status": 200,
+      "sha256": "f8afb70dc2908aebfa6dbae95f6881abfb4d0aae4f8dd1b00874dea2a6717367",
+      "bytes": 27044,
+      "server_date": "Mon, 07 Sep 2026 18:51:00 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=ARPAUSDT&interval=1d&startTime=1687910400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:36.703534+00:00",
+      "http_status": 200,
+      "sha256": "d8be416bf3ab434ebcfc9449f36b91a3d99de4b6cf27f9bcb7e64eb49e70f14b",
+      "bytes": 169378,
+      "server_date": "Mon, 07 Sep 2026 18:50:36 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=CAKEUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:26.169652+00:00",
+      "http_status": 200,
+      "sha256": "aeaba0594040beb44f8ef2051a913258f0722502de65636091e174b2e610036a",
+      "bytes": 170021,
+      "server_date": "Mon, 07 Sep 2026 18:51:26 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=ENJUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:23.971069+00:00",
+      "http_status": 200,
+      "sha256": "3fe1e2416765e151845995cfa473368276189dcf0563415baeb3690b224c32da",
+      "bytes": 169859,
+      "server_date": "Mon, 07 Sep 2026 18:50:23 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=PLAUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:01.758774+00:00",
+      "http_status": 200,
+      "sha256": "662d3014380248ed09acd8d8c451dd70e53adeb94a43a27558f2850e6750bdfe",
+      "bytes": 136573,
+      "server_date": "Mon, 07 Sep 2026 18:51:01 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=PYRUSDT&interval=1d&startTime=1724284800000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:37.554352+00:00",
+      "http_status": 200,
+      "sha256": "aa2a7dda84fc3daa94a75db4492cb2c4ce18fc1bc1f7d0d0c50ae8992f6b456c",
+      "bytes": 120365,
+      "server_date": "Mon, 07 Sep 2026 18:50:37 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=LPTUSDT&interval=1d&startTime=1708560000000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:44.808323+00:00",
+      "http_status": 200,
+      "sha256": "910acf929f9f766dc5414de657b31ccfa68035fe945593603119e4dd09a75418",
+      "bytes": 155183,
+      "server_date": "Mon, 07 Sep 2026 18:50:45 GMT"
+    },
+    {
+      "url": "https://s3-ap-northeast-1.amazonaws.com/data.binance.vision?prefix=data%2Fspot%2Fmonthly%2Fklines%2FBCHABCUSDT%2F1d%2F&max-keys=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:33.845637+00:00",
+      "http_status": 200,
+      "sha256": "fc586828af2c011a5b9ff67c69df4503b67726b426fb72c7b3a4d9ef97572207",
+      "bytes": 7135,
+      "server_date": "Mon, 07 Sep 2026 18:51:35 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=TRUUSDT&interval=1d&startTime=1697414400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:02.196717+00:00",
+      "http_status": 200,
+      "sha256": "f9270f1e7c27fd566ea08552a992037edd61c8af0478dfbad22e8fc13d12aaa1",
+      "bytes": 156771,
+      "server_date": "Mon, 07 Sep 2026 18:51:02 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=RDNTUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:51.416331+00:00",
+      "http_status": 200,
+      "sha256": "46b2440336d4adcc31ede762b539979a87a1547d4e7309593fb4b636278aef97",
+      "bytes": 169643,
+      "server_date": "Mon, 07 Sep 2026 18:50:51 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=FILUSDT&interval=1d&startTime=1775520000000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:29.610924+00:00",
+      "http_status": 200,
+      "sha256": "7ed31a2e870b150318eb8f54ddb86bfe99b9066ac5f108e6786c1dcaa64a9b4f",
+      "bytes": 25816,
+      "server_date": "Mon, 07 Sep 2026 18:50:29 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=NEOUSDT&interval=1d&startTime=1687910400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:14.509499+00:00",
+      "http_status": 200,
+      "sha256": "518234f517de2342065d840ec3610972e50c9f4f72b5db5f2e75a2e50eb193de",
+      "bytes": 167615,
+      "server_date": "Mon, 07 Sep 2026 18:51:14 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=1000CHEEMSUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:15.771570+00:00",
+      "http_status": 200,
+      "sha256": "aaea17b7c5af784071e1aa263983a10dddccfb9c0c7671ea93e50f6abacbe0f4",
+      "bytes": 92155,
+      "server_date": "Mon, 07 Sep 2026 18:50:15 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=THEUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:13.619292+00:00",
+      "http_status": 200,
+      "sha256": "4340b885ef1689c4f8a706aa76027a080b3009a9ff54f9fed64f96e2d920ae9c",
+      "bytes": 109088,
+      "server_date": "Mon, 07 Sep 2026 18:51:13 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=VIRTUALUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:28.514646+00:00",
+      "http_status": 200,
+      "sha256": "43e9d5e3022757739803fe4ab138619cea2bbb0c79d2a70e27404fcf3cd1ee54",
+      "bytes": 87554,
+      "server_date": "Mon, 07 Sep 2026 18:50:28 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=NILUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:42.206658+00:00",
+      "http_status": 200,
+      "sha256": "45a914380cd38ca6217026201ee12c7c71fa0a75595b93d1913337a5eeec2370",
+      "bytes": 89457,
+      "server_date": "Mon, 07 Sep 2026 18:50:42 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=DIAUSDT&interval=1d&startTime=1774310400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:25.006845+00:00",
+      "http_status": 200,
+      "sha256": "83d9cc2cd9c92681dd33e06ee47486c3005798adf871207d94afb000f7418f88",
+      "bytes": 27392,
+      "server_date": "Mon, 07 Sep 2026 18:50:25 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=DIAUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:22.591752+00:00",
+      "http_status": 200,
+      "sha256": "87e598cf34865f3bc117a428eaa966ef326fd76cfa582d90093a7decaa9217f5",
+      "bytes": 166026,
+      "server_date": "Mon, 07 Sep 2026 18:50:22 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=BZRXUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:58.435802+00:00",
+      "http_status": 200,
+      "sha256": "7bb0dd7d791518a7ec7cdb37a0698952fdff6bc88f31767628457737600c2241",
+      "bytes": 75721,
+      "server_date": "Mon, 07 Sep 2026 18:50:58 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=MMTUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:27.416037+00:00",
+      "http_status": 200,
+      "sha256": "6a76313f779c4e899168249e3fc0eca3fd136b5e971f708c628069e1b0052426",
+      "bytes": 51496,
+      "server_date": "Mon, 07 Sep 2026 18:50:27 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=FXSUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:11.423200+00:00",
+      "http_status": 200,
+      "sha256": "b1a3de4109dd4492612e06c1af0599df62ac2d342567ec9360ae5b610c37cded",
+      "bytes": 166416,
+      "server_date": "Mon, 07 Sep 2026 18:51:11 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=FILUSDT&interval=1d&startTime=1689120000000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:28.312252+00:00",
+      "http_status": 200,
+      "sha256": "fa02bc5e56e6c43f82a2a53f0e44a2eadbf994219dcc047ebe2601703456e266",
+      "bytes": 170021,
+      "server_date": "Mon, 07 Sep 2026 18:50:28 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=CVPUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:14.003877+00:00",
+      "http_status": 200,
+      "sha256": "adba58406b735bc12470f5e926489da0aa6428eb1d4c5a7fafaff7807494d47c",
+      "bytes": 165352,
+      "server_date": "Mon, 07 Sep 2026 18:50:14 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=CELOUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:18.202703+00:00",
+      "http_status": 200,
+      "sha256": "9750a1a72b2956924c6b2b27516e51ab610a4445d8c914f7a3cbddfedfd3070a",
+      "bytes": 168052,
+      "server_date": "Mon, 07 Sep 2026 18:50:18 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=BETAUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:27.654654+00:00",
+      "http_status": 200,
+      "sha256": "06a61b0d6b1ca949efb3f4cab6e1075471553010445f562df319e07bc092d6b1",
+      "bytes": 168494,
+      "server_date": "Mon, 07 Sep 2026 18:50:27 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=WTCUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:46.822638+00:00",
+      "http_status": 200,
+      "sha256": "46680ab0bf7a04eaad89c2a5e6aa2a8bd181c3030b2cdf1ee66f7554109fe5d9",
+      "bytes": 165924,
+      "server_date": "Mon, 07 Sep 2026 18:50:46 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=SNXUSDT&interval=1d&startTime=1774310400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:09.445521+00:00",
+      "http_status": 200,
+      "sha256": "754733b6c1adddca5f345932e0e69f927e359b85ef8180135f927ab9048e622a",
+      "bytes": 27538,
+      "server_date": "Mon, 07 Sep 2026 18:51:09 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=DOLOUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:47.656230+00:00",
+      "http_status": 200,
+      "sha256": "0cd1801b36d96b3ebdf1863b5d265b67d4b9ef6b56f89092fa3d7dda7859ccf3",
+      "bytes": 63018,
+      "server_date": "Mon, 07 Sep 2026 18:50:47 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=KAVAUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:59.987814+00:00",
+      "http_status": 200,
+      "sha256": "df38ddb7adf5cb617708363e2f40251d6da58bf61a7a9ad865f7fd32e8699cac",
+      "bytes": 168973,
+      "server_date": "Mon, 07 Sep 2026 18:51:00 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=ERAUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:59.553401+00:00",
+      "http_status": 200,
+      "sha256": "8927a1a1f28436363a085481dfd83234bf978184de77d888233ecd41976f2659",
+      "bytes": 69611,
+      "server_date": "Mon, 07 Sep 2026 18:50:59 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=IQUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:26.935181+00:00",
+      "http_status": 200,
+      "sha256": "4f91be9868dcb8ea89a4971ee12b79e9b7513152333292569976e522b18d0eef",
+      "bytes": 169373,
+      "server_date": "Mon, 07 Sep 2026 18:50:26 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=FLMUSDT&interval=1d&startTime=1687910400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:19.320937+00:00",
+      "http_status": 200,
+      "sha256": "42c2c9c1094d5e21983141df6143d2dc2bce78738bbb9fdd5ebbb1d2350de2b3",
+      "bytes": 146302,
+      "server_date": "Mon, 07 Sep 2026 18:50:19 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=QNTUSDT&interval=1d&startTime=1713916800000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:32.984732+00:00",
+      "http_status": 200,
+      "sha256": "c3c879e23ece2891eb67a10fa36dd41c2cb3fe850a7e3605b649cb0f2a5ed27e",
+      "bytes": 145297,
+      "server_date": "Mon, 07 Sep 2026 18:51:33 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=CELOUSDT&interval=1d&startTime=1696204800000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:19.565876+00:00",
+      "http_status": 200,
+      "sha256": "afc0f1413fdfabbfb903878caf491084b2d7491fb53dd8c9a7946a5a5fb6f9a5",
+      "bytes": 167899,
+      "server_date": "Mon, 07 Sep 2026 18:50:19 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=XLMUSDT&interval=1d&startTime=1774310400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:09.213649+00:00",
+      "http_status": 200,
+      "sha256": "2e222a3d965dc7af8ece36c12ff6e684f1ab0d39dc86fdc8725f3697e744f996",
+      "bytes": 28634,
+      "server_date": "Mon, 07 Sep 2026 18:51:09 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=ETHFIUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:09.263490+00:00",
+      "http_status": 200,
+      "sha256": "788695e109c410c836b588aed696711a989531d3bdd84c73f941e9e05d2bc489",
+      "bytes": 153803,
+      "server_date": "Mon, 07 Sep 2026 18:51:09 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=SENTUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:28.364713+00:00",
+      "http_status": 200,
+      "sha256": "098ecf11936d7b11d8503d6c333db69224b4afc4ad6998441ded69d2657e671c",
+      "bytes": 38738,
+      "server_date": "Mon, 07 Sep 2026 18:51:28 GMT"
+    },
+    {
+      "url": "https://s3-ap-northeast-1.amazonaws.com/data.binance.vision?prefix=data%2Fspot%2Fmonthly%2Fklines%2FBCHSVUSDT%2F1d%2F&max-keys=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:18.390279+00:00",
+      "http_status": 200,
+      "sha256": "4957b19a82853e02f3a707617e09d9ed55746c3b5ea2a260c26d317f04486fe8",
+      "bytes": 3421,
+      "server_date": "Mon, 07 Sep 2026 18:50:19 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=REEFUSDT&interval=1d&startTime=1695600000000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:58.664981+00:00",
+      "http_status": 200,
+      "sha256": "607081df71922741fa65f2bdad9db7eb40426426180a47cc6415876cd3dc7d03",
+      "bytes": 58098,
+      "server_date": "Mon, 07 Sep 2026 18:50:58 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=KLAYUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:19.514682+00:00",
+      "http_status": 200,
+      "sha256": "814af5932594ffc44add7762969fadb414ba6ff29d7609f538e74ddae4b04dff",
+      "bytes": 168939,
+      "server_date": "Mon, 07 Sep 2026 18:50:19 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=OGUSDT&interval=1d&startTime=1695686400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:54.713235+00:00",
+      "http_status": 200,
+      "sha256": "ecdbfe0da9d75bb7aae49a2aae6f6e9a36ee3fd3f107535809ae763f8ae25f3a",
+      "bytes": 166198,
+      "server_date": "Mon, 07 Sep 2026 18:50:54 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=JTOUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:41.294464+00:00",
+      "http_status": 200,
+      "sha256": "9efe58321a939becad2a5fc643ee432e70fd4b737517b436c2190a8c19079db5",
+      "bytes": 168799,
+      "server_date": "Mon, 07 Sep 2026 18:50:41 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=ATAUSDT&interval=1d&startTime=1709424000000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:12.458535+00:00",
+      "http_status": 200,
+      "sha256": "76def2ebb7bc005eb44c7ea40e47be5c79a8a9170e7d6019b383cad38ecc4427",
+      "bytes": 136191,
+      "server_date": "Mon, 07 Sep 2026 18:50:12 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=COMBOUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:02.839740+00:00",
+      "http_status": 200,
+      "sha256": "3e8646a767518564d8d5bfdee59116aa3e481fd11285ecbab1c6e29c607b1878",
+      "bytes": 111121,
+      "server_date": "Mon, 07 Sep 2026 18:51:03 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=BALUSDT&interval=1d&startTime=1687910400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:39.759871+00:00",
+      "http_status": 200,
+      "sha256": "ea5746c70c8244cecea4ba75d400c3cd32e725643acc9224cb3a2f06efac2144",
+      "bytes": 107878,
+      "server_date": "Mon, 07 Sep 2026 18:50:39 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=TCTUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:48.336818+00:00",
+      "http_status": 200,
+      "sha256": "a818d2cda93bd3adb9fba71ab50828548a276d201e8f0b396869fc1e6126a7a1",
+      "bytes": 127449,
+      "server_date": "Mon, 07 Sep 2026 18:50:48 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=REZUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:29.248217+00:00",
+      "http_status": 200,
+      "sha256": "b9fc10cdd15fcb490f80c7aee9c19ad3a8c2dedddf778dbbcbc7ac66573b1b73",
+      "bytes": 146804,
+      "server_date": "Mon, 07 Sep 2026 18:51:29 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=FTTUSDT&interval=1d&startTime=1714694400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:23.527741+00:00",
+      "http_status": 200,
+      "sha256": "8d99cbef60ae539569576fd9d3137b5e0f24475a29a420e45f6449d44a38d213",
+      "bytes": 142428,
+      "server_date": "Mon, 07 Sep 2026 18:51:23 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=LDOUSDT&interval=1d&startTime=1738454400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:31.613023+00:00",
+      "http_status": 200,
+      "sha256": "b4b4a557ee05d4cc4bbe1ef93c90f9990d3f9dfa7f85e1c6275d3e4056d7b08d",
+      "bytes": 98697,
+      "server_date": "Mon, 07 Sep 2026 18:50:31 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=ASTSBUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:06.791717+00:00",
+      "http_status": 200,
+      "sha256": "e05b9931a5129673cd563db1bc5ac8ec3e16c4664ff5753ad5cc00e565203b2a",
+      "bytes": 5309,
+      "server_date": "Mon, 07 Sep 2026 18:51:06 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=SANDUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:52.082097+00:00",
+      "http_status": 200,
+      "sha256": "718dfe30e3809342db0d672414831a8a4591c069dc3a5952acb59cd9bd458aab",
+      "bytes": 172042,
+      "server_date": "Mon, 07 Sep 2026 18:50:52 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=DFUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:23.745710+00:00",
+      "http_status": 200,
+      "sha256": "ce91dd87e9b9dac7e7658a32b85fae0a4df40fe9913403de0bf4977424975dd3",
+      "bytes": 166939,
+      "server_date": "Mon, 07 Sep 2026 18:51:23 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=IQUSDT&interval=1d&startTime=1781740800000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:28.073032+00:00",
+      "http_status": 200,
+      "sha256": "d517df6b985861f514e01bc3c65ad6091119263f9eda43d322299fa9fe016f5d",
+      "bytes": 13371,
+      "server_date": "Mon, 07 Sep 2026 18:50:28 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=NBSUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:35.795328+00:00",
+      "http_status": 200,
+      "sha256": "22dd89f420c709cc709e3fc4af19125670218fa7811fe8940025e103edc2733c",
+      "bytes": 127475,
+      "server_date": "Mon, 07 Sep 2026 18:50:35 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=DEGOUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:20.020542+00:00",
+      "http_status": 200,
+      "sha256": "83108127b21254bc33f1525218638e0f23d655885589c12b8eb9cd457ec34dce",
+      "bytes": 165657,
+      "server_date": "Mon, 07 Sep 2026 18:51:20 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=KLAYUSDT&interval=1d&startTime=1710892800000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:20.618014+00:00",
+      "http_status": 200,
+      "sha256": "4448fbd9cf47275843d046e42f6d26adb6bc75dd3e4d38d362dc065274ee8196",
+      "bytes": 37910,
+      "server_date": "Mon, 07 Sep 2026 18:50:20 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=DUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:49.643703+00:00",
+      "http_status": 200,
+      "sha256": "9c1ab670abd0558a05517976663ca87ee2b08dbe16d39a05f2d692966e3a1e4a",
+      "bytes": 88836,
+      "server_date": "Mon, 07 Sep 2026 18:50:49 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=AEVOUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:46.783009+00:00",
+      "http_status": 200,
+      "sha256": "86c7d4a7c75800c595f95d0c0bfde1d9803782e265d490cc7d3373e260890d21",
+      "bytes": 153245,
+      "server_date": "Mon, 07 Sep 2026 18:50:46 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=SHELLUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:40.847754+00:00",
+      "http_status": 200,
+      "sha256": "e50fbb4329b44961f7dd943d29993db21882f2a6933d41e74d8286c408a23434",
+      "bytes": 93489,
+      "server_date": "Mon, 07 Sep 2026 18:50:41 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=OPGUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:19.709694+00:00",
+      "http_status": 200,
+      "sha256": "408ca8449ec4ff8445a9461c87291ac8b420c81e1e028c64bf2479f192d64c84",
+      "bytes": 18151,
+      "server_date": "Mon, 07 Sep 2026 18:50:19 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=SFPUSDT&interval=1d&startTime=1785542400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:34.683085+00:00",
+      "http_status": 200,
+      "sha256": "879b7aa96ff715674cb1a9dcdfee70d4ec17861fc0eea90eba4fb1d331b3b831",
+      "bytes": 5998,
+      "server_date": "Mon, 07 Sep 2026 18:50:34 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=DOCKUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:11.590472+00:00",
+      "http_status": 200,
+      "sha256": "89cdccb0062910f919876bf7cee74cbab61e588cfc242a438bcae79aa2ba7632",
+      "bytes": 167755,
+      "server_date": "Mon, 07 Sep 2026 18:50:11 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=AVGOBUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:33.637689+00:00",
+      "http_status": 200,
+      "sha256": "87f9907eeabf5e48a7d4ef7950b50c1d603ff617f302e6ecefa1ffe872f1f544",
+      "bytes": 8857,
+      "server_date": "Mon, 07 Sep 2026 18:51:33 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=AAVEUSDT&interval=1d&startTime=1775520000000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:21.529792+00:00",
+      "http_status": 200,
+      "sha256": "6898eba0b515029572d60a2cae772a82c747ef23d2aca7a4791de8dc3dc8cbc9",
+      "bytes": 26226,
+      "server_date": "Mon, 07 Sep 2026 18:51:21 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=FOGOUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:38.628641+00:00",
+      "http_status": 200,
+      "sha256": "9d93360c8ad2d863b556b006c0b85eb08729380df090fc83db6b4e882f5547b1",
+      "bytes": 39697,
+      "server_date": "Mon, 07 Sep 2026 18:50:38 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=CFXUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:22.869919+00:00",
+      "http_status": 200,
+      "sha256": "ee2a9543d62e12ed23d4d4f73b155490d7fe7b17db293e27e73833c43d1b531c",
+      "bytes": 169534,
+      "server_date": "Mon, 07 Sep 2026 18:51:23 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=CFXUSDT&interval=1d&startTime=1703376000000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:24.188417+00:00",
+      "http_status": 200,
+      "sha256": "32a6c5031579dc2901866a53ab7aa38283769a86f64a6b0750b016207a8be991",
+      "bytes": 168388,
+      "server_date": "Mon, 07 Sep 2026 18:51:24 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=ATOMUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:47.900751+00:00",
+      "http_status": 200,
+      "sha256": "a7cc416029263fded964847405d8e4d195ad0340c562e0479828d21a9ee1a2cf",
+      "bytes": 173158,
+      "server_date": "Mon, 07 Sep 2026 18:50:48 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=MATICUSDT&interval=1d&startTime=1687910400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:22.916523+00:00",
+      "http_status": 200,
+      "sha256": "a34d84b2b85e7ecd058bef760e91d16458dbc97f1c005a71f22497a21a892af6",
+      "bytes": 76241,
+      "server_date": "Mon, 07 Sep 2026 18:50:23 GMT"
+    },
+    {
+      "url": "https://s3-ap-northeast-1.amazonaws.com/data.binance.vision?prefix=data%2Fspot%2Fmonthly%2Fklines%2F&max-keys=1000&delimiter=%2F&marker=data%2Fspot%2Fmonthly%2Fklines%2FSTXUSDT%2F",
+      "retrieved_at_utc": "2026-09-07T18:50:10.186738+00:00",
+      "http_status": 200,
+      "sha256": "9ae105bc29f3e13e5b71556612257b7d9ce69bebe34529ae9f8adf9fbdae676b",
+      "bytes": 59373,
+      "server_date": "Mon, 07 Sep 2026 18:50:11 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=CETUSUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:07.914243+00:00",
+      "http_status": 200,
+      "sha256": "1a3a4ce92a506e0bfec5d0eefb186a99f5144cd747d992149aa4ef2686bfe8b8",
+      "bytes": 112830,
+      "server_date": "Mon, 07 Sep 2026 18:51:08 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=SAHARAUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:14.495012+00:00",
+      "http_status": 200,
+      "sha256": "48fe135088eb5b6143e8dedb427cf586f07bcf756bb2257ded126b04804ecf35",
+      "bytes": 74546,
+      "server_date": "Mon, 07 Sep 2026 18:50:14 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=IOTAUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:01.967839+00:00",
+      "http_status": 200,
+      "sha256": "a88eaef9d3503e5cd51488778ccb4f8c192575f3f20c67109686c91ac9f1b2c0",
+      "bytes": 169621,
+      "server_date": "Mon, 07 Sep 2026 18:51:02 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=USUALUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:39.083179+00:00",
+      "http_status": 200,
+      "sha256": "0edd3d057c5a06dd1a661917647d30f7ee677163c70d56aa151d3098ba28dac9",
+      "bytes": 111608,
+      "server_date": "Mon, 07 Sep 2026 18:50:39 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=BTCUSDT&interval=1d&startTime=1774310400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:36.468406+00:00",
+      "http_status": 200,
+      "sha256": "315b6f146e0c28320561c03411271423da4f8e27ff0b0d6fc21677a388099f0c",
+      "bytes": 30997,
+      "server_date": "Mon, 07 Sep 2026 18:51:36 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=ALPINEUSDT&interval=1d&startTime=1731801600000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:24.592849+00:00",
+      "http_status": 200,
+      "sha256": "3aaf6c6bd5e4c16a0d8b389ac622a76b8e4e222146b931c7bc81f849d0bcf158",
+      "bytes": 108776,
+      "server_date": "Mon, 07 Sep 2026 18:50:24 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=WBETHUSDT&interval=1d&startTime=1776124800000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:29.009678+00:00",
+      "http_status": 200,
+      "sha256": "8e487c97b55dfefea506677db22473e58f5c1c379dc2a8537d57343fafd7f1df",
+      "bytes": 24828,
+      "server_date": "Mon, 07 Sep 2026 18:51:29 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=CTKUSDT&interval=1d&startTime=1690156800000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:43.058039+00:00",
+      "http_status": 200,
+      "sha256": "880f170489a7cd4dc0502eb1fec28c6db31eb68a2ea16275f1f121e84e2c647d",
+      "bytes": 166037,
+      "server_date": "Mon, 07 Sep 2026 18:50:43 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=STRKUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:18.890402+00:00",
+      "http_status": 200,
+      "sha256": "1c8cc829eb86c3f51a1fb9a2080e68a6eca5b9f8087523762b495625d6338c22",
+      "bytes": 158674,
+      "server_date": "Mon, 07 Sep 2026 18:50:19 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=PROVEUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:24.775694+00:00",
+      "http_status": 200,
+      "sha256": "31fd304227af1c350b6a5eba37090cd9f119f437c6eee9bd27a7c6f622071820",
+      "bytes": 66409,
+      "server_date": "Mon, 07 Sep 2026 18:50:24 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=EGLDUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:57.794063+00:00",
+      "http_status": 200,
+      "sha256": "442f5e105a2b6183ddb92e980ad2c6e612a0aa3fba2bdb6c4f217b7ab4304b6b",
+      "bytes": 172229,
+      "server_date": "Mon, 07 Sep 2026 18:50:57 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=STOUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:54.526044+00:00",
+      "http_status": 200,
+      "sha256": "c9e424575235d78eb7c3087e6a6e53ff8809f40e9cba2672ad550eae3d7dac88",
+      "bytes": 82820,
+      "server_date": "Mon, 07 Sep 2026 18:50:54 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=IOUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:15.392816+00:00",
+      "http_status": 200,
+      "sha256": "099471b40b072cbe02d9c7f29e4b6c0912311d625b531e7674fd3eb41a3aebb9",
+      "bytes": 138156,
+      "server_date": "Mon, 07 Sep 2026 18:51:15 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=ARPAUSDT&interval=1d&startTime=1774310400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:37.975387+00:00",
+      "http_status": 200,
+      "sha256": "0af8c29fd9a5d54db04fc6ac5049ac9d9fb041353355b5368a9b0dbe4799334e",
+      "bytes": 27802,
+      "server_date": "Mon, 07 Sep 2026 18:50:38 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=ELFUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:45.175646+00:00",
+      "http_status": 200,
+      "sha256": "b5257d93b41ab1b87dcc5a0e87bd82937f114a51d25fb325fa1968b0233f3df4",
+      "bytes": 166021,
+      "server_date": "Mon, 07 Sep 2026 18:50:45 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=SMHBUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:16.202856+00:00",
+      "http_status": 200,
+      "sha256": "8caa0cf84e5e81ece674eca39e9670109eb9a72dd05f457c09c5bbd0dbb693a5",
+      "bytes": 6445,
+      "server_date": "Mon, 07 Sep 2026 18:50:16 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=FRONTUSDT&interval=1d&startTime=1719705600000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:30.708634+00:00",
+      "http_status": 200,
+      "sha256": "88083293ed90ed1b0c1c5a07d95793c5e6eeb625053a7b11697cd7ce69806a5a",
+      "bytes": 9859,
+      "server_date": "Mon, 07 Sep 2026 18:50:30 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=ADXUSDT&interval=1d&startTime=1721865600000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:18.023242+00:00",
+      "http_status": 200,
+      "sha256": "c1d8c066d2038c562effd75bad1ae40b15e3967b6598e2a3fbc24248f88728a1",
+      "bytes": 128806,
+      "server_date": "Mon, 07 Sep 2026 18:51:18 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=KAIAUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:32.299756+00:00",
+      "http_status": 200,
+      "sha256": "f9a3eac6dba793dde90adab6c49ae2e08d3bb8a550d8ffe5d5de23fb52ad49d2",
+      "bytes": 114039,
+      "server_date": "Mon, 07 Sep 2026 18:50:32 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=AIXBTUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:46.243342+00:00",
+      "http_status": 200,
+      "sha256": "03f2f7fda5003b08d281b76d905f3c4b20959fd44c7066ab18c9c6620871294d",
+      "bytes": 103025,
+      "server_date": "Mon, 07 Sep 2026 18:50:46 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=DARUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:32.113830+00:00",
+      "http_status": 200,
+      "sha256": "ee16f37010a5de5fa90176b9128c1860c3498665066e07a167969233fb18f8a2",
+      "bytes": 169336,
+      "server_date": "Mon, 07 Sep 2026 18:50:32 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=VIDTUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:10.771003+00:00",
+      "http_status": 200,
+      "sha256": "d34cef77e7a164f3812633e26e8c7601199ba499be9a6837d37eefd6fc6b44f1",
+      "bytes": 168163,
+      "server_date": "Mon, 07 Sep 2026 18:51:10 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=TSMBUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:21.688663+00:00",
+      "http_status": 200,
+      "sha256": "7791bc138f9236e1ee4e851172e6ca4ef85d238e7d16398d0720b375b1a90461",
+      "bytes": 8841,
+      "server_date": "Mon, 07 Sep 2026 18:50:21 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=KAVAUSDT&interval=1d&startTime=1774310400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:02.612503+00:00",
+      "http_status": 200,
+      "sha256": "0b467aed2f0ead74cbaa25c31da63257f5fb820b9a7ad2a59a9560cad0b6bed9",
+      "bytes": 27725,
+      "server_date": "Mon, 07 Sep 2026 18:51:02 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=1INCHUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:18.468073+00:00",
+      "http_status": 200,
+      "sha256": "cb38ba12346a1d46d3ce2ddbfd9e51416692d26d97ac528a1a8685ff000c4c06",
+      "bytes": 169207,
+      "server_date": "Mon, 07 Sep 2026 18:51:18 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=ENJUSDT&interval=1d&startTime=1774310400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:26.536272+00:00",
+      "http_status": 200,
+      "sha256": "d2ae67d14ced6744f0307bd5651073a432b26112d725e459d47aeb6a9909de94",
+      "bytes": 28073,
+      "server_date": "Mon, 07 Sep 2026 18:50:26 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=GNSUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:45.172610+00:00",
+      "http_status": 200,
+      "sha256": "fcac19f1e7ee9e04d741d8bbef55cf9cb3af7058126d082cb7c15b162d678d27",
+      "bytes": 163875,
+      "server_date": "Mon, 07 Sep 2026 18:50:44 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=DATAUSDT&interval=1d&startTime=1687910400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:32.326510+00:00",
+      "http_status": 200,
+      "sha256": "fb98454f11870cfc01c48e109ddb74fe81370b1ae1f9726373630be5382a2bdd",
+      "bytes": 161746,
+      "server_date": "Mon, 07 Sep 2026 18:51:32 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=WAXPUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:28.596217+00:00",
+      "http_status": 200,
+      "sha256": "e732f02592bb5779f3ae0712ec6775874592548325f63e08678164bed67ae841",
+      "bytes": 168455,
+      "server_date": "Mon, 07 Sep 2026 18:51:28 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=SAGAUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:33.864973+00:00",
+      "http_status": 200,
+      "sha256": "fdfb17117931cd1cddf1a0a9276e5e382c3625f4f863735b9384e6107af85630",
+      "bytes": 149530,
+      "server_date": "Mon, 07 Sep 2026 18:51:34 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=PYRUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:36.227534+00:00",
+      "http_status": 200,
+      "sha256": "cd04b1d84a4e284634900c45b069b94e327a1b5da547a579d01cc540f09b0f51",
+      "bytes": 166293,
+      "server_date": "Mon, 07 Sep 2026 18:50:36 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=LENDUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:34.295826+00:00",
+      "http_status": 200,
+      "sha256": "ed6c53c9fbb59b9c568ac1c3102b6de7911495de2e5bd607477e61ba50af182a",
+      "bytes": 2028,
+      "server_date": "Mon, 07 Sep 2026 18:51:34 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=NFLXBUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:54.027263+00:00",
+      "http_status": 200,
+      "sha256": "a589bd4df7c66f544ee9d95db0312af5cf35cd41774e0aec0ab415d49b6830bd",
+      "bytes": 5271,
+      "server_date": "Mon, 07 Sep 2026 18:50:54 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=BETAUSDT&interval=1d&startTime=1720051200000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:28.954576+00:00",
+      "http_status": 200,
+      "sha256": "f0222576a0215f28ba97ed8f8ccded2de84af6b7a717f42022c1f009593f102c",
+      "bytes": 48653,
+      "server_date": "Mon, 07 Sep 2026 18:50:29 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=VTHOUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:30.788764+00:00",
+      "http_status": 200,
+      "sha256": "a8ce2013ea2165d156d63c4465106e7f99488660c312afb7b94db761d09dadfe",
+      "bytes": 170619,
+      "server_date": "Mon, 07 Sep 2026 18:51:30 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=LAYERUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:47.120191+00:00",
+      "http_status": 200,
+      "sha256": "d5494d0d4c7ba8ab2b02cac9057400956bd265d4b13508d0a55151cc9c027fe1",
+      "bytes": 96126,
+      "server_date": "Mon, 07 Sep 2026 18:50:47 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=ALGOUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:47.704036+00:00",
+      "http_status": 200,
+      "sha256": "da0329fc0dc04b6bc73b65392417e1d014e064469e0f5f414bf5aabb06fb8260",
+      "bytes": 171562,
+      "server_date": "Mon, 07 Sep 2026 18:50:47 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=UNIUSDT&interval=1d&startTime=1687910400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:08.786138+00:00",
+      "http_status": 200,
+      "sha256": "9712515b2b0d24eef41a321bd8b8f20609821ffcff5a58e5e04994e5d16ea965",
+      "bytes": 170360,
+      "server_date": "Mon, 07 Sep 2026 18:51:08 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=ZROUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:37.117763+00:00",
+      "http_status": 200,
+      "sha256": "d96f55872cb28b281954cc8b9649e08c0005de4ec74d440afec11ecef4d18513",
+      "bytes": 136548,
+      "server_date": "Mon, 07 Sep 2026 18:50:37 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=BREVUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:06.574407+00:00",
+      "http_status": 200,
+      "sha256": "e071f61a71fc10583b9fd4f4a7f6d3397e5f9b5b914ba45c4d5cd694e07653cd",
+      "bytes": 40650,
+      "server_date": "Mon, 07 Sep 2026 18:51:06 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=PIVXUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:53.863179+00:00",
+      "http_status": 200,
+      "sha256": "51fb0e1a7d0489ca2bccf8dbaa00f85ef09537b82a7ecf152feb6e9c544640b9",
+      "bytes": 165813,
+      "server_date": "Mon, 07 Sep 2026 18:50:54 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=WINGUSDT&interval=1d&startTime=1687910400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:15.611549+00:00",
+      "http_status": 200,
+      "sha256": "13160bf4d2420202e36f04a04afd368a913b927e35dd9b9b67a26aa93d6a9c05",
+      "bytes": 111458,
+      "server_date": "Mon, 07 Sep 2026 18:51:15 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=HARDUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:19.128780+00:00",
+      "http_status": 200,
+      "sha256": "b565cf32e97305d71a982ac2e5b888b7fc8917d44c12d9ecb863d278b80aa78d",
+      "bytes": 167212,
+      "server_date": "Mon, 07 Sep 2026 18:51:19 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=NEOUSDT&interval=1d&startTime=1774310400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:15.816306+00:00",
+      "http_status": 200,
+      "sha256": "fca6a8f9f2f0650935694b93b1e355c9aca8aeaf807524c355537265c2aeb04d",
+      "bytes": 27171,
+      "server_date": "Mon, 07 Sep 2026 18:51:16 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=NEOUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:13.185900+00:00",
+      "http_status": 200,
+      "sha256": "ece0a9488e2aec2963dbc1aced269d20e947e29be9ec76079d047e732ebbf9f0",
+      "bytes": 170160,
+      "server_date": "Mon, 07 Sep 2026 18:51:13 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=AUCTIONUSDT&interval=1d&startTime=1721865600000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:18.632775+00:00",
+      "http_status": 200,
+      "sha256": "73d1807e2dfb887c993ba415fa1c083d3bf20f7cfea77a9337c6dae87e9b59ba",
+      "bytes": 128563,
+      "server_date": "Mon, 07 Sep 2026 18:50:18 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=NBISBUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:02.391692+00:00",
+      "http_status": 200,
+      "sha256": "00eecf88054f37a541deba84d04f591559595e131aef9764cbdce118cfcc7f00",
+      "bytes": 10406,
+      "server_date": "Mon, 07 Sep 2026 18:51:02 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=MFTUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:23.462651+00:00",
+      "http_status": 200,
+      "sha256": "028fc883234b3d7e55c9bc8abd263230c0c4cd98d3df20e64a0ec95c74e9ff2d",
+      "bytes": 140501,
+      "server_date": "Mon, 07 Sep 2026 18:50:23 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=SCRTUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:31.227382+00:00",
+      "http_status": 200,
+      "sha256": "6a1017a32e5bfc2006934a02388b0890d7a2601bdc040e180cccce338ec69ad0",
+      "bytes": 165241,
+      "server_date": "Mon, 07 Sep 2026 18:51:31 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=MDTUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:34.260287+00:00",
+      "http_status": 200,
+      "sha256": "224e510467790133f0f23a1ad561a95f6159038b37b66868a334571256487e7d",
+      "bytes": 168746,
+      "server_date": "Mon, 07 Sep 2026 18:50:34 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=INTCBUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:07.010315+00:00",
+      "http_status": 200,
+      "sha256": "dd0b57cbdc54ef1c8b189018fc3b938a9206a51041b64c87e193e257f0bb444f",
+      "bytes": 12660,
+      "server_date": "Mon, 07 Sep 2026 18:51:07 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=GSBUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:50.735035+00:00",
+      "http_status": 200,
+      "sha256": "877703a6c2b2e4ecf2306b4f60f676090f9cab089021551303a528a723dc4c5b",
+      "bytes": 6460,
+      "server_date": "Mon, 07 Sep 2026 18:50:50 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=ICPUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:38.206725+00:00",
+      "http_status": 200,
+      "sha256": "4debdb6579112e8ef434cf08dd41246f484060cc7dac6d12d6f22dfcf76ad209",
+      "bytes": 170659,
+      "server_date": "Mon, 07 Sep 2026 18:50:38 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=HIGHUSDT&interval=1d&startTime=1726099200000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:26.605949+00:00",
+      "http_status": 200,
+      "sha256": "d2692e2937ee1a84dbef520df61955420011b3e129620e7e3b20125e904ff2d4",
+      "bytes": 107418,
+      "server_date": "Mon, 07 Sep 2026 18:51:26 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=SPELLUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:20.675818+00:00",
+      "http_status": 200,
+      "sha256": "3770fc43fbfbf173b4d760494428cd0f0d499155573bdbda87ad16564fad3def",
+      "bytes": 172881,
+      "server_date": "Mon, 07 Sep 2026 18:50:20 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=MTLUSDT&interval=1d&startTime=1687910400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:09.892870+00:00",
+      "http_status": 200,
+      "sha256": "dab33db2b04083b9109e3f59ad0a353f82664fd24953609300b91686988f8356",
+      "bytes": 165306,
+      "server_date": "Mon, 07 Sep 2026 18:51:10 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=QCOMBUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:10.979137+00:00",
+      "http_status": 200,
+      "sha256": "049ead1acb26acb62427d553f7926501f66a837246915334c5bd37c10d9aa281",
+      "bytes": 10168,
+      "server_date": "Mon, 07 Sep 2026 18:51:11 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=RUNEUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:03.068931+00:00",
+      "http_status": 200,
+      "sha256": "85882fcef025a473c34896b0a713a34bb9c6e30754d4d6349f867fcfed5f1c31",
+      "bytes": 170071,
+      "server_date": "Mon, 07 Sep 2026 18:51:03 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=RAYUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:24.126941+00:00",
+      "http_status": 200,
+      "sha256": "7ee8a909487fe8b95fb11fb64188bd5c9c629f3517628076525f8e0f6fcf9bed",
+      "bytes": 167480,
+      "server_date": "Mon, 07 Sep 2026 18:50:24 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=TFUELUSDT&interval=1d&startTime=1774310400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:41.927549+00:00",
+      "http_status": 200,
+      "sha256": "fa5982ca41017558cee040094f537b4364073bcd58b7037161b9244d4affeb6f",
+      "bytes": 27554,
+      "server_date": "Mon, 07 Sep 2026 18:50:42 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=DARUSDT&interval=1d&startTime=1722384000000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:33.135277+00:00",
+      "http_status": 200,
+      "sha256": "3fc8448e9ea1140cd12863b15c35797e5120418f43adf60741b21c65af4e87c2",
+      "bytes": 27162,
+      "server_date": "Mon, 07 Sep 2026 18:50:33 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=LISTAUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:20.881322+00:00",
+      "http_status": 200,
+      "sha256": "42f858ff904dcbd99d0a703fa99c9f3b8f1c5b59d28cc97053d9d7307b195e6c",
+      "bytes": 135746,
+      "server_date": "Mon, 07 Sep 2026 18:51:21 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=ARUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:03.759498+00:00",
+      "http_status": 200,
+      "sha256": "28776dea0bfb18c706a8df737158bc48944059e980a576eb242bf8bb76d4eb54",
+      "bytes": 168635,
+      "server_date": "Mon, 07 Sep 2026 18:51:03 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=PNUTUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:30.342313+00:00",
+      "http_status": 200,
+      "sha256": "d9d81ed9e7193cd6280c0f31bc5da77d2860b1502f250cd93f62c9f2db3a5cc3",
+      "bytes": 114045,
+      "server_date": "Mon, 07 Sep 2026 18:51:30 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=METISUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:10.342408+00:00",
+      "http_status": 200,
+      "sha256": "5d52dd14438f5c48cc38fca1bd27891792218ab9743e72977f9304104469fc07",
+      "bytes": 151244,
+      "server_date": "Mon, 07 Sep 2026 18:51:10 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=DIAUSDT&interval=1d&startTime=1687910400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:23.905030+00:00",
+      "http_status": 200,
+      "sha256": "64a5096dc1945f6b9dea706fea9d8dabbb3aa841aaedcfeb979a2094f072f4cb",
+      "bytes": 165483,
+      "server_date": "Mon, 07 Sep 2026 18:50:24 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=MANTRAUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:11.628077+00:00",
+      "http_status": 200,
+      "sha256": "940dae4781b3c64c14a95ccc277f06456ba22a1db38d33b5c57748bcaa04c92e",
+      "bytes": 31665,
+      "server_date": "Mon, 07 Sep 2026 18:51:11 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=FLUXUSDT&interval=1d&startTime=1725494400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:04.825816+00:00",
+      "http_status": 200,
+      "sha256": "51c6e2aff650c994541edeeb6f57f61b7ef17c70d6db878bad8d1a53ebe2068b",
+      "bytes": 121712,
+      "server_date": "Mon, 07 Sep 2026 18:51:05 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=AAVEUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:18.911990+00:00",
+      "http_status": 200,
+      "sha256": "2801c93c38e63e5c06e60114b879181b5132ad837002a9c327b1acd3fa1d6311",
+      "bytes": 172876,
+      "server_date": "Mon, 07 Sep 2026 18:51:19 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=RLUSDUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:30.064674+00:00",
+      "http_status": 200,
+      "sha256": "0009f2c9bfd3db88d47ee4c524c72cf018683cbb42184e59f82461b7123ab8ab",
+      "bytes": 38650,
+      "server_date": "Mon, 07 Sep 2026 18:50:30 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=BETHUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:12.288879+00:00",
+      "http_status": 200,
+      "sha256": "33382a7ce5500db3b86ccaa2eaf2404dfcbc6224f1d940e29fd4110e71349c6c",
+      "bytes": 37962,
+      "server_date": "Mon, 07 Sep 2026 18:51:12 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=HEMIUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:30.560789+00:00",
+      "http_status": 200,
+      "sha256": "a9d20fc49411644078752ba90c53e358b15f77f9b15bab232dc4315e5a8d65b3",
+      "bytes": 59609,
+      "server_date": "Mon, 07 Sep 2026 18:51:30 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=BELUSDT&interval=1d&startTime=1687910400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:12.279624+00:00",
+      "http_status": 200,
+      "sha256": "1bdd5f833cd5b1d05a161881f13bacf7e2f7d952ca7f14d56fae25ccdee63f2b",
+      "bytes": 167009,
+      "server_date": "Mon, 07 Sep 2026 18:50:12 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=LTOUSDT&interval=1d&startTime=1687910400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:29.462613+00:00",
+      "http_status": 200,
+      "sha256": "51388be2257cbb38e3cee83228fc8a3f89bd9fcbfa1d3e836ee821a739d32c0d",
+      "bytes": 123031,
+      "server_date": "Mon, 07 Sep 2026 18:51:29 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=HNTUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:15.158435+00:00",
+      "http_status": 200,
+      "sha256": "8593bb8cba2644915b68359d78d0489bc9db88d061f37df905fe4430159e9e1a",
+      "bytes": 125552,
+      "server_date": "Mon, 07 Sep 2026 18:50:15 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=HAEDALUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:30.955869+00:00",
+      "http_status": 200,
+      "sha256": "bdc17577d2b008a774e5934e13e740d47e4239b9bb9ee203640e1e0f77971bc2",
+      "bytes": 79161,
+      "server_date": "Mon, 07 Sep 2026 18:50:31 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=TRUUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:00.865832+00:00",
+      "http_status": 200,
+      "sha256": "84e9dde696e96498ac248b89a0f7326a80ef05a3b07ab0902f8680eedca221d5",
+      "bytes": 168179,
+      "server_date": "Mon, 07 Sep 2026 18:51:01 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=VTHOUSDT&interval=1d&startTime=1687910400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:32.108771+00:00",
+      "http_status": 200,
+      "sha256": "4b325d734eae85304f5f31d31572432c98cbb7f30a04ece9a1697441fa08293a",
+      "bytes": 170553,
+      "server_date": "Mon, 07 Sep 2026 18:51:32 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=RUNEUSDT&interval=1d&startTime=1774310400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:05.697383+00:00",
+      "http_status": 200,
+      "sha256": "7f3ada2dee0f82a1792d1800ca4da68e87709ef2a0db4b122773c187ee7ac9aa",
+      "bytes": 27763,
+      "server_date": "Mon, 07 Sep 2026 18:51:05 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=ZKCUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:16.917270+00:00",
+      "http_status": 200,
+      "sha256": "595242796040c72630b42e2b9e541fe81e3e86e33d499c92ad356979ec4dde29",
+      "bytes": 59722,
+      "server_date": "Mon, 07 Sep 2026 18:51:17 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=CTKUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:41.726775+00:00",
+      "http_status": 200,
+      "sha256": "dd405421af6d395859e48b63048f1a28f00e2d5e5e07a908f8bf92497d94d8a6",
+      "bytes": 166805,
+      "server_date": "Mon, 07 Sep 2026 18:50:41 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=VOXELUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:40.187348+00:00",
+      "http_status": 200,
+      "sha256": "a111888a504eb7d610eca9cd92f561f3d3a1eb50409505eba47c20b2630edee4",
+      "bytes": 167535,
+      "server_date": "Mon, 07 Sep 2026 18:50:40 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=MTLUSDT&interval=1d&startTime=1774310400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:11.198622+00:00",
+      "http_status": 200,
+      "sha256": "8fd0b40eaed90f2184e5f5f46dc8687178221b72c876a7b7d738aefae5febd49",
+      "bytes": 26828,
+      "server_date": "Mon, 07 Sep 2026 18:51:11 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=BCHSVUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:16.458564+00:00",
+      "http_status": 200,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "bytes": 2,
+      "server_date": "Mon, 07 Sep 2026 18:50:16 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=WUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:14.728843+00:00",
+      "http_status": 200,
+      "sha256": "559ee459de448959193c12ed3d4ef0aa9b563b0a873fed2043511279d8bfe791",
+      "bytes": 151069,
+      "server_date": "Mon, 07 Sep 2026 18:51:14 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=ATOMUSDT&interval=1d&startTime=1774310400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:50.287832+00:00",
+      "http_status": 200,
+      "sha256": "17b55056d6351932265927c299ea1f105401a74a4e17bdaa3b8f8f7e4e21ac73",
+      "bytes": 27713,
+      "server_date": "Mon, 07 Sep 2026 18:50:50 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=DODOUSDT&interval=1d&startTime=1700092800000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:32.768793+00:00",
+      "http_status": 200,
+      "sha256": "3618ad008c753e94108b2d107843514b8d4185a100a451c58fdab71e515ba78f",
+      "bytes": 167878,
+      "server_date": "Mon, 07 Sep 2026 18:51:32 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=ANTUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:36.005102+00:00",
+      "http_status": 200,
+      "sha256": "6af10068861fe62dab008b06f5d76dea28778e9193315609f46712030f08386b",
+      "bytes": 166493,
+      "server_date": "Mon, 07 Sep 2026 18:50:36 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=SANTOSUSDT&interval=1d&startTime=1724716800000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:27.045727+00:00",
+      "http_status": 200,
+      "sha256": "a683dc53a1eec9249888a1389b1f48371ae8efc1a0b5ccf2cfa8e392c2c92567",
+      "bytes": 122196,
+      "server_date": "Mon, 07 Sep 2026 18:51:27 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=REPUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:54.481649+00:00",
+      "http_status": 200,
+      "sha256": "658651e63cb342acbae9ef2ab84579a89eafbcd9616bea6ef85ecfe6667605b4",
+      "bytes": 134321,
+      "server_date": "Mon, 07 Sep 2026 18:50:54 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=WNXMUSDT&interval=1d&startTime=1687910400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:01.516742+00:00",
+      "http_status": 200,
+      "sha256": "80ea7239535e575ceec757ba0082ce9df13a15e5b3bf002e469abed8a797d022",
+      "bytes": 57881,
+      "server_date": "Mon, 07 Sep 2026 18:51:01 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=YFIIUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:16.266886+00:00",
+      "http_status": 200,
+      "sha256": "fba94d12cb22d81524912164f8c13c9af7b8a975a39273fe0d5f3fc97b03610c",
+      "bytes": 172773,
+      "server_date": "Mon, 07 Sep 2026 18:51:16 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=SNXUSDT&interval=1d&startTime=1687910400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:08.126818+00:00",
+      "http_status": 200,
+      "sha256": "ce46df80f2fbbed02e671b08a767f86d4feced19230601a2ed6f5db017ab9d51",
+      "bytes": 167791,
+      "server_date": "Mon, 07 Sep 2026 18:51:08 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=CRCLBUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:15.099350+00:00",
+      "http_status": 200,
+      "sha256": "542af2b27ef0cc02267dc17356df9a6e22139dfb9297a65acc8db67808f3a93f",
+      "bytes": 14785,
+      "server_date": "Mon, 07 Sep 2026 18:50:15 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=BANANAUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:13.430759+00:00",
+      "http_status": 200,
+      "sha256": "5ab6a79a2a05bfd012f0ab6160691ef6be5bf21d93a486381d8ab80f41cd437d",
+      "bytes": 129870,
+      "server_date": "Mon, 07 Sep 2026 18:51:13 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=MDTUSDT&interval=1d&startTime=1687910400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:35.580627+00:00",
+      "http_status": 200,
+      "sha256": "dcce6c700ba083b41dfd1c8f959e3813858655344ac0322e3e2b01b283634022",
+      "bytes": 168790,
+      "server_date": "Mon, 07 Sep 2026 18:50:35 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=NULSUSDT&interval=1d&startTime=1687910400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:01.088588+00:00",
+      "http_status": 200,
+      "sha256": "23c01bccc156692a50fbd860b1deb64782c207fb65c97acf124de55d400f1f8d",
+      "bytes": 109337,
+      "server_date": "Mon, 07 Sep 2026 18:51:01 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=SPKUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:12.960382+00:00",
+      "http_status": 200,
+      "sha256": "fab2098ba6bc58daae542046839091c48308191cb3fea7b0ff8bb56c884c3684",
+      "bytes": 76330,
+      "server_date": "Mon, 07 Sep 2026 18:51:13 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=MVLLBUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:32.923073+00:00",
+      "http_status": 200,
+      "sha256": "8cbce9580c64dc64bb30cafeb7029482b09b378edf457f70219c05ab509f4534",
+      "bytes": 7657,
+      "server_date": "Mon, 07 Sep 2026 18:50:33 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=DUSKUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:41.076209+00:00",
+      "http_status": 200,
+      "sha256": "2cdd7a6ee15624bad472520886eab7cd5c5996566c867d39d6c17dab98c32337",
+      "bytes": 168508,
+      "server_date": "Mon, 07 Sep 2026 18:50:41 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=SXTUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:40.405499+00:00",
+      "http_status": 200,
+      "sha256": "c14ec2d3df2b246add3f668c14106d1e5dbb008d243fcc6980af38bb8fb16e43",
+      "bytes": 82083,
+      "server_date": "Mon, 07 Sep 2026 18:50:40 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=MATICUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:21.507745+00:00",
+      "http_status": 200,
+      "sha256": "146de166a29c7049483f049f96bc1935ba7a9393d0833438116b1996d2f23ba9",
+      "bytes": 174015,
+      "server_date": "Mon, 07 Sep 2026 18:50:21 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=IBMBUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:20.655195+00:00",
+      "http_status": 200,
+      "sha256": "90f26ded818825a45f0298526420e2e77654cc0949c152795bf54cbe971bc975",
+      "bytes": 8838,
+      "server_date": "Mon, 07 Sep 2026 18:51:20 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=RAYUSDT&interval=1d&startTime=1714953600000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:25.454931+00:00",
+      "http_status": 200,
+      "sha256": "94bb952001bab75ad1e1977a1d57463a950eee2ea04004f4de664ad1423b3901",
+      "bytes": 143267,
+      "server_date": "Mon, 07 Sep 2026 18:50:25 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=NOMUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:26.750956+00:00",
+      "http_status": 200,
+      "sha256": "1f33987b787302b730c6fc3aafedac5f6a39e3679fca4b511d2b656a576521fe",
+      "bytes": 58069,
+      "server_date": "Mon, 07 Sep 2026 18:50:26 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=MOVRUSDT&interval=1d&startTime=1722729600000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:27.202412+00:00",
+      "http_status": 200,
+      "sha256": "204994334e41c0b088d74d0e9ffe043e81d33ef8445347f3d763a46e24d1f55a",
+      "bytes": 125952,
+      "server_date": "Mon, 07 Sep 2026 18:50:27 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=LQTYUSDT&interval=1d&startTime=1763942400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:12.674016+00:00",
+      "http_status": 200,
+      "sha256": "2dcb0a7e6ba7bfebb5e022630afac32cc62c2500d8fbef4f69e01b7c9dfa5864",
+      "bytes": 46810,
+      "server_date": "Mon, 07 Sep 2026 18:50:12 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=CHESSUSDT&interval=1d&startTime=1721260800000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:09.657596+00:00",
+      "http_status": 200,
+      "sha256": "6d0fe360b977d5e5bdb198520881a8d1f858b91af9a5912fb358bdb6c71af744",
+      "bytes": 96608,
+      "server_date": "Mon, 07 Sep 2026 18:51:09 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=LITEBUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:26.365213+00:00",
+      "http_status": 200,
+      "sha256": "e1073291f184b2660e0774d32b9adbac56d2e9cef14a525dde8be638c673366f",
+      "bytes": 11359,
+      "server_date": "Mon, 07 Sep 2026 18:51:26 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=QNTUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:31.665758+00:00",
+      "http_status": 200,
+      "sha256": "d47f84589311c2f3e4f9e22da9aaa10f5d3828e88fe7b40052ceb950ff315fde",
+      "bytes": 171472,
+      "server_date": "Mon, 07 Sep 2026 18:51:31 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=ARUSDT&interval=1d&startTime=1707350400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:05.040329+00:00",
+      "http_status": 200,
+      "sha256": "8efbf07c08682034dbaa7c115ae6044a8d6da0dc60eee7cc809e743218013075",
+      "bytes": 158908,
+      "server_date": "Mon, 07 Sep 2026 18:51:05 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=WTCUSDT&interval=1d&startTime=1687910400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:48.100647+00:00",
+      "http_status": 200,
+      "sha256": "a4d32501e1c1fab33579a8d11bce3aa33fe870fb9a46995dc4925db78a32614b",
+      "bytes": 26920,
+      "server_date": "Mon, 07 Sep 2026 18:50:48 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=RDNTUSDT&interval=1d&startTime=1766534400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:52.714666+00:00",
+      "http_status": 200,
+      "sha256": "b0856d6a0529333a93574df63237e09ade20708de4055f43e9fd646095e1930d",
+      "bytes": 16591,
+      "server_date": "Mon, 07 Sep 2026 18:50:52 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=PHBUSDT&interval=1d&startTime=1755129600000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:26.813298+00:00",
+      "http_status": 200,
+      "sha256": "e5cbd9b7de082511fdaa92ed5b3e36d1def4ae1c2a7a8fcb1411fc284ae3adc9",
+      "bytes": 47581,
+      "server_date": "Mon, 07 Sep 2026 18:51:27 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=SNXXBUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:17.129437+00:00",
+      "http_status": 200,
+      "sha256": "4240fd76c903f9eb04dad4a1cfbd1c6051e11984b4b7798212fead6d3b6c2455",
+      "bytes": 7892,
+      "server_date": "Mon, 07 Sep 2026 18:51:17 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=A2ZUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:33.580942+00:00",
+      "http_status": 200,
+      "sha256": "123a75bd26fc2e7d069afb088258fc68d3524d4849bb1d5095cbaf26f5832385",
+      "bytes": 41994,
+      "server_date": "Mon, 07 Sep 2026 18:50:33 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=ARPAUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:35.149213+00:00",
+      "http_status": 200,
+      "sha256": "59f8d760efcc6ba854177b54a93468ab9cbfb7cdcb51344b15d094d005340efa",
+      "bytes": 170427,
+      "server_date": "Mon, 07 Sep 2026 18:50:35 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=GALUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:59.332729+00:00",
+      "http_status": 200,
+      "sha256": "e406107013a76ae6e789389b9af9d8648bba3399e66340def4f2e58f92479a74",
+      "bytes": 134693,
+      "server_date": "Mon, 07 Sep 2026 18:50:59 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=OOKIUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:49.209786+00:00",
+      "http_status": 200,
+      "sha256": "a10528216809841f6b3420da548e51b3ea6afc4cdac55bb56066e73783fb2f71",
+      "bytes": 170629,
+      "server_date": "Mon, 07 Sep 2026 18:50:49 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=SOXSBUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:25.657932+00:00",
+      "http_status": 200,
+      "sha256": "bc99af0ddfbba29a5d1ec6f3495303ff557e79f6d2d453aff10d6df618044ddc",
+      "bytes": 6559,
+      "server_date": "Mon, 07 Sep 2026 18:50:25 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=SFPUSDT&interval=1d&startTime=1699142400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:33.374488+00:00",
+      "http_status": 200,
+      "sha256": "4c2cadab12a6207936e7b9ba1c95d3ccd2d6f98d9556a0c4c658166fab140de1",
+      "bytes": 164801,
+      "server_date": "Mon, 07 Sep 2026 18:50:33 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=EOSUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:51.189534+00:00",
+      "http_status": 200,
+      "sha256": "8c0b12fe90a4bf5693208410ba5ae276e92b3d544a8f3b10d26806f7d7a2ece6",
+      "bytes": 171450,
+      "server_date": "Mon, 07 Sep 2026 18:50:51 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=VTHOUSDT&interval=1d&startTime=1774310400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:33.414424+00:00",
+      "http_status": 200,
+      "sha256": "d175f64e55c136e499bd49e860918341522a996d140464240348527d05952729",
+      "bytes": 28094,
+      "server_date": "Mon, 07 Sep 2026 18:51:33 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=BEAMXUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:13.902180+00:00",
+      "http_status": 200,
+      "sha256": "0df4b215c208eb9daaef383f223c1be8bac6f926654a8fb24be19b1b27281366",
+      "bytes": 171857,
+      "server_date": "Mon, 07 Sep 2026 18:51:14 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=EDUUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:27.867580+00:00",
+      "http_status": 200,
+      "sha256": "5cc89865ac24bb518393c1bc9003fa4ce5f6fe835234043e6bacd7f5367fa9ad",
+      "bytes": 168181,
+      "server_date": "Mon, 07 Sep 2026 18:50:28 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=ATAUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:11.369761+00:00",
+      "http_status": 200,
+      "sha256": "52adb5977533a671b8c88c08c613d6086b1f50e58166d8dc8b8144e529533665",
+      "bytes": 168613,
+      "server_date": "Mon, 07 Sep 2026 18:50:11 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=TROYUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:34.535391+00:00",
+      "http_status": 200,
+      "sha256": "6802c057176d0b6ed493a8a585ee1ce682d64855aaf4eeaab22b7b3a77670c5b",
+      "bytes": 170016,
+      "server_date": "Mon, 07 Sep 2026 18:51:34 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=PEPEUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:03.996013+00:00",
+      "http_status": 200,
+      "sha256": "e506880a0235785aebb76d3deba6cd40081f18bf3994c7a8cf1d4989a6e2d699",
+      "bytes": 172922,
+      "server_date": "Mon, 07 Sep 2026 18:51:04 GMT"
+    },
+    {
+      "url": "https://s3-ap-northeast-1.amazonaws.com/data.binance.vision?prefix=data%2Fspot%2Fmonthly%2Fklines%2F&max-keys=1000&delimiter=%2F",
+      "retrieved_at_utc": "2026-09-07T18:50:08.596033+00:00",
+      "http_status": 200,
+      "sha256": "5b3d062257120e59c872dc1c8bc991d7c7f2a19086afd40e4437011e783083fc",
+      "bytes": 83649,
+      "server_date": "Mon, 07 Sep 2026 18:50:09 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=SANDUSDT&interval=1d&startTime=1774310400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:55.148683+00:00",
+      "http_status": 200,
+      "sha256": "fec3f4710510676c57847b6f686c9664c3535f0b0366579c74cf4a71f9bcbe5c",
+      "bytes": 28032,
+      "server_date": "Mon, 07 Sep 2026 18:50:55 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=AUTOUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:52.504149+00:00",
+      "http_status": 200,
+      "sha256": "05b887710831d95e63571fba3972a823382c4ca2df04183204e8d30fd7fa5870",
+      "bytes": 126287,
+      "server_date": "Mon, 07 Sep 2026 18:50:52 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=ALGOUSDT&interval=1d&startTime=1774310400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:50.074525+00:00",
+      "http_status": 200,
+      "sha256": "62bac595da1bfc4f4fa0db318bbfe4463860dd26e3fe3817045ec401f85b5f05",
+      "bytes": 28229,
+      "server_date": "Mon, 07 Sep 2026 18:50:50 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=STEEMUSDT&interval=1d&startTime=1736985600000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:17.966448+00:00",
+      "http_status": 200,
+      "sha256": "c3db65758ad43507b5aae3485b8a5db7eedbf8ca73c8e8c0de1a2c2d112de223",
+      "bytes": 99178,
+      "server_date": "Mon, 07 Sep 2026 18:50:18 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=MIRAUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:19.338229+00:00",
+      "http_status": 200,
+      "sha256": "f266da5d29261f87d35afcf262428108639ae2f8bd2dc0af32e003cfdd241563",
+      "bytes": 57951,
+      "server_date": "Mon, 07 Sep 2026 18:51:19 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=UNFIUSDT&interval=1d&startTime=1692144000000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:05.472530+00:00",
+      "http_status": 200,
+      "sha256": "a43ba3f9fe94cfd9cd389c0d51b6f3f9c329ea9115b6d57bfba271ace6d5aa24",
+      "bytes": 75138,
+      "server_date": "Mon, 07 Sep 2026 18:51:05 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=FTMUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:56.244063+00:00",
+      "http_status": 200,
+      "sha256": "10d8584c93bb83086761b87990ccb132a7f843f658ee5d1e0b3e69d62ddd9aec",
+      "bytes": 173454,
+      "server_date": "Mon, 07 Sep 2026 18:50:56 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=ONGUSDT&interval=1d&startTime=1774310400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:18.672014+00:00",
+      "http_status": 200,
+      "sha256": "5ae58c4415250a8cc8fca4ecf421e77fb6238b59591a114f625f3965d89dfbc9",
+      "bytes": 27739,
+      "server_date": "Mon, 07 Sep 2026 18:51:18 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=FLOWUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:56.686739+00:00",
+      "http_status": 200,
+      "sha256": "8b462a6ef17bdf551ee9355782792247d6457544ded1284eb64cd8630fdf5c37",
+      "bytes": 168822,
+      "server_date": "Mon, 07 Sep 2026 18:50:56 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=EGLDUSDT&interval=1d&startTime=1687910400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:59.112657+00:00",
+      "http_status": 200,
+      "sha256": "aa9d8520e73e8b0ad11a2705dc188cec17d818f1034f48662ff9ed02caab66eb",
+      "bytes": 168279,
+      "server_date": "Mon, 07 Sep 2026 18:50:59 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=SANTOSUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:25.732428+00:00",
+      "http_status": 200,
+      "sha256": "4285e6f933837125a37f9348da71415a2f15abc00e9413d929e66689db7ec39f",
+      "bytes": 165940,
+      "server_date": "Mon, 07 Sep 2026 18:51:25 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=SFPUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:32.130799+00:00",
+      "http_status": 200,
+      "sha256": "7afceb3accec3ab47f89834f92882eec10ad3e6537d3e4d18ef9691952ae4a09",
+      "bytes": 168369,
+      "server_date": "Mon, 07 Sep 2026 18:50:32 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=HARDUSDT&interval=1d&startTime=1691020800000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:20.442467+00:00",
+      "http_status": 200,
+      "sha256": "ef9c554c6a606cb74236bee96825327186e2bc711f00515ac529b548fca961a0",
+      "bytes": 104219,
+      "server_date": "Mon, 07 Sep 2026 18:51:20 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=BICOUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:51:16.498455+00:00",
+      "http_status": 200,
+      "sha256": "8ed5f4c5872f161670bb224d5127b86acd58b1676ddce478da802fc805dbf832",
+      "bytes": 166639,
+      "server_date": "Mon, 07 Sep 2026 18:51:16 GMT"
+    },
+    {
+      "url": "https://api.binance.com/api/v3/klines?symbol=ANIMEUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+      "retrieved_at_utc": "2026-09-07T18:50:50.112705+00:00",
+      "http_status": 200,
+      "sha256": "6b4323bed2f0919eaf7a0177c3caf4ef7ef184a211e9a244b49d375882c2ac91",
+      "bytes": 100377,
+      "server_date": "Mon, 07 Sep 2026 18:50:50 GMT"
+    }
+  ],
+  "benchmark_reference": "Existing same-day funding_carry_screen_20260907 protocol/results/sources. No new benchmark claim or operator fee measurement."
+}

@@ -1,0 +1,20 @@
+{
+  "synthetic_and_temporal_tests_passed": 11,
+  "freeze_gate_tests_passed": 8,
+  "ruff": "PASS on four changed Python files",
+  "pyright": "PASS using actual .venv interpreter on three new scripts",
+  "raw_response_hash_checks": 395,
+  "raw_decimal_return_checks": 9430,
+  "maximum_raw_return_difference": 4.440892098500626e-16,
+  "decimal_portfolio_checks": 6,
+  "offline_reproduction_from_extracted_zip": "PASS; results.json, weekly_portfolios.json, samples.json.gz and audit.json byte-identical to expected outputs",
+  "frozen_files_unchanged_since_4cf37a8": [
+    "charters/scientific_state.json",
+    "GarimpoInvestimentos/trials.json",
+    "GarimpoInvestimentos/v3/costs.py",
+    "CR_FREEZE_INDEX.md",
+    "CR_RESEARCH_FREEZE.md"
+  ],
+  "full_legacy_suite": "983 passed in the prior infrastructure turn; not rerun for these independent research scripts.",
+  "remote_ci_docker_deployment": "NOT_RUN"
+}
