@@ -1564,3 +1564,39 @@ Limites que continuam abertos: tarifa atual por tier/conta e fills não
 medidos; benchmark do operador e FX não confirmados; séries originais dos
 DSRs e posições de H1-H3 não identificadas. Resultado honesto nesses campos
 é UNKNOWN, com as condições de desbloqueio descritas acima.
+
+
+### Funding carry — triagem econômica autorizada em 2026-09-07
+
+O usuário pediu explicitamente para fechar a conta econômica e decidir se
+vale aprofundar. Isso autoriza a falsificação barata em Discovery apesar de
+G1 deployment permanecer bloqueado; não altera coleta, capital ou freeze.
+Protocolo antes do download: commit `d85d75b`, em
+`docs/evidence/funding_carry_screen_20260907/protocol.json`.
+
+**Decisão: REJECT nesta triagem; carry passivo BTC/ETH sai da prioridade de
+pesquisa sob a estrutura C=US$5.000, N=US$2.500 e benchmark de referência BRL.**
+As taxas de funding de 365 dias somaram 3,352476% BTC e 2,487086% ETH. Mesmo a
+comparação otimista N=C, custo zero, fica em R$859/R$637 contra referência
+condicional de R$2.900–2.907. Não é refutação universal da classe.
+
+Reconstrução contábil por quantidade fixa, incluindo basis por mark price e
+custos ilustrativos: US$54,84 BTC / US$34,62 ETH, ou R$281,08/R$177,46 com
+FX constante 5,1253. Antes de imposto, FX e atenção; não são fills realizados.
+O primeiro settlement foi excluído para não atribuir recebimento antes de
+manter a posição. A referência do benchmark usa taxa corrente constante;
+essa comparação com cripto retrospectivo prioriza pesquisa, não é retorno
+histórico sincronizado do Tesouro nem previsão de funding.
+
+Taxa anual requerida na estrutura padronizada: 23,14% sobre nocional, ou 32,50%
+com R$1.200/ano de atenção ilustrativa. BTC/ETH ficam abaixo também nas
+janelas de 30/90 dias pré-fixadas. Reduzir fee a zero não resgata a conta.
+FX favorável não conta como alpha: seria necessária alta do USD/BRL de
+10,11%/10,55% para igualar a referência antes de imposto.
+
+Validação: 2.190 registros públicos, sem duplicações/lacunas de 8h; somas
+Decimal, corte temporal, hashes e identidade spot+short conferidos. Campos
+da vela final posteriores ao corte foram descartados. Reabertura só com
+mudança material em remuneração, benchmark ou estrutura mensurável.
+Resultados, cenários e fontes canônicos: `docs/evidence/funding_carry_screen_20260907/`.
+Nenhuma migração adicional de runtime ou reexecução de H1-H9 foi feita.

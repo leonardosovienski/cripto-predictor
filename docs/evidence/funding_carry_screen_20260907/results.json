@@ -1,0 +1,541 @@
+{
+  "protocol_id": "funding-carry-economic-screen-20260907",
+  "protocol_sha256": "87f5289c52f22d003d99c6f170ea0baf36b613588ce12b84b69d90d23eadec4a",
+  "mode": "DISCOVERY_DESCRIPTIVE_NOT_PROOF",
+  "benchmark": {
+    "capital_brl": 25626.5,
+    "gross_gain_brl": 3562.0835,
+    "tax_rate": 0.175,
+    "custody_brl_range": [
+      31.253,
+      38.377167
+    ],
+    "net_gain_brl_range": [
+      2900.3417205,
+      2907.4658875
+    ],
+    "net_return_range": [
+      0.11317744212046124,
+      0.11345544212046124
+    ]
+  },
+  "assets": {
+    "BTCUSDT": {
+      "quality": {
+        "observations": 1095,
+        "expected": 1095,
+        "missing": 0,
+        "duplicates": 0,
+        "max_timestamp_offset_ms": 26,
+        "schedule_hours": 8,
+        "event_window_start": "2025-09-07T00:00:00+00:00",
+        "event_window_end": "2026-09-06T16:00:00.004000+00:00"
+      },
+      "windows": [
+        {
+          "days": 30,
+          "n": 90,
+          "rate_sum": 0.00613393,
+          "simple_annualized_rate": 0.07462948166666666,
+          "negative_fraction": 0.011111111111111112,
+          "funding_rate_min": -1.5e-06,
+          "funding_rate_max": 0.0001,
+          "monthly_signed_sums": {
+            "2026-08": 0.005182139999999999,
+            "2026-09": 0.0009517899999999999
+          }
+        },
+        {
+          "days": 90,
+          "n": 270,
+          "rate_sum": 0.0140474,
+          "simple_annualized_rate": 0.056970011111111114,
+          "negative_fraction": 0.06296296296296296,
+          "funding_rate_min": -6.685e-05,
+          "funding_rate_max": 0.0001,
+          "monthly_signed_sums": {
+            "2026-06": 0.0012566500000000002,
+            "2026-07": 0.0056560800000000026,
+            "2026-08": 0.006182880000000003,
+            "2026-09": 0.0009517899999999999
+          }
+        },
+        {
+          "days": 365,
+          "n": 1095,
+          "rate_sum": 0.03352476,
+          "simple_annualized_rate": 0.03352476,
+          "negative_fraction": 0.23835616438356164,
+          "funding_rate_min": -0.00015178,
+          "funding_rate_max": 0.0001,
+          "monthly_signed_sums": {
+            "2025-09": 0.0033586299999999996,
+            "2025-10": 0.003073509999999999,
+            "2025-11": 0.004468559999999996,
+            "2025-12": 0.00424408,
+            "2026-01": 0.004576380000000002,
+            "2026-02": -0.0006341300000000001,
+            "2026-03": -0.00092486,
+            "2026-04": -0.00177227,
+            "2026-05": 0.0023134799999999997,
+            "2026-06": 0.00203063,
+            "2026-07": 0.0056560800000000026,
+            "2026-08": 0.006182880000000003,
+            "2026-09": 0.0009517899999999999
+          }
+        }
+      ],
+      "normalized_notional": {
+        "funding_usdt_2500": 83.81190000000001,
+        "funding_brl_2500": 429.56113107000004,
+        "funding_usdt_5000_zero_cost": 167.62380000000002,
+        "funding_brl_5000_zero_cost": 859.1222621400001,
+        "roundtrip_fee_scenario_usdt": 7.5,
+        "roundtrip_slippage_scenario_usdt": 5.0,
+        "net_scenario_usdt": 71.31190000000001,
+        "net_scenario_brl": 365.4948810700001,
+        "annual_funding_required_base": 0.23135488424092251,
+        "annual_funding_required_with_attention": 0.3250079386962715,
+        "zero_cost_notional_needed_for_benchmark_usdt": 16879.67969352521,
+        "zero_cost_required_n_over_capital": 3.375935938705042
+      },
+      "fixed_quantity": {
+        "quantity": 0.02268850014311906,
+        "spot_start": 110187.98,
+        "spot_end": 80341.83,
+        "mark_start": 110135.3,
+        "mark_end": 80304.44425037,
+        "eligible_settlements": 1094,
+        "first_settlement_excluded": true,
+        "funding_usdt": 65.99276864314137,
+        "basis_change_usdt": -0.34700360170838807,
+        "spot_pnl_usdt": -677.1643785465527,
+        "perp_price_pnl_usdt": 676.8173749448443,
+        "gross_mark_pnl_usdt": 65.64576504143298,
+        "fee_illustration_usdt": 6.483231703793486,
+        "slippage_5bps_each_side_usdt": 4.3218138930667624,
+        "net_scenario_usdt": 54.840719444572734,
+        "net_scenario_brl_fx_unchanged": 281.07513936926864,
+        "maximum_daily_mark_high": 126180.1,
+        "max_price_only_short_loss_usdt": 364.03244709631673,
+        "margin_cash_usdt": 2500,
+        "margin_test": "NOT_A_LIQUIDATION_SIMULATION",
+        "executable": false,
+        "missing_execution": [
+          "fills",
+          "liquidation/maintenance rules",
+          "unwind slippage",
+          "venue eligibility",
+          "USDT/USD conversion",
+          "tax classification"
+        ]
+      },
+      "cost_sensitivity": [
+        {
+          "slippage_bps_each_side": 0,
+          "fx_cost_fraction": 0,
+          "attention_brl": 0,
+          "economic_value_brl_fx_flat": 391.12138107000004
+        },
+        {
+          "slippage_bps_each_side": 0,
+          "fx_cost_fraction": 0,
+          "attention_brl": 1200,
+          "economic_value_brl_fx_flat": -808.8786189299999
+        },
+        {
+          "slippage_bps_each_side": 0,
+          "fx_cost_fraction": 0.005,
+          "attention_brl": 0,
+          "economic_value_brl_fx_flat": 262.98888107000005
+        },
+        {
+          "slippage_bps_each_side": 0,
+          "fx_cost_fraction": 0.005,
+          "attention_brl": 1200,
+          "economic_value_brl_fx_flat": -937.01111893
+        },
+        {
+          "slippage_bps_each_side": 0,
+          "fx_cost_fraction": 0.01,
+          "attention_brl": 0,
+          "economic_value_brl_fx_flat": 134.85638107000005
+        },
+        {
+          "slippage_bps_each_side": 0,
+          "fx_cost_fraction": 0.01,
+          "attention_brl": 1200,
+          "economic_value_brl_fx_flat": -1065.14361893
+        },
+        {
+          "slippage_bps_each_side": 5,
+          "fx_cost_fraction": 0,
+          "attention_brl": 0,
+          "economic_value_brl_fx_flat": 365.4948810700001
+        },
+        {
+          "slippage_bps_each_side": 5,
+          "fx_cost_fraction": 0,
+          "attention_brl": 1200,
+          "economic_value_brl_fx_flat": -834.50511893
+        },
+        {
+          "slippage_bps_each_side": 5,
+          "fx_cost_fraction": 0.005,
+          "attention_brl": 0,
+          "economic_value_brl_fx_flat": 237.36238107000008
+        },
+        {
+          "slippage_bps_each_side": 5,
+          "fx_cost_fraction": 0.005,
+          "attention_brl": 1200,
+          "economic_value_brl_fx_flat": -962.6376189299999
+        },
+        {
+          "slippage_bps_each_side": 5,
+          "fx_cost_fraction": 0.01,
+          "attention_brl": 0,
+          "economic_value_brl_fx_flat": 109.22988107000009
+        },
+        {
+          "slippage_bps_each_side": 5,
+          "fx_cost_fraction": 0.01,
+          "attention_brl": 1200,
+          "economic_value_brl_fx_flat": -1090.7701189299999
+        },
+        {
+          "slippage_bps_each_side": 10,
+          "fx_cost_fraction": 0,
+          "attention_brl": 0,
+          "economic_value_brl_fx_flat": 339.86838107000005
+        },
+        {
+          "slippage_bps_each_side": 10,
+          "fx_cost_fraction": 0,
+          "attention_brl": 1200,
+          "economic_value_brl_fx_flat": -860.13161893
+        },
+        {
+          "slippage_bps_each_side": 10,
+          "fx_cost_fraction": 0.005,
+          "attention_brl": 0,
+          "economic_value_brl_fx_flat": 211.73588107000006
+        },
+        {
+          "slippage_bps_each_side": 10,
+          "fx_cost_fraction": 0.005,
+          "attention_brl": 1200,
+          "economic_value_brl_fx_flat": -988.26411893
+        },
+        {
+          "slippage_bps_each_side": 10,
+          "fx_cost_fraction": 0.01,
+          "attention_brl": 0,
+          "economic_value_brl_fx_flat": 83.60338107000007
+        },
+        {
+          "slippage_bps_each_side": 10,
+          "fx_cost_fraction": 0.01,
+          "attention_brl": 1200,
+          "economic_value_brl_fx_flat": -1116.39661893
+        }
+      ],
+      "fx_sensitivity": [
+        {
+          "usdbrl_change": -0.2,
+          "gross_of_tax_value_brl": -4900.439888504584,
+          "illustrative_after_15pct_tax_brl": -4900.439888504584,
+          "after_tax_excess_over_benchmark_brl": -7800.7816090045835
+        },
+        {
+          "usdbrl_change": -0.1,
+          "gross_of_tax_value_brl": -2309.6823745676593,
+          "illustrative_after_15pct_tax_brl": -2309.6823745676593,
+          "after_tax_excess_over_benchmark_brl": -5210.02409506766
+        },
+        {
+          "usdbrl_change": 0,
+          "gross_of_tax_value_brl": 281.0751393692682,
+          "illustrative_after_15pct_tax_brl": 238.91386846387798,
+          "after_tax_excess_over_benchmark_brl": -2661.427852036122
+        },
+        {
+          "usdbrl_change": 0.1,
+          "gross_of_tax_value_brl": 2871.8326533061954,
+          "illustrative_after_15pct_tax_brl": 2441.057755310266,
+          "after_tax_excess_over_benchmark_brl": -459.28396518973386
+        },
+        {
+          "usdbrl_change": 0.2,
+          "gross_of_tax_value_brl": 5462.590167243123,
+          "illustrative_after_15pct_tax_brl": 4643.201642156654,
+          "after_tax_excess_over_benchmark_brl": 1742.859921656654
+        }
+      ],
+      "fx_appreciation_needed_to_match_benchmark_pre_tax": 0.10110041433983863,
+      "decision": "REJECT_FOR_THIS_ECONOMIC_SCREEN"
+    },
+    "ETHUSDT": {
+      "quality": {
+        "observations": 1095,
+        "expected": 1095,
+        "missing": 0,
+        "duplicates": 0,
+        "max_timestamp_offset_ms": 26,
+        "schedule_hours": 8,
+        "event_window_start": "2025-09-07T00:00:00+00:00",
+        "event_window_end": "2026-09-06T16:00:00.004000+00:00"
+      },
+      "windows": [
+        {
+          "days": 30,
+          "n": 90,
+          "rate_sum": 0.00503669,
+          "simple_annualized_rate": 0.06127972833333333,
+          "negative_fraction": 0.03333333333333333,
+          "funding_rate_min": -6.75e-06,
+          "funding_rate_max": 0.0001,
+          "monthly_signed_sums": {
+            "2026-08": 0.004096479999999998,
+            "2026-09": 0.0009402099999999999
+          }
+        },
+        {
+          "days": 90,
+          "n": 270,
+          "rate_sum": 0.00948556,
+          "simple_annualized_rate": 0.038469215555555554,
+          "negative_fraction": 0.14814814814814814,
+          "funding_rate_min": -8.135e-05,
+          "funding_rate_max": 0.0001,
+          "monthly_signed_sums": {
+            "2026-06": 0.00023365,
+            "2026-07": 0.0034836800000000003,
+            "2026-08": 0.004828019999999998,
+            "2026-09": 0.0009402099999999999
+          }
+        },
+        {
+          "days": 365,
+          "n": 1095,
+          "rate_sum": 0.02487086,
+          "simple_annualized_rate": 0.02487086,
+          "negative_fraction": 0.2684931506849315,
+          "funding_rate_min": -0.00036526,
+          "funding_rate_max": 0.0001,
+          "monthly_signed_sums": {
+            "2025-09": 0.002710619999999999,
+            "2025-10": 0.00295345,
+            "2025-11": 0.004235290000000001,
+            "2025-12": 0.0035931300000000004,
+            "2026-01": 0.0041013099999999995,
+            "2026-02": -0.0030729200000000003,
+            "2026-03": -0.0009299100000000002,
+            "2026-04": -0.0013526899999999997,
+            "2026-05": 0.0028839900000000016,
+            "2026-06": 0.0004966800000000002,
+            "2026-07": 0.0034836800000000003,
+            "2026-08": 0.004828019999999998,
+            "2026-09": 0.0009402099999999999
+          }
+        }
+      ],
+      "normalized_notional": {
+        "funding_usdt_2500": 62.177150000000005,
+        "funding_brl_2500": 318.67654689500006,
+        "funding_usdt_5000_zero_cost": 124.35430000000001,
+        "funding_brl_5000_zero_cost": 637.3530937900001,
+        "roundtrip_fee_scenario_usdt": 7.5,
+        "roundtrip_slippage_scenario_usdt": 5.0,
+        "net_scenario_usdt": 49.677150000000005,
+        "net_scenario_brl": 254.61029689500003,
+        "annual_funding_required_base": 0.23135488424092251,
+        "annual_funding_required_with_attention": 0.3250079386962715,
+        "zero_cost_notional_needed_for_benchmark_usdt": 22753.021431599318,
+        "zero_cost_required_n_over_capital": 4.550604286319864
+      },
+      "fixed_quantity": {
+        "quantity": 0.5850485005206932,
+        "spot_start": 4273.15,
+        "spot_end": 2514.48,
+        "mark_start": 4271.31,
+        "mark_end": 2513.85905774,
+        "eligible_settlements": 1094,
+        "first_settlement_excluded": true,
+        "funding_usdt": 45.26317592686805,
+        "basis_change_usdt": -0.7132079028347025,
+        "spot_pnl_usdt": -1028.9072464107273,
+        "perp_price_pnl_usdt": 1028.1940385078926,
+        "gross_mark_pnl_usdt": 44.54996802403335,
+        "fee_illustration_usdt": 5.9559192450943685,
+        "slippage_5bps_each_side_usdt": 3.9703728682997323,
+        "net_scenario_usdt": 34.62367591063924,
+        "net_scenario_brl_fx_unchanged": 177.45672614479932,
+        "maximum_daily_mark_high": 4764.16,
+        "max_price_only_short_loss_usdt": 288.34115348162334,
+        "margin_cash_usdt": 2500,
+        "margin_test": "NOT_A_LIQUIDATION_SIMULATION",
+        "executable": false,
+        "missing_execution": [
+          "fills",
+          "liquidation/maintenance rules",
+          "unwind slippage",
+          "venue eligibility",
+          "USDT/USD conversion",
+          "tax classification"
+        ]
+      },
+      "cost_sensitivity": [
+        {
+          "slippage_bps_each_side": 0,
+          "fx_cost_fraction": 0,
+          "attention_brl": 0,
+          "economic_value_brl_fx_flat": 280.23679689500005
+        },
+        {
+          "slippage_bps_each_side": 0,
+          "fx_cost_fraction": 0,
+          "attention_brl": 1200,
+          "economic_value_brl_fx_flat": -919.763203105
+        },
+        {
+          "slippage_bps_each_side": 0,
+          "fx_cost_fraction": 0.005,
+          "attention_brl": 0,
+          "economic_value_brl_fx_flat": 152.10429689500006
+        },
+        {
+          "slippage_bps_each_side": 0,
+          "fx_cost_fraction": 0.005,
+          "attention_brl": 1200,
+          "economic_value_brl_fx_flat": -1047.895703105
+        },
+        {
+          "slippage_bps_each_side": 0,
+          "fx_cost_fraction": 0.01,
+          "attention_brl": 0,
+          "economic_value_brl_fx_flat": 23.971796895000068
+        },
+        {
+          "slippage_bps_each_side": 0,
+          "fx_cost_fraction": 0.01,
+          "attention_brl": 1200,
+          "economic_value_brl_fx_flat": -1176.0282031049999
+        },
+        {
+          "slippage_bps_each_side": 5,
+          "fx_cost_fraction": 0,
+          "attention_brl": 0,
+          "economic_value_brl_fx_flat": 254.61029689500003
+        },
+        {
+          "slippage_bps_each_side": 5,
+          "fx_cost_fraction": 0,
+          "attention_brl": 1200,
+          "economic_value_brl_fx_flat": -945.389703105
+        },
+        {
+          "slippage_bps_each_side": 5,
+          "fx_cost_fraction": 0.005,
+          "attention_brl": 0,
+          "economic_value_brl_fx_flat": 126.47779689500004
+        },
+        {
+          "slippage_bps_each_side": 5,
+          "fx_cost_fraction": 0.005,
+          "attention_brl": 1200,
+          "economic_value_brl_fx_flat": -1073.522203105
+        },
+        {
+          "slippage_bps_each_side": 5,
+          "fx_cost_fraction": 0.01,
+          "attention_brl": 0,
+          "economic_value_brl_fx_flat": -1.6547031049999532
+        },
+        {
+          "slippage_bps_each_side": 5,
+          "fx_cost_fraction": 0.01,
+          "attention_brl": 1200,
+          "economic_value_brl_fx_flat": -1201.654703105
+        },
+        {
+          "slippage_bps_each_side": 10,
+          "fx_cost_fraction": 0,
+          "attention_brl": 0,
+          "economic_value_brl_fx_flat": 228.98379689500004
+        },
+        {
+          "slippage_bps_each_side": 10,
+          "fx_cost_fraction": 0,
+          "attention_brl": 1200,
+          "economic_value_brl_fx_flat": -971.0162031049999
+        },
+        {
+          "slippage_bps_each_side": 10,
+          "fx_cost_fraction": 0.005,
+          "attention_brl": 0,
+          "economic_value_brl_fx_flat": 100.85129689500005
+        },
+        {
+          "slippage_bps_each_side": 10,
+          "fx_cost_fraction": 0.005,
+          "attention_brl": 1200,
+          "economic_value_brl_fx_flat": -1099.1487031049999
+        },
+        {
+          "slippage_bps_each_side": 10,
+          "fx_cost_fraction": 0.01,
+          "attention_brl": 0,
+          "economic_value_brl_fx_flat": -27.281203104999946
+        },
+        {
+          "slippage_bps_each_side": 10,
+          "fx_cost_fraction": 0.01,
+          "attention_brl": 1200,
+          "economic_value_brl_fx_flat": -1227.281203105
+        }
+      ],
+      "fx_sensitivity": [
+        {
+          "usdbrl_change": -0.2,
+          "gross_of_tax_value_brl": -4983.3346190841585,
+          "illustrative_after_15pct_tax_brl": -4983.3346190841585,
+          "after_tax_excess_over_benchmark_brl": -7883.676339584159
+        },
+        {
+          "usdbrl_change": -0.1,
+          "gross_of_tax_value_brl": -2402.9389464696765,
+          "illustrative_after_15pct_tax_brl": -2402.9389464696765,
+          "after_tax_excess_over_benchmark_brl": -5303.2806669696765
+        },
+        {
+          "usdbrl_change": 0,
+          "gross_of_tax_value_brl": 177.45672614480102,
+          "illustrative_after_15pct_tax_brl": 150.83821722308087,
+          "after_tax_excess_over_benchmark_brl": -2749.503503276919
+        },
+        {
+          "usdbrl_change": 0.1,
+          "gross_of_tax_value_brl": 2757.852398759283,
+          "illustrative_after_15pct_tax_brl": 2344.1745389453904,
+          "after_tax_excess_over_benchmark_brl": -556.1671815546097
+        },
+        {
+          "usdbrl_change": 0.2,
+          "gross_of_tax_value_brl": 5338.2480713737605,
+          "illustrative_after_15pct_tax_brl": 4537.510860667697,
+          "after_tax_excess_over_benchmark_brl": 1637.1691401676967
+        }
+      ],
+      "fx_appreciation_needed_to_match_benchmark_pre_tax": 0.10552199506660731,
+      "decision": "REJECT_FOR_THIS_ECONOMIC_SCREEN"
+    }
+  },
+  "decision": "DO_NOT_DEEPEN_PASSIVE_BTC_ETH_CARRY_UNDER_THIS_CAPITAL_AND_BENCHMARK",
+  "limitations": [
+    "Historical rates are not forecasts",
+    "Zero-cost N=C scenario is a favorable normalized comparison, not a deployable structure or universal upper bound",
+    "Operator benchmark, taxes, realized friction and collateral efficiency remain unknown",
+    "No alternative assets or timing rules searched after results"
+  ]
+}

@@ -1,5 +1,5 @@
 {
-  "status": "DRAFT_NOT_REGISTERED_NOT_AUTHORIZED",
+  "status": "ECONOMIC_SCREEN_REJECTED_NO_ACTIVATION",
   "as_of": "2026-09-07",
   "proposed_family": "funding_carry_structural_v1",
   "related_frozen_family": "funding_oi_hmm_v3",
@@ -13,7 +13,7 @@
     "activate": false,
     "capital_authorized": false,
     "first_gate": "G1_KILL_UNDER_CURRENT_ENVELOPE",
-    "stopping_rule": "No outcome test until venue/collateral G1 and a same-currency benchmark/cost G2 are decidable; then G3-G7 in order.",
+    "stopping_rule": "User authorized one-shot economic screen on 2026-09-07. Screen rejected passive BTC/ETH carry under the declared structure/benchmark; no further outcome research or activation without material change. G1 deployment remains failed.",
     "universe_proposed": [
       "BTCUSDT",
       "ETHUSDT"
@@ -29,5 +29,11 @@
       "FX route and costs",
       "risk premium and attention costs"
     ]
+  },
+  "economic_screen": {
+    "protocol_commit": "d85d75b",
+    "result_path": "docs/evidence/funding_carry_screen_20260907/results.json",
+    "decision": "DO_NOT_DEEPEN_PASSIVE_BTC_ETH_CARRY_UNDER_THIS_CAPITAL_AND_BENCHMARK",
+    "operator_benchmark_accessibility": "UNKNOWN; conditional comparison remains explicit"
   }
 }
