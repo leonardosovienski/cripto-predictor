@@ -1,0 +1,26 @@
+{
+  "id": "discovery-altcoin-payoff-20260907-v2",
+  "protocol_commit": "bbe7a8b",
+  "implementation_before_new_prices_commit": "34b599a",
+  "adaptive_changes": [
+    "quantity/identity correction for known missing outcomes",
+    "objective switches from rally frequency to net log payoff",
+    "week grouping and uncertainty penalty",
+    "abstention/cash allowed"
+  ],
+  "preserved": [
+    "240-symbol sample",
+    "8 feature definitions",
+    "1-day information delay",
+    "7-day horizon",
+    "2021-2023 training geometry",
+    "all original observations and output files"
+  ],
+  "new_model_specifications": 1,
+  "new_historical_performance_trials": 0,
+  "snapshot_date": "2026-09-07",
+  "snapshot_is_prospective": false,
+  "decision": "PREPARED_NOT_PROMOTED; no candidate passed the dry-run margin",
+  "data_censoring": "BTT, CVP, VIDT retained with null return; no fabricated full-loss label",
+  "notes": "Daily marks and same-base cross-quote identity are accounting assumptions, not evidence of actual fills. Historical v1 scenarios are sensitivity only. No formal Core trial/power attestation or capital activation."
+}

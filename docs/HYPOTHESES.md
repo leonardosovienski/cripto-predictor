@@ -1653,3 +1653,50 @@ seis carteiras reconstruídas independentemente; Ruff/Pyright passaram.
 Produção, coleta, ledger H1-H9, scientific_state, costs e selos preservados.
 Resultados originais e diagnóstico permanecem separados em `results.json`
 e `audit.json` no diretório de evidência. Nenhuma ordem ou capital ativado.
+
+### Continuação: identidade e payoff líquido — 2026-09-07
+
+O usuário pediu continuar a partir da infraestrutura existente. Protocolo de
+preparação `bbe7a8b`; implementação e controles antes da consulta de novos
+preços `34b599a`. Escopo: resolver os 13 desfechos censurados já identificados,
+preservar a evidência anterior e preparar um scorer que considere payoff
+líquido e permita abstenção. **Zero novas trials de performance histórica.**
+
+Dez casos receberam marcação de preço com identidade/quantidade corrigida:
+NPXS/PUNDIX, BZRX/OOKI, COCOS/COMBO, OCEAN/FET, MATIC/POL, FTM/S, BNX/FORM,
+EOS/A e os pares HNT/BUSD e FTT/BUSD convertidos pelo fechamento BUSD/USDT
+observado. Preços são referências diárias, não fills sincronizados. BTT,
+CVP e VIDT permanecem censurados: a saída no horizonte original não foi
+verificada; novo ticker de BTT só negocia depois desse horizonte. Nenhum
+preço futuro é usado para preencher a lacuna. `gross_return=null` substitui
+o stress -100% apenas no dataset derivado; original, controles e ledger
+permanecem preservados. Todas as 5.204 observações de treino são mantidas,
+incluindo a única censurada remanescente nessa janela.
+
+Sensibilidade contábil das mesmas escolhas V1, agora com migrações conhecidas:
+2025–2026 permanece aproximadamente -97,83% com perda total na VIDT
+censurada ou -97,33% com retorno zero nessa posição. São cenários para o
+resíduo desconhecido, não resultado executável. Não mudam a decisão de
+não promoção da V1 nem tornam qualquer modelo novo lucrativo.
+
+Protótipo adaptativo V2: mesmos vizinhos/features/universo; usa log-payoff
+após custos assumidos de 20 bps por perna, agrupa vizinhos por semana e
+exige margem positiva após penalidade heurística de incerteza. Observação
+censurada entre vizinhos força abstenção, em vez de desaparecer do treino.
+Até cinco alocações de 20%; vagas vazias ficam em caixa. A fotografia já
+consumida de 07/09 teve **0 de 14 candidatos aprovados, 100% caixa simulado**.
+Isso testa funcionamento, não rentabilidade ou evidência prospectiva.
+
+Status: `IMPLEMENTED_DRY_RUN_ONLY_NOT_PROMOTED`. Antes da comparação
+prospectiva: universo e feed de eventos/suspensões com known_at completo,
+equivalência live, preços/fills de paper, benchmark/FX/fricção e atestado
+específico/poder adequado. A amostra legada ainda não é taxonomia completa
+de altcoins: inclui RLUSD entre os elegíveis atuais; não há claim de universo
+sem stablecoins. O helper para uso futuro corrige JUP/SYRUP como falsos
+positivos de produto alavancado, sem trocar silenciosamente a amostra V1.
+Primeira semana futura possível após este protocolo: 14/09; não há scheduler
+ou coleta nova ativados. Evidência já vista não volta a ser intocada.
+
+30 testes direcionados passaram (11 V1, 11 novos de payoff/identidade e oito
+do gate). Ruff/Pyright passaram. Modo offline reproduziu resultados e dataset
+derivado byte a byte. Detalhes: `docs/evidence/altcoin_payoff_20260907/`.

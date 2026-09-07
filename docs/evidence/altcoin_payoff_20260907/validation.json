@@ -1,0 +1,18 @@
+{
+  "targeted_tests": {
+    "total": 30,
+    "prior_analog": 11,
+    "new_payoff_identity": 11,
+    "freeze_gate": 8
+  },
+  "ruff": "PASS",
+  "pyright": "PASS",
+  "offline_byte_identical": [
+    "results.json",
+    "samples_identity_corrected.json.gz"
+  ],
+  "new_price_requests": 13,
+  "new_historical_performance_trials": 0,
+  "scheduler_created": false,
+  "capital_authorized": false
+}

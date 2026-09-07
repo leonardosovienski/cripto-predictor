@@ -236,6 +236,11 @@ def main():
     parser.add_argument("--base-results-dir", required=True, type=Path)
     parser.add_argument("--data-dir", required=True, type=Path)
     parser.add_argument("--output-dir", required=True, type=Path)
+    parser.add_argument(
+        "--offline",
+        action="store_true",
+        help="Require every price request in the recorded cache; never contact the provider",
+    )
     args = parser.parse_args()
     args.output_dir.mkdir(parents=True, exist_ok=True)
     events = json.loads((EVIDENCE / "identity_events.json").read_text())["events"]
@@ -246,16 +251,23 @@ def main():
 
     def close_for(symbol: str, day: date):
         start = (day - EPOCH).days * DAY
-        body = acquisition.get(
-            "https://api.binance.com/api/v3/klines",
-            {
-                "symbol": symbol,
-                "interval": "1d",
-                "startTime": start,
-                "endTime": start + DAY - 1,
-                "limit": 2,
-            },
-        )
+        url = "https://api.binance.com/api/v3/klines"
+        params = {
+            "symbol": symbol,
+            "interval": "1d",
+            "startTime": start,
+            "endTime": start + DAY - 1,
+            "limit": 2,
+        }
+        if args.offline:
+            request = acquisition.client.build_request("GET", url, params=params)
+            key = hashlib.sha256(str(request.url).encode()).hexdigest()
+            metadata = json.loads((args.data_dir / "raw" / f"{key}.json").read_text())
+            body = gzip.decompress((args.data_dir / "raw" / f"{key}.bin.gz").read_bytes())
+            if hashlib.sha256(body).hexdigest() != metadata["sha256"]:
+                raise ValueError("offline cached price hash mismatch")
+        else:
+            body = acquisition.get(url, params)
         return exact_close(json.loads(body), day)
 
     resolutions = []
