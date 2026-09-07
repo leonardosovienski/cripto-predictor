@@ -155,3 +155,30 @@ def test_drawdown_and_compounding_are_not_arithmetic_return_sum():
     metrics = b.wealth_metrics([1.2, 0.5, 1.1])
     assert metrics["ending_5000_usdt"] == pytest.approx(3300)
     assert metrics["max_drawdown_weekly_endpoints"] == pytest.approx(-0.5)
+
+
+def test_partial_day_is_preserved_as_missing_without_dropping_symbol(tmp_path, monkeypatch):
+    evidence = tmp_path / "evidence"
+    evidence.mkdir()
+    (evidence / "protocol.json").write_text("{}")
+    monkeypatch.setattr(b, "EVIDENCE", evidence)
+    directory = tmp_path / "data"
+    (directory / "pairs").mkdir(parents=True)
+    first = (b.BASE - b.EPOCH).days * b.DAY
+    rows = [
+        [first, 100, 101, 99, 100, 100000, 10000000, first + b.DAY - 1],
+        [first + b.DAY, 100, 101, 99, 100, 100000, 10000000, first + b.DAY + 3600000 - 1],
+    ]
+    payload = gzip.compress(json.dumps({"rows": rows}).encode())
+    (directory / "pairs/BTCUSDT.json.gz").write_bytes(payload)
+    manifest = {
+        "protocol_sha256": b.digest((evidence / "protocol.json").read_bytes()),
+        "errors": [],
+        "selected": ["BTCUSDT"],
+        "pairs": [{"symbol": "BTCUSDT", "normalized_sha256": b.digest(payload)}],
+    }
+    (directory / "acquisition.json").write_text(json.dumps(manifest))
+    _, data = b.load_histories(directory)
+    assert "BTCUSDT" in data
+    assert np.isfinite(data["BTCUSDT"][0]).all()
+    assert np.isnan(data["BTCUSDT"][1]).all()

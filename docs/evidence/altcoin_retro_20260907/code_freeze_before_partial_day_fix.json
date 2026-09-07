@@ -1,0 +1,7 @@
+{
+  "scripts/backtest_altcoin_payoff.py": "53879ec740277697091a2349dcd7e33524c4412da0628ed62db9b24dec314f51",
+  "scripts/collect_altcoin_retro.py": "7afd7b9a300f1ebd3d9a815682cd6abb21ee51f6bccb59fb20d4271f1b23e85f",
+  "scripts/prepare_altcoin_payoff.py": "0c349fe67d4466db008cf1728c57767ee01fce9c122f85e539eeff6f8af30ad0",
+  "scripts/research_altcoin_analogs.py": "22b5456ae7c56c09b51cb295b784fad7b9b5685241f9fa54a31e5cb6a1aa7626",
+  "docs/evidence/altcoin_retro_20260907/protocol.json": "70f8c98429b6f34138afbec70c6f5eb3254d341ff896c3b82c06964b2d37b1bc"
+}

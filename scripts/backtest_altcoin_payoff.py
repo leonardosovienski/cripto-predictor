@@ -72,11 +72,15 @@ def load_histories(directory: Path):
             idx = (EPOCH + timedelta(days=opened // DAY) - BASE).days
             if opened % DAY or not 0 <= idx < len(values) or idx in seen:
                 raise ValueError("invalid or duplicate candle day")
-            if candle[7] != opened + DAY - 1:
+            if not opened <= candle[7] < opened + DAY:
                 raise ValueError("invalid UTC close time")
+            seen.add(idx)
+            if candle[7] != opened + DAY - 1:
+                # An early halt is an incomplete day, not a full-day close or a fatal
+                # universe error. Preserve raw data and leave this day missing.
+                continue
             if candle[2] < max(candle[1], candle[4]) or candle[3] > min(candle[1], candle[4]):
                 raise ValueError("inconsistent OHLC")
-            seen.add(idx)
             values[idx] = candle[1:7]
         data[row["symbol"]] = values
     if set(data) != set(manifest["selected"]):
