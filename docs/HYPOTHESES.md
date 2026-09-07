@@ -1542,3 +1542,25 @@ custódia e capital depois da evidência de execução requerida. Para concluir 
 hurdle, dependem do operador: alternativa efetivamente acessível, rota/custo FX,
 prêmio de risco e custo de atenção. Esta rodada não gasta, transfere, abre
 conta, altera coleta, aprova ou mergeia em nome de terceiros.
+
+
+### Validação da entrega — 2026-09-07
+
+983 testes passaram (all-extras, Python 3.13.14, Core 3.2.0). Ruff check e
+format, Pyright, scan de segredos (0 achados), build wheel/sdist e instalação
+da wheel em ambiente novo fora do checkout: PASS. Snapshot H6 confere; costs,
+trials, h6_status e selos permanecem byte-idênticos à base. Docker e CI remoto
+não foram executados. A primeira execução de testes teve 979 passes e uma
+falha do path de isolamento escolhido dentro do checkout; mudado apenas o
+DATA_DIR de teste para pasta externa, a suíte final passou sem essa falha.
+
+Atestados realmente reemitidos: Fase 1 2026-09-07T18:19:19Z, V3 2026-09-07T18:19:27Z,
+Core 3.2.0, ambos contra `package:3.2.0;git:b765948f5f7b48986dcbb00533193669d1202b41`. Expiração: 2026-09-14;
+nenhuma validade permanente inferida. Os arquivos novos não foram instalados
+na produção. Antes de qualquer implantação, é necessária revisão concreta
+do diff científico e uma decisão de deployment que preserve a coleta.
+
+Limites que continuam abertos: tarifa atual por tier/conta e fills não
+medidos; benchmark do operador e FX não confirmados; séries originais dos
+DSRs e posições de H1-H3 não identificadas. Resultado honesto nesses campos
+é UNKNOWN, com as condições de desbloqueio descritas acima.

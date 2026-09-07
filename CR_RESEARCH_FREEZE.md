@@ -145,24 +145,25 @@ sweep_count_audit:
   correction_applied: none  # decisão deliberada — ver nota acima
 
 harness_attestation:
+  # Reemissão real 2026-09-07, árvore limpa: package:3.2.0;git:b765948f5f7b48986dcbb00533193669d1202b41
   # scripts/attest_harness.py rodado de verdade em 2026-09-03 (não editado manualmente).
   # O atestado anterior (core_version=2.3.0, passed_at=2026-08-21) estava expirado
   # (expires_at=2026-08-28) e contra Core desatualizado — trocado por reemissão real.
   v3_judge:
     metric: psr
-    core_version: "3.0.0"
-    passed_at: "2026-09-03T00:45:53Z"
-    expires_at: "2026-09-10T00:45:53Z"
+    core_version: "3.2.0"
+    passed_at: "2026-09-07T18:19:27Z"
+    expires_at: "2026-09-14T18:19:27Z"
     positive_control: GO (sinal plantado detectado — sensibilidade OK)
     negative_control: NO-GO em ruído puro (especificidade OK)
   phase1_judge:
     metric: spearman_ic
-    core_version: "3.0.0"
-    passed_at: "2026-09-03T00:45:43Z"
-    expires_at: "2026-09-10T00:45:43Z"
+    core_version: "3.2.0"
+    passed_at: "2026-09-07T18:19:19Z"
+    expires_at: "2026-09-14T18:19:19Z"
     positive_control: VALIDADO (sinal plantado detectado)
     negative_control: RUIDO rejeitado (IC95 cruza zero)
-  test_suite: "853 passed, 0 failed (uv run pytest tests/, all-extras, 2026-09-03)"
+  test_suite: "983 passed, 0 failed (pytest all-extras, Core 3.2.0, 2026-09-07)"
   # inclui: hash chain (tamper/append), DPL bitemporal (published_at>=timestamp,
   # rejeição de leitura antes do cutoff), PBO/CSCV (ruído->PBO alto, skill real->PBO baixo),
   # gate_power (UNDERPOWERED vs REFUTED distintos), no-lookahead do HMM V3.

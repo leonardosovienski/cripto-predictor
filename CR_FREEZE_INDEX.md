@@ -75,7 +75,7 @@ em `CR_RESEARCH_FREEZE.md` e o gate técnico em `scripts/check_reopen_dossier.py
 | Arquivo | O que contém |
 |---|---|
 | `scripts/attest_harness.py` | Reemite o atestado de controle positivo/negativo dos 2 juízes (V3/PSR, Fase1/Spearman) |
-| `GarimpoInvestimentos/trials.harness_attestation.json` | Atestado histórico Core 3.0.0; migração/reemissão Core 3.2.0: errata P0-A em HYPOTHESES.md |
+| `GarimpoInvestimentos/trials.harness_attestation.json` | Atestado real Core 3.2.0, reemitido 2026-09-07 em árvore limpa; errata P0-A em HYPOTHESES.md |
 | `GarimpoInvestimentos/trials.phase1_harness_attestation.json` | Idem, juiz Fase1 |
 
 ## 9. Segurança
