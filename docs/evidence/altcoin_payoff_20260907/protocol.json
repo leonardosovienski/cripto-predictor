@@ -1,0 +1,37 @@
+{
+  "id": "discovery-altcoin-payoff-20260907-v2",
+  "mode": "DISCOVERY_PREPARATION",
+  "authorization": "User asks to continue from the current infrastructure and findings on 2026-09-07.",
+  "base_commit": "2b346e2600917133a51274fb9fa50b944595aa90",
+  "adaptive_origin": "v1 found more large-rally targets but lost money; this is an explicitly adaptive new objective, not untouched validation of v1.",
+  "scope_this_round": [
+    "Resolve the 13 already-identified missing outcomes using documented token quantities and public prices exactly at the existing 7-day horizon.",
+    "Keep unresolved exits censored rather than labeling them -100% or zero.",
+    "Recalculate fixed v1 selections only as accounting sensitivity; never rewrite original evidence.",
+    "Implement and unit-test a net-payoff and abstention scorer; produce a current dry-run snapshot without measuring new historical performance."
+  ],
+  "identity_policy": "Use official migration ratios and successor closing prices on the exact original exit day. For unchanged assets with another quote pair, use that pair's close multiplied by the quote/USDT close; no stablecoin peg assumption. This is a valuation proxy, not synchronized executable fills. No price after the outcome horizon, no last-price forward-fill, no automatic zero recovery. Raw requests and sources retain actual retrieval known_at.",
+  "frozen_inputs": "Same 240-symbol v1 sample, 8 features, Monday decision, full 24h feature delay, 7-day holding and fixed 2021-2023 training geometry. Keep the original universe to isolate the objective; fix the separate future universe helper so JUP/SYRUP are not mistaken for leveraged products. No resampling after outcomes.",
+  "model": {
+    "neighbors": 200,
+    "geometry": "Training-only median/IQR, zero IQR=>1, clip [-5,5], Euclidean nearest neighbors; same as v1.",
+    "target": "Log wealth factor after assumed transaction costs, including the magnitude of gains and losses. For a direct USDT exit, factor=(1+r)*(1-c)/(1+c). A cross-quote exit uses two sell legs: factor=(1+r)*(1-c)^2/(1+c).",
+    "cost_per_leg_bps": 20,
+    "cost_status": "ASSUMED_UNCALIBRATED, inherited v1 scenario; not a change to v3/costs.py.",
+    "dependence": "Average log payoffs within each distinct training week among neighbors, then weight those weeks equally. Require >=20 distinct weeks. For a conservative heuristic uncertainty penalty, effective_n=floor(number_of_weeks/4), score=mean_weekly_group_log_payoff - 1.96*sample_sd/sqrt(effective_n). This is not a calibrated confidence interval or a probability.",
+    "censoring": "All training observations remain in the neighbor geometry. If any of the 200 neighbor outcomes is censored, abstain for that candidate; never delete the losing/censored case or replace its return with zero.",
+    "selection": "Rank positive scores only. Up to five candidates, each 20% of starting research portfolio; unused slots remain zero-yield USDT cash, including 100% cash if none pass. No forcing five purchases. Ties by symbol.",
+    "snapshot": "A diagnostic snapshot from the already-consumed 2026-09-07 inputs, explicitly not a prospective recommendation or executable signal."
+  },
+  "new_evidence": {
+    "historical_performance_trials_this_round": 0,
+    "already_consumed": "2021-2023 training, 2024 and 2025-2026 evaluation are Discovery data; no relabeling them as independent test.",
+    "earliest_new_week": "2026-09-14",
+    "before_prospective_activation": ["freeze complete investability and delisting-event feed with observation known_at", "verify live feed/latency parity and paper fills", "resolve operator benchmark/FX/friction and execution envelope", "issue a model-specific harness/power attestation before formal promotion", "derive evidence horizon from economically relevant paired effect; a few weeks cannot establish profitability"],
+    "scheduler_status": "NOT_CREATED; this round does not create a recurring monitor or background execution."
+  },
+  "stopping_rule": "One scorer specification, no tuning if it abstains or looks unattractive. Record readiness and remaining blockers. Do not open a new historical performance search in this round.",
+  "capital_authorized": false,
+  "production_changes": false,
+  "funding_oi_hmm_reopened": false
+}
