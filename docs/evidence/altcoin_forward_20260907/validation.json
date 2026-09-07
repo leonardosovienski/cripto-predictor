@@ -1,0 +1,19 @@
+{
+  "tests_passed": 44,
+  "tests_command": "pytest -q tests/test_altcoin_forward.py tests/test_altcoin_payoff.py tests/test_altcoin_analogs.py tests/test_freeze_h6_definition.py",
+  "ruff": "PASS",
+  "pyright": "PASS with local .venv Python",
+  "offline_replay": {
+    "offline_snapshot_semantically_identical": true,
+    "ignored_field": "recorded_after_acquisition (new execution clock only)",
+    "public_requests_made": 0,
+    "eligible_count": 13,
+    "selected": []
+  },
+  "raw_response_hashes_verified": 275,
+  "ledger_chain": "PASS",
+  "original_feature_score_parity": "13 of 13 identical features and scores; differences exactly zero",
+  "before_first_slot_tick": "PASS, zero prospective decisions, no quotes acquired and no added ledger rows",
+  "frozen_state_costs_trials_unchanged": "git diff --exit-code 9e492f0 HEAD for five frozen files passed",
+  "formal_attestation": false
+}

@@ -1,0 +1,12 @@
+{
+  "prior_history_reference": "docs/evidence/altcoin_payoff_20260907/search_log.json",
+  "new_id": "discovery-altcoin-forward-20260907-v3",
+  "changes": "Read-only observer and declared current investability/stablecoin exclusion; no new historical model-performance trial. Model v2 unchanged.",
+  "new_historical_performance_trials": 0,
+  "new_real_market_prospective_decisions": 0,
+  "synthetic_controls": "Stipulated 100 null replicates, two candidate queries each; zero qualifications; known-pattern positive/negative and censored-case controls pass. No general null calibration claim.",
+  "preflight_protocol_commit": "c80f309",
+  "initial_code_freeze_commit": "cbe5229",
+  "catalog_diff_commit": "9ca6648",
+  "status": "OBSERVER_SCHEDULED; NO_EXECUTABLE_PROMOTION"
+}

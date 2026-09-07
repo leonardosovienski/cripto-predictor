@@ -1,0 +1,18 @@
+{
+  "checked_on": "2026-09-07",
+  "market_data_only_documentation": "https://developers.binance.com/en/docs/products/spot/faqs/market_data_only",
+  "commission_documentation": "https://developers.binance.com/en/docs/products/spot/faqs/commission_faq",
+  "codex_local_automation_documentation": "https://learn.chatgpt.com/docs/automations?surface=app",
+  "market_data_base": "https://data-api.binance.vision/api/v3/",
+  "announcement_catalogs": [
+    {
+      "catalog_id": 161,
+      "url": "https://www.binance.com/bapi/composite/v1/public/cms/article/list/query?type=1&pageNo=1&pageSize=50&catalogId=161"
+    },
+    {
+      "catalog_id": 49,
+      "url": "https://www.binance.com/bapi/composite/v1/public/cms/article/list/query?type=1&pageNo=1&pageSize=50&catalogId=49"
+    }
+  ],
+  "provenance": "All 275 raw responses and actual requested_at/known_at/source hashes are in forward-data/raw in the reproduction package; additional initial connectivity probes are preserved separately."
+}

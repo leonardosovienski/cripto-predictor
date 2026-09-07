@@ -1700,3 +1700,14 @@ ou coleta nova ativados. Evidência já vista não volta a ser intocada.
 30 testes direcionados passaram (11 V1, 11 novos de payoff/identidade e oito
 do gate). Ruff/Pyright passaram. Modo offline reproduziu resultados e dataset
 derivado byte a byte. Detalhes: `docs/evidence/altcoin_payoff_20260907/`.
+
+
+### 2026-09-07 — Altcoin forward observation pilot v3
+
+User authorized the remaining preparation and forward observation steps. Protocol c80f309 and recorder freeze cbe5229 precede the live preflight; 9ca6648 adds catalog status diffs before any prospective decisions. Fixed v2 net-payoff scorer and training geometry remain unchanged. Current investability excludes verified RLUSD category contamination prospectively only; no resampling, historical performance search or prior-evidence rewrite.
+
+Live preflight: 275 preserved public responses; 160 of the 240 sampled symbols currently trading after exclusions, 13 eligible, zero qualifying. Features and scores for all 13 exactly match the consumed September 7 snapshot. All 428 delisting and 4404 news catalog headlines retrieved with matching pagination counts; interpreted event completeness remains UNKNOWN. Visible-book hypothetical immediate roundtrip at 1000 USDT ranges 21.4276–55.7413 bps including ASSUMED 10bps fees each side. These are quote marks, not fills or verified account economics.
+
+Forty-four targeted tests, Ruff and Pyright pass; offline snapshot replay matches apart from its new execution timestamp. Full-geometry synthetic known-pattern controls and censoring guard pass; zero qualifications in 200 stipulated-null queries do not certify general false-positive rates. Normal-design power sensitivity is conditional, not a Core model-specific attestation.
+
+Weekly local Codex heartbeat scheduled from September 13, 21:00 America/Sao_Paulo, for a bounded 12-entry-slot observer and final due observation December 6, 21:00. No prospective decisions or matured outcomes exist at registration. Decisions are durable before entry quotes; missed slots/outcomes remain censored; no retuning. This explicitly separate observation pilot does not pass executable readiness or G1-G7. Exact account fees, attainable operator benchmark, full events, execution parity and formal attestation remain unresolved. Frozen state/trials/costs, production, funding/OI/HMM and capital unchanged.

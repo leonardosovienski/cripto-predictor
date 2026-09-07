@@ -1,0 +1,14 @@
+{
+  "updated_at": "2026-09-07T19:56:10.527211+00:00",
+  "mode": "tick",
+  "ledger_rows": 2,
+  "ledger_head": "ff05b3c7b86abd9747c107a605fc0acae57dc96c7444175663dab0cb815491f3",
+  "prospective_decisions": 0,
+  "matured_observations": 0,
+  "first_entry_utc": "2026-09-14T00:00:00+00:00",
+  "last_due_utc": "2026-12-07T00:00:00+00:00",
+  "pilot_finished": false,
+  "execution_ready": false,
+  "formal_promotion": false,
+  "capital": false
+}

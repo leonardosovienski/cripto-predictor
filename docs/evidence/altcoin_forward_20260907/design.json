@@ -1,0 +1,196 @@
+{
+  "synthetic_controls": {
+    "seed": 20260907,
+    "full_geometry_positive_and_negative_controls": [
+      {
+        "status": "ABSTAIN_NO_POSITIVE_MARGIN",
+        "qualified": false,
+        "distinct_weeks": 74,
+        "effective_n_heuristic": 18,
+        "mean_log_payoff": -0.024629629371517896,
+        "geometric_payoff_proxy": -0.02432879492454812,
+        "uncertainty_penalty_log": 0.0010480034021956863,
+        "score_log": -0.02567763277371358,
+        "score_return_equivalent": -0.025350766058741914,
+        "confidence_claim": "heuristic penalty, not a calibrated confidence interval"
+      },
+      {
+        "status": "RESEARCH_CANDIDATE",
+        "qualified": true,
+        "distinct_weeks": 77,
+        "effective_n_heuristic": 19,
+        "mean_log_payoff": 0.02565893113745109,
+        "geometric_payoff_proxy": 0.02599095522285168,
+        "uncertainty_penalty_log": 0.0008766166360631721,
+        "score_log": 0.02478231450138792,
+        "score_return_equivalent": 0.02509194858271197,
+        "confidence_claim": "heuristic penalty, not a calibrated confidence interval"
+      }
+    ],
+    "censored_neighbor_guard": "PASS",
+    "stipulated_null_queries": 200,
+    "stipulated_null_qualified": 0,
+    "null_score_range": [
+      -0.030429725416821436,
+      -0.005714454933508654
+    ],
+    "meaning": "Synthetic implementation checks only; neither calibrated probability nor a Core harness/power attestation or real-market edge evidence."
+  },
+  "power_planning": {
+    "scenario_benchmark_annual_net": 0.113177,
+    "benchmark_status": "DATED_CONDITIONAL_SCENARIO_NOT_USER_CONFIRMED",
+    "alpha": 0.05,
+    "power": 0.8,
+    "formula": "ceil(((1.96+0.842)*assumed paired weekly SD / target weekly log difference)^2) * assumed dependence multiplier",
+    "limitations": "Normal-design sensitivity, not empirical attestation. Actual variance, dependence, tails, attainable benchmark, costs, risk premium, selection and full search adjustment are unresolved. Means and SDs share weekly log-return units. Twelve calendar weeks are not twelve independent observations automatically.",
+    "grid": [
+      {
+        "extra_annual_percentage_points": 5.0,
+        "paired_weekly_log_sd_assumed": 0.01,
+        "dependence_multiplier_assumed": 1,
+        "target_weekly_log_difference": 0.0008449416396655684,
+        "calendar_weeks_normal_design": 1100,
+        "calendar_years": 21.153846153846153
+      },
+      {
+        "extra_annual_percentage_points": 5.0,
+        "paired_weekly_log_sd_assumed": 0.01,
+        "dependence_multiplier_assumed": 4,
+        "target_weekly_log_difference": 0.0008449416396655684,
+        "calendar_weeks_normal_design": 4400,
+        "calendar_years": 84.61538461538461
+      },
+      {
+        "extra_annual_percentage_points": 5.0,
+        "paired_weekly_log_sd_assumed": 0.03,
+        "dependence_multiplier_assumed": 1,
+        "target_weekly_log_difference": 0.0008449416396655684,
+        "calendar_weeks_normal_design": 9898,
+        "calendar_years": 190.34615384615384
+      },
+      {
+        "extra_annual_percentage_points": 5.0,
+        "paired_weekly_log_sd_assumed": 0.03,
+        "dependence_multiplier_assumed": 4,
+        "target_weekly_log_difference": 0.0008449416396655684,
+        "calendar_weeks_normal_design": 39592,
+        "calendar_years": 761.3846153846154
+      },
+      {
+        "extra_annual_percentage_points": 5.0,
+        "paired_weekly_log_sd_assumed": 0.05,
+        "dependence_multiplier_assumed": 1,
+        "target_weekly_log_difference": 0.0008449416396655684,
+        "calendar_weeks_normal_design": 27494,
+        "calendar_years": 528.7307692307693
+      },
+      {
+        "extra_annual_percentage_points": 5.0,
+        "paired_weekly_log_sd_assumed": 0.05,
+        "dependence_multiplier_assumed": 4,
+        "target_weekly_log_difference": 0.0008449416396655684,
+        "calendar_weeks_normal_design": 109976,
+        "calendar_years": 2114.923076923077
+      },
+      {
+        "extra_annual_percentage_points": 10.0,
+        "paired_weekly_log_sd_assumed": 0.01,
+        "dependence_multiplier_assumed": 1,
+        "target_weekly_log_difference": 0.0016543163312727977,
+        "calendar_weeks_normal_design": 287,
+        "calendar_years": 5.519230769230769
+      },
+      {
+        "extra_annual_percentage_points": 10.0,
+        "paired_weekly_log_sd_assumed": 0.01,
+        "dependence_multiplier_assumed": 4,
+        "target_weekly_log_difference": 0.0016543163312727977,
+        "calendar_weeks_normal_design": 1148,
+        "calendar_years": 22.076923076923077
+      },
+      {
+        "extra_annual_percentage_points": 10.0,
+        "paired_weekly_log_sd_assumed": 0.03,
+        "dependence_multiplier_assumed": 1,
+        "target_weekly_log_difference": 0.0016543163312727977,
+        "calendar_weeks_normal_design": 2582,
+        "calendar_years": 49.65384615384615
+      },
+      {
+        "extra_annual_percentage_points": 10.0,
+        "paired_weekly_log_sd_assumed": 0.03,
+        "dependence_multiplier_assumed": 4,
+        "target_weekly_log_difference": 0.0016543163312727977,
+        "calendar_weeks_normal_design": 10328,
+        "calendar_years": 198.6153846153846
+      },
+      {
+        "extra_annual_percentage_points": 10.0,
+        "paired_weekly_log_sd_assumed": 0.05,
+        "dependence_multiplier_assumed": 1,
+        "target_weekly_log_difference": 0.0016543163312727977,
+        "calendar_weeks_normal_design": 7172,
+        "calendar_years": 137.92307692307693
+      },
+      {
+        "extra_annual_percentage_points": 10.0,
+        "paired_weekly_log_sd_assumed": 0.05,
+        "dependence_multiplier_assumed": 4,
+        "target_weekly_log_difference": 0.0016543163312727977,
+        "calendar_weeks_normal_design": 28688,
+        "calendar_years": 551.6923076923077
+      },
+      {
+        "extra_annual_percentage_points": 20.0,
+        "paired_weekly_log_sd_assumed": 0.01,
+        "dependence_multiplier_assumed": 1,
+        "target_weekly_log_difference": 0.0031775250523907173,
+        "calendar_weeks_normal_design": 78,
+        "calendar_years": 1.5
+      },
+      {
+        "extra_annual_percentage_points": 20.0,
+        "paired_weekly_log_sd_assumed": 0.01,
+        "dependence_multiplier_assumed": 4,
+        "target_weekly_log_difference": 0.0031775250523907173,
+        "calendar_weeks_normal_design": 312,
+        "calendar_years": 6.0
+      },
+      {
+        "extra_annual_percentage_points": 20.0,
+        "paired_weekly_log_sd_assumed": 0.03,
+        "dependence_multiplier_assumed": 1,
+        "target_weekly_log_difference": 0.0031775250523907173,
+        "calendar_weeks_normal_design": 700,
+        "calendar_years": 13.461538461538462
+      },
+      {
+        "extra_annual_percentage_points": 20.0,
+        "paired_weekly_log_sd_assumed": 0.03,
+        "dependence_multiplier_assumed": 4,
+        "target_weekly_log_difference": 0.0031775250523907173,
+        "calendar_weeks_normal_design": 2800,
+        "calendar_years": 53.84615384615385
+      },
+      {
+        "extra_annual_percentage_points": 20.0,
+        "paired_weekly_log_sd_assumed": 0.05,
+        "dependence_multiplier_assumed": 1,
+        "target_weekly_log_difference": 0.0031775250523907173,
+        "calendar_weeks_normal_design": 1945,
+        "calendar_years": 37.40384615384615
+      },
+      {
+        "extra_annual_percentage_points": 20.0,
+        "paired_weekly_log_sd_assumed": 0.05,
+        "dependence_multiplier_assumed": 4,
+        "target_weekly_log_difference": 0.0031775250523907173,
+        "calendar_weeks_normal_design": 7780,
+        "calendar_years": 149.6153846153846
+      }
+    ],
+    "twelve_week_pilot_purpose": "Operational feasibility and new descriptive observations; never declare profitability solely because 12 weeks passed."
+  },
+  "formal_attestation": false,
+  "historical_performance_trials": 0
+}

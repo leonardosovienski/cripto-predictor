@@ -1,0 +1,325 @@
+{
+  "known_at": "2026-09-07T19:52:20.758696+00:00",
+  "snapshot_sha256": "c49521aa5c0345b81f87d89ad4236544830e8f49cbca3d513b3005dab57ac4d7",
+  "sample_size": 240,
+  "currently_trading_after_exclusions": 160,
+  "eligible_count": 13,
+  "selected": [],
+  "cash_weight": 1.0,
+  "prospective": false,
+  "ranked": [
+    {
+      "symbol": "XLMUSDT",
+      "status": "ABSTAIN_NO_POSITIVE_MARGIN",
+      "score_log": -0.046013775420037054
+    },
+    {
+      "symbol": "FILUSDT",
+      "status": "ABSTAIN_NO_POSITIVE_MARGIN",
+      "score_log": -0.061689205778583375
+    },
+    {
+      "symbol": "PEPEUSDT",
+      "status": "ABSTAIN_NO_POSITIVE_MARGIN",
+      "score_log": -0.062065621514386146
+    },
+    {
+      "symbol": "ASTERUSDT",
+      "status": "ABSTAIN_NO_POSITIVE_MARGIN",
+      "score_log": -0.0631029481924725
+    },
+    {
+      "symbol": "ICPUSDT",
+      "status": "ABSTAIN_NO_POSITIVE_MARGIN",
+      "score_log": -0.06967858463911888
+    },
+    {
+      "symbol": "AAVEUSDT",
+      "status": "ABSTAIN_NO_POSITIVE_MARGIN",
+      "score_log": -0.0912832307266427
+    },
+    {
+      "symbol": "UNIUSDT",
+      "status": "ABSTAIN_NO_POSITIVE_MARGIN",
+      "score_log": -0.10584656684441958
+    },
+    {
+      "symbol": "TUTUSDT",
+      "status": "ABSTAIN_NO_POSITIVE_MARGIN",
+      "score_log": -0.10654894880766679
+    },
+    {
+      "symbol": "PUMPUSDT",
+      "status": "ABSTAIN_NO_POSITIVE_MARGIN",
+      "score_log": -0.1120539805037688
+    },
+    {
+      "symbol": "BICOUSDT",
+      "status": "ABSTAIN_NO_POSITIVE_MARGIN",
+      "score_log": -0.12328574154930944
+    },
+    {
+      "symbol": "ONGUSDT",
+      "status": "ABSTAIN_NO_POSITIVE_MARGIN",
+      "score_log": -0.13131546847221362
+    },
+    {
+      "symbol": "BMTUSDT",
+      "status": "ABSTAIN_NO_POSITIVE_MARGIN",
+      "score_log": -0.13781846755873703
+    },
+    {
+      "symbol": "HEMIUSDT",
+      "status": "ABSTAIN_NO_POSITIVE_MARGIN",
+      "score_log": -0.16350534113971754
+    }
+  ],
+  "raw_responses_verified": 275,
+  "raw_interval": [
+    "2026-09-07T19:50:24.379397+00:00",
+    "2026-09-07T19:51:03.727626+00:00"
+  ],
+  "ledger_chain_valid": true,
+  "clock_offset_seconds": 0.8802220821380615,
+  "feature_score_parity": [
+    {
+      "symbol": "XLMUSDT",
+      "max_feature_difference": 0.0,
+      "score_difference": 0.0
+    },
+    {
+      "symbol": "FILUSDT",
+      "max_feature_difference": 0.0,
+      "score_difference": 0.0
+    },
+    {
+      "symbol": "PEPEUSDT",
+      "max_feature_difference": 0.0,
+      "score_difference": 0.0
+    },
+    {
+      "symbol": "ASTERUSDT",
+      "max_feature_difference": 0.0,
+      "score_difference": 0.0
+    },
+    {
+      "symbol": "ICPUSDT",
+      "max_feature_difference": 0.0,
+      "score_difference": 0.0
+    },
+    {
+      "symbol": "AAVEUSDT",
+      "max_feature_difference": 0.0,
+      "score_difference": 0.0
+    },
+    {
+      "symbol": "UNIUSDT",
+      "max_feature_difference": 0.0,
+      "score_difference": 0.0
+    },
+    {
+      "symbol": "TUTUSDT",
+      "max_feature_difference": 0.0,
+      "score_difference": 0.0
+    },
+    {
+      "symbol": "PUMPUSDT",
+      "max_feature_difference": 0.0,
+      "score_difference": 0.0
+    },
+    {
+      "symbol": "BICOUSDT",
+      "max_feature_difference": 0.0,
+      "score_difference": 0.0
+    },
+    {
+      "symbol": "ONGUSDT",
+      "max_feature_difference": 0.0,
+      "score_difference": 0.0
+    },
+    {
+      "symbol": "BMTUSDT",
+      "max_feature_difference": 0.0,
+      "score_difference": 0.0
+    },
+    {
+      "symbol": "HEMIUSDT",
+      "max_feature_difference": 0.0,
+      "score_difference": 0.0
+    }
+  ],
+  "event_catalogs": [
+    {
+      "catalog_id": 161,
+      "reported_total": 428,
+      "unique_articles": 428,
+      "pagination_count_matches": true,
+      "complete_investability_event_feed": false
+    },
+    {
+      "catalog_id": 49,
+      "reported_total": 4404,
+      "unique_articles": 4404,
+      "pagination_count_matches": true,
+      "complete_investability_event_feed": false
+    }
+  ],
+  "costs": [
+    {
+      "symbol": "XLMUSDT",
+      "notional_usdt": 1000.0,
+      "spread_bps": 5.182689816014512,
+      "buy_impact_from_best_ask_bps": 0.0,
+      "hypothetical_same_book_roundtrip_loss_bps": 25.160989637306173,
+      "hypothetical_same_book_roundtrip_loss_usdt": 2.5160989637306175,
+      "source_known_at": "2026-09-07T19:51:03.727626+00:00",
+      "request_ms": 291.00119999202434
+    },
+    {
+      "symbol": "FILUSDT",
+      "notional_usdt": 1000.0,
+      "spread_bps": 1.1938160329493226,
+      "buy_impact_from_best_ask_bps": 0.3474686728612777,
+      "hypothetical_same_book_roundtrip_loss_bps": 22.803301815149666,
+      "hypothetical_same_book_roundtrip_loss_usdt": 2.280330181514967,
+      "source_known_at": "2026-09-07T19:51:01.236585+00:00",
+      "request_ms": 292.9861000011442
+    },
+    {
+      "symbol": "PEPEUSDT",
+      "notional_usdt": 1000.0,
+      "spread_bps": 27.51031636863824,
+      "buy_impact_from_best_ask_bps": 0.0,
+      "hypothetical_same_book_roundtrip_loss_bps": 47.407609890109946,
+      "hypothetical_same_book_roundtrip_loss_usdt": 4.740760989010995,
+      "source_known_at": "2026-09-07T19:51:02.468058+00:00",
+      "request_ms": 291.64640000090003
+    },
+    {
+      "symbol": "ASTERUSDT",
+      "notional_usdt": 1000.0,
+      "spread_bps": 12.92824822236587,
+      "buy_impact_from_best_ask_bps": -3e-24,
+      "hypothetical_same_book_roundtrip_loss_bps": 32.88406976744152,
+      "hypothetical_same_book_roundtrip_loss_usdt": 3.2884069767441515,
+      "source_known_at": "2026-09-07T19:51:00.015199+00:00",
+      "request_ms": 289.9171000026399
+    },
+    {
+      "symbol": "ICPUSDT",
+      "notional_usdt": 1000.0,
+      "spread_bps": 3.3019646689780418,
+      "buy_impact_from_best_ask_bps": 0.2460444364758095,
+      "hypothetical_same_book_roundtrip_loss_bps": 26.26878136693267,
+      "hypothetical_same_book_roundtrip_loss_usdt": 2.626878136693267,
+      "source_known_at": "2026-09-07T19:51:01.851197+00:00",
+      "request_ms": 292.2281000064686
+    },
+    {
+      "symbol": "AAVEUSDT",
+      "notional_usdt": 1000.0,
+      "spread_bps": 0.7550874013667082,
+      "buy_impact_from_best_ask_bps": 1.039549287016211,
+      "hypothetical_same_book_roundtrip_loss_bps": 22.939351208226544,
+      "hypothetical_same_book_roundtrip_loss_usdt": 2.2939351208226544,
+      "source_known_at": "2026-09-07T19:50:59.702789+00:00",
+      "request_ms": 1182.548400000087
+    },
+    {
+      "symbol": "UNIUSDT",
+      "notional_usdt": 1000.0,
+      "spread_bps": 1.4406108189872506,
+      "buy_impact_from_best_ask_bps": -3e-24,
+      "hypothetical_same_book_roundtrip_loss_bps": 21.42762748487459,
+      "hypothetical_same_book_roundtrip_loss_usdt": 2.142762748487459,
+      "source_known_at": "2026-09-07T19:51:03.419217+00:00",
+      "request_ms": 293.24280000582803
+    },
+    {
+      "symbol": "TUTUSDT",
+      "notional_usdt": 1000.0,
+      "spread_bps": 8.093889113719142,
+      "buy_impact_from_best_ask_bps": 7.218575266582594,
+      "hypothetical_same_book_roundtrip_loss_bps": 35.25756607471231,
+      "hypothetical_same_book_roundtrip_loss_usdt": 3.525756607471231,
+      "source_known_at": "2026-09-07T19:51:03.104046+00:00",
+      "request_ms": 292.02059999806806
+    },
+    {
+      "symbol": "PUMPUSDT",
+      "notional_usdt": 1000.0,
+      "spread_bps": 4.466279589102278,
+      "buy_impact_from_best_ask_bps": 0.028214994786939895,
+      "hypothetical_same_book_roundtrip_loss_bps": 24.474502269529186,
+      "hypothetical_same_book_roundtrip_loss_usdt": 2.4474502269529186,
+      "source_known_at": "2026-09-07T19:51:02.767792+00:00",
+      "request_ms": 292.927199989208
+    },
+    {
+      "symbol": "BICOUSDT",
+      "notional_usdt": 1000.0,
+      "spread_bps": 8.771929824561404,
+      "buy_impact_from_best_ask_bps": 6.336468363638543,
+      "hypothetical_same_book_roundtrip_loss_bps": 35.05481276577571,
+      "hypothetical_same_book_roundtrip_loss_usdt": 3.505481276577571,
+      "source_known_at": "2026-09-07T19:51:00.320160+00:00",
+      "request_ms": 289.69489999872167
+    },
+    {
+      "symbol": "ONGUSDT",
+      "notional_usdt": 1000.0,
+      "spread_bps": 9.59744068248467,
+      "buy_impact_from_best_ask_bps": 0.0,
+      "hypothetical_same_book_roundtrip_loss_bps": 41.145237335983296,
+      "hypothetical_same_book_roundtrip_loss_usdt": 4.11452373359833,
+      "source_known_at": "2026-09-07T19:51:02.164125+00:00",
+      "request_ms": 292.2603000042727
+    },
+    {
+      "symbol": "BMTUSDT",
+      "notional_usdt": 1000.0,
+      "spread_bps": 5.629045876723895,
+      "buy_impact_from_best_ask_bps": 5.596444665652938,
+      "hypothetical_same_book_roundtrip_loss_bps": 35.973991260154214,
+      "hypothetical_same_book_roundtrip_loss_usdt": 3.5973991260154214,
+      "source_known_at": "2026-09-07T19:51:00.621709+00:00",
+      "request_ms": 290.93589998956304
+    },
+    {
+      "symbol": "HEMIUSDT",
+      "notional_usdt": 1000.0,
+      "spread_bps": 11.435105774728417,
+      "buy_impact_from_best_ask_bps": 11.15076388980054,
+      "hypothetical_same_book_roundtrip_loss_bps": 55.74132648102359,
+      "hypothetical_same_book_roundtrip_loss_usdt": 5.574132648102359,
+      "source_known_at": "2026-09-07T19:51:01.548857+00:00",
+      "request_ms": 293.73279999708757
+    }
+  ],
+  "fee_status": "ASSUMED_10_BPS_PER_LEG_NOT_ACCOUNT_SPECIFIC",
+  "mark_status": "Visible book hypothetical roundtrip; not actual orders, fills, future costs or net investor P&L",
+  "economic_inputs": {
+    "operator_venue": null,
+    "operator_account_commissions": null,
+    "operator_attainable_benchmark": null,
+    "reporting_currency": "BRL",
+    "mark_currency": "USDT",
+    "fx_conversion_and_tax_route": null,
+    "conditional_research_venue": "Binance public spot data",
+    "conditional_benchmark": "Dated Selic scenario from funding_carry_screen_20260907, not confirmed as user-attainable"
+  },
+  "readiness": {
+    "public_feed": "AVAILABLE_OBSERVED",
+    "event_catalog_pagination": "COUNTS_VERIFIED",
+    "complete_interpreted_investability_events": "UNKNOWN",
+    "three_historical_exits": "BTT, CVP, VIDT remain censored",
+    "model_causal_tests": "EXECUTED",
+    "prospective_hypothetical_observer": "IMPLEMENTED_PENDING_FIRST_SLOT",
+    "executable_paper_fill_parity": "NOT_CERTIFIED",
+    "actual_account_costs": "UNKNOWN",
+    "formal_model_specific_attestation": "NOT_ISSUED",
+    "formal_proof": "NOT_PASSED",
+    "orders": false,
+    "capital": false
+  }
+}

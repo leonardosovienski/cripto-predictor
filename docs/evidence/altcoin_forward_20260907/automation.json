@@ -1,0 +1,11 @@
+{
+  "id": "observar-altcoins-semanalmente",
+  "name": "Observar altcoins semanalmente",
+  "status": "ACTIVE",
+  "kind": "heartbeat",
+  "local_timezone": "America/Sao_Paulo",
+  "schedule": "Domingos às 21h; primeiro registro em 13/09/2026; última saída prevista em 06/12/2026.",
+  "local_runtime_required": true,
+  "notification_intent": "Somente mudança relevante, conclusão, falha ou informação necessária.",
+  "policy_after_last_outcome": "Pausar após o balanço final."
+}
