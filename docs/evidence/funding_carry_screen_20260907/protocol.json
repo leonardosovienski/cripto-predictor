@@ -1,0 +1,43 @@
+{
+  "id": "funding-carry-economic-screen-20260907",
+  "mode": "DISCOVERY_ONE_SHOT",
+  "recorded_before_download": true,
+  "authorization": "User 'faz isso' authorizes closing funding-carry economics and deciding whether research is worthwhile. This updates the previous self-imposed stop on a public economic screen; G1 for deployment remains failed. No live execution, family reopening or data-collection change.",
+  "family": "funding_carry_structural_v1",
+  "venue_reference": "Binance USD-M USDT perpetual plus spot; public availability does not establish operator eligibility",
+  "symbols": ["BTCUSDT", "ETHUSDT"],
+  "end_exclusive_utc": "2026-09-07T00:00:00Z",
+  "windows_days": [30, 90, 365],
+  "primary_window_days": 365,
+  "capital_usd": 5000,
+  "reporting_currency": "BRL",
+  "capital_allocations": {
+    "fully_reserved": {"spot_notional_usd": 2500, "cash_margin_usd": 2500},
+    "optimistic_undeployable_bound": {"spot_notional_usd": 5000, "cash_margin_usd": 0}
+  },
+  "benchmark_reference": "Previous sourced candidate: effective Selic 13.90%, IR17.5%, B3 custody0.2% with R$10000 exemption; actual operator eligibility unknown",
+  "fx_entry_reference_brl_per_usd": 5.1253,
+  "fx_exit_changes": [-0.20, -0.10, 0, 0.10, 0.20],
+  "cost_scenarios": {
+    "zero_cost_optimistic": {"fee": 0, "slippage": 0, "fixed_cost": 0, "attention": 0, "risk_premium": 0, "tax": 0},
+    "public_fee_illustration": {"spot_bps_per_side": 10, "perp_bps_per_side": 5},
+    "sensitivity": {"slippage_bps_per_side": [0, 5, 10], "roundtrip_fx_cost_fraction_capital": [0, 0.005, 0.01], "attention_brl_annual": [0, 1200], "crypto_tax_rate_illustrative": [0, 0.15]}
+  },
+  "primary_statistic": "Signed sum of historical settlement rates, simple annualization for 30/90d, and observed 365d normalized-notional funding. Never advertised APY or forecast.",
+  "secondary_accounting": "If mark prices and historical spot prices cover the fixed window, compute funding for fixed hedge quantity, endpoint basis change, and cash margin stress; no invented fills or liquidations.",
+  "data_checks": ["fixed exclusive cutoff", "pagination complete", "unique timestamps", "event_time vs download known_at", "rate spacing and missing settlements", "future events reject", "no interpolation", "all two symbols and three horizons reported"],
+  "decision_rule": "If even zero-cost normalized funding in the primary window at N=C fails the conditional BRL benchmark with FX unchanged, do not deepen this passive carry structure at this capital. Short-window outliers do not override the primary screen. Missing coverage gives INCONCLUSIVE_DATA_FIDELITY. No CONFIRMED_NO_EDGE claim for the whole class.",
+  "maximum_search": "Two predefined assets, one venue, three fixed descriptive windows, no timing/threshold optimization, no candidate expansion after results.",
+  "economic_thesis": {
+    "money": "Funding received by the perpetual short while spot hedges cryptocurrency direction, plus endpoint basis P&L.",
+    "payer": "Perpetual long holders when funding is positive; the short pays when funding is negative.",
+    "why_exists": "Demand for leveraged long exposure and constraints on financing/custody/capital.",
+    "persistence": "Conditional on leverage demand and intermediation constraints; not guaranteed.",
+    "competition": "Professional carry desks compete; no measured execution or funding advantage for this stack.",
+    "constrained_participant": "Directional traders seeking leverage rather than spot ownership.",
+    "capacity": "Collateral, margin liquidity, counterparty concentration and book liquidity; unmeasured at scale.",
+    "kills_edge": "Funding compression/reversal, basis unwind, liquidation, costs, FX and opportunity cost.",
+    "latency": "Funding receipts are low frequency; hedge entry/unwind and liquidation risk still require timely execution.",
+    "cheapest_falsification": "Compare fixed-window historical receipts under zero-cost favorable conditions with the same-currency benchmark before funding execution infrastructure."
+  }
+}
