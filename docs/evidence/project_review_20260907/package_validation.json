@@ -1,0 +1,14 @@
+{
+  "status": "PASS",
+  "packaged_file_hashes": 4665,
+  "selected_tests_passed": 62,
+  "reproduced_result_files_byte_identical": 6,
+  "forward_snapshot": "REPLAYED_FROM_SAVED_RESPONSES",
+  "forward_eligible": 44,
+  "forward_selected": [],
+  "public_requests_during_reproduction": 0,
+  "orders": false,
+  "archive_sha256": "99d2063d33b9e517b58c1c35e5fec2c16cd29b3f1f6b1a34ce15879c3439fbb3",
+  "archive_bytes": 73738508,
+  "package_source_commit": "51c5a88084c9cf77c36731c5a26eb1e6574a3d8f"
+}
