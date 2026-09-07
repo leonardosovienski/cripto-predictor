@@ -1,0 +1,14 @@
+[
+  {
+    "package": "distlib",
+    "version": "0.4.3",
+    "sha256": "4b0ce306c966eb73bc3a7b6abad017c556dadd92c44701562cd528ac7fde4d5b",
+    "url": "https://files.pythonhosted.org/packages/02/08/9c41fb51ab5b43eb21674aff13df270e8ba6c4b29c8624e328dc7a9482af/distlib-0.4.3-py2.py3-none-any.whl"
+  },
+  {
+    "package": "virtualenv",
+    "version": "21.7.1",
+    "sha256": "6394973f990536e34c05157179146c020284c42fe01da1dfeb0ba16c345280d9",
+    "url": "https://files.pythonhosted.org/packages/4b/a7/ded126c19495158a05c7202b3389139839d4cf78d622d453867778e0f7a8/virtualenv-21.7.1-py3-none-any.whl"
+  }
+]

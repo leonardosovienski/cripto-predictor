@@ -1,0 +1,43 @@
+{
+  "as_of_utc": "2026-09-07T23:34:17.240708+00:00",
+  "base_commit": "5d28a63c1b2a147d17054ace3914de698a7959a4",
+  "full_suite": {
+    "passed": 1045,
+    "failed": 0,
+    "skipped": 0,
+    "source": "full_tests.txt"
+  },
+  "isolated_minimal_ci_profile": {
+    "passed": 1011,
+    "skipped": 4,
+    "extras": [
+      "test",
+      "science"
+    ],
+    "source": "minimal_ci_tests.txt"
+  },
+  "observer_review_controls": {
+    "passed": 28,
+    "includes": "OS lock crash recovery, concurrency, missingness, full 12-slot lifecycle, loss accounting and idempotency"
+  },
+  "ruff": "PASS",
+  "ruff_format": "PASS",
+  "pyright": "PASS",
+  "build_uv": "PASS",
+  "build_python_isolated": "PASS_AFTER_EXACT_RUNTIME_REPAIR",
+  "installed_wheel_outside_checkout": "PASS",
+  "wheel_sha256": "90c7e91417dfc62c715940f375cae6e965b53249773053584a786b83a6489e19",
+  "runtime_integrity": {
+    "status": "PASS",
+    "files_checked": 3785
+  },
+  "secret_scan_findings": 0,
+  "historical_replay": "BYTE_IDENTICAL",
+  "live_snapshot_offline_replay": "PASS",
+  "docker": "NOT_VALIDATED: daemon unavailable; Windows denied service startup",
+  "remote_ci": "NOT_EXECUTED",
+  "posix_lock_branch": "NOT_EXECUTED_ON_WINDOWS",
+  "new_model_searches": 0,
+  "profit_attestation": false,
+  "capital": false
+}

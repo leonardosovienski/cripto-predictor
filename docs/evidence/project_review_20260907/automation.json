@@ -1,0 +1,12 @@
+{
+  "id": "observar-altcoins-semanalmente",
+  "name": "Observar altcoins semanalmente",
+  "status": "ACTIVE",
+  "profile": "altcoin_reviewed_20260907",
+  "schedule": "Domingos às 21h America/Sao_Paulo",
+  "first_entry": "2026-09-13 21:00 America/Sao_Paulo",
+  "final_exit": "2026-12-06 21:00 America/Sao_Paulo",
+  "prompt_sha256": "d966a6fcbf9eafb94e9d38cb544061a9fb6cf1597fa005cbc45ddbe93744c70c",
+  "notification_intent": "Somente mudança relevante, falha, conclusão ou informação necessária",
+  "target_thread_id": "01a07d06-406f-7781-adad-0d0ea3ae9424"
+}

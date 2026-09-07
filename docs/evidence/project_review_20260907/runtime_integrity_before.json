@@ -1,0 +1,280 @@
+{
+  "numpy": {
+    "version": "2.5.1",
+    "files_checked": 950,
+    "missing": [],
+    "mismatches": []
+  },
+  "scikit-learn": {
+    "version": "1.9.0",
+    "files_checked": 1060,
+    "missing": [],
+    "mismatches": []
+  },
+  "scipy": {
+    "version": "1.18.0",
+    "files_checked": 1536,
+    "missing": [],
+    "mismatches": []
+  },
+  "httpx": {
+    "version": "0.28.1",
+    "files_checked": 31,
+    "missing": [],
+    "mismatches": []
+  },
+  "predictor-core": {
+    "version": "3.2.0",
+    "files_checked": 46,
+    "missing": [],
+    "mismatches": []
+  },
+  "predictor-ops": {
+    "version": "4.1.0",
+    "files_checked": 20,
+    "missing": [],
+    "mismatches": []
+  },
+  "distlib": {
+    "version": "0.4.3",
+    "files_checked": 25,
+    "missing": [],
+    "mismatches": [
+      {
+        "path": "distlib/__init__.py",
+        "matches_after_lf_normalization": false
+      },
+      {
+        "path": "distlib/compat.py",
+        "matches_after_lf_normalization": false
+      },
+      {
+        "path": "distlib/database.py",
+        "matches_after_lf_normalization": false
+      },
+      {
+        "path": "distlib/index.py",
+        "matches_after_lf_normalization": false
+      },
+      {
+        "path": "distlib/locators.py",
+        "matches_after_lf_normalization": false
+      },
+      {
+        "path": "distlib/manifest.py",
+        "matches_after_lf_normalization": false
+      },
+      {
+        "path": "distlib/markers.py",
+        "matches_after_lf_normalization": false
+      },
+      {
+        "path": "distlib/metadata.py",
+        "matches_after_lf_normalization": false
+      },
+      {
+        "path": "distlib/resources.py",
+        "matches_after_lf_normalization": false
+      },
+      {
+        "path": "distlib/scripts.py",
+        "matches_after_lf_normalization": false
+      },
+      {
+        "path": "distlib/util.py",
+        "matches_after_lf_normalization": false
+      },
+      {
+        "path": "distlib/version.py",
+        "matches_after_lf_normalization": false
+      },
+      {
+        "path": "distlib/wheel.py",
+        "matches_after_lf_normalization": false
+      }
+    ]
+  },
+  "virtualenv": {
+    "version": "21.7.1",
+    "files_checked": 113,
+    "missing": [],
+    "mismatches": [
+      {
+        "path": "virtualenv/__main__.py",
+        "matches_after_lf_normalization": false
+      },
+      {
+        "path": "virtualenv/activation/activator.py",
+        "matches_after_lf_normalization": false
+      },
+      {
+        "path": "virtualenv/activation/bash/__init__.py",
+        "matches_after_lf_normalization": false
+      },
+      {
+        "path": "virtualenv/activation/batch/__init__.py",
+        "matches_after_lf_normalization": false
+      },
+      {
+        "path": "virtualenv/activation/fish/__init__.py",
+        "matches_after_lf_normalization": false
+      },
+      {
+        "path": "virtualenv/activation/python/__init__.py",
+        "matches_after_lf_normalization": false
+      },
+      {
+        "path": "virtualenv/activation/via_template.py",
+        "matches_after_lf_normalization": false
+      },
+      {
+        "path": "virtualenv/activation/xonsh/__init__.py",
+        "matches_after_lf_normalization": false
+      },
+      {
+        "path": "virtualenv/app_data/__init__.py",
+        "matches_after_lf_normalization": false
+      },
+      {
+        "path": "virtualenv/app_data/via_disk_folder.py",
+        "matches_after_lf_normalization": false
+      },
+      {
+        "path": "virtualenv/config/cli/parser.py",
+        "matches_after_lf_normalization": false
+      },
+      {
+        "path": "virtualenv/config/convert.py",
+        "matches_after_lf_normalization": false
+      },
+      {
+        "path": "virtualenv/config/ini.py",
+        "matches_after_lf_normalization": false
+      },
+      {
+        "path": "virtualenv/create/creator.py",
+        "matches_after_lf_normalization": false
+      },
+      {
+        "path": "virtualenv/create/describe.py",
+        "matches_after_lf_normalization": false
+      },
+      {
+        "path": "virtualenv/create/pyenv_cfg.py",
+        "matches_after_lf_normalization": false
+      },
+      {
+        "path": "virtualenv/create/via_global_ref/api.py",
+        "matches_after_lf_normalization": false
+      },
+      {
+        "path": "virtualenv/create/via_global_ref/builtin/cpython/common.py",
+        "matches_after_lf_normalization": false
+      },
+      {
+        "path": "virtualenv/create/via_global_ref/builtin/cpython/cpython3.py",
+        "matches_after_lf_normalization": false
+      },
+      {
+        "path": "virtualenv/create/via_global_ref/builtin/cpython/mac_os.py",
+        "matches_after_lf_normalization": false
+      },
+      {
+        "path": "virtualenv/create/via_global_ref/builtin/graalpy/__init__.py",
+        "matches_after_lf_normalization": false
+      },
+      {
+        "path": "virtualenv/create/via_global_ref/builtin/pypy/common.py",
+        "matches_after_lf_normalization": false
+      },
+      {
+        "path": "virtualenv/create/via_global_ref/builtin/ref.py",
+        "matches_after_lf_normalization": false
+      },
+      {
+        "path": "virtualenv/create/via_global_ref/builtin/rustpython/__init__.py",
+        "matches_after_lf_normalization": false
+      },
+      {
+        "path": "virtualenv/create/via_global_ref/builtin/via_global_self_do.py",
+        "matches_after_lf_normalization": false
+      },
+      {
+        "path": "virtualenv/create/via_global_ref/store.py",
+        "matches_after_lf_normalization": false
+      },
+      {
+        "path": "virtualenv/create/via_global_ref/venv.py",
+        "matches_after_lf_normalization": false
+      },
+      {
+        "path": "virtualenv/run/__init__.py",
+        "matches_after_lf_normalization": false
+      },
+      {
+        "path": "virtualenv/run/plugin/activators.py",
+        "matches_after_lf_normalization": false
+      },
+      {
+        "path": "virtualenv/run/plugin/base.py",
+        "matches_after_lf_normalization": false
+      },
+      {
+        "path": "virtualenv/run/plugin/creators.py",
+        "matches_after_lf_normalization": false
+      },
+      {
+        "path": "virtualenv/run/session.py",
+        "matches_after_lf_normalization": false
+      },
+      {
+        "path": "virtualenv/seed/embed/base_embed.py",
+        "matches_after_lf_normalization": false
+      },
+      {
+        "path": "virtualenv/seed/embed/pip_invoke.py",
+        "matches_after_lf_normalization": false
+      },
+      {
+        "path": "virtualenv/seed/embed/via_app_data/pip_install/base.py",
+        "matches_after_lf_normalization": false
+      },
+      {
+        "path": "virtualenv/seed/embed/via_app_data/pip_install/copy.py",
+        "matches_after_lf_normalization": false
+      },
+      {
+        "path": "virtualenv/seed/embed/via_app_data/via_app_data.py",
+        "matches_after_lf_normalization": false
+      },
+      {
+        "path": "virtualenv/seed/seeder.py",
+        "matches_after_lf_normalization": false
+      },
+      {
+        "path": "virtualenv/seed/wheels/acquire.py",
+        "matches_after_lf_normalization": false
+      },
+      {
+        "path": "virtualenv/seed/wheels/bundle.py",
+        "matches_after_lf_normalization": false
+      },
+      {
+        "path": "virtualenv/seed/wheels/periodic_update.py",
+        "matches_after_lf_normalization": false
+      },
+      {
+        "path": "virtualenv/seed/wheels/util.py",
+        "matches_after_lf_normalization": false
+      },
+      {
+        "path": "virtualenv/util/lock.py",
+        "matches_after_lf_normalization": false
+      },
+      {
+        "path": "virtualenv/version.py",
+        "matches_after_lf_normalization": false
+      }
+    ]
+  }
+}
