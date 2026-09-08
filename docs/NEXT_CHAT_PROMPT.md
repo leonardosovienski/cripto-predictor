@@ -7,8 +7,16 @@ Retome o projeto a partir do estado abaixo e do meu pedido mais recente. Confira
 - Repositório principal: `C:\Users\Superleo13\cripto-predictor`, branch `main`.
 - GitHub: [cripto-predictor](https://github.com/leonardosovienski/cripto-predictor).
 - Leia [SESSION_HANDOFF_20260908.md](SESSION_HANDOFF_20260908.md), [CURRENT_RESEARCH_STATE_20260908.md](CURRENT_RESEARCH_STATE_20260908.md) e o [índice da documentação](README.md).
-- A consolidação foi publicada em `dd8dbe26f10be23340d9248764da1e485633f7b8`. As branches anteriores foram integradas e removidas; só restou `main`. Commits documentais posteriores não representam novas avaliações econômicas. Confira o HEAD atual.
+- A consolidação foi publicada em `dd8dbe26f10be23340d9248764da1e485633f7b8`. As branches anteriores foram integradas e removidas; só restou `main` naquele momento. Commits documentais posteriores não representam novas avaliações econômicas. Confira o HEAD atual.
 - A validação da consolidação teve 1.170 testes aprovados e quatro jobs do [CI](https://github.com/leonardosovienski/cripto-predictor/actions/runs/34228309330) aprovados, incluindo container. Core 3.2.0 e Ops 4.1.0.
+
+## Entrega posterior: pesquisa de lucro multiestratégia
+
+O dono ampliou explicitamente a autonomia de alteração de código para quaisquer criptoativos e estratégias, com foco em lucro líquido absoluto. A entrega [PR #105](https://github.com/leonardosovienski/cripto-predictor/pull/105), iniciada a partir de `522de73`, acrescenta `GarimpoInvestimentos.profit_research`. Consulte [PROFIT_RESEARCH.md](PROFIT_RESEARCH.md) e [scope.json](evidence/profit_research_20260908/scope.json) antes de continuar. Confira no PR o estado da integração e do CI, sem inferir isso deste texto.
+
+Essa entrada compara contas econômicas, preserva custos desconhecidos, implementa descoberta pública de rendimentos sem excluir stablecoins/wrapped e diagnostica o giro de ajustar uma posição em vez de fechar/reabrir. É ferramenta de pesquisa, não nova estratégia validada: os testes novos são sintéticos, não houve replay histórico AR2, consulta real de yields ou demonstração de lucro adicional nessa entrega. A reconciliação dos valores arredondados publicados mantém teto parcial de −6,97 USDT antes dos custos desconhecidos. Nenhuma permissão de capital foi ativada.
+
+O trabalho usa a branch nova `research/profit-opportunity-screening-20260908` para validação antes da integração; não recria branches históricas ou muda os diretórios dos observadores. Os congelamentos, charters, resultados negativos, diários, dados locais e agendamentos anteriores permanecem preservados. Novos estudos empíricos exigem especificação, orçamento de tentativas e critérios prévios; famílias fechadas continuam sujeitas ao dossiê de reabertura.
 
 ## Objetivo e limites da pesquisa
 

@@ -39,7 +39,14 @@ def case() -> dict:
         "evidence_kind": "SCENARIO",
         "evidence_ref": "Synthetic test fixture; no market data",
         "cashflows": {"funding": "17.22", "basis": "-0.12"},
-        "costs": {"execution": "18.32", "financing": "0", "infrastructure": "5.75", "tax": "0", "conversion": "0", "other": "0"},
+        "costs": {
+            "execution": "18.32",
+            "financing": "0",
+            "infrastructure": "5.75",
+            "tax": "0",
+            "conversion": "0",
+            "other": "0",
+        },
         "cost_notes": {k: "Synthetic assumption only; not a real fee estimate" for k in COST_NAMES},
         "risk_limit": "100",
         "stress_loss": "80",
@@ -49,17 +56,32 @@ def case() -> dict:
 
 
 def pool(**overrides) -> dict:
-    row = {"pool": "test-pool", "chain": "Test", "project": "test-project", "symbol": "USDC", "tvlUsd": 1000000, "apyBase": 5, "apyReward": 2}
+    row = {
+        "pool": "test-pool",
+        "chain": "Test",
+        "project": "test-project",
+        "symbol": "USDC",
+        "tvlUsd": 1000000,
+        "apyBase": 5,
+        "apyReward": 2,
+    }
     row.update(overrides)
     return row
 
 
 def snapshot(rows: list[dict]) -> dict:
     raw = json.dumps({"status": "success", "data": rows})
-    return {"source": SOURCE, "retrieved_at": "2026-09-08T12:00:00Z", "sha256": hashlib.sha256(raw.encode()).hexdigest(), "raw_json": raw}
+    return {
+        "source": SOURCE,
+        "retrieved_at": "2026-09-08T12:00:00Z",
+        "sha256": hashlib.sha256(raw.encode()).hexdigest(),
+        "raw_json": raw,
+    }
 
 
-@pytest.mark.parametrize("value", [True, False, None, "nan", "Infinity", float("nan"), float("inf"), {}, [], "bad"])
+@pytest.mark.parametrize(
+    "value", [True, False, None, "nan", "Infinity", float("nan"), float("inf"), {}, [], "bad"]
+)
 def test_invalid_numbers(value):
     with pytest.raises(ValueError):
         number(value)
@@ -94,7 +116,15 @@ def test_positive_arithmetic_is_not_capital_authorization():
     assert Decimal(result["return_pct"]) == Decimal("75.81") / 50
 
 
-@pytest.mark.parametrize("field,value", [("stress_loss", None), ("stress_loss", "101"), ("risk_evidence", ""), ("execution_evidence", None)])
+@pytest.mark.parametrize(
+    "field,value",
+    [
+        ("stress_loss", None),
+        ("stress_loss", "101"),
+        ("risk_evidence", ""),
+        ("execution_evidence", None),
+    ],
+)
 def test_missing_or_excess_risk_blocks_positive_case(field, value):
     c = case()
     c["cashflows"]["funding"] = "100"
@@ -111,7 +141,16 @@ def test_unknown_cashflow_and_invalid_known_cashflow():
         assess(c)
 
 
-@pytest.mark.parametrize("field,value", [("capital", 0), ("risk_limit", "5001"), ("period_end", "2026-01-01T00:00:00Z"), ("period_start", "2026-06-16"), ("evidence_kind", "REAL_PROFIT")])
+@pytest.mark.parametrize(
+    "field,value",
+    [
+        ("capital", 0),
+        ("risk_limit", "5001"),
+        ("period_end", "2026-01-01T00:00:00Z"),
+        ("period_start", "2026-06-16"),
+        ("evidence_kind", "REAL_PROFIT"),
+    ],
+)
 def test_invalid_case_contract(field, value):
     c = case()
     c[field] = value
@@ -134,7 +173,17 @@ def test_costs_must_be_complete_nonnegative_and_justified():
         assess(c)
 
 
-@pytest.mark.parametrize("field,value", [("capital", "10000"), ("currency", "BRL"), ("period_start", "2026-06-17T00:00:00Z"), ("period_end", "2026-09-07T00:00:00Z"), ("scenario", "adverse"), ("evidence_kind", "ADAPTIVE_BACKTEST")])
+@pytest.mark.parametrize(
+    "field,value",
+    [
+        ("capital", "10000"),
+        ("currency", "BRL"),
+        ("period_start", "2026-06-17T00:00:00Z"),
+        ("period_end", "2026-09-07T00:00:00Z"),
+        ("scenario", "adverse"),
+        ("evidence_kind", "ADAPTIVE_BACKTEST"),
+    ],
+)
 def test_incomparable_cases_are_not_ranked(field, value):
     a, b = case(), case()
     b["id"], b[field] = "OTHER", value
@@ -157,10 +206,27 @@ def test_rank_any_asset_and_family_without_summing_capital():
 
 
 def transition_case() -> dict:
-    return {"current_instrument": "venue:BTCUSDT:perp:USDT", "target_instrument": "venue:BTCUSDT:perp:USDT", "current_quantity": "-1", "target_quantity": "-1.2", "price": "100", "quantity_step": "0.1", "cost_bps": "10"}
+    return {
+        "current_instrument": "venue:BTCUSDT:perp:USDT",
+        "target_instrument": "venue:BTCUSDT:perp:USDT",
+        "current_quantity": "-1",
+        "target_quantity": "-1.2",
+        "price": "100",
+        "quantity_step": "0.1",
+        "cost_bps": "10",
+    }
 
 
-@pytest.mark.parametrize("target,delta,difference", [("-1", "0", "0.20"), ("-1.2", "-0.2", "0.20"), ("-0.5", "0.5", "0.10"), ("0", "1", "0"), ("1", "2", "0")])
+@pytest.mark.parametrize(
+    "target,delta,difference",
+    [
+        ("-1", "0", "0.20"),
+        ("-1.2", "-0.2", "0.20"),
+        ("-0.5", "0.5", "0.10"),
+        ("0", "1", "0"),
+        ("1", "2", "0"),
+    ],
+)
 def test_turnover_adjust_hold_reduce_close_reverse(target, delta, difference):
     spec = transition_case()
     spec["target_quantity"] = target
@@ -170,7 +236,16 @@ def test_turnover_adjust_hold_reduce_close_reverse(target, delta, difference):
     assert result["capital_permission"] is False
 
 
-@pytest.mark.parametrize("field,value", [("target_instrument", "another:venue"), ("quantity_step", "0"), ("target_quantity", "0.15"), ("price", "0"), ("cost_bps", "-1")])
+@pytest.mark.parametrize(
+    "field,value",
+    [
+        ("target_instrument", "another:venue"),
+        ("quantity_step", "0"),
+        ("target_quantity", "0.15"),
+        ("price", "0"),
+        ("cost_bps", "-1"),
+    ],
+)
 def test_invalid_transition(field, value):
     spec = transition_case()
     spec[field] = value
@@ -189,7 +264,14 @@ def test_yield_convention_and_units_are_explicit():
 
 
 def test_discovery_keeps_stables_wrapped_and_unknown_assets():
-    result = discover_yields(snapshot([pool(pool=str(i), symbol=name) for i, name in enumerate(["USDC", "WSTETH", "UNKNOWN-TOKEN"])]))
+    result = discover_yields(
+        snapshot(
+            [
+                pool(pool=str(i), symbol=name)
+                for i, name in enumerate(["USDC", "WSTETH", "UNKNOWN-TOKEN"])
+            ]
+        )
+    )
     assert len(result["candidates"]) == 3
     assert result["source_freshness_verified"] is False
     assert all(not c["capital_permission"] for c in result["candidates"])
@@ -205,7 +287,11 @@ def test_missing_base_never_falls_back_to_aggregate_apy():
 
 
 def test_invalid_and_all_duplicate_rows_are_reported_not_silently_selected():
-    result = discover_yields(snapshot([pool(), pool(apyBase=50), pool(pool="bad", tvlUsd=-1), pool(pool="nan", apyBase="nan")]))
+    result = discover_yields(
+        snapshot(
+            [pool(), pool(apyBase=50), pool(pool="bad", tvlUsd=-1), pool(pool="nan", apyBase="nan")]
+        )
+    )
     assert len(result["rejected"]) == 4
     assert result["candidates"] == []
     assert result["input_count"] == 4
@@ -213,7 +299,11 @@ def test_invalid_and_all_duplicate_rows_are_reported_not_silently_selected():
 
 def test_snapshot_integrity_source_payload_and_timezone():
     s = snapshot([pool()])
-    for field, value in [("raw_json", "{}"), ("source", "https://other.invalid"), ("retrieved_at", "2026-09-08")]:
+    for field, value in [
+        ("raw_json", "{}"),
+        ("source", "https://other.invalid"),
+        ("retrieved_at", "2026-09-08"),
+    ]:
         changed = dict(s)
         changed[field] = value
         with pytest.raises(ValueError):
@@ -253,7 +343,9 @@ def test_capture_is_get_only_and_does_not_overwrite(tmp_path, monkeypatch):
         return httpx.Response(200, json={"status": "success", "data": [pool()]})
 
     original = httpx.Client
-    monkeypatch.setattr(httpx, "Client", lambda **kw: original(transport=httpx.MockTransport(handler), **kw))
+    monkeypatch.setattr(
+        httpx, "Client", lambda **kw: original(transport=httpx.MockTransport(handler), **kw)
+    )
     path = tmp_path / "snapshot.json"
     capture_yields(path)
     before = path.read_bytes()
@@ -268,7 +360,9 @@ def test_network_failure_is_not_empty_success(tmp_path, monkeypatch, capsys):
         raise httpx.ConnectError("not a market response", request=request)
 
     original = httpx.Client
-    monkeypatch.setattr(httpx, "Client", lambda **kw: original(transport=httpx.MockTransport(handler), **kw))
+    monkeypatch.setattr(
+        httpx, "Client", lambda **kw: original(transport=httpx.MockTransport(handler), **kw)
+    )
     path = tmp_path / "snapshot.json"
     assert main(["capture-yields", str(path)]) == 2
     assert not path.exists()

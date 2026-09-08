@@ -116,7 +116,10 @@ def assess(case: dict[str, Any]) -> dict[str, Any]:
         blockers.append("STRESS_LOSS_EXCEEDS_BUDGET")
     if not isinstance(case.get("risk_evidence"), str) or not case["risk_evidence"].strip():
         blockers.append("MISSING_RISK_EVIDENCE")
-    if not isinstance(case.get("execution_evidence"), str) or not case["execution_evidence"].strip():
+    if (
+        not isinstance(case.get("execution_evidence"), str)
+        or not case["execution_evidence"].strip()
+    ):
         blockers.append("MISSING_EXECUTION_EVIDENCE")
     if net is not None and net <= 0:
         blockers.append("NON_POSITIVE_NET")
@@ -142,7 +145,11 @@ def assess(case: dict[str, Any]) -> dict[str, Any]:
         "return_pct": None if net is None else str(100 * net / capital),
         "break_even_execution_budget": None if execution_budget is None else str(execution_budget),
         "cost_reduction_to_break_even": None if net is None else str(max(-net, Decimal(0))),
-        "economics_status": "INCOMPLETE" if net is None else "POSITIVE_MODELLED" if net > 0 else "NON_POSITIVE",
+        "economics_status": "INCOMPLETE"
+        if net is None
+        else "POSITIVE_MODELLED"
+        if net > 0
+        else "NON_POSITIVE",
         "research_status": "BLOCKED" if blockers else "CANDIDATE_FOR_VALIDATION",
         "blockers": blockers,
         "capital_permission": False,
@@ -158,11 +165,20 @@ def compare(cases: list[dict[str, Any]]) -> dict[str, Any]:
     if len({r["id"] for r in rows}) != len(rows):
         raise ValueError("Duplicate opportunity id")
     groups = {
-        (r["currency"], number(r["capital"]), r["period_start"], r["period_end"], r["scenario"], r["evidence_kind"])
+        (
+            r["currency"],
+            number(r["capital"]),
+            r["period_start"],
+            r["period_end"],
+            r["scenario"],
+            r["evidence_kind"],
+        )
         for r in rows
     }
     if len(groups) != 1:
-        raise ValueError("Compare only identical capital, currency, period, scenario and evidence kind")
+        raise ValueError(
+            "Compare only identical capital, currency, period, scenario and evidence kind"
+        )
     ranked = sorted(
         (r for r in rows if r["research_status"] == "CANDIDATE_FOR_VALIDATION"),
         key=lambda r: (-number(r["net"]), r["id"]),
@@ -252,17 +268,19 @@ def discover_yields(snapshot: dict[str, Any]) -> dict[str, Any]:
         except (KeyError, ValueError, TypeError) as exc:
             rejected.append({"index": index, "reason": str(exc)})
             continue
-        candidates.append({
-            **identity,
-            **rates,
-            "tvlUsd": str(tvl),
-            "status": "DISCOVERY_ONLY",
-            "capital_permission": False,
-            "source_timestamp": None,
-            "needs": ["SOURCE_FRESHNESS", "YIELD_CONVENTION", "COSTS", "EXIT_LIQUIDITY", "RISK"]
-            + (["BASE_YIELD"] if rates["apyBase"] is None else [])
-            + (["REWARD_YIELD"] if rates["apyReward"] is None else []),
-        })
+        candidates.append(
+            {
+                **identity,
+                **rates,
+                "tvlUsd": str(tvl),
+                "status": "DISCOVERY_ONLY",
+                "capital_permission": False,
+                "source_timestamp": None,
+                "needs": ["SOURCE_FRESHNESS", "YIELD_CONVENTION", "COSTS", "EXIT_LIQUIDITY", "RISK"]
+                + (["BASE_YIELD"] if rates["apyBase"] is None else [])
+                + (["REWARD_YIELD"] if rates["apyReward"] is None else []),
+            }
+        )
     return {
         "schema_version": 1,
         "retrieved_at": retrieved.isoformat(),
@@ -307,7 +325,9 @@ def capture_yields(destination: Path) -> None:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("command", choices=("evaluate", "transition", "discover-yields", "capture-yields"))
+    parser.add_argument(
+        "command", choices=("evaluate", "transition", "discover-yields", "capture-yields")
+    )
     parser.add_argument("path", type=Path)
     args = parser.parse_args(argv)
     try:
