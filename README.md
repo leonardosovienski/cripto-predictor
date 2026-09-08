@@ -9,6 +9,7 @@ Não há lucro real nem projeção validada de lucro futuro. No diagnóstico his
 - [Estado vigente da pesquisa](docs/CURRENT_RESEARCH_STATE_20260908.md): resultados, correções e pendências reais.
 - [Continuidade e recuperação](docs/SESSION_HANDOFF_20260908.md): código, pacotes de dados, caminhos dos observadores e situação do Git.
 - [Prompt de continuidade](docs/NEXT_CHAT_PROMPT.md): referência para retomar o trabalho sem depender do chat.
+- [Migração para outro Windows](docs/MIGRACAO_WINDOWS.md): código pelo Git e pacote separado somente com dados.
 - [Auditoria da consolidação](docs/evidence/git_consolidation_20260908/README.md): branches integradas, validações e preservação.
 
 As famílias científicas anteriores continuam sujeitas ao [índice de congelamento](CR_FREEZE_INDEX.md), ao [manifesto](CR_RESEARCH_FREEZE.md) e ao [charter](charters/scientific_state.json). A pesquisa posterior possui protocolos separados; não reabre silenciosamente hipóteses encerradas.

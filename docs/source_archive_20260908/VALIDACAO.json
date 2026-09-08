@@ -1,0 +1,87 @@
+{
+  "status": "PASS",
+  "data_files": 67740,
+  "source_paths_in_git": 6745,
+  "source_objects": 1277,
+  "data_zip_bytes": 103387165,
+  "logical_data_bytes": 1377698166,
+  "unique_data_objects": 7333,
+  "expanded_unique_containers": 27,
+  "restoration": {
+    "status": "PASS",
+    "data_files": 67740,
+    "source_files_from_git": 6745,
+    "destination": "C:\\Users\\Superleo13\\Documents\\Codex\\2026-09-07\\files-pasted-by-the-user-quero\\work\\dados-restaurados",
+    "runtime_installed": false,
+    "automation_installed": false
+  },
+  "runtime_integrity": {
+    "numpy": {
+      "version": "2.5.1",
+      "files_checked": 950,
+      "missing": [],
+      "mismatches": []
+    },
+    "scikit-learn": {
+      "version": "1.9.0",
+      "files_checked": 1060,
+      "missing": [],
+      "mismatches": []
+    },
+    "scipy": {
+      "version": "1.18.0",
+      "files_checked": 1536,
+      "missing": [],
+      "mismatches": []
+    },
+    "httpx": {
+      "version": "0.28.1",
+      "files_checked": 31,
+      "missing": [],
+      "mismatches": []
+    },
+    "predictor-core": {
+      "version": "3.2.0",
+      "files_checked": 46,
+      "missing": [],
+      "mismatches": []
+    },
+    "predictor-ops": {
+      "version": "4.1.0",
+      "files_checked": 20,
+      "missing": [],
+      "mismatches": []
+    },
+    "distlib": {
+      "version": "0.4.3",
+      "files_checked": 25,
+      "missing": [],
+      "mismatches": []
+    },
+    "virtualenv": {
+      "version": "21.7.1",
+      "files_checked": 113,
+      "missing": [],
+      "mismatches": []
+    }
+  },
+  "runtime_reinstalled_with_fresh_downloads": true,
+  "frozen_altcoin_ledger_rows": 2,
+  "frozen_carry_ledger_rows": 1,
+  "carry_public_sources_verified": 6,
+  "split_archives_match_expanded_complete_archives": 5,
+  "automations_transferred": false,
+  "software_validation": {
+    "new_migration_tests": 9,
+    "initial_full_suite_passed": 1177,
+    "initial_full_suite_missing_build_artifacts": 2,
+    "packaging_retest_after_uv_build_passed": 3,
+    "ruff": "PASS",
+    "pyright": "PASS",
+    "uv_lock": "PASS",
+    "secret_scan_findings": 0,
+    "focused_tests_on_reinstalled_environment": 64
+  },
+  "data_zip_sha256": "cdb29a42e51924377bbd808022a81a8eaa70f672defbeffc58090d418ea7b0fc",
+  "staged_git_objects_verified": 1278
+}

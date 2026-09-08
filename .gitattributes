@@ -107,3 +107,6 @@
 /tests/test_immediate_audit.py -text
 /tests/test_research_corrections.py -text
 /docs/session_archive_20260908/deliverables/** -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+
+# Exact historical source snapshots and migration index.
+/docs/source_archive_20260908/** -text

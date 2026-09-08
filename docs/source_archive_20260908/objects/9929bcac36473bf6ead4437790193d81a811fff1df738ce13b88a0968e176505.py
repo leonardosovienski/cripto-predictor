@@ -1,0 +1,196 @@
+"""DSR + registro de tentativas (governança estatística — risco nº 2 da auditoria).
+
+Invariantes que importam: o benchmark E[max SR] é 0 sem seleção (1 tentativa /
+variância nula) e CRESCE com o nº de tentativas — logo o DSR só pode cair quando
+se tenta mais. Registrar de novo a mesma configuração NÃO conta tentativa nova.
+"""
+
+import random
+
+import pytest
+from predictor_core.stats import probabilistic_sharpe_ratio
+
+from GarimpoInvestimentos.analyzers.trials import (
+    DeflationNotEstimableError,
+    FrozenFamilyError,
+    _reject_frozen_family,
+    deflated_sharpe_ratio,
+    expected_max_sharpe,
+    load_trials,
+    register_trial,
+)
+
+
+def _returns(n=60, mean=0.01, sd=0.02, seed=7):
+    rng = random.Random(seed)
+    return [rng.gauss(mean, sd) for _ in range(n)]
+
+
+# ---------- expected_max_sharpe ----------
+
+
+def test_sem_selecao_benchmark_zero():
+    assert expected_max_sharpe(1, 1.0) == 0.0  # 1 tentativa: nada a descontar
+    assert expected_max_sharpe(10, 0.0) == 0.0  # tentativas idênticas: idem
+
+
+def test_benchmark_cresce_com_tentativas_e_variancia():
+    v = 0.04
+    e2, e10, e100 = (expected_max_sharpe(n, v) for n in (2, 10, 100))
+    assert 0 < e2 < e10 < e100  # mais tentativas → máx-por-sorte maior
+    assert expected_max_sharpe(10, 0.16) > e10  # mais dispersão entre tentativas → idem
+
+
+# ---------- deflated_sharpe_ratio ----------
+
+
+@pytest.mark.parametrize("sharpes", [[], [0.3], [None, float("inf"), 0.3]])
+def test_dsr_sem_variancia_estimavel_bloqueia_em_vez_de_publicar_psr(sharpes):
+    with pytest.raises(DeflationNotEstimableError):
+        deflated_sharpe_ratio(_returns(), sharpes)
+
+
+def test_mais_tentativas_so_reduzem_o_dsr():
+    rets = _returns()
+    psr = probabilistic_sharpe_ratio(rets, benchmark_sharpe=0.0)
+    dez = deflated_sharpe_ratio(rets, [0.3, -0.1, 0.2, 0.05, -0.3, 0.4, 0.1, -0.2, 0.25, 0.0])
+    assert dez["sr0"] > 0
+    assert dez["dsr"] < psr
+
+
+def test_sharpes_ausentes_contam_no_n_sem_entrar_na_variancia():
+    rets = _returns()
+    complete = deflated_sharpe_ratio(rets, [0.3, -0.1])
+    missing = deflated_sharpe_ratio(rets, [0.3, -0.1, None, float("inf")])
+    assert missing["n_trials"] == 4 and missing["n_sharpes"] == 2
+    assert missing["sr0"] > complete["sr0"]
+    assert missing["dsr"] < complete["dsr"]
+
+
+# ---------- registro versionado ----------
+
+
+def test_registro_roundtrip_e_dedup_por_nome(tmp_path, registry_attestation):
+    p = tmp_path / "trials.json"
+    # criação usa bypass explícito da trava de poder (mecânica do registro;
+    # a trava tem testes próprios em test_experiment_registry)
+    register_trial("cfg-a", params={"h": 7}, sharpe=0.1, path=p, **registry_attestation(p))
+    register_trial("cfg-b", params={"h": 30}, path=p, power_attestation=False)
+    register_trial(
+        "cfg-a", params={"h": 7}, sharpe=0.15, notes="reavaliada com mais n", path=p
+    )  # mesma config → atualiza
+    trials = load_trials(p)
+    assert [t["name"] for t in trials] == ["cfg-a", "cfg-b"]  # não duplicou
+    assert trials[0]["sharpe"] == 0.15
+    assert trials[1]["sharpe"] is None
+
+
+def test_registro_semeado_do_projeto_existe_e_tem_2_tentativas():
+    trials = load_trials()  # o trials.json versionado
+    names = [t["name"] for t in trials]
+    assert "v1-direct-gemini-h7" in names and "v2-dpl-gemini-h7" in names
+
+
+# ------------------------------------------------------------------ #
+# Congelamento por FAMÍLIA (auditoria 2026-09-05)                     #
+#                                                                     #
+# Até esta correção o freeze era aplicado só por NOME de trial das    #
+# hipóteses fechadas. Bastava um nome novo declarando a mesma família #
+# para reparametrizar H1-H3 sem que nada barrasse.                    #
+# ------------------------------------------------------------------ #
+
+
+def test_familia_congelada_e_rejeitada_por_nome_novo():
+    """O buraco concreto que a auditoria explorou: nome inédito, família congelada."""
+    with pytest.raises(FrozenFamilyError, match="CONGELADA"):
+        _reject_frozen_family(
+            "v3-hmm-funding-oi-fr45-reopen",
+            {"family": "funding_oi_hmm_v3", "mechanism": "reparametriza", "success_criterion": "x"},
+            ("funding_oi_hmm_v3",),
+            set(),
+        )
+
+
+def test_atualizar_trial_existente_de_familia_congelada_passa():
+    """Registrar de novo um nome JÁ existente é como um veredito é gravado —
+    foi assim que o H9 foi fechado (mesmo nome, `sharpe`/`notes` preenchidos).
+    Bloquear isso impediria FECHAR uma hipótese, o oposto do objetivo."""
+    _reject_frozen_family(
+        "v3-hmm-funding-oi-fr90",
+        {"family": "funding_oi_hmm_v3"},
+        ("funding_oi_hmm_v3",),
+        {"v3-hmm-funding-oi-fr90"},
+    )
+
+
+def test_familia_nao_congelada_passa():
+    _reject_frozen_family("h10-nova", {"family": "basis-asymmetry"}, ("funding_oi_hmm_v3",), set())
+
+
+def test_trial_sem_family_declarada_passa():
+    """Ausência de `family` não é o que este guard controla — não inventa bloqueio.
+    É também a ressalva honesta: quem OMITE a família escapa deste guard, e por
+    isso o dossiê manual continua necessário."""
+    _reject_frozen_family("h10-nova", {"mechanism": "x"}, ("funding_oi_hmm_v3",), set())
+
+
+def test_charter_do_projeto_congela_a_familia_h1_h3():
+    """Amarra o guard ao charter real: se `funding_oi_hmm_v3` sair de
+    frozen_families, este teste cai junto."""
+    from GarimpoInvestimentos.governance import load_scientific_state
+
+    assert "funding_oi_hmm_v3" in load_scientific_state().frozen_families
+
+
+def test_register_trial_bloqueia_familia_congelada_antes_de_chegar_no_core(tmp_path, monkeypatch):
+    """Integração: o guard tem que estar ligado no caminho de escrita real e
+    disparar ANTES do core — um espião no `_core_register` prova que nada da
+    escrita chegou a ser tentado."""
+    import GarimpoInvestimentos.analyzers.trials as trials_mod
+
+    p = tmp_path / "trials.json"
+    p.write_text("[]", encoding="utf-8")
+    monkeypatch.setattr(trials_mod, "TRIALS_PATH", p)
+
+    chegou_no_core = False
+
+    def core_spy(*_args, **_kwargs):
+        nonlocal chegou_no_core
+        chegou_no_core = True
+        return []
+
+    monkeypatch.setattr(trials_mod, "_core_register", core_spy)
+
+    with pytest.raises(FrozenFamilyError, match="funding_oi_hmm_v3"):
+        trials_mod.register_trial(
+            "v3-hmm-funding-oi-fr45-reopen",
+            params={"family": "funding_oi_hmm_v3"},
+            path=p,
+        )
+    assert not chegou_no_core
+    assert p.read_text(encoding="utf-8") == "[]"
+
+
+def test_register_trial_deixa_passar_familia_nao_congelada(tmp_path, monkeypatch):
+    """Contraste direto: família nova não é afetada pelo guard."""
+    import GarimpoInvestimentos.analyzers.trials as trials_mod
+
+    p = tmp_path / "trials.json"
+    p.write_text("[]", encoding="utf-8")
+    monkeypatch.setattr(trials_mod, "TRIALS_PATH", p)
+
+    chegou_no_core = False
+
+    def core_spy(*_args, **_kwargs):
+        nonlocal chegou_no_core
+        chegou_no_core = True
+        return []
+
+    monkeypatch.setattr(trials_mod, "_core_register", core_spy)
+
+    trials_mod.register_trial(
+        "h10-basis-asymmetry-hmm-v1",
+        params={"family": "basis-asymmetry-hmm-covariate"},
+        path=p,
+    )
+    assert chegou_no_core

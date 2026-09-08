@@ -1,0 +1,1881 @@
+diff --git a/docs/HYPOTHESES.md b/docs/HYPOTHESES.md
+index 0bf8d57..7fe82f8 100644
+--- a/docs/HYPOTHESES.md
++++ b/docs/HYPOTHESES.md
+@@ -1700,3 +1700,14 @@ ou coleta nova ativados. Evidência já vista não volta a ser intocada.
+ 30 testes direcionados passaram (11 V1, 11 novos de payoff/identidade e oito
+ do gate). Ruff/Pyright passaram. Modo offline reproduziu resultados e dataset
+ derivado byte a byte. Detalhes: `docs/evidence/altcoin_payoff_20260907/`.
++
++
++### 2026-09-07 — Altcoin forward observation pilot v3
++
++User authorized the remaining preparation and forward observation steps. Protocol c80f309 and recorder freeze cbe5229 precede the live preflight; 9ca6648 adds catalog status diffs before any prospective decisions. Fixed v2 net-payoff scorer and training geometry remain unchanged. Current investability excludes verified RLUSD category contamination prospectively only; no resampling, historical performance search or prior-evidence rewrite.
++
++Live preflight: 275 preserved public responses; 160 of the 240 sampled symbols currently trading after exclusions, 13 eligible, zero qualifying. Features and scores for all 13 exactly match the consumed September 7 snapshot. All 428 delisting and 4404 news catalog headlines retrieved with matching pagination counts; interpreted event completeness remains UNKNOWN. Visible-book hypothetical immediate roundtrip at 1000 USDT ranges 21.4276–55.7413 bps including ASSUMED 10bps fees each side. These are quote marks, not fills or verified account economics.
++
++Forty-four targeted tests, Ruff and Pyright pass; offline snapshot replay matches apart from its new execution timestamp. Full-geometry synthetic known-pattern controls and censoring guard pass; zero qualifications in 200 stipulated-null queries do not certify general false-positive rates. Normal-design power sensitivity is conditional, not a Core model-specific attestation.
++
++Weekly local Codex heartbeat scheduled from September 13, 21:00 America/Sao_Paulo, for a bounded 12-entry-slot observer and final due observation December 6, 21:00. No prospective decisions or matured outcomes exist at registration. Decisions are durable before entry quotes; missed slots/outcomes remain censored; no retuning. This explicitly separate observation pilot does not pass executable readiness or G1-G7. Exact account fees, attainable operator benchmark, full events, execution parity and formal attestation remain unresolved. Frozen state/trials/costs, production, funding/OI/HMM and capital unchanged.
+diff --git a/docs/evidence/altcoin_forward_20260907/RUNBOOK.md b/docs/evidence/altcoin_forward_20260907/RUNBOOK.md
+new file mode 100644
+index 0000000..88c579c
+--- /dev/null
++++ b/docs/evidence/altcoin_forward_20260907/RUNBOOK.md
+@@ -0,0 +1,23 @@
++# Piloto semanal de observação — 7 de setembro de 2026
++
++Este procedimento registra decisões hipotéticas e preços futuros. Não é um adaptador de ordens, uma recomendação de compra ou uma certificação de lucro. A regra de seleção v2 permanece fixa. A promoção formal continua bloqueada pelas pendências descritas no protocolo.
++
++Executar no worktree `work/cripto-v1.2`, usando seu Python local:
++
++```powershell
++.venv\Scripts\python.exe -m scripts.observe_altcoin_forward --mode tick --base-data-dir '..\altcoin-data' --training '..\altcoin-payoff-results\samples_identity_corrected.json.gz' --data-dir '..\altcoin-forward-data'
++```
++
++O agendamento é domingo às 21h em America/Sao_Paulo, equivalente à segunda-feira 00h UTC. Primeiro registro em 13/09/2026 às 21h; última entrada em 29/11; última observação de saída em 06/12 às 21h. São 12 janelas de entrada e 13 execuções previstas. Manter computador ligado e aplicativo aberto. O agendamento local não promete pontualidade nem disponibilidade contínua.
++
++`tick` usa o relógio real: coleta dentro da primeira hora após a âncora, grava a decisão no livro antes de consultar ofertas de entrada e, na semana seguinte, observa ofertas de saída. Uma execução fora da janela marca a observação perdida; não procura retrospectivamente um preço favorável. Um resultado sem preço fica pendente/censurado, com seu peso original. Não contar registros ausentes como zero retorno da estratégia. Caixa de referência sem posição tem zero rendimento em USDT, não em reais.
++
++Arquivos operacionais em `work/altcoin-forward-data`: `ledger.jsonl`, `status.json`, `snapshots/` e `raw/`. A cadeia de hashes detecta alterações simples e duplicação; ela é local e não fornece carimbo de tempo externo independente. Cada fonte guarda hora real de obtenção. A data publicada de um anúncio não substitui essa hora. Os catálogos completos obtidos têm títulos e links; interpretar todos os efeitos de eventos continua sendo uma pendência.
++
++Após cada execução, conferir código de saída, integridade da cadeia, contagens de decisões/saídas, alterações no estado dos pares, candidatas, custos simulados e motivos de dados ausentes. Não alterar a regra quando ela ficar em caixa. Guardar custos da conta como desconhecidos até confirmação verificável; nenhum segredo ou chave é necessário para este piloto. Não tocar nos coletores de produção, nos registros congelados, nas famílias HMM/funding/OI ou no capital.
++
++Se uma execução falhar, preservar os arquivos e informar o motivo. Um arquivo `observer.lock` remanescente requer primeiro verificar se seu processo ainda existe; não apagar o arquivo cegamente e não sobrepor escritores. Corrigir defeitos de operação com uma versão documentada e novos hashes antes de decisões posteriores. Nunca apagar ou reconstruir observações antigas como se fossem novas.
++
++Quando `status.json` indicar `pilot_finished: true`, produzir balanço de viabilidade e pausar o próprio acompanhamento pelo recurso de automações do Codex. Sem avisos repetidos quando não houver mudança relevante. Avisar sobre conclusão, falha, candidata nova, mudança relevante de dados/custos ou informação necessária do usuário. Comparar as marcas à cesta contemporânea e BTC no mesmo período, mantendo custos, moeda e ausência de dados explícitos.
++
++As 12 semanas medem funcionamento e fornecem novas observações. Não constituem, por si só, prazo suficiente para demonstrar lucro. `design.json` contém apenas controles sintéticos e cenários de tamanho de amostra. Não reutilizar a atestação do modelo antigo para aprovar este modelo.
+diff --git a/docs/evidence/altcoin_forward_20260907/audit.json b/docs/evidence/altcoin_forward_20260907/audit.json
+new file mode 100644
+index 0000000..35ba865
+--- /dev/null
++++ b/docs/evidence/altcoin_forward_20260907/audit.json
+@@ -0,0 +1,325 @@
++{
++  "known_at": "2026-09-07T19:52:20.758696+00:00",
++  "snapshot_sha256": "c49521aa5c0345b81f87d89ad4236544830e8f49cbca3d513b3005dab57ac4d7",
++  "sample_size": 240,
++  "currently_trading_after_exclusions": 160,
++  "eligible_count": 13,
++  "selected": [],
++  "cash_weight": 1.0,
++  "prospective": false,
++  "ranked": [
++    {
++      "symbol": "XLMUSDT",
++      "status": "ABSTAIN_NO_POSITIVE_MARGIN",
++      "score_log": -0.046013775420037054
++    },
++    {
++      "symbol": "FILUSDT",
++      "status": "ABSTAIN_NO_POSITIVE_MARGIN",
++      "score_log": -0.061689205778583375
++    },
++    {
++      "symbol": "PEPEUSDT",
++      "status": "ABSTAIN_NO_POSITIVE_MARGIN",
++      "score_log": -0.062065621514386146
++    },
++    {
++      "symbol": "ASTERUSDT",
++      "status": "ABSTAIN_NO_POSITIVE_MARGIN",
++      "score_log": -0.0631029481924725
++    },
++    {
++      "symbol": "ICPUSDT",
++      "status": "ABSTAIN_NO_POSITIVE_MARGIN",
++      "score_log": -0.06967858463911888
++    },
++    {
++      "symbol": "AAVEUSDT",
++      "status": "ABSTAIN_NO_POSITIVE_MARGIN",
++      "score_log": -0.0912832307266427
++    },
++    {
++      "symbol": "UNIUSDT",
++      "status": "ABSTAIN_NO_POSITIVE_MARGIN",
++      "score_log": -0.10584656684441958
++    },
++    {
++      "symbol": "TUTUSDT",
++      "status": "ABSTAIN_NO_POSITIVE_MARGIN",
++      "score_log": -0.10654894880766679
++    },
++    {
++      "symbol": "PUMPUSDT",
++      "status": "ABSTAIN_NO_POSITIVE_MARGIN",
++      "score_log": -0.1120539805037688
++    },
++    {
++      "symbol": "BICOUSDT",
++      "status": "ABSTAIN_NO_POSITIVE_MARGIN",
++      "score_log": -0.12328574154930944
++    },
++    {
++      "symbol": "ONGUSDT",
++      "status": "ABSTAIN_NO_POSITIVE_MARGIN",
++      "score_log": -0.13131546847221362
++    },
++    {
++      "symbol": "BMTUSDT",
++      "status": "ABSTAIN_NO_POSITIVE_MARGIN",
++      "score_log": -0.13781846755873703
++    },
++    {
++      "symbol": "HEMIUSDT",
++      "status": "ABSTAIN_NO_POSITIVE_MARGIN",
++      "score_log": -0.16350534113971754
++    }
++  ],
++  "raw_responses_verified": 275,
++  "raw_interval": [
++    "2026-09-07T19:50:24.379397+00:00",
++    "2026-09-07T19:51:03.727626+00:00"
++  ],
++  "ledger_chain_valid": true,
++  "clock_offset_seconds": 0.8802220821380615,
++  "feature_score_parity": [
++    {
++      "symbol": "XLMUSDT",
++      "max_feature_difference": 0.0,
++      "score_difference": 0.0
++    },
++    {
++      "symbol": "FILUSDT",
++      "max_feature_difference": 0.0,
++      "score_difference": 0.0
++    },
++    {
++      "symbol": "PEPEUSDT",
++      "max_feature_difference": 0.0,
++      "score_difference": 0.0
++    },
++    {
++      "symbol": "ASTERUSDT",
++      "max_feature_difference": 0.0,
++      "score_difference": 0.0
++    },
++    {
++      "symbol": "ICPUSDT",
++      "max_feature_difference": 0.0,
++      "score_difference": 0.0
++    },
++    {
++      "symbol": "AAVEUSDT",
++      "max_feature_difference": 0.0,
++      "score_difference": 0.0
++    },
++    {
++      "symbol": "UNIUSDT",
++      "max_feature_difference": 0.0,
++      "score_difference": 0.0
++    },
++    {
++      "symbol": "TUTUSDT",
++      "max_feature_difference": 0.0,
++      "score_difference": 0.0
++    },
++    {
++      "symbol": "PUMPUSDT",
++      "max_feature_difference": 0.0,
++      "score_difference": 0.0
++    },
++    {
++      "symbol": "BICOUSDT",
++      "max_feature_difference": 0.0,
++      "score_difference": 0.0
++    },
++    {
++      "symbol": "ONGUSDT",
++      "max_feature_difference": 0.0,
++      "score_difference": 0.0
++    },
++    {
++      "symbol": "BMTUSDT",
++      "max_feature_difference": 0.0,
++      "score_difference": 0.0
++    },
++    {
++      "symbol": "HEMIUSDT",
++      "max_feature_difference": 0.0,
++      "score_difference": 0.0
++    }
++  ],
++  "event_catalogs": [
++    {
++      "catalog_id": 161,
++      "reported_total": 428,
++      "unique_articles": 428,
++      "pagination_count_matches": true,
++      "complete_investability_event_feed": false
++    },
++    {
++      "catalog_id": 49,
++      "reported_total": 4404,
++      "unique_articles": 4404,
++      "pagination_count_matches": true,
++      "complete_investability_event_feed": false
++    }
++  ],
++  "costs": [
++    {
++      "symbol": "XLMUSDT",
++      "notional_usdt": 1000.0,
++      "spread_bps": 5.182689816014512,
++      "buy_impact_from_best_ask_bps": 0.0,
++      "hypothetical_same_book_roundtrip_loss_bps": 25.160989637306173,
++      "hypothetical_same_book_roundtrip_loss_usdt": 2.5160989637306175,
++      "source_known_at": "2026-09-07T19:51:03.727626+00:00",
++      "request_ms": 291.00119999202434
++    },
++    {
++      "symbol": "FILUSDT",
++      "notional_usdt": 1000.0,
++      "spread_bps": 1.1938160329493226,
++      "buy_impact_from_best_ask_bps": 0.3474686728612777,
++      "hypothetical_same_book_roundtrip_loss_bps": 22.803301815149666,
++      "hypothetical_same_book_roundtrip_loss_usdt": 2.280330181514967,
++      "source_known_at": "2026-09-07T19:51:01.236585+00:00",
++      "request_ms": 292.9861000011442
++    },
++    {
++      "symbol": "PEPEUSDT",
++      "notional_usdt": 1000.0,
++      "spread_bps": 27.51031636863824,
++      "buy_impact_from_best_ask_bps": 0.0,
++      "hypothetical_same_book_roundtrip_loss_bps": 47.407609890109946,
++      "hypothetical_same_book_roundtrip_loss_usdt": 4.740760989010995,
++      "source_known_at": "2026-09-07T19:51:02.468058+00:00",
++      "request_ms": 291.64640000090003
++    },
++    {
++      "symbol": "ASTERUSDT",
++      "notional_usdt": 1000.0,
++      "spread_bps": 12.92824822236587,
++      "buy_impact_from_best_ask_bps": -3e-24,
++      "hypothetical_same_book_roundtrip_loss_bps": 32.88406976744152,
++      "hypothetical_same_book_roundtrip_loss_usdt": 3.2884069767441515,
++      "source_known_at": "2026-09-07T19:51:00.015199+00:00",
++      "request_ms": 289.9171000026399
++    },
++    {
++      "symbol": "ICPUSDT",
++      "notional_usdt": 1000.0,
++      "spread_bps": 3.3019646689780418,
++      "buy_impact_from_best_ask_bps": 0.2460444364758095,
++      "hypothetical_same_book_roundtrip_loss_bps": 26.26878136693267,
++      "hypothetical_same_book_roundtrip_loss_usdt": 2.626878136693267,
++      "source_known_at": "2026-09-07T19:51:01.851197+00:00",
++      "request_ms": 292.2281000064686
++    },
++    {
++      "symbol": "AAVEUSDT",
++      "notional_usdt": 1000.0,
++      "spread_bps": 0.7550874013667082,
++      "buy_impact_from_best_ask_bps": 1.039549287016211,
++      "hypothetical_same_book_roundtrip_loss_bps": 22.939351208226544,
++      "hypothetical_same_book_roundtrip_loss_usdt": 2.2939351208226544,
++      "source_known_at": "2026-09-07T19:50:59.702789+00:00",
++      "request_ms": 1182.548400000087
++    },
++    {
++      "symbol": "UNIUSDT",
++      "notional_usdt": 1000.0,
++      "spread_bps": 1.4406108189872506,
++      "buy_impact_from_best_ask_bps": -3e-24,
++      "hypothetical_same_book_roundtrip_loss_bps": 21.42762748487459,
++      "hypothetical_same_book_roundtrip_loss_usdt": 2.142762748487459,
++      "source_known_at": "2026-09-07T19:51:03.419217+00:00",
++      "request_ms": 293.24280000582803
++    },
++    {
++      "symbol": "TUTUSDT",
++      "notional_usdt": 1000.0,
++      "spread_bps": 8.093889113719142,
++      "buy_impact_from_best_ask_bps": 7.218575266582594,
++      "hypothetical_same_book_roundtrip_loss_bps": 35.25756607471231,
++      "hypothetical_same_book_roundtrip_loss_usdt": 3.525756607471231,
++      "source_known_at": "2026-09-07T19:51:03.104046+00:00",
++      "request_ms": 292.02059999806806
++    },
++    {
++      "symbol": "PUMPUSDT",
++      "notional_usdt": 1000.0,
++      "spread_bps": 4.466279589102278,
++      "buy_impact_from_best_ask_bps": 0.028214994786939895,
++      "hypothetical_same_book_roundtrip_loss_bps": 24.474502269529186,
++      "hypothetical_same_book_roundtrip_loss_usdt": 2.4474502269529186,
++      "source_known_at": "2026-09-07T19:51:02.767792+00:00",
++      "request_ms": 292.927199989208
++    },
++    {
++      "symbol": "BICOUSDT",
++      "notional_usdt": 1000.0,
++      "spread_bps": 8.771929824561404,
++      "buy_impact_from_best_ask_bps": 6.336468363638543,
++      "hypothetical_same_book_roundtrip_loss_bps": 35.05481276577571,
++      "hypothetical_same_book_roundtrip_loss_usdt": 3.505481276577571,
++      "source_known_at": "2026-09-07T19:51:00.320160+00:00",
++      "request_ms": 289.69489999872167
++    },
++    {
++      "symbol": "ONGUSDT",
++      "notional_usdt": 1000.0,
++      "spread_bps": 9.59744068248467,
++      "buy_impact_from_best_ask_bps": 0.0,
++      "hypothetical_same_book_roundtrip_loss_bps": 41.145237335983296,
++      "hypothetical_same_book_roundtrip_loss_usdt": 4.11452373359833,
++      "source_known_at": "2026-09-07T19:51:02.164125+00:00",
++      "request_ms": 292.2603000042727
++    },
++    {
++      "symbol": "BMTUSDT",
++      "notional_usdt": 1000.0,
++      "spread_bps": 5.629045876723895,
++      "buy_impact_from_best_ask_bps": 5.596444665652938,
++      "hypothetical_same_book_roundtrip_loss_bps": 35.973991260154214,
++      "hypothetical_same_book_roundtrip_loss_usdt": 3.5973991260154214,
++      "source_known_at": "2026-09-07T19:51:00.621709+00:00",
++      "request_ms": 290.93589998956304
++    },
++    {
++      "symbol": "HEMIUSDT",
++      "notional_usdt": 1000.0,
++      "spread_bps": 11.435105774728417,
++      "buy_impact_from_best_ask_bps": 11.15076388980054,
++      "hypothetical_same_book_roundtrip_loss_bps": 55.74132648102359,
++      "hypothetical_same_book_roundtrip_loss_usdt": 5.574132648102359,
++      "source_known_at": "2026-09-07T19:51:01.548857+00:00",
++      "request_ms": 293.73279999708757
++    }
++  ],
++  "fee_status": "ASSUMED_10_BPS_PER_LEG_NOT_ACCOUNT_SPECIFIC",
++  "mark_status": "Visible book hypothetical roundtrip; not actual orders, fills, future costs or net investor P&L",
++  "economic_inputs": {
++    "operator_venue": null,
++    "operator_account_commissions": null,
++    "operator_attainable_benchmark": null,
++    "reporting_currency": "BRL",
++    "mark_currency": "USDT",
++    "fx_conversion_and_tax_route": null,
++    "conditional_research_venue": "Binance public spot data",
++    "conditional_benchmark": "Dated Selic scenario from funding_carry_screen_20260907, not confirmed as user-attainable"
++  },
++  "readiness": {
++    "public_feed": "AVAILABLE_OBSERVED",
++    "event_catalog_pagination": "COUNTS_VERIFIED",
++    "complete_interpreted_investability_events": "UNKNOWN",
++    "three_historical_exits": "BTT, CVP, VIDT remain censored",
++    "model_causal_tests": "EXECUTED",
++    "prospective_hypothetical_observer": "IMPLEMENTED_PENDING_FIRST_SLOT",
++    "executable_paper_fill_parity": "NOT_CERTIFIED",
++    "actual_account_costs": "UNKNOWN",
++    "formal_model_specific_attestation": "NOT_ISSUED",
++    "formal_proof": "NOT_PASSED",
++    "orders": false,
++    "capital": false
++  }
++}
+\ No newline at end of file
+diff --git a/docs/evidence/altcoin_forward_20260907/automation.json b/docs/evidence/altcoin_forward_20260907/automation.json
+new file mode 100644
+index 0000000..5b9c096
+--- /dev/null
++++ b/docs/evidence/altcoin_forward_20260907/automation.json
+@@ -0,0 +1,11 @@
++{
++  "id": "observar-altcoins-semanalmente",
++  "name": "Observar altcoins semanalmente",
++  "status": "ACTIVE",
++  "kind": "heartbeat",
++  "local_timezone": "America/Sao_Paulo",
++  "schedule": "Domingos às 21h; primeiro registro em 13/09/2026; última saída prevista em 06/12/2026.",
++  "local_runtime_required": true,
++  "notification_intent": "Somente mudança relevante, conclusão, falha ou informação necessária.",
++  "policy_after_last_outcome": "Pausar após o balanço final."
++}
+diff --git a/docs/evidence/altcoin_forward_20260907/design.json b/docs/evidence/altcoin_forward_20260907/design.json
+new file mode 100644
+index 0000000..8986ecb
+--- /dev/null
++++ b/docs/evidence/altcoin_forward_20260907/design.json
+@@ -0,0 +1,196 @@
++{
++  "synthetic_controls": {
++    "seed": 20260907,
++    "full_geometry_positive_and_negative_controls": [
++      {
++        "status": "ABSTAIN_NO_POSITIVE_MARGIN",
++        "qualified": false,
++        "distinct_weeks": 74,
++        "effective_n_heuristic": 18,
++        "mean_log_payoff": -0.024629629371517896,
++        "geometric_payoff_proxy": -0.02432879492454812,
++        "uncertainty_penalty_log": 0.0010480034021956863,
++        "score_log": -0.02567763277371358,
++        "score_return_equivalent": -0.025350766058741914,
++        "confidence_claim": "heuristic penalty, not a calibrated confidence interval"
++      },
++      {
++        "status": "RESEARCH_CANDIDATE",
++        "qualified": true,
++        "distinct_weeks": 77,
++        "effective_n_heuristic": 19,
++        "mean_log_payoff": 0.02565893113745109,
++        "geometric_payoff_proxy": 0.02599095522285168,
++        "uncertainty_penalty_log": 0.0008766166360631721,
++        "score_log": 0.02478231450138792,
++        "score_return_equivalent": 0.02509194858271197,
++        "confidence_claim": "heuristic penalty, not a calibrated confidence interval"
++      }
++    ],
++    "censored_neighbor_guard": "PASS",
++    "stipulated_null_queries": 200,
++    "stipulated_null_qualified": 0,
++    "null_score_range": [
++      -0.030429725416821436,
++      -0.005714454933508654
++    ],
++    "meaning": "Synthetic implementation checks only; neither calibrated probability nor a Core harness/power attestation or real-market edge evidence."
++  },
++  "power_planning": {
++    "scenario_benchmark_annual_net": 0.113177,
++    "benchmark_status": "DATED_CONDITIONAL_SCENARIO_NOT_USER_CONFIRMED",
++    "alpha": 0.05,
++    "power": 0.8,
++    "formula": "ceil(((1.96+0.842)*assumed paired weekly SD / target weekly log difference)^2) * assumed dependence multiplier",
++    "limitations": "Normal-design sensitivity, not empirical attestation. Actual variance, dependence, tails, attainable benchmark, costs, risk premium, selection and full search adjustment are unresolved. Means and SDs share weekly log-return units. Twelve calendar weeks are not twelve independent observations automatically.",
++    "grid": [
++      {
++        "extra_annual_percentage_points": 5.0,
++        "paired_weekly_log_sd_assumed": 0.01,
++        "dependence_multiplier_assumed": 1,
++        "target_weekly_log_difference": 0.0008449416396655684,
++        "calendar_weeks_normal_design": 1100,
++        "calendar_years": 21.153846153846153
++      },
++      {
++        "extra_annual_percentage_points": 5.0,
++        "paired_weekly_log_sd_assumed": 0.01,
++        "dependence_multiplier_assumed": 4,
++        "target_weekly_log_difference": 0.0008449416396655684,
++        "calendar_weeks_normal_design": 4400,
++        "calendar_years": 84.61538461538461
++      },
++      {
++        "extra_annual_percentage_points": 5.0,
++        "paired_weekly_log_sd_assumed": 0.03,
++        "dependence_multiplier_assumed": 1,
++        "target_weekly_log_difference": 0.0008449416396655684,
++        "calendar_weeks_normal_design": 9898,
++        "calendar_years": 190.34615384615384
++      },
++      {
++        "extra_annual_percentage_points": 5.0,
++        "paired_weekly_log_sd_assumed": 0.03,
++        "dependence_multiplier_assumed": 4,
++        "target_weekly_log_difference": 0.0008449416396655684,
++        "calendar_weeks_normal_design": 39592,
++        "calendar_years": 761.3846153846154
++      },
++      {
++        "extra_annual_percentage_points": 5.0,
++        "paired_weekly_log_sd_assumed": 0.05,
++        "dependence_multiplier_assumed": 1,
++        "target_weekly_log_difference": 0.0008449416396655684,
++        "calendar_weeks_normal_design": 27494,
++        "calendar_years": 528.7307692307693
++      },
++      {
++        "extra_annual_percentage_points": 5.0,
++        "paired_weekly_log_sd_assumed": 0.05,
++        "dependence_multiplier_assumed": 4,
++        "target_weekly_log_difference": 0.0008449416396655684,
++        "calendar_weeks_normal_design": 109976,
++        "calendar_years": 2114.923076923077
++      },
++      {
++        "extra_annual_percentage_points": 10.0,
++        "paired_weekly_log_sd_assumed": 0.01,
++        "dependence_multiplier_assumed": 1,
++        "target_weekly_log_difference": 0.0016543163312727977,
++        "calendar_weeks_normal_design": 287,
++        "calendar_years": 5.519230769230769
++      },
++      {
++        "extra_annual_percentage_points": 10.0,
++        "paired_weekly_log_sd_assumed": 0.01,
++        "dependence_multiplier_assumed": 4,
++        "target_weekly_log_difference": 0.0016543163312727977,
++        "calendar_weeks_normal_design": 1148,
++        "calendar_years": 22.076923076923077
++      },
++      {
++        "extra_annual_percentage_points": 10.0,
++        "paired_weekly_log_sd_assumed": 0.03,
++        "dependence_multiplier_assumed": 1,
++        "target_weekly_log_difference": 0.0016543163312727977,
++        "calendar_weeks_normal_design": 2582,
++        "calendar_years": 49.65384615384615
++      },
++      {
++        "extra_annual_percentage_points": 10.0,
++        "paired_weekly_log_sd_assumed": 0.03,
++        "dependence_multiplier_assumed": 4,
++        "target_weekly_log_difference": 0.0016543163312727977,
++        "calendar_weeks_normal_design": 10328,
++        "calendar_years": 198.6153846153846
++      },
++      {
++        "extra_annual_percentage_points": 10.0,
++        "paired_weekly_log_sd_assumed": 0.05,
++        "dependence_multiplier_assumed": 1,
++        "target_weekly_log_difference": 0.0016543163312727977,
++        "calendar_weeks_normal_design": 7172,
++        "calendar_years": 137.92307692307693
++      },
++      {
++        "extra_annual_percentage_points": 10.0,
++        "paired_weekly_log_sd_assumed": 0.05,
++        "dependence_multiplier_assumed": 4,
++        "target_weekly_log_difference": 0.0016543163312727977,
++        "calendar_weeks_normal_design": 28688,
++        "calendar_years": 551.6923076923077
++      },
++      {
++        "extra_annual_percentage_points": 20.0,
++        "paired_weekly_log_sd_assumed": 0.01,
++        "dependence_multiplier_assumed": 1,
++        "target_weekly_log_difference": 0.0031775250523907173,
++        "calendar_weeks_normal_design": 78,
++        "calendar_years": 1.5
++      },
++      {
++        "extra_annual_percentage_points": 20.0,
++        "paired_weekly_log_sd_assumed": 0.01,
++        "dependence_multiplier_assumed": 4,
++        "target_weekly_log_difference": 0.0031775250523907173,
++        "calendar_weeks_normal_design": 312,
++        "calendar_years": 6.0
++      },
++      {
++        "extra_annual_percentage_points": 20.0,
++        "paired_weekly_log_sd_assumed": 0.03,
++        "dependence_multiplier_assumed": 1,
++        "target_weekly_log_difference": 0.0031775250523907173,
++        "calendar_weeks_normal_design": 700,
++        "calendar_years": 13.461538461538462
++      },
++      {
++        "extra_annual_percentage_points": 20.0,
++        "paired_weekly_log_sd_assumed": 0.03,
++        "dependence_multiplier_assumed": 4,
++        "target_weekly_log_difference": 0.0031775250523907173,
++        "calendar_weeks_normal_design": 2800,
++        "calendar_years": 53.84615384615385
++      },
++      {
++        "extra_annual_percentage_points": 20.0,
++        "paired_weekly_log_sd_assumed": 0.05,
++        "dependence_multiplier_assumed": 1,
++        "target_weekly_log_difference": 0.0031775250523907173,
++        "calendar_weeks_normal_design": 1945,
++        "calendar_years": 37.40384615384615
++      },
++      {
++        "extra_annual_percentage_points": 20.0,
++        "paired_weekly_log_sd_assumed": 0.05,
++        "dependence_multiplier_assumed": 4,
++        "target_weekly_log_difference": 0.0031775250523907173,
++        "calendar_weeks_normal_design": 7780,
++        "calendar_years": 149.6153846153846
++      }
++    ],
++    "twelve_week_pilot_purpose": "Operational feasibility and new descriptive observations; never declare profitability solely because 12 weeks passed."
++  },
++  "formal_attestation": false,
++  "historical_performance_trials": 0
++}
+\ No newline at end of file
+diff --git a/docs/evidence/altcoin_forward_20260907/freeze.json b/docs/evidence/altcoin_forward_20260907/freeze.json
+new file mode 100644
+index 0000000..1e24c7b
+--- /dev/null
++++ b/docs/evidence/altcoin_forward_20260907/freeze.json
+@@ -0,0 +1,18 @@
++{
++  "known_at": "2026-09-07T19:56:06.456729+00:00",
++  "repository_files": {
++    "scripts/observe_altcoin_forward.py": "679ef8813ea0e738d0fdcc3b38cd4df864aa9e81dfe6efc04de475f9332d69f9",
++    "scripts/check_altcoin_forward_design.py": "92777628e212d699ef8725f254ebc11e32e0ffd495a655228e8abc5689548a7a",
++    "scripts/prepare_altcoin_payoff.py": "0c349fe67d4466db008cf1728c57767ee01fce9c122f85e539eeff6f8af30ad0",
++    "scripts/research_altcoin_analogs.py": "22b5456ae7c56c09b51cb295b784fad7b9b5685241f9fa54a31e5cb6a1aa7626",
++    "scripts/collect_altcoin_analogs.py": "ca1dfd1f8f93d6174c23829c8729c6c772376de0ef4af28b2738ada261b96e7f",
++    "docs/evidence/altcoin_forward_20260907/protocol.json": "e7a9253c1feac547accd84a9e06b00302004e54e94a56e71a6b3733dcf5b5d09",
++    "docs/evidence/altcoin_analogs_20260907/protocol.json": "fa5e8a6a29d0e7dda4711e82b4bf11c4026c2101ba079a763200a284ac410ab4",
++    "docs/evidence/altcoin_payoff_20260907/protocol.json": "071a50b6ffbc535d226c73a02a1211f1bd4512554fd4844d039b6226c6a3da15"
++  },
++  "acquisition_sha256": "b0823fd898bb46043f1d6d328b74d033f1bfbddfe98ea13ea11fad7b82d35f6e",
++  "training_sha256": "42e5bfadec6414c4148ccd4f048329256483e91715fd9e78542633d8a5a5e972",
++  "note": "Exact byte hashes; changing code/input requires a documented new freeze before later decisions. Local hashes do not supply independent trusted timestamps.",
++  "previous_freeze_sha256": "a7ace3244d4804ecf3883e5a5abfbc4408f8516c9868f162dff54ff927adae88",
++  "amendment": "Add current-catalog status diffs and verification of the preceding snapshot; no signal, price, cost or selection changes. Forty-four tests pass. Before first prospective decision. Original preflight used freeze_preflight.json and remains preserved."
++}
+diff --git a/docs/evidence/altcoin_forward_20260907/freeze_preflight.json b/docs/evidence/altcoin_forward_20260907/freeze_preflight.json
+new file mode 100644
+index 0000000..c3dbe0b
+--- /dev/null
++++ b/docs/evidence/altcoin_forward_20260907/freeze_preflight.json
+@@ -0,0 +1,16 @@
++{
++  "known_at": "2026-09-07T19:50:06.367667+00:00",
++  "repository_files": {
++    "scripts/observe_altcoin_forward.py": "f11bad2e5ad546eed7e492a83921452fd61702e3669a3bf45a3a91528b198f3c",
++    "scripts/check_altcoin_forward_design.py": "92777628e212d699ef8725f254ebc11e32e0ffd495a655228e8abc5689548a7a",
++    "scripts/prepare_altcoin_payoff.py": "0c349fe67d4466db008cf1728c57767ee01fce9c122f85e539eeff6f8af30ad0",
++    "scripts/research_altcoin_analogs.py": "22b5456ae7c56c09b51cb295b784fad7b9b5685241f9fa54a31e5cb6a1aa7626",
++    "scripts/collect_altcoin_analogs.py": "ca1dfd1f8f93d6174c23829c8729c6c772376de0ef4af28b2738ada261b96e7f",
++    "docs/evidence/altcoin_forward_20260907/protocol.json": "e7a9253c1feac547accd84a9e06b00302004e54e94a56e71a6b3733dcf5b5d09",
++    "docs/evidence/altcoin_analogs_20260907/protocol.json": "fa5e8a6a29d0e7dda4711e82b4bf11c4026c2101ba079a763200a284ac410ab4",
++    "docs/evidence/altcoin_payoff_20260907/protocol.json": "071a50b6ffbc535d226c73a02a1211f1bd4512554fd4844d039b6226c6a3da15"
++  },
++  "acquisition_sha256": "b0823fd898bb46043f1d6d328b74d033f1bfbddfe98ea13ea11fad7b82d35f6e",
++  "training_sha256": "42e5bfadec6414c4148ccd4f048329256483e91715fd9e78542633d8a5a5e972",
++  "note": "Exact byte hashes; changing code/input requires a documented new freeze before later decisions. Local hashes do not supply independent trusted timestamps."
++}
+diff --git a/docs/evidence/altcoin_forward_20260907/protocol.json b/docs/evidence/altcoin_forward_20260907/protocol.json
+new file mode 100644
+index 0000000..1297425
+--- /dev/null
++++ b/docs/evidence/altcoin_forward_20260907/protocol.json
+@@ -0,0 +1,49 @@
++{
++  "id": "discovery-altcoin-forward-20260907-v3",
++  "base_commit": "9e492f07f05b161beaed3cb7d343ff97011d5c14",
++  "mode": "PROSPECTIVE_OBSERVATION_PILOT",
++  "authorization": "User requests all proposed next steps on 2026-09-07; public data, preparation and simulated observation only.",
++  "amendment": "Previous v2 protocol required complete readiness before prospective activation. This separate protocol permits a bounded observation pilot while those gates remain unresolved; it does not activate executable paper trading, formal Proof, promotion or capital. Record hypothetical selections and later price marks, even when readiness fails, without claiming investability or fills.",
++  "model": "Unchanged v2 payoff_summary and training-only kNN200 geometry, 8 delayed features, fixed repaired 2021-2023 training observations including censored cases. No historical evaluation, refit, parameter search or tuning from this pilot.",
++  "universe": "Original deterministic 240-symbol sample, intersect current public exchangeInfo TRADING and spot permission. Original stable/fiat exclusions plus RLUSD and explicit legacy leveraged-family helper. No replacements, no new coins selected after seeing results. This corrects a known category error prospectively only; original training and evidence remain unchanged. JUP and SYRUP are not excluded by a generic suffix, but are not added to the original sample.",
++  "start_utc": "2026-09-14T00:00:00+00:00",
++  "last_entry_utc": "2026-11-30T00:00:00+00:00",
++  "last_due_utc": "2026-12-07T00:00:00+00:00",
++  "entry_window_minutes": 60,
++  "feature_contract": "Monday 00 UTC anchor; exactly 90 consecutive positive complete daily bars ending Saturday. Use extract_features with the same full-day delay. Actual source retrieval known_at must precede committed decision. Live acquisition finishes within entry window; otherwise record MISSED, never backdate or use a Monday open after observing later prices.",
++  "selection": "Require at least 10 eligible samples; rank strictly positive fixed payoff scores, symbol tie-break, at most five with 20% initial research weight each. Unused allocation is zero-yield USDT reference cash. Preserve both qualified model candidates and final selections. No purchase instruction.",
++  "entry_mark": "Commit decision to a hash-linked local append-only ledger and fsync it BEFORE requesting any entry book. Then record read-only public depth ask VWAP for 1000 USDT gross simulated notional per candidate. No actual fills. Quote age is bounded by request round trip and request time only; REST book has no per-level timestamp. Fail on slow requests, insufficient visible depth or invalid prices. Also record BTC and equal-weight contemporaneous eligible basket as separate reference marks at the same run, not synchronized fills.",
++  "outcome": "Due at the next Monday 00 UTC, allowing up to 60 minutes for actual retrieval. Fetch exit depth and use bid VWAP for the recorded quantity. Never choose a price retroactively. If entry or due observation is missed, suspended, unpriced, or outside the window, censor the affected outcome. Keep its weight and reason. No symbol migration is assumed without a separately recorded official identity event. An unresolved component makes the portfolio return null; never silently renormalize survivors.",
++  "costs": {
++    "status": "ASSUMED_NOT_ACCOUNT_CALIBRATED",
++    "entry_fee_bps": 10,
++    "exit_fee_bps": 10,
++    "extra_slippage_bps_per_side": [
++      0,
++      10,
++      40,
++      90
++    ],
++    "book_cost": "Spread and displayed depth impact measured only at observation; additional slippage scenarios do not relabel them as actual realized costs.",
++    "account_commission": null,
++    "fx_conversion_tax_transfer_costs": null
++  },
++  "events": "Save complete current public exchangeInfo response, diffs against prior observation and attempts to retrieve official delisting/update announcements with observed known_at. A successful page is not evidence of complete event coverage. Public event-feed completeness remains UNKNOWN unless separately audited. Missing notices block executable readiness, not read-only observation. Historical BTT/CVP/VIDT remain censored until an exact-horizon exit is verified.",
++  "economic_reference": "User venue and attainable benchmark requested but unknown at registration. Existing dated BRL/Selic scenario is conditional. USDT cash is not BRL risk-free cash; report FX separately. Research marks remain USDT until a verified user conversion/benchmark route is available.",
++  "evidence": "Twelve entry slots test operation and generate genuinely new observations. This is not a profitability proof horizon. Publish a normal-design power sensitivity grid, explicitly conditional on unmeasured paired weekly dispersion and dependence. No formal model-specific Core attestation or G1-G7 pass may be inferred from unit tests or synthetic checks.",
++  "stopping_rule": "Do not change the model when it abstains or loses. No significance testing during the 12 slots; report descriptive marks and missingness. After last due slot stop the recurring pilot and report feasibility, candidates, costs and unresolved gates. Operational bug fixes must be versioned before later decisions; preserve all prior ledger records.",
++  "scheduler": "Codex task heartbeat at weekly Monday 00 UTC (Sunday 21 America/Sao_Paulo), through final due slot. Local app and PC must be running; missed slots remain missed. Quiet unless meaningful change, completion, failure or required user action.",
++  "capital_authorized": false,
++  "order_submission": false,
++  "production_changes": false,
++  "formal_promotion": false,
++  "registration_amendments": [
++    {
++      "known_at": "2026-09-07T19:50:06.367330+00:00",
++      "before_first_prospective_decision": true,
++      "change": "Only the verified known RLUSD category error is excluded additionally. Do not classify symbols such as U from their ticker alone. No addition/removal based on returns."
++    }
++  ],
++  "mark_fee_accounting": "For a hypothetical 1000 USDT budget, consume displayed asks; deduct assumed 10bps buy fee from acquired base quantity. Additional slippage stresses are quantity haircuts. Exit consumes displayed bids and deducts assumed 10bps sell fee and the extra slippage haircut from quote proceeds. Daily v2 neighbor-score cost algebra remains frozen; book-mark accounting is a distinct declared observation proxy. Lot-size rounding, account restrictions and tax are not certified.",
++  "synthetic_control_plan": "Seed 20260907: fixed 1600-observation two-cluster kNN200 positive/negative geometry control over 80 weeks, one censored-neighbor guard, 100 stipulated zero-log-drift week-common-shock replicates (two candidate queries each). Report qualification count without interpreting it as general null calibration. Conditional power grid: extra 5/10/20 annual percentage points over dated 11.3177% scenario, weekly paired log SD 1/3/5%, dependence multipliers 1/4, two-sided alpha 5%, power 80%. No observed market return feeds this grid."
++}
+diff --git a/docs/evidence/altcoin_forward_20260907/replay_validation.json b/docs/evidence/altcoin_forward_20260907/replay_validation.json
+new file mode 100644
+index 0000000..93067af
+--- /dev/null
++++ b/docs/evidence/altcoin_forward_20260907/replay_validation.json
+@@ -0,0 +1,7 @@
++{
++  "offline_snapshot_semantically_identical": true,
++  "ignored_field": "recorded_after_acquisition (new execution clock only)",
++  "public_requests_made": 0,
++  "eligible_count": 13,
++  "selected": []
++}
+\ No newline at end of file
+diff --git a/docs/evidence/altcoin_forward_20260907/search_log.json b/docs/evidence/altcoin_forward_20260907/search_log.json
+new file mode 100644
+index 0000000..9bf561a
+--- /dev/null
++++ b/docs/evidence/altcoin_forward_20260907/search_log.json
+@@ -0,0 +1,12 @@
++{
++  "prior_history_reference": "docs/evidence/altcoin_payoff_20260907/search_log.json",
++  "new_id": "discovery-altcoin-forward-20260907-v3",
++  "changes": "Read-only observer and declared current investability/stablecoin exclusion; no new historical model-performance trial. Model v2 unchanged.",
++  "new_historical_performance_trials": 0,
++  "new_real_market_prospective_decisions": 0,
++  "synthetic_controls": "Stipulated 100 null replicates, two candidate queries each; zero qualifications; known-pattern positive/negative and censored-case controls pass. No general null calibration claim.",
++  "preflight_protocol_commit": "c80f309",
++  "initial_code_freeze_commit": "cbe5229",
++  "catalog_diff_commit": "9ca6648",
++  "status": "OBSERVER_SCHEDULED; NO_EXECUTABLE_PROMOTION"
++}
+diff --git a/docs/evidence/altcoin_forward_20260907/sources.json b/docs/evidence/altcoin_forward_20260907/sources.json
+new file mode 100644
+index 0000000..aaba8db
+--- /dev/null
++++ b/docs/evidence/altcoin_forward_20260907/sources.json
+@@ -0,0 +1,18 @@
++{
++  "checked_on": "2026-09-07",
++  "market_data_only_documentation": "https://developers.binance.com/en/docs/products/spot/faqs/market_data_only",
++  "commission_documentation": "https://developers.binance.com/en/docs/products/spot/faqs/commission_faq",
++  "codex_local_automation_documentation": "https://learn.chatgpt.com/docs/automations?surface=app",
++  "market_data_base": "https://data-api.binance.vision/api/v3/",
++  "announcement_catalogs": [
++    {
++      "catalog_id": 161,
++      "url": "https://www.binance.com/bapi/composite/v1/public/cms/article/list/query?type=1&pageNo=1&pageSize=50&catalogId=161"
++    },
++    {
++      "catalog_id": 49,
++      "url": "https://www.binance.com/bapi/composite/v1/public/cms/article/list/query?type=1&pageNo=1&pageSize=50&catalogId=49"
++    }
++  ],
++  "provenance": "All 275 raw responses and actual requested_at/known_at/source hashes are in forward-data/raw in the reproduction package; additional initial connectivity probes are preserved separately."
++}
+diff --git a/docs/evidence/altcoin_forward_20260907/status.json b/docs/evidence/altcoin_forward_20260907/status.json
+new file mode 100644
+index 0000000..22f8cd2
+--- /dev/null
++++ b/docs/evidence/altcoin_forward_20260907/status.json
+@@ -0,0 +1,14 @@
++{
++  "updated_at": "2026-09-07T19:56:10.527211+00:00",
++  "mode": "tick",
++  "ledger_rows": 2,
++  "ledger_head": "ff05b3c7b86abd9747c107a605fc0acae57dc96c7444175663dab0cb815491f3",
++  "prospective_decisions": 0,
++  "matured_observations": 0,
++  "first_entry_utc": "2026-09-14T00:00:00+00:00",
++  "last_due_utc": "2026-12-07T00:00:00+00:00",
++  "pilot_finished": false,
++  "execution_ready": false,
++  "formal_promotion": false,
++  "capital": false
++}
+\ No newline at end of file
+diff --git a/docs/evidence/altcoin_forward_20260907/validation.json b/docs/evidence/altcoin_forward_20260907/validation.json
+new file mode 100644
+index 0000000..4bcce77
+--- /dev/null
++++ b/docs/evidence/altcoin_forward_20260907/validation.json
+@@ -0,0 +1,19 @@
++{
++  "tests_passed": 44,
++  "tests_command": "pytest -q tests/test_altcoin_forward.py tests/test_altcoin_payoff.py tests/test_altcoin_analogs.py tests/test_freeze_h6_definition.py",
++  "ruff": "PASS",
++  "pyright": "PASS with local .venv Python",
++  "offline_replay": {
++    "offline_snapshot_semantically_identical": true,
++    "ignored_field": "recorded_after_acquisition (new execution clock only)",
++    "public_requests_made": 0,
++    "eligible_count": 13,
++    "selected": []
++  },
++  "raw_response_hashes_verified": 275,
++  "ledger_chain": "PASS",
++  "original_feature_score_parity": "13 of 13 identical features and scores; differences exactly zero",
++  "before_first_slot_tick": "PASS, zero prospective decisions, no quotes acquired and no added ledger rows",
++  "frozen_state_costs_trials_unchanged": "git diff --exit-code 9e492f0 HEAD for five frozen files passed",
++  "formal_attestation": false
++}
+diff --git a/scripts/check_altcoin_forward_design.py b/scripts/check_altcoin_forward_design.py
+new file mode 100644
+index 0000000..41d4c39
+--- /dev/null
++++ b/scripts/check_altcoin_forward_design.py
+@@ -0,0 +1,118 @@
++"""Synthetic scorer controls and conditional planning; no historical price trials."""
++
++from __future__ import annotations
++
++import argparse
++import json
++import math
++from pathlib import Path
++
++import numpy as np
++
++from scripts.prepare_altcoin_payoff import payoff_summary
++from scripts.research_altcoin_analogs import AnalogModel
++
++
++def controls():
++    rng = np.random.default_rng(20260907)
++    weeks = np.repeat(np.arange(80), 20)
++    cluster = np.tile(np.repeat([-1, 1], 10), 80)
++    x = rng.normal(0, 0.2, (1600, 8)) + cluster[:, None] * 3
++    returns = np.where(cluster > 0, 0.03, -0.02) + rng.normal(0, 0.003, 1600)
++    model = AnalogModel().fit(x, np.zeros(1600))
++    _, _, indices = model.predict(np.array([[-3.0] * 8, [3.0] * 8]))
++    train = [
++        {"date": f"synthetic-{week}", "gross_return": float(r)}
++        for week, r in zip(weeks, returns, strict=True)
++    ]
++    pattern = [payoff_summary([train[int(i)] for i in row]) for row in indices]
++    assert not pattern[0]["qualified"] and pattern[1]["qualified"]
++    null_qualified = 0
++    null_scores = []
++    # Week-common zero-log-drift variation plus asset noise. Keep geometry fixed.
++    # This checks one stipulated null; it does not calibrate all financial nulls.
++    for _ in range(100):
++        shock = rng.normal(0, 0.03, 80)[weeks] + rng.normal(0, 0.02, 1600)
++        null_train = [
++            {"date": f"synthetic-{week}", "gross_return": math.expm1(float(r))}
++            for week, r in zip(weeks, shock, strict=True)
++        ]
++        for row in indices:
++            summary = payoff_summary([null_train[int(i)] for i in row])
++            null_qualified += int(summary["qualified"])
++            null_scores.append(summary["score_log"])
++    poisoned = [dict(train[int(i)]) for i in indices[1]]
++    poisoned[0]["gross_return"] = None
++    assert not payoff_summary(poisoned)["qualified"]
++    return {
++        "seed": 20260907,
++        "full_geometry_positive_and_negative_controls": pattern,
++        "censored_neighbor_guard": "PASS",
++        "stipulated_null_queries": len(null_scores),
++        "stipulated_null_qualified": null_qualified,
++        "null_score_range": [min(null_scores), max(null_scores)],
++        "meaning": "Synthetic implementation checks only; neither calibrated probability nor a Core harness/power attestation or real-market edge evidence.",
++    }
++
++
++def power_grid():
++    result = []
++    # A conditional benchmark scenario already consumed in the funding screen.
++    benchmark = 0.113177
++    for extra_annual_pp in (0.05, 0.10, 0.20):
++        delta_weekly_log = math.log((1 + benchmark + extra_annual_pp) / (1 + benchmark)) / 52
++        for paired_weekly_sd in (0.01, 0.03, 0.05):
++            independent_weeks = math.ceil(
++                ((1.96 + 0.842) * paired_weekly_sd / delta_weekly_log) ** 2
++            )
++            for dependence_factor in (1, 4):
++                calendar_weeks = independent_weeks * dependence_factor
++                result.append(
++                    {
++                        "extra_annual_percentage_points": extra_annual_pp * 100,
++                        "paired_weekly_log_sd_assumed": paired_weekly_sd,
++                        "dependence_multiplier_assumed": dependence_factor,
++                        "target_weekly_log_difference": delta_weekly_log,
++                        "calendar_weeks_normal_design": calendar_weeks,
++                        "calendar_years": calendar_weeks / 52,
++                    }
++                )
++    return {
++        "scenario_benchmark_annual_net": benchmark,
++        "benchmark_status": "DATED_CONDITIONAL_SCENARIO_NOT_USER_CONFIRMED",
++        "alpha": 0.05,
++        "power": 0.8,
++        "formula": "ceil(((1.96+0.842)*assumed paired weekly SD / target weekly log difference)^2) * assumed dependence multiplier",
++        "limitations": "Normal-design sensitivity, not empirical attestation. Actual variance, dependence, tails, attainable benchmark, costs, risk premium, selection and full search adjustment are unresolved. Means and SDs share weekly log-return units. Twelve calendar weeks are not twelve independent observations automatically.",
++        "grid": result,
++        "twelve_week_pilot_purpose": "Operational feasibility and new descriptive observations; never declare profitability solely because 12 weeks passed.",
++    }
++
++
++def main():
++    parser = argparse.ArgumentParser(description=__doc__)
++    parser.add_argument("--output", type=Path, required=True)
++    args = parser.parse_args()
++    output = {
++        "synthetic_controls": controls(),
++        "power_planning": power_grid(),
++        "formal_attestation": False,
++        "historical_performance_trials": 0,
++    }
++    args.output.parent.mkdir(parents=True, exist_ok=True)
++    args.output.write_text(json.dumps(output, indent=2, allow_nan=False), encoding="utf-8")
++    print(
++        json.dumps(
++            {
++                "controls": output["synthetic_controls"],
++                "minimum_conditional_years": min(
++                    x["calendar_years"] for x in output["power_planning"]["grid"]
++                ),
++            },
++            indent=2,
++        )
++    )
++
++
++if __name__ == "__main__":
++    main()
+diff --git a/scripts/observe_altcoin_forward.py b/scripts/observe_altcoin_forward.py
+new file mode 100644
+index 0000000..ae716e8
+--- /dev/null
++++ b/scripts/observe_altcoin_forward.py
+@@ -0,0 +1,696 @@
++"""Bounded, read-only forward observation. No exchange account or order API.
++
++Decision is durable before entry quotes. Marks are hypothetical, not fills.
++Missing observations stay censored. The original strategy and evidence are intact.
++"""
++
++from __future__ import annotations
++
++import argparse
++import gzip
++import hashlib
++import json
++import math
++import os
++import time
++import uuid
++from concurrent.futures import ThreadPoolExecutor
++from contextlib import contextmanager
++from datetime import UTC, datetime, timedelta
++from decimal import Decimal
++from pathlib import Path
++
++import httpx
++import numpy as np
++
++from scripts.collect_altcoin_analogs import time_ms
++from scripts.prepare_altcoin_payoff import is_known_leveraged_symbol, payoff_summary
++from scripts.research_altcoin_analogs import AnalogModel, extract_features
++
++ROOT = Path(__file__).resolve().parents[1]
++EVIDENCE = ROOT / "docs/evidence/altcoin_forward_20260907"
++API = "https://data-api.binance.vision/api/v3/"
++CMS = "https://www.binance.com/bapi/composite/v1/public/cms/article/list/query"
++DAY_MS = 86_400_000
++SLIPS = (0, 10, 40, 90)
++
++
++def now() -> datetime:
++    return datetime.now(UTC)
++
++
++def encoded(value) -> bytes:
++    return json.dumps(value, sort_keys=True, separators=(",", ":"), allow_nan=False).encode()
++
++
++def sha(value: bytes) -> str:
++    return hashlib.sha256(value).hexdigest()
++
++
++def write_json(path: Path, value) -> None:
++    path.parent.mkdir(parents=True, exist_ok=True)
++    path.write_text(json.dumps(value, indent=2, allow_nan=False), encoding="utf-8")
++
++
++@contextmanager
++def exclusive(directory: Path):
++    directory.mkdir(parents=True, exist_ok=True)
++    lock = directory / "observer.lock"
++    fd = os.open(lock, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
++    try:
++        os.write(fd, encoded({"pid": os.getpid(), "known_at": now().isoformat()}))
++        os.fsync(fd)
++        yield
++    finally:
++        os.close(fd)
++        lock.unlink()
++
++
++class Ledger:
++    def __init__(self, path: Path):
++        self.path = path
++        self.rows: list[dict] = []
++        previous = "0" * 64
++        if path.exists():
++            for line in path.read_text(encoding="utf-8").splitlines():
++                row = json.loads(line)
++                digest = row.pop("sha256")
++                if row["previous_sha256"] != previous or sha(encoded(row)) != digest:
++                    raise ValueError("ledger chain damaged; do not repair by dropping observations")
++                if row["sequence"] != len(self.rows):
++                    raise ValueError("ledger sequence mismatch")
++                row["sha256"] = digest
++                self.rows.append(row)
++                previous = digest
++
++    def append(self, kind: str, slot: str, payload: dict) -> dict:
++        if any(r["kind"] == kind and r["slot"] == slot for r in self.rows):
++            raise ValueError("duplicate observation event")
++        row = {
++            "sequence": len(self.rows),
++            "kind": kind,
++            "slot": slot,
++            "known_at": now().isoformat(),
++            "previous_sha256": self.rows[-1]["sha256"] if self.rows else "0" * 64,
++            "payload": payload,
++        }
++        row["sha256"] = sha(encoded(row))
++        self.path.parent.mkdir(parents=True, exist_ok=True)
++        with self.path.open("ab") as stream:
++            stream.write(encoded(row) + b"\n")
++            stream.flush()
++            os.fsync(stream.fileno())
++        self.rows.append(row)
++        return row
++
++    def find(self, kind: str, slot: str):
++        return next((r for r in self.rows if r["kind"] == kind and r["slot"] == slot), None)
++
++
++class PublicSource:
++    def __init__(self, directory: Path):
++        self.directory = directory / "raw"
++        self.directory.mkdir(parents=True, exist_ok=True)
++        self.client = httpx.Client(timeout=20, follow_redirects=False)
++
++    def get(self, endpoint: str, params: dict | None = None) -> tuple[dict | list, dict]:
++        if endpoint not in {"time", "exchangeInfo", "klines", "depth", "cms"}:
++            raise ValueError("endpoint outside public read-only allowlist")
++        started = now()
++        timer = time.perf_counter()
++        response = self.client.get(CMS if endpoint == "cms" else API + endpoint, params=params)
++        received = now()
++        key = uuid.uuid4().hex
++        meta = {
++            "url": str(response.request.url),
++            "requested_at": started.isoformat(),
++            "known_at": received.isoformat(),
++            "elapsed_ms": (time.perf_counter() - timer) * 1000,
++            "status": response.status_code,
++            "sha256": sha(response.content),
++            "raw_file": f"raw/{key}.bin.gz",
++        }
++        (self.directory / f"{key}.bin.gz").write_bytes(gzip.compress(response.content, mtime=0))
++        write_json(self.directory / f"{key}.json", meta)
++        response.raise_for_status()
++        return response.json(), meta
++
++    def close(self):
++        self.client.close()
++
++
++def anchor_for(instant: datetime) -> datetime:
++    day = instant.astimezone(UTC).replace(hour=0, minute=0, second=0, microsecond=0)
++    return day - timedelta(days=day.weekday())
++
++
++def in_window(instant: datetime, anchor: datetime) -> bool:
++    return anchor <= instant < anchor + timedelta(hours=1)
++
++
++def eligibility(symbol: dict, sampled: set[str], excluded: set[str]) -> bool:
++    return (
++        symbol["symbol"] in sampled
++        and symbol["quoteAsset"] == "USDT"
++        and symbol["baseAsset"] not in excluded
++        and not is_known_leveraged_symbol(symbol["symbol"])
++        and symbol["status"] == "TRADING"
++        and symbol.get("isSpotTradingAllowed") is True
++    )
++
++
++def normalize_window(rows: list, anchor: datetime) -> np.ndarray:
++    """Fail if missing, duplicate, revised into invalid OHLC, or future bars leak in."""
++    start = int((anchor - timedelta(days=91)).timestamp() * 1000)
++    expected = list(range(start, start + 90 * DAY_MS, DAY_MS))
++    if [time_ms(r[0]) for r in rows] != expected:
++        raise ValueError("incomplete, duplicate or out-of-window candle history")
++    window = []
++    for row, open_ms in zip(rows, expected, strict=True):
++        if time_ms(row[6]) != open_ms + DAY_MS - 1:
++            raise ValueError("invalid candle close time")
++        o, h, low, c, v, q = [float(row[i]) for i in (1, 2, 3, 4, 5, 7)]
++        if not all(math.isfinite(x) and x > 0 for x in (o, h, low, c, v, q)):
++            raise ValueError("nonpositive/incomplete candle")
++        if h < max(o, c) or low > min(o, c) or low > h:
++            raise ValueError("inconsistent OHLC")
++        window.append([o, h, low, c, v, q])
++    return np.vstack((window, np.full((2, 6), np.nan)))
++
++
++def levels(book: dict) -> tuple[list, list]:
++    sides = []
++    for key, descending in (("bids", True), ("asks", False)):
++        rows = [(Decimal(p), Decimal(q)) for p, q in book[key]]
++        if not rows or any(not x.is_finite() or x <= 0 for row in rows for x in row):
++            raise ValueError("invalid/empty order book")
++        prices = [p for p, _ in rows]
++        if prices != sorted(set(prices), reverse=descending):
++            raise ValueError("book levels not strictly sorted")
++        sides.append(rows)
++    bids, asks = sides
++    if bids[0][0] >= asks[0][0]:
++        raise ValueError("crossed/locked order book")
++    return bids, asks
++
++
++def buy_mark(book: dict, notional: float) -> dict:
++    bids, asks = levels(book)
++    remaining = Decimal(str(notional))
++    if not remaining.is_finite() or remaining <= 0:
++        raise ValueError("invalid notional")
++    quantity = Decimal(0)
++    for price, available in asks:
++        spent = min(remaining, price * available)
++        quantity += spent / price
++        remaining -= spent
++        if remaining == 0:
++            break
++    if remaining > Decimal("0.00000001"):
++        raise ValueError("insufficient displayed ask depth")
++    vwap = Decimal(str(notional)) / quantity
++    mid = (bids[0][0] + asks[0][0]) / 2
++    return {
++        "notional_usdt": notional,
++        "gross_quantity": str(quantity),
++        "ask_vwap": str(vwap),
++        "spread_bps": float((asks[0][0] - bids[0][0]) / mid * 10000),
++        "buy_impact_from_best_ask_bps": float((vwap / asks[0][0] - 1) * 10000),
++        "buy_cost_from_mid_bps": float((vwap / mid - 1) * 10000),
++        "quantity_after_assumed_fee_and_extra_slippage": {
++            str(slip): str(quantity * Decimal("0.999") * (1 - Decimal(slip) / 10000))
++            for slip in SLIPS
++        },
++    }
++
++
++def sell_mark(book: dict, quantity: str) -> Decimal:
++    bids, _ = levels(book)
++    remaining = Decimal(quantity)
++    if not remaining.is_finite() or remaining <= 0:
++        raise ValueError("invalid quantity")
++    value = Decimal(0)
++    for price, available in bids:
++        size = min(remaining, available)
++        value += price * size
++        remaining -= size
++        if remaining == 0:
++            break
++    if remaining > Decimal("0.000000000000000001"):
++        raise ValueError("insufficient displayed bid depth")
++    return value
++
++
++def aggregate(positions: list[dict], cash_weight: float) -> dict:
++    weight = cash_weight + sum(p["weight"] for p in positions)
++    if not math.isclose(weight, 1, abs_tol=1e-9):
++        raise ValueError("portfolio weights do not sum to one")
++    missing = [p["symbol"] for p in positions if p.get("factors") is None]
++    return {
++        "status": "CENSORED" if missing else "HYPOTHETICAL_MARKS_COMPLETE",
++        "missing_symbols": missing,
++        "net_return_by_extra_slippage_bps": {
++            str(slip): None
++            if missing
++            else cash_weight + sum(p["weight"] * p["factors"][str(slip)] for p in positions) - 1
++            for slip in SLIPS
++        },
++        "realized_pnl": None,
++    }
++
++
++def event_catalog(source: PublicSource, catalog_id: int) -> dict:
++    def page(number):
++        data, meta = source.get(
++            "cms", {"type": 1, "pageNo": number, "pageSize": 50, "catalogId": catalog_id}
++        )
++        if not isinstance(data, dict) or data.get("code") != "000000":
++            raise ValueError("announcement service unavailable")
++        catalog = next(c for c in data["data"]["catalogs"] if c["catalogId"] == catalog_id)
++        return catalog, meta
++
++    first, metadata = page(1)
++    total = first["total"]
++    pages = [(first, metadata)]
++    with ThreadPoolExecutor(max_workers=4) as pool:
++        pages += list(pool.map(page, range(2, math.ceil(total / 50) + 1)))
++    articles = {a["code"]: a for p, _ in pages for a in p["articles"]}
++    return {
++        "catalog_id": catalog_id,
++        "reported_total": total,
++        "unique_articles": len(articles),
++        "pagination_count_matches": len(articles) == total
++        and all(p["total"] == total for p, _ in pages),
++        "sources": [meta for _, meta in pages],
++        "articles": sorted(articles.values(), key=lambda a: a["releaseDate"], reverse=True),
++        "complete_investability_event_feed": False,
++        "limitation": "Current provider headline catalog only. Deletions, edits, other categories, full event interpretation and historical known_at are not certified.",
++    }
++
++
++def snapshot(source: PublicSource, anchor: datetime, base_data: Path, training: Path) -> dict:
++    clock, clock_meta = source.get("time")
++    if not isinstance(clock, dict):
++        raise ValueError("invalid public clock response")
++    midpoint = (
++        datetime.fromisoformat(clock_meta["requested_at"]).timestamp()
++        + datetime.fromisoformat(clock_meta["known_at"]).timestamp()
++    ) / 2
++    offset = clock["serverTime"] / 1000 - midpoint
++    if abs(offset) > 10 or clock_meta["elapsed_ms"] > 5000:
++        raise ValueError("clock offset or public API latency exceeds pilot tolerance")
++    exchange, exchange_meta = source.get("exchangeInfo")
++    if not isinstance(exchange, dict):
++        raise ValueError("invalid exchange catalog response")
++    manifest = json.loads((base_data / "acquisition.json").read_text())
++    original_protocol = json.loads(
++        (ROOT / "docs/evidence/altcoin_analogs_20260907/protocol.json").read_text()
++    )
++    excluded = set(original_protocol["data"]["exclude_bases"]) | {"RLUSD"}
++    sampled = set(manifest["selected"])
++    current = sorted(s["symbol"] for s in exchange["symbols"] if eligibility(s, sampled, excluded))
++    statuses = {s["symbol"]: s["status"] for s in exchange["symbols"] if s["symbol"] in sampled}
++    start = int((anchor - timedelta(days=91)).timestamp() * 1000)
++    end = int((anchor - timedelta(days=1)).timestamp() * 1000) - 1
++
++    def history(symbol):
++        try:
++            rows, metadata = source.get(
++                "klines",
++                {
++                    "symbol": symbol,
++                    "interval": "1d",
++                    "startTime": start,
++                    "endTime": end,
++                    "limit": 100,
++                },
++            )
++            if not isinstance(rows, list):
++                raise ValueError("candle response is not a list")
++            try:
++                bars = normalize_window(rows, anchor)
++            except ValueError as error:
++                return symbol, None, metadata, str(error), False
++            return symbol, bars, metadata, None, False
++        except (httpx.HTTPError, ValueError, KeyError) as error:
++            return symbol, None, None, str(error), True
++
++    with ThreadPoolExecutor(max_workers=6) as pool:
++        histories = list(pool.map(history, ["BTCUSDT"] + current))
++    btc = histories[0][1]
++    if btc is None:
++        raise ValueError("BTC reference history unavailable")
++    failures = [symbol for symbol, _, _, _, network_error in histories if network_error]
++    if failures:
++        raise ValueError(f"acquisition failures must not shrink selection universe: {failures}")
++    candidates, rejected = [], []
++    for symbol, bars, metadata, error, _ in histories[1:]:
++        features = None if bars is None else extract_features(bars, btc, 91)
++        if features is None:
++            rejected.append(
++                {
++                    "symbol": symbol,
++                    "reason": error or "below_fixed_liquidity_threshold",
++                    "source": metadata,
++                }
++            )
++        else:
++            vector, volume = features
++            candidates.append(
++                {
++                    "symbol": symbol,
++                    "features": vector.tolist(),
++                    "median_quote_volume_30d": volume,
++                    "source": metadata,
++                }
++            )
++    train = [
++        s for s in json.loads(gzip.decompress(training.read_bytes())) if s["period"] == "train"
++    ]
++    if any(s["date"] >= "2024-01-01" for s in train):
++        raise ValueError("future training observations")
++    model = AnalogModel().fit(np.array([s["features"] for s in train]), np.zeros(len(train)))
++    ranked = []
++    if candidates:
++        _, _, indices = model.predict(np.array([s["features"] for s in candidates]))
++        for candidate, neighbors in zip(candidates, indices, strict=True):
++            ranked.append({**candidate, **payoff_summary([train[int(i)] for i in neighbors])})
++    ranked.sort(key=lambda s: (s["score_log"] is None, -(s["score_log"] or 0), s["symbol"]))
++    qualified = [s["symbol"] for s in ranked if s["qualified"]]
++    selected = qualified[:5] if len(ranked) >= 10 else []
++    notices = []
++    for catalog_id in (161, 49):
++        try:
++            notices.append(event_catalog(source, catalog_id))
++        except (httpx.HTTPError, ValueError, KeyError, StopIteration) as error:
++            notices.append(
++                {
++                    "catalog_id": catalog_id,
++                    "error": str(error),
++                    "complete_investability_event_feed": False,
++                }
++            )
++    return {
++        "anchor_utc": anchor.isoformat(),
++        "recorded_after_acquisition": now().isoformat(),
++        "clock": {"offset_seconds": offset, "source": clock_meta},
++        "exchange_source": exchange_meta,
++        "sample_status": statuses,
++        "sample_size": len(sampled),
++        "currently_trading_after_exclusions": len(current),
++        "rejected": rejected,
++        "btc_history_source": histories[0][2],
++        "ranked": ranked,
++        "qualified_symbols": qualified,
++        "selected": selected,
++        "cash_weight": 1 - 0.2 * len(selected),
++        "minimum_universe_met": len(ranked) >= 10,
++        "announcements": notices,
++        "execution_ready": False,
++        "promotion_ready": False,
++    }
++
++
++def quoted_book(source: PublicSource, symbol: str) -> tuple[dict, dict]:
++    book, metadata = source.get("depth", {"symbol": symbol, "limit": 1000})
++    if metadata["elapsed_ms"] > 5000:
++        raise ValueError("quote request exceeded five seconds")
++    if not isinstance(book, dict):
++        raise ValueError("invalid quote response")
++    levels(book)
++    return book, metadata
++
++
++def catalog_changes(previous: dict, current: dict) -> list[dict]:
++    return [
++        {
++            "symbol": symbol,
++            "previous": previous.get(symbol, "MISSING"),
++            "current": current.get(symbol, "MISSING"),
++        }
++        for symbol in sorted(set(previous) | set(current))
++        if previous.get(symbol, "MISSING") != current.get(symbol, "MISSING")
++    ]
++
++
++def attach_catalog_changes(snap: dict, ledger: Ledger):
++    prior = next((r for r in reversed(ledger.rows) if r["payload"].get("snapshot")), None)
++    if prior:
++        path = Path(prior["payload"]["snapshot"])
++        if sha(path.read_bytes()) != prior["payload"]["snapshot_sha256"]:
++            raise ValueError("prior snapshot hash mismatch")
++        previous = json.loads(path.read_text())
++        snap["sample_status_changes"] = catalog_changes(
++            previous["sample_status"], snap["sample_status"]
++        )
++        snap["compared_with_ledger_sha256"] = prior["sha256"]
++    else:
++        snap["sample_status_changes"] = None
++        snap["compared_with_ledger_sha256"] = None
++
++
++def portfolio_specs(snap: dict) -> dict:
++    selected = [{"symbol": s, "weight": 0.2} for s in snap["selected"]]
++    eligible = [s["symbol"] for s in snap["ranked"]] if snap["minimum_universe_met"] else []
++    basket = [{"symbol": s, "weight": 1 / len(eligible)} for s in eligible]
++    return {
++        "payoff": {"positions": selected, "cash_weight": snap["cash_weight"]},
++        "equal_basket": {"positions": basket, "cash_weight": 0 if basket else 1},
++        "btc_same_weeks": {
++            "positions": [{"symbol": "BTCUSDT", "weight": 1}] if eligible else [],
++            "cash_weight": 0 if eligible else 1,
++        },
++    }
++
++
++def entry_marks(source: PublicSource, portfolios: dict, anchor: datetime | None) -> dict:
++    books, errors = {}, {}
++    for symbol in sorted({p["symbol"] for spec in portfolios.values() for p in spec["positions"]}):
++        try:
++            book, meta = quoted_book(source, symbol)
++            if anchor and not in_window(datetime.fromisoformat(meta["known_at"]), anchor):
++                raise ValueError("entry quote outside registered window")
++            books[symbol] = (book, meta)
++        except (httpx.HTTPError, ValueError, KeyError) as error:
++            errors[symbol] = str(error)
++    result = {}
++    for name, spec in portfolios.items():
++        positions = []
++        for p in spec["positions"]:
++            symbol = p["symbol"]
++            try:
++                if symbol not in books:
++                    raise ValueError(errors[symbol])
++                book, meta = books[symbol]
++                positions.append({**p, "entry": buy_mark(book, 5000 * p["weight"]), "source": meta})
++            except ValueError as error:
++                positions.append({**p, "entry": None, "reason": str(error)})
++        result[name] = {"positions": positions, "cash_weight": spec["cash_weight"]}
++    return result
++
++
++def settle(source: PublicSource, entry: dict, due: datetime, missed: bool) -> dict:
++    books, errors = {}, {}
++    if not missed:
++        for symbol in sorted(
++            {p["symbol"] for spec in entry.values() for p in spec["positions"] if p["entry"]}
++        ):
++            try:
++                book, meta = quoted_book(source, symbol)
++                if not in_window(datetime.fromisoformat(meta["known_at"]), due):
++                    raise ValueError("exit quote outside registered window")
++                books[symbol] = (book, meta)
++            except (httpx.HTTPError, ValueError, KeyError) as error:
++                errors[symbol] = str(error)
++    result = {}
++    for name, spec in entry.items():
++        positions = []
++        for p in spec["positions"]:
++            position = {"symbol": p["symbol"], "weight": p["weight"], "factors": None}
++            try:
++                if not p["entry"] or missed:
++                    raise ValueError("entry missing or due window missed")
++                if p["symbol"] not in books:
++                    raise ValueError(errors[p["symbol"]])
++                book, meta = books[p["symbol"]]
++                factors = {}
++                for slip, qty in p["entry"][
++                    "quantity_after_assumed_fee_and_extra_slippage"
++                ].items():
++                    value = sell_mark(book, qty) * Decimal("0.999") * (1 - Decimal(slip) / 10000)
++                    factors[slip] = float(value / Decimal(str(p["entry"]["notional_usdt"])))
++                position.update({"factors": factors, "source": meta})
++            except ValueError as error:
++                position["reason"] = str(error)
++            positions.append(position)
++        result[name] = {
++            "positions": positions,
++            "cash_weight": spec["cash_weight"],
++            **aggregate(positions, spec["cash_weight"]),
++        }
++    return result
++
++
++def verify_freeze(base_data: Path, training: Path):
++    freeze = json.loads((EVIDENCE / "freeze.json").read_text())
++    paths = {
++        **{str(ROOT / k): v for k, v in freeze["repository_files"].items()},
++        str(base_data / "acquisition.json"): freeze["acquisition_sha256"],
++        str(training): freeze["training_sha256"],
++    }
++    for path, digest in paths.items():
++        if sha(Path(path).read_bytes()) != digest:
++            raise ValueError(f"frozen input/code changed: {path}")
++    return sha((EVIDENCE / "freeze.json").read_bytes())
++
++
++def run(args):
++    freeze_hash = verify_freeze(args.base_data_dir, args.training)
++    protocol = json.loads((EVIDENCE / "protocol.json").read_text())
++    with exclusive(args.data_dir):
++        ledger = Ledger(args.data_dir / "ledger.jsonl")
++        source = PublicSource(args.data_dir)
++        try:
++            if args.mode == "preflight":
++                snap = snapshot(source, anchor_for(now()), args.base_data_dir, args.training)
++                attach_catalog_changes(snap, ledger)
++                run_id = "preflight-" + uuid.uuid4().hex
++                path = args.data_dir / "snapshots" / f"{run_id}.json"
++                write_json(path, snap)
++                # Durable diagnostic observation before its diagnostic book requests.
++                ledger.append(
++                    "PREFLIGHT",
++                    run_id,
++                    {
++                        "prospective": False,
++                        "snapshot": str(path),
++                        "snapshot_sha256": sha(path.read_bytes()),
++                        "freeze_sha256": freeze_hash,
++                    },
++                )
++                specs = portfolio_specs(snap)
++                specs["cost_probe_1000"] = {
++                    "positions": [{"symbol": s["symbol"], "weight": 0.2} for s in snap["ranked"]],
++                    "cash_weight": None,
++                }
++                marks = entry_marks(source, specs, None)
++                write_json(args.data_dir / "preflight_marks.json", marks)
++                ledger.append("PREFLIGHT_QUOTES", run_id, {"marks": marks, "prospective": False})
++            else:
++                first = datetime.fromisoformat(protocol["start_utc"])
++                last = datetime.fromisoformat(protocol["last_entry_utc"])
++                slot_time = first
++                while slot_time <= min(now(), last):
++                    slot = slot_time.isoformat()
++                    entry = ledger.find("ENTRY_MARKS", slot)
++                    decision = ledger.find("DECISION", slot)
++                    if entry is None and decision is None:
++                        if not in_window(now(), slot_time):
++                            ledger.append(
++                                "DECISION", slot, {"status": "MISSED_ENTRY", "prospective": False}
++                            )
++                        else:
++                            try:
++                                snap = snapshot(
++                                    source, slot_time, args.base_data_dir, args.training
++                                )
++                                attach_catalog_changes(snap, ledger)
++                                if not in_window(now(), slot_time):
++                                    raise ValueError("acquisition finished after entry window")
++                                path = args.data_dir / "snapshots" / f"{slot_time.date()}.json"
++                                write_json(path, snap)
++                                specs = portfolio_specs(snap)
++                                ledger.append(
++                                    "DECISION",
++                                    slot,
++                                    {
++                                        "status": "RECORDED_BEFORE_QUOTES",
++                                        "prospective": True,
++                                        "snapshot": str(path),
++                                        "snapshot_sha256": sha(path.read_bytes()),
++                                        "freeze_sha256": freeze_hash,
++                                        "portfolios": specs,
++                                    },
++                                )
++                                marks = entry_marks(source, specs, slot_time)
++                                entry = ledger.append("ENTRY_MARKS", slot, marks)
++                            except (httpx.HTTPError, ValueError, KeyError) as error:
++                                if not ledger.find("DECISION", slot):
++                                    ledger.append(
++                                        "DECISION",
++                                        slot,
++                                        {
++                                            "status": "ACQUISITION_FAILED",
++                                            "error": str(error),
++                                            "prospective": False,
++                                        },
++                                    )
++                                raise
++                    elif (
++                        entry is None
++                        and decision
++                        and decision["payload"]["status"] == "RECORDED_BEFORE_QUOTES"
++                    ):
++                        # Crash after durable decision cannot create a fresh delayed pretend entry.
++                        if not ledger.find("ENTRY_INTERRUPTED", slot):
++                            ledger.append(
++                                "ENTRY_INTERRUPTED",
++                                slot,
++                                {
++                                    "status": "CENSORED_NO_ENTRY_MARKS",
++                                    "decision_sha256": decision["sha256"],
++                                },
++                            )
++                    due = slot_time + timedelta(days=7)
++                    if entry and now() >= due and not ledger.find("OUTCOME", slot):
++                        results = settle(source, entry["payload"], due, not in_window(now(), due))
++                        ledger.append(
++                            "OUTCOME",
++                            slot,
++                            {
++                                "due_utc": due.isoformat(),
++                                "portfolios": results,
++                                "actual_holding_time": "quote timestamps recorded; anchor windows can differ by up to 60 minutes",
++                                "realized_pnl": None,
++                            },
++                        )
++                    slot_time += timedelta(days=7)
++            summary = {
++                "updated_at": now().isoformat(),
++                "mode": args.mode,
++                "ledger_rows": len(ledger.rows),
++                "ledger_head": ledger.rows[-1]["sha256"] if ledger.rows else None,
++                "prospective_decisions": sum(
++                    r["kind"] == "DECISION" and r["payload"].get("prospective") is True
++                    for r in ledger.rows
++                ),
++                "matured_observations": sum(r["kind"] == "OUTCOME" for r in ledger.rows),
++                "first_entry_utc": protocol["start_utc"],
++                "last_due_utc": protocol["last_due_utc"],
++                "pilot_finished": now() >= datetime.fromisoformat(protocol["last_due_utc"])
++                and all(
++                    ledger.find("OUTCOME", r["slot"])
++                    for r in ledger.rows
++                    if r["kind"] == "ENTRY_MARKS"
++                ),
++                "execution_ready": False,
++                "formal_promotion": False,
++                "capital": False,
++            }
++            write_json(args.data_dir / "status.json", summary)
++            print(json.dumps(summary, indent=2))
++        finally:
++            source.close()
++
++
++def main():
++    parser = argparse.ArgumentParser(description=__doc__)
++    parser.add_argument("--mode", choices=("preflight", "tick"), required=True)
++    parser.add_argument("--base-data-dir", type=Path, required=True)
++    parser.add_argument("--training", type=Path, required=True)
++    parser.add_argument("--data-dir", type=Path, required=True)
++    run(parser.parse_args())
++
++
++if __name__ == "__main__":
++    main()
+diff --git a/tests/test_altcoin_forward.py b/tests/test_altcoin_forward.py
+new file mode 100644
+index 0000000..955ae16
+--- /dev/null
++++ b/tests/test_altcoin_forward.py
+@@ -0,0 +1,246 @@
++"""Causal, accounting and interruption controls for the isolated observer."""
++
++import argparse
++import copy
++from datetime import UTC, datetime, timedelta
++from decimal import Decimal
++
++import numpy as np
++import pytest
++
++from scripts import observe_altcoin_forward as f
++
++BOOK = {"bids": [["99", "100"], ["98", "100"]], "asks": [["101", "5"], ["102", "100"]]}
++
++
++def test_depth_cost_and_size_are_accounted():
++    mark = f.buy_mark(BOOK, 1010)
++    assert Decimal(mark["gross_quantity"]) == Decimal(5) + Decimal(505) / 102
++    assert float(mark["ask_vwap"]) > 101
++    assert f.sell_mark(BOOK, "110") == 100 * 99 + 10 * 98
++    assert mark["spread_bps"] == 200
++    assert Decimal(mark["quantity_after_assumed_fee_and_extra_slippage"]["10"]) < Decimal(
++        mark["gross_quantity"]
++    )
++
++
++def test_insufficient_depth_is_not_a_fill():
++    with pytest.raises(ValueError, match="insufficient"):
++        f.buy_mark(BOOK, 999999)
++    with pytest.raises(ValueError, match="insufficient"):
++        f.sell_mark(BOOK, "999999")
++
++
++@pytest.mark.parametrize("change", ["crossed", "duplicate", "negative"])
++def test_invalid_books_fail_closed(change):
++    book = copy.deepcopy(BOOK)
++    if change == "crossed":
++        book["bids"][0][0] = "105"
++    elif change == "duplicate":
++        book["asks"][1][0] = "101"
++    else:
++        book["asks"][0][1] = "-1"
++    with pytest.raises(ValueError):
++        f.buy_mark(book, 1000)
++
++
++def test_missing_position_keeps_its_weight():
++    holdings = [{"symbol": "AUSDT", "weight": 0.2, "factors": None}]
++    result = f.aggregate(holdings, 0.8)
++    assert result["status"] == "CENSORED"
++    assert all(x is None for x in result["net_return_by_extra_slippage_bps"].values())
++    assert result["realized_pnl"] is None
++    with pytest.raises(ValueError, match="weights"):
++        f.aggregate(holdings, 1)
++    assert f.aggregate([], 1)["net_return_by_extra_slippage_bps"]["0"] == 0
++
++
++def test_ledger_durability_duplicate_and_tamper_detection(tmp_path):
++    path = tmp_path / "ledger.jsonl"
++    log = f.Ledger(path)
++    log.append("DECISION", "slot", {"selected": ["A"]})
++    log.append("ENTRY_MARKS", "slot", {"price": 1})
++    assert len(f.Ledger(path).rows) == 2
++    with pytest.raises(ValueError, match="duplicate"):
++        log.append("DECISION", "slot", {})
++    path.write_text(path.read_text().replace('"price":1', '"price":2'))
++    with pytest.raises(ValueError, match="chain"):
++        f.Ledger(path)
++
++
++def test_single_writer(tmp_path):
++    with f.exclusive(tmp_path):
++        with pytest.raises(FileExistsError):
++            with f.exclusive(tmp_path):
++                pytest.fail("second writer entered")
++    assert not (tmp_path / "observer.lock").exists()
++
++
++def rows_for(anchor):
++    start = int((anchor - timedelta(days=91)).timestamp() * 1000)
++    return [
++        [
++            start + i * f.DAY_MS,
++            "100",
++            "102",
++            "99",
++            "101",
++            "100000",
++            start + (i + 1) * f.DAY_MS - 1,
++            "10000000",
++        ]
++        for i in range(90)
++    ]
++
++
++def test_exact_90_day_delay_and_future_exclusion():
++    anchor = datetime(2026, 9, 14, tzinfo=UTC)
++    rows = rows_for(anchor)
++    bars = f.normalize_window(rows, anchor)
++    assert bars.shape == (92, 6)
++    result = f.extract_features(bars, bars, 91)
++    assert result is not None
++    first = result[0]
++    bars[90:] = 999999
++    result = f.extract_features(bars, bars, 91)
++    assert result is not None
++    assert np.array_equal(first, result[0])
++    with pytest.raises(ValueError):
++        f.normalize_window(rows[1:], anchor)
++    with pytest.raises(ValueError):
++        f.normalize_window(rows + [rows[-1]], anchor)
++    rows[0][0] += f.DAY_MS
++    with pytest.raises(ValueError):
++        f.normalize_window(rows, anchor)
++
++
++def test_window_cannot_backdate_and_timezone_is_utc():
++    anchor = datetime(2026, 9, 14, tzinfo=UTC)
++    assert not f.in_window(anchor - timedelta(microseconds=1), anchor)
++    assert f.in_window(anchor + timedelta(minutes=59), anchor)
++    assert not f.in_window(anchor + timedelta(hours=1), anchor)
++    assert f.anchor_for(anchor + timedelta(days=3)) == anchor
++
++
++def test_live_investability_and_real_token_names():
++    symbol = {
++        "symbol": "JUPUSDT",
++        "baseAsset": "JUP",
++        "quoteAsset": "USDT",
++        "status": "TRADING",
++        "isSpotTradingAllowed": True,
++    }
++    assert f.eligibility(symbol, {"JUPUSDT"}, {"RLUSD"})
++    symbol["status"] = "BREAK"
++    assert not f.eligibility(symbol, {"JUPUSDT"}, set())
++    symbol.update(symbol="RLUSDUSDT", baseAsset="RLUSD", status="TRADING")
++    assert not f.eligibility(symbol, {"RLUSDUSDT"}, {"RLUSD"})
++
++
++def test_public_source_rejects_account_and_order_routes(tmp_path):
++    source = f.PublicSource(tmp_path)
++    try:
++        for endpoint in ("order", "account/commission", "https://example.com"):
++            with pytest.raises(ValueError, match="allowlist"):
++                source.get(endpoint)
++    finally:
++        source.close()
++
++
++def setup_tick(tmp_path, monkeypatch, instant):
++    args = argparse.Namespace(
++        mode="tick",
++        base_data_dir=tmp_path,
++        training=tmp_path / "unused",
++        data_dir=tmp_path / "data",
++    )
++    clock = [instant]
++    monkeypatch.setattr(f, "now", lambda: clock[0])
++    monkeypatch.setattr(f, "verify_freeze", lambda *_: "frozen")
++    snap = {
++        "ranked": [{"symbol": "AUSDT"}],
++        "selected": ["AUSDT"],
++        "cash_weight": 0.8,
++        "minimum_universe_met": True,
++        "sample_status": {"AUSDT": "TRADING"},
++    }
++    monkeypatch.setattr(f, "snapshot", lambda *_: snap)
++
++    class Source:
++        def __init__(self, *_):
++            pass
++
++        def get(self, endpoint, params):
++            # Every quote must follow an already committed prospective decision.
++            log = f.Ledger(args.data_dir / "ledger.jsonl")
++            assert any(
++                r["kind"] == "DECISION" and r["payload"].get("prospective") for r in log.rows
++            )
++            return BOOK, {"known_at": clock[0].isoformat(), "elapsed_ms": 1}
++
++        def close(self):
++            pass
++
++    monkeypatch.setattr(f, "PublicSource", Source)
++    return args, clock
++
++
++def test_causal_round_trip_idempotency_and_cost_stress(tmp_path, monkeypatch):
++    args, clock = setup_tick(tmp_path, monkeypatch, datetime(2026, 9, 14, 0, 10, tzinfo=UTC))
++    f.run(args)
++    f.run(args)
++    log = f.Ledger(args.data_dir / "ledger.jsonl")
++    assert [r["kind"] for r in log.rows] == ["DECISION", "ENTRY_MARKS"]
++    clock[0] += timedelta(days=7)
++    f.run(args)
++    log = f.Ledger(args.data_dir / "ledger.jsonl")
++    outcome = next(r for r in log.rows if r["kind"] == "OUTCOME")
++    returns = outcome["payload"]["portfolios"]["payoff"]["net_return_by_extra_slippage_bps"]
++    assert returns["90"] < returns["10"] < returns["0"] < 0
++    assert outcome["payload"]["realized_pnl"] is None
++    assert sum(r["kind"] == "DECISION" for r in log.rows) == 2
++
++
++def test_missed_exit_censored_and_missed_entry_not_backfilled(tmp_path, monkeypatch):
++    args, clock = setup_tick(tmp_path, monkeypatch, datetime(2026, 9, 14, 0, 10, tzinfo=UTC))
++    f.run(args)
++    clock[0] += timedelta(days=7, hours=2)
++    f.run(args)
++    log = f.Ledger(args.data_dir / "ledger.jsonl")
++    outcome = next(r for r in log.rows if r["kind"] == "OUTCOME")
++    assert outcome["payload"]["portfolios"]["payoff"]["status"] == "CENSORED"
++    assert log.rows[-1]["payload"]["status"] == "MISSED_ENTRY"
++
++
++def test_crash_after_decision_cannot_restart_as_new_entry(tmp_path, monkeypatch):
++    args, _ = setup_tick(tmp_path, monkeypatch, datetime(2026, 9, 14, 0, 10, tzinfo=UTC))
++    log = f.Ledger(args.data_dir / "ledger.jsonl")
++    slot = datetime(2026, 9, 14, tzinfo=UTC).isoformat()
++    log.append("DECISION", slot, {"status": "RECORDED_BEFORE_QUOTES", "prospective": True})
++    f.run(args)
++    assert [r["kind"] for r in f.Ledger(log.path).rows] == ["DECISION", "ENTRY_INTERRUPTED"]
++
++
++def test_acquisition_failure_is_recorded_not_silently_dropped(tmp_path, monkeypatch):
++    args, _ = setup_tick(tmp_path, monkeypatch, datetime(2026, 9, 14, 0, 10, tzinfo=UTC))
++
++    def failed(*_):
++        raise ValueError("acquisition failure")
++
++    monkeypatch.setattr(f, "snapshot", failed)
++    with pytest.raises(ValueError):
++        f.run(args)
++    row = f.Ledger(args.data_dir / "ledger.jsonl").rows[0]
++    assert row["payload"]["status"] == "ACQUISITION_FAILED"
++    assert row["payload"]["prospective"] is False
++
++
++def test_catalog_diff_preserves_suspension_and_removal():
++    changes = f.catalog_changes(
++        {"A": "TRADING", "B": "TRADING", "C": "BREAK"}, {"A": "BREAK", "C": "BREAK", "D": "TRADING"}
++    )
++    assert changes == [
++        {"symbol": "A", "previous": "TRADING", "current": "BREAK"},
++        {"symbol": "B", "previous": "TRADING", "current": "MISSING"},
++        {"symbol": "D", "previous": "MISSING", "current": "TRADING"},
++    ]

@@ -1,0 +1,215 @@
+"""Operational entrypoints implemented with predictor_ops public APIs."""
+
+from __future__ import annotations
+
+import argparse
+import os
+import sys
+import threading
+from collections.abc import Sequence
+from pathlib import Path
+
+from platformdirs import user_state_path
+from predictor_ops import JobConfig, RunResult, RunStatus, run_job
+
+from GarimpoInvestimentos.core.paths import FEATURE_STORE_DB
+
+
+def _state_root() -> Path:
+    configured = os.getenv("PREDICTOR_OPS_STATE_DIR")
+    return (
+        Path(configured).expanduser().resolve()
+        if configured
+        else user_state_path("cripto-predictor")
+    )
+
+
+#: Ponto de partida para `exit_statuses`, espelhando o default do predictor_ops
+#: (`JobConfig.exit_statuses`). Existe como constante para deixar explícito que
+#: qualquer mapeamento por job COMPLETA este dict em vez de substituí-lo.
+_EXIT_STATUSES_PADRAO = {0: RunStatus.SUCCEEDED, 2: RunStatus.PARTIAL}
+
+
+def job_config(name: str, *, timeout_seconds: float | None = None) -> JobConfig:
+    commands = {
+        "phase1": [sys.executable, "-m", "GarimpoInvestimentos.phase1"],
+        "backtest": [sys.executable, "-m", "GarimpoInvestimentos.analyzers.backtest"],
+        "watchdog": [sys.executable, "-m", "GarimpoInvestimentos.observation_watchdog"],
+        "v3-daily": [sys.executable, "-m", "GarimpoInvestimentos.v3.daily"],
+        "observation-daily": [sys.executable, "-m", "GarimpoInvestimentos.observation_quality"],
+        # Renovacao condicional do atestado de poder. A validade e de 7 dias e a
+        # renovacao era 100% manual — vencido, o Experiment Registry recusa
+        # QUALQUER trial nova. Agendar este job diariamente renova sozinho perto
+        # do vencimento, sem gravar todo dia. Nao afrouxa nada: o atestado so e
+        # gravado se o controle positivo passar, como sempre.
+        "attest-renew": [
+            sys.executable,
+            "-m",
+            "scripts.attest_harness",
+            "--if-expiring-within",
+            "2",
+        ],
+        # Backup semanal do Feature Store. Sem argumento: --output-root cai na
+        # raiz padrao (DATA_DIR/backups) e o nome carrega carimbo de tempo, entao
+        # a tarefa agendada nunca colide com o backup da semana anterior.
+        "backup": [
+            sys.executable,
+            "-m",
+            "scripts.feature_store_backup",
+            "create",
+            "--output-root",
+        ],
+        # Publica o painel diario e o estado da H6 (h6_status.json LOCAL,
+        # historico append-only). Nao commita nada sozinho — quem decide o que
+        # entra no git continua sendo humano (H6_status.json e' commitado a
+        # mao, por design). O que este job destrava e' a DETECCAO: sem ele
+        # rodando toda noite, o historico local nunca existe, e o watchdog
+        # (_check_h6_bridge) nao tem com o que comparar o que esta publicado.
+        "quality-snapshot": [sys.executable, "-m", "GarimpoInvestimentos.quality_snapshot"],
+        # Descoberta de candidatos (rede, CoinGecko: momentum + trending) -> Feature
+        # Store. Sem isto, o UNICO lugar que amplia o universo era
+        # run_sinal_diario.bat, que nunca foi agendado no Task Scheduler (so
+        # GarimpoFase1/22:00 esta agendada, e phase1.py so analisa o universo que
+        # a store JA TEM — nao descobre nada, ver RUNBOOK_COLETA_H6_WINDOWS.md
+        # B.1). Sem descoberta rodando sozinha, o universo fica travado nos
+        # ativos originais para sempre e o `n` da H6 cresce numa fracao do que
+        # poderia (RUNBOOK: ~2/dia com 2 ativos vs ~24/dia que a H5 teve com o
+        # universo cheio). So ingestao (rede) — nunca chama LLM (main.py --ingest
+        # retorna antes da analise); ver run_garimpo_fase1.bat, que encadeia este
+        # job ANTES de `phase1`, para o mesmo ciclo noturno ja analisar o que
+        # acabou de ser descoberto.
+        "discover": [
+            sys.executable,
+            "-m",
+            "GarimpoInvestimentos.main",
+            "--ingest",
+            "--discover",
+            "15",
+            "--mode",
+            "fallback",
+        ],
+        "observation-live": [
+            sys.executable,
+            "-m",
+            "GarimpoInvestimentos.observation_collect",
+            "--live",
+        ],
+        "microstructure-live": [
+            sys.executable,
+            "-m",
+            "GarimpoInvestimentos.trading.binance_spot_collector",
+            "--symbol",
+            "BTCUSDT",
+            "ETHUSDT",
+        ],
+        # H8 (docs/HYPOTHESES.md, checklist item 4): motor propõe->valida->avalia
+        # ja existia (analyzers/hypothesis_loop.py) e era so testado isolado —
+        # nada rodava em producao. Disponibilizado aqui, NAO agendado
+        # automaticamente por este commit: registrar no Task Scheduler continua
+        # decisao do dono, mesma regra de todo outro job (linha ~62 acima).
+        # Chama o LLM real por padrao (sem --dry-run) — cada execucao GASTA cota
+        # de API e ESCREVE no traco append-only real (hypothesis_proposals.json,
+        # hypothesis_evaluations.json). So o dono decide a cadencia.
+        "h8-hypothesis-loop": [
+            sys.executable,
+            "-m",
+            "GarimpoInvestimentos.analyzers.hypothesis_loop_runner",
+            "--symbol",
+            "BTCUSDT",
+        ],
+    }
+    if name not in commands:
+        raise ValueError(f"unknown job: {name}")
+    artifact = FEATURE_STORE_DB if name in {"phase1", "backtest", "discover"} else None
+    return JobConfig(
+        id=f"cripto-{name}",
+        command=commands[name],
+        timeout_seconds=timeout_seconds or (252_000 if name == "phase1" else 1_800),
+        heartbeat_interval_seconds=5,
+        expected_artifact=artifact,
+        provenance={"domain": "crypto", "scientific_change": False},
+        scientific_state=(
+            "COLLECTION_ONLY"
+            if name
+            in {
+                "v3-daily",
+                "observation-daily",
+                "observation-live",
+                "microstructure-live",
+                "h8-hypothesis-loop",
+            }
+            else None
+        ),
+        # phase1.py sai com 1 (GarimpoInvestimentos/phase1.py:348) sempre que ALGUM
+        # juiz falha isoladamente (ex.: um provider sem créditos), mesmo com os
+        # demais gravando previsões reais normalmente. Sem este mapeamento,
+        # predictor_ops.run_job trata qualquer exit code fora de exit_statuses como
+        # FAILED (runner.py:242, `exit_statuses.get(exit_code, FAILED)`) — o job
+        # nunca mais reportaria SUCCEEDED enquanto aquele provider ficar
+        # indisponível, mesmo saudável pros outros. phase1_watchdog.py já aceita
+        # SUCCEEDED/PARTIAL como não-violação; PARTIAL é a leitura correta de
+        # "1 gravado, N falha(s) isolada(s)".
+        #
+        # SEMPRE partir de _EXIT_STATUSES_PADRAO, nunca de {}. O campo tem
+        # default_factory no predictor_ops; passar um dict explícito SUBSTITUI esse
+        # default em vez de completá-lo. Entre 2026-08-19 (#32) e 2026-08-21, este
+        # ponto passava `{}` para todo job que não fosse phase1 e `{1: PARTIAL}`
+        # para o phase1 — o que apagou o `0: SUCCEEDED` do default e fez TODO job
+        # reportar FAILED ao sair com 0, phase1 incluído. Efeito medido: o
+        # watchdog.py exige `status == "SUCCEEDED"` do backtest diário e o
+        # observation_watchdog exige SUCCEEDED/PARTIAL — nenhum dos dois podia ser
+        # satisfeito, então o alarme tocava toda noite e um problema real ficaria
+        # indistinguível do ruído.
+        # O backup e a excecao ao padrao: nao existe "backup parcial". O script
+        # sai com 2 em qualquer falha, e 2 -> PARTIAL no default faria um backup
+        # que NAO aconteceu ser lido como saudavel pelos watchdogs (que aceitam
+        # SUCCEEDED/PARTIAL). Aqui so o 0 vale.
+        exit_statuses=(
+            {**_EXIT_STATUSES_PADRAO, 1: RunStatus.PARTIAL}
+            if name == "phase1"
+            else {0: RunStatus.SUCCEEDED}
+            if name == "backup"
+            else dict(_EXIT_STATUSES_PADRAO)
+        ),
+        runtime={"backend": "local", "root": _state_root(), "lock_stale_after_seconds": 86_400},
+    )
+
+
+def execute_job(
+    name: str, *, timeout_seconds: float | None = None, shutdown: threading.Event | None = None
+) -> RunResult:
+    return run_job(job_config(name, timeout_seconds=timeout_seconds), shutdown=shutdown)
+
+
+def main(argv: Sequence[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(description="Run cripto-predictor jobs via predictor_ops")
+    parser.add_argument(
+        "job",
+        choices=(
+            "phase1",
+            "backtest",
+            "watchdog",
+            "v3-daily",
+            "observation-daily",
+            "observation-live",
+            "microstructure-live",
+            "attest-renew",
+            "backup",
+            "quality-snapshot",
+            "discover",
+        ),
+    )
+    parser.add_argument("--timeout", type=float)
+    args = parser.parse_args(argv)
+    result = execute_job(args.job, timeout_seconds=args.timeout)
+    # Preserve PARTIAL for outer schedulers; returning zero used to erase the
+    # distinction at the process boundary.
+    if result.run_status is RunStatus.SUCCEEDED:
+        return 0
+    if result.run_status is RunStatus.PARTIAL:
+        return 1
+    return result.exit_code or 3
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

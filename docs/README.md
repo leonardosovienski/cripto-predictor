@@ -5,6 +5,7 @@
 - [Estado da pesquisa](CURRENT_RESEARCH_STATE_20260908.md): conclusão econômica, correções e pendências atuais.
 - [Continuidade de 08/09](SESSION_HANDOFF_20260908.md): Git, validação, observadores, dados e recuperação.
 - [Prompt de continuidade](NEXT_CHAT_PROMPT.md): contexto atualizado para retomar o trabalho.
+- [Migração para Windows](MIGRACAO_WINDOWS.md): código versionado no Git e dados em pacote externo.
 - [Auditoria da consolidação](evidence/git_consolidation_20260908/README.md): integração das branches e preservação.
 
 ## Evidências e reprodução
