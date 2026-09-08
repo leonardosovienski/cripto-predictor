@@ -1,0 +1,21 @@
+{
+  "id": "profit-comparison-20260908-v1",
+  "authorization": "User requested: testa o projeto ver se melhorou a projecao de lucro",
+  "source_head": "d619be9",
+  "classification": "Verification of already inspected adaptive historical results, not a new strategy trial or independent validation",
+  "strategy_variants_added": 0,
+  "parameter_searches": 0,
+  "scope": "Recompute all twelve frozen AR1/AR2 carry cost cases and all six frozen BR1/BR2 cases. Compare exact saved output bytes. Independently audit BR1/BR2 Decimal accounting and replay twelve saved execution plans. Run existing relevant software tests.",
+  "comparison": "Compare separate 5000 USDT simulations from 2024-01-01 UTC to the cutoff opening price at 2026-09-07 UTC. Report every replayed stream; existing AR1 BTC is the observed best prior carry result, not a prospectively selected winner. Show calendar contributions for 2024, 2025 and partial 2026; do not restart or resize holdings at year boundaries. Cost cases remain exactly as frozen.",
+  "limitations": [
+    "Different holding times and changing exposure; identical initial account size does not imply identical risk.",
+    "Prior AR drawdown samples daily trade close; BR drawdown samples hourly mark close. Do not rank these as the same measurement.",
+    "Dated futures use settlement fees and no funding; stress mechanisms are applied where economically relevant, not identical realized costs.",
+    "Original one-year 50-percent-allocation carry checkpoint is not directly comparable to the 980-day 25-percent-initial-allocation studies.",
+    "No sum of independently funded streams is a result for one 5000 USDT portfolio.",
+    "Previously reported AR3 losses are retained as context and not rerun in this carry comparison.",
+    "No annualized or monthly historical average is promoted to a future profit forecast. Validated future expected profit remains unknown."
+  ],
+  "network": "Disabled during historical and saved-quote replay. No additional prices or prospective performance are consumed.",
+  "preservation": "Only add comparison tooling and evidence in the isolated research worktree. Preserve frozen files, previous deliveries, original repository, weekly observer and ledger. No orders or account access."
+}
