@@ -1,0 +1,23 @@
+{
+  "id": "btc-immediate-public-audit-20260908-v1",
+  "baseline_commit": "c36eeed",
+  "registration": "Freeze this specification and implementation before collecting the new market data. One diagnostic run; retain failures, no parameter search or alternative start after a failed first quote.",
+  "historical_start": "2026-06-16T00:00:00+00:00",
+  "historical_end": "2026-09-08T00:00:00+00:00",
+  "capital_usdt": 5000,
+  "spot_budget_usdt": 1250,
+  "model_step_btc": "0.001",
+  "costs": {
+    "base": {"spot_bps":10,"future_bps":5,"extra_slippage_bps":5,"annual_overhead_usdt":0,"positive_funding_multiplier":1,"entry_mismatch_fraction":0},
+    "adverse": {"spot_bps":20,"future_bps":10,"extra_slippage_bps":20,"annual_overhead_usdt":25,"positive_funding_multiplier":1,"entry_mismatch_fraction":0},
+    "stress": {"spot_bps":20,"future_bps":10,"extra_slippage_bps":20,"annual_overhead_usdt":25,"positive_funding_multiplier":0.5,"entry_mismatch_fraction":0.005}
+  },
+  "historical_method": "One fixed BTC spot-long/perpetual-short holding over 84 completed UTC days, 25% initial spot budget and fixed .001 BTC simulation grid. Entry and exit use daily candle opens, with modeled adverse slippage and fees; historical books, filters and fills are unknown. Funding strictly after the complete entry hour and before cutoff; signed, half positive only in stress. Verify all hourly marks and 8-hour funding buckets. Separate margin cash, 1.5% reserve and +30% mark jump, with negative current-hour funding first. Daily curve uses hypothetical liquidation costs. Show decomposition, losses, daily drawdown and twelve consecutive weekly increments. This recent period mostly overlaps previously consulted history and remains adaptive descriptive evidence.",
+  "live_samples": 11,
+  "live_spacing_seconds": 30,
+  "live_method": "One five-minute observation of paired Binance spot/perpetual depth, with simultaneous OKX BTC-USDT spot depth as a second-source price consistency diagnostic. Persist sample decisions before requests. First sample is the only opening reference; final scheduled sample is the only closing reference. No retries or selecting a later favorable quote. Follow 5000/1250 fixed allocation and current Binance lot constraints with all three costs. Quotes are not fills, short observation not a yield forecast. Midpoint skew <=500ms and book request duration <=2s; exchange event age <=5s when available. Per-request wall/monotonic disagreement >100ms is rejected. Cross-source discrepancy >50bps is flagged, not converted to an arbitrage profit. OKX prices cannot authenticate Binance funding or internal matching.",
+  "network": "Public GET-only Binance clocks, exchangeInfo (spot narrowed to BTCUSDT), depth, klines, fundingRate, markPriceKlines and OKX public time/market books. 128 requests and 80 MB total maximum, 20 MB response cap, 10-second timeout, no retries, redirects, authentication or order endpoints. Persist raw responses and errors with URL/times/hash. Historical and live components report their own failures.",
+  "audit": "Rebuild historical quantities, funding, fees, PnL and margin with Decimal directly from saved raw responses using a separate stdlib implementation without importing the primary normalizer/accounting engine. Tolerance 0.0000001 USDT. Verify raw hashes, cutoff semantics and freeze. Verify short live quote PnL with direct Decimal book walking. Same assistant remains author; second venue is only second-source price checking, not an external audit.",
+  "unknown": "Actual account fees/commission asset, real fills and liquidation, tax residency/taxes and conversion remain outside public-only authorization. No future 84-day observations or external auditor can be created retroactively. No guarantee or annualized expected profit.",
+  "preservation": "New immediate-audit-data directory and new evidence folder only. Preserve all old results and both prospective observer journals. Do not change schedules or create a task on this request. Work alone, no other agents, paid services, accounts, capital or orders."
+}
