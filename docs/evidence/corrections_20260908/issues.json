@@ -1,0 +1,24 @@
+{
+  "as_of": "2026-09-08",
+  "scope": "Identified failures from the chat review and additional correction audit; not an assertion that every possible defect has been eliminated.",
+  "issues": [
+    {"id":"INPUT-01","finding":"Crossed, unordered or nonfinite books could reach the original diagnostic arithmetic","status":"FIXED","resolution":"v2 full-book validation retained by supported v3; v1 preserved only for historical reproduction"},
+    {"id":"INPUT-02","finding":"NaN and coerced request timestamps could evade v2 freshness checks","status":"FIXED","resolution":"v3 requires exact positive integers, bounded duration and bounded paired midpoint skew"},
+    {"id":"INPUT-03","finding":"Saved sources lacked strict JSON, unique identity and URL/path association checks","status":"FIXED","resolution":"v3 validates duplicate keys, nonfinite values, exact venue endpoint, BTC identities, hashes and confined paths"},
+    {"id":"CLI-01","finding":"Rejected plans could leave a successful process status","status":"FIXED","resolution":"v3 returns exit 1 on rejected rows or malformed input, with rejection evidence when possible"},
+    {"id":"AUDIT-01","finding":"Separate historical accounting reused the production normalizer","status":"FIXED_WITH_DECLARED_LIMIT","resolution":"New stdlib-only parser independently reconstructs all 532 saved sources and 29 normalized groups; same author and same data source remain explicit"},
+    {"id":"WORDS-01","finding":"Independent audit wording overstated independence of authorship","status":"CORRECTED","resolution":"Consolidated current state and delivery explicitly distinguish separate calculation, separate parser and external author"},
+    {"id":"WORDS-02","finding":"Historical improvement and profit interpretation mixed periods, units and evidence strength","status":"CORRECTED","resolution":"Current state uses common capital and period, discloses negative alternatives and zero entries, rejects comparing unlike bootstraps/drawdowns and withdraws future-profit claims"},
+    {"id":"WORDS-03","finding":"Saved BTC residual exposure reduction could be read as newly earned profit","status":"CORRECTED","resolution":"Exposure and cash sizing correction is explicitly not realized profit; all 12 valid plans unchanged"},
+    {"id":"LITERATURE-01","finding":"Research analogues could be mistaken for certified replications or currently reconfirmed Ethena RWA/loan claims","status":"CORRECTED","resolution":"Classified as adaptations and the unconfirmed specific claim withdrawn from decision support; no such revenue entered strategy accounts"},
+    {"id":"OBSERVE-01","finding":"Existing altcoin pilot did not observe the BTC carry hypothesis","status":"IMPLEMENTED_AWAITING_DATA","resolution":"Separate frozen 84-day BTC public shadow observer, with a separate schedule; first entry and actual outcomes are still future events"},
+    {"id":"OBSERVE-02","finding":"A new observer needed causal decisions, crash handling and explicit missing-data semantics","status":"IMPLEMENTED_AND_TESTED","resolution":"Durable chained ledger, OS process lock, atomic status, raw-source verification, no late entry/exit retry, persistent errors, known/missing slots and censored outcomes"},
+    {"id":"OBSERVE-03","finding":"Current public quotes could be mistaken for actual fills or complete margin certification","status":"IMPLEMENTED_WITH_DECLARED_LIMIT","resolution":"Book depth and current lot checks at entry/exit, separate USDT margin, costs and signed funding; labels retain unknown fills, actual liquidation and incomplete hours"},
+    {"id":"PROFIT-01","finding":"Future positive net investor profit is not established","status":"NOT_ESTABLISHED","resolution":"Cannot be manufactured by a code correction; retain validated expected profit as null, gather prospective observations without retuning"},
+    {"id":"ACCOUNT-01","finding":"Actual account fees, tax, conversion, execution and margin rules are unknown under public-only scope","status":"OUTSIDE_CURRENT_AUTHORIZED_DATA","resolution":"Use explicit modeled assumptions and preserve real_profit=null; no authenticated account access or orders"},
+    {"id":"EXTERNAL-01","finding":"No independent external author or second-market source audit has occurred","status":"NOT_PERFORMED","resolution":"Do not claim that an external audit was completed; comply with user instruction to work alone"}
+  ],
+  "checks": {"full_repository_tests_passed":1159,"new_tests_passed":49,"ruff":"PASS","pyright_errors":0},
+  "economic_strategies_retuned": false,
+  "real_orders": 0
+}
