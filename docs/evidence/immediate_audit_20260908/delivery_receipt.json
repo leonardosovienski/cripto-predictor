@@ -1,0 +1,8 @@
+{
+  "files_verified": 128,
+  "tests_passed": 57,
+  "accounting_audit_identical": true,
+  "network_blocked_during_audit": true,
+  "package_sha256": "7d2b4b22f050fcb939f05f2221cb41543607a57706e1e4173ffe5ebbc64f2727",
+  "bytes": 417294
+}

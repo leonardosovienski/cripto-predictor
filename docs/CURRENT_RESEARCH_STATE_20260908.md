@@ -2,6 +2,8 @@
 
 Esta é a referência vigente após a revisão e as correções. Relatórios anteriores permanecem como evidência histórica; suas afirmações devem ser lidas com as retificações abaixo. Não existe projeção validada de lucro futuro nem resultado de execução real.
 
+Atualização após o pedido de auditar agora: `docs/evidence/immediate_audit_20260908/RESULTADOS.md` registra a nova coleta pública. Nos 84 dias encerrados em 08/09, o carry hipotético ficou em +10,56 USDT no cenário base, −6,97 USDT no adverso e −21,65 USDT no estresse. Houve também onze observações de livros ao longo de cinco minutos, com conferência de preços na OKX. As contas passaram na reconstrução separada; o ganho histórico recente não resistiu aos custos adversos. Essa rodada não substituiu nem iniciou o piloto futuro de 84 dias. A suíte completa passou em 1.167 testes.
+
 ## Correções e versões
 
 - `scripts.plan_btc_hedge_v3` é a entrada mantida para diagnóstico com livros salvos. Rejeita livros cruzados, números não finitos, horários inválidos, fontes duplicadas ou inconsistentes e amostras incompletas. Uma rejeição retorna código de saída 1. v1/v2 ficam congelados para reproduzir entregas anteriores; não devem ser usados para aceitar novos dados.
