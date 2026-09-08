@@ -1,0 +1,24 @@
+{
+  "status": "PASS",
+  "basis_and_prior_regression_tests": 37,
+  "new_execution_plan_tests": 5,
+  "total_distinct_targeted_tests": 42,
+  "new_tests": 28,
+  "prior_regression_tests": 14,
+  "ruff": "PASS",
+  "pyright_errors": 0,
+  "independent_audit": {
+    "status": "PASS",
+    "raw_sources_rebuilt": 532,
+    "normalized_series_rebuilt": 29,
+    "decision_records_checked": 23994,
+    "economic_cost_cases_checked": 6,
+    "decimal_comparisons": 165258,
+    "maximum_absolute_difference_usdt": "9.76876712325760E-10",
+    "hourly_margin_and_jump_checks": 73104,
+    "economic_engine_imported": false,
+    "real_profit_certified": false
+  },
+  "partial_v1_files_byte_identical_to_v2": 4,
+  "diagnostic_raw_hashes_verified": 26
+}

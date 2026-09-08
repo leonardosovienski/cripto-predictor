@@ -1,0 +1,12 @@
+{
+  "status": "PASS",
+  "raw_sources_rebuilt": 532,
+  "normalized_series_rebuilt": 29,
+  "decision_records_checked": 23994,
+  "economic_cost_cases_checked": 6,
+  "decimal_comparisons": 165258,
+  "maximum_absolute_difference_usdt": "9.76876712325760E-10",
+  "hourly_margin_and_jump_checks": 73104,
+  "economic_engine_imported": false,
+  "real_profit_certified": false
+}

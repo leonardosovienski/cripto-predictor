@@ -1,0 +1,11 @@
+{
+  "BR1_DATED_BTC/adverse.json.gz": "f06ed39f764da80575bb0094035f6d4a558d63b8207bdc6f689e1de47b0e664e",
+  "BR1_DATED_BTC/base.json.gz": "c0e71e2cc94a51a75cdfb853799d960ce7af0bfd2fe85d37459896b308819e43",
+  "BR1_DATED_BTC/plan.json.gz": "b6cb0f34c5a22c9f96f53d7b7f0cb6c87b0c075ab8b278fff9f87c537a376f62",
+  "BR1_DATED_BTC/stress.json.gz": "665a1c48d7a97c03247422c88032ec321bd0d55a51f27b8bdbbd999b920654d6",
+  "BR2_CONVERGENCE_BTC/adverse.json.gz": "dda24df7b83e80f7ff46db109beb330978f25ea236107ba572501a32334e652a",
+  "BR2_CONVERGENCE_BTC/base.json.gz": "dda24df7b83e80f7ff46db109beb330978f25ea236107ba572501a32334e652a",
+  "BR2_CONVERGENCE_BTC/plan.json.gz": "7b2ee5ad73f5043076dd9d35cbed560b843f2f09a1af73fff01ee4db1e30f217",
+  "BR2_CONVERGENCE_BTC/stress.json.gz": "dda24df7b83e80f7ff46db109beb330978f25ea236107ba572501a32334e652a",
+  "results.json": "b05e9f3fd8db17ec16561aefc9c19ddc94954fcea2316a375e091a775787e3bf"
+}

@@ -1,0 +1,10 @@
+{
+  "files": {
+    "scripts/plan_btc_hedge.py": "8b926086a2e5b509cc2fb5d9a1b2dd766db101e66e7ce05927a4ca7b057c917c",
+    "scripts/reproduce_btc_basis.py": "025f30fc6a0242102d1168c80b3855585407e1b6db7f614a2e15d7c4ec9ca56c",
+    "tests/test_btc_execution_plan.py": "202faf177235cdc43b648f6aa1d22a7da92322e2ba7f24b35b077bf51752859e"
+  },
+  "scope": "Current saved-quote net-quantity planning and offline orchestration only. Historical engines and parameters unchanged.",
+  "saved_quotes_reused": 12,
+  "new_network_requests": 0
+}

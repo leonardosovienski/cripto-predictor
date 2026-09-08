@@ -1,0 +1,13 @@
+{
+  "checked_utc": "2026-09-08T02:23:53.889894+00:00",
+  "original_repository_clean": true,
+  "original_head": "fbf4c714a092668bc1b82942ebdececd396e3ab7",
+  "main_head": "7834a60dcf044ad65a118e323cb79f163ff0bbcc",
+  "automation_unchanged": true,
+  "observer_ledger_sha256": "42e96f95f1765784e12cbf9fed2d77d26cbd0f268bbbaf46bcdf3715ec6141a5",
+  "observer_runtime_verification": {
+    "status": "PASS",
+    "files_checked": 3785
+  },
+  "previous_delivery_unchanged": true
+}

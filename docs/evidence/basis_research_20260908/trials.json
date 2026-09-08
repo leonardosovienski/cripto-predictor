@@ -4,13 +4,17 @@
   "streams": [
     {
       "id": "BR1_DATED_BTC",
-      "status": "EVALUATING",
-      "economic_evaluations": 1
+      "status": "COMPLETED",
+      "economic_evaluations": 1,
+      "unique_rule_specifications_evaluated": 1,
+      "verdict": "POSITIVE_BUT_DESCRIPTIVELY_UNCERTAIN"
     },
     {
       "id": "BR2_CONVERGENCE_BTC",
-      "status": "EVALUATING",
-      "economic_evaluations": 1
+      "status": "COMPLETED",
+      "economic_evaluations": 1,
+      "unique_rule_specifications_evaluated": 1,
+      "verdict": "NO_OPPORTUNITY_UNDER_REGISTERED_RULE"
     }
   ],
   "runs": [
@@ -24,8 +28,11 @@
     {
       "id": "basis-results-v2",
       "kind": "SOFTWARE_CORRECTION_REPLAY",
-      "status": "RUNNING",
-      "started_utc": "2026-09-08T02:06:59.505361+00:00"
+      "status": "COMPLETED",
+      "started_utc": "2026-09-08T02:06:59.505361+00:00",
+      "completed_cost_cases": 6,
+      "completed_utc": "2026-09-08T02:23:53.891096+00:00"
     }
-  ]
+  ],
+  "counter_semantics": "Economic evaluations count unique registered rule specifications. Cost cases and physical software/reproduction reruns are reported separately in runs; no parameter search."
 }
