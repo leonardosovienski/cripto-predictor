@@ -1,0 +1,14 @@
+{
+  "id": "PROFIT-RESEARCH-ENGINEERING-20260908",
+  "base_commit": "522de73de85ada9f3491cd4c7c7d666557381f98",
+  "authorization": "Owner authorized code changes for profit-oriented research in any crypto asset/strategy",
+  "stage": "SOFTWARE_VALIDATION_ONLY",
+  "capital_permission": false,
+  "market_trials_started": 0,
+  "performance_claim": null,
+  "new_empirical_parameter_sweeps": 0,
+  "allowed_this_delivery": ["offline accounting", "synthetic tests", "read-only public yield collector implementation", "reconciliation of already-published rounded costs"],
+  "not_done": ["live yield collection in this session", "AR2 historical turnover replay", "new strategy backtests", "prospective profitability validation", "real execution or money movement"],
+  "preserve": ["frozen scientific families", "carry and altcoin observers", "charters and capital gates", "historical evidence and hashes", "local owner files", "existing schedules"],
+  "next_market_research_requires": ["separate preregistered specification and sources", "finite search budget", "explicit all-in costs and risk", "executable data feasibility", "stopping rules", "reopen dossier for any frozen family"]
+}
