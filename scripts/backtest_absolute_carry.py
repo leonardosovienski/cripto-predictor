@@ -27,7 +27,7 @@ def common_step(a: str, b: str) -> Decimal:
     da, db = Decimal(a), Decimal(b)
     if not da.is_finite() or not db.is_finite() or min(da, db) <= 0:
         raise ValueError("Invalid quantity grid")
-    scale = 10 ** max(-da.as_tuple().exponent, -db.as_tuple().exponent, 0)
+    scale = 10 ** max(-int(da.as_tuple().exponent), -int(db.as_tuple().exponent), 0)
     return Decimal(math.lcm(int(da * scale), int(db * scale))) / Decimal(scale)
 
 
@@ -62,7 +62,7 @@ def get_filters(info: dict, symbol: str) -> dict:
 
 
 def load_dataset(directory: Path, protocol_path: Path):
-    manifest = json.loads((directory / "manifest.json").read_text())
+    manifest = json.loads((directory / "manifest.json").read_text(encoding="utf-8"))
     sha = lambda b: hashlib.sha256(b).hexdigest()
     if sha(protocol_path.read_bytes()) != manifest["protocol_sha256"]:
         raise ValueError("Registered acquisition protocol changed")
@@ -74,7 +74,7 @@ def load_dataset(directory: Path, protocol_path: Path):
         if sha(raw) != source["sha256"] or source["status"] != 200:
             raise ValueError("Raw source changed")
     info = {
-        kind: json.loads((directory / f"{kind}_exchangeInfo.json").read_text())
+        kind: json.loads((directory / f"{kind}_exchangeInfo.json").read_text(encoding="utf-8"))
         for kind in ("spot", "perp")
     }
     assets = {}

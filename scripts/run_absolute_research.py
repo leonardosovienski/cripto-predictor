@@ -24,8 +24,8 @@ def main():
     args = parser.parse_args()
     args.output.mkdir(parents=True, exist_ok=False)
     protocol_path = EVIDENCE / "protocol.json"
-    protocol = json.loads(protocol_path.read_text())
-    registry = json.loads((EVIDENCE / "trials.json").read_text())
+    protocol = json.loads(protocol_path.read_text(encoding="utf-8"))
+    registry = json.loads((EVIDENCE / "trials.json").read_text(encoding="utf-8"))
     if hashlib.sha256(protocol_path.read_bytes()).hexdigest() != registry["protocol_sha256"]:
         raise ValueError("Registered protocol mismatch")
     assets, manifest = load_dataset(args.carry_data, protocol_path)

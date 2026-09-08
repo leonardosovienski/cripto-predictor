@@ -46,7 +46,7 @@ class PublicCache:
         meta_path = self.directory / "raw" / f"{key}.json"
         raw_path = self.directory / "raw" / f"{key}.bin.gz"
         if meta_path.exists():
-            meta = json.loads(meta_path.read_text())
+            meta = json.loads(meta_path.read_text(encoding="utf-8"))
             payload = gzip.decompress(raw_path.read_bytes())
             if meta["sha256"] != sha(payload) or meta["url"] != str(request.url):
                 raise ValueError("Cached source integrity failure")
