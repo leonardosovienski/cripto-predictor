@@ -1,0 +1,13 @@
+Traceback (most recent call last):
+  File "<frozen runpy>", line 203, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\Superleo13\Documents\Codex\2026-09-07\files-pasted-by-the-user-quero\work\cripto-research\scripts\audit_absolute_research.py", line 213, in <module>
+    main()
+    ~~~~^^
+  File "C:\Users\Superleo13\Documents\Codex\2026-09-07\files-pasted-by-the-user-quero\work\cripto-research\scripts\audit_absolute_research.py", line 207, in main
+    result = {"carry": audit_carry(args.carry_data, args.results, protocol), "spot": audit_spot(args.altcoin_data, args.results), "status": "PASS"}
+                                                                                     ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Superleo13\Documents\Codex\2026-09-07\files-pasted-by-the-user-quero\work\cripto-research\scripts\audit_absolute_research.py", line 171, in audit_spot
+    assert not missing, f"Selected source bars unavailable: {list(missing)[:3]}"
+           ^^^^^^^^^^^
+AssertionError: Selected source bars unavailable: [('BNXUSDT', 1742601600000), ('BNXUSDT', 1742428800000), ('BNXUSDT', 1742688000000)]

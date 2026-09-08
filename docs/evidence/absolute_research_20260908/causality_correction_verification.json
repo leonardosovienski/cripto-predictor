@@ -1,0 +1,22 @@
+{
+  "economics_unchanged_byte_for_byte": [
+    "carry/AR1_BTCUSDT_adverse_ledger.json",
+    "carry/AR1_BTCUSDT_base_ledger.json",
+    "carry/AR1_BTCUSDT_compression_ledger.json",
+    "carry/AR1_ETHUSDT_adverse_ledger.json",
+    "carry/AR1_ETHUSDT_base_ledger.json",
+    "carry/AR1_ETHUSDT_compression_ledger.json",
+    "carry/AR2_BTCUSDT_adverse_ledger.json",
+    "carry/AR2_BTCUSDT_base_ledger.json",
+    "carry/AR2_BTCUSDT_compression_ledger.json",
+    "carry/AR2_ETHUSDT_adverse_ledger.json",
+    "carry/AR2_ETHUSDT_base_ledger.json",
+    "carry/AR2_ETHUSDT_compression_ledger.json",
+    "spot/decisions.json",
+    "spot/weekly_results.json",
+    "spot/results.json"
+  ],
+  "carry_decisions_unchanged": true,
+  "source_path_replaced_by_hash": true,
+  "current_filters_no_longer_used_by_simulation": true
+}

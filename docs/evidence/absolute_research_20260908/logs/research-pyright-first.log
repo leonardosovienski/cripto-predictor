@@ -1,0 +1,4 @@
+c:\Users\Superleo13\Documents\Codex\2026-09-07\files-pasted-by-the-user-quero\work\cripto-research\scripts\backtest_absolute_carry.py
+  c:\Users\Superleo13\Documents\Codex\2026-09-07\files-pasted-by-the-user-quero\work\cripto-research\scripts\backtest_absolute_carry.py:30:23 - error: Operator "-" not supported for type "int | Literal['n', 'N', 'F']" when expected type is "int" (reportOperatorIssue)
+  c:\Users\Superleo13\Documents\Codex\2026-09-07\files-pasted-by-the-user-quero\work\cripto-research\scripts\backtest_absolute_carry.py:30:48 - error: Operator "-" not supported for type "int | Literal['n', 'N', 'F']" when expected type is "int" (reportOperatorIssue)
+2 errors, 0 warnings, 0 informations

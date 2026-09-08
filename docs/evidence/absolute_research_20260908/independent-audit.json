@@ -1,0 +1,30 @@
+{
+  "carry": {
+    "raw_responses": 68,
+    "normalized_series_rebuilt_from_raw": 8,
+    "hedge_spells_decimal_checked": 27,
+    "hourly_margin_checks_decimal": 155232,
+    "maximum_cashflow_difference_usdt": "6.142635E-13",
+    "all_twelve_cost_streams_reconciled": true
+  },
+  "spot": {
+    "normalized_histories": 661,
+    "past_eligible_observations_ranked_independently": 13996,
+    "weekly_decisions_checked": 140,
+    "original_raw_hashes_verified": 1133,
+    "selected_feature_and_outcome_raw_bars_traced": 36830,
+    "selected_payoffs_decimal_checked_across_four_costs": 2520,
+    "selected_identity_resolutions": [
+      {
+        "symbol": "BNXUSDT",
+        "entry": "2025-03-17",
+        "successor": "FORMUSDT",
+        "ratio": "1",
+        "source": "https://www.binance.com/en/support/announcement/detail/7d5accdcf8f446f3ba3d79f8747a28e2"
+      }
+    ],
+    "selected_censored_outcomes": 0,
+    "historical_universe_completeness_certified": false
+  },
+  "status": "PASS"
+}

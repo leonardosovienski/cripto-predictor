@@ -1,0 +1,16 @@
+{
+  "targeted_tests": {"passed": 58, "failed": 0, "skipped": 0, "files": ["tests/test_absolute_research.py", "tests/test_altcoin_payoff.py", "tests/test_altcoin_retro.py", "tests/test_altcoin_forward.py"]},
+  "ruff": "PASS",
+  "ruff_format": "PASS",
+  "pyright": {"errors": 0, "warnings": 0},
+  "independent_audit": "PASS; see independent-audit.json",
+  "restored_data_files_checked": 3077,
+  "relocated_offline_result_files_byte_identical": 19,
+  "economic_correction_files_byte_identical_to_first_evaluation": 15,
+  "runtime": "Python 3.13.14, existing locked original environment; 3785 runtime files verified at start, no dependency mutation",
+  "original_repository": "Clean and protected files/observer ledger unchanged; see preservation_check.json",
+  "historical_result": "ADAPTIVE_RESEARCH_ONLY",
+  "real_profit_certified": false,
+  "not_validated": ["Docker", "remote CI", "POSIX execution", "real exchange account", "actual fills", "historical liquidation rules", "investor taxes and conversion"],
+  "notes": "The previous 1045-test result belongs to the earlier review. This new session ran 58 relevant tests; it does not claim a new full-suite 1045/1059 run. Two new data-reading/causality fixes and auditor/documentation corrections are explicitly preserved in run_history.md."
+}

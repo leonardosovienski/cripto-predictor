@@ -2,6 +2,8 @@
 
 Esta pasta pertence ao worktree isolado `codex/cripto-absolute-research-20260908`, iniciado na tag final, commit fbf4c71. O protocolo é registrado antes de qualquer avaliação das cinco novas séries. Todos os períodos são pesquisa adaptativa.
 
+**Leitura atual:** `DECISAO.md` contém o resultado concluído; `REPRODUZIR.md` explica a reprodução; `absolute-results-v3` é a saída final. Carry contínuo positivo nos cenários registrados; carry condicionado falha nos custos adversos; momentum perde 98,91% no cenário base. Não há lucro real certificado. O replay conferiu 3.077 arquivos de dados e reproduziu 19 arquivos de resultado byte a byte.
+
 As instruções atuais do usuário autorizam novos testes históricos e superam os antigos limites de comparação externa e proibição de backtests. Não reabrem H1–H9 nem alteram a família congelada `funding_oi_hmm_v3`. A triagem anterior de carry e seu dossier permanecem como registros históricos; esta extensão está autorizada explicitamente pelo novo pedido e documentada em outro registro.
 
 O runtime Python 3.13 da pasta original é usado somente como interpretador, após verificar seus 3.785 arquivos. Código e novos resultados ficam neste worktree. Os dados originais são lidos por caminhos absolutos; não há vínculos de diretório nem cópia implícita da `.venv`. O observador continua em sua pasta original.

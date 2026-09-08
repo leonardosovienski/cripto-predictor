@@ -1,0 +1,562 @@
+{
+  "id": "AR3_UNIVERSE",
+  "overall": {
+    "weeks": 140,
+    "active_weeks": 138,
+    "cash_weeks": 2,
+    "selected_holdings": 630,
+    "censored_selected_holdings": 0,
+    "average_exposure": 0.9,
+    "trade_stats_primary": {
+      "complete": 630,
+      "wins": 231,
+      "losses": 399,
+      "zero": 0,
+      "win_rate_among_complete": 0.36666666666666664,
+      "mean_gain": 0.1726364862472417,
+      "mean_loss": -0.14243977277369116,
+      "profit_factor_return_units": 0.7016821036712458
+    },
+    "cost_scenarios": {
+      "0": {
+        "compounded_return": -0.9859417985917963,
+        "ending_5000_usdt": 70.29100704101835,
+        "simulated_profit_5000_usdt": -4929.708992958982,
+        "max_drawdown_weekly_endpoints": -0.9893383735730643
+      },
+      "10": {
+        "compounded_return": -0.9890702794618376,
+        "ending_5000_usdt": 54.64860269081215,
+        "simulated_profit_5000_usdt": -4945.351397309188,
+        "max_drawdown_weekly_endpoints": -0.9914952072809721
+      },
+      "40": {
+        "compounded_return": -0.9948708704987203,
+        "ending_5000_usdt": 25.645647506398664,
+        "simulated_profit_5000_usdt": -4974.354352493601,
+        "max_drawdown_weekly_endpoints": -0.9956883148915642
+      },
+      "90": {
+        "compounded_return": -0.9985531875364357,
+        "ending_5000_usdt": 7.23406231782142,
+        "simulated_profit_5000_usdt": -4992.765937682178,
+        "max_drawdown_weekly_endpoints": -0.9986881331121933
+      }
+    },
+    "missing_scenarios": {
+      "total_loss": {
+        "compounded_return": -0.9890702794618376,
+        "ending_5000_usdt": 54.64860269081215,
+        "simulated_profit_5000_usdt": -4945.351397309188,
+        "max_drawdown_weekly_endpoints": -0.9914952072809721
+      },
+      "flat_gross": {
+        "compounded_return": -0.9890702794618376,
+        "ending_5000_usdt": 54.64860269081215,
+        "simulated_profit_5000_usdt": -4945.351397309188,
+        "max_drawdown_weekly_endpoints": -0.9914952072809721
+      }
+    },
+    "uncertainty_primary": {
+      "mean_weekly_log_return": -0.03225906818178365,
+      "interval": [
+        -0.05135439152321294,
+        -0.010898998317662875
+      ],
+      "meaning": "Descriptive 4-week block bootstrap only; not calibrated for full adaptive research/search history."
+    },
+    "realized_profit": null,
+    "investor_net_brl_profit": null,
+    "decision": "NOT_PROFITABLE_IN_THIS_DIAGNOSTIC"
+  },
+  "by_entry_year": {
+    "2024": {
+      "weeks": 53,
+      "active_weeks": 52,
+      "cash_weeks": 1,
+      "selected_holdings": 247,
+      "censored_selected_holdings": 0,
+      "average_exposure": 0.9320754716981132,
+      "trade_stats_primary": {
+        "complete": 247,
+        "wins": 108,
+        "losses": 139,
+        "zero": 0,
+        "win_rate_among_complete": 0.43724696356275305,
+        "mean_gain": 0.18700342272651463,
+        "mean_loss": -0.14603223631672485,
+        "profit_factor_return_units": 0.9949695154861252
+      },
+      "cost_scenarios": {
+        "0": {
+          "compounded_return": -0.3986339475467604,
+          "ending_5000_usdt": 3006.830262266198,
+          "simulated_profit_5000_usdt": -1993.169737733802,
+          "max_drawdown_weekly_endpoints": -0.7524003060668761
+        },
+        "10": {
+          "compounded_return": -0.4553216644923146,
+          "ending_5000_usdt": 2723.391677538427,
+          "simulated_profit_5000_usdt": -2276.608322461573,
+          "max_drawdown_weekly_endpoints": -0.7673012424218686
+        },
+        "40": {
+          "compounded_return": -0.5955202242416712,
+          "ending_5000_usdt": 2022.3988787916442,
+          "simulated_profit_5000_usdt": -2977.601121208356,
+          "max_drawdown_weekly_endpoints": -0.8069041204499273
+        },
+        "90": {
+          "compounded_return": -0.7541537420422422,
+          "ending_5000_usdt": 1229.231289788789,
+          "simulated_profit_5000_usdt": -3770.768710211211,
+          "max_drawdown_weekly_endpoints": -0.8650696618424295
+        }
+      },
+      "missing_scenarios": {
+        "total_loss": {
+          "compounded_return": -0.4553216644923146,
+          "ending_5000_usdt": 2723.391677538427,
+          "simulated_profit_5000_usdt": -2276.608322461573,
+          "max_drawdown_weekly_endpoints": -0.7673012424218686
+        },
+        "flat_gross": {
+          "compounded_return": -0.4553216644923146,
+          "ending_5000_usdt": 2723.391677538427,
+          "simulated_profit_5000_usdt": -2276.608322461573,
+          "max_drawdown_weekly_endpoints": -0.7673012424218686
+        }
+      },
+      "uncertainty_primary": {
+        "mean_weekly_log_return": -0.011463393747906885,
+        "interval": [
+          -0.05035998489990932,
+          0.030965885826583526
+        ],
+        "meaning": "Descriptive 4-week block bootstrap only; not calibrated for full adaptive research/search history."
+      },
+      "realized_profit": null,
+      "investor_net_brl_profit": null,
+      "decision": "NOT_PROFITABLE_IN_THIS_DIAGNOSTIC"
+    },
+    "2025": {
+      "weeks": 52,
+      "active_weeks": 52,
+      "cash_weeks": 0,
+      "selected_holdings": 228,
+      "censored_selected_holdings": 0,
+      "average_exposure": 0.8769230769230769,
+      "trade_stats_primary": {
+        "complete": 228,
+        "wins": 68,
+        "losses": 160,
+        "zero": 0,
+        "win_rate_among_complete": 0.2982456140350877,
+        "mean_gain": 0.15533597313260186,
+        "mean_loss": -0.14372161123158816,
+        "profit_factor_return_units": 0.45934489611988094
+      },
+      "cost_scenarios": {
+        "0": {
+          "compounded_return": -0.9366825938531377,
+          "ending_5000_usdt": 316.58703073431167,
+          "simulated_profit_5000_usdt": -4683.412969265689,
+          "max_drawdown_weekly_endpoints": -0.9380336534018103
+        },
+        "10": {
+          "compounded_return": -0.9421803594173345,
+          "ending_5000_usdt": 289.09820291332744,
+          "simulated_profit_5000_usdt": -4710.901797086673,
+          "max_drawdown_weekly_endpoints": -0.943300766507343
+        },
+        "40": {
+          "compounded_return": -0.9559928160968231,
+          "ending_5000_usdt": 220.0359195158847,
+          "simulated_profit_5000_usdt": -4779.964080484116,
+          "max_drawdown_weekly_endpoints": -0.9565852126765124
+        },
+        "90": {
+          "compounded_return": -0.9721235186179347,
+          "ending_5000_usdt": 139.38240691032667,
+          "simulated_profit_5000_usdt": -4860.617593089673,
+          "max_drawdown_weekly_endpoints": -0.9722205640672328
+        }
+      },
+      "missing_scenarios": {
+        "total_loss": {
+          "compounded_return": -0.9421803594173345,
+          "ending_5000_usdt": 289.09820291332744,
+          "simulated_profit_5000_usdt": -4710.901797086673,
+          "max_drawdown_weekly_endpoints": -0.943300766507343
+        },
+        "flat_gross": {
+          "compounded_return": -0.9421803594173345,
+          "ending_5000_usdt": 289.09820291332744,
+          "simulated_profit_5000_usdt": -4710.901797086673,
+          "max_drawdown_weekly_endpoints": -0.943300766507343
+        }
+      },
+      "uncertainty_primary": {
+        "mean_weekly_log_return": -0.054815899202987066,
+        "interval": [
+          -0.07939088942493905,
+          -0.02830678319066805
+        ],
+        "meaning": "Descriptive 4-week block bootstrap only; not calibrated for full adaptive research/search history."
+      },
+      "realized_profit": null,
+      "investor_net_brl_profit": null,
+      "decision": "NOT_PROFITABLE_IN_THIS_DIAGNOSTIC"
+    },
+    "2026": {
+      "weeks": 35,
+      "active_weeks": 34,
+      "cash_weeks": 1,
+      "selected_holdings": 155,
+      "censored_selected_holdings": 0,
+      "average_exposure": 0.8857142857142857,
+      "trade_stats_primary": {
+        "complete": 155,
+        "wins": 55,
+        "losses": 100,
+        "zero": 0,
+        "win_rate_among_complete": 0.3548387096774194,
+        "mean_gain": 0.16581477264786046,
+        "mean_loss": -0.13539530691623908,
+        "profit_factor_return_units": 0.6735693210750803
+      },
+      "cost_scenarios": {
+        "0": {
+          "compounded_return": -0.6307948608733654,
+          "ending_5000_usdt": 1846.0256956331727,
+          "simulated_profit_5000_usdt": -3153.9743043668273,
+          "max_drawdown_weekly_endpoints": -0.6796882982980621
+        },
+        "10": {
+          "compounded_return": -0.6529487856903236,
+          "ending_5000_usdt": 1735.2560715483826,
+          "simulated_profit_5000_usdt": -3264.7439284516176,
+          "max_drawdown_weekly_endpoints": -0.6971905840392729
+        },
+        "40": {
+          "compounded_return": -0.7118469142528995,
+          "ending_5000_usdt": 1440.7654287355026,
+          "simulated_profit_5000_usdt": -3559.2345712644974,
+          "max_drawdown_weekly_endpoints": -0.7442446179274786
+        },
+        "90": {
+          "compounded_return": -0.7888890871746959,
+          "ending_5000_usdt": 1055.5545641265207,
+          "simulated_profit_5000_usdt": -3944.4454358734793,
+          "max_drawdown_weekly_endpoints": -0.8085796029791711
+        }
+      },
+      "missing_scenarios": {
+        "total_loss": {
+          "compounded_return": -0.6529487856903236,
+          "ending_5000_usdt": 1735.2560715483826,
+          "simulated_profit_5000_usdt": -3264.7439284516176,
+          "max_drawdown_weekly_endpoints": -0.6971905840392729
+        },
+        "flat_gross": {
+          "compounded_return": -0.6529487856903236,
+          "ending_5000_usdt": 1735.2560715483826,
+          "simulated_profit_5000_usdt": -3264.7439284516176,
+          "max_drawdown_weekly_endpoints": -0.6971905840392729
+        }
+      },
+      "uncertainty_primary": {
+        "mean_weekly_log_return": -0.03023665480729483,
+        "interval": [
+          -0.05310519347932864,
+          -0.0022168533598859895
+        ],
+        "meaning": "Descriptive 4-week block bootstrap only; not calibrated for full adaptive research/search history."
+      },
+      "realized_profit": null,
+      "investor_net_brl_profit": null,
+      "decision": "NOT_PROFITABLE_IN_THIS_DIAGNOSTIC"
+    }
+  },
+  "concentration": {
+    "0": {
+      "net_profit_usdt": -4929.708992958982,
+      "positive_increment_sum_usdt": 9019.980647222383,
+      "top_five_positive_sum_usdt": 4317.547501847252,
+      "top_five_share_of_positive_increments": 0.4786648298604498,
+      "profit_less_top_five_increments_usdt": -9247.256494806234,
+      "exclusion_meaning": "Arithmetic contribution diagnostic, not a rerun with those trades removed or a new strategy."
+    },
+    "10": {
+      "net_profit_usdt": -4945.351397309188,
+      "positive_increment_sum_usdt": 8311.491802321661,
+      "top_five_positive_sum_usdt": 4078.595020009449,
+      "top_five_share_of_positive_increments": 0.4907175651512005,
+      "profit_less_top_five_increments_usdt": -9023.946417318637,
+      "exclusion_meaning": "Arithmetic contribution diagnostic, not a rerun with those trades removed or a new strategy."
+    },
+    "40": {
+      "net_profit_usdt": -4974.354352493601,
+      "positive_increment_sum_usdt": 6544.990833025628,
+      "top_five_positive_sum_usdt": 3450.79809820424,
+      "top_five_share_of_positive_increments": 0.5272426174826284,
+      "profit_less_top_five_increments_usdt": -8425.152450697842,
+      "exclusion_meaning": "Arithmetic contribution diagnostic, not a rerun with those trades removed or a new strategy."
+    },
+    "90": {
+      "net_profit_usdt": -4992.765937682178,
+      "positive_increment_sum_usdt": 4486.349712658387,
+      "top_five_positive_sum_usdt": 2641.659294969375,
+      "top_five_share_of_positive_increments": 0.5888215284501438,
+      "profit_less_top_five_increments_usdt": -7634.425232651553,
+      "exclusion_meaning": "Arithmetic contribution diagnostic, not a rerun with those trades removed or a new strategy."
+    }
+  },
+  "registered_bootstrap": {
+    "0": {
+      "mean_weekly_pnl_usdt": -35.21220709256416,
+      "interval_95_usdt": [
+        -86.3611234687266,
+        16.8072270908396
+      ],
+      "meaning": "Descriptive four-week circular bootstrap, conditional on adaptive history; neither independent nor search-adjusted."
+    },
+    "10": {
+      "mean_weekly_pnl_usdt": -35.32393855220848,
+      "interval_95_usdt": [
+        -84.88157423316369,
+        14.008004770153763
+      ],
+      "meaning": "Descriptive four-week circular bootstrap, conditional on adaptive history; neither independent nor search-adjusted."
+    },
+    "40": {
+      "mean_weekly_pnl_usdt": -35.53110251781144,
+      "interval_95_usdt": [
+        -79.42170130415174,
+        6.962238032655804
+      ],
+      "meaning": "Descriptive four-week circular bootstrap, conditional on adaptive history; neither independent nor search-adjusted."
+    },
+    "90": {
+      "mean_weekly_pnl_usdt": -35.66261384058699,
+      "interval_95_usdt": [
+        -74.85210664194217,
+        -0.43002538290296566
+      ],
+      "meaning": "Descriptive four-week circular bootstrap, conditional on adaptive history; neither independent nor search-adjusted."
+    }
+  },
+  "symbol_contributions_usdt_primary": {
+    "CKBUSDT": 715.2294302354876,
+    "XLMUSDT": 622.9047443720846,
+    "HBARUSDT": 574.8173374863255,
+    "ARKMUSDT": 518.4276308132218,
+    "PEPEUSDT": 482.0028848460677,
+    "PEOPLEUSDT": 436.957158499652,
+    "DOGEUSDT": 417.2356663113609,
+    "RSRUSDT": 319.72856313280937,
+    "ADAUSDT": 263.3763582715847,
+    "PENDLEUSDT": 241.9316246243239,
+    "SUIUSDT": 226.25561835314483,
+    "BNXUSDT": 205.01019523216274,
+    "SEIUSDT": 167.3012384252737,
+    "MAVUSDT": 166.89363670711063,
+    "AGIXUSDT": 164.37010563346428,
+    "ZECUSDT": 148.90510634170076,
+    "COTIUSDT": 141.42314341731282,
+    "XRPUSDT": 132.46709779235752,
+    "HIGHUSDT": 131.6646384901886,
+    "RAYUSDT": 123.38298106325601,
+    "AGLDUSDT": 114.63303803787295,
+    "PENGUUSDT": 113.71012768114376,
+    "PERPUSDT": 111.44127088419435,
+    "TAOUSDT": 92.51873782378863,
+    "ENAUSDT": 84.28153565777437,
+    "SHIBUSDT": 73.24661259466478,
+    "LINKUSDT": 70.44573806690103,
+    "RLCUSDT": 68.751030646272,
+    "LEVERUSDT": 63.095790095741684,
+    "SANTOSUSDT": 56.36769235418859,
+    "APTUSDT": 53.225417165845066,
+    "FETUSDT": 49.465922647460296,
+    "TRXUSDT": 33.16513858619694,
+    "EPICUSDT": 27.717531570136703,
+    "\u5e01\u5b89\u4eba\u751fUSDT": 26.705667761416972,
+    "AIXBTUSDT": 24.885812725781523,
+    "BONKUSDT": 20.38844289760866,
+    "LOKAUSDT": 17.8248300211074,
+    "DEXEUSDT": 13.02805412497914,
+    "AUCTIONUSDT": 12.985132559103612,
+    "TIAUSDT": 12.694773938102998,
+    "BSWUSDT": 12.312511719172095,
+    "ETHUSDT": 10.44539681232982,
+    "PUMPUSDT": 7.99829496336098,
+    "INJUSDT": 7.803891717085556,
+    "OMUSDT": 6.8843896786988275,
+    "SYRUPUSDT": 4.539666862611213,
+    "VOXELUSDT": 2.7134832367673187,
+    "KITEUSDT": 2.488141296835556,
+    "PNUTUSDT": 1.334019423645671,
+    "SOLVUSDT": 1.287817238187541,
+    "ARBUSDT": 1.1954754627395405,
+    "CHZUSDT": 0.9331407747036331,
+    "BICOUSDT": 0.38336515981052505,
+    "LTCUSDT": 0.13898311268058355,
+    "UUSDT": -0.04627708451973407,
+    "BFUSDUSDT": -0.20495122163945534,
+    "ORCAUSDT": -0.43068302968462957,
+    "TWTUSDT": -0.5006224804926442,
+    "OMNIUSDT": -0.514122475153588,
+    "HUMAUSDT": -0.6401042761719555,
+    "HEIUSDT": -0.6821125560817644,
+    "ASTERUSDT": -0.7233250886247425,
+    "PYTHUSDT": -0.988737047708799,
+    "BNBUSDT": -1.072200104908755,
+    "DCRUSDT": -1.364596091452934,
+    "AXSUSDT": -1.5748157956915458,
+    "DOTUSDT": -1.9228576905967036,
+    "NEARUSDT": -2.1635613261729576,
+    "ENJUSDT": -2.182707053685563,
+    "SYNUSDT": -2.4056951676627425,
+    "GUNUSDT": -2.688282408023165,
+    "PARTIUSDT": -2.9311177353619184,
+    "ACEUSDT": -3.2900536898186385,
+    "XPLUSDT": -3.540927518810908,
+    "CFXUSDT": -3.6864975418233374,
+    "ALLOUSDT": -4.238692454284734,
+    "ONDOUSDT": -4.416734570672197,
+    "TNSRUSDT": -4.813202220297251,
+    "LUNCUSDT": -4.8453899845781105,
+    "VITEUSDT": -4.853657721886605,
+    "FUNUSDT": -4.883368388096187,
+    "POLUSDT": -5.437194277002866,
+    "TUTUSDT": -5.525399772323991,
+    "ACHUSDT": -5.596712479479366,
+    "ENSOUSDT": -6.511814759479327,
+    "SIGNUSDT": -7.454944960433869,
+    "WLFIUSDT": -7.776282655187473,
+    "AVAXUSDT": -7.831267278565337,
+    "RENDERUSDT": -8.100860882870718,
+    "ASRUSDT": -8.414875084330875,
+    "SAHARAUSDT": -9.014790155649537,
+    "PHBUSDT": -9.293792998587671,
+    "VIRTUALUSDT": -9.400834531422843,
+    "ALPINEUSDT": -10.65096969844938,
+    "AWEUSDT": -10.677475960654709,
+    "1000SATSUSDT": -10.965878993914139,
+    "GMTUSDT": -12.396591947651274,
+    "SNXUSDT": -13.33549458578266,
+    "NULSUSDT": -14.02212911505454,
+    "BCHUSDT": -14.317894076036701,
+    "BERAUSDT": -15.017715179985275,
+    "FILUSDT": -15.490218014137167,
+    "DUSKUSDT": -15.916568718802115,
+    "LISTAUSDT": -15.9931698394737,
+    "ZROUSDT": -16.427550848436464,
+    "COMPUSDT": -16.68349108354614,
+    "EIGENUSDT": -16.75273858200274,
+    "OSMOUSDT": -17.398780373524556,
+    "BATUSDT": -17.55307850792268,
+    "UNFIUSDT": -17.744891378179332,
+    "SUPERUSDT": -18.073396661046843,
+    "RUNEUSDT": -19.344267804326744,
+    "TURBOUSDT": -20.351825189013713,
+    "DASHUSDT": -20.495232299116523,
+    "HYPERUSDT": -20.97325638484141,
+    "XVGUSDT": -21.463628346608573,
+    "BANANAS31USDT": -22.77467987575371,
+    "MAGICUSDT": -24.6785028853,
+    "OGUSDT": -26.236334048559264,
+    "COOKIEUSDT": -28.55598520983935,
+    "KAITOUSDT": -30.2274631651834,
+    "BBUSDT": -33.709983206991694,
+    "NMRUSDT": -34.138409234149265,
+    "BMTUSDT": -34.389592053861655,
+    "WUSDT": -36.653043884593686,
+    "DIAUSDT": -36.73564520067172,
+    "EOSUSDT": -38.36738627706124,
+    "ASTRUSDT": -40.54278306611964,
+    "RNDRUSDT": -41.79931377605776,
+    "SAGAUSDT": -42.223165187004774,
+    "ETHFIUSDT": -42.785656920208005,
+    "ALTUSDT": -42.88160747525312,
+    "ANIMEUSDT": -43.27163735928762,
+    "SPELLUSDT": -43.49456108132026,
+    "LPTUSDT": -43.51790450099407,
+    "WIFUSDT": -44.189699035307406,
+    "BIOUSDT": -44.561017314863754,
+    "AXLUSDT": -44.79932277550575,
+    "ARKUSDT": -48.90854852956297,
+    "SLFUSDT": -50.30035131587269,
+    "STRKUSDT": -50.60376930280097,
+    "RAREUSDT": -53.18204657934665,
+    "CELOUSDT": -53.692651253524595,
+    "APEUSDT": -54.509011667148485,
+    "MASKUSDT": -56.88016542353015,
+    "FARMUSDT": -59.16737021305797,
+    "TRUMPUSDT": -59.804382487618184,
+    "NEIROUSDT": -62.06387140345386,
+    "CRVUSDT": -62.41734036129646,
+    "MOVRUSDT": -62.442853447382326,
+    "WLDUSDT": -63.40819663415515,
+    "VANAUSDT": -63.67842730405463,
+    "STRAXUSDT": -67.04030507224076,
+    "CHRUSDT": -67.3496294075745,
+    "JASMYUSDT": -75.81363364786417,
+    "CAKEUSDT": -77.32415154293524,
+    "TONUSDT": -81.20853989598368,
+    "ALGOUSDT": -84.86573050407188,
+    "MKRUSDT": -85.24679521759901,
+    "FIROUSDT": -92.54668335378851,
+    "HIVEUSDT": -93.14167516440558,
+    "TRUUSDT": -95.65496561583971,
+    "API3USDT": -96.41929348781802,
+    "MEMEUSDT": -97.75195145101961,
+    "AMBUSDT": -99.89003344197991,
+    "SKLUSDT": -103.09284865983196,
+    "ERNUSDT": -103.17535804224947,
+    "TROYUSDT": -105.50088352361817,
+    "ARUSDT": -111.88581516216469,
+    "IOTAUSDT": -114.98291565628521,
+    "GHSTUSDT": -116.84961165675901,
+    "REIUSDT": -119.6287155287855,
+    "BTTCUSDT": -123.17420864869221,
+    "UNIUSDT": -123.5058029679386,
+    "AAVEUSDT": -123.53273561481414,
+    "UTKUSDT": -132.7821718515553,
+    "SOLUSDT": -132.95556377362595,
+    "AVAUSDT": -133.2245246267621,
+    "POLYXUSDT": -138.10111219393045,
+    "ROSEUSDT": -147.8135153039251,
+    "LDOUSDT": -151.15791683169587,
+    "DFUSDT": -158.43773768734948,
+    "ZENUSDT": -166.46409546752378,
+    "JUPUSDT": -168.10622454604362,
+    "JTOUSDT": -172.92661745446898,
+    "ORDIUSDT": -184.08060525517863,
+    "BURGERUSDT": -197.55744400309717,
+    "COSUSDT": -200.63554603428372,
+    "STPTUSDT": -202.42324434263355,
+    "POWRUSDT": -217.96964152589513,
+    "SUSHIUSDT": -235.4089777905154,
+    "VANRYUSDT": -253.00833096033583,
+    "SCUSDT": -254.72201243706715,
+    "VIDTUSDT": -268.3118916870244,
+    "ICPUSDT": -279.64625384110144,
+    "CTXCUSDT": -298.0322810440168,
+    "ZRXUSDT": -309.10250228125307,
+    "IDUSDT": -356.2245350569339,
+    "FLOKIUSDT": -441.3941838879698,
+    "TRBUSDT": -448.3235911495982,
+    "ENSUSDT": -482.1114679456833,
+    "BELUSDT": -486.4416919725017,
+    "BAKEUSDT": -552.3126777578855,
+    "FRONTUSDT": -771.8118050784475
+  },
+  "daily_bar_count": 727447,
+  "catalog_symbols": 661,
+  "unresolved": [],
+  "future_observation_candidate": false,
+  "executable_ready": false,
+  "measured_investor_net_profit": null
+}

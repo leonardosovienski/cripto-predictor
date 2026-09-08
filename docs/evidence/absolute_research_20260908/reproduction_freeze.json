@@ -1,0 +1,16 @@
+{
+  "scripts/collect_absolute_carry.py": "962924677ac546a2b28d69bf5dc1285ab037f13728b1f96b0902cfc4d4cd61ba",
+  "scripts/backtest_absolute_carry.py": "c39dc255829d503502f3b0dd70266bf8864f72296e3f67b2903e86ab299891d0",
+  "scripts/backtest_absolute_spot.py": "665546b4fbcc7d32c0f6d284bfaa69d37ba83dc76d47e2c4eeeadcb90a41a2b5",
+  "scripts/run_absolute_research.py": "78040ca6b03c229176867954450a8d22bb06cbc386c9bce8f291d42308b6c59c",
+  "scripts/audit_absolute_research.py": "373a99c544fe2e50e18933a9aec826cf07621818671b7f7c8c7934f562991478",
+  "scripts/reproduce_absolute_research.py": "9d2401b8638d330db0b9752bcc87079663dd978811673c30bc0d7ef79773e200",
+  "scripts/backtest_altcoin_payoff.py": "2561ff3645e652f1027623f72884043d6a80fb625a89b86926c1149722f5bcd1",
+  "scripts/prepare_altcoin_payoff.py": "0c349fe67d4466db008cf1728c57767ee01fce9c122f85e539eeff6f8af30ad0",
+  "scripts/research_altcoin_analogs.py": "22b5456ae7c56c09b51cb295b784fad7b9b5685241f9fa54a31e5cb6a1aa7626",
+  "scripts/collect_altcoin_analogs.py": "ca1dfd1f8f93d6174c23829c8729c6c772376de0ef4af28b2738ada261b96e7f",
+  "docs/evidence/absolute_research_20260908/protocol.json": "078f130eba63dfdae35fc6cc6a7da65b368731faaa3a5ab14522456a5e440d0f",
+  "docs/evidence/absolute_research_20260908/causality_amendment.json": "5f94ebce097480b8b31154b91c2f3d7cb61b4372046f6fdaa2b6bfa1c6c24c1c",
+  "docs/evidence/altcoin_retro_20260907/protocol.json": "70f8c98429b6f34138afbec70c6f5eb3254d341ff896c3b82c06964b2d37b1bc",
+  "docs/evidence/altcoin_payoff_20260907/results.json": "56d1082c6e558745572cc84f7cbb9810737b58b8db834a208e4a37ad47972d0d"
+}

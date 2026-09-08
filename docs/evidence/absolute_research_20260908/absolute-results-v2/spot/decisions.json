@@ -1,0 +1,5948 @@
+[
+  {
+    "date": "2024-01-01",
+    "eligible": 141,
+    "qualified": 67,
+    "selected": [
+      "TRBUSDT",
+      "BAKEUSDT",
+      "ICPUSDT",
+      "BTTCUSDT",
+      "SEIUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "TRBUSDT",
+        "r30": 1.2075637467948888,
+        "r7": 0.42060352300188925,
+        "median_quote_volume": 32547679.0541
+      },
+      {
+        "symbol": "BAKEUSDT",
+        "r30": 1.0611866537048216,
+        "r7": 0.22139880279907884,
+        "median_quote_volume": 47851024.09244
+      },
+      {
+        "symbol": "ICPUSDT",
+        "r30": 0.9874382291935664,
+        "r7": 0.24907713447205806,
+        "median_quote_volume": 40076979.575674996
+      },
+      {
+        "symbol": "BTTCUSDT",
+        "r30": 0.9289758914014707,
+        "r7": 0.05173567439918889,
+        "median_quote_volume": 9127139.24552387
+      },
+      {
+        "symbol": "SEIUSDT",
+        "r30": 0.904177528580748,
+        "r7": 0.4590951647366865,
+        "median_quote_volume": 60073222.769075
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2024-01-08",
+    "eligible": 141,
+    "qualified": 25,
+    "selected": [
+      "POWRUSDT",
+      "OSMOUSDT",
+      "SEIUSDT",
+      "INJUSDT",
+      "PERPUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "POWRUSDT",
+        "r30": 1.1105909746843432,
+        "r7": 0.9029712580085838,
+        "median_quote_volume": 5311316.63775
+      },
+      {
+        "symbol": "OSMOUSDT",
+        "r30": 0.8562498667961572,
+        "r7": 0.16086186278488496,
+        "median_quote_volume": 7751670.8496045
+      },
+      {
+        "symbol": "SEIUSDT",
+        "r30": 0.838626991005127,
+        "r7": 0.09657115584371354,
+        "median_quote_volume": 101981976.52726501
+      },
+      {
+        "symbol": "INJUSDT",
+        "r30": 0.7840022989040316,
+        "r7": 0.0717645662293109,
+        "median_quote_volume": 104466589.56740001
+      },
+      {
+        "symbol": "PERPUSDT",
+        "r30": 0.6101206714417249,
+        "r7": 0.17507086856248927,
+        "median_quote_volume": 6338834.85505995
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2024-01-15",
+    "eligible": 143,
+    "qualified": 62,
+    "selected": [
+      "MOVRUSDT",
+      "SEIUSDT",
+      "ENSUSDT",
+      "ICPUSDT",
+      "SKLUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "MOVRUSDT",
+        "r30": 1.3356717825602937,
+        "r7": 0.08294928432940445,
+        "median_quote_volume": 39049822.862149
+      },
+      {
+        "symbol": "SEIUSDT",
+        "r30": 1.032442635862821,
+        "r7": 0.10619004702020172,
+        "median_quote_volume": 148134552.73763
+      },
+      {
+        "symbol": "ENSUSDT",
+        "r30": 0.942679789070483,
+        "r7": 0.5804951893207811,
+        "median_quote_volume": 13613231.34955
+      },
+      {
+        "symbol": "ICPUSDT",
+        "r30": 0.7101668747056807,
+        "r7": 0.07313187456169995,
+        "median_quote_volume": 85122634.164785
+      },
+      {
+        "symbol": "SKLUSDT",
+        "r30": 0.6934817965911753,
+        "r7": 0.10626547626702566,
+        "median_quote_volume": 11831473.470625
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2024-01-22",
+    "eligible": 139,
+    "qualified": 11,
+    "selected": [
+      "ASTRUSDT",
+      "PENDLEUSDT",
+      "SCUSDT",
+      "MAVUSDT",
+      "FRONTUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "ASTRUSDT",
+        "r30": 0.6555508158872692,
+        "r7": 0.17557038290321653,
+        "median_quote_volume": 26511325.53316
+      },
+      {
+        "symbol": "PENDLEUSDT",
+        "r30": 0.6110070927121531,
+        "r7": 0.180607928134019,
+        "median_quote_volume": 10099060.119905
+      },
+      {
+        "symbol": "SCUSDT",
+        "r30": 0.5161536416981747,
+        "r7": 0.20638832740310437,
+        "median_quote_volume": 5685776.2850015
+      },
+      {
+        "symbol": "MAVUSDT",
+        "r30": 0.29853489215258844,
+        "r7": 0.09453946685673348,
+        "median_quote_volume": 12741681.40425
+      },
+      {
+        "symbol": "FRONTUSDT",
+        "r30": 0.28849277375276966,
+        "r7": 0.11336110074323666,
+        "median_quote_volume": 6395782.93095
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2024-01-29",
+    "eligible": 118,
+    "qualified": 17,
+    "selected": [
+      "ENSUSDT",
+      "PENDLEUSDT",
+      "SUIUSDT",
+      "CHRUSDT",
+      "MAVUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "ENSUSDT",
+        "r30": 0.6600945974385234,
+        "r7": 0.03470951897939699,
+        "median_quote_volume": 42569036.9708
+      },
+      {
+        "symbol": "PENDLEUSDT",
+        "r30": 0.6320244165481024,
+        "r7": 0.12052886358981048,
+        "median_quote_volume": 17728201.378535
+      },
+      {
+        "symbol": "SUIUSDT",
+        "r30": 0.5600102440393666,
+        "r7": 0.23511801452751616,
+        "median_quote_volume": 100700917.271015
+      },
+      {
+        "symbol": "CHRUSDT",
+        "r30": 0.44614995036633515,
+        "r7": 0.09147700909827569,
+        "median_quote_volume": 6125369.180749999
+      },
+      {
+        "symbol": "MAVUSDT",
+        "r30": 0.4442205845884733,
+        "r7": 0.16243218710816038,
+        "median_quote_volume": 16409348.245700002
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2024-02-05",
+    "eligible": 104,
+    "qualified": 16,
+    "selected": [
+      "PENDLEUSDT",
+      "API3USDT",
+      "SUIUSDT",
+      "MAVUSDT",
+      "LINKUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "PENDLEUSDT",
+        "r30": 0.7412937750407481,
+        "r7": 0.24315823869828213,
+        "median_quote_volume": 22127794.74639
+      },
+      {
+        "symbol": "API3USDT",
+        "r30": 0.5688051680749591,
+        "r7": 0.07198738378950574,
+        "median_quote_volume": 6456026.793095
+      },
+      {
+        "symbol": "SUIUSDT",
+        "r30": 0.5214543511940515,
+        "r7": 0.03043697864163644,
+        "median_quote_volume": 114452015.287835
+      },
+      {
+        "symbol": "MAVUSDT",
+        "r30": 0.27691339736762005,
+        "r7": 0.13111162316739242,
+        "median_quote_volume": 17412197.18625
+      },
+      {
+        "symbol": "LINKUSDT",
+        "r30": 0.1952487912954143,
+        "r7": 0.20778748904606262,
+        "median_quote_volume": 86595967.5976
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2024-02-12",
+    "eligible": 95,
+    "qualified": 26,
+    "selected": [
+      "OMUSDT",
+      "IDUSDT",
+      "DUSKUSDT",
+      "PENDLEUSDT",
+      "SUIUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "OMUSDT",
+        "r30": 1.3440607325715355,
+        "r7": 0.5469655906629731,
+        "median_quote_volume": 10464742.137435
+      },
+      {
+        "symbol": "IDUSDT",
+        "r30": 0.7045341603573878,
+        "r7": 0.8288923228435857,
+        "median_quote_volume": 5321022.98395
+      },
+      {
+        "symbol": "DUSKUSDT",
+        "r30": 0.556544085576792,
+        "r7": 0.07425744526129692,
+        "median_quote_volume": 5414972.1622
+      },
+      {
+        "symbol": "PENDLEUSDT",
+        "r30": 0.5014020507032984,
+        "r7": 0.05834988306227673,
+        "median_quote_volume": 28733178.111515
+      },
+      {
+        "symbol": "SUIUSDT",
+        "r30": 0.46033638726577697,
+        "r7": 0.18594347041392997,
+        "median_quote_volume": 114638134.59540999
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2024-02-19",
+    "eligible": 99,
+    "qualified": 71,
+    "selected": [
+      "CKBUSDT",
+      "API3USDT",
+      "NMRUSDT",
+      "RLCUSDT",
+      "CHRUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "CKBUSDT",
+        "r30": 1.2078221354468885,
+        "r7": 0.8083950132414159,
+        "median_quote_volume": 6027610.961091
+      },
+      {
+        "symbol": "API3USDT",
+        "r30": 0.9592390895539392,
+        "r7": 0.3092548085930144,
+        "median_quote_volume": 28052572.396975
+      },
+      {
+        "symbol": "NMRUSDT",
+        "r30": 0.6679828998654328,
+        "r7": 0.25932926773264137,
+        "median_quote_volume": 7259912.528100001
+      },
+      {
+        "symbol": "RLCUSDT",
+        "r30": 0.6618946370558408,
+        "r7": 0.30323448545926573,
+        "median_quote_volume": 7675761.29685
+      },
+      {
+        "symbol": "CHRUSDT",
+        "r30": 0.6492412417570974,
+        "r7": 0.33702546343703366,
+        "median_quote_volume": 5632929.5614
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2024-02-26",
+    "eligible": 108,
+    "qualified": 67,
+    "selected": [
+      "CKBUSDT",
+      "WLDUSDT",
+      "COTIUSDT",
+      "AGIXUSDT",
+      "ARKMUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "CKBUSDT",
+        "r30": 1.3265064427409172,
+        "r7": 0.07776027716325706,
+        "median_quote_volume": 14501591.855848
+      },
+      {
+        "symbol": "WLDUSDT",
+        "r30": 1.290816980534906,
+        "r7": 0.5544787903375061,
+        "median_quote_volume": 19569896.302649997
+      },
+      {
+        "symbol": "COTIUSDT",
+        "r30": 1.2724385276720562,
+        "r7": 0.7176473518739692,
+        "median_quote_volume": 6660997.714694999
+      },
+      {
+        "symbol": "AGIXUSDT",
+        "r30": 1.0680287024011796,
+        "r7": 0.47097485638225206,
+        "median_quote_volume": 5896263.961440001
+      },
+      {
+        "symbol": "ARKMUSDT",
+        "r30": 1.0275101149459545,
+        "r7": 0.48757364827966204,
+        "median_quote_volume": 7282436.8138500005
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2024-03-04",
+    "eligible": 133,
+    "qualified": 121,
+    "selected": [
+      "PEPEUSDT",
+      "ARKMUSDT",
+      "JASMYUSDT",
+      "COTIUSDT",
+      "CKBUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "PEPEUSDT",
+        "r30": 1.5604303333274059,
+        "r7": 1.1994169877900753,
+        "median_quote_volume": 17763283.81988487
+      },
+      {
+        "symbol": "ARKMUSDT",
+        "r30": 1.5154322077635893,
+        "r7": 0.5420622516481816,
+        "median_quote_volume": 32005149.5181
+      },
+      {
+        "symbol": "JASMYUSDT",
+        "r30": 1.4267824916499758,
+        "r7": 0.22187383389988813,
+        "median_quote_volume": 9678325.6710971
+      },
+      {
+        "symbol": "COTIUSDT",
+        "r30": 1.3690988810080094,
+        "r7": 0.15479075213962862,
+        "median_quote_volume": 16185717.83106
+      },
+      {
+        "symbol": "CKBUSDT",
+        "r30": 1.3068964403666237,
+        "r7": 0.2722882968396011,
+        "median_quote_volume": 31201223.1236175
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2024-03-11",
+    "eligible": 189,
+    "qualified": 141,
+    "selected": [
+      "PEPEUSDT",
+      "FLOKIUSDT",
+      "ARKMUSDT",
+      "FETUSDT",
+      "ARUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "PEPEUSDT",
+        "r30": 2.2214891993358505,
+        "r7": 0.6931471805599453,
+        "median_quote_volume": 37427079.05289768
+      },
+      {
+        "symbol": "FLOKIUSDT",
+        "r30": 2.1141315401201486,
+        "r7": 0.5811823941162102,
+        "median_quote_volume": 7178527.330053415
+      },
+      {
+        "symbol": "ARKMUSDT",
+        "r30": 1.9449315403579306,
+        "r7": 0.49553710438755383,
+        "median_quote_volume": 68885875.6048
+      },
+      {
+        "symbol": "FETUSDT",
+        "r30": 1.7057233849035094,
+        "r7": 0.5357199897155969,
+        "median_quote_volume": 97584559.06265
+      },
+      {
+        "symbol": "ARUSDT",
+        "r30": 1.6480011437191613,
+        "r7": 0.479100880358694,
+        "median_quote_volume": 25099773.0515
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2024-03-18",
+    "eligible": 231,
+    "qualified": 43,
+    "selected": [
+      "VANRYUSDT",
+      "ZRXUSDT",
+      "FRONTUSDT",
+      "IDUSDT",
+      "RSRUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "VANRYUSDT",
+        "r30": 1.403675913839351,
+        "r7": 0.28606994893641974,
+        "median_quote_volume": 19142966.364660002
+      },
+      {
+        "symbol": "ZRXUSDT",
+        "r30": 1.383354911619508,
+        "r7": 0.856168409386713,
+        "median_quote_volume": 5666859.443299999
+      },
+      {
+        "symbol": "FRONTUSDT",
+        "r30": 1.3751634225640783,
+        "r7": 0.9465096082146451,
+        "median_quote_volume": 6213480.14205
+      },
+      {
+        "symbol": "IDUSDT",
+        "r30": 0.9942803236741282,
+        "r7": 0.6621353030640347,
+        "median_quote_volume": 16714922.973725
+      },
+      {
+        "symbol": "RSRUSDT",
+        "r30": 0.7942892522577278,
+        "r7": 0.02865042610474507,
+        "median_quote_volume": 10277930.639660351
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2024-03-25",
+    "eligible": 233,
+    "qualified": 86,
+    "selected": [
+      "FLOKIUSDT",
+      "ERNUSDT",
+      "SHIBUSDT",
+      "ARUSDT",
+      "VANRYUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "FLOKIUSDT",
+        "r30": 1.9158897802930324,
+        "r7": 0.0648012756825469,
+        "median_quote_volume": 260031435.97052157
+      },
+      {
+        "symbol": "ERNUSDT",
+        "r30": 1.121088281917791,
+        "r7": 0.3556499901690257,
+        "median_quote_volume": 5947916.7436
+      },
+      {
+        "symbol": "SHIBUSDT",
+        "r30": 1.0458267454060841,
+        "r7": 0.06552228904770394,
+        "median_quote_volume": 484875694.66559863
+      },
+      {
+        "symbol": "ARUSDT",
+        "r30": 0.9796116979329831,
+        "r7": 0.10857755764694901,
+        "median_quote_volume": 40864180.626855
+      },
+      {
+        "symbol": "VANRYUSDT",
+        "r30": 0.9788036372628973,
+        "r7": 0.005753022682196427,
+        "median_quote_volume": 28571569.38144
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2024-04-01",
+    "eligible": 237,
+    "qualified": 166,
+    "selected": [
+      "FLOKIUSDT",
+      "REIUSDT",
+      "VANRYUSDT",
+      "POLYXUSDT",
+      "PEPEUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "FLOKIUSDT",
+        "r30": 1.5096227165450813,
+        "r7": 0.06295547527935136,
+        "median_quote_volume": 267000395.42708242
+      },
+      {
+        "symbol": "REIUSDT",
+        "r30": 1.2948948918561078,
+        "r7": 0.36128560784429625,
+        "median_quote_volume": 6163786.4948849995
+      },
+      {
+        "symbol": "VANRYUSDT",
+        "r30": 1.2227495808113655,
+        "r7": 0.07027538333360112,
+        "median_quote_volume": 33835539.62622
+      },
+      {
+        "symbol": "POLYXUSDT",
+        "r30": 1.0934580665999716,
+        "r7": 0.4040492081506335,
+        "median_quote_volume": 19171250.276735
+      },
+      {
+        "symbol": "PEPEUSDT",
+        "r30": 1.0876030031597403,
+        "r7": 0.10631764979803196,
+        "median_quote_volume": 606308364.4462707
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2024-04-08",
+    "eligible": 226,
+    "qualified": 23,
+    "selected": [
+      "BELUSDT",
+      "PENDLEUSDT",
+      "COSUSDT",
+      "TRUUSDT",
+      "BNXUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "BELUSDT",
+        "r30": 0.7812048878501813,
+        "r7": 0.7744462337918506,
+        "median_quote_volume": 5361344.574899999
+      },
+      {
+        "symbol": "PENDLEUSDT",
+        "r30": 0.6904556387243808,
+        "r7": 0.3479724358058803,
+        "median_quote_volume": 31965169.48518
+      },
+      {
+        "symbol": "COSUSDT",
+        "r30": 0.6170787298762982,
+        "r7": 0.27482461118186763,
+        "median_quote_volume": 7602404.69251975
+      },
+      {
+        "symbol": "TRUUSDT",
+        "r30": 0.6136555368473889,
+        "r7": 0.0021850469601783855,
+        "median_quote_volume": 12989811.595759999
+      },
+      {
+        "symbol": "BNXUSDT",
+        "r30": 0.5247755496066432,
+        "r7": 0.11649461985042735,
+        "median_quote_volume": 8813427.74935
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2024-04-15",
+    "eligible": 209,
+    "qualified": 1,
+    "selected": [
+      "OMUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "OMUSDT",
+        "r30": 0.625824599339489,
+        "r7": 0.07318232505300544,
+        "median_quote_volume": 37918958.7005658
+      }
+    ],
+    "cash_weight": 0.8,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2024-04-22",
+    "eligible": 186,
+    "qualified": 28,
+    "selected": [
+      "PENDLEUSDT",
+      "GHSTUSDT",
+      "NULSUSDT",
+      "BNXUSDT",
+      "COSUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "PENDLEUSDT",
+        "r30": 0.7193553216377688,
+        "r7": 0.0668805357773196,
+        "median_quote_volume": 68967044.204825
+      },
+      {
+        "symbol": "GHSTUSDT",
+        "r30": 0.6326647233419217,
+        "r7": 0.18706939769763548,
+        "median_quote_volume": 7532769.0777
+      },
+      {
+        "symbol": "NULSUSDT",
+        "r30": 0.4527109712017962,
+        "r7": 0.056569583674831746,
+        "median_quote_volume": 6218000.731
+      },
+      {
+        "symbol": "BNXUSDT",
+        "r30": 0.4327268798538601,
+        "r7": 0.10844491137851818,
+        "median_quote_volume": 6925449.372545
+      },
+      {
+        "symbol": "COSUSDT",
+        "r30": 0.4077404219452999,
+        "r7": 0.3357906507718115,
+        "median_quote_volume": 5478892.2317845
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2024-04-29",
+    "eligible": 166,
+    "qualified": 9,
+    "selected": [
+      "HIGHUSDT",
+      "COSUSDT",
+      "BNXUSDT",
+      "FARMUSDT",
+      "LEVERUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "HIGHUSDT",
+        "r30": 0.6768259975610288,
+        "r7": 0.47897653478471985,
+        "median_quote_volume": 18445650.9285875
+      },
+      {
+        "symbol": "COSUSDT",
+        "r30": 0.6760823420680518,
+        "r7": 0.4177629165021451,
+        "median_quote_volume": 9350450.397699751
+      },
+      {
+        "symbol": "BNXUSDT",
+        "r30": 0.5445443055220565,
+        "r7": 0.31565568792199505,
+        "median_quote_volume": 14161056.169755
+      },
+      {
+        "symbol": "FARMUSDT",
+        "r30": 0.42386088281870166,
+        "r7": 0.1465845398781649,
+        "median_quote_volume": 11520874.57798
+      },
+      {
+        "symbol": "LEVERUSDT",
+        "r30": 0.35420992420290665,
+        "r7": 0.3758027118956964,
+        "median_quote_volume": 15145813.982513499
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2024-05-06",
+    "eligible": 146,
+    "qualified": 13,
+    "selected": [
+      "HIGHUSDT",
+      "LEVERUSDT",
+      "PEPEUSDT",
+      "BONKUSDT",
+      "OMUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "HIGHUSDT",
+        "r30": 0.5160155042063628,
+        "r7": 0.07209102915451887,
+        "median_quote_volume": 17545379.331746
+      },
+      {
+        "symbol": "LEVERUSDT",
+        "r30": 0.25160011195959797,
+        "r7": 0.016379350685091065,
+        "median_quote_volume": 20144350.086187497
+      },
+      {
+        "symbol": "PEPEUSDT",
+        "r30": 0.22545302116287239,
+        "r7": 0.18439983949559288,
+        "median_quote_volume": 318609849.78310806
+      },
+      {
+        "symbol": "BONKUSDT",
+        "r30": 0.1707607343928786,
+        "r7": 0.11542390199713232,
+        "median_quote_volume": 57341336.612
+      },
+      {
+        "symbol": "OMUSDT",
+        "r30": 0.15580599312303736,
+        "r7": 0.033901551675681416,
+        "median_quote_volume": 23468164.38654
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2024-05-13",
+    "eligible": 128,
+    "qualified": 10,
+    "selected": [
+      "TRBUSDT",
+      "ARUSDT",
+      "ARKMUSDT",
+      "RNDRUSDT",
+      "FRONTUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "TRBUSDT",
+        "r30": 0.36502596198462234,
+        "r7": 0.5754704769787325,
+        "median_quote_volume": 13495487.946150001
+      },
+      {
+        "symbol": "ARUSDT",
+        "r30": 0.2517013004244894,
+        "r7": 0.10687143947636654,
+        "median_quote_volume": 38855219.11033
+      },
+      {
+        "symbol": "ARKMUSDT",
+        "r30": 0.24923737391073322,
+        "r7": 0.10127992165609807,
+        "median_quote_volume": 35550942.26005
+      },
+      {
+        "symbol": "RNDRUSDT",
+        "r30": 0.1938301775259658,
+        "r7": 0.2016140486961467,
+        "median_quote_volume": 65339267.894935
+      },
+      {
+        "symbol": "FRONTUSDT",
+        "r30": 0.19313793419899103,
+        "r7": 0.48007337021308216,
+        "median_quote_volume": 13226228.8754
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2024-05-20",
+    "eligible": 120,
+    "qualified": 64,
+    "selected": [
+      "PEOPLEUSDT",
+      "PEPEUSDT",
+      "ARUSDT",
+      "BONKUSDT",
+      "FLOKIUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "PEOPLEUSDT",
+        "r30": 0.640520275716873,
+        "r7": 0.3980544377505015,
+        "median_quote_volume": 7103205.870516
+      },
+      {
+        "symbol": "PEPEUSDT",
+        "r30": 0.6282156548977638,
+        "r7": 0.11307714461897085,
+        "median_quote_volume": 358787926.9123293
+      },
+      {
+        "symbol": "ARUSDT",
+        "r30": 0.6257670681359352,
+        "r7": 0.1622406115892299,
+        "median_quote_volume": 39268385.258515
+      },
+      {
+        "symbol": "BONKUSDT",
+        "r30": 0.5789219631418708,
+        "r7": 0.13636209674659677,
+        "median_quote_volume": 96038168.05116439
+      },
+      {
+        "symbol": "FLOKIUSDT",
+        "r30": 0.38695439410690297,
+        "r7": 0.18277339213712937,
+        "median_quote_volume": 66133104.96424453
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2024-05-27",
+    "eligible": 111,
+    "qualified": 55,
+    "selected": [
+      "PEOPLEUSDT",
+      "PEPEUSDT",
+      "BNXUSDT",
+      "ENSUSDT",
+      "LPTUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "PEOPLEUSDT",
+        "r30": 1.0527350091060548,
+        "r7": 0.5229158815012162,
+        "median_quote_volume": 27299214.412727997
+      },
+      {
+        "symbol": "PEPEUSDT",
+        "r30": 0.6544918602412368,
+        "r7": 0.4505547129713418,
+        "median_quote_volume": 403481900.9688009
+      },
+      {
+        "symbol": "BNXUSDT",
+        "r30": 0.5013050209823672,
+        "r7": 0.33654380577493825,
+        "median_quote_volume": 14860703.179384999
+      },
+      {
+        "symbol": "ENSUSDT",
+        "r30": 0.4473794020270283,
+        "r7": 0.408526558126654,
+        "median_quote_volume": 5877349.325549999
+      },
+      {
+        "symbol": "LPTUSDT",
+        "r30": 0.4109139826883593,
+        "r7": 0.1710627402764544,
+        "median_quote_volume": 14571266.239735
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2024-06-03",
+    "eligible": 112,
+    "qualified": 38,
+    "selected": [
+      "PEOPLEUSDT",
+      "JASMYUSDT",
+      "TRUUSDT",
+      "ENSUSDT",
+      "FRONTUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "PEOPLEUSDT",
+        "r30": 1.531918966853202,
+        "r7": 0.3567916535071043,
+        "median_quote_volume": 90574327.6015935
+      },
+      {
+        "symbol": "JASMYUSDT",
+        "r30": 0.7673876327617247,
+        "r7": 0.5121783149935322,
+        "median_quote_volume": 17093834.340576902
+      },
+      {
+        "symbol": "TRUUSDT",
+        "r30": 0.6722866426714266,
+        "r7": 0.2813797588610175,
+        "median_quote_volume": 9330461.955219999
+      },
+      {
+        "symbol": "ENSUSDT",
+        "r30": 0.6440723141118093,
+        "r7": 0.21630801510271452,
+        "median_quote_volume": 7899718.8332
+      },
+      {
+        "symbol": "FRONTUSDT",
+        "r30": 0.6322494401430299,
+        "r7": 0.16641800290521658,
+        "median_quote_volume": 19164098.880400002
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2024-06-10",
+    "eligible": 115,
+    "qualified": 20,
+    "selected": [
+      "PEOPLEUSDT",
+      "JASMYUSDT",
+      "TRUUSDT",
+      "FLOKIUSDT",
+      "ORDIUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "PEOPLEUSDT",
+        "r30": 1.5202067787061577,
+        "r7": 0.20325015108645597,
+        "median_quote_volume": 159879361.6288555
+      },
+      {
+        "symbol": "JASMYUSDT",
+        "r30": 0.662750020924755,
+        "r7": 0.046456885836218105,
+        "median_quote_volume": 27031019.1767421
+      },
+      {
+        "symbol": "TRUUSDT",
+        "r30": 0.5746630780940966,
+        "r7": 0.012200761377247939,
+        "median_quote_volume": 15098107.509305
+      },
+      {
+        "symbol": "FLOKIUSDT",
+        "r30": 0.44388193740082216,
+        "r7": 0.10169837264574032,
+        "median_quote_volume": 142071928.1445607
+      },
+      {
+        "symbol": "ORDIUSDT",
+        "r30": 0.40912515390142223,
+        "r7": 0.2220820927706462,
+        "median_quote_volume": 60389883.8979
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2024-06-17",
+    "eligible": 119,
+    "qualified": 8,
+    "selected": [
+      "BAKEUSDT",
+      "ENSUSDT",
+      "UNIUSDT",
+      "AUCTIONUSDT",
+      "ROSEUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "BAKEUSDT",
+        "r30": 0.5169876150945405,
+        "r7": 0.4142796208858452,
+        "median_quote_volume": 5847046.945005
+      },
+      {
+        "symbol": "ENSUSDT",
+        "r30": 0.5115350952395245,
+        "r7": 0.09267535613051045,
+        "median_quote_volume": 26852184.82095
+      },
+      {
+        "symbol": "UNIUSDT",
+        "r30": 0.45716967126564917,
+        "r7": 0.13631303558639948,
+        "median_quote_volume": 33381778.840170003
+      },
+      {
+        "symbol": "AUCTIONUSDT",
+        "r30": 0.40777404471464246,
+        "r7": 0.06429254893119017,
+        "median_quote_volume": 6098168.6108
+      },
+      {
+        "symbol": "ROSEUSDT",
+        "r30": 0.3284255691433843,
+        "r7": 0.14905190616364453,
+        "median_quote_volume": 8832871.043967001
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2024-06-24",
+    "eligible": 118,
+    "qualified": 4,
+    "selected": [
+      "BURGERUSDT",
+      "ENSUSDT",
+      "TRXUSDT",
+      "LDOUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "BURGERUSDT",
+        "r30": 0.18202242427601975,
+        "r7": 0.05832500543412467,
+        "median_quote_volume": 5330965.68422
+      },
+      {
+        "symbol": "ENSUSDT",
+        "r30": 0.04321911911997664,
+        "r7": 0.06427252831780897,
+        "median_quote_volume": 29007935.8592
+      },
+      {
+        "symbol": "TRXUSDT",
+        "r30": 0.036943515191684276,
+        "r7": 0.037116960686872424,
+        "median_quote_volume": 30843583.791697003
+      },
+      {
+        "symbol": "LDOUSDT",
+        "r30": 0.006988148633928383,
+        "r7": 0.03832974528055437,
+        "median_quote_volume": 28544278.717945002
+      }
+    ],
+    "cash_weight": 0.19999999999999996,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2024-07-01",
+    "eligible": 108,
+    "qualified": 4,
+    "selected": [
+      "PEOPLEUSDT",
+      "TRXUSDT",
+      "OMUSDT",
+      "ENSUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "PEOPLEUSDT",
+        "r30": 0.19272366557015755,
+        "r7": 0.14282553047020477,
+        "median_quote_volume": 126390204.10505751
+      },
+      {
+        "symbol": "TRXUSDT",
+        "r30": 0.11422448990936988,
+        "r7": 0.04789038586823121,
+        "median_quote_volume": 29107591.559785
+      },
+      {
+        "symbol": "OMUSDT",
+        "r30": 0.0414604313674455,
+        "r7": 0.044541193724874716,
+        "median_quote_volume": 11257080.137
+      },
+      {
+        "symbol": "ENSUSDT",
+        "r30": 0.006626412864885257,
+        "r7": 0.02677325270005838,
+        "median_quote_volume": 29498513.9022
+      }
+    ],
+    "cash_weight": 0.19999999999999996,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2024-07-08",
+    "eligible": 104,
+    "qualified": 4,
+    "selected": [
+      "TRXUSDT",
+      "ENSUSDT",
+      "UNFIUSDT",
+      "BNXUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "TRXUSDT",
+        "r30": 0.12373753093023596,
+        "r7": 0.03429712917752449,
+        "median_quote_volume": 32733498.1565965
+      },
+      {
+        "symbol": "ENSUSDT",
+        "r30": 0.08263226458027018,
+        "r7": 0.013889112160667311,
+        "median_quote_volume": 40642512.187350005
+      },
+      {
+        "symbol": "UNFIUSDT",
+        "r30": 0.032393244720235116,
+        "r7": 0.07156128147340934,
+        "median_quote_volume": 6212946.8269
+      },
+      {
+        "symbol": "BNXUSDT",
+        "r30": 0.003302837191274688,
+        "r7": 0.48728061877921447,
+        "median_quote_volume": 12075977.880475
+      }
+    ],
+    "cash_weight": 0.19999999999999996,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2024-07-15",
+    "eligible": 96,
+    "qualified": 9,
+    "selected": [
+      "OMUSDT",
+      "MKRUSDT",
+      "TRXUSDT",
+      "AAVEUSDT",
+      "XRPUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "OMUSDT",
+        "r30": 0.22955330290035222,
+        "r7": 0.16237576320988728,
+        "median_quote_volume": 8114135.303950001
+      },
+      {
+        "symbol": "MKRUSDT",
+        "r30": 0.18809037687495705,
+        "r7": 0.14327104192208148,
+        "median_quote_volume": 16788979.75065
+      },
+      {
+        "symbol": "TRXUSDT",
+        "r30": 0.1759458257913964,
+        "r7": 0.07093591878522322,
+        "median_quote_volume": 32932951.4334885
+      },
+      {
+        "symbol": "AAVEUSDT",
+        "r30": 0.17002590956829758,
+        "r7": 0.17697620716948273,
+        "median_quote_volume": 10992818.864055
+      },
+      {
+        "symbol": "XRPUSDT",
+        "r30": 0.09742388252122354,
+        "r7": 0.15815335361691585,
+        "median_quote_volume": 127216275.12705
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2024-07-22",
+    "eligible": 98,
+    "qualified": 53,
+    "selected": [
+      "ZENUSDT",
+      "OMUSDT",
+      "1000SATSUSDT",
+      "RAYUSDT",
+      "BONKUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "ZENUSDT",
+        "r30": 0.6640263488605564,
+        "r7": 0.14357948431033535,
+        "median_quote_volume": 10553191.5401
+      },
+      {
+        "symbol": "OMUSDT",
+        "r30": 0.6290021720901274,
+        "r7": 0.22250676369881242,
+        "median_quote_volume": 10217505.5977
+      },
+      {
+        "symbol": "1000SATSUSDT",
+        "r30": 0.5320278314165937,
+        "r7": 0.39953864837051484,
+        "median_quote_volume": 59508841.377293095
+      },
+      {
+        "symbol": "RAYUSDT",
+        "r30": 0.4453542787588246,
+        "r7": 0.2576277373030449,
+        "median_quote_volume": 5043289.81624
+      },
+      {
+        "symbol": "BONKUSDT",
+        "r30": 0.38120601868851345,
+        "r7": 0.30824751080821516,
+        "median_quote_volume": 66648830.40974355
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2024-07-29",
+    "eligible": 96,
+    "qualified": 12,
+    "selected": [
+      "1000SATSUSDT",
+      "JUPUSDT",
+      "XRPUSDT",
+      "JTOUSDT",
+      "SOLUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "1000SATSUSDT",
+        "r30": 0.4381289149269561,
+        "r7": 0.10417099727245603,
+        "median_quote_volume": 81686886.9528482
+      },
+      {
+        "symbol": "JUPUSDT",
+        "r30": 0.2482438680937584,
+        "r7": 0.05705647184485549,
+        "median_quote_volume": 21528221.728215
+      },
+      {
+        "symbol": "XRPUSDT",
+        "r30": 0.22562311718989023,
+        "r7": 0.003195159533224181,
+        "median_quote_volume": 180935462.37755
+      },
+      {
+        "symbol": "JTOUSDT",
+        "r30": 0.2166762047271872,
+        "r7": 0.11786314139600255,
+        "median_quote_volume": 13325556.8607
+      },
+      {
+        "symbol": "SOLUSDT",
+        "r30": 0.20580079099318072,
+        "r7": 0.057747078228676266,
+        "median_quote_volume": 477954453.705845
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2024-08-05",
+    "eligible": 98,
+    "qualified": 2,
+    "selected": [
+      "ZECUSDT",
+      "AAVEUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "ZECUSDT",
+        "r30": 0.5464864964936301,
+        "r7": 0.00188976434192285,
+        "median_quote_volume": 5338366.541
+      },
+      {
+        "symbol": "AAVEUSDT",
+        "r30": 0.28323993103255957,
+        "r7": 0.042868544349766356,
+        "median_quote_volume": 12623040.829695
+      }
+    ],
+    "cash_weight": 0.6,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2024-08-12",
+    "eligible": 97,
+    "qualified": 18,
+    "selected": [
+      "ZECUSDT",
+      "1000SATSUSDT",
+      "JTOUSDT",
+      "XRPUSDT",
+      "LUNCUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "ZECUSDT",
+        "r30": 0.5342677067353582,
+        "r7": 0.2617831787894289,
+        "median_quote_volume": 6056231.511695
+      },
+      {
+        "symbol": "1000SATSUSDT",
+        "r30": 0.36490804934253873,
+        "r7": 0.1867463427743103,
+        "median_quote_volume": 97577009.52164105
+      },
+      {
+        "symbol": "JTOUSDT",
+        "r30": 0.29043655021687037,
+        "r7": 0.10761361462073551,
+        "median_quote_volume": 17290421.8093
+      },
+      {
+        "symbol": "XRPUSDT",
+        "r30": 0.2628266209525712,
+        "r7": 0.049663683737860405,
+        "median_quote_volume": 241830546.96240002
+      },
+      {
+        "symbol": "LUNCUSDT",
+        "r30": 0.22127854826305282,
+        "r7": 0.20183289969388885,
+        "median_quote_volume": 7102367.80323964
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2024-08-19",
+    "eligible": 95,
+    "qualified": 6,
+    "selected": [
+      "ZECUSDT",
+      "BAKEUSDT",
+      "CRVUSDT",
+      "AAVEUSDT",
+      "1000SATSUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "ZECUSDT",
+        "r30": 0.34855502519910936,
+        "r7": 0.055124647237519524,
+        "median_quote_volume": 6335767.54111
+      },
+      {
+        "symbol": "BAKEUSDT",
+        "r30": 0.1455748942760495,
+        "r7": 0.14267119809163653,
+        "median_quote_volume": 5921841.295005
+      },
+      {
+        "symbol": "CRVUSDT",
+        "r30": 0.12571373379422504,
+        "r7": 0.20434704022988437,
+        "median_quote_volume": 15987310.431894999
+      },
+      {
+        "symbol": "AAVEUSDT",
+        "r30": 0.11813241607322075,
+        "r7": 0.1729720885046377,
+        "median_quote_volume": 22855062.49449
+      },
+      {
+        "symbol": "1000SATSUSDT",
+        "r30": 0.03583328555140217,
+        "r7": 0.04425978714309903,
+        "median_quote_volume": 94796483.44532914
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2024-08-26",
+    "eligible": 92,
+    "qualified": 30,
+    "selected": [
+      "AMBUSDT",
+      "AAVEUSDT",
+      "CRVUSDT",
+      "SUIUSDT",
+      "SAGAUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "AMBUSDT",
+        "r30": 0.48219238273346837,
+        "r7": 0.2255374878212449,
+        "median_quote_volume": 5821169.862225
+      },
+      {
+        "symbol": "AAVEUSDT",
+        "r30": 0.38989580125115536,
+        "r7": 0.2112275288241848,
+        "median_quote_volume": 37191308.42002
+      },
+      {
+        "symbol": "CRVUSDT",
+        "r30": 0.32983334935539066,
+        "r7": 0.10938543116480236,
+        "median_quote_volume": 27288832.80192
+      },
+      {
+        "symbol": "SUIUSDT",
+        "r30": 0.30592207060145155,
+        "r7": 0.2064612770708137,
+        "median_quote_volume": 44514877.19076
+      },
+      {
+        "symbol": "SAGAUSDT",
+        "r30": 0.28938213357769593,
+        "r7": 0.14332019459607956,
+        "median_quote_volume": 18846293.297935
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2024-09-02",
+    "eligible": 89,
+    "qualified": 0,
+    "selected": [],
+    "selected_past_features": [],
+    "cash_weight": 1.0,
+    "selection_status": "CASH"
+  },
+  {
+    "date": "2024-09-09",
+    "eligible": 85,
+    "qualified": 8,
+    "selected": [
+      "VIDTUSDT",
+      "LOKAUSDT",
+      "1000SATSUSDT",
+      "SAGAUSDT",
+      "STRKUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "VIDTUSDT",
+        "r30": 0.9428085057176981,
+        "r7": 0.030298496683448993,
+        "median_quote_volume": 8888105.15241
+      },
+      {
+        "symbol": "LOKAUSDT",
+        "r30": 0.4375305556731136,
+        "r7": 0.002808990611055173,
+        "median_quote_volume": 5055322.8429000005
+      },
+      {
+        "symbol": "1000SATSUSDT",
+        "r30": 0.27670501382062995,
+        "r7": 0.11673000810514787,
+        "median_quote_volume": 94358706.3404904
+      },
+      {
+        "symbol": "SAGAUSDT",
+        "r30": 0.1604792858540915,
+        "r7": 0.10265029361516696,
+        "median_quote_volume": 17508104.3332
+      },
+      {
+        "symbol": "STRKUSDT",
+        "r30": 0.07770898432731611,
+        "r7": 0.18138741380215767,
+        "median_quote_volume": 8930792.603920002
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2024-09-16",
+    "eligible": 91,
+    "qualified": 58,
+    "selected": [
+      "LOKAUSDT",
+      "FETUSDT",
+      "BSWUSDT",
+      "NULSUSDT",
+      "VOXELUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "LOKAUSDT",
+        "r30": 0.5607579925141997,
+        "r7": 0.023563113728140902,
+        "median_quote_volume": 5518351.289845
+      },
+      {
+        "symbol": "FETUSDT",
+        "r30": 0.5302019027291295,
+        "r7": 0.2784849789708636,
+        "median_quote_volume": 69033260.41635
+      },
+      {
+        "symbol": "BSWUSDT",
+        "r30": 0.4985231838937711,
+        "r7": 0.01739174271186902,
+        "median_quote_volume": 6103425.816455
+      },
+      {
+        "symbol": "NULSUSDT",
+        "r30": 0.49503955632627766,
+        "r7": 0.07400483577639894,
+        "median_quote_volume": 5345880.0419
+      },
+      {
+        "symbol": "VOXELUSDT",
+        "r30": 0.48325879393333615,
+        "r7": 0.028987536873252187,
+        "median_quote_volume": 5864555.809985
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2024-09-23",
+    "eligible": 92,
+    "qualified": 56,
+    "selected": [
+      "CKBUSDT",
+      "SAGAUSDT",
+      "SUIUSDT",
+      "FETUSDT",
+      "VITEUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "CKBUSDT",
+        "r30": 0.6513366433905385,
+        "r7": 0.10710406308052897,
+        "median_quote_volume": 6103943.969075499
+      },
+      {
+        "symbol": "SAGAUSDT",
+        "r30": 0.6346435067337728,
+        "r7": 0.45630674057750686,
+        "median_quote_volume": 19676287.46813
+      },
+      {
+        "symbol": "SUIUSDT",
+        "r30": 0.5532913370625993,
+        "r7": 0.3495842828952944,
+        "median_quote_volume": 77009068.869095
+      },
+      {
+        "symbol": "FETUSDT",
+        "r30": 0.47369140232492035,
+        "r7": 0.14712023668641894,
+        "median_quote_volume": 75927708.42765
+      },
+      {
+        "symbol": "VITEUSDT",
+        "r30": 0.4585749334221128,
+        "r7": 0.11960830787972762,
+        "median_quote_volume": 5562783.831794
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2024-09-30",
+    "eligible": 90,
+    "qualified": 77,
+    "selected": [
+      "CKBUSDT",
+      "SUIUSDT",
+      "TAOUSDT",
+      "SUPERUSDT",
+      "ALTUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "CKBUSDT",
+        "r30": 0.7989945906524492,
+        "r7": 0.13606118868900055,
+        "median_quote_volume": 13975860.9234595
+      },
+      {
+        "symbol": "SUIUSDT",
+        "r30": 0.7418543606207866,
+        "r7": 0.1298292186540534,
+        "median_quote_volume": 110985761.017625
+      },
+      {
+        "symbol": "TAOUSDT",
+        "r30": 0.635491192384566,
+        "r7": 0.1325187343101363,
+        "median_quote_volume": 26321186.681084998
+      },
+      {
+        "symbol": "SUPERUSDT",
+        "r30": 0.49930177003188114,
+        "r7": 0.1806844486520552,
+        "median_quote_volume": 7270318.6636
+      },
+      {
+        "symbol": "ALTUSDT",
+        "r30": 0.4524334034771135,
+        "r7": 0.21630424766396825,
+        "median_quote_volume": 6139017.3572
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2024-10-07",
+    "eligible": 99,
+    "qualified": 6,
+    "selected": [
+      "TAOUSDT",
+      "SUIUSDT",
+      "SAGAUSDT",
+      "WUSDT",
+      "APTUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "TAOUSDT",
+        "r30": 0.8665240708933417,
+        "r7": 0.05377248814898169,
+        "median_quote_volume": 60537335.687195
+      },
+      {
+        "symbol": "SUIUSDT",
+        "r30": 0.788731042415857,
+        "r7": 0.039004101303766074,
+        "median_quote_volume": 165335217.98935997
+      },
+      {
+        "symbol": "SAGAUSDT",
+        "r30": 0.6082670901949996,
+        "r7": 0.01822354764863685,
+        "median_quote_volume": 38168149.325615
+      },
+      {
+        "symbol": "WUSDT",
+        "r30": 0.5308628138967649,
+        "r7": 0.1273937144353155,
+        "median_quote_volume": 6129179.669985
+      },
+      {
+        "symbol": "APTUSDT",
+        "r30": 0.39852063575535324,
+        "r7": 0.064770836157782,
+        "median_quote_volume": 24077884.092100002
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2024-10-14",
+    "eligible": 102,
+    "qualified": 69,
+    "selected": [
+      "TAOUSDT",
+      "SUIUSDT",
+      "SAGAUSDT",
+      "CELOUSDT",
+      "PHBUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "TAOUSDT",
+        "r30": 0.8058790290840869,
+        "r7": 0.1495415598080025,
+        "median_quote_volume": 72040157.53856501
+      },
+      {
+        "symbol": "SUIUSDT",
+        "r30": 0.7684054562974263,
+        "r7": 0.24518937974575966,
+        "median_quote_volume": 196487529.0024
+      },
+      {
+        "symbol": "SAGAUSDT",
+        "r30": 0.6935462301017992,
+        "r7": 0.13733660978622206,
+        "median_quote_volume": 46453916.41999
+      },
+      {
+        "symbol": "CELOUSDT",
+        "r30": 0.6187419614355167,
+        "r7": 0.11288319757624915,
+        "median_quote_volume": 10608787.615775
+      },
+      {
+        "symbol": "PHBUSDT",
+        "r30": 0.5613382434339086,
+        "r7": 0.21014895378071438,
+        "median_quote_volume": 6528382.4742
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2024-10-21",
+    "eligible": 109,
+    "qualified": 57,
+    "selected": [
+      "DIAUSDT",
+      "ARKUSDT",
+      "CELOUSDT",
+      "ENAUSDT",
+      "AXLUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "DIAUSDT",
+        "r30": 1.1635509246265745,
+        "r7": 0.364695293399552,
+        "median_quote_volume": 11566020.884455
+      },
+      {
+        "symbol": "ARKUSDT",
+        "r30": 0.5785395712693215,
+        "r7": 0.18318457009145234,
+        "median_quote_volume": 6398661.19965
+      },
+      {
+        "symbol": "CELOUSDT",
+        "r30": 0.5198385436407904,
+        "r7": 0.05362256630553008,
+        "median_quote_volume": 13480768.975925
+      },
+      {
+        "symbol": "ENAUSDT",
+        "r30": 0.4815296901972555,
+        "r7": 0.19768561861869766,
+        "median_quote_volume": 44642576.6563725
+      },
+      {
+        "symbol": "AXLUSDT",
+        "r30": 0.4616049872097787,
+        "r7": 0.07242609225691626,
+        "median_quote_volume": 5895408.4449975
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2024-10-28",
+    "eligible": 109,
+    "qualified": 7,
+    "selected": [
+      "RAYUSDT",
+      "APEUSDT",
+      "MEMEUSDT",
+      "SOLUSDT",
+      "TRXUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "RAYUSDT",
+        "r30": 0.5903952747891292,
+        "r7": 0.32418992454298345,
+        "median_quote_volume": 8700680.5145
+      },
+      {
+        "symbol": "APEUSDT",
+        "r30": 0.24022176525724626,
+        "r7": 0.19920840148944507,
+        "median_quote_volume": 7195168.320015
+      },
+      {
+        "symbol": "MEMEUSDT",
+        "r30": 0.10942876818652575,
+        "r7": 0.00898882456843328,
+        "median_quote_volume": 12255569.27359
+      },
+      {
+        "symbol": "SOLUSDT",
+        "r30": 0.09399433242818382,
+        "r7": 0.06710110262053295,
+        "median_quote_volume": 470665685.20936
+      },
+      {
+        "symbol": "TRXUSDT",
+        "r30": 0.07541260378038692,
+        "r7": 0.05282371172490264,
+        "median_quote_volume": 34637383.42969
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2024-11-04",
+    "eligible": 101,
+    "qualified": 21,
+    "selected": [
+      "RAYUSDT",
+      "SANTOSUSDT",
+      "DOGEUSDT",
+      "ENAUSDT",
+      "PENDLEUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "RAYUSDT",
+        "r30": 0.8087110752224153,
+        "r7": 0.18460129866930147,
+        "median_quote_volume": 14153395.809950002
+      },
+      {
+        "symbol": "SANTOSUSDT",
+        "r30": 0.4744494620340341,
+        "r7": 0.22028572607792388,
+        "median_quote_volume": 8220098.937905
+      },
+      {
+        "symbol": "DOGEUSDT",
+        "r30": 0.41773055802356857,
+        "r7": 0.14895164124092378,
+        "median_quote_volume": 194081826.99142
+      },
+      {
+        "symbol": "ENAUSDT",
+        "r30": 0.2609315994659953,
+        "r7": 0.014161002989497707,
+        "median_quote_volume": 45396184.635027
+      },
+      {
+        "symbol": "PENDLEUSDT",
+        "r30": 0.2200417612181508,
+        "r7": 0.017594471906523773,
+        "median_quote_volume": 22150470.805749997
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2024-11-11",
+    "eligible": 111,
+    "qualified": 93,
+    "selected": [
+      "TROYUSDT",
+      "RAYUSDT",
+      "DOGEUSDT",
+      "ENAUSDT",
+      "ARKMUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "TROYUSDT",
+        "r30": 1.2836908009632528,
+        "r7": 0.7388683271354548,
+        "median_quote_volume": 10129568.45219
+      },
+      {
+        "symbol": "RAYUSDT",
+        "r30": 1.2414813399391682,
+        "r7": 0.44884977009110083,
+        "median_quote_volume": 30784222.57369
+      },
+      {
+        "symbol": "DOGEUSDT",
+        "r30": 0.7248929315911105,
+        "r7": 0.31625765180456483,
+        "median_quote_volume": 309600424.430205
+      },
+      {
+        "symbol": "ENAUSDT",
+        "r30": 0.7074462326230536,
+        "r7": 0.4152507273723167,
+        "median_quote_volume": 51314319.111248
+      },
+      {
+        "symbol": "ARKMUSDT",
+        "r30": 0.516532201799111,
+        "r7": 0.33773089002840895,
+        "median_quote_volume": 27196350.026100002
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2024-11-18",
+    "eligible": 127,
+    "qualified": 87,
+    "selected": [
+      "DOGEUSDT",
+      "XLMUSDT",
+      "ADAUSDT",
+      "PEPEUSDT",
+      "BONKUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "DOGEUSDT",
+        "r30": 1.0327378627967325,
+        "r7": 0.5091156198287081,
+        "median_quote_volume": 387081863.18649
+      },
+      {
+        "symbol": "XLMUSDT",
+        "r30": 0.8429274216621498,
+        "r7": 0.7698726354930866,
+        "median_quote_volume": 5075695.41555
+      },
+      {
+        "symbol": "ADAUSDT",
+        "r30": 0.7704966466378382,
+        "r7": 0.40082379213834074,
+        "median_quote_volume": 34669943.53317501
+      },
+      {
+        "symbol": "PEPEUSDT",
+        "r30": 0.7681945609556029,
+        "r7": 0.6427932944143306,
+        "median_quote_volume": 212109169.3761035
+      },
+      {
+        "symbol": "BONKUSDT",
+        "r30": 0.7493502771185028,
+        "r7": 0.748457818335483,
+        "median_quote_volume": 36298350.75368367
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2024-11-25",
+    "eligible": 149,
+    "qualified": 119,
+    "selected": [
+      "XLMUSDT",
+      "TROYUSDT",
+      "ADAUSDT",
+      "DOGEUSDT",
+      "HBARUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "XLMUSDT",
+        "r30": 1.6856709702433796,
+        "r7": 0.8604800594399373,
+        "median_quote_volume": 8951007.33355
+      },
+      {
+        "symbol": "TROYUSDT",
+        "r30": 1.3313619661615537,
+        "r7": 0.2210652686125717,
+        "median_quote_volume": 55843703.982126
+      },
+      {
+        "symbol": "ADAUSDT",
+        "r30": 1.1235981512327242,
+        "r7": 0.36267095561103657,
+        "median_quote_volume": 150582044.26066
+      },
+      {
+        "symbol": "DOGEUSDT",
+        "r30": 1.109152355161936,
+        "r7": 0.1664033607098317,
+        "median_quote_volume": 1030830240.659945
+      },
+      {
+        "symbol": "HBARUSDT",
+        "r30": 1.1053734638197983,
+        "r7": 0.5376830113801309,
+        "median_quote_volume": 22096565.92826
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2024-12-02",
+    "eligible": 192,
+    "qualified": 170,
+    "selected": [
+      "XLMUSDT",
+      "ALGOUSDT",
+      "XRPUSDT",
+      "HBARUSDT",
+      "ADAUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "XLMUSDT",
+        "r30": 1.7370807896106157,
+        "r7": 0.005923395555626097,
+        "median_quote_volume": 102378877.23359999
+      },
+      {
+        "symbol": "ALGOUSDT",
+        "r30": 1.3554475794391663,
+        "r7": 0.4125898201802894,
+        "median_quote_volume": 28904588.49725
+      },
+      {
+        "symbol": "XRPUSDT",
+        "r30": 1.3428212434381737,
+        "r7": 0.28425434546227824,
+        "median_quote_volume": 845442822.70645
+      },
+      {
+        "symbol": "HBARUSDT",
+        "r30": 1.2994397116597722,
+        "r7": 0.09758120986252472,
+        "median_quote_volume": 78827928.71032
+      },
+      {
+        "symbol": "ADAUSDT",
+        "r30": 1.1495641945766442,
+        "r7": 0.012308995395452558,
+        "median_quote_volume": 349487223.34008
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2024-12-09",
+    "eligible": 229,
+    "qualified": 218,
+    "selected": [
+      "HBARUSDT",
+      "XRPUSDT",
+      "CRVUSDT",
+      "ALGOUSDT",
+      "IOTAUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "HBARUSDT",
+        "r30": 1.907721326033537,
+        "r7": 0.6680945478339471,
+        "median_quote_volume": 159010293.0675
+      },
+      {
+        "symbol": "XRPUSDT",
+        "r30": 1.5470185745262985,
+        "r7": 0.2908160893055341,
+        "median_quote_volume": 1267536424.0393
+      },
+      {
+        "symbol": "CRVUSDT",
+        "r30": 1.5008904478107987,
+        "r7": 0.5448504615448425,
+        "median_quote_volume": 57186767.255625
+      },
+      {
+        "symbol": "ALGOUSDT",
+        "r30": 1.4237174374061792,
+        "r7": 0.13749580252342658,
+        "median_quote_volume": 66481008.90065
+      },
+      {
+        "symbol": "IOTAUSDT",
+        "r30": 1.4039498202478287,
+        "r7": 0.5706398884021138,
+        "median_quote_volume": 13763870.166450001
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2024-12-16",
+    "eligible": 246,
+    "qualified": 19,
+    "selected": [
+      "CTXCUSDT",
+      "XVGUSDT",
+      "SUSHIUSDT",
+      "ENSUSDT",
+      "AAVEUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "CTXCUSDT",
+        "r30": 1.4224882825865084,
+        "r7": 0.34352299130219527,
+        "median_quote_volume": 6418377.8085
+      },
+      {
+        "symbol": "XVGUSDT",
+        "r30": 1.202196830245032,
+        "r7": 0.002542589724714134,
+        "median_quote_volume": 22641151.369469002
+      },
+      {
+        "symbol": "SUSHIUSDT",
+        "r30": 1.0735577992169816,
+        "r7": 0.07502896910585433,
+        "median_quote_volume": 21925686.87125
+      },
+      {
+        "symbol": "ENSUSDT",
+        "r30": 0.9422819199457184,
+        "r7": 0.008869769285429844,
+        "median_quote_volume": 65835504.8956
+      },
+      {
+        "symbol": "AAVEUSDT",
+        "r30": 0.8380402997851397,
+        "r7": 0.2588417399016514,
+        "median_quote_volume": 66836216.377715
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2024-12-23",
+    "eligible": 244,
+    "qualified": 2,
+    "selected": [
+      "ZENUSDT",
+      "AGLDUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "ZENUSDT",
+        "r30": 1.1456084318083601,
+        "r7": 0.6029322522844686,
+        "median_quote_volume": 18337697.8703
+      },
+      {
+        "symbol": "AGLDUSDT",
+        "r30": 0.4506638577782312,
+        "r7": 0.48539213529108644,
+        "median_quote_volume": 6919363.28955
+      }
+    ],
+    "cash_weight": 0.6,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2024-12-30",
+    "eligible": 218,
+    "qualified": 50,
+    "selected": [
+      "AVAUSDT",
+      "XVGUSDT",
+      "CRVUSDT",
+      "ZENUSDT",
+      "HBARUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "AVAUSDT",
+        "r30": 0.7872706178328567,
+        "r7": 0.03467557949154948,
+        "median_quote_volume": 10419535.35303
+      },
+      {
+        "symbol": "XVGUSDT",
+        "r30": 0.7820527127546841,
+        "r7": 0.3212678452274807,
+        "median_quote_volume": 28501621.384343
+      },
+      {
+        "symbol": "CRVUSDT",
+        "r30": 0.721581345887736,
+        "r7": 0.25420318518032375,
+        "median_quote_volume": 111566109.14288
+      },
+      {
+        "symbol": "ZENUSDT",
+        "r30": 0.7139160167368498,
+        "r7": 0.126425494577696,
+        "median_quote_volume": 21415242.37005
+      },
+      {
+        "symbol": "HBARUSDT",
+        "r30": 0.7099992028767625,
+        "r7": 0.14802744580995003,
+        "median_quote_volume": 246307661.20798
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2025-01-06",
+    "eligible": 182,
+    "qualified": 24,
+    "selected": [
+      "DFUSDT",
+      "AVAUSDT",
+      "AGLDUSDT",
+      "DEXEUSDT",
+      "UTKUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "DFUSDT",
+        "r30": 0.7572468905311698,
+        "r7": 0.33125947175643217,
+        "median_quote_volume": 11872532.179724999
+      },
+      {
+        "symbol": "AVAUSDT",
+        "r30": 0.6518313437983746,
+        "r7": 0.10563806214864502,
+        "median_quote_volume": 16028521.96274
+      },
+      {
+        "symbol": "AGLDUSDT",
+        "r30": 0.5538924018827376,
+        "r7": 0.3872286182441875,
+        "median_quote_volume": 16476680.314799998
+      },
+      {
+        "symbol": "DEXEUSDT",
+        "r30": 0.4849043439829631,
+        "r7": 0.28498986370005763,
+        "median_quote_volume": 6916284.0140700005
+      },
+      {
+        "symbol": "UTKUSDT",
+        "r30": 0.3366691710098757,
+        "r7": 0.055904350027042145,
+        "median_quote_volume": 11424187.948630001
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2025-01-13",
+    "eligible": 161,
+    "qualified": 4,
+    "selected": [
+      "HIVEUSDT",
+      "FIROUSDT",
+      "STRAXUSDT",
+      "XRPUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "HIVEUSDT",
+        "r30": 0.4725422701969769,
+        "r7": 0.3006920132703177,
+        "median_quote_volume": 18859546.965099998
+      },
+      {
+        "symbol": "FIROUSDT",
+        "r30": 0.2825953562814006,
+        "r7": 0.03731247472998381,
+        "median_quote_volume": 5473403.50815
+      },
+      {
+        "symbol": "STRAXUSDT",
+        "r30": 0.17557706872274217,
+        "r7": 0.005614563754345603,
+        "median_quote_volume": 6188780.93461
+      },
+      {
+        "symbol": "XRPUSDT",
+        "r30": 0.09692614087569945,
+        "r7": 0.06258421406169717,
+        "median_quote_volume": 685546476.525
+      }
+    ],
+    "cash_weight": 0.19999999999999996,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2025-01-20",
+    "eligible": 147,
+    "qualified": 61,
+    "selected": [
+      "DEXEUSDT",
+      "DFUSDT",
+      "RAYUSDT",
+      "ZENUSDT",
+      "XRPUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "DEXEUSDT",
+        "r30": 0.735234046434835,
+        "r7": 0.09002366292235804,
+        "median_quote_volume": 9563488.700855
+      },
+      {
+        "symbol": "DFUSDT",
+        "r30": 0.6903688976832802,
+        "r7": 0.1436220502457359,
+        "median_quote_volume": 13752526.378665
+      },
+      {
+        "symbol": "RAYUSDT",
+        "r30": 0.5111444795320101,
+        "r7": 0.4720551925721581,
+        "median_quote_volume": 16780400.12635
+      },
+      {
+        "symbol": "ZENUSDT",
+        "r30": 0.43081448125083505,
+        "r7": 0.011971247196494715,
+        "median_quote_volume": 51366846.0623
+      },
+      {
+        "symbol": "XRPUSDT",
+        "r30": 0.3786688999646208,
+        "r7": 0.23830516189064,
+        "median_quote_volume": 685546476.525
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2025-01-27",
+    "eligible": 146,
+    "qualified": 9,
+    "selected": [
+      "STPTUSDT",
+      "RAYUSDT",
+      "DEXEUSDT",
+      "LDOUSDT",
+      "OMUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "STPTUSDT",
+        "r30": 0.9420643575962223,
+        "r7": 0.7201682447401302,
+        "median_quote_volume": 7688848.646464501
+      },
+      {
+        "symbol": "RAYUSDT",
+        "r30": 0.4642519794027711,
+        "r7": 0.041351981119082656,
+        "median_quote_volume": 19813593.0513
+      },
+      {
+        "symbol": "DEXEUSDT",
+        "r30": 0.38015816030447946,
+        "r7": 0.11335934964999654,
+        "median_quote_volume": 5935522.83151
+      },
+      {
+        "symbol": "LDOUSDT",
+        "r30": 0.11734475496189324,
+        "r7": 0.11960081908857577,
+        "median_quote_volume": 26575188.15366
+      },
+      {
+        "symbol": "OMUSDT",
+        "r30": 0.10580376716105729,
+        "r7": 0.07219326312663708,
+        "median_quote_volume": 13532001.9309
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2025-02-03",
+    "eligible": 140,
+    "qualified": 4,
+    "selected": [
+      "SPELLUSDT",
+      "OMUSDT",
+      "LDOUSDT",
+      "DEXEUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "SPELLUSDT",
+        "r30": 0.5243129073869205,
+        "r7": 0.22414113417712664,
+        "median_quote_volume": 15955117.4985611
+      },
+      {
+        "symbol": "OMUSDT",
+        "r30": 0.2959712987863111,
+        "r7": 0.25108188254700387,
+        "median_quote_volume": 20109963.905
+      },
+      {
+        "symbol": "LDOUSDT",
+        "r30": 0.07910268512551759,
+        "r7": 0.020823756911260698,
+        "median_quote_volume": 29764941.970225
+      },
+      {
+        "symbol": "DEXEUSDT",
+        "r30": 0.0628712661691783,
+        "r7": 0.07329358781792937,
+        "median_quote_volume": 5823546.2381
+      }
+    ],
+    "cash_weight": 0.19999999999999996,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2025-02-10",
+    "eligible": 140,
+    "qualified": 2,
+    "selected": [
+      "BELUSDT",
+      "OMUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "BELUSDT",
+        "r30": 0.5795046905211001,
+        "r7": 0.2522027998624294,
+        "median_quote_volume": 5238469.72014
+      },
+      {
+        "symbol": "OMUSDT",
+        "r30": 0.4229745294255252,
+        "r7": 0.11532203486494212,
+        "median_quote_volume": 41252145.844699994
+      }
+    ],
+    "cash_weight": 0.6,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2025-02-17",
+    "eligible": 134,
+    "qualified": 8,
+    "selected": [
+      "OMUSDT",
+      "STPTUSDT",
+      "DFUSDT",
+      "JTOUSDT",
+      "JUPUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "OMUSDT",
+        "r30": 0.6806232802462729,
+        "r7": 0.25509233883767374,
+        "median_quote_volume": 59794250.2745
+      },
+      {
+        "symbol": "STPTUSDT",
+        "r30": 0.2689013946973512,
+        "r7": 0.2928474255072988,
+        "median_quote_volume": 11630273.6363855
+      },
+      {
+        "symbol": "DFUSDT",
+        "r30": 0.2323791223472916,
+        "r7": 0.11027807134569473,
+        "median_quote_volume": 5090510.802365
+      },
+      {
+        "symbol": "JTOUSDT",
+        "r30": 0.1674579502391159,
+        "r7": 0.21942269043264562,
+        "median_quote_volume": 14075635.030499998
+      },
+      {
+        "symbol": "JUPUSDT",
+        "r30": 0.16738588909677535,
+        "r7": 0.10325190352220656,
+        "median_quote_volume": 76762517.43757501
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2025-02-24",
+    "eligible": 121,
+    "qualified": 8,
+    "selected": [
+      "BNXUSDT",
+      "OMUSDT",
+      "BELUSDT",
+      "ACHUSDT",
+      "MKRUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "BNXUSDT",
+        "r30": 1.4139805100845466,
+        "r7": 0.15260135949668588,
+        "median_quote_volume": 21377197.3013
+      },
+      {
+        "symbol": "OMUSDT",
+        "r30": 0.8120342837857889,
+        "r7": 0.08670276494778394,
+        "median_quote_volume": 67315281.8298
+      },
+      {
+        "symbol": "BELUSDT",
+        "r30": 0.5692702363555082,
+        "r7": 0.011818771249462094,
+        "median_quote_volume": 7716210.843505001
+      },
+      {
+        "symbol": "ACHUSDT",
+        "r30": 0.46248368381052907,
+        "r7": 0.30637981258946856,
+        "median_quote_volume": 35061211.794665
+      },
+      {
+        "symbol": "MKRUSDT",
+        "r30": 0.17271811523094935,
+        "r7": 0.4101024135366814,
+        "median_quote_volume": 9747945.47955
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2025-03-03",
+    "eligible": 121,
+    "qualified": 5,
+    "selected": [
+      "MKRUSDT",
+      "STPTUSDT",
+      "BELUSDT",
+      "BURGERUSDT",
+      "AUCTIONUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "MKRUSDT",
+        "r30": 0.4275654551088304,
+        "r7": 0.08486101638928446,
+        "median_quote_volume": 13745322.1807
+      },
+      {
+        "symbol": "STPTUSDT",
+        "r30": 0.34079940518064233,
+        "r7": 0.11800425991231296,
+        "median_quote_volume": 9326634.7758375
+      },
+      {
+        "symbol": "BELUSDT",
+        "r30": 0.3241975580465035,
+        "r7": 0.10398700226990279,
+        "median_quote_volume": 5834904.04882
+      },
+      {
+        "symbol": "BURGERUSDT",
+        "r30": 0.15550946501955282,
+        "r7": 0.14178764581571285,
+        "median_quote_volume": 5395800.2012600005
+      },
+      {
+        "symbol": "AUCTIONUSDT",
+        "r30": 0.08208941040679683,
+        "r7": 0.04797265455532415,
+        "median_quote_volume": 5961341.39665
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2025-03-10",
+    "eligible": 115,
+    "qualified": 7,
+    "selected": [
+      "AUCTIONUSDT",
+      "BCHUSDT",
+      "ADAUSDT",
+      "TRXUSDT",
+      "RUNEUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "AUCTIONUSDT",
+        "r30": 0.6889965668336322,
+        "r7": 0.22418390215486642,
+        "median_quote_volume": 8113269.45685
+      },
+      {
+        "symbol": "BCHUSDT",
+        "r30": 0.19920334376820145,
+        "r7": 0.21450000914367512,
+        "median_quote_volume": 13180287.679650001
+      },
+      {
+        "symbol": "ADAUSDT",
+        "r30": 0.13260924324192125,
+        "r7": 0.1999120276463825,
+        "median_quote_volume": 134183273.38508001
+      },
+      {
+        "symbol": "TRXUSDT",
+        "r30": 0.051336471348330866,
+        "r7": 0.040599842550305985,
+        "median_quote_volume": 111527725.25124
+      },
+      {
+        "symbol": "RUNEUSDT",
+        "r30": 0.04216081082427812,
+        "r7": 0.04856083266974552,
+        "median_quote_volume": 61521362.899749994
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2025-03-17",
+    "eligible": 105,
+    "qualified": 6,
+    "selected": [
+      "AUCTIONUSDT",
+      "PNUTUSDT",
+      "BNXUSDT",
+      "TIAUSDT",
+      "OMUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "AUCTIONUSDT",
+        "r30": 0.804864996713238,
+        "r7": 0.44640593098100434,
+        "median_quote_volume": 11677898.3969
+      },
+      {
+        "symbol": "PNUTUSDT",
+        "r30": 0.30644937930347277,
+        "r7": 0.11604152507816043,
+        "median_quote_volume": 62825384.8563
+      },
+      {
+        "symbol": "BNXUSDT",
+        "r30": 0.2199389590617611,
+        "r7": 0.14299034792917564,
+        "median_quote_volume": 43991647.414945
+      },
+      {
+        "symbol": "TIAUSDT",
+        "r30": 0.17247251297052138,
+        "r7": 0.09384594957573354,
+        "median_quote_volume": 25856666.652609996
+      },
+      {
+        "symbol": "OMUSDT",
+        "r30": 0.12381107359935116,
+        "r7": 0.012887716371164953,
+        "median_quote_volume": 36593198.516499996
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2025-03-24",
+    "eligible": 105,
+    "qualified": 7,
+    "selected": [
+      "AUCTIONUSDT",
+      "VANAUSDT",
+      "CAKEUSDT",
+      "ZROUSDT",
+      "SLFUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "AUCTIONUSDT",
+        "r30": 0.8724652523341255,
+        "r7": 0.17245043699869164,
+        "median_quote_volume": 21875557.11505
+      },
+      {
+        "symbol": "VANAUSDT",
+        "r30": 0.21559532382599295,
+        "r7": 0.25007262595593427,
+        "median_quote_volume": 17243611.799445
+      },
+      {
+        "symbol": "CAKEUSDT",
+        "r30": 0.08867532625703843,
+        "r7": 0.37875836024635745,
+        "median_quote_volume": 28985165.300545
+      },
+      {
+        "symbol": "ZROUSDT",
+        "r30": 0.08414122864186885,
+        "r7": 0.3818085708692177,
+        "median_quote_volume": 10336482.199760001
+      },
+      {
+        "symbol": "SLFUSDT",
+        "r30": 0.058636154269208506,
+        "r7": 0.11376339948927876,
+        "median_quote_volume": 5190469.64992
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2025-03-31",
+    "eligible": 94,
+    "qualified": 1,
+    "selected": [
+      "TONUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "TONUSDT",
+        "r30": 0.07812960685484932,
+        "r7": 0.008688623761128054,
+        "median_quote_volume": 24389943.670199998
+      }
+    ],
+    "cash_weight": 0.8,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2025-04-07",
+    "eligible": 93,
+    "qualified": 9,
+    "selected": [
+      "VIDTUSDT",
+      "ZROUSDT",
+      "EOSUSDT",
+      "RAREUSDT",
+      "PENDLEUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "VIDTUSDT",
+        "r30": 0.7163740311697618,
+        "r7": 0.01758569874413684,
+        "median_quote_volume": 5113159.143415
+      },
+      {
+        "symbol": "ZROUSDT",
+        "r30": 0.33130973922006846,
+        "r7": 0.16756697481032523,
+        "median_quote_volume": 16808794.21334
+      },
+      {
+        "symbol": "EOSUSDT",
+        "r30": 0.32416316717190274,
+        "r7": 0.3186535113609332,
+        "median_quote_volume": 15244427.07165
+      },
+      {
+        "symbol": "RAREUSDT",
+        "r30": 0.2609590023110276,
+        "r7": 0.04473589384139152,
+        "median_quote_volume": 11770138.188809998
+      },
+      {
+        "symbol": "PENDLEUSDT",
+        "r30": 0.22543225592614313,
+        "r7": 0.20197788519077262,
+        "median_quote_volume": 11962996.98815
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2025-04-14",
+    "eligible": 93,
+    "qualified": 29,
+    "selected": [
+      "ORCAUSDT",
+      "PENDLEUSDT",
+      "CRVUSDT",
+      "API3USDT",
+      "RSRUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "ORCAUSDT",
+        "r30": 0.788024954637423,
+        "r7": 0.42890734426499144,
+        "median_quote_volume": 6421383.480555
+      },
+      {
+        "symbol": "PENDLEUSDT",
+        "r30": 0.5305993162955996,
+        "r7": 0.12104355370631728,
+        "median_quote_volume": 13837045.51795
+      },
+      {
+        "symbol": "CRVUSDT",
+        "r30": 0.4597059277390393,
+        "r7": 0.23074325816995456,
+        "median_quote_volume": 28043433.88394
+      },
+      {
+        "symbol": "API3USDT",
+        "r30": 0.45118735744625965,
+        "r7": 0.05512302362280113,
+        "median_quote_volume": 10705448.45203
+      },
+      {
+        "symbol": "RSRUSDT",
+        "r30": 0.3628654355249082,
+        "r7": 0.05358307009173575,
+        "median_quote_volume": 7707622.890064349
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2025-04-21",
+    "eligible": 89,
+    "qualified": 7,
+    "selected": [
+      "RAYUSDT",
+      "RENDERUSDT",
+      "GMTUSDT",
+      "TAOUSDT",
+      "SOLUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "RAYUSDT",
+        "r30": 0.2783631676489157,
+        "r7": 0.11516720001980806,
+        "median_quote_volume": 10899208.602400001
+      },
+      {
+        "symbol": "RENDERUSDT",
+        "r30": 0.24094675765787624,
+        "r7": 0.06532834820651176,
+        "median_quote_volume": 19517594.98897
+      },
+      {
+        "symbol": "GMTUSDT",
+        "r30": 0.15055206002677832,
+        "r7": 0.2630300434534688,
+        "median_quote_volume": 5773010.69964
+      },
+      {
+        "symbol": "TAOUSDT",
+        "r30": 0.14302138080937082,
+        "r7": 0.13471272767035364,
+        "median_quote_volume": 25080983.277510002
+      },
+      {
+        "symbol": "SOLUSDT",
+        "r30": 0.09181304888052304,
+        "r7": 0.05609496627844374,
+        "median_quote_volume": 511735864.350685
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2025-04-28",
+    "eligible": 91,
+    "qualified": 35,
+    "selected": [
+      "RAYUSDT",
+      "JASMYUSDT",
+      "FETUSDT",
+      "TRUMPUSDT",
+      "PENGUUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "RAYUSDT",
+        "r30": 0.3605061780567777,
+        "r7": 0.26171245223494194,
+        "median_quote_volume": 13591387.2444
+      },
+      {
+        "symbol": "JASMYUSDT",
+        "r30": 0.3550889007830975,
+        "r7": 0.18968191120024694,
+        "median_quote_volume": 8291853.2545975
+      },
+      {
+        "symbol": "FETUSDT",
+        "r30": 0.3511954781741068,
+        "r7": 0.338525625433055,
+        "median_quote_volume": 19068496.58945
+      },
+      {
+        "symbol": "TRUMPUSDT",
+        "r30": 0.34006613087580206,
+        "r7": 0.618490260542484,
+        "median_quote_volume": 73257852.25424999
+      },
+      {
+        "symbol": "PENGUUSDT",
+        "r30": 0.3195729254155497,
+        "r7": 0.6854486012077964,
+        "median_quote_volume": 8809371.6980335
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2025-05-05",
+    "eligible": 95,
+    "qualified": 14,
+    "selected": [
+      "VOXELUSDT",
+      "BSWUSDT",
+      "PENGUUSDT",
+      "AIXBTUSDT",
+      "TAOUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "VOXELUSDT",
+        "r30": 1.017102659798561,
+        "r7": 0.3095478953753436,
+        "median_quote_volume": 5797303.91586
+      },
+      {
+        "symbol": "BSWUSDT",
+        "r30": 0.8127303967204766,
+        "r7": 0.22795125288231297,
+        "median_quote_volume": 5741927.9837299995
+      },
+      {
+        "symbol": "PENGUUSDT",
+        "r30": 0.7768094959593923,
+        "r7": 0.05393876499340424,
+        "median_quote_volume": 11615737.115927
+      },
+      {
+        "symbol": "AIXBTUSDT",
+        "r30": 0.7677418460843343,
+        "r7": 0.12412860064666568,
+        "median_quote_volume": 8122244.43723
+      },
+      {
+        "symbol": "TAOUSDT",
+        "r30": 0.49165271941253513,
+        "r7": 0.010823232967849589,
+        "median_quote_volume": 33435112.243079998
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2025-05-12",
+    "eligible": 101,
+    "qualified": 95,
+    "selected": [
+      "TURBOUSDT",
+      "PENGUUSDT",
+      "AIXBTUSDT",
+      "PNUTUSDT",
+      "MAGICUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "TURBOUSDT",
+        "r30": 1.2851099033535711,
+        "r7": 0.24177377344705311,
+        "median_quote_volume": 19061148.115304
+      },
+      {
+        "symbol": "PENGUUSDT",
+        "r30": 1.2719734481806304,
+        "r7": 0.3755722423014963,
+        "median_quote_volume": 31728511.0955605
+      },
+      {
+        "symbol": "AIXBTUSDT",
+        "r30": 1.0497571028789663,
+        "r7": 0.23378255803032721,
+        "median_quote_volume": 19483382.99628
+      },
+      {
+        "symbol": "PNUTUSDT",
+        "r30": 1.007592336264474,
+        "r7": 0.7637242107940333,
+        "median_quote_volume": 21169569.803705
+      },
+      {
+        "symbol": "MAGICUSDT",
+        "r30": 0.9983867644765652,
+        "r7": 0.12314297369880212,
+        "median_quote_volume": 5830196.71399
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2025-05-19",
+    "eligible": 107,
+    "qualified": 5,
+    "selected": [
+      "ETHFIUSDT",
+      "NEIROUSDT",
+      "PEOPLEUSDT",
+      "SOLVUSDT",
+      "TRXUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "ETHFIUSDT",
+        "r30": 1.0606029627011255,
+        "r7": 0.10545019773492333,
+        "median_quote_volume": 8275083.1854
+      },
+      {
+        "symbol": "NEIROUSDT",
+        "r30": 0.9641122645097262,
+        "r7": 0.14228590734753513,
+        "median_quote_volume": 17088893.69262268
+      },
+      {
+        "symbol": "PEOPLEUSDT",
+        "r30": 0.7090025523497393,
+        "r7": 0.021349891107434675,
+        "median_quote_volume": 9480937.673147
+      },
+      {
+        "symbol": "SOLVUSDT",
+        "r30": 0.6301015543660689,
+        "r7": 0.045373355558228606,
+        "median_quote_volume": 6718520.21453
+      },
+      {
+        "symbol": "TRXUSDT",
+        "r30": 0.08431740984310993,
+        "r7": 0.012691473077140749,
+        "median_quote_volume": 93412851.39783001
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2025-05-26",
+    "eligible": 106,
+    "qualified": 66,
+    "selected": [
+      "COOKIEUSDT",
+      "NEIROUSDT",
+      "KAITOUSDT",
+      "PNUTUSDT",
+      "WIFUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "COOKIEUSDT",
+        "r30": 0.8858315243894467,
+        "r7": 0.6888332531795591,
+        "median_quote_volume": 5750546.150695
+      },
+      {
+        "symbol": "NEIROUSDT",
+        "r30": 0.8245212677227114,
+        "r7": 0.13604620940188236,
+        "median_quote_volume": 59404007.13138257
+      },
+      {
+        "symbol": "KAITOUSDT",
+        "r30": 0.7267339837930666,
+        "r7": 0.1408113182980955,
+        "median_quote_volume": 21196051.582450002
+      },
+      {
+        "symbol": "PNUTUSDT",
+        "r30": 0.7240306522753982,
+        "r7": 0.11254187506649083,
+        "median_quote_volume": 50735434.84651
+      },
+      {
+        "symbol": "WIFUSDT",
+        "r30": 0.7012225945654906,
+        "r7": 0.18393143103485804,
+        "median_quote_volume": 79762254.48282
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2025-06-02",
+    "eligible": 105,
+    "qualified": 4,
+    "selected": [
+      "KAITOUSDT",
+      "ASRUSDT",
+      "MASKUSDT",
+      "VANAUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "KAITOUSDT",
+        "r30": 0.7603940891415589,
+        "r7": 0.006237557930137136,
+        "median_quote_volume": 27716502.49128
+      },
+      {
+        "symbol": "ASRUSDT",
+        "r30": 0.5579665645993493,
+        "r7": 0.10428891576960077,
+        "median_quote_volume": 5600394.1983
+      },
+      {
+        "symbol": "MASKUSDT",
+        "r30": 0.532912411168834,
+        "r7": 0.1740067066074174,
+        "median_quote_volume": 11170127.74235
+      },
+      {
+        "symbol": "VANAUSDT",
+        "r30": 0.05244290254674102,
+        "r7": 0.04707310687585946,
+        "median_quote_volume": 6048721.977195
+      }
+    ],
+    "cash_weight": 0.19999999999999996,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2025-06-09",
+    "eligible": 103,
+    "qualified": 21,
+    "selected": [
+      "ANIMEUSDT",
+      "ETHFIUSDT",
+      "TRBUSDT",
+      "WIFUSDT",
+      "PEOPLEUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "ANIMEUSDT",
+        "r30": 0.4956104579595103,
+        "r7": 0.34589818473118344,
+        "median_quote_volume": 7600870.641235501
+      },
+      {
+        "symbol": "ETHFIUSDT",
+        "r30": 0.4895934036602167,
+        "r7": 0.02520776671870449,
+        "median_quote_volume": 42335653.6809
+      },
+      {
+        "symbol": "TRBUSDT",
+        "r30": 0.4225454698428952,
+        "r7": 0.16536754047348984,
+        "median_quote_volume": 8177008.809754999
+      },
+      {
+        "symbol": "WIFUSDT",
+        "r30": 0.2312034682913102,
+        "r7": 0.02437729533560553,
+        "median_quote_volume": 81240199.303175
+      },
+      {
+        "symbol": "PEOPLEUSDT",
+        "r30": 0.22747390141543078,
+        "r7": 0.006440448321009744,
+        "median_quote_volume": 13442948.176445499
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2025-06-16",
+    "eligible": 88,
+    "qualified": 7,
+    "selected": [
+      "AAVEUSDT",
+      "COMPUSDT",
+      "UNIUSDT",
+      "MKRUSDT",
+      "BCHUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "AAVEUSDT",
+        "r30": 0.20615016122677682,
+        "r7": 0.06638433444382516,
+        "median_quote_volume": 52045607.364125
+      },
+      {
+        "symbol": "COMPUSDT",
+        "r30": 0.1676780123078023,
+        "r7": 0.13923797065764287,
+        "median_quote_volume": 7848478.03899
+      },
+      {
+        "symbol": "UNIUSDT",
+        "r30": 0.1589324769614366,
+        "r7": 0.140166022909112,
+        "median_quote_volume": 49958160.12506
+      },
+      {
+        "symbol": "MKRUSDT",
+        "r30": 0.13738496194051256,
+        "r7": 0.16308470037566727,
+        "median_quote_volume": 8673528.54935
+      },
+      {
+        "symbol": "BCHUSDT",
+        "r30": 0.08420933999392125,
+        "r7": 0.05118337139460307,
+        "median_quote_volume": 14053091.8387
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2025-06-23",
+    "eligible": 84,
+    "qualified": 2,
+    "selected": [
+      "BMTUSDT",
+      "BCHUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "BMTUSDT",
+        "r30": 0.29731296551274233,
+        "r7": 0.0507889655544688,
+        "median_quote_volume": 8397619.317645
+      },
+      {
+        "symbol": "BCHUSDT",
+        "r30": 0.05024639194090564,
+        "r7": 0.08109540508458817,
+        "median_quote_volume": 15438541.6567
+      }
+    ],
+    "cash_weight": 0.6,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2025-06-30",
+    "eligible": 82,
+    "qualified": 9,
+    "selected": [
+      "SEIUSDT",
+      "BMTUSDT",
+      "PENGUUSDT",
+      "BCHUSDT",
+      "MKRUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "SEIUSDT",
+        "r30": 0.3065888584586791,
+        "r7": 0.30846415202278693,
+        "median_quote_volume": 17659264.41837
+      },
+      {
+        "symbol": "BMTUSDT",
+        "r30": 0.26484728626465925,
+        "r7": 0.0907981279022706,
+        "median_quote_volume": 9324969.765494999
+      },
+      {
+        "symbol": "PENGUUSDT",
+        "r30": 0.18435078703068172,
+        "r7": 0.47662459377928484,
+        "median_quote_volume": 18855156.3841785
+      },
+      {
+        "symbol": "BCHUSDT",
+        "r30": 0.18126305406922255,
+        "r7": 0.04947267808814015,
+        "median_quote_volume": 21967655.4085
+      },
+      {
+        "symbol": "MKRUSDT",
+        "r30": 0.1491602863546726,
+        "r7": 0.06619013531355178,
+        "median_quote_volume": 10479226.7458
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2025-07-07",
+    "eligible": 75,
+    "qualified": 16,
+    "selected": [
+      "FUNUSDT",
+      "PENGUUSDT",
+      "BONKUSDT",
+      "UNIUSDT",
+      "AAVEUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "FUNUSDT",
+        "r30": 1.3683878523320923,
+        "r7": 0.2918218324724858,
+        "median_quote_volume": 9342062.2635595
+      },
+      {
+        "symbol": "PENGUUSDT",
+        "r30": 0.5485300740916448,
+        "r7": 0.1448963696733869,
+        "median_quote_volume": 21295866.285864502
+      },
+      {
+        "symbol": "BONKUSDT",
+        "r30": 0.26490045942306206,
+        "r7": 0.24988311235610902,
+        "median_quote_volume": 15360762.676399395
+      },
+      {
+        "symbol": "UNIUSDT",
+        "r30": 0.2176350195843741,
+        "r7": 0.02849826279381427,
+        "median_quote_volume": 76646193.26865
+      },
+      {
+        "symbol": "AAVEUSDT",
+        "r30": 0.12374094473653752,
+        "r7": 0.05114708486905049,
+        "median_quote_volume": 42251991.263605
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2025-07-14",
+    "eligible": 73,
+    "qualified": 46,
+    "selected": [
+      "FUNUSDT",
+      "BANANAS31USDT",
+      "PENGUUSDT",
+      "SEIUSDT",
+      "BONKUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "FUNUSDT",
+        "r30": 1.4164801334626647,
+        "r7": 0.19082149025972625,
+        "median_quote_volume": 15083309.879205499
+      },
+      {
+        "symbol": "BANANAS31USDT",
+        "r30": 0.9832713094417354,
+        "r7": 0.08138185859291765,
+        "median_quote_volume": 15850508.306721501
+      },
+      {
+        "symbol": "PENGUUSDT",
+        "r30": 0.8312752652747092,
+        "r7": 0.3708770968208346,
+        "median_quote_volume": 32432299.584992
+      },
+      {
+        "symbol": "SEIUSDT",
+        "r30": 0.5570545695692031,
+        "r7": 0.2052749304838837,
+        "median_quote_volume": 50652646.567885
+      },
+      {
+        "symbol": "BONKUSDT",
+        "r30": 0.4964936448347794,
+        "r7": 0.28384887761878924,
+        "median_quote_volume": 16815146.93631288
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2025-07-21",
+    "eligible": 86,
+    "qualified": 82,
+    "selected": [
+      "FUNUSDT",
+      "PENGUUSDT",
+      "BONKUSDT",
+      "FLOKIUSDT",
+      "XLMUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "FUNUSDT",
+        "r30": 1.3917353752804524,
+        "r7": 0.19595430220196425,
+        "median_quote_volume": 21276737.1246435
+      },
+      {
+        "symbol": "PENGUUSDT",
+        "r30": 1.1979074869835,
+        "r7": 0.28236754615657156,
+        "median_quote_volume": 88853774.3440785
+      },
+      {
+        "symbol": "BONKUSDT",
+        "r30": 0.8421719634408311,
+        "r7": 0.273276061008266,
+        "median_quote_volume": 57774417.31108874
+      },
+      {
+        "symbol": "FLOKIUSDT",
+        "r30": 0.6150693245173403,
+        "r7": 0.34239303791119785,
+        "median_quote_volume": 17727511.82633909
+      },
+      {
+        "symbol": "XLMUSDT",
+        "r30": 0.613538406501376,
+        "r7": 0.15984291643223436,
+        "median_quote_volume": 14766587.28005
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2025-07-28",
+    "eligible": 93,
+    "qualified": 34,
+    "selected": [
+      "HYPERUSDT",
+      "PENGUUSDT",
+      "BONKUSDT",
+      "CFXUSDT",
+      "ENAUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "HYPERUSDT",
+        "r30": 1.6721776922053075,
+        "r7": 0.3487902411775184,
+        "median_quote_volume": 5693985.669935
+      },
+      {
+        "symbol": "PENGUUSDT",
+        "r30": 1.5188693581594241,
+        "r7": 0.30572903733479934,
+        "median_quote_volume": 149223782.000987
+      },
+      {
+        "symbol": "BONKUSDT",
+        "r30": 0.9712634635976364,
+        "r7": 0.047234281756850495,
+        "median_quote_volume": 126530205.08784288
+      },
+      {
+        "symbol": "CFXUSDT",
+        "r30": 0.9648776646639625,
+        "r7": 0.5532674178606445,
+        "median_quote_volume": 7223175.258400001
+      },
+      {
+        "symbol": "ENAUSDT",
+        "r30": 0.9063980224100626,
+        "r7": 0.3548752618581953,
+        "median_quote_volume": 62729189.102091506
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2025-08-04",
+    "eligible": 101,
+    "qualified": 5,
+    "selected": [
+      "OMNIUSDT",
+      "CFXUSDT",
+      "TONUSDT",
+      "MEMEUSDT",
+      "TRXUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "OMNIUSDT",
+        "r30": 0.9574693506944936,
+        "r7": 0.5289182225521466,
+        "median_quote_volume": 5353780.31685
+      },
+      {
+        "symbol": "CFXUSDT",
+        "r30": 0.8944103281989136,
+        "r7": 0.016662573091542315,
+        "median_quote_volume": 16212318.8539
+      },
+      {
+        "symbol": "TONUSDT",
+        "r30": 0.21673936319923173,
+        "r7": 0.07109294899235949,
+        "median_quote_volume": 26627099.34626
+      },
+      {
+        "symbol": "MEMEUSDT",
+        "r30": 0.14651808317211254,
+        "r7": 0.011969675009118044,
+        "median_quote_volume": 5753277.1148745
+      },
+      {
+        "symbol": "TRXUSDT",
+        "r30": 0.11537984057753219,
+        "r7": 0.006228609361335826,
+        "median_quote_volume": 157728767.901335
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2025-08-11",
+    "eligible": 103,
+    "qualified": 78,
+    "selected": [
+      "EPICUSDT",
+      "ENAUSDT",
+      "CFXUSDT",
+      "OMNIUSDT",
+      "PENGUUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "EPICUSDT",
+        "r30": 0.9001974028699702,
+        "r7": 0.23117481443638777,
+        "median_quote_volume": 5618743.47685
+      },
+      {
+        "symbol": "ENAUSDT",
+        "r30": 0.8411598260419246,
+        "r7": 0.3445449343463239,
+        "median_quote_volume": 229219252.60232002
+      },
+      {
+        "symbol": "CFXUSDT",
+        "r30": 0.8263373577718695,
+        "r7": 0.1094565928798298,
+        "median_quote_volume": 33857680.7269
+      },
+      {
+        "symbol": "OMNIUSDT",
+        "r30": 0.7202039819474586,
+        "r7": 0.17454896703978812,
+        "median_quote_volume": 7640898.97475
+      },
+      {
+        "symbol": "PENGUUSDT",
+        "r30": 0.703481911807635,
+        "r7": 0.14899303332890937,
+        "median_quote_volume": 186322546.59504002
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2025-08-18",
+    "eligible": 107,
+    "qualified": 21,
+    "selected": [
+      "OGUSDT",
+      "EPICUSDT",
+      "LDOUSDT",
+      "ETHUSDT",
+      "LINKUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "OGUSDT",
+        "r30": 1.2042184743922741,
+        "r7": 0.2573523925711491,
+        "median_quote_volume": 6575193.765
+      },
+      {
+        "symbol": "EPICUSDT",
+        "r30": 0.7876866474166788,
+        "r7": 0.1561444419437952,
+        "median_quote_volume": 5618743.47685
+      },
+      {
+        "symbol": "LDOUSDT",
+        "r30": 0.3043689912367955,
+        "r7": 0.062177244951891364,
+        "median_quote_volume": 25850322.17482
+      },
+      {
+        "symbol": "ETHUSDT",
+        "r30": 0.2404573572391212,
+        "r7": 0.03717513141504801,
+        "median_quote_volume": 2572789861.709455
+      },
+      {
+        "symbol": "LINKUSDT",
+        "r30": 0.22934649543881758,
+        "r7": 0.03140679848789798,
+        "median_quote_volume": 95517293.85139999
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2025-08-25",
+    "eligible": 95,
+    "qualified": 47,
+    "selected": [
+      "BIOUSDT",
+      "MEMEUSDT",
+      "ENAUSDT",
+      "LINKUSDT",
+      "LDOUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "BIOUSDT",
+        "r30": 1.379649818401222,
+        "r7": 0.8704811958428608,
+        "median_quote_volume": 17314386.083750002
+      },
+      {
+        "symbol": "MEMEUSDT",
+        "r30": 0.71743987312899,
+        "r7": 0.5902172024738409,
+        "median_quote_volume": 5568007.380010501
+      },
+      {
+        "symbol": "ENAUSDT",
+        "r30": 0.45001821347107884,
+        "r7": 0.009639610316769274,
+        "median_quote_volume": 243873169.7655165
+      },
+      {
+        "symbol": "LINKUSDT",
+        "r30": 0.3834489775437894,
+        "r7": 0.1490899402814276,
+        "median_quote_volume": 115305020.85554999
+      },
+      {
+        "symbol": "LDOUSDT",
+        "r30": 0.35611560766983813,
+        "r7": 0.08298436692832266,
+        "median_quote_volume": 26229473.377155
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2025-09-01",
+    "eligible": 91,
+    "qualified": 4,
+    "selected": [
+      "BERAUSDT",
+      "MAVUSDT",
+      "POLUSDT",
+      "SYRUPUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "BERAUSDT",
+        "r30": 0.3627885469350924,
+        "r7": 0.03620132400417126,
+        "median_quote_volume": 8468067.0456
+      },
+      {
+        "symbol": "MAVUSDT",
+        "r30": 0.34962088774486655,
+        "r7": 0.09883205853953826,
+        "median_quote_volume": 9846626.782175
+      },
+      {
+        "symbol": "POLUSDT",
+        "r30": 0.22655402965036572,
+        "r7": 0.02761516703297339,
+        "median_quote_volume": 16364256.65106
+      },
+      {
+        "symbol": "SYRUPUSDT",
+        "r30": 0.13280649226657418,
+        "r7": 0.015775215223697105,
+        "median_quote_volume": 16758013.298715
+      }
+    ],
+    "cash_weight": 0.19999999999999996,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2025-09-08",
+    "eligible": 90,
+    "qualified": 10,
+    "selected": [
+      "ALPINEUSDT",
+      "OGUSDT",
+      "BIOUSDT",
+      "MAVUSDT",
+      "ENAUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "ALPINEUSDT",
+        "r30": 0.8081715937772491,
+        "r7": 0.2131795451538601,
+        "median_quote_volume": 6345404.793155
+      },
+      {
+        "symbol": "OGUSDT",
+        "r30": 0.6760363668201287,
+        "r7": 0.06856890662038606,
+        "median_quote_volume": 7293717.82565
+      },
+      {
+        "symbol": "BIOUSDT",
+        "r30": 0.6116698520049569,
+        "r7": 0.016388834193346722,
+        "median_quote_volume": 53535616.596965
+      },
+      {
+        "symbol": "MAVUSDT",
+        "r30": 0.45539356561919325,
+        "r7": 0.1896442785277079,
+        "median_quote_volume": 12449459.116735
+      },
+      {
+        "symbol": "ENAUSDT",
+        "r30": 0.14618251017808145,
+        "r7": 0.11939450286402035,
+        "median_quote_volume": 151513429.995102
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2025-09-15",
+    "eligible": 83,
+    "qualified": 55,
+    "selected": [
+      "NMRUSDT",
+      "BIOUSDT",
+      "WLDUSDT",
+      "MEMEUSDT",
+      "PYTHUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "NMRUSDT",
+        "r30": 0.7661891227212343,
+        "r7": 0.020734842039411935,
+        "median_quote_volume": 8190277.56795
+      },
+      {
+        "symbol": "BIOUSDT",
+        "r30": 0.5076803489104105,
+        "r7": 0.019082272519840578,
+        "median_quote_volume": 44222165.870775
+      },
+      {
+        "symbol": "WLDUSDT",
+        "r30": 0.5070107411150989,
+        "r7": 0.5427106056284374,
+        "median_quote_volume": 35457835.8786
+      },
+      {
+        "symbol": "MEMEUSDT",
+        "r30": 0.3902876004414732,
+        "r7": 0.09822915338989341,
+        "median_quote_volume": 11374875.011605
+      },
+      {
+        "symbol": "PYTHUSDT",
+        "r30": 0.371535034306442,
+        "r7": 0.039563042134772415,
+        "median_quote_volume": 16571233.872054998
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2025-09-22",
+    "eligible": 84,
+    "qualified": 10,
+    "selected": [
+      "BBUSDT",
+      "WUSDT",
+      "AVAXUSDT",
+      "EIGENUSDT",
+      "MAVUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "BBUSDT",
+        "r30": 0.501490851449283,
+        "r7": 0.24642145215809033,
+        "median_quote_volume": 11466299.406475
+      },
+      {
+        "symbol": "WUSDT",
+        "r30": 0.4239530296507769,
+        "r7": 0.24184353944652612,
+        "median_quote_volume": 6511557.805205001
+      },
+      {
+        "symbol": "AVAXUSDT",
+        "r30": 0.3762019728833129,
+        "r7": 0.09778535387732207,
+        "median_quote_volume": 97235478.7175
+      },
+      {
+        "symbol": "EIGENUSDT",
+        "r30": 0.3370152722033873,
+        "r7": 0.06969111427105149,
+        "median_quote_volume": 18027566.32535
+      },
+      {
+        "symbol": "MAVUSDT",
+        "r30": 0.2998924605582499,
+        "r7": 0.049235102997684466,
+        "median_quote_volume": 12436355.54304
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2025-09-29",
+    "eligible": 81,
+    "qualified": 2,
+    "selected": [
+      "EIGENUSDT",
+      "ETHFIUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "EIGENUSDT",
+        "r30": 0.3941417481480395,
+        "r7": 0.024666129890193855,
+        "median_quote_volume": 22570263.05858
+      },
+      {
+        "symbol": "ETHFIUSDT",
+        "r30": 0.35860969082665917,
+        "r7": 0.08132479200515806,
+        "median_quote_volume": 24906030.3147
+      }
+    ],
+    "cash_weight": 0.6,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2025-10-06",
+    "eligible": 86,
+    "qualified": 53,
+    "selected": [
+      "AWEUSDT",
+      "TWTUSDT",
+      "EIGENUSDT",
+      "ETHFIUSDT",
+      "BBUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "AWEUSDT",
+        "r30": 0.7483933798836215,
+        "r7": 0.026078054787242448,
+        "median_quote_volume": 5361185.43611
+      },
+      {
+        "symbol": "TWTUSDT",
+        "r30": 0.7094211571523132,
+        "r7": 0.1317740945055979,
+        "median_quote_volume": 9229648.07215
+      },
+      {
+        "symbol": "EIGENUSDT",
+        "r30": 0.5020698850548041,
+        "r7": 0.04302296044727438,
+        "median_quote_volume": 28864272.219425
+      },
+      {
+        "symbol": "ETHFIUSDT",
+        "r30": 0.5013778790726336,
+        "r7": 0.11600477104715798,
+        "median_quote_volume": 27365833.4978
+      },
+      {
+        "symbol": "BBUSDT",
+        "r30": 0.44678697767007053,
+        "r7": 0.006517947367214135,
+        "median_quote_volume": 11781134.402725
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2025-10-13",
+    "eligible": 101,
+    "qualified": 2,
+    "selected": [
+      "ZECUSDT",
+      "LISTAUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "ZECUSDT",
+        "r30": 1.8033730381652542,
+        "r7": 0.6184797184109164,
+        "median_quote_volume": 10167472.784545
+      },
+      {
+        "symbol": "LISTAUSDT",
+        "r30": 0.33008279665726875,
+        "r7": 0.08321049744727489,
+        "median_quote_volume": 6231588.0287999995
+      }
+    ],
+    "cash_weight": 0.6,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2025-10-20",
+    "eligible": 101,
+    "qualified": 6,
+    "selected": [
+      "SNXUSDT",
+      "DASHUSDT",
+      "TWTUSDT",
+      "OGUSDT",
+      "TAOUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "SNXUSDT",
+        "r30": 0.6419996693930045,
+        "r7": 0.377081668700451,
+        "median_quote_volume": 15322206.691300001
+      },
+      {
+        "symbol": "DASHUSDT",
+        "r30": 0.5572711209761686,
+        "r7": 0.07378299787799175,
+        "median_quote_volume": 16993386.19744
+      },
+      {
+        "symbol": "TWTUSDT",
+        "r30": 0.365383580115633,
+        "r7": 0.04210273042398873,
+        "median_quote_volume": 15484965.3434
+      },
+      {
+        "symbol": "OGUSDT",
+        "r30": 0.2062770340799195,
+        "r7": 0.11348747244200057,
+        "median_quote_volume": 9809044.9897
+      },
+      {
+        "symbol": "TAOUSDT",
+        "r30": 0.10039937689472031,
+        "r7": 0.29546421289383573,
+        "median_quote_volume": 20661849.923440002
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2025-10-27",
+    "eligible": 90,
+    "qualified": 9,
+    "selected": [
+      "ZECUSDT",
+      "VIRTUALUSDT",
+      "KAITOUSDT",
+      "BNBUSDT",
+      "STRKUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "ZECUSDT",
+        "r30": 1.6226348521660765,
+        "r7": 0.22104521835660437,
+        "median_quote_volume": 152101025.384575
+      },
+      {
+        "symbol": "VIRTUALUSDT",
+        "r30": 0.27500839647842107,
+        "r7": 0.5594639622310393,
+        "median_quote_volume": 9768172.78635
+      },
+      {
+        "symbol": "KAITOUSDT",
+        "r30": 0.19897541862663595,
+        "r7": 0.12120125809250319,
+        "median_quote_volume": 5068801.691570001
+      },
+      {
+        "symbol": "BNBUSDT",
+        "r30": 0.1658440853821464,
+        "r7": 0.021821088910847403,
+        "median_quote_volume": 561085156.859365
+      },
+      {
+        "symbol": "STRKUSDT",
+        "r30": 0.04703731534201766,
+        "r7": 0.08087847872093262,
+        "median_quote_volume": 8674847.6051915
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2025-11-03",
+    "eligible": 84,
+    "qualified": 6,
+    "selected": [
+      "ZECUSDT",
+      "DASHUSDT",
+      "ZENUSDT",
+      "VIRTUALUSDT",
+      "TAOUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "ZECUSDT",
+        "r30": 1.143168833906001,
+        "r7": 0.4005032797244568,
+        "median_quote_volume": 177323933.30078
+      },
+      {
+        "symbol": "DASHUSDT",
+        "r30": 0.814599945105291,
+        "r7": 0.561516929192447,
+        "median_quote_volume": 21148260.70009
+      },
+      {
+        "symbol": "ZENUSDT",
+        "r30": 0.7124119163777006,
+        "r7": 0.5754582503072191,
+        "median_quote_volume": 28149239.915135
+      },
+      {
+        "symbol": "VIRTUALUSDT",
+        "r30": 0.45803367107808024,
+        "r7": 0.3307729760182112,
+        "median_quote_volume": 13874880.761155
+      },
+      {
+        "symbol": "TAOUSDT",
+        "r30": 0.42301564735436825,
+        "r7": 0.22631631856165335,
+        "median_quote_volume": 81997995.08036
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2025-11-10",
+    "eligible": 82,
+    "qualified": 8,
+    "selected": [
+      "ZECUSDT",
+      "DASHUSDT",
+      "ICPUSDT",
+      "FILUSDT",
+      "BATUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "ZECUSDT",
+        "r30": 1.0389408198960721,
+        "r7": 0.37687333222137465,
+        "median_quote_volume": 241799259.77933925
+      },
+      {
+        "symbol": "DASHUSDT",
+        "r30": 0.8428925669192873,
+        "r7": 0.10095522218991017,
+        "median_quote_volume": 29333066.645115
+      },
+      {
+        "symbol": "ICPUSDT",
+        "r30": 0.7196103328453666,
+        "r7": 0.9567175291974915,
+        "median_quote_volume": 14093767.94328
+      },
+      {
+        "symbol": "FILUSDT",
+        "r30": 0.2524741848620442,
+        "r7": 0.5704928496260983,
+        "median_quote_volume": 21611803.94466
+      },
+      {
+        "symbol": "BATUSDT",
+        "r30": 0.21056476910734945,
+        "r7": 0.10990277423107761,
+        "median_quote_volume": 5592672.29085
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2025-11-17",
+    "eligible": 71,
+    "qualified": 4,
+    "selected": [
+      "ZECUSDT",
+      "DASHUSDT",
+      "STRKUSDT",
+      "UNIUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "ZECUSDT",
+        "r30": 1.1851792741957488,
+        "r7": 0.11031849268232075,
+        "median_quote_volume": 342610074.9397733
+      },
+      {
+        "symbol": "DASHUSDT",
+        "r30": 0.8411176648190114,
+        "r7": 0.18244418846987015,
+        "median_quote_volume": 35361128.538975
+      },
+      {
+        "symbol": "STRKUSDT",
+        "r30": 0.5607225949106137,
+        "r7": 0.4121244001981413,
+        "median_quote_volume": 9179047.826808501
+      },
+      {
+        "symbol": "UNIUSDT",
+        "r30": 0.15844150881815497,
+        "r7": 0.2020611168931024,
+        "median_quote_volume": 30012940.21866
+      }
+    ],
+    "cash_weight": 0.19999999999999996,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2025-11-24",
+    "eligible": 73,
+    "qualified": 1,
+    "selected": [
+      "BCHUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "BCHUSDT",
+        "r30": 0.14761558651868345,
+        "r7": 0.10243085525623126,
+        "median_quote_volume": 32572253.627899997
+      }
+    ],
+    "cash_weight": 0.8,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2025-12-01",
+    "eligible": 71,
+    "qualified": 4,
+    "selected": [
+      "BATUSDT",
+      "DCRUSDT",
+      "WLFIUSDT",
+      "ARUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "BATUSDT",
+        "r30": 0.5203518928494554,
+        "r7": 0.31397276768349847,
+        "median_quote_volume": 5496437.9889
+      },
+      {
+        "symbol": "DCRUSDT",
+        "r30": 0.38483714031219696,
+        "r7": 0.04213435394034806,
+        "median_quote_volume": 5195543.04431
+      },
+      {
+        "symbol": "WLFIUSDT",
+        "r30": 0.156442108806134,
+        "r7": 0.049258438586792526,
+        "median_quote_volume": 27522421.497
+      },
+      {
+        "symbol": "ARUSDT",
+        "r30": 0.13597937426316262,
+        "r7": 0.08678913007239093,
+        "median_quote_volume": 9202976.57725
+      }
+    ],
+    "cash_weight": 0.19999999999999996,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2025-12-08",
+    "eligible": 68,
+    "qualified": 4,
+    "selected": [
+      "TNSRUSDT",
+      "PARTIUSDT",
+      "BCHUSDT",
+      "TRXUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "TNSRUSDT",
+        "r30": 0.930107877427297,
+        "r7": 0.006021523570685893,
+        "median_quote_volume": 9514993.22947
+      },
+      {
+        "symbol": "PARTIUSDT",
+        "r30": 0.6598107602923535,
+        "r7": 0.19907122200641617,
+        "median_quote_volume": 6649128.291464999
+      },
+      {
+        "symbol": "BCHUSDT",
+        "r30": 0.2101605020767806,
+        "r7": 0.11233517728578356,
+        "median_quote_volume": 36846242.72805
+      },
+      {
+        "symbol": "TRXUSDT",
+        "r30": 0.011208523648092996,
+        "r7": 0.021831853016820474,
+        "median_quote_volume": 77905048.139875
+      }
+    ],
+    "cash_weight": 0.19999999999999996,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2025-12-15",
+    "eligible": 66,
+    "qualified": 1,
+    "selected": [
+      "BATUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "BATUSDT",
+        "r30": 0.44003645217325305,
+        "r7": 0.1161662204294782,
+        "median_quote_volume": 5647829.47365
+      }
+    ],
+    "cash_weight": 0.8,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2025-12-22",
+    "eligible": 63,
+    "qualified": 4,
+    "selected": [
+      "PARTIUSDT",
+      "BCHUSDT",
+      "SYRUPUSDT",
+      "TRXUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "PARTIUSDT",
+        "r30": 0.6226137140987432,
+        "r7": 0.067936207803903,
+        "median_quote_volume": 5428369.412895
+      },
+      {
+        "symbol": "BCHUSDT",
+        "r30": 0.20822415631673272,
+        "r7": 0.020819864655335675,
+        "median_quote_volume": 36846242.72805
+      },
+      {
+        "symbol": "SYRUPUSDT",
+        "r30": 0.02965723833814061,
+        "r7": 0.177595737092494,
+        "median_quote_volume": 5286202.6931
+      },
+      {
+        "symbol": "TRXUSDT",
+        "r30": 0.0049786731573157605,
+        "r7": 0.03943357724036576,
+        "median_quote_volume": 57306458.201000005
+      }
+    ],
+    "cash_weight": 0.19999999999999996,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2025-12-29",
+    "eligible": 55,
+    "qualified": 5,
+    "selected": [
+      "LUNCUSDT",
+      "BCHUSDT",
+      "ZECUSDT",
+      "TRXUSDT",
+      "BFUSDUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "LUNCUSDT",
+        "r30": 0.3777625055588286,
+        "r7": 0.016997576368571077,
+        "median_quote_volume": 11928917.579484645
+      },
+      {
+        "symbol": "BCHUSDT",
+        "r30": 0.1572299534102832,
+        "r7": 0.05151282779550629,
+        "median_quote_volume": 29715238.75085
+      },
+      {
+        "symbol": "ZECUSDT",
+        "r30": 0.05175230711026196,
+        "r7": 0.14351826191474654,
+        "median_quote_volume": 190271577.42111498
+      },
+      {
+        "symbol": "TRXUSDT",
+        "r30": 0.016277783333119945,
+        "r7": 0.010585843383795717,
+        "median_quote_volume": 54810233.05771
+      },
+      {
+        "symbol": "BFUSDUSDT",
+        "r30": 0.0008004002428308897,
+        "r7": 0.0004001200413489556,
+        "median_quote_volume": 12370030.1127
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2026-01-05",
+    "eligible": 55,
+    "qualified": 10,
+    "selected": [
+      "CHZUSDT",
+      "LUNCUSDT",
+      "PEPEUSDT",
+      "TONUSDT",
+      "BCHUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "CHZUSDT",
+        "r30": 0.4132737812751274,
+        "r7": 0.2251174526021173,
+        "median_quote_volume": 5141414.200060001
+      },
+      {
+        "symbol": "LUNCUSDT",
+        "r30": 0.35528956749085716,
+        "r7": 0.07910280497825464,
+        "median_quote_volume": 12815674.84375697
+      },
+      {
+        "symbol": "PEPEUSDT",
+        "r30": 0.24594246627901578,
+        "r7": 0.3755880372452192,
+        "median_quote_volume": 32585332.29788828
+      },
+      {
+        "symbol": "TONUSDT",
+        "r30": 0.1501945516680422,
+        "r7": 0.13090935055777936,
+        "median_quote_volume": 9104392.113869999
+      },
+      {
+        "symbol": "BCHUSDT",
+        "r30": 0.12967547272070937,
+        "r7": 0.04868321801671804,
+        "median_quote_volume": 27807208.48285
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2026-01-12",
+    "eligible": 54,
+    "qualified": 13,
+    "selected": [
+      "CHZUSDT",
+      "POLUSDT",
+      "VIRTUALUSDT",
+      "FETUSDT",
+      "SUIUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "CHZUSDT",
+        "r30": 0.4258810938171661,
+        "r7": 0.10553578513509555,
+        "median_quote_volume": 5568100.14911
+      },
+      {
+        "symbol": "POLUSDT",
+        "r30": 0.38152853528025626,
+        "r7": 0.4288346526771934,
+        "median_quote_volume": 5484389.551855
+      },
+      {
+        "symbol": "VIRTUALUSDT",
+        "r30": 0.21814175453406662,
+        "r7": 0.1794603245129223,
+        "median_quote_volume": 8432693.395565
+      },
+      {
+        "symbol": "FETUSDT",
+        "r30": 0.14692273201405628,
+        "r7": 0.15355625550968996,
+        "median_quote_volume": 9161609.71461
+      },
+      {
+        "symbol": "SUIUSDT",
+        "r30": 0.10735591821987536,
+        "r7": 0.07446805137504023,
+        "median_quote_volume": 62698658.49851
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2026-01-19",
+    "eligible": 55,
+    "qualified": 29,
+    "selected": [
+      "CHZUSDT",
+      "DASHUSDT",
+      "ZENUSDT",
+      "PUMPUSDT",
+      "ICPUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "CHZUSDT",
+        "r30": 0.7707521367215419,
+        "r7": 0.2030695938359309,
+        "median_quote_volume": 7999214.701645
+      },
+      {
+        "symbol": "DASHUSDT",
+        "r30": 0.735625138042814,
+        "r7": 0.692610699860383,
+        "median_quote_volume": 7934336.843615
+      },
+      {
+        "symbol": "ZENUSDT",
+        "r30": 0.4409505290193482,
+        "r7": 0.28715264510331656,
+        "median_quote_volume": 8865556.981770001
+      },
+      {
+        "symbol": "PUMPUSDT",
+        "r30": 0.4097569601897053,
+        "r7": 0.20309253287417112,
+        "median_quote_volume": 18289913.81495
+      },
+      {
+        "symbol": "ICPUSDT",
+        "r30": 0.3517412526182594,
+        "r7": 0.22370818635540382,
+        "median_quote_volume": 11541427.031690001
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2026-01-26",
+    "eligible": 57,
+    "qualified": 2,
+    "selected": [
+      "GUNUSDT",
+      "WLFIUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "GUNUSDT",
+        "r30": 1.062255756657828,
+        "r7": 0.24763199993103563,
+        "median_quote_volume": 5042692.82652
+      },
+      {
+        "symbol": "WLFIUSDT",
+        "r30": 0.26242028844576826,
+        "r7": 0.05587401905783697,
+        "median_quote_volume": 11095533.178405
+      }
+    ],
+    "cash_weight": 0.6,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2026-02-02",
+    "eligible": 60,
+    "qualified": 0,
+    "selected": [],
+    "selected_past_features": [],
+    "cash_weight": 1.0,
+    "selection_status": "CASH"
+  },
+  {
+    "date": "2026-02-09",
+    "eligible": 65,
+    "qualified": 1,
+    "selected": [
+      "BFUSDUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "BFUSDUSDT",
+        "r30": 9.999500033329732e-05,
+        "r7": 0.0004000400093353953,
+        "median_quote_volume": 7961865.091600001
+      }
+    ],
+    "cash_weight": 0.8,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2026-02-16",
+    "eligible": 66,
+    "qualified": 6,
+    "selected": [
+      "KITEUSDT",
+      "DUSKUSDT",
+      "AXSUSDT",
+      "ZROUSDT",
+      "BERAUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "KITEUSDT",
+        "r30": 0.7024591981855639,
+        "r7": 0.2770963495624487,
+        "median_quote_volume": 6553397.739635
+      },
+      {
+        "symbol": "DUSKUSDT",
+        "r30": 0.5338652481082988,
+        "r7": 0.1839849893926526,
+        "median_quote_volume": 7466476.840949999
+      },
+      {
+        "symbol": "AXSUSDT",
+        "r30": 0.32894595827396805,
+        "r7": 0.12852642443564144,
+        "median_quote_volume": 23476996.007584997
+      },
+      {
+        "symbol": "ZROUSDT",
+        "r30": 0.13597638161758926,
+        "r7": 0.10287074022973733,
+        "median_quote_volume": 14432983.672194999
+      },
+      {
+        "symbol": "BERAUSDT",
+        "r30": 0.0692917804713919,
+        "r7": 0.468052952857366,
+        "median_quote_volume": 5537163.9435815
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2026-02-23",
+    "eligible": 56,
+    "qualified": 2,
+    "selected": [
+      "ENSOUSDT",
+      "KITEUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "ENSOUSDT",
+        "r30": 1.121734706088964,
+        "r7": 0.4919571394616079,
+        "median_quote_volume": 10015100.51449
+      },
+      {
+        "symbol": "KITEUSDT",
+        "r30": 0.6931471805599453,
+        "r7": 0.12927414566052817,
+        "median_quote_volume": 9878537.117645
+      }
+    ],
+    "cash_weight": 0.6,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2026-03-02",
+    "eligible": 51,
+    "qualified": 3,
+    "selected": [
+      "KITEUSDT",
+      "ASTERUSDT",
+      "BERAUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "KITEUSDT",
+        "r30": 0.5646243915804925,
+        "r7": 0.14388484995288192,
+        "median_quote_volume": 16968617.620219998
+      },
+      {
+        "symbol": "ASTERUSDT",
+        "r30": 0.15230566085368902,
+        "r7": 0.004163781171779514,
+        "median_quote_volume": 28698752.16214
+      },
+      {
+        "symbol": "BERAUSDT",
+        "r30": 0.08759805931798598,
+        "r7": 0.07014560936675977,
+        "median_quote_volume": 5748791.2707895
+      }
+    ],
+    "cash_weight": 0.3999999999999999,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2026-03-09",
+    "eligible": 47,
+    "qualified": 9,
+    "selected": [
+      "KITEUSDT",
+      "ZROUSDT",
+      "NEARUSDT",
+      "ICPUSDT",
+      "ETHUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "KITEUSDT",
+        "r30": 0.7716991750985343,
+        "r7": 0.0902389214804963,
+        "median_quote_volume": 23469760.485965
+      },
+      {
+        "symbol": "ZROUSDT",
+        "r30": 0.2658166924402856,
+        "r7": 0.06861994588128688,
+        "median_quote_volume": 11006621.852219999
+      },
+      {
+        "symbol": "NEARUSDT",
+        "r30": 0.21821338520635114,
+        "r7": 0.035209001482485625,
+        "median_quote_volume": 19654631.18045
+      },
+      {
+        "symbol": "ICPUSDT",
+        "r30": 0.08790304000011155,
+        "r7": 0.002453988961566566,
+        "median_quote_volume": 7940371.860695001
+      },
+      {
+        "symbol": "ETHUSDT",
+        "r30": 0.07524317490930194,
+        "r7": 0.002582548904931773,
+        "median_quote_volume": 887095318.2379506
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2026-03-16",
+    "eligible": 47,
+    "qualified": 26,
+    "selected": [
+      "TAOUSDT",
+      "RENDERUSDT",
+      "NEARUSDT",
+      "VIRTUALUSDT",
+      "TRUMPUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "TAOUSDT",
+        "r30": 0.46968265347665,
+        "r7": 0.34777179187514623,
+        "median_quote_volume": 19415399.47454
+      },
+      {
+        "symbol": "RENDERUSDT",
+        "r30": 0.35766380036890943,
+        "r7": 0.3232550206833676,
+        "median_quote_volume": 5337175.87403
+      },
+      {
+        "symbol": "NEARUSDT",
+        "r30": 0.31807644380977695,
+        "r7": 0.08749176680087911,
+        "median_quote_volume": 21104910.984899998
+      },
+      {
+        "symbol": "VIRTUALUSDT",
+        "r30": 0.21628512116317705,
+        "r7": 0.08018104896171434,
+        "median_quote_volume": 9296018.018865
+      },
+      {
+        "symbol": "TRUMPUSDT",
+        "r30": 0.19901039290575562,
+        "r7": 0.28967808109849574,
+        "median_quote_volume": 8075989.0644755
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2026-03-23",
+    "eligible": 47,
+    "qualified": 7,
+    "selected": [
+      "SIGNUSDT",
+      "TAOUSDT",
+      "FETUSDT",
+      "DOTUSDT",
+      "APTUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "SIGNUSDT",
+        "r30": 0.6464761018181524,
+        "r7": 0.04590691301989052,
+        "median_quote_volume": 5020154.15697
+      },
+      {
+        "symbol": "TAOUSDT",
+        "r30": 0.4152103126680845,
+        "r7": 0.07310425832861565,
+        "median_quote_volume": 20658236.442325
+      },
+      {
+        "symbol": "FETUSDT",
+        "r30": 0.2927337479478988,
+        "r7": 0.19960240081648445,
+        "median_quote_volume": 6700921.27664
+      },
+      {
+        "symbol": "DOTUSDT",
+        "r30": 0.1315870015783343,
+        "r7": 0.03747836271794292,
+        "median_quote_volume": 9314574.46288
+      },
+      {
+        "symbol": "APTUSDT",
+        "r30": 0.11649917362356998,
+        "r7": 0.05492404593069824,
+        "median_quote_volume": 7888395.234785
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2026-03-30",
+    "eligible": 49,
+    "qualified": 9,
+    "selected": [
+      "BANANAS31USDT",
+      "TAOUSDT",
+      "FETUSDT",
+      "HUMAUSDT",
+      "ZROUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "BANANAS31USDT",
+        "r30": 1.0022648719696297,
+        "r7": 0.34715312345873445,
+        "median_quote_volume": 7397619.78034
+      },
+      {
+        "symbol": "TAOUSDT",
+        "r30": 0.5356503524601862,
+        "r7": 0.1624816292870243,
+        "median_quote_volume": 37802309.412275
+      },
+      {
+        "symbol": "FETUSDT",
+        "r30": 0.3798146558363488,
+        "r7": 0.08092325296404013,
+        "median_quote_volume": 11756654.17182
+      },
+      {
+        "symbol": "HUMAUSDT",
+        "r30": 0.3250797083401179,
+        "r7": 0.06644995848283917,
+        "median_quote_volume": 5286485.493655
+      },
+      {
+        "symbol": "ZROUSDT",
+        "r30": 0.22514655649064594,
+        "r7": 0.017154810197038496,
+        "median_quote_volume": 8018758.538985
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2026-04-06",
+    "eligible": 43,
+    "qualified": 5,
+    "selected": [
+      "RENDERUSDT",
+      "TRXUSDT",
+      "ZECUSDT",
+      "SHIBUSDT",
+      "SIGNUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "RENDERUSDT",
+        "r30": 0.29356601561075574,
+        "r7": 0.12480765059334792,
+        "median_quote_volume": 8107300.052955
+      },
+      {
+        "symbol": "TRXUSDT",
+        "r30": 0.10760204083283981,
+        "r7": 0.0028377758283865393,
+        "median_quote_volume": 35093830.938225
+      },
+      {
+        "symbol": "ZECUSDT",
+        "r30": 0.10335391175717364,
+        "r7": 0.16195226305010432,
+        "median_quote_volume": 46318168.40386
+      },
+      {
+        "symbol": "SHIBUSDT",
+        "r30": 0.08171355183835408,
+        "r7": 0.027074411764957004,
+        "median_quote_volume": 5418077.07144288
+      },
+      {
+        "symbol": "SIGNUSDT",
+        "r30": 0.05139470912319856,
+        "r7": 0.11325161698589846,
+        "median_quote_volume": 6333338.13243
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2026-04-13",
+    "eligible": 43,
+    "qualified": 15,
+    "selected": [
+      "\u5e01\u5b89\u4eba\u751fUSDT",
+      "ZECUSDT",
+      "DASHUSDT",
+      "FETUSDT",
+      "XPLUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "\u5e01\u5b89\u4eba\u751fUSDT",
+        "r30": 0.7983492050533222,
+        "r7": 0.8930256712749689,
+        "median_quote_volume": 5267199.3750599995
+      },
+      {
+        "symbol": "ZECUSDT",
+        "r30": 0.5755979641623409,
+        "r7": 0.38938255759586876,
+        "median_quote_volume": 57735496.863835
+      },
+      {
+        "symbol": "DASHUSDT",
+        "r30": 0.3409806541761429,
+        "r7": 0.40470847401272514,
+        "median_quote_volume": 5531979.01827
+      },
+      {
+        "symbol": "FETUSDT",
+        "r30": 0.32137209583476445,
+        "r7": 0.03411312472206442,
+        "median_quote_volume": 18004263.550240003
+      },
+      {
+        "symbol": "XPLUSDT",
+        "r30": 0.24797343540494549,
+        "r7": 0.15147003974269355,
+        "median_quote_volume": 9270963.906675
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2026-04-20",
+    "eligible": 47,
+    "qualified": 15,
+    "selected": [
+      "\u5e01\u5b89\u4eba\u751fUSDT",
+      "ARBUSDT",
+      "ENAUSDT",
+      "PEPEUSDT",
+      "ETHUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "\u5e01\u5b89\u4eba\u751fUSDT",
+        "r30": 2.079873227419326,
+        "r7": 1.1955206373977862,
+        "median_quote_volume": 8656912.874005
+      },
+      {
+        "symbol": "ARBUSDT",
+        "r30": 0.2622094776859732,
+        "r7": 0.1112256351102244,
+        "median_quote_volume": 5313891.740865
+      },
+      {
+        "symbol": "ENAUSDT",
+        "r30": 0.1519290738038329,
+        "r7": 0.22230987056563237,
+        "median_quote_volume": 13381189.168179
+      },
+      {
+        "symbol": "PEPEUSDT",
+        "r30": 0.09743445038540563,
+        "r7": 0.03509131981127019,
+        "median_quote_volume": 28272812.564548418
+      },
+      {
+        "symbol": "ETHUSDT",
+        "r30": 0.09476954854569095,
+        "r7": 0.02818984112953496,
+        "median_quote_volume": 664395211.734592
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2026-04-27",
+    "eligible": 47,
+    "qualified": 16,
+    "selected": [
+      "ENJUSDT",
+      "ZECUSDT",
+      "PENGUUSDT",
+      "NEARUSDT",
+      "PEPEUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "ENJUSDT",
+        "r30": 1.0566222677909882,
+        "r7": 0.09259630365142986,
+        "median_quote_volume": 6877482.1007265
+      },
+      {
+        "symbol": "ZECUSDT",
+        "r30": 0.4797702943984916,
+        "r7": 0.10487145906299375,
+        "median_quote_volume": 68648127.72994
+      },
+      {
+        "symbol": "PENGUUSDT",
+        "r30": 0.23088898210984918,
+        "r7": 0.1715892398285574,
+        "median_quote_volume": 9047560.222772
+      },
+      {
+        "symbol": "NEARUSDT",
+        "r30": 0.13577560452226395,
+        "r7": 0.04299387107129773,
+        "median_quote_volume": 14307806.36075
+      },
+      {
+        "symbol": "PEPEUSDT",
+        "r30": 0.12136085700426753,
+        "r7": 0.020998146839773617,
+        "median_quote_volume": 32311771.16773228
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2026-05-04",
+    "eligible": 46,
+    "qualified": 17,
+    "selected": [
+      "\u5e01\u5b89\u4eba\u751fUSDT",
+      "BIOUSDT",
+      "ORDIUSDT",
+      "ZECUSDT",
+      "PENGUUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "\u5e01\u5b89\u4eba\u751fUSDT",
+        "r30": 2.141898896613583,
+        "r7": 0.16412868033406106,
+        "median_quote_volume": 33021495.6906
+      },
+      {
+        "symbol": "BIOUSDT",
+        "r30": 1.262357459889129,
+        "r7": 0.6523251860396901,
+        "median_quote_volume": 6355043.60255
+      },
+      {
+        "symbol": "ORDIUSDT",
+        "r30": 0.8791664113028762,
+        "r7": 0.15717003341803193,
+        "median_quote_volume": 5414296.895090001
+      },
+      {
+        "symbol": "ZECUSDT",
+        "r30": 0.4764858543406335,
+        "r7": 0.07763059616498241,
+        "median_quote_volume": 68154880.38566
+      },
+      {
+        "symbol": "PENGUUSDT",
+        "r30": 0.46215918647525617,
+        "r7": 0.1364422233970747,
+        "median_quote_volume": 11341815.9676915
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2026-05-11",
+    "eligible": 51,
+    "qualified": 43,
+    "selected": [
+      "BIOUSDT",
+      "LUNCUSDT",
+      "ORDIUSDT",
+      "TONUSDT",
+      "NEIROUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "BIOUSDT",
+        "r30": 1.1500877158309566,
+        "r7": 0.0034662079764861075,
+        "median_quote_volume": 14667119.863745
+      },
+      {
+        "symbol": "LUNCUSDT",
+        "r30": 0.9274864550685936,
+        "r7": 0.04478600791957939,
+        "median_quote_volume": 7825447.487278215
+      },
+      {
+        "symbol": "ORDIUSDT",
+        "r30": 0.8229587920819358,
+        "r7": 0.008550948127222733,
+        "median_quote_volume": 12346204.26367
+      },
+      {
+        "symbol": "TONUSDT",
+        "r30": 0.668795327867436,
+        "r7": 0.594630077024235,
+        "median_quote_volume": 15978995.973919999
+      },
+      {
+        "symbol": "NEIROUSDT",
+        "r30": 0.5254807521125061,
+        "r7": 0.03341159320810201,
+        "median_quote_volume": 5622961.51849038
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2026-05-18",
+    "eligible": 52,
+    "qualified": 6,
+    "selected": [
+      "\u5e01\u5b89\u4eba\u751fUSDT",
+      "CHZUSDT",
+      "DOGEUSDT",
+      "TRXUSDT",
+      "BNBUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "\u5e01\u5b89\u4eba\u751fUSDT",
+        "r30": 0.13693337194697847,
+        "r7": 0.020956555334094504,
+        "median_quote_volume": 17046302.591229998
+      },
+      {
+        "symbol": "CHZUSDT",
+        "r30": 0.1062691935940443,
+        "r7": 0.061817431023210447,
+        "median_quote_volume": 6104816.282035
+      },
+      {
+        "symbol": "DOGEUSDT",
+        "r30": 0.09749781368532315,
+        "r7": 0.0057769176293596455,
+        "median_quote_volume": 102322682.44409001
+      },
+      {
+        "symbol": "TRXUSDT",
+        "r30": 0.08272084022076166,
+        "r7": 0.014176591266263605,
+        "median_quote_volume": 35786668.14073
+      },
+      {
+        "symbol": "BNBUSDT",
+        "r30": 0.03162875781279038,
+        "r7": 0.009877947005401634,
+        "median_quote_volume": 67875868.21879
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2026-05-25",
+    "eligible": 53,
+    "qualified": 22,
+    "selected": [
+      "ZECUSDT",
+      "NEARUSDT",
+      "ONDOUSDT",
+      "INJUSDT",
+      "PENDLEUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "ZECUSDT",
+        "r30": 0.6105103239744218,
+        "r7": 0.20992241783204632,
+        "median_quote_volume": 103962072.29047
+      },
+      {
+        "symbol": "NEARUSDT",
+        "r30": 0.5568667152882559,
+        "r7": 0.4941091385216794,
+        "median_quote_volume": 18321215.00225
+      },
+      {
+        "symbol": "ONDOUSDT",
+        "r30": 0.48612348005890593,
+        "r7": 0.2140989965872557,
+        "median_quote_volume": 18369453.49332
+      },
+      {
+        "symbol": "INJUSDT",
+        "r30": 0.45702440317706283,
+        "r7": 0.12143934685949394,
+        "median_quote_volume": 7541675.202155
+      },
+      {
+        "symbol": "PENDLEUSDT",
+        "r30": 0.3676073334166263,
+        "r7": 0.03168050177211858,
+        "median_quote_volume": 5938578.4867
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2026-06-01",
+    "eligible": 51,
+    "qualified": 13,
+    "selected": [
+      "INJUSDT",
+      "\u5e01\u5b89\u4eba\u751fUSDT",
+      "XLMUSDT",
+      "FETUSDT",
+      "WLDUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "INJUSDT",
+        "r30": 0.6565413973363879,
+        "r7": 0.2109792798307553,
+        "median_quote_volume": 10590187.668025
+      },
+      {
+        "symbol": "\u5e01\u5b89\u4eba\u751fUSDT",
+        "r30": 0.4609224384432339,
+        "r7": 0.2052608072576159,
+        "median_quote_volume": 8542263.646915
+      },
+      {
+        "symbol": "XLMUSDT",
+        "r30": 0.37184669755844485,
+        "r7": 0.4384509431716581,
+        "median_quote_volume": 9356709.433850002
+      },
+      {
+        "symbol": "FETUSDT",
+        "r30": 0.3558566132875005,
+        "r7": 0.293429214707349,
+        "median_quote_volume": 12287547.454349998
+      },
+      {
+        "symbol": "WLDUSDT",
+        "r30": 0.3484519270039297,
+        "r7": 0.1380642845895147,
+        "median_quote_volume": 13057172.18213
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2026-06-08",
+    "eligible": 52,
+    "qualified": 4,
+    "selected": [
+      "ALLOUSDT",
+      "\u5e01\u5b89\u4eba\u751fUSDT",
+      "WLDUSDT",
+      "SAHARAUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "ALLOUSDT",
+        "r30": 1.39940251707263,
+        "r7": 0.618549756093579,
+        "median_quote_volume": 5906513.3277
+      },
+      {
+        "symbol": "\u5e01\u5b89\u4eba\u751fUSDT",
+        "r30": 0.8050879405921004,
+        "r7": 0.39014408852939214,
+        "median_quote_volume": 9536744.15362
+      },
+      {
+        "symbol": "WLDUSDT",
+        "r30": 0.4958850670207025,
+        "r7": 0.18459412020704363,
+        "median_quote_volume": 29765580.828165
+      },
+      {
+        "symbol": "SAHARAUSDT",
+        "r30": 0.23647040571972533,
+        "r7": 0.008607492429740737,
+        "median_quote_volume": 8348604.298669999
+      }
+    ],
+    "cash_weight": 0.19999999999999996,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2026-06-15",
+    "eligible": 51,
+    "qualified": 5,
+    "selected": [
+      "WLDUSDT",
+      "NEARUSDT",
+      "JTOUSDT",
+      "INJUSDT",
+      "UUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "WLDUSDT",
+        "r30": 0.6508035219541072,
+        "r7": 0.1918948409386857,
+        "median_quote_volume": 56909029.05986
+      },
+      {
+        "symbol": "NEARUSDT",
+        "r30": 0.30266776183520167,
+        "r7": 0.13561367717203548,
+        "median_quote_volume": 82038398.38085
+      },
+      {
+        "symbol": "JTOUSDT",
+        "r30": 0.05605769826376301,
+        "r7": 0.08401227447173146,
+        "median_quote_volume": 5484226.640165
+      },
+      {
+        "symbol": "INJUSDT",
+        "r30": 0.02184832019554022,
+        "r7": 0.02049291288182943,
+        "median_quote_volume": 12968881.242715
+      },
+      {
+        "symbol": "UUSDT",
+        "r30": 0.0005998200719675495,
+        "r7": 0.0002998650629695497,
+        "median_quote_volume": 24323883.223750003
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2026-06-22",
+    "eligible": 47,
+    "qualified": 8,
+    "selected": [
+      "ALLOUSDT",
+      "WLDUSDT",
+      "\u5e01\u5b89\u4eba\u751fUSDT",
+      "XLMUSDT",
+      "JTOUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "ALLOUSDT",
+        "r30": 1.460948035879242,
+        "r7": 0.07383523248204613,
+        "median_quote_volume": 16845895.9819
+      },
+      {
+        "symbol": "WLDUSDT",
+        "r30": 0.8213825561399519,
+        "r7": 0.19660350873888172,
+        "median_quote_volume": 108807616.511605
+      },
+      {
+        "symbol": "\u5e01\u5b89\u4eba\u751fUSDT",
+        "r30": 0.48266380678090265,
+        "r7": 0.06646003804769118,
+        "median_quote_volume": 8916674.018945
+      },
+      {
+        "symbol": "XLMUSDT",
+        "r30": 0.38781422005617183,
+        "r7": 0.14456067192506414,
+        "median_quote_volume": 50434065.038100004
+      },
+      {
+        "symbol": "JTOUSDT",
+        "r30": 0.2347252405224562,
+        "r7": 0.2049167742246303,
+        "median_quote_volume": 7065841.647015
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2026-06-29",
+    "eligible": 47,
+    "qualified": 4,
+    "selected": [
+      "HEIUSDT",
+      "JTOUSDT",
+      "AAVEUSDT",
+      "XPLUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "HEIUSDT",
+        "r30": 0.8967692601291353,
+        "r7": 0.2841042511038971,
+        "median_quote_volume": 5705865.49926
+      },
+      {
+        "symbol": "JTOUSDT",
+        "r30": 0.530284625316312,
+        "r7": 0.19748441825666319,
+        "median_quote_volume": 7191477.63814
+      },
+      {
+        "symbol": "AAVEUSDT",
+        "r30": 0.15128306594565696,
+        "r7": 0.21290577291429102,
+        "median_quote_volume": 10358649.575965
+      },
+      {
+        "symbol": "XPLUSDT",
+        "r30": 0.055343657984880085,
+        "r7": 0.06691664354253866,
+        "median_quote_volume": 17128532.059245
+      }
+    ],
+    "cash_weight": 0.19999999999999996,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2026-07-06",
+    "eligible": 39,
+    "qualified": 13,
+    "selected": [
+      "SYNUSDT",
+      "ALLOUSDT",
+      "XPLUSDT",
+      "UNIUSDT",
+      "SOLUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "SYNUSDT",
+        "r30": 2.0699039291787398,
+        "r7": 0.183336111842544,
+        "median_quote_volume": 14067679.189088501
+      },
+      {
+        "symbol": "ALLOUSDT",
+        "r30": 0.6705983108733322,
+        "r7": 0.1301164775244535,
+        "median_quote_volume": 10994600.55518
+      },
+      {
+        "symbol": "XPLUSDT",
+        "r30": 0.23202957325361562,
+        "r7": 0.05562869686938843,
+        "median_quote_volume": 16591587.9567875
+      },
+      {
+        "symbol": "UNIUSDT",
+        "r30": 0.19231539387628935,
+        "r7": 0.09580750668265946,
+        "median_quote_volume": 11102416.20549
+      },
+      {
+        "symbol": "SOLUSDT",
+        "r30": 0.1719113834892261,
+        "r7": 0.1486645337904783,
+        "median_quote_volume": 189023722.61936
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2026-07-13",
+    "eligible": 37,
+    "qualified": 8,
+    "selected": [
+      "AAVEUSDT",
+      "UNIUSDT",
+      "BCHUSDT",
+      "ZECUSDT",
+      "ETHUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "AAVEUSDT",
+        "r30": 0.4219077763644191,
+        "r7": 0.10128046885839201,
+        "median_quote_volume": 17049498.077014998
+      },
+      {
+        "symbol": "UNIUSDT",
+        "r30": 0.38115272746385814,
+        "r7": 0.12788309059705275,
+        "median_quote_volume": 11660593.714105
+      },
+      {
+        "symbol": "BCHUSDT",
+        "r30": 0.17269590126831383,
+        "r7": 0.032912781201734756,
+        "median_quote_volume": 7850549.3905
+      },
+      {
+        "symbol": "ZECUSDT",
+        "r30": 0.17210830590578707,
+        "r7": 0.09318344489456219,
+        "median_quote_volume": 85739226.46459499
+      },
+      {
+        "symbol": "ETHUSDT",
+        "r30": 0.0660701001721993,
+        "r7": 0.003990589311015404,
+        "median_quote_volume": 419604170.2452165
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2026-07-20",
+    "eligible": 33,
+    "qualified": 10,
+    "selected": [
+      "ZECUSDT",
+      "ALLOUSDT",
+      "PUMPUSDT",
+      "ETHUSDT",
+      "LTCUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "ZECUSDT",
+        "r30": 0.20347078571550511,
+        "r7": 0.09377386278124536,
+        "median_quote_volume": 82419553.65325
+      },
+      {
+        "symbol": "ALLOUSDT",
+        "r30": 0.15085907414065935,
+        "r7": 0.21352117988505584,
+        "median_quote_volume": 7431954.79031
+      },
+      {
+        "symbol": "PUMPUSDT",
+        "r30": 0.13361729958733493,
+        "r7": 0.17931945306819022,
+        "median_quote_volume": 7939949.0580985
+      },
+      {
+        "symbol": "ETHUSDT",
+        "r30": 0.08483644719776126,
+        "r7": 0.04101529037627156,
+        "median_quote_volume": 427263515.3290325
+      },
+      {
+        "symbol": "LTCUSDT",
+        "r30": 0.06935760204629708,
+        "r7": 0.051506037713531114,
+        "median_quote_volume": 13263553.640744999
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2026-07-27",
+    "eligible": 33,
+    "qualified": 10,
+    "selected": [
+      "PUMPUSDT",
+      "UNIUSDT",
+      "ONDOUSDT",
+      "ETHUSDT",
+      "LINKUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "PUMPUSDT",
+        "r30": 0.3940204612096781,
+        "r7": 0.06855180409673393,
+        "median_quote_volume": 8223308.1766435
+      },
+      {
+        "symbol": "UNIUSDT",
+        "r30": 0.24066676210641613,
+        "r7": 0.027906217558455643,
+        "median_quote_volume": 11365513.55476
+      },
+      {
+        "symbol": "ONDOUSDT",
+        "r30": 0.18597612509438285,
+        "r7": 0.0863627516921245,
+        "median_quote_volume": 6538141.2548549995
+      },
+      {
+        "symbol": "ETHUSDT",
+        "r30": 0.17885111512938007,
+        "r7": 0.006571261104486127,
+        "median_quote_volume": 427263515.3290325
+      },
+      {
+        "symbol": "LINKUSDT",
+        "r30": 0.14559955883800807,
+        "r7": 0.0040635887159222095,
+        "median_quote_volume": 10049422.52582
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2026-08-03",
+    "eligible": 33,
+    "qualified": 7,
+    "selected": [
+      "KAITOUSDT",
+      "PUMPUSDT",
+      "UNIUSDT",
+      "ONDOUSDT",
+      "PEPEUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "KAITOUSDT",
+        "r30": 0.753044295303064,
+        "r7": 0.1741870531457249,
+        "median_quote_volume": 7035159.567965
+      },
+      {
+        "symbol": "PUMPUSDT",
+        "r30": 0.32837273858521654,
+        "r7": 0.17187980819071677,
+        "median_quote_volume": 8352477.524698
+      },
+      {
+        "symbol": "UNIUSDT",
+        "r30": 0.2506852996033449,
+        "r7": 0.10737483432895152,
+        "median_quote_volume": 11890113.527075
+      },
+      {
+        "symbol": "ONDOUSDT",
+        "r30": 0.14593887514215823,
+        "r7": 0.004483721081447872,
+        "median_quote_volume": 9757195.603245001
+      },
+      {
+        "symbol": "PEPEUSDT",
+        "r30": 0.12275929564261172,
+        "r7": 0.010889399799268317,
+        "median_quote_volume": 14676756.825793944
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2026-08-10",
+    "eligible": 31,
+    "qualified": 10,
+    "selected": [
+      "PUMPUSDT",
+      "ADAUSDT",
+      "ENAUSDT",
+      "ETHUSDT",
+      "PEPEUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "PUMPUSDT",
+        "r30": 0.4874303437179118,
+        "r7": 0.1297417149483332,
+        "median_quote_volume": 9849573.1114735
+      },
+      {
+        "symbol": "ADAUSDT",
+        "r30": 0.18021850659717598,
+        "r7": 0.13446272485503888,
+        "median_quote_volume": 17702351.292255
+      },
+      {
+        "symbol": "ENAUSDT",
+        "r30": 0.1671547642504651,
+        "r7": 0.13116116160255956,
+        "median_quote_volume": 10614180.955718499
+      },
+      {
+        "symbol": "ETHUSDT",
+        "r30": 0.09377958428330418,
+        "r7": 0.03817906964029623,
+        "median_quote_volume": 393884687.4391405
+      },
+      {
+        "symbol": "PEPEUSDT",
+        "r30": 0.08796877294595701,
+        "r7": 0.028471674081311994,
+        "median_quote_volume": 12754639.354653236
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2026-08-17",
+    "eligible": 30,
+    "qualified": 4,
+    "selected": [
+      "PUMPUSDT",
+      "LINKUSDT",
+      "BNBUSDT",
+      "TRXUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "PUMPUSDT",
+        "r30": 0.4847818629367518,
+        "r7": 0.13425787285988847,
+        "median_quote_volume": 11139596.197372
+      },
+      {
+        "symbol": "LINKUSDT",
+        "r30": 0.12694579393851227,
+        "r7": 0.1311507619894253,
+        "median_quote_volume": 10023093.10987
+      },
+      {
+        "symbol": "BNBUSDT",
+        "r30": 0.05985467182514466,
+        "r7": 0.01175101653551895,
+        "median_quote_volume": 49759878.966715
+      },
+      {
+        "symbol": "TRXUSDT",
+        "r30": 0.024141737779717284,
+        "r7": 0.006360766561810237,
+        "median_quote_volume": 22330626.99261
+      }
+    ],
+    "cash_weight": 0.19999999999999996,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2026-08-24",
+    "eligible": 33,
+    "qualified": 25,
+    "selected": [
+      "TUTUSDT",
+      "ACEUSDT",
+      "PUMPUSDT",
+      "ENAUSDT",
+      "ZECUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "TUTUSDT",
+        "r30": 1.4675425483914635,
+        "r7": 0.6046856754039698,
+        "median_quote_volume": 10418571.047585
+      },
+      {
+        "symbol": "ACEUSDT",
+        "r30": 1.090275433379048,
+        "r7": 0.42939932271247505,
+        "median_quote_volume": 6283645.556779999
+      },
+      {
+        "symbol": "PUMPUSDT",
+        "r30": 0.9978959004890311,
+        "r7": 0.5891574670358977,
+        "median_quote_volume": 12313672.757941999
+      },
+      {
+        "symbol": "ENAUSDT",
+        "r30": 0.578105316888842,
+        "r7": 0.6336751680436528,
+        "median_quote_volume": 9281355.242232502
+      },
+      {
+        "symbol": "ZECUSDT",
+        "r30": 0.46294478517547877,
+        "r7": 0.49701232028803366,
+        "median_quote_volume": 38589520.946559995
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  },
+  {
+    "date": "2026-08-31",
+    "eligible": 33,
+    "qualified": 12,
+    "selected": [
+      "PUMPUSDT",
+      "ENAUSDT",
+      "BICOUSDT",
+      "ZECUSDT",
+      "PENGUUSDT"
+    ],
+    "selected_past_features": [
+      {
+        "symbol": "PUMPUSDT",
+        "r30": 0.9361427479837787,
+        "r7": 0.019549794780571613,
+        "median_quote_volume": 14540235.9002985
+      },
+      {
+        "symbol": "ENAUSDT",
+        "r30": 0.6757554378480761,
+        "r7": 0.008178718128741925,
+        "median_quote_volume": 10669961.0497195
+      },
+      {
+        "symbol": "BICOUSDT",
+        "r30": 0.6560259568507709,
+        "r7": 0.14757603418517304,
+        "median_quote_volume": 6495600.65180615
+      },
+      {
+        "symbol": "ZECUSDT",
+        "r30": 0.5822530492603596,
+        "r7": 0.048059086414875,
+        "median_quote_volume": 45100876.25623
+      },
+      {
+        "symbol": "PENGUUSDT",
+        "r30": 0.41216217436395497,
+        "r7": 0.08384318730731054,
+        "median_quote_volume": 5286417.01708
+      }
+    ],
+    "cash_weight": 0.0,
+    "selection_status": "SELECTED"
+  }
+]

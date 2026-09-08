@@ -1,0 +1,1469 @@
+{
+  "protocol_id": "absolute-research-20260908-v1",
+  "protocol_sha256": "078f130eba63dfdae35fc6cc6a7da65b368731faaa3a5ab14522456a5e440d0f",
+  "strategy_streams": 5,
+  "evidence_class": "ADAPTIVE_HISTORICAL",
+  "carry": {
+    "AR1_BTCUSDT": {
+      "scenarios": {
+        "base": {
+          "initial_usdt": 5000,
+          "ending_usdt_mechanical": 5424.252889577045,
+          "profit_usdt_mechanical": 424.2528895770447,
+          "return_fraction": 0.08485057791540895,
+          "funding_usdt": 431.0766799120354,
+          "basis_pnl_usdt": 2.06625,
+          "fees_slippage_usdt": 8.890040335,
+          "residual_cost_usdt": 0.0,
+          "unhedged_shock_usdt": 0.0,
+          "round_trip_hedges": 1,
+          "leg_transactions": 4,
+          "active_weeks": 140,
+          "cash_weeks": 0,
+          "active_days": 980,
+          "weeks": 140,
+          "average_gross_notional_fraction_equity": 0.8889614391307363,
+          "average_spot_notional_fraction_equity": 0.4445513068890989,
+          "maximum_drawdown_daily_close_and_final_unwind": -0.0016357564199419583,
+          "non_synchronous_low_drawdown_stress_bound": -0.11124077798224297,
+          "low_bound_meaning": "Conservative non-synchronous low-spot/high-perp, positive current-day funding omitted; not observed intraday portfolio drawdown.",
+          "minimum_hourly_collateral_surplus_usdt": 1646.8137598152437,
+          "minimum_30pct_mark_jump_surplus_usdt": 532.5803867652437,
+          "first_conservative_margin_breach": null,
+          "first_jump_breach": null,
+          "modeled_margin_bound_passed": true,
+          "actual_liquidation_certified": false,
+          "executable_net_profit": null,
+          "additional_cost_budget_usdt": 424.2528895770447,
+          "concentration": {
+            "net_profit_usdt": 424.2528895770447,
+            "positive_increment_sum_usdt": 441.2278267591528,
+            "top_five_positive_sum_usdt": 75.35562476701125,
+            "top_five_share_of_positive_increments": 0.17078620204102546,
+            "profit_less_top_five_increments_usdt": 348.89726481003345,
+            "exclusion_meaning": "Arithmetic contribution diagnostic, not a rerun with those trades removed or a new strategy."
+          },
+          "bootstrap": {
+            "mean_weekly_pnl_usdt": 3.0303777826931766,
+            "interval_95_usdt": [
+              2.1797474392231186,
+              4.005391235459533
+            ],
+            "meaning": "Descriptive four-week circular bootstrap, conditional on adaptive history; neither independent nor search-adjusted."
+          },
+          "by_year": {
+            "2024": {
+              "pnl_usdt": 235.25657850198058,
+              "return_on_year_start_equity": 0.04705131570039622,
+              "active_days": 366
+            },
+            "2025": {
+              "pnl_usdt": 155.71072957849992,
+              "return_on_year_start_equity": 0.029742712175351516,
+              "active_days": 365
+            },
+            "2026": {
+              "pnl_usdt": 33.28558149656419,
+              "return_on_year_start_equity": 0.006174324493986916,
+              "active_days": 249
+            }
+          }
+        },
+        "adverse": {
+          "initial_usdt": 5000,
+          "ending_usdt_mechanical": 5341.127589680895,
+          "profit_usdt_mechanical": 341.12758968089474,
+          "return_fraction": 0.06822551793617904,
+          "funding_usdt": 431.0766799120354,
+          "basis_pnl_usdt": 2.06625,
+          "fees_slippage_usdt": 24.892052560000003,
+          "residual_cost_usdt": 67.12328767123222,
+          "unhedged_shock_usdt": 0.0,
+          "round_trip_hedges": 1,
+          "leg_transactions": 4,
+          "active_weeks": 140,
+          "cash_weeks": 0,
+          "active_days": 980,
+          "weeks": 140,
+          "average_gross_notional_fraction_equity": 0.8957513392074351,
+          "average_spot_notional_fraction_equity": 0.4479469261789635,
+          "maximum_drawdown_daily_close_and_final_unwind": -0.0030430519242146126,
+          "non_synchronous_low_drawdown_stress_bound": -0.11229807304940154,
+          "low_bound_meaning": "Conservative non-synchronous low-spot/high-perp, positive current-day funding omitted; not observed intraday portfolio drawdown.",
+          "minimum_hourly_collateral_surplus_usdt": 1597.1159060735156,
+          "minimum_30pct_mark_jump_surplus_usdt": 482.8825330235157,
+          "first_conservative_margin_breach": null,
+          "first_jump_breach": null,
+          "modeled_margin_bound_passed": true,
+          "actual_liquidation_certified": false,
+          "executable_net_profit": null,
+          "additional_cost_budget_usdt": 341.12758968089474,
+          "concentration": {
+            "net_profit_usdt": 341.12758968089474,
+            "positive_increment_sum_usdt": 380.94811098351965,
+            "top_five_positive_sum_usdt": 72.9583644930417,
+            "top_five_share_of_positive_increments": 0.19151785345431988,
+            "profit_less_top_five_increments_usdt": 268.16922518785304,
+            "exclusion_meaning": "Arithmetic contribution diagnostic, not a rerun with those trades removed or a new strategy."
+          },
+          "bootstrap": {
+            "mean_weekly_pnl_usdt": 2.4366256405778195,
+            "interval_95_usdt": [
+              1.5321669057585647,
+              3.4535485573152687
+            ],
+            "meaning": "Descriptive four-week circular bootstrap, conditional on adaptive history; neither independent nor search-adjusted."
+          },
+          "by_year": {
+            "2024": {
+              "pnl_usdt": 204.6683138013277,
+              "return_on_year_start_equity": 0.040933662760265443,
+              "active_days": 366
+            },
+            "2025": {
+              "pnl_usdt": 130.71072957852903,
+              "return_on_year_start_equity": 0.025114132486006913,
+              "active_days": 365
+            },
+            "2026": {
+              "pnl_usdt": 5.7485463010380045,
+              "return_on_year_start_equity": 0.0010774391574241982,
+              "active_days": 249
+            }
+          }
+        },
+        "compression": {
+          "initial_usdt": 5000,
+          "ending_usdt_mechanical": 5104.119645660121,
+          "profit_usdt_mechanical": 104.11964566012102,
+          "return_fraction": 0.020823929132024244,
+          "funding_usdt": 200.19985499127202,
+          "basis_pnl_usdt": 2.06625,
+          "fees_slippage_usdt": 24.892052560000003,
+          "residual_cost_usdt": 67.12328767123222,
+          "unhedged_shock_usdt": 6.131119100000001,
+          "round_trip_hedges": 1,
+          "leg_transactions": 4,
+          "active_weeks": 140,
+          "cash_weeks": 0,
+          "active_days": 980,
+          "weeks": 140,
+          "average_gross_notional_fraction_equity": 0.9221756349169228,
+          "average_spot_notional_fraction_equity": 0.4611616795464343,
+          "maximum_drawdown_daily_close_and_final_unwind": -0.005040015370443407,
+          "non_synchronous_low_drawdown_stress_bound": -0.1165558849188828,
+          "low_bound_meaning": "Conservative non-synchronous low-spot/high-perp, positive current-day funding omitted; not observed intraday portfolio drawdown.",
+          "minimum_hourly_collateral_surplus_usdt": 1403.8540025444865,
+          "minimum_30pct_mark_jump_surplus_usdt": 289.62062949448665,
+          "first_conservative_margin_breach": null,
+          "first_jump_breach": null,
+          "modeled_margin_bound_passed": true,
+          "actual_liquidation_certified": false,
+          "executable_net_profit": null,
+          "additional_cost_budget_usdt": 104.11964566012102,
+          "concentration": {
+            "net_profit_usdt": 104.11964566012102,
+            "positive_increment_sum_usdt": 162.35474082616292,
+            "top_five_positive_sum_usdt": 35.46275759821856,
+            "top_five_share_of_positive_increments": 0.21842760745859202,
+            "profit_less_top_five_increments_usdt": 68.65688806190246,
+            "exclusion_meaning": "Arithmetic contribution diagnostic, not a rerun with those trades removed or a new strategy."
+          },
+          "bootstrap": {
+            "mean_weekly_pnl_usdt": 0.7437117547151502,
+            "interval_95_usdt": [
+              0.1107108557524813,
+              1.3592429424681525
+            ],
+            "meaning": "Descriptive four-week circular bootstrap, conditional on adaptive history; neither independent nor search-adjusted."
+          },
+          "by_year": {
+            "2024": {
+              "pnl_usdt": 77.82724931741541,
+              "return_on_year_start_equity": 0.015565449863483183,
+              "active_days": 366
+            },
+            "2025": {
+              "pnl_usdt": 48.24643250656027,
+              "return_on_year_start_equity": 0.009501393044248463,
+              "active_days": 365
+            },
+            "2026": {
+              "pnl_usdt": -21.954036163854653,
+              "return_on_year_start_equity": -0.004282817127990057,
+              "active_days": 249
+            }
+          }
+        }
+      },
+      "current_quantity_step": "0.001",
+      "current_filters": {
+        "spot": {
+          "step": "0.00001000",
+          "min_qty": 1e-05,
+          "max_qty": 142.46150016,
+          "min_notional": 5.0,
+          "status": "TRADING",
+          "historical_constraints_certified": false
+        },
+        "perp": {
+          "step": "0.001",
+          "min_qty": 0.001,
+          "max_qty": 120.0,
+          "min_notional": 50.0,
+          "status": "TRADING",
+          "historical_constraints_certified": false
+        }
+      },
+      "future_observation_candidate": true,
+      "execution_ready": false,
+      "real_profit": null
+    },
+    "AR1_ETHUSDT": {
+      "scenarios": {
+        "base": {
+          "initial_usdt": 5000,
+          "ending_usdt_mechanical": 5328.944327213127,
+          "profit_usdt_mechanical": 328.9443272131266,
+          "return_fraction": 0.0657888654426253,
+          "funding_usdt": 333.8738009581337,
+          "basis_pnl_usdt": 1.6300600000002587,
+          "fees_slippage_usdt": 6.5595337449999995,
+          "residual_cost_usdt": 0.0,
+          "unhedged_shock_usdt": 0.0,
+          "round_trip_hedges": 1,
+          "leg_transactions": 4,
+          "active_weeks": 140,
+          "cash_weeks": 0,
+          "active_days": 980,
+          "weeks": 140,
+          "average_gross_notional_fraction_equity": 0.5925985133067933,
+          "average_spot_notional_fraction_equity": 0.2963382593187023,
+          "maximum_drawdown_daily_close_and_final_unwind": -0.0013665660592344642,
+          "non_synchronous_low_drawdown_stress_bound": -0.09971067412098422,
+          "low_bound_meaning": "Conservative non-synchronous low-spot/high-perp, positive current-day funding omitted; not observed intraday portfolio drawdown.",
+          "minimum_hourly_collateral_surplus_usdt": 2536.9266573533546,
+          "minimum_30pct_mark_jump_surplus_usdt": 1711.5992905308087,
+          "first_conservative_margin_breach": null,
+          "first_jump_breach": null,
+          "modeled_margin_bound_passed": true,
+          "actual_liquidation_certified": false,
+          "executable_net_profit": null,
+          "additional_cost_budget_usdt": 328.9443272131266,
+          "concentration": {
+            "net_profit_usdt": 328.9443272131266,
+            "positive_increment_sum_usdt": 339.8082127966318,
+            "top_five_positive_sum_usdt": 78.63712303035754,
+            "top_five_share_of_positive_increments": 0.23141619322020401,
+            "profit_less_top_five_increments_usdt": 250.30720418276906,
+            "exclusion_meaning": "Arithmetic contribution diagnostic, not a rerun with those trades removed or a new strategy."
+          },
+          "bootstrap": {
+            "mean_weekly_pnl_usdt": 2.3496023372366186,
+            "interval_95_usdt": [
+              1.5537184251201053,
+              3.352998970087375
+            ],
+            "meaning": "Descriptive four-week circular bootstrap, conditional on adaptive history; neither independent nor search-adjusted."
+          },
+          "by_year": {
+            "2024": {
+              "pnl_usdt": 229.659083320229,
+              "return_on_year_start_equity": 0.04593181666404589,
+              "active_days": 366
+            },
+            "2025": {
+              "pnl_usdt": 87.37031242115518,
+              "return_on_year_start_equity": 0.01670669369248534,
+              "active_days": 365
+            },
+            "2026": {
+              "pnl_usdt": 11.91493147174242,
+              "return_on_year_start_equity": 0.002240900056201589,
+              "active_days": 249
+            }
+          }
+        },
+        "adverse": {
+          "initial_usdt": 5000,
+          "ending_usdt_mechanical": 5250.01377377698,
+          "profit_usdt_mechanical": 250.0137737769801,
+          "return_fraction": 0.05000275475539606,
+          "funding_usdt": 333.8738009581337,
+          "basis_pnl_usdt": 1.6300600000002587,
+          "fees_slippage_usdt": 18.36679951,
+          "residual_cost_usdt": 67.12328767123222,
+          "unhedged_shock_usdt": 0.0,
+          "round_trip_hedges": 1,
+          "leg_transactions": 4,
+          "active_weeks": 140,
+          "cash_weeks": 0,
+          "active_days": 980,
+          "weeks": 140,
+          "average_gross_notional_fraction_equity": 0.5968316780126114,
+          "average_spot_notional_fraction_equity": 0.29845523854925565,
+          "maximum_drawdown_daily_close_and_final_unwind": -0.003191957823268754,
+          "non_synchronous_low_drawdown_stress_bound": -0.10066083505263057,
+          "low_bound_meaning": "Conservative non-synchronous low-spot/high-perp, positive current-day funding omitted; not observed intraday portfolio drawdown.",
+          "minimum_hourly_collateral_surplus_usdt": 2490.0748024560785,
+          "minimum_30pct_mark_jump_surplus_usdt": 1664.7474356335326,
+          "first_conservative_margin_breach": null,
+          "first_jump_breach": null,
+          "modeled_margin_bound_passed": true,
+          "actual_liquidation_certified": false,
+          "executable_net_profit": null,
+          "additional_cost_budget_usdt": 250.0137737769801,
+          "concentration": {
+            "net_profit_usdt": 250.0137737769801,
+            "positive_increment_sum_usdt": 279.77451539354115,
+            "top_five_positive_sum_usdt": 76.23986275638617,
+            "top_five_share_of_positive_increments": 0.2725046727331271,
+            "profit_less_top_five_increments_usdt": 173.7739110205939,
+            "exclusion_meaning": "Arithmetic contribution diagnostic, not a rerun with those trades removed or a new strategy."
+          },
+          "bootstrap": {
+            "mean_weekly_pnl_usdt": 1.785812669835572,
+            "interval_95_usdt": [
+              0.9596744858674983,
+              2.81716107902319
+            ],
+            "meaning": "Descriptive four-week circular bootstrap, conditional on adaptive history; neither independent nor search-adjusted."
+          },
+          "by_year": {
+            "2024": {
+              "pnl_usdt": 198.97161198457616,
+              "return_on_year_start_equity": 0.03979432239691527,
+              "active_days": 366
+            },
+            "2025": {
+              "pnl_usdt": 62.37031242118701,
+              "return_on_year_start_equity": 0.011996663393470275,
+              "active_days": 365
+            },
+            "2026": {
+              "pnl_usdt": -11.328150628783078,
+              "return_on_year_start_equity": -0.002153091510026184,
+              "active_days": 249
+            }
+          }
+        },
+        "compression": {
+          "initial_usdt": 5000,
+          "ending_usdt_mechanical": 5065.937035603176,
+          "profit_usdt_mechanical": 65.9370356031759,
+          "return_fraction": 0.013187407120635264,
+          "funding_usdt": 156.03797723431072,
+          "basis_pnl_usdt": 1.6300600000002587,
+          "fees_slippage_usdt": 18.36679951,
+          "residual_cost_usdt": 67.12328767123222,
+          "unhedged_shock_usdt": 6.24091445,
+          "round_trip_hedges": 1,
+          "leg_transactions": 4,
+          "active_weeks": 140,
+          "cash_weeks": 0,
+          "active_days": 980,
+          "weeks": 140,
+          "average_gross_notional_fraction_equity": 0.6112402114509579,
+          "average_spot_notional_fraction_equity": 0.3056608039906349,
+          "maximum_drawdown_daily_close_and_final_unwind": -0.005538343099641407,
+          "non_synchronous_low_drawdown_stress_bound": -0.10381743646078401,
+          "low_bound_meaning": "Conservative non-synchronous low-spot/high-perp, positive current-day funding omitted; not observed intraday portfolio drawdown.",
+          "minimum_hourly_collateral_surplus_usdt": 2336.232875007546,
+          "minimum_30pct_mark_jump_surplus_usdt": 1510.9055081850004,
+          "first_conservative_margin_breach": null,
+          "first_jump_breach": null,
+          "modeled_margin_bound_passed": true,
+          "actual_liquidation_certified": false,
+          "executable_net_profit": null,
+          "additional_cost_budget_usdt": 65.9370356031759,
+          "concentration": {
+            "net_profit_usdt": 65.9370356031759,
+            "positive_increment_sum_usdt": 116.09747209129637,
+            "top_five_positive_sum_usdt": 36.792756241210554,
+            "top_five_share_of_positive_increments": 0.3169126388236738,
+            "profit_less_top_five_increments_usdt": 29.144279361965346,
+            "exclusion_meaning": "Arithmetic contribution diagnostic, not a rerun with those trades removed or a new strategy."
+          },
+          "bootstrap": {
+            "mean_weekly_pnl_usdt": 0.4709788257369707,
+            "interval_95_usdt": [
+              -0.07242068176663435,
+              1.0551712155910589
+            ],
+            "meaning": "Descriptive four-week circular bootstrap, conditional on adaptive history; neither independent nor search-adjusted."
+          },
+          "by_year": {
+            "2024": {
+              "pnl_usdt": 76.39918413355463,
+              "return_on_year_start_equity": 0.015279836826710858,
+              "active_days": 366
+            },
+            "2025": {
+              "pnl_usdt": 15.270123914332544,
+              "return_on_year_start_equity": 0.00300806208504234,
+              "active_days": 365
+            },
+            "2026": {
+              "pnl_usdt": -25.73227244471127,
+              "return_on_year_start_equity": -0.0050537988403996925,
+              "active_days": 249
+            }
+          }
+        }
+      },
+      "current_quantity_step": "0.001",
+      "current_filters": {
+        "spot": {
+          "step": "0.00010000",
+          "min_qty": 0.0001,
+          "max_qty": 2226.55313514,
+          "min_notional": 5.0,
+          "status": "TRADING",
+          "historical_constraints_certified": false
+        },
+        "perp": {
+          "step": "0.001",
+          "min_qty": 0.001,
+          "max_qty": 2000.0,
+          "min_notional": 20.0,
+          "status": "TRADING",
+          "historical_constraints_certified": false
+        }
+      },
+      "future_observation_candidate": true,
+      "execution_ready": false,
+      "real_profit": null
+    },
+    "AR2_BTCUSDT": {
+      "scenarios": {
+        "base": {
+          "initial_usdt": 5000,
+          "ending_usdt_mechanical": 5017.7911043759395,
+          "profit_usdt_mechanical": 17.79110437593954,
+          "return_fraction": 0.0035582208751878674,
+          "funding_usdt": 33.370259105942935,
+          "basis_pnl_usdt": 2.7129800000001194,
+          "fees_slippage_usdt": 18.29213473,
+          "residual_cost_usdt": 0.0,
+          "unhedged_shock_usdt": 0.0,
+          "round_trip_hedges": 3,
+          "leg_transactions": 12,
+          "active_weeks": 12,
+          "cash_weeks": 128,
+          "active_days": 84,
+          "weeks": 140,
+          "average_gross_notional_fraction_equity": 0.04176034722337252,
+          "average_spot_notional_fraction_equity": 0.020880695294492924,
+          "maximum_drawdown_daily_close_and_final_unwind": -0.0012147027523408127,
+          "non_synchronous_low_drawdown_stress_bound": -0.02922699066615364,
+          "low_bound_meaning": "Conservative non-synchronous low-spot/high-perp, positive current-day funding omitted; not observed intraday portfolio drawdown.",
+          "minimum_hourly_collateral_surplus_usdt": 3562.942381601646,
+          "minimum_30pct_mark_jump_surplus_usdt": 3130.5684604099597,
+          "first_conservative_margin_breach": null,
+          "first_jump_breach": null,
+          "modeled_margin_bound_passed": true,
+          "actual_liquidation_certified": false,
+          "executable_net_profit": null,
+          "additional_cost_budget_usdt": 17.79110437593954,
+          "concentration": {
+            "net_profit_usdt": 17.79110437593954,
+            "positive_increment_sum_usdt": 29.197571159749714,
+            "top_five_positive_sum_usdt": 19.483386620232523,
+            "top_five_share_of_positive_increments": 0.6672947730354821,
+            "profit_less_top_five_increments_usdt": -1.6922822442929828,
+            "exclusion_meaning": "Arithmetic contribution diagnostic, not a rerun with those trades removed or a new strategy."
+          },
+          "bootstrap": {
+            "mean_weekly_pnl_usdt": 0.12707931697099673,
+            "interval_95_usdt": [
+              -0.02519911359187875,
+              0.3560371282119869
+            ],
+            "meaning": "Descriptive four-week circular bootstrap, conditional on adaptive history; neither independent nor search-adjusted."
+          },
+          "by_year": {
+            "2024": {
+              "pnl_usdt": 17.79110437593954,
+              "return_on_year_start_equity": 0.0035582208751878674,
+              "active_days": 84
+            },
+            "2025": {
+              "pnl_usdt": 0.0,
+              "return_on_year_start_equity": 0.0,
+              "active_days": 0
+            },
+            "2026": {
+              "pnl_usdt": 0.0,
+              "return_on_year_start_equity": 0.0,
+              "active_days": 0
+            }
+          }
+        },
+        "adverse": {
+          "initial_usdt": 5000,
+          "ending_usdt_mechanical": 4917.7420136547935,
+          "profit_usdt_mechanical": -82.25798634520652,
+          "return_fraction": -0.01645159726904133,
+          "funding_usdt": 33.370259105942935,
+          "basis_pnl_usdt": 2.7129800000001194,
+          "fees_slippage_usdt": 51.21793778,
+          "residual_cost_usdt": 67.12328767123222,
+          "unhedged_shock_usdt": 0.0,
+          "round_trip_hedges": 3,
+          "leg_transactions": 12,
+          "active_weeks": 12,
+          "cash_weeks": 128,
+          "active_days": 84,
+          "weeks": 140,
+          "average_gross_notional_fraction_equity": 0.041941903166964604,
+          "average_spot_notional_fraction_equity": 0.020971480199154117,
+          "maximum_drawdown_daily_close_and_final_unwind": -0.017096586108991785,
+          "non_synchronous_low_drawdown_stress_bound": -0.029613402727722726,
+          "low_bound_meaning": "Conservative non-synchronous low-spot/high-perp, positive current-day funding omitted; not observed intraday portfolio drawdown.",
+          "minimum_hourly_collateral_surplus_usdt": 3556.6691853941124,
+          "minimum_30pct_mark_jump_surplus_usdt": 3124.295264202426,
+          "first_conservative_margin_breach": null,
+          "first_jump_breach": null,
+          "modeled_margin_bound_passed": true,
+          "actual_liquidation_certified": false,
+          "executable_net_profit": null,
+          "additional_cost_budget_usdt": -82.25798634520652,
+          "concentration": {
+            "net_profit_usdt": -82.25798634520652,
+            "positive_increment_sum_usdt": 18.22804205396187,
+            "top_five_positive_sum_usdt": 15.398021698077173,
+            "top_five_share_of_positive_increments": 0.8447435908087785,
+            "profit_less_top_five_increments_usdt": -97.65600804328369,
+            "exclusion_meaning": "Arithmetic contribution diagnostic, not a rerun with those trades removed or a new strategy."
+          },
+          "bootstrap": {
+            "mean_weekly_pnl_usdt": -0.5875570453229036,
+            "interval_95_usdt": [
+              -0.814536573163002,
+              -0.3898646407165959
+            ],
+            "meaning": "Descriptive four-week circular bootstrap, conditional on adaptive history; neither independent nor search-adjusted."
+          },
+          "by_year": {
+            "2024": {
+              "pnl_usdt": -40.20319182471212,
+              "return_on_year_start_equity": -0.008040638364942398,
+              "active_days": 84
+            },
+            "2025": {
+              "pnl_usdt": -24.999999999968168,
+              "return_on_year_start_equity": -0.005040529071424937,
+              "active_days": 0
+            },
+            "2026": {
+              "pnl_usdt": -17.05479452052623,
+              "return_on_year_start_equity": -0.003456027711672416,
+              "active_days": 0
+            }
+          }
+        },
+        "compression": {
+          "initial_usdt": 5000,
+          "ending_usdt_mechanical": 4882.580568834774,
+          "profit_usdt_mechanical": -117.41943116522634,
+          "return_fraction": -0.023483886233045315,
+          "funding_usdt": 16.558242635918567,
+          "basis_pnl_usdt": 2.7129800000001194,
+          "fees_slippage_usdt": 51.21793778,
+          "residual_cost_usdt": 67.12328767123222,
+          "unhedged_shock_usdt": 18.34942835,
+          "round_trip_hedges": 3,
+          "leg_transactions": 12,
+          "active_weeks": 12,
+          "cash_weeks": 128,
+          "active_days": 84,
+          "weeks": 140,
+          "average_gross_notional_fraction_equity": 0.04213154218851059,
+          "average_spot_notional_fraction_equity": 0.021066306623324618,
+          "maximum_drawdown_daily_close_and_final_unwind": -0.023483886233045315,
+          "non_synchronous_low_drawdown_stress_bound": -0.03220305765539766,
+          "low_bound_meaning": "Conservative non-synchronous low-spot/high-perp, positive current-day funding omitted; not observed intraday portfolio drawdown.",
+          "minimum_hourly_collateral_surplus_usdt": 3547.3515426421477,
+          "minimum_30pct_mark_jump_surplus_usdt": 3114.9776214504614,
+          "first_conservative_margin_breach": null,
+          "first_jump_breach": null,
+          "modeled_margin_bound_passed": true,
+          "actual_liquidation_certified": false,
+          "executable_net_profit": null,
+          "additional_cost_budget_usdt": -117.41943116522634,
+          "concentration": {
+            "net_profit_usdt": -117.41943116522634,
+            "positive_increment_sum_usdt": 8.147596352848268,
+            "top_five_positive_sum_usdt": 7.627980712053613,
+            "top_five_share_of_positive_increments": 0.9362246706523446,
+            "profit_less_top_five_increments_usdt": -125.04741187727996,
+            "exclusion_meaning": "Arithmetic contribution diagnostic, not a rerun with those trades removed or a new strategy."
+          },
+          "bootstrap": {
+            "mean_weekly_pnl_usdt": -0.8387102226087596,
+            "interval_95_usdt": [
+              -1.2157607779040436,
+              -0.5495564824240123
+            ],
+            "meaning": "Descriptive four-week circular bootstrap, conditional on adaptive history; neither independent nor search-adjusted."
+          },
+          "by_year": {
+            "2024": {
+              "pnl_usdt": -75.36463664473195,
+              "return_on_year_start_equity": -0.015072927328946384,
+              "active_days": 84
+            },
+            "2025": {
+              "pnl_usdt": -24.999999999968168,
+              "return_on_year_start_equity": -0.005076517986691065,
+              "active_days": 0
+            },
+            "2026": {
+              "pnl_usdt": -17.05479452052623,
+              "return_on_year_start_equity": -0.0034808293384606115,
+              "active_days": 0
+            }
+          }
+        }
+      },
+      "current_quantity_step": "0.001",
+      "current_filters": {
+        "spot": {
+          "step": "0.00001000",
+          "min_qty": 1e-05,
+          "max_qty": 142.46150016,
+          "min_notional": 5.0,
+          "status": "TRADING",
+          "historical_constraints_certified": false
+        },
+        "perp": {
+          "step": "0.001",
+          "min_qty": 0.001,
+          "max_qty": 120.0,
+          "min_notional": 50.0,
+          "status": "TRADING",
+          "historical_constraints_certified": false
+        }
+      },
+      "future_observation_candidate": false,
+      "execution_ready": false,
+      "real_profit": null
+    },
+    "AR2_ETHUSDT": {
+      "scenarios": {
+        "base": {
+          "initial_usdt": 5000,
+          "ending_usdt_mechanical": 5030.687756592333,
+          "profit_usdt_mechanical": 30.687756592333244,
+          "return_fraction": 0.006137551318466716,
+          "funding_usdt": 50.69033605733521,
+          "basis_pnl_usdt": 4.336810000000017,
+          "fees_slippage_usdt": 24.339389465,
+          "residual_cost_usdt": 0.0,
+          "unhedged_shock_usdt": 0.0,
+          "round_trip_hedges": 4,
+          "leg_transactions": 16,
+          "active_weeks": 16,
+          "cash_weeks": 124,
+          "active_days": 112,
+          "weeks": 140,
+          "average_gross_notional_fraction_equity": 0.056616019287053024,
+          "average_spot_notional_fraction_equity": 0.028308222523715888,
+          "maximum_drawdown_daily_close_and_final_unwind": -0.001214092796803734,
+          "non_synchronous_low_drawdown_stress_bound": -0.033812052589371255,
+          "low_bound_meaning": "Conservative non-synchronous low-spot/high-perp, positive current-day funding omitted; not observed intraday portfolio drawdown.",
+          "minimum_hourly_collateral_surplus_usdt": 3496.502226155321,
+          "minimum_30pct_mark_jump_surplus_usdt": 3043.8936047936195,
+          "first_conservative_margin_breach": null,
+          "first_jump_breach": null,
+          "modeled_margin_bound_passed": true,
+          "actual_liquidation_certified": false,
+          "executable_net_profit": null,
+          "additional_cost_budget_usdt": 30.687756592333244,
+          "concentration": {
+            "net_profit_usdt": 30.687756592333244,
+            "positive_increment_sum_usdt": 44.79049728908012,
+            "top_five_positive_sum_usdt": 22.00867376273618,
+            "top_five_share_of_positive_increments": 0.49136926568801176,
+            "profit_less_top_five_increments_usdt": 8.679082829597064,
+            "exclusion_meaning": "Arithmetic contribution diagnostic, not a rerun with those trades removed or a new strategy."
+          },
+          "bootstrap": {
+            "mean_weekly_pnl_usdt": 0.21919826137380888,
+            "interval_95_usdt": [
+              0.008852853716963734,
+              0.4795918035631434
+            ],
+            "meaning": "Descriptive four-week circular bootstrap, conditional on adaptive history; neither independent nor search-adjusted."
+          },
+          "by_year": {
+            "2024": {
+              "pnl_usdt": 30.687756592333244,
+              "return_on_year_start_equity": 0.006137551318466716,
+              "active_days": 112
+            },
+            "2025": {
+              "pnl_usdt": 0.0,
+              "return_on_year_start_equity": 0.0,
+              "active_days": 0
+            },
+            "2026": {
+              "pnl_usdt": 0.0,
+              "return_on_year_start_equity": 0.0,
+              "active_days": 0
+            }
+          }
+        },
+        "adverse": {
+          "initial_usdt": 5000,
+          "ending_usdt_mechanical": 4919.82376032033,
+          "profit_usdt_mechanical": -80.17623967967029,
+          "return_fraction": -0.016035247935934027,
+          "funding_usdt": 50.450708691480536,
+          "basis_pnl_usdt": 4.3156000000000185,
+          "fees_slippage_usdt": 67.8192607,
+          "residual_cost_usdt": 67.12328767123222,
+          "unhedged_shock_usdt": 0.0,
+          "round_trip_hedges": 4,
+          "leg_transactions": 16,
+          "active_weeks": 16,
+          "cash_weeks": 124,
+          "active_days": 112,
+          "weeks": 140,
+          "average_gross_notional_fraction_equity": 0.056701816425744,
+          "average_spot_notional_fraction_equity": 0.028351122422994045,
+          "maximum_drawdown_daily_close_and_final_unwind": -0.016915146317850516,
+          "non_synchronous_low_drawdown_stress_bound": -0.04157245469123705,
+          "low_bound_meaning": "Conservative non-synchronous low-spot/high-perp, positive current-day funding omitted; not observed intraday portfolio drawdown.",
+          "minimum_hourly_collateral_surplus_usdt": 3490.061330162103,
+          "minimum_30pct_mark_jump_surplus_usdt": 3037.4527088004015,
+          "first_conservative_margin_breach": null,
+          "first_jump_breach": null,
+          "modeled_margin_bound_passed": true,
+          "actual_liquidation_certified": false,
+          "executable_net_profit": null,
+          "additional_cost_budget_usdt": -80.17623967967029,
+          "concentration": {
+            "net_profit_usdt": -80.17623967967029,
+            "positive_increment_sum_usdt": 26.883444513897302,
+            "top_five_positive_sum_usdt": 17.618760938523337,
+            "top_five_share_of_positive_increments": 0.6553758737804369,
+            "profit_less_top_five_increments_usdt": -97.79500061819363,
+            "exclusion_meaning": "Arithmetic contribution diagnostic, not a rerun with those trades removed or a new strategy."
+          },
+          "bootstrap": {
+            "mean_weekly_pnl_usdt": -0.5726874262833592,
+            "interval_95_usdt": [
+              -0.8098264506849041,
+              -0.3619729921461885
+            ],
+            "meaning": "Descriptive four-week circular bootstrap, conditional on adaptive history; neither independent nor search-adjusted."
+          },
+          "by_year": {
+            "2024": {
+              "pnl_usdt": -38.12144515917589,
+              "return_on_year_start_equity": -0.0076242890318352075,
+              "active_days": 112
+            },
+            "2025": {
+              "pnl_usdt": -24.999999999968168,
+              "return_on_year_start_equity": -0.005038414327085516,
+              "active_days": 0
+            },
+            "2026": {
+              "pnl_usdt": -17.05479452052623,
+              "return_on_year_start_equity": -0.0034545703993068555,
+              "active_days": 0
+            }
+          }
+        },
+        "compression": {
+          "initial_usdt": 5000,
+          "ending_usdt_mechanical": 4869.906757910269,
+          "profit_usdt_mechanical": -130.09324208973067,
+          "return_fraction": -0.0260186484179461,
+          "funding_usdt": 25.128898231417068,
+          "basis_pnl_usdt": 4.303650000000019,
+          "fees_slippage_usdt": 67.5870834,
+          "residual_cost_usdt": 67.12328767123222,
+          "unhedged_shock_usdt": 24.81541925,
+          "round_trip_hedges": 4,
+          "leg_transactions": 16,
+          "active_weeks": 16,
+          "cash_weeks": 124,
+          "active_days": 112,
+          "weeks": 140,
+          "average_gross_notional_fraction_equity": 0.05684350427878368,
+          "average_spot_notional_fraction_equity": 0.02842196843971813,
+          "maximum_drawdown_daily_close_and_final_unwind": -0.0260186484179461,
+          "non_synchronous_low_drawdown_stress_bound": -0.04981156130730635,
+          "low_bound_meaning": "Conservative non-synchronous low-spot/high-perp, positive current-day funding omitted; not observed intraday portfolio drawdown.",
+          "minimum_hourly_collateral_surplus_usdt": 3480.1996279574405,
+          "minimum_30pct_mark_jump_surplus_usdt": 3027.591006595739,
+          "first_conservative_margin_breach": null,
+          "first_jump_breach": null,
+          "modeled_margin_bound_passed": true,
+          "actual_liquidation_certified": false,
+          "executable_net_profit": null,
+          "additional_cost_budget_usdt": -130.09324208973067,
+          "concentration": {
+            "net_profit_usdt": -130.09324208973067,
+            "positive_increment_sum_usdt": 12.463247346713615,
+            "top_five_positive_sum_usdt": 9.841124338106056,
+            "top_five_share_of_positive_increments": 0.7896115726774069,
+            "profit_less_top_five_increments_usdt": -139.93436642783672,
+            "exclusion_meaning": "Arithmetic contribution diagnostic, not a rerun with those trades removed or a new strategy."
+          },
+          "bootstrap": {
+            "mean_weekly_pnl_usdt": -0.9292374434980761,
+            "interval_95_usdt": [
+              -1.3089355834357754,
+              -0.6256929248564442
+            ],
+            "meaning": "Descriptive four-week circular bootstrap, conditional on adaptive history; neither independent nor search-adjusted."
+          },
+          "by_year": {
+            "2024": {
+              "pnl_usdt": -88.03844756923627,
+              "return_on_year_start_equity": -0.01760768951384728,
+              "active_days": 112
+            },
+            "2025": {
+              "pnl_usdt": -24.999999999968168,
+              "return_on_year_start_equity": -0.005089616385046125,
+              "active_days": 0
+            },
+            "2026": {
+              "pnl_usdt": -17.05479452052623,
+              "return_on_year_start_equity": -0.00348985649621969,
+              "active_days": 0
+            }
+          }
+        }
+      },
+      "current_quantity_step": "0.001",
+      "current_filters": {
+        "spot": {
+          "step": "0.00010000",
+          "min_qty": 0.0001,
+          "max_qty": 2226.55313514,
+          "min_notional": 5.0,
+          "status": "TRADING",
+          "historical_constraints_certified": false
+        },
+        "perp": {
+          "step": "0.001",
+          "min_qty": 0.001,
+          "max_qty": 2000.0,
+          "min_notional": 20.0,
+          "status": "TRADING",
+          "historical_constraints_certified": false
+        }
+      },
+      "future_observation_candidate": false,
+      "execution_ready": false,
+      "real_profit": null
+    }
+  },
+  "spot": {
+    "id": "AR3_UNIVERSE",
+    "overall": {
+      "weeks": 140,
+      "active_weeks": 138,
+      "cash_weeks": 2,
+      "selected_holdings": 630,
+      "censored_selected_holdings": 0,
+      "average_exposure": 0.9,
+      "trade_stats_primary": {
+        "complete": 630,
+        "wins": 231,
+        "losses": 399,
+        "zero": 0,
+        "win_rate_among_complete": 0.36666666666666664,
+        "mean_gain": 0.1726364862472417,
+        "mean_loss": -0.14243977277369116,
+        "profit_factor_return_units": 0.7016821036712458
+      },
+      "cost_scenarios": {
+        "0": {
+          "compounded_return": -0.9859417985917963,
+          "ending_5000_usdt": 70.29100704101835,
+          "simulated_profit_5000_usdt": -4929.708992958982,
+          "max_drawdown_weekly_endpoints": -0.9893383735730643
+        },
+        "10": {
+          "compounded_return": -0.9890702794618376,
+          "ending_5000_usdt": 54.64860269081215,
+          "simulated_profit_5000_usdt": -4945.351397309188,
+          "max_drawdown_weekly_endpoints": -0.9914952072809721
+        },
+        "40": {
+          "compounded_return": -0.9948708704987203,
+          "ending_5000_usdt": 25.645647506398664,
+          "simulated_profit_5000_usdt": -4974.354352493601,
+          "max_drawdown_weekly_endpoints": -0.9956883148915642
+        },
+        "90": {
+          "compounded_return": -0.9985531875364357,
+          "ending_5000_usdt": 7.23406231782142,
+          "simulated_profit_5000_usdt": -4992.765937682178,
+          "max_drawdown_weekly_endpoints": -0.9986881331121933
+        }
+      },
+      "missing_scenarios": {
+        "total_loss": {
+          "compounded_return": -0.9890702794618376,
+          "ending_5000_usdt": 54.64860269081215,
+          "simulated_profit_5000_usdt": -4945.351397309188,
+          "max_drawdown_weekly_endpoints": -0.9914952072809721
+        },
+        "flat_gross": {
+          "compounded_return": -0.9890702794618376,
+          "ending_5000_usdt": 54.64860269081215,
+          "simulated_profit_5000_usdt": -4945.351397309188,
+          "max_drawdown_weekly_endpoints": -0.9914952072809721
+        }
+      },
+      "uncertainty_primary": {
+        "mean_weekly_log_return": -0.03225906818178365,
+        "interval": [
+          -0.05135439152321294,
+          -0.010898998317662875
+        ],
+        "meaning": "Descriptive 4-week block bootstrap only; not calibrated for full adaptive research/search history."
+      },
+      "realized_profit": null,
+      "investor_net_brl_profit": null,
+      "decision": "NOT_PROFITABLE_IN_THIS_DIAGNOSTIC"
+    },
+    "by_entry_year": {
+      "2024": {
+        "weeks": 53,
+        "active_weeks": 52,
+        "cash_weeks": 1,
+        "selected_holdings": 247,
+        "censored_selected_holdings": 0,
+        "average_exposure": 0.9320754716981132,
+        "trade_stats_primary": {
+          "complete": 247,
+          "wins": 108,
+          "losses": 139,
+          "zero": 0,
+          "win_rate_among_complete": 0.43724696356275305,
+          "mean_gain": 0.18700342272651463,
+          "mean_loss": -0.14603223631672485,
+          "profit_factor_return_units": 0.9949695154861252
+        },
+        "cost_scenarios": {
+          "0": {
+            "compounded_return": -0.3986339475467604,
+            "ending_5000_usdt": 3006.830262266198,
+            "simulated_profit_5000_usdt": -1993.169737733802,
+            "max_drawdown_weekly_endpoints": -0.7524003060668761
+          },
+          "10": {
+            "compounded_return": -0.4553216644923146,
+            "ending_5000_usdt": 2723.391677538427,
+            "simulated_profit_5000_usdt": -2276.608322461573,
+            "max_drawdown_weekly_endpoints": -0.7673012424218686
+          },
+          "40": {
+            "compounded_return": -0.5955202242416712,
+            "ending_5000_usdt": 2022.3988787916442,
+            "simulated_profit_5000_usdt": -2977.601121208356,
+            "max_drawdown_weekly_endpoints": -0.8069041204499273
+          },
+          "90": {
+            "compounded_return": -0.7541537420422422,
+            "ending_5000_usdt": 1229.231289788789,
+            "simulated_profit_5000_usdt": -3770.768710211211,
+            "max_drawdown_weekly_endpoints": -0.8650696618424295
+          }
+        },
+        "missing_scenarios": {
+          "total_loss": {
+            "compounded_return": -0.4553216644923146,
+            "ending_5000_usdt": 2723.391677538427,
+            "simulated_profit_5000_usdt": -2276.608322461573,
+            "max_drawdown_weekly_endpoints": -0.7673012424218686
+          },
+          "flat_gross": {
+            "compounded_return": -0.4553216644923146,
+            "ending_5000_usdt": 2723.391677538427,
+            "simulated_profit_5000_usdt": -2276.608322461573,
+            "max_drawdown_weekly_endpoints": -0.7673012424218686
+          }
+        },
+        "uncertainty_primary": {
+          "mean_weekly_log_return": -0.011463393747906885,
+          "interval": [
+            -0.05035998489990932,
+            0.030965885826583526
+          ],
+          "meaning": "Descriptive 4-week block bootstrap only; not calibrated for full adaptive research/search history."
+        },
+        "realized_profit": null,
+        "investor_net_brl_profit": null,
+        "decision": "NOT_PROFITABLE_IN_THIS_DIAGNOSTIC"
+      },
+      "2025": {
+        "weeks": 52,
+        "active_weeks": 52,
+        "cash_weeks": 0,
+        "selected_holdings": 228,
+        "censored_selected_holdings": 0,
+        "average_exposure": 0.8769230769230769,
+        "trade_stats_primary": {
+          "complete": 228,
+          "wins": 68,
+          "losses": 160,
+          "zero": 0,
+          "win_rate_among_complete": 0.2982456140350877,
+          "mean_gain": 0.15533597313260186,
+          "mean_loss": -0.14372161123158816,
+          "profit_factor_return_units": 0.45934489611988094
+        },
+        "cost_scenarios": {
+          "0": {
+            "compounded_return": -0.9366825938531377,
+            "ending_5000_usdt": 316.58703073431167,
+            "simulated_profit_5000_usdt": -4683.412969265689,
+            "max_drawdown_weekly_endpoints": -0.9380336534018103
+          },
+          "10": {
+            "compounded_return": -0.9421803594173345,
+            "ending_5000_usdt": 289.09820291332744,
+            "simulated_profit_5000_usdt": -4710.901797086673,
+            "max_drawdown_weekly_endpoints": -0.943300766507343
+          },
+          "40": {
+            "compounded_return": -0.9559928160968231,
+            "ending_5000_usdt": 220.0359195158847,
+            "simulated_profit_5000_usdt": -4779.964080484116,
+            "max_drawdown_weekly_endpoints": -0.9565852126765124
+          },
+          "90": {
+            "compounded_return": -0.9721235186179347,
+            "ending_5000_usdt": 139.38240691032667,
+            "simulated_profit_5000_usdt": -4860.617593089673,
+            "max_drawdown_weekly_endpoints": -0.9722205640672328
+          }
+        },
+        "missing_scenarios": {
+          "total_loss": {
+            "compounded_return": -0.9421803594173345,
+            "ending_5000_usdt": 289.09820291332744,
+            "simulated_profit_5000_usdt": -4710.901797086673,
+            "max_drawdown_weekly_endpoints": -0.943300766507343
+          },
+          "flat_gross": {
+            "compounded_return": -0.9421803594173345,
+            "ending_5000_usdt": 289.09820291332744,
+            "simulated_profit_5000_usdt": -4710.901797086673,
+            "max_drawdown_weekly_endpoints": -0.943300766507343
+          }
+        },
+        "uncertainty_primary": {
+          "mean_weekly_log_return": -0.054815899202987066,
+          "interval": [
+            -0.07939088942493905,
+            -0.02830678319066805
+          ],
+          "meaning": "Descriptive 4-week block bootstrap only; not calibrated for full adaptive research/search history."
+        },
+        "realized_profit": null,
+        "investor_net_brl_profit": null,
+        "decision": "NOT_PROFITABLE_IN_THIS_DIAGNOSTIC"
+      },
+      "2026": {
+        "weeks": 35,
+        "active_weeks": 34,
+        "cash_weeks": 1,
+        "selected_holdings": 155,
+        "censored_selected_holdings": 0,
+        "average_exposure": 0.8857142857142857,
+        "trade_stats_primary": {
+          "complete": 155,
+          "wins": 55,
+          "losses": 100,
+          "zero": 0,
+          "win_rate_among_complete": 0.3548387096774194,
+          "mean_gain": 0.16581477264786046,
+          "mean_loss": -0.13539530691623908,
+          "profit_factor_return_units": 0.6735693210750803
+        },
+        "cost_scenarios": {
+          "0": {
+            "compounded_return": -0.6307948608733654,
+            "ending_5000_usdt": 1846.0256956331727,
+            "simulated_profit_5000_usdt": -3153.9743043668273,
+            "max_drawdown_weekly_endpoints": -0.6796882982980621
+          },
+          "10": {
+            "compounded_return": -0.6529487856903236,
+            "ending_5000_usdt": 1735.2560715483826,
+            "simulated_profit_5000_usdt": -3264.7439284516176,
+            "max_drawdown_weekly_endpoints": -0.6971905840392729
+          },
+          "40": {
+            "compounded_return": -0.7118469142528995,
+            "ending_5000_usdt": 1440.7654287355026,
+            "simulated_profit_5000_usdt": -3559.2345712644974,
+            "max_drawdown_weekly_endpoints": -0.7442446179274786
+          },
+          "90": {
+            "compounded_return": -0.7888890871746959,
+            "ending_5000_usdt": 1055.5545641265207,
+            "simulated_profit_5000_usdt": -3944.4454358734793,
+            "max_drawdown_weekly_endpoints": -0.8085796029791711
+          }
+        },
+        "missing_scenarios": {
+          "total_loss": {
+            "compounded_return": -0.6529487856903236,
+            "ending_5000_usdt": 1735.2560715483826,
+            "simulated_profit_5000_usdt": -3264.7439284516176,
+            "max_drawdown_weekly_endpoints": -0.6971905840392729
+          },
+          "flat_gross": {
+            "compounded_return": -0.6529487856903236,
+            "ending_5000_usdt": 1735.2560715483826,
+            "simulated_profit_5000_usdt": -3264.7439284516176,
+            "max_drawdown_weekly_endpoints": -0.6971905840392729
+          }
+        },
+        "uncertainty_primary": {
+          "mean_weekly_log_return": -0.03023665480729483,
+          "interval": [
+            -0.05310519347932864,
+            -0.0022168533598859895
+          ],
+          "meaning": "Descriptive 4-week block bootstrap only; not calibrated for full adaptive research/search history."
+        },
+        "realized_profit": null,
+        "investor_net_brl_profit": null,
+        "decision": "NOT_PROFITABLE_IN_THIS_DIAGNOSTIC"
+      }
+    },
+    "concentration": {
+      "0": {
+        "net_profit_usdt": -4929.708992958982,
+        "positive_increment_sum_usdt": 9019.980647222383,
+        "top_five_positive_sum_usdt": 4317.547501847252,
+        "top_five_share_of_positive_increments": 0.4786648298604498,
+        "profit_less_top_five_increments_usdt": -9247.256494806234,
+        "exclusion_meaning": "Arithmetic contribution diagnostic, not a rerun with those trades removed or a new strategy."
+      },
+      "10": {
+        "net_profit_usdt": -4945.351397309188,
+        "positive_increment_sum_usdt": 8311.491802321661,
+        "top_five_positive_sum_usdt": 4078.595020009449,
+        "top_five_share_of_positive_increments": 0.4907175651512005,
+        "profit_less_top_five_increments_usdt": -9023.946417318637,
+        "exclusion_meaning": "Arithmetic contribution diagnostic, not a rerun with those trades removed or a new strategy."
+      },
+      "40": {
+        "net_profit_usdt": -4974.354352493601,
+        "positive_increment_sum_usdt": 6544.990833025628,
+        "top_five_positive_sum_usdt": 3450.79809820424,
+        "top_five_share_of_positive_increments": 0.5272426174826284,
+        "profit_less_top_five_increments_usdt": -8425.152450697842,
+        "exclusion_meaning": "Arithmetic contribution diagnostic, not a rerun with those trades removed or a new strategy."
+      },
+      "90": {
+        "net_profit_usdt": -4992.765937682178,
+        "positive_increment_sum_usdt": 4486.349712658387,
+        "top_five_positive_sum_usdt": 2641.659294969375,
+        "top_five_share_of_positive_increments": 0.5888215284501438,
+        "profit_less_top_five_increments_usdt": -7634.425232651553,
+        "exclusion_meaning": "Arithmetic contribution diagnostic, not a rerun with those trades removed or a new strategy."
+      }
+    },
+    "registered_bootstrap": {
+      "0": {
+        "mean_weekly_pnl_usdt": -35.21220709256416,
+        "interval_95_usdt": [
+          -86.3611234687266,
+          16.8072270908396
+        ],
+        "meaning": "Descriptive four-week circular bootstrap, conditional on adaptive history; neither independent nor search-adjusted."
+      },
+      "10": {
+        "mean_weekly_pnl_usdt": -35.32393855220848,
+        "interval_95_usdt": [
+          -84.88157423316369,
+          14.008004770153763
+        ],
+        "meaning": "Descriptive four-week circular bootstrap, conditional on adaptive history; neither independent nor search-adjusted."
+      },
+      "40": {
+        "mean_weekly_pnl_usdt": -35.53110251781144,
+        "interval_95_usdt": [
+          -79.42170130415174,
+          6.962238032655804
+        ],
+        "meaning": "Descriptive four-week circular bootstrap, conditional on adaptive history; neither independent nor search-adjusted."
+      },
+      "90": {
+        "mean_weekly_pnl_usdt": -35.66261384058699,
+        "interval_95_usdt": [
+          -74.85210664194217,
+          -0.43002538290296566
+        ],
+        "meaning": "Descriptive four-week circular bootstrap, conditional on adaptive history; neither independent nor search-adjusted."
+      }
+    },
+    "symbol_contributions_usdt_primary": {
+      "CKBUSDT": 715.2294302354876,
+      "XLMUSDT": 622.9047443720846,
+      "HBARUSDT": 574.8173374863255,
+      "ARKMUSDT": 518.4276308132218,
+      "PEPEUSDT": 482.0028848460677,
+      "PEOPLEUSDT": 436.957158499652,
+      "DOGEUSDT": 417.2356663113609,
+      "RSRUSDT": 319.72856313280937,
+      "ADAUSDT": 263.3763582715847,
+      "PENDLEUSDT": 241.9316246243239,
+      "SUIUSDT": 226.25561835314483,
+      "BNXUSDT": 205.01019523216274,
+      "SEIUSDT": 167.3012384252737,
+      "MAVUSDT": 166.89363670711063,
+      "AGIXUSDT": 164.37010563346428,
+      "ZECUSDT": 148.90510634170076,
+      "COTIUSDT": 141.42314341731282,
+      "XRPUSDT": 132.46709779235752,
+      "HIGHUSDT": 131.6646384901886,
+      "RAYUSDT": 123.38298106325601,
+      "AGLDUSDT": 114.63303803787295,
+      "PENGUUSDT": 113.71012768114376,
+      "PERPUSDT": 111.44127088419435,
+      "TAOUSDT": 92.51873782378863,
+      "ENAUSDT": 84.28153565777437,
+      "SHIBUSDT": 73.24661259466478,
+      "LINKUSDT": 70.44573806690103,
+      "RLCUSDT": 68.751030646272,
+      "LEVERUSDT": 63.095790095741684,
+      "SANTOSUSDT": 56.36769235418859,
+      "APTUSDT": 53.225417165845066,
+      "FETUSDT": 49.465922647460296,
+      "TRXUSDT": 33.16513858619694,
+      "EPICUSDT": 27.717531570136703,
+      "币安人生USDT": 26.705667761416972,
+      "AIXBTUSDT": 24.885812725781523,
+      "BONKUSDT": 20.38844289760866,
+      "LOKAUSDT": 17.8248300211074,
+      "DEXEUSDT": 13.02805412497914,
+      "AUCTIONUSDT": 12.985132559103612,
+      "TIAUSDT": 12.694773938102998,
+      "BSWUSDT": 12.312511719172095,
+      "ETHUSDT": 10.44539681232982,
+      "PUMPUSDT": 7.99829496336098,
+      "INJUSDT": 7.803891717085556,
+      "OMUSDT": 6.8843896786988275,
+      "SYRUPUSDT": 4.539666862611213,
+      "VOXELUSDT": 2.7134832367673187,
+      "KITEUSDT": 2.488141296835556,
+      "PNUTUSDT": 1.334019423645671,
+      "SOLVUSDT": 1.287817238187541,
+      "ARBUSDT": 1.1954754627395405,
+      "CHZUSDT": 0.9331407747036331,
+      "BICOUSDT": 0.38336515981052505,
+      "LTCUSDT": 0.13898311268058355,
+      "UUSDT": -0.04627708451973407,
+      "BFUSDUSDT": -0.20495122163945534,
+      "ORCAUSDT": -0.43068302968462957,
+      "TWTUSDT": -0.5006224804926442,
+      "OMNIUSDT": -0.514122475153588,
+      "HUMAUSDT": -0.6401042761719555,
+      "HEIUSDT": -0.6821125560817644,
+      "ASTERUSDT": -0.7233250886247425,
+      "PYTHUSDT": -0.988737047708799,
+      "BNBUSDT": -1.072200104908755,
+      "DCRUSDT": -1.364596091452934,
+      "AXSUSDT": -1.5748157956915458,
+      "DOTUSDT": -1.9228576905967036,
+      "NEARUSDT": -2.1635613261729576,
+      "ENJUSDT": -2.182707053685563,
+      "SYNUSDT": -2.4056951676627425,
+      "GUNUSDT": -2.688282408023165,
+      "PARTIUSDT": -2.9311177353619184,
+      "ACEUSDT": -3.2900536898186385,
+      "XPLUSDT": -3.540927518810908,
+      "CFXUSDT": -3.6864975418233374,
+      "ALLOUSDT": -4.238692454284734,
+      "ONDOUSDT": -4.416734570672197,
+      "TNSRUSDT": -4.813202220297251,
+      "LUNCUSDT": -4.8453899845781105,
+      "VITEUSDT": -4.853657721886605,
+      "FUNUSDT": -4.883368388096187,
+      "POLUSDT": -5.437194277002866,
+      "TUTUSDT": -5.525399772323991,
+      "ACHUSDT": -5.596712479479366,
+      "ENSOUSDT": -6.511814759479327,
+      "SIGNUSDT": -7.454944960433869,
+      "WLFIUSDT": -7.776282655187473,
+      "AVAXUSDT": -7.831267278565337,
+      "RENDERUSDT": -8.100860882870718,
+      "ASRUSDT": -8.414875084330875,
+      "SAHARAUSDT": -9.014790155649537,
+      "PHBUSDT": -9.293792998587671,
+      "VIRTUALUSDT": -9.400834531422843,
+      "ALPINEUSDT": -10.65096969844938,
+      "AWEUSDT": -10.677475960654709,
+      "1000SATSUSDT": -10.965878993914139,
+      "GMTUSDT": -12.396591947651274,
+      "SNXUSDT": -13.33549458578266,
+      "NULSUSDT": -14.02212911505454,
+      "BCHUSDT": -14.317894076036701,
+      "BERAUSDT": -15.017715179985275,
+      "FILUSDT": -15.490218014137167,
+      "DUSKUSDT": -15.916568718802115,
+      "LISTAUSDT": -15.9931698394737,
+      "ZROUSDT": -16.427550848436464,
+      "COMPUSDT": -16.68349108354614,
+      "EIGENUSDT": -16.75273858200274,
+      "OSMOUSDT": -17.398780373524556,
+      "BATUSDT": -17.55307850792268,
+      "UNFIUSDT": -17.744891378179332,
+      "SUPERUSDT": -18.073396661046843,
+      "RUNEUSDT": -19.344267804326744,
+      "TURBOUSDT": -20.351825189013713,
+      "DASHUSDT": -20.495232299116523,
+      "HYPERUSDT": -20.97325638484141,
+      "XVGUSDT": -21.463628346608573,
+      "BANANAS31USDT": -22.77467987575371,
+      "MAGICUSDT": -24.6785028853,
+      "OGUSDT": -26.236334048559264,
+      "COOKIEUSDT": -28.55598520983935,
+      "KAITOUSDT": -30.2274631651834,
+      "BBUSDT": -33.709983206991694,
+      "NMRUSDT": -34.138409234149265,
+      "BMTUSDT": -34.389592053861655,
+      "WUSDT": -36.653043884593686,
+      "DIAUSDT": -36.73564520067172,
+      "EOSUSDT": -38.36738627706124,
+      "ASTRUSDT": -40.54278306611964,
+      "RNDRUSDT": -41.79931377605776,
+      "SAGAUSDT": -42.223165187004774,
+      "ETHFIUSDT": -42.785656920208005,
+      "ALTUSDT": -42.88160747525312,
+      "ANIMEUSDT": -43.27163735928762,
+      "SPELLUSDT": -43.49456108132026,
+      "LPTUSDT": -43.51790450099407,
+      "WIFUSDT": -44.189699035307406,
+      "BIOUSDT": -44.561017314863754,
+      "AXLUSDT": -44.79932277550575,
+      "ARKUSDT": -48.90854852956297,
+      "SLFUSDT": -50.30035131587269,
+      "STRKUSDT": -50.60376930280097,
+      "RAREUSDT": -53.18204657934665,
+      "CELOUSDT": -53.692651253524595,
+      "APEUSDT": -54.509011667148485,
+      "MASKUSDT": -56.88016542353015,
+      "FARMUSDT": -59.16737021305797,
+      "TRUMPUSDT": -59.804382487618184,
+      "NEIROUSDT": -62.06387140345386,
+      "CRVUSDT": -62.41734036129646,
+      "MOVRUSDT": -62.442853447382326,
+      "WLDUSDT": -63.40819663415515,
+      "VANAUSDT": -63.67842730405463,
+      "STRAXUSDT": -67.04030507224076,
+      "CHRUSDT": -67.3496294075745,
+      "JASMYUSDT": -75.81363364786417,
+      "CAKEUSDT": -77.32415154293524,
+      "TONUSDT": -81.20853989598368,
+      "ALGOUSDT": -84.86573050407188,
+      "MKRUSDT": -85.24679521759901,
+      "FIROUSDT": -92.54668335378851,
+      "HIVEUSDT": -93.14167516440558,
+      "TRUUSDT": -95.65496561583971,
+      "API3USDT": -96.41929348781802,
+      "MEMEUSDT": -97.75195145101961,
+      "AMBUSDT": -99.89003344197991,
+      "SKLUSDT": -103.09284865983196,
+      "ERNUSDT": -103.17535804224947,
+      "TROYUSDT": -105.50088352361817,
+      "ARUSDT": -111.88581516216469,
+      "IOTAUSDT": -114.98291565628521,
+      "GHSTUSDT": -116.84961165675901,
+      "REIUSDT": -119.6287155287855,
+      "BTTCUSDT": -123.17420864869221,
+      "UNIUSDT": -123.5058029679386,
+      "AAVEUSDT": -123.53273561481414,
+      "UTKUSDT": -132.7821718515553,
+      "SOLUSDT": -132.95556377362595,
+      "AVAUSDT": -133.2245246267621,
+      "POLYXUSDT": -138.10111219393045,
+      "ROSEUSDT": -147.8135153039251,
+      "LDOUSDT": -151.15791683169587,
+      "DFUSDT": -158.43773768734948,
+      "ZENUSDT": -166.46409546752378,
+      "JUPUSDT": -168.10622454604362,
+      "JTOUSDT": -172.92661745446898,
+      "ORDIUSDT": -184.08060525517863,
+      "BURGERUSDT": -197.55744400309717,
+      "COSUSDT": -200.63554603428372,
+      "STPTUSDT": -202.42324434263355,
+      "POWRUSDT": -217.96964152589513,
+      "SUSHIUSDT": -235.4089777905154,
+      "VANRYUSDT": -253.00833096033583,
+      "SCUSDT": -254.72201243706715,
+      "VIDTUSDT": -268.3118916870244,
+      "ICPUSDT": -279.64625384110144,
+      "CTXCUSDT": -298.0322810440168,
+      "ZRXUSDT": -309.10250228125307,
+      "IDUSDT": -356.2245350569339,
+      "FLOKIUSDT": -441.3941838879698,
+      "TRBUSDT": -448.3235911495982,
+      "ENSUSDT": -482.1114679456833,
+      "BELUSDT": -486.4416919725017,
+      "BAKEUSDT": -552.3126777578855,
+      "FRONTUSDT": -771.8118050784475
+    },
+    "daily_bar_count": 727447,
+    "catalog_symbols": 661,
+    "unresolved": [],
+    "future_observation_candidate": false,
+    "executable_ready": false,
+    "measured_investor_net_profit": null
+  },
+  "selector_diagnosis": {
+    "source": "C:\\Users\\Superleo13\\Documents\\Codex\\2026-09-07\\files-mentioned-by-the-user-cripto\\work\\altcoin-retro-results\\scores.json.gz",
+    "observations": 13996,
+    "status_counts": {
+      "ABSTAIN_NO_POSITIVE_MARGIN": 12730,
+      "ABSTAIN_CENSORED_NEIGHBOR": 1265,
+      "ABSTAIN_TOO_FEW_DISTINCT_WEEKS": 1
+    },
+    "scorable": 12730,
+    "positive_mean_after_frozen_cost_before_penalty": 1448,
+    "positive_after_penalty": 0,
+    "mean_log_payoff_quantiles": [
+      -0.14768329218115106,
+      -0.03776390540513753,
+      -0.024466692284743657,
+      -0.010945318794470707,
+      0.062104194676082095
+    ],
+    "penalty_log_quantiles": [
+      0.04185044969294641,
+      0.06686345816444086,
+      0.07487303378963076,
+      0.08456964923099239,
+      0.29428530450111995
+    ],
+    "distinct_training_weeks_range": [
+      22,
+      100
+    ],
+    "effective_n_range": [
+      5,
+      25
+    ],
+    "best_frozen_score": -0.020747962122169755,
+    "interpretation": "Abstention is explained by training conditional means, heuristic week-dependent uncertainty penalty and censored neighbors. This decomposition does not show that removing the penalty would be profitable. No threshold variant was evaluated."
+  },
+  "source_responses": 68,
+  "future_data_used": false,
+  "real_profit_certified": false
+}

@@ -1,0 +1,66 @@
+BTCUSDT spot_daily 1000
+BTCUSDT spot_daily 1012
+BTCUSDT spot_daily complete 1012
+BTCUSDT perp_daily 1000
+BTCUSDT perp_daily 1012
+BTCUSDT perp_daily complete 1012
+BTCUSDT mark_hourly 1000
+BTCUSDT mark_hourly 2000
+BTCUSDT mark_hourly 3000
+BTCUSDT mark_hourly 4000
+BTCUSDT mark_hourly 5000
+BTCUSDT mark_hourly 6000
+BTCUSDT mark_hourly 7000
+BTCUSDT mark_hourly 8000
+BTCUSDT mark_hourly 9000
+BTCUSDT mark_hourly 10000
+BTCUSDT mark_hourly 11000
+BTCUSDT mark_hourly 12000
+BTCUSDT mark_hourly 13000
+BTCUSDT mark_hourly 14000
+BTCUSDT mark_hourly 15000
+BTCUSDT mark_hourly 16000
+BTCUSDT mark_hourly 17000
+BTCUSDT mark_hourly 18000
+BTCUSDT mark_hourly 19000
+BTCUSDT mark_hourly 20000
+BTCUSDT mark_hourly 21000
+BTCUSDT mark_hourly 22000
+BTCUSDT mark_hourly 23000
+BTCUSDT mark_hourly 24000
+BTCUSDT mark_hourly 24265
+BTCUSDT mark_hourly complete 24265
+BTCUSDT funding complete 3033
+ETHUSDT spot_daily 1000
+ETHUSDT spot_daily 1012
+ETHUSDT spot_daily complete 1012
+ETHUSDT perp_daily 1000
+ETHUSDT perp_daily 1012
+ETHUSDT perp_daily complete 1012
+ETHUSDT mark_hourly 1000
+ETHUSDT mark_hourly 2000
+ETHUSDT mark_hourly 3000
+ETHUSDT mark_hourly 4000
+ETHUSDT mark_hourly 5000
+ETHUSDT mark_hourly 6000
+ETHUSDT mark_hourly 7000
+ETHUSDT mark_hourly 8000
+ETHUSDT mark_hourly 9000
+ETHUSDT mark_hourly 10000
+ETHUSDT mark_hourly 11000
+ETHUSDT mark_hourly 12000
+ETHUSDT mark_hourly 13000
+ETHUSDT mark_hourly 14000
+ETHUSDT mark_hourly 15000
+ETHUSDT mark_hourly 16000
+ETHUSDT mark_hourly 17000
+ETHUSDT mark_hourly 18000
+ETHUSDT mark_hourly 19000
+ETHUSDT mark_hourly 20000
+ETHUSDT mark_hourly 21000
+ETHUSDT mark_hourly 22000
+ETHUSDT mark_hourly 23000
+ETHUSDT mark_hourly 24000
+ETHUSDT mark_hourly 24265
+ETHUSDT mark_hourly complete 24265
+ETHUSDT funding complete 3033

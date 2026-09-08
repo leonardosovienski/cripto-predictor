@@ -1,0 +1,946 @@
+{
+  "AR1_BTCUSDT": [
+    {
+      "anchor_ms": 1704067200000,
+      "anchor": "2024-01-01T00:00:00+00:00",
+      "exit_ms": 1788739200000,
+      "enter": true,
+      "lagged_signed_28d_funding": 0.01535683,
+      "lagged_settlements": 84,
+      "lagged_liquidity": {
+        "spot_daily": 1611916883.8381286,
+        "perp_daily": 12239002513.054106
+      },
+      "reason": "ENTER"
+    }
+  ],
+  "AR1_ETHUSDT": [
+    {
+      "anchor_ms": 1704067200000,
+      "anchor": "2024-01-01T00:00:00+00:00",
+      "exit_ms": 1788739200000,
+      "enter": true,
+      "lagged_signed_28d_funding": 0.01696101,
+      "lagged_settlements": 84,
+      "lagged_liquidity": {
+        "spot_daily": 870451380.272859,
+        "perp_daily": 6401493736.203395
+      },
+      "reason": "ENTER"
+    }
+  ],
+  "AR2_BTCUSDT": [
+    {
+      "anchor_ms": 1704067200000,
+      "anchor": "2024-01-01T00:00:00+00:00",
+      "exit_ms": 1706486400000,
+      "enter": true,
+      "lagged_signed_28d_funding": 0.01535683,
+      "lagged_settlements": 84,
+      "lagged_liquidity": {
+        "spot_daily": 1611916883.8381286,
+        "perp_daily": 12239002513.054106
+      },
+      "reason": "ENTER"
+    },
+    {
+      "anchor_ms": 1706486400000,
+      "anchor": "2024-01-29T00:00:00+00:00",
+      "exit_ms": 1708905600000,
+      "enter": false,
+      "lagged_signed_28d_funding": 0.01114551,
+      "lagged_settlements": 84,
+      "lagged_liquidity": {
+        "spot_daily": 1821256413.2550783,
+        "perp_daily": 13178040591.597996
+      },
+      "reason": "FUNDING_BELOW_FIXED_COST_GATE"
+    },
+    {
+      "anchor_ms": 1708905600000,
+      "anchor": "2024-02-26T00:00:00+00:00",
+      "exit_ms": 1711324800000,
+      "enter": false,
+      "lagged_signed_28d_funding": 0.008564190000000001,
+      "lagged_settlements": 84,
+      "lagged_liquidity": {
+        "spot_daily": 1518360981.1223874,
+        "perp_daily": 11087640001.113827
+      },
+      "reason": "FUNDING_BELOW_FIXED_COST_GATE"
+    },
+    {
+      "anchor_ms": 1711324800000,
+      "anchor": "2024-03-25T00:00:00+00:00",
+      "exit_ms": 1713744000000,
+      "enter": true,
+      "lagged_signed_28d_funding": 0.03055665,
+      "lagged_settlements": 84,
+      "lagged_liquidity": {
+        "spot_daily": 3778411057.651887,
+        "perp_daily": 22828005586.030197
+      },
+      "reason": "ENTER"
+    },
+    {
+      "anchor_ms": 1713744000000,
+      "anchor": "2024-04-22T00:00:00+00:00",
+      "exit_ms": 1716163200000,
+      "enter": true,
+      "lagged_signed_28d_funding": 0.01358056,
+      "lagged_settlements": 84,
+      "lagged_liquidity": {
+        "spot_daily": 2772238436.1072464,
+        "perp_daily": 21831527508.516747
+      },
+      "reason": "ENTER"
+    },
+    {
+      "anchor_ms": 1716163200000,
+      "anchor": "2024-05-20T00:00:00+00:00",
+      "exit_ms": 1718582400000,
+      "enter": false,
+      "lagged_signed_28d_funding": 0.0038734,
+      "lagged_settlements": 84,
+      "lagged_liquidity": {
+        "spot_daily": 1782605100.4256935,
+        "perp_daily": 15086317935.523201
+      },
+      "reason": "FUNDING_BELOW_FIXED_COST_GATE"
+    },
+    {
+      "anchor_ms": 1718582400000,
+      "anchor": "2024-06-17T00:00:00+00:00",
+      "exit_ms": 1721001600000,
+      "enter": false,
+      "lagged_signed_28d_funding": 0.008380470000000001,
+      "lagged_settlements": 84,
+      "lagged_liquidity": {
+        "spot_daily": 1848555303.3389807,
+        "perp_daily": 13294362048.44305
+      },
+      "reason": "FUNDING_BELOW_FIXED_COST_GATE"
+    },
+    {
+      "anchor_ms": 1721001600000,
+      "anchor": "2024-07-15T00:00:00+00:00",
+      "exit_ms": 1723420800000,
+      "enter": false,
+      "lagged_signed_28d_funding": 0.00708807,
+      "lagged_settlements": 84,
+      "lagged_liquidity": {
+        "spot_daily": 1486082763.8383923,
+        "perp_daily": 12851270597.569649
+      },
+      "reason": "FUNDING_BELOW_FIXED_COST_GATE"
+    },
+    {
+      "anchor_ms": 1723420800000,
+      "anchor": "2024-08-12T00:00:00+00:00",
+      "exit_ms": 1725840000000,
+      "enter": false,
+      "lagged_signed_28d_funding": 0.00403765,
+      "lagged_settlements": 84,
+      "lagged_liquidity": {
+        "spot_daily": 1876420298.5279994,
+        "perp_daily": 17976177207.60865
+      },
+      "reason": "FUNDING_BELOW_FIXED_COST_GATE"
+    },
+    {
+      "anchor_ms": 1725840000000,
+      "anchor": "2024-09-09T00:00:00+00:00",
+      "exit_ms": 1728259200000,
+      "enter": false,
+      "lagged_signed_28d_funding": -1.0319999999999979e-05,
+      "lagged_settlements": 84,
+      "lagged_liquidity": {
+        "spot_daily": 1596212876.7170343,
+        "perp_daily": 14665151753.0539
+      },
+      "reason": "FUNDING_BELOW_FIXED_COST_GATE"
+    },
+    {
+      "anchor_ms": 1728259200000,
+      "anchor": "2024-10-07T00:00:00+00:00",
+      "exit_ms": 1730678400000,
+      "enter": false,
+      "lagged_signed_28d_funding": 0.00219054,
+      "lagged_settlements": 84,
+      "lagged_liquidity": {
+        "spot_daily": 1537144118.535386,
+        "perp_daily": 14976110141.7936
+      },
+      "reason": "FUNDING_BELOW_FIXED_COST_GATE"
+    },
+    {
+      "anchor_ms": 1730678400000,
+      "anchor": "2024-11-04T00:00:00+00:00",
+      "exit_ms": 1733097600000,
+      "enter": false,
+      "lagged_signed_28d_funding": 0.00664205,
+      "lagged_settlements": 84,
+      "lagged_liquidity": {
+        "spot_daily": 1586525913.7460663,
+        "perp_daily": 15327811296.884201
+      },
+      "reason": "FUNDING_BELOW_FIXED_COST_GATE"
+    },
+    {
+      "anchor_ms": 1733097600000,
+      "anchor": "2024-12-02T00:00:00+00:00",
+      "exit_ms": 1735516800000,
+      "enter": false,
+      "lagged_signed_28d_funding": 0.01242799,
+      "lagged_settlements": 84,
+      "lagged_liquidity": {
+        "spot_daily": 3643077586.79476,
+        "perp_daily": 23557933322.49695
+      },
+      "reason": "FUNDING_BELOW_FIXED_COST_GATE"
+    },
+    {
+      "anchor_ms": 1735516800000,
+      "anchor": "2024-12-30T00:00:00+00:00",
+      "exit_ms": 1737936000000,
+      "enter": false,
+      "lagged_signed_28d_funding": 0.0112847,
+      "lagged_settlements": 84,
+      "lagged_liquidity": {
+        "spot_daily": 2819956807.250229,
+        "perp_daily": 20077749480.886497
+      },
+      "reason": "FUNDING_BELOW_FIXED_COST_GATE"
+    },
+    {
+      "anchor_ms": 1737936000000,
+      "anchor": "2025-01-27T00:00:00+00:00",
+      "exit_ms": 1740355200000,
+      "enter": false,
+      "lagged_signed_28d_funding": 0.0065942200000000005,
+      "lagged_settlements": 84,
+      "lagged_liquidity": {
+        "spot_daily": 2534564769.278302,
+        "perp_daily": 20060132657.257
+      },
+      "reason": "FUNDING_BELOW_FIXED_COST_GATE"
+    },
+    {
+      "anchor_ms": 1740355200000,
+      "anchor": "2025-02-24T00:00:00+00:00",
+      "exit_ms": 1742774400000,
+      "enter": false,
+      "lagged_signed_28d_funding": 0.00441831,
+      "lagged_settlements": 84,
+      "lagged_liquidity": {
+        "spot_daily": 2018612328.0907137,
+        "perp_daily": 14595337939.2194
+      },
+      "reason": "FUNDING_BELOW_FIXED_COST_GATE"
+    },
+    {
+      "anchor_ms": 1742774400000,
+      "anchor": "2025-03-24T00:00:00+00:00",
+      "exit_ms": 1745193600000,
+      "enter": false,
+      "lagged_signed_28d_funding": 0.00220421,
+      "lagged_settlements": 84,
+      "lagged_liquidity": {
+        "spot_daily": 2507207469.384579,
+        "perp_daily": 20995267648.42625
+      },
+      "reason": "FUNDING_BELOW_FIXED_COST_GATE"
+    },
+    {
+      "anchor_ms": 1745193600000,
+      "anchor": "2025-04-21T00:00:00+00:00",
+      "exit_ms": 1747612800000,
+      "enter": false,
+      "lagged_signed_28d_funding": 0.0027678,
+      "lagged_settlements": 84,
+      "lagged_liquidity": {
+        "spot_daily": 1767441222.7982626,
+        "perp_daily": 17025249090.562649
+      },
+      "reason": "FUNDING_BELOW_FIXED_COST_GATE"
+    },
+    {
+      "anchor_ms": 1747612800000,
+      "anchor": "2025-05-19T00:00:00+00:00",
+      "exit_ms": 1750032000000,
+      "enter": false,
+      "lagged_signed_28d_funding": 0.00151737,
+      "lagged_settlements": 84,
+      "lagged_liquidity": {
+        "spot_daily": 1646829021.6536367,
+        "perp_daily": 14595165285.0858
+      },
+      "reason": "FUNDING_BELOW_FIXED_COST_GATE"
+    },
+    {
+      "anchor_ms": 1750032000000,
+      "anchor": "2025-06-16T00:00:00+00:00",
+      "exit_ms": 1752451200000,
+      "enter": false,
+      "lagged_signed_28d_funding": 0.0037328500000000002,
+      "lagged_settlements": 84,
+      "lagged_liquidity": {
+        "spot_daily": 1843789684.9835157,
+        "perp_daily": 17527213062.5394
+      },
+      "reason": "FUNDING_BELOW_FIXED_COST_GATE"
+    },
+    {
+      "anchor_ms": 1752451200000,
+      "anchor": "2025-07-14T00:00:00+00:00",
+      "exit_ms": 1754870400000,
+      "enter": false,
+      "lagged_signed_28d_funding": 0.0029539600000000003,
+      "lagged_settlements": 84,
+      "lagged_liquidity": {
+        "spot_daily": 1292317730.2891874,
+        "perp_daily": 13557694848.17935
+      },
+      "reason": "FUNDING_BELOW_FIXED_COST_GATE"
+    },
+    {
+      "anchor_ms": 1754870400000,
+      "anchor": "2025-08-11T00:00:00+00:00",
+      "exit_ms": 1757289600000,
+      "enter": false,
+      "lagged_signed_28d_funding": 0.0070827600000000004,
+      "lagged_settlements": 84,
+      "lagged_liquidity": {
+        "spot_daily": 1689004611.3915896,
+        "perp_daily": 14138510773.873749
+      },
+      "reason": "FUNDING_BELOW_FIXED_COST_GATE"
+    },
+    {
+      "anchor_ms": 1757289600000,
+      "anchor": "2025-09-08T00:00:00+00:00",
+      "exit_ms": 1759708800000,
+      "enter": false,
+      "lagged_signed_28d_funding": 0.00561564,
+      "lagged_settlements": 84,
+      "lagged_liquidity": {
+        "spot_daily": 1718357693.3265028,
+        "perp_daily": 14901674702.26655
+      },
+      "reason": "FUNDING_BELOW_FIXED_COST_GATE"
+    },
+    {
+      "anchor_ms": 1759708800000,
+      "anchor": "2025-10-06T00:00:00+00:00",
+      "exit_ms": 1762128000000,
+      "enter": false,
+      "lagged_signed_28d_funding": 0.0043824,
+      "lagged_settlements": 84,
+      "lagged_liquidity": {
+        "spot_daily": 1458559431.8630486,
+        "perp_daily": 12420557734.099049
+      },
+      "reason": "FUNDING_BELOW_FIXED_COST_GATE"
+    },
+    {
+      "anchor_ms": 1762128000000,
+      "anchor": "2025-11-03T00:00:00+00:00",
+      "exit_ms": 1764547200000,
+      "enter": false,
+      "lagged_signed_28d_funding": 0.0023475600000000003,
+      "lagged_settlements": 84,
+      "lagged_liquidity": {
+        "spot_daily": 2520256192.9508686,
+        "perp_daily": 17866689104.56915
+      },
+      "reason": "FUNDING_BELOW_FIXED_COST_GATE"
+    },
+    {
+      "anchor_ms": 1764547200000,
+      "anchor": "2025-12-01T00:00:00+00:00",
+      "exit_ms": 1766966400000,
+      "enter": false,
+      "lagged_signed_28d_funding": 0.00403556,
+      "lagged_settlements": 84,
+      "lagged_liquidity": {
+        "spot_daily": 2311442981.379375,
+        "perp_daily": 14276376681.2505
+      },
+      "reason": "FUNDING_BELOW_FIXED_COST_GATE"
+    },
+    {
+      "anchor_ms": 1766966400000,
+      "anchor": "2025-12-29T00:00:00+00:00",
+      "exit_ms": 1769385600000,
+      "enter": false,
+      "lagged_signed_28d_funding": 0.00364634,
+      "lagged_settlements": 84,
+      "lagged_liquidity": {
+        "spot_daily": 1563178427.108792,
+        "perp_daily": 13321945697.84545
+      },
+      "reason": "FUNDING_BELOW_FIXED_COST_GATE"
+    },
+    {
+      "anchor_ms": 1769385600000,
+      "anchor": "2026-01-26T00:00:00+00:00",
+      "exit_ms": 1771804800000,
+      "enter": false,
+      "lagged_signed_28d_funding": 0.0042665,
+      "lagged_settlements": 84,
+      "lagged_liquidity": {
+        "spot_daily": 1280339609.3269083,
+        "perp_daily": 11188695824.8676
+      },
+      "reason": "FUNDING_BELOW_FIXED_COST_GATE"
+    },
+    {
+      "anchor_ms": 1771804800000,
+      "anchor": "2026-02-23T00:00:00+00:00",
+      "exit_ms": 1774224000000,
+      "enter": false,
+      "lagged_signed_28d_funding": 0.00042352000000000004,
+      "lagged_settlements": 84,
+      "lagged_liquidity": {
+        "spot_daily": 1552615165.5630147,
+        "perp_daily": 12556566242.208199
+      },
+      "reason": "FUNDING_BELOW_FIXED_COST_GATE"
+    },
+    {
+      "anchor_ms": 1774224000000,
+      "anchor": "2026-03-23T00:00:00+00:00",
+      "exit_ms": 1776643200000,
+      "enter": false,
+      "lagged_signed_28d_funding": -0.0007041,
+      "lagged_settlements": 84,
+      "lagged_liquidity": {
+        "spot_daily": 1570587574.36765,
+        "perp_daily": 15008442618.161152
+      },
+      "reason": "FUNDING_BELOW_FIXED_COST_GATE"
+    },
+    {
+      "anchor_ms": 1776643200000,
+      "anchor": "2026-04-20T00:00:00+00:00",
+      "exit_ms": 1779062400000,
+      "enter": false,
+      "lagged_signed_28d_funding": -0.00075018,
+      "lagged_settlements": 84,
+      "lagged_liquidity": {
+        "spot_daily": 1274353482.219141,
+        "perp_daily": 11825306428.2547
+      },
+      "reason": "FUNDING_BELOW_FIXED_COST_GATE"
+    },
+    {
+      "anchor_ms": 1779062400000,
+      "anchor": "2026-05-18T00:00:00+00:00",
+      "exit_ms": 1781481600000,
+      "enter": false,
+      "lagged_signed_28d_funding": -0.00130327,
+      "lagged_settlements": 84,
+      "lagged_liquidity": {
+        "spot_daily": 1158524057.7135673,
+        "perp_daily": 10396602351.563702
+      },
+      "reason": "FUNDING_BELOW_FIXED_COST_GATE"
+    },
+    {
+      "anchor_ms": 1781481600000,
+      "anchor": "2026-06-15T00:00:00+00:00",
+      "exit_ms": 1783900800000,
+      "enter": false,
+      "lagged_signed_28d_funding": 0.00327695,
+      "lagged_settlements": 84,
+      "lagged_liquidity": {
+        "spot_daily": 1170661282.1210248,
+        "perp_daily": 11252314033.74115
+      },
+      "reason": "FUNDING_BELOW_FIXED_COST_GATE"
+    },
+    {
+      "anchor_ms": 1783900800000,
+      "anchor": "2026-07-13T00:00:00+00:00",
+      "exit_ms": 1786320000000,
+      "enter": false,
+      "lagged_signed_28d_funding": 0.00342241,
+      "lagged_settlements": 84,
+      "lagged_liquidity": {
+        "spot_daily": 1060058750.0790466,
+        "perp_daily": 9810651470.9539
+      },
+      "reason": "FUNDING_BELOW_FIXED_COST_GATE"
+    },
+    {
+      "anchor_ms": 1786320000000,
+      "anchor": "2026-08-10T00:00:00+00:00",
+      "exit_ms": 1788739200000,
+      "enter": false,
+      "lagged_signed_28d_funding": 0.00451489,
+      "lagged_settlements": 84,
+      "lagged_liquidity": {
+        "spot_daily": 960651202.7228904,
+        "perp_daily": 8352386928.87175
+      },
+      "reason": "FUNDING_BELOW_FIXED_COST_GATE"
+    }
+  ],
+  "AR2_ETHUSDT": [
+    {
+      "anchor_ms": 1704067200000,
+      "anchor": "2024-01-01T00:00:00+00:00",
+      "exit_ms": 1706486400000,
+      "enter": true,
+      "lagged_signed_28d_funding": 0.01696101,
+      "lagged_settlements": 84,
+      "lagged_liquidity": {
+        "spot_daily": 870451380.272859,
+        "perp_daily": 6401493736.203395
+      },
+      "reason": "ENTER"
+    },
+    {
+      "anchor_ms": 1706486400000,
+      "anchor": "2024-01-29T00:00:00+00:00",
+      "exit_ms": 1708905600000,
+      "enter": false,
+      "lagged_signed_28d_funding": 0.01131469,
+      "lagged_settlements": 84,
+      "lagged_liquidity": {
+        "spot_daily": 952934794.561404,
+        "perp_daily": 5892659470.454915
+      },
+      "reason": "FUNDING_BELOW_FIXED_COST_GATE"
+    },
+    {
+      "anchor_ms": 1708905600000,
+      "anchor": "2024-02-26T00:00:00+00:00",
+      "exit_ms": 1711324800000,
+      "enter": false,
+      "lagged_signed_28d_funding": 0.008260980000000001,
+      "lagged_settlements": 84,
+      "lagged_liquidity": {
+        "spot_daily": 843037794.7198884,
+        "perp_daily": 5148346892.8858
+      },
+      "reason": "FUNDING_BELOW_FIXED_COST_GATE"
+    },
+    {
+      "anchor_ms": 1711324800000,
+      "anchor": "2024-03-25T00:00:00+00:00",
+      "exit_ms": 1713744000000,
+      "enter": true,
+      "lagged_signed_28d_funding": 0.03098107,
+      "lagged_settlements": 84,
+      "lagged_liquidity": {
+        "spot_daily": 2027748065.3481975,
+        "perp_daily": 11496574940.175674
+      },
+      "reason": "ENTER"
+    },
+    {
+      "anchor_ms": 1713744000000,
+      "anchor": "2024-04-22T00:00:00+00:00",
+      "exit_ms": 1716163200000,
+      "enter": true,
+      "lagged_signed_28d_funding": 0.01414859,
+      "lagged_settlements": 84,
+      "lagged_liquidity": {
+        "spot_daily": 1437161126.8276787,
+        "perp_daily": 8882825991.922646
+      },
+      "reason": "ENTER"
+    },
+    {
+      "anchor_ms": 1716163200000,
+      "anchor": "2024-05-20T00:00:00+00:00",
+      "exit_ms": 1718582400000,
+      "enter": false,
+      "lagged_signed_28d_funding": 0.0053729,
+      "lagged_settlements": 84,
+      "lagged_liquidity": {
+        "spot_daily": 950611127.4361401,
+        "perp_daily": 6649760347.926041
+      },
+      "reason": "FUNDING_BELOW_FIXED_COST_GATE"
+    },
+    {
+      "anchor_ms": 1718582400000,
+      "anchor": "2024-06-17T00:00:00+00:00",
+      "exit_ms": 1721001600000,
+      "enter": false,
+      "lagged_signed_28d_funding": 0.00959972,
+      "lagged_settlements": 84,
+      "lagged_liquidity": {
+        "spot_daily": 1047294094.0867546,
+        "perp_daily": 7860644543.442165
+      },
+      "reason": "FUNDING_BELOW_FIXED_COST_GATE"
+    },
+    {
+      "anchor_ms": 1721001600000,
+      "anchor": "2024-07-15T00:00:00+00:00",
+      "exit_ms": 1723420800000,
+      "enter": false,
+      "lagged_signed_28d_funding": 0.00677606,
+      "lagged_settlements": 84,
+      "lagged_liquidity": {
+        "spot_daily": 826230343.108576,
+        "perp_daily": 6681016552.582085
+      },
+      "reason": "FUNDING_BELOW_FIXED_COST_GATE"
+    },
+    {
+      "anchor_ms": 1723420800000,
+      "anchor": "2024-08-12T00:00:00+00:00",
+      "exit_ms": 1725840000000,
+      "enter": false,
+      "lagged_signed_28d_funding": 0.00417232,
+      "lagged_settlements": 84,
+      "lagged_liquidity": {
+        "spot_daily": 1016971206.102281,
+        "perp_daily": 7833297669.297185
+      },
+      "reason": "FUNDING_BELOW_FIXED_COST_GATE"
+    },
+    {
+      "anchor_ms": 1725840000000,
+      "anchor": "2024-09-09T00:00:00+00:00",
+      "exit_ms": 1728259200000,
+      "enter": false,
+      "lagged_signed_28d_funding": 0.00186556,
+      "lagged_settlements": 84,
+      "lagged_liquidity": {
+        "spot_daily": 684837675.6806824,
+        "perp_daily": 6261714609.9021
+      },
+      "reason": "FUNDING_BELOW_FIXED_COST_GATE"
+    },
+    {
+      "anchor_ms": 1728259200000,
+      "anchor": "2024-10-07T00:00:00+00:00",
+      "exit_ms": 1730678400000,
+      "enter": false,
+      "lagged_signed_28d_funding": 0.00404833,
+      "lagged_settlements": 84,
+      "lagged_liquidity": {
+        "spot_daily": 649799844.4603865,
+        "perp_daily": 6226623626.413731
+      },
+      "reason": "FUNDING_BELOW_FIXED_COST_GATE"
+    },
+    {
+      "anchor_ms": 1730678400000,
+      "anchor": "2024-11-04T00:00:00+00:00",
+      "exit_ms": 1733097600000,
+      "enter": false,
+      "lagged_signed_28d_funding": 0.0076555500000000005,
+      "lagged_settlements": 84,
+      "lagged_liquidity": {
+        "spot_daily": 686946678.4300995,
+        "perp_daily": 5965028929.99408
+      },
+      "reason": "FUNDING_BELOW_FIXED_COST_GATE"
+    },
+    {
+      "anchor_ms": 1733097600000,
+      "anchor": "2024-12-02T00:00:00+00:00",
+      "exit_ms": 1735516800000,
+      "enter": true,
+      "lagged_signed_28d_funding": 0.01458388,
+      "lagged_settlements": 84,
+      "lagged_liquidity": {
+        "spot_daily": 1879474700.4905338,
+        "perp_daily": 11652347006.153545
+      },
+      "reason": "ENTER"
+    },
+    {
+      "anchor_ms": 1735516800000,
+      "anchor": "2024-12-30T00:00:00+00:00",
+      "exit_ms": 1737936000000,
+      "enter": false,
+      "lagged_signed_28d_funding": 0.01121027,
+      "lagged_settlements": 84,
+      "lagged_liquidity": {
+        "spot_daily": 1674842129.2851648,
+        "perp_daily": 11429359512.43852
+      },
+      "reason": "FUNDING_BELOW_FIXED_COST_GATE"
+    },
+    {
+      "anchor_ms": 1737936000000,
+      "anchor": "2025-01-27T00:00:00+00:00",
+      "exit_ms": 1740355200000,
+      "enter": false,
+      "lagged_signed_28d_funding": 0.00764553,
+      "lagged_settlements": 84,
+      "lagged_liquidity": {
+        "spot_daily": 1315687273.8373165,
+        "perp_daily": 9731842987.721909
+      },
+      "reason": "FUNDING_BELOW_FIXED_COST_GATE"
+    },
+    {
+      "anchor_ms": 1740355200000,
+      "anchor": "2025-02-24T00:00:00+00:00",
+      "exit_ms": 1742774400000,
+      "enter": false,
+      "lagged_signed_28d_funding": 0.00296076,
+      "lagged_settlements": 84,
+      "lagged_liquidity": {
+        "spot_daily": 1246158078.8247523,
+        "perp_daily": 8695302038.49828
+      },
+      "reason": "FUNDING_BELOW_FIXED_COST_GATE"
+    },
+    {
+      "anchor_ms": 1742774400000,
+      "anchor": "2025-03-24T00:00:00+00:00",
+      "exit_ms": 1745193600000,
+      "enter": false,
+      "lagged_signed_28d_funding": 0.00215949,
+      "lagged_settlements": 84,
+      "lagged_liquidity": {
+        "spot_daily": 1433021611.511132,
+        "perp_daily": 10244447355.445826
+      },
+      "reason": "FUNDING_BELOW_FIXED_COST_GATE"
+    },
+    {
+      "anchor_ms": 1745193600000,
+      "anchor": "2025-04-21T00:00:00+00:00",
+      "exit_ms": 1747612800000,
+      "enter": false,
+      "lagged_signed_28d_funding": 0.00147545,
+      "lagged_settlements": 84,
+      "lagged_liquidity": {
+        "spot_daily": 886984090.037504,
+        "perp_daily": 9182452430.726475
+      },
+      "reason": "FUNDING_BELOW_FIXED_COST_GATE"
+    },
+    {
+      "anchor_ms": 1747612800000,
+      "anchor": "2025-05-19T00:00:00+00:00",
+      "exit_ms": 1750032000000,
+      "enter": false,
+      "lagged_signed_28d_funding": 0.00327405,
+      "lagged_settlements": 84,
+      "lagged_liquidity": {
+        "spot_daily": 1018948677.488633,
+        "perp_daily": 10592323041.00309
+      },
+      "reason": "FUNDING_BELOW_FIXED_COST_GATE"
+    },
+    {
+      "anchor_ms": 1750032000000,
+      "anchor": "2025-06-16T00:00:00+00:00",
+      "exit_ms": 1752451200000,
+      "enter": false,
+      "lagged_signed_28d_funding": 0.00490899,
+      "lagged_settlements": 84,
+      "lagged_liquidity": {
+        "spot_daily": 1524387103.1989145,
+        "perp_daily": 14253129698.382885
+      },
+      "reason": "FUNDING_BELOW_FIXED_COST_GATE"
+    },
+    {
+      "anchor_ms": 1752451200000,
+      "anchor": "2025-07-14T00:00:00+00:00",
+      "exit_ms": 1754870400000,
+      "enter": false,
+      "lagged_signed_28d_funding": 0.00370524,
+      "lagged_settlements": 84,
+      "lagged_liquidity": {
+        "spot_daily": 1140293347.7761335,
+        "perp_daily": 13232693306.586164
+      },
+      "reason": "FUNDING_BELOW_FIXED_COST_GATE"
+    },
+    {
+      "anchor_ms": 1754870400000,
+      "anchor": "2025-08-11T00:00:00+00:00",
+      "exit_ms": 1757289600000,
+      "enter": false,
+      "lagged_signed_28d_funding": 0.00634282,
+      "lagged_settlements": 84,
+      "lagged_liquidity": {
+        "spot_daily": 2436195024.7248635,
+        "perp_daily": 24248735223.48194
+      },
+      "reason": "FUNDING_BELOW_FIXED_COST_GATE"
+    },
+    {
+      "anchor_ms": 1757289600000,
+      "anchor": "2025-09-08T00:00:00+00:00",
+      "exit_ms": 1759708800000,
+      "enter": false,
+      "lagged_signed_28d_funding": 0.00411323,
+      "lagged_settlements": 84,
+      "lagged_liquidity": {
+        "spot_daily": 2826687301.0955353,
+        "perp_daily": 26782264059.42916
+      },
+      "reason": "FUNDING_BELOW_FIXED_COST_GATE"
+    },
+    {
+      "anchor_ms": 1759708800000,
+      "anchor": "2025-10-06T00:00:00+00:00",
+      "exit_ms": 1762128000000,
+      "enter": false,
+      "lagged_signed_28d_funding": 0.00305501,
+      "lagged_settlements": 84,
+      "lagged_liquidity": {
+        "spot_daily": 1618605399.7841606,
+        "perp_daily": 15334461215.686684
+      },
+      "reason": "FUNDING_BELOW_FIXED_COST_GATE"
+    },
+    {
+      "anchor_ms": 1762128000000,
+      "anchor": "2025-11-03T00:00:00+00:00",
+      "exit_ms": 1764547200000,
+      "enter": false,
+      "lagged_signed_28d_funding": 0.00284686,
+      "lagged_settlements": 84,
+      "lagged_liquidity": {
+        "spot_daily": 2078624505.454814,
+        "perp_daily": 18029603912.975883
+      },
+      "reason": "FUNDING_BELOW_FIXED_COST_GATE"
+    },
+    {
+      "anchor_ms": 1764547200000,
+      "anchor": "2025-12-01T00:00:00+00:00",
+      "exit_ms": 1766966400000,
+      "enter": false,
+      "lagged_signed_28d_funding": 0.00384107,
+      "lagged_settlements": 84,
+      "lagged_liquidity": {
+        "spot_daily": 1904929305.4153056,
+        "perp_daily": 16192914367.432705
+      },
+      "reason": "FUNDING_BELOW_FIXED_COST_GATE"
+    },
+    {
+      "anchor_ms": 1766966400000,
+      "anchor": "2025-12-29T00:00:00+00:00",
+      "exit_ms": 1769385600000,
+      "enter": false,
+      "lagged_signed_28d_funding": 0.00315275,
+      "lagged_settlements": 84,
+      "lagged_liquidity": {
+        "spot_daily": 1165115877.356771,
+        "perp_daily": 13160019139.83774
+      },
+      "reason": "FUNDING_BELOW_FIXED_COST_GATE"
+    },
+    {
+      "anchor_ms": 1769385600000,
+      "anchor": "2026-01-26T00:00:00+00:00",
+      "exit_ms": 1771804800000,
+      "enter": false,
+      "lagged_signed_28d_funding": 0.00418802,
+      "lagged_settlements": 84,
+      "lagged_liquidity": {
+        "spot_daily": 897615717.2675695,
+        "perp_daily": 10381473508.32292
+      },
+      "reason": "FUNDING_BELOW_FIXED_COST_GATE"
+    },
+    {
+      "anchor_ms": 1771804800000,
+      "anchor": "2026-02-23T00:00:00+00:00",
+      "exit_ms": 1774224000000,
+      "enter": false,
+      "lagged_signed_28d_funding": -0.00196532,
+      "lagged_settlements": 84,
+      "lagged_liquidity": {
+        "spot_daily": 1125924442.8306713,
+        "perp_daily": 11060846893.73262
+      },
+      "reason": "FUNDING_BELOW_FIXED_COST_GATE"
+    },
+    {
+      "anchor_ms": 1774224000000,
+      "anchor": "2026-03-23T00:00:00+00:00",
+      "exit_ms": 1776643200000,
+      "enter": false,
+      "lagged_signed_28d_funding": -0.00103131,
+      "lagged_settlements": 84,
+      "lagged_liquidity": {
+        "spot_daily": 887095318.2379506,
+        "perp_daily": 11611214440.872875
+      },
+      "reason": "FUNDING_BELOW_FIXED_COST_GATE"
+    },
+    {
+      "anchor_ms": 1776643200000,
+      "anchor": "2026-04-20T00:00:00+00:00",
+      "exit_ms": 1779062400000,
+      "enter": false,
+      "lagged_signed_28d_funding": -0.00048807,
+      "lagged_settlements": 84,
+      "lagged_liquidity": {
+        "spot_daily": 664395211.734592,
+        "perp_daily": 9934169542.115416
+      },
+      "reason": "FUNDING_BELOW_FIXED_COST_GATE"
+    },
+    {
+      "anchor_ms": 1779062400000,
+      "anchor": "2026-05-18T00:00:00+00:00",
+      "exit_ms": 1781481600000,
+      "enter": false,
+      "lagged_signed_28d_funding": -0.00075736,
+      "lagged_settlements": 84,
+      "lagged_liquidity": {
+        "spot_daily": 586681705.509649,
+        "perp_daily": 8055639695.813311
+      },
+      "reason": "FUNDING_BELOW_FIXED_COST_GATE"
+    },
+    {
+      "anchor_ms": 1781481600000,
+      "anchor": "2026-06-15T00:00:00+00:00",
+      "exit_ms": 1783900800000,
+      "enter": false,
+      "lagged_signed_28d_funding": 0.00222684,
+      "lagged_settlements": 84,
+      "lagged_liquidity": {
+        "spot_daily": 561447324.133733,
+        "perp_daily": 8945699723.454987
+      },
+      "reason": "FUNDING_BELOW_FIXED_COST_GATE"
+    },
+    {
+      "anchor_ms": 1783900800000,
+      "anchor": "2026-07-13T00:00:00+00:00",
+      "exit_ms": 1786320000000,
+      "enter": false,
+      "lagged_signed_28d_funding": 0.00230677,
+      "lagged_settlements": 84,
+      "lagged_liquidity": {
+        "spot_daily": 419604170.2452165,
+        "perp_daily": 7301367825.98241
+      },
+      "reason": "FUNDING_BELOW_FIXED_COST_GATE"
+    },
+    {
+      "anchor_ms": 1786320000000,
+      "anchor": "2026-08-10T00:00:00+00:00",
+      "exit_ms": 1788739200000,
+      "enter": false,
+      "lagged_signed_28d_funding": 0.00255835,
+      "lagged_settlements": 84,
+      "lagged_liquidity": {
+        "spot_daily": 393884687.4391405,
+        "perp_daily": 6516396139.84235
+      },
+      "reason": "FUNDING_BELOW_FIXED_COST_GATE"
+    }
+  ]
+}

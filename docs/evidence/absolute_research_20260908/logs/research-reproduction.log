@@ -1,0 +1,68 @@
+{
+  "carry": {
+    "raw_responses": 68,
+    "normalized_series_rebuilt_from_raw": 8,
+    "hedge_spells_decimal_checked": 27,
+    "hourly_margin_checks_decimal": 155232,
+    "maximum_cashflow_difference_usdt": "6.142635E-13",
+    "all_twelve_cost_streams_reconciled": true
+  },
+  "spot": {
+    "normalized_histories": 661,
+    "past_eligible_observations_ranked_independently": 13996,
+    "weekly_decisions_checked": 140,
+    "original_raw_hashes_verified": 1133,
+    "selected_feature_and_outcome_raw_bars_traced": 36830,
+    "selected_payoffs_decimal_checked_across_four_costs": 2520,
+    "selected_identity_resolutions": [
+      {
+        "symbol": "BNXUSDT",
+        "entry": "2025-03-17",
+        "successor": "FORMUSDT",
+        "ratio": "1",
+        "source": "https://www.binance.com/en/support/announcement/detail/7d5accdcf8f446f3ba3d79f8747a28e2"
+      }
+    ],
+    "selected_censored_outcomes": 0,
+    "historical_universe_completeness_certified": false
+  },
+  "status": "PASS"
+}
+Carry sources and chronology verified: 68
+Four carry streams complete
+One spot stream complete
+{
+  "AR1_BTCUSDT": {
+    "base": 424.25289,
+    "adverse": 341.12759,
+    "compression": 104.119646
+  },
+  "AR1_ETHUSDT": {
+    "base": 328.944327,
+    "adverse": 250.013774,
+    "compression": 65.937036
+  },
+  "AR2_BTCUSDT": {
+    "base": 17.791104,
+    "adverse": -82.257986,
+    "compression": -117.419431
+  },
+  "AR2_ETHUSDT": {
+    "base": 30.687757,
+    "adverse": -80.17624,
+    "compression": -130.093242
+  },
+  "AR3_UNIVERSE": {
+    "0": -4929.708992958982,
+    "10": -4945.351397309188,
+    "40": -4974.354352493601,
+    "90": -4992.765937682178
+  }
+}
+{
+  "data_files_checked": 3077,
+  "data_archive_sha256": "2887d25e991fa4c177f03aa044446a9ce65addfff60acf9c213df91eb6602301",
+  "network_used": false,
+  "independent_audit": "PASS",
+  "byte_identical_result_files": 19
+}

@@ -7,28 +7,37 @@
   "trials": [
     {
       "id": "AR1_BTCUSDT",
-      "status": "REGISTERED",
-      "evaluations": 0
+      "status": "COMPLETED_ADAPTIVE_HISTORICAL",
+      "evaluations": 1,
+      "preserved_previous_output": "absolute-results-v2"
     },
     {
       "id": "AR1_ETHUSDT",
-      "status": "REGISTERED",
-      "evaluations": 0
+      "status": "COMPLETED_ADAPTIVE_HISTORICAL",
+      "evaluations": 1,
+      "preserved_previous_output": "absolute-results-v2"
     },
     {
       "id": "AR2_BTCUSDT",
-      "status": "REGISTERED",
-      "evaluations": 0
+      "status": "COMPLETED_ADAPTIVE_HISTORICAL",
+      "evaluations": 1,
+      "preserved_previous_output": "absolute-results-v2"
     },
     {
       "id": "AR2_ETHUSDT",
-      "status": "REGISTERED",
-      "evaluations": 0
+      "status": "COMPLETED_ADAPTIVE_HISTORICAL",
+      "evaluations": 1,
+      "preserved_previous_output": "absolute-results-v2"
     },
     {
       "id": "AR3_UNIVERSE",
-      "status": "REGISTERED",
-      "evaluations": 0
+      "status": "COMPLETED_ADAPTIVE_HISTORICAL",
+      "evaluations": 1,
+      "preserved_previous_output": "absolute-results-v2"
     }
-  ]
+  ],
+  "completed_at_utc": "2026-09-08T01:11:46.996413+00:00",
+  "evaluations_per_stream": 1,
+  "software_replays": 1,
+  "result_path": "absolute-results-v3/results.json"
 }

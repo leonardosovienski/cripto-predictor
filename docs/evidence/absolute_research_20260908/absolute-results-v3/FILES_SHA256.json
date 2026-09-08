@@ -1,0 +1,21 @@
+{
+  "carry/AR1_BTCUSDT_adverse_ledger.json": "42f4b36a9bae7b12f2c2803f0bd2fb81062dd25e0a10f4f42540a3f72d6f7b7a",
+  "carry/AR1_BTCUSDT_base_ledger.json": "1e6ca4fb159bcdaa53356fab541cb55fb358cf9ba38b12410b7a2a02f8154f72",
+  "carry/AR1_BTCUSDT_compression_ledger.json": "c0d89c8c67c6380c292a30b949dd756e5a5f185575b88299200c41167591642f",
+  "carry/AR1_ETHUSDT_adverse_ledger.json": "3a59571529de999bbfe787d18bc853eccb4ccdeae94ef75fbc08af463835348f",
+  "carry/AR1_ETHUSDT_base_ledger.json": "2f5563d10378982185eb8d59c2337f7c25923c0cc6da7721a586302abac76760",
+  "carry/AR1_ETHUSDT_compression_ledger.json": "c0bd775ad83aa4dd4c00605bb38f03b5895956d44bfbf49f5d759911ca70b539",
+  "carry/AR2_BTCUSDT_adverse_ledger.json": "cde9bd3de8085d8800f915152defaf2bcf72f00c9383ca2bf13b3aff1aa31c66",
+  "carry/AR2_BTCUSDT_base_ledger.json": "be75cecdd629c5d458f91b7570eeb5c6263b3cfe7c3ade523d565c214180162a",
+  "carry/AR2_BTCUSDT_compression_ledger.json": "38424b99c2054301376cb4281d0990772ef8b824113f5f4775939efe2c70c62d",
+  "carry/AR2_ETHUSDT_adverse_ledger.json": "d041b824a690cc12f1002b51dfe2f9b82595a974a33b05b4c1e0e7b7e8123190",
+  "carry/AR2_ETHUSDT_base_ledger.json": "a6d14e94d5b236a817ad35f497d1425f1c05b969bfa34a96ce4898f470f048fd",
+  "carry/AR2_ETHUSDT_compression_ledger.json": "ab0c17ad14c3b9438def51fc9aeb9f29e0ccf9f2172dec76c74fbc06c290252d",
+  "carry/decisions.json": "10c75cf81216527d0eee742d5843d953d1609f09b9da13de9d345283944066f5",
+  "carry/results.json": "99cab63d549fb5ac7993c310605f1534543fbff14cd2d5e9bea46b5f58f1bc26",
+  "results.json": "351711ddcf492a6592e5fa3a3007878094f74b528a40fb1ebd6564e330dcce54",
+  "selector_diagnosis.json": "b283732e60fe9e68eeb364f9d95ddc0c987de8f1b8e4ce89641ce2b15e1eb8ff",
+  "spot/decisions.json": "41d35a9d093f76d5df9babea50358438059434d8495b9081df90694a29c3629f",
+  "spot/results.json": "8270e29502f6b8522bf5b86a0065bc0fbf2af0c12daf694031e525b799408b18",
+  "spot/weekly_results.json": "9f157239135ded4e86d2f57a603bb0fa9122fa7ebdd7dea045e89148d0d48a21"
+}

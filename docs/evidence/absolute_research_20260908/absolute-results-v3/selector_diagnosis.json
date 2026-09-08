@@ -1,0 +1,37 @@
+{
+  "source": "Preserved v5 scores.json.gz",
+  "source_sha256": "1e50d0009a24201c9c7a48752b86946838e43fa87956d7dbc025617e44d13243",
+  "observations": 13996,
+  "status_counts": {
+    "ABSTAIN_NO_POSITIVE_MARGIN": 12730,
+    "ABSTAIN_CENSORED_NEIGHBOR": 1265,
+    "ABSTAIN_TOO_FEW_DISTINCT_WEEKS": 1
+  },
+  "scorable": 12730,
+  "positive_mean_after_frozen_cost_before_penalty": 1448,
+  "positive_after_penalty": 0,
+  "mean_log_payoff_quantiles": [
+    -0.14768329218115106,
+    -0.03776390540513753,
+    -0.024466692284743657,
+    -0.010945318794470707,
+    0.062104194676082095
+  ],
+  "penalty_log_quantiles": [
+    0.04185044969294641,
+    0.06686345816444086,
+    0.07487303378963076,
+    0.08456964923099239,
+    0.29428530450111995
+  ],
+  "distinct_training_weeks_range": [
+    22,
+    100
+  ],
+  "effective_n_range": [
+    5,
+    25
+  ],
+  "best_frozen_score": -0.020747962122169755,
+  "interpretation": "Abstention is explained by training conditional means, heuristic week-dependent uncertainty penalty and censored neighbors. This decomposition does not show that removing the penalty would be profitable. No threshold variant was evaluated."
+}
