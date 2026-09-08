@@ -1,0 +1,1982 @@
+diff --git a/.github/workflows/ci.yml b/.github/workflows/ci.yml
+index 3bbbf5a..4b392e5 100644
+--- a/.github/workflows/ci.yml
++++ b/.github/workflows/ci.yml
+@@ -19,7 +19,7 @@ jobs:
+       - uses: actions/setup-python@v7
+         with:
+           python-version: "3.13"
+-      - run: uv sync --locked --extra test
++      - run: uv sync --locked --extra test --extra science
+       - run: uv run ruff check .
+       - run: uv run ruff format --check .
+       - run: uv run pyright
+@@ -48,7 +48,7 @@ jobs:
+       - uses: actions/setup-python@v7
+         with:
+           python-version: "3.14"
+-      - run: uv sync --extra test
++      - run: uv sync --extra test --extra science
+       - run: uv build
+       - run: uv run pytest -q
+ 
+diff --git a/HANDOFF.md b/HANDOFF.md
+index b97ad99..224d181 100644
+--- a/HANDOFF.md
++++ b/HANDOFF.md
+@@ -1,5 +1,8 @@
+ # HANDOFF — GarimpoInvestimentos (Fase 1 + melhorias)
+ 
++> **Revisão final — 07/09/2026:** consultar [estado consolidado](docs/PROJECT_STATE_20260907.md).
++> Perfil corrente do observador: `altcoin_reviewed_20260907` (v6 operacional), mesma regra e datas. Carry reclassificado pelo objetivo de lucro absoluto; nenhuma promoção para capital.
++
+ > **Delta CRIPTO v1.2 — 2026-09-07:** Core 3.2.0 preparado em worktree isolado;
+ > seis pins consistentes, DSR estrito e N incluindo Sharpes ausentes. H6/H9
+ > encerradas por insuficiência de amostra; custos assumidos reclassificados.
+diff --git a/README.md b/README.md
+index 745336d..993980b 100644
+--- a/README.md
++++ b/README.md
+@@ -1,5 +1,8 @@
+ # cripto-predictor (GarimpoInvestimentos + DPL)
+ 
++> **Estado desta linha após revisão — 07/09/2026:** [resultado consolidado](docs/PROJECT_STATE_20260907.md).
++> O seletor de altcoins não operou no histórico; carry tem cenários positivos após custos assumidos, sem lucro real comprovado. Pesquisa/observação autorizada separadamente; as famílias científicas antigas continuam congeladas.
++
+ > ## 🧊 Projeto cientificamente congelado — comece por `CR_FREEZE_INDEX.md`
+ >
+ > Este repositório passou por um congelamento científico completo
+diff --git a/docs/HYPOTHESES.md b/docs/HYPOTHESES.md
+index 0709b8a..9e3d44f 100644
+--- a/docs/HYPOTHESES.md
++++ b/docs/HYPOTHESES.md
+@@ -1733,3 +1733,14 @@ All 140 consecutive weekly slots from 2024-01-01 through 2026-08-31 were evaluat
+ Of candidate scores, 12,730 failed the fixed positive-margin condition, 1,265 contained a censored neighbor and one had too few distinct training weeks. Although 1,448 neighbor means were positive before the heuristic uncertainty penalty, no final score was positive. This is not solely a minimum-universe failure. Decision: NO_TRADING_EVIDENCE_RULE_ABSTAINS; the current rule did not demonstrate the user's absolute-profit objective in the observed interval. No external investment comparison or parameter search was performed.
+ 
+ Fifty-three targeted tests, Ruff and Pyright passed. Independent calculations checked 1,133 raw response hashes, 32 feature vectors traced to 3,881 raw bars, 32 neighbor/score calculations, and 560 Decimal weekly portfolio factors. A complete offline rerun reproduced all four result/decision/score files byte for byte. With no selected holdings there were no executed-position returns to audit. Daily OHLC price proxies and assumed trading costs are not historical executable fills or investor net BRL results. Active automation/model, production, protected state/trials/costs and frozen research remain unchanged. Detailed evidence: docs/evidence/altcoin_retro_20260907/.
++
++
++### 2026-09-07 — Final project review and operational v6
++
++User requests complete review, justified changes, execution and validation. Registered in 3179b1d before corrections. Seven initial failing controls comprised two demonstrated stale-lock recovery failures and five missing accounting capabilities. Operational fixes and regression controls landed in d81ba94: OS-released persistent-file advisory lock, coverage-aware 12-slot accounting, failed-run status and required science dependencies in CI. No model/threshold/cost/search change. The complete lifecycle tests use synthetic quotes and do not manufacture future observations.
++
++Economic correction: the previous BTC/ETH carry rejection used an external benchmark subsequently rejected by the user. Independent Decimal reconciliation of the same eight original raw responses confirms +54.84071944 USDT (+1.0968%) BTC and +34.62367591 USDT (+0.6925%) ETH per separate hypothetical 5000-USDT scenario over 2025-09-07 to 2026-09-07, after assumed transaction fees/slippage. Account costs, conversion, taxes, margin viability and actual fills remain unverified. This is an adaptive interpretation of consumed evidence, not a new independent strategy success. Original negative-priority report and all raw sources remain intact. No verified investor net profit is claimed.
++
++The v5 retrospective was replayed with identical results/decisions/scores; independent audit reconfirmed zero trades and zero simulated profit in 140 weeks. No threshold was relaxed to force trades. New operational v6 preflight: 487 current pairs, 472 after exclusions, 44 eligible, zero selected; 616 public response hashes, 44 independent entry-book calculations, exact cached snapshot reproduction and ledger integrity pass. The same existing automation now uses a separate reviewed data directory/profile, with original dates and notification intent preserved. No prospective decisions or outcomes exist yet.
++
++Final all-extras suite: 1045 passed, zero failed/skipped. Separate test+science installation: 1011 passed, four optional skips. Ruff/format/Pyright, two build routes, wheel installation outside checkout and 3785 runtime file checks pass. A local integrity discrepancy in distlib/virtualenv broke the generic build path; exact lockfile-SHA-verified wheels were restored via uncached copies, after which integrity and build passed. No unsupported cause is inferred. Docker daemon was unavailable and Windows denied starting its service; container, POSIX lock branch and remote CI are explicitly unvalidated. Six prior reproduction archives and eleven protected scientific/model files were verified unchanged. Details: docs/evidence/project_review_20260907 and docs/PROJECT_STATE_20260907.md.
+diff --git a/docs/PROJECT_STATE_20260907.md b/docs/PROJECT_STATE_20260907.md
+new file mode 100644
+index 0000000..59cad03
+--- /dev/null
++++ b/docs/PROJECT_STATE_20260907.md
+@@ -0,0 +1,46 @@
++# Estado consolidado após a revisão de 07/09/2026
++
++**Há cenários históricos de carry positivos após custos assumidos. Não há lucro real nem lucro líquido do investidor comprovado. O seletor atual de altcoins não operou nas 140 semanas históricas.**
++
++Este é o ponto de entrada corrente desta linha de trabalho. Os relatórios, hipóteses e freezes anteriores permanecem registros das suas respectivas datas. O objetivo adotado pelo usuário é lucro líquido absoluto; nenhuma comparação com outro investimento é exigida.
++
++## Resultado econômico revisado
++
++| Linha | Evidência que existe | Conclusão permitida |
++|---|---|---|
++| Seletor original de grandes altas | Resultados negativos nas análises anteriores, incluindo correções de migrações; três desfechos ainda desconhecidos | Não promovido; contar grandes altas não demonstrou carteira lucrativa |
++| Seletor atual de payoff | 140 semanas, 13.996 ocorrências elegíveis, nenhuma posição; 5.000 → 5.000 USDT | Lucro simulado zero, sem taxa de acerto de operações estimável |
++| Carry BTC, 07/09/2025–07/09/2026 | +54,84071944 USDT, +1,0968% sobre 5.000 USDT hipotéticos | Cenário histórico positivo após taxas/deslizamento assumidos; não lucro real validado |
++| Carry ETH, mesmo período | +34,62367591 USDT, +0,6925% sobre 5.000 USDT hipotéticos | Mesma limitação; é outro cenário de 5.000 USDT, não ganho adicional na mesma carteira |
++| H1–H9 e famílias antigas | Estados e resultados anteriores preservados | Nenhuma nova aprovação, reabertura ou alegação de lucro |
++
++A rejeição antiga do carry dependia de uma referência externa que o usuário depois retirou. Ela não equivale a retorno absoluto negativo. A revisão recompõe os mesmos fluxos dos dois ativos a partir de oito respostas brutas, com Decimal, sem buscar outro período ou ajustar parâmetros. O ganho BTC suporta apenas 54,84 USDT de custos adicionais antes de zerar; no ETH, 34,62 USDT. Conversão, transferências, tarifas reais, impostos e a viabilidade efetiva da margem não estão certificados. Uma margem de referência de 2.500 USDT não comprova ausência de liquidação.
++
++## Alterações implementadas
++
++1. O observador usa bloqueio do sistema operacional, liberado quando o processo termina. Um arquivo `observer.lock` remanescente já não impede todas as execuções posteriores; concorrência continua bloqueada.
++2. O status contabiliza as 12 janelas, semanas conhecidas, ausentes, com posições e em caixa. Sem observações, lucro é desconhecido. Semana ausente não vira zero. Calendário encerrado não vira evidência de lucro.
++3. Falhas de aquisição atualizam o status com o erro, preservando os registros anteriores.
++4. O CI de qualidade e o perfil experimental instalam a dependência científica necessária aos testes novos. O perfil mínimo equivalente foi instalado e executado separadamente.
++5. Arquivos inconsistentes de `distlib` e `virtualenv` no ambiente local foram restaurados das versões exatas do lockfile, por wheels com SHA256 conferido e cópia sem vínculos ao cache compartilhado. `verify_research_runtime.py` detecta novas divergências; não atribuímos uma causa sem evidência.
++6. As conclusões de lucro foram reunidas, incluindo os cenários positivos que a resposta anterior centrada no seletor omitiu.
++
++O modelo, treinamento, penalidade de incerteza, limiar, tamanho por candidato e custos declarados do seletor não foram alterados para produzir um resultado favorável. A geometria identifica sinais sintéticos fortes, mas sua penalidade continua heurística; isso não calibra probabilidade de sucesso no mercado. A versão atual permanece como observação de pesquisa.
++
++## Operação corrente
++
++Perfil: `docs/evidence/altcoin_reviewed_20260907/`; dados: `work/altcoin-reviewed-data`. A v4 anterior permanece intacta e reproduzível usando sua versão preservada. O novo perfil incorpora somente correções operacionais antes das primeiras decisões prospectivas.
++
++O preflight repetiu a busca: 487 pares spot/USDT ativos no catálogo, 472 após exclusões, 44 elegíveis, nenhum selecionado. Foram conferidas 616 respostas, 44 contas de compra hipotética e a reprodução offline do snapshot. O universo implementado continua Binance spot/USDT, sem alegar cobertura de qualquer cripto ou corretora.
++
++O horário do acompanhamento permanece domingo às 21h de Brasília: primeira entrada possível 13/09, última saída 06/12. Cada janela tem 60 minutos. A checagem do runtime precede o registrador. O computador e o app precisam estar ativos para a automação local; [documentação oficial de tarefas agendadas](https://learn.chatgpt.com/docs/automations?surface=app).
++
++Cada semana usa 5.000 USDT como referência fixa de tamanho. A soma dos resultados semanais conhecidos não é saldo de uma conta capitalizada, pois o tamanho não foi recalculado segundo uma conta real. O total do piloto fica desconhecido até todas as janelas serem observadas. A simulação de um ciclo completo nos testes é controle de software, não observação dos meses futuros.
++
++## Limites da validação
++
++Testes, controles de interrupção, lint, formatação, tipos, build por uv e por `python -m build`, instalação da wheel fora do checkout, integridade das bibliotecas e reproduções históricas têm registros na pasta `project_review_20260907`. Os seis pacotes antigos e os arquivos científicos protegidos permanecem íntegros. Contagens finais e hashes constam em `validation.json`.
++
++O Docker local não ficou disponível; iniciar seu serviço foi negado pelo Windows. Container, branch POSIX do bloqueio e CI remoto não foram executados nesta máquina. Esses limites não são transformados em PASS. Produção, banco de dados real, ordens, contas e capital permanecem fora desta execução.
++
++**Qualidade final:** infraestrutura de pesquisa e simulação validada nos controles locais descritos; seletor sem lucro demonstrado; carry com cenários positivos ainda não convertidos em execução e lucro líquido comprovados. Não existe uma nota numérica objetiva ou um selo de rentabilidade decorrente da contagem de testes.
+diff --git a/docs/evidence/altcoin_reviewed_20260907/RUNBOOK.md b/docs/evidence/altcoin_reviewed_20260907/RUNBOOK.md
+new file mode 100644
+index 0000000..41ae82f
+--- /dev/null
++++ b/docs/evidence/altcoin_reviewed_20260907/RUNBOOK.md
+@@ -0,0 +1,35 @@
++# Objetivo e acompanhamento v6 após revisão
++
++O usuário definiu o objetivo em 07/09/2026: **lucro líquido positivo**, sem comparação com outro investimento e sem preferência de corretora ou moeda. Não pedir novamente escolha de Selic, BTC, cesta ou corretora preferida como condição para continuar a pesquisa.
++
++O critério econômico é terminar com mais dinheiro do que começou, depois dos custos aplicáveis, na mesma moeda. Custos desconhecidos permanecem desconhecidos. As marcas públicas em USDT ainda não certificam lucro líquido em reais, porque conta, conversão e tributação não foram verificadas. Nenhuma taxa específica foi informada pelo usuário. Ele autorizou liberdade de pesquisa, não contas, transferências ou ordens.
++
++O adaptador disponível é Binance spot público. A busca foi ampliada da amostra original para todos os pares USDT atualmente negociáveis, respeitando exclusões declaradas e os mesmos filtros de 90 dias completos, atraso de um dia e liquidez. Outras corretoras e outras criptos são permitidas pelo objetivo; isso não significa que já exista cobertura de todas elas. Não remover critérios de dados ou custos apenas para produzir uma candidata.
++
++O modelo de vizinhos e seus dados de treino continuam fixos. BTC permanece uma entrada estatística usada nas oito características já definidas, e também pode ser candidato; não existe carteira de comparação com BTC, cesta ou Selic nesta versão.
++
++No worktree `work/cripto-v1.2`, executar:
++
++```powershell
++.venv\Scripts\python.exe -m scripts.verify_research_runtime
++.venv\Scripts\python.exe -m scripts.observe_altcoin_forward --mode tick --base-data-dir '..\altcoin-data' --training '..\altcoin-payoff-results\samples_identity_corrected.json.gz' --data-dir '..\altcoin-reviewed-data' --evidence-dir 'docs\evidence\altcoin_reviewed_20260907'
++```
++
++Executar o segundo comando somente se o primeiro retornar código zero. Uma divergência de integridade exige diagnóstico; não ignorar a checagem nem ajustar hashes para aceitá-la.
++
++Horário mantido: domingos às 21h de Brasília, primeira janela 13/09/2026; 12 entradas previstas, última saída 06/12/2026. O computador e o aplicativo precisam estar ativos. A janela de coleta termina 60 minutos depois da âncora. Não retroagir entradas nem substituir saídas ausentes por zero ou por uma cotação escolhida depois. O registro de decisão deve preceder a consulta das ofertas de entrada.
++
++Conferir código de saída, `work/altcoin-reviewed-data/status.json`, livro `ledger.jsonl`, fontes, custos, candidatas e preços ausentes. Se `pilot_finished` for verdadeiro, registrar o balanço descritivo e pausar o próprio acompanhamento pelo recurso de automações. Atualizar `outputs/ACOMPANHAMENTO_CRIPTO.md` em linguagem simples, focando resultado líquido absoluto e suas limitações. Avisar apenas sobre mudança relevante, conclusão, falha ou informação necessária; ficar em silêncio quando nada relevante mudou.
++
++Esta versão usa um livro separado. As versões anteriores permanecem como evidência histórica em seus arquivos e pacotes. A primeira coleta v4 é diagnóstico, não entrada prospectiva. Não ajustar a seleção após observar resultados. Os estudos sintéticos de tamanho de amostra não prometem lucro e não constituem atestação formal. As 12 semanas testam o funcionamento e acumulam dados; não estabelecem automaticamente rentabilidade.
++
++
++Revisão de 07/09: o teste histórico v5 terminou com 140 semanas em caixa e zero operações. A regra continua sem lucro demonstrado. O piloto mantém essa regra para observação, não para buscar parâmetros até aparecer lucro.
++
++O arquivo observer.lock agora pode continuar existindo com o processo encerrado: a exclusão mútua depende do bloqueio do sistema operacional, liberado quando o processo termina. Não apagar o arquivo para tentar obter acesso paralelo.
++
++Ler observation_quality em status.json: known_due_weeks, missing_due_weeks, cash_due_weeks e active_due_weeks. Nenhuma observação significa lucro desconhecido, não zero. Semanas faltantes nunca são apagadas do denominador. standardized_completed_week_profit_usdt soma apenas semanas conhecidas; standardized_pilot_profit_usdt só existe quando todas as 12 semanas têm resultado. São experimentos semanais com tamanho fixo de 5.000 USDT: não apresentar a soma como saldo de uma conta composta. realized_profit e investor_net_brl_profit continuam null.
++
++Se last_run_error não for null ou o processo sair com erro, comunicar a falha conforme a preferência já registrada. Se pilot_finished for verdadeiro, divulgar também as semanas ausentes e o veredito de qualidade; concluir o calendário não significa validar lucro.
++
++O estudo separado de carry tem cenários históricos positivos após custos assumidos. A antiga rejeição por comparação externa foi revista. Isso não muda o seletor spot nem autoriza futuros, margem ou capital.
+diff --git a/docs/evidence/altcoin_reviewed_20260907/freeze.json b/docs/evidence/altcoin_reviewed_20260907/freeze.json
+new file mode 100644
+index 0000000..f5781c8
+--- /dev/null
++++ b/docs/evidence/altcoin_reviewed_20260907/freeze.json
+@@ -0,0 +1,16 @@
++{
++  "known_at": "2026-09-07T23:12:31.157069+00:00",
++  "repository_files": {
++    "scripts/observe_altcoin_forward.py": "33f077582c49ec253db250ffd7aa8f40f1ab451479c839b6b5245b336abc4911",
++    "scripts/plan_absolute_profit.py": "c7b20fd1cefef2dd5153f93d665bc861498aef2c64eedcb3be529258a678955b",
++    "scripts/prepare_altcoin_payoff.py": "0c349fe67d4466db008cf1728c57767ee01fce9c122f85e539eeff6f8af30ad0",
++    "scripts/research_altcoin_analogs.py": "22b5456ae7c56c09b51cb295b784fad7b9b5685241f9fa54a31e5cb6a1aa7626",
++    "scripts/collect_altcoin_analogs.py": "ca1dfd1f8f93d6174c23829c8729c6c772376de0ef4af28b2738ada261b96e7f",
++    "docs/evidence/altcoin_analogs_20260907/protocol.json": "fa5e8a6a29d0e7dda4711e82b4bf11c4026c2101ba079a763200a284ac410ab4",
++    "docs/evidence/altcoin_payoff_20260907/protocol.json": "071a50b6ffbc535d226c73a02a1211f1bd4512554fd4844d039b6226c6a3da15",
++    "docs/evidence/altcoin_reviewed_20260907/protocol.json": "3a00ae198fbfeebd4a8a69ea763c21edd9ddac6ff94961eb3f93186f783e851a"
++  },
++  "acquisition_sha256": "b0823fd898bb46043f1d6d328b74d033f1bfbddfe98ea13ea11fad7b82d35f6e",
++  "training_sha256": "42e5bfadec6414c4148ccd4f048329256483e91715fd9e78542633d8a5a5e972",
++  "note": "Operational fixes only, before prospective decisions. v4 files and evidence unchanged. New profile reviewed_20260907; scores and marks retain their prior economic assumptions."
++}
+diff --git a/docs/evidence/altcoin_reviewed_20260907/protocol.json b/docs/evidence/altcoin_reviewed_20260907/protocol.json
+new file mode 100644
+index 0000000..fc4d1d2
+--- /dev/null
++++ b/docs/evidence/altcoin_reviewed_20260907/protocol.json
+@@ -0,0 +1,67 @@
++{
++  "id": "discovery-altcoin-absolute-profit-20260907-v6-reviewed",
++  "base_commit": "5d28a63c1b2a147d17054ace3914de698a7959a4",
++  "mode": "PROSPECTIVE_OBSERVATION_PILOT",
++  "authorization": "Final review and corrections explicitly requested by user after v5 historical diagnosis. No prospective decisions exist yet.",
++  "amendment": "Operational review v6: crash-released OS lock, complete slot accounting, explicit failed-run status. Same training, scorer, universe, costs, schedule and public-only scope. Preserve v4 records under their original profile; use a new v6 data directory.",
++  "model": "Unchanged v2 payoff_summary and training-only kNN200 geometry, 8 delayed features, fixed repaired 2021-2023 training observations including censored cases. No historical evaluation, refit, parameter search or tuning from this pilot.",
++  "universe": "All currently TRADING, spot-enabled Binance USDT symbols, with no original 240-symbol cap and no ranking by past outcome for inclusion. Keep declared non-crypto/stable exclusions plus RLUSD and explicit leveraged-token identification. BTC may itself be a candidate. Every candidate must still have the same 90 complete delayed daily bars and median quote volume >=5 million USDT. Asset classification and coverage are not globally certified. Other exchanges/quotes remain outside the current adapter, not prohibited by user preference.",
++  "start_utc": "2026-09-14T00:00:00+00:00",
++  "last_entry_utc": "2026-11-30T00:00:00+00:00",
++  "last_due_utc": "2026-12-07T00:00:00+00:00",
++  "entry_window_minutes": 60,
++  "feature_contract": "Monday 00 UTC anchor; exactly 90 consecutive positive complete daily bars ending Saturday. Use extract_features with the same full-day delay. Actual source retrieval known_at must precede committed decision. Live acquisition finishes within entry window; otherwise record MISSED, never backdate or use a Monday open after observing later prices.",
++  "selection": "Require at least 10 eligible samples; rank strictly positive fixed payoff scores, symbol tie-break, at most five with 20% initial research weight each. Unused allocation is zero-yield USDT reference cash. Preserve both qualified model candidates and final selections. No purchase instruction.",
++  "entry_mark": "Commit decision to a hash-linked local append-only ledger and fsync it BEFORE requesting any entry book. Then record read-only public depth ask VWAP for 1000 USDT gross simulated notional per candidate. No actual fills. Quote age is bounded by request round trip and request time only; REST book has no per-level timestamp. Fail on slow requests, insufficient visible depth or invalid prices. Record only the hypothetical selected portfolio; no BTC or basket reference portfolio.",
++  "outcome": "Due at the next Monday 00 UTC, allowing up to 60 minutes for actual retrieval. Fetch exit depth and use bid VWAP for the recorded quantity. Never choose a price retroactively. If entry or due observation is missed, suspended, unpriced, or outside the window, censor the affected outcome. Keep its weight and reason. No symbol migration is assumed without a separately recorded official identity event. An unresolved component makes the portfolio return null; never silently renormalize survivors.",
++  "costs": {
++    "status": "ASSUMED_NOT_ACCOUNT_CALIBRATED",
++    "entry_fee_bps": 10,
++    "exit_fee_bps": 10,
++    "extra_slippage_bps_per_side": [
++      0,
++      10,
++      40,
++      90
++    ],
++    "book_cost": "Spread and displayed depth impact measured only at observation; additional slippage scenarios do not relabel them as actual realized costs.",
++    "account_commission": null,
++    "fx_conversion_tax_transfer_costs": null
++  },
++  "events": "Save complete current public exchangeInfo response, diffs against prior observation and attempts to retrieve official delisting/update announcements with observed known_at. A successful page is not evidence of complete event coverage. Public event-feed completeness remains UNKNOWN unless separately audited. Missing notices block executable readiness, not read-only observation. Historical BTT/CVP/VIDT remain censored until an exact-horizon exit is verified.",
++  "economic_reference": "No external investment benchmark. Compare only the same portfolio starting and ending value after costs. USDT marks and eventual BRL economic profit must be labeled separately until conversion and tax route are verified. User delegates venue selection for research; do not keep asking them to choose a benchmark or a preferred exchange.",
++  "evidence": "Twelve prospective slots test recorder operation and generate new observations; not automatic proof of profit. Already-consumed v5 historical diagnostic has 140 cash weeks and no selected holdings.",
++  "stopping_rule": "Do not change the model when it abstains or loses. No significance testing during the 12 slots; report descriptive marks and missingness. After last due slot stop the recurring pilot and report feasibility, candidates, costs and unresolved gates. Operational bug fixes must be versioned before later decisions; preserve all prior ledger records.",
++  "scheduler": "Update the existing thread heartbeat, preserving weekly timing and notification preferences. Use this v4 protocol and a separate v4 data directory; first future anchor and last due anchor unchanged.",
++  "capital_authorized": false,
++  "order_submission": false,
++  "production_changes": false,
++  "formal_promotion": false,
++  "registration_amendments": [],
++  "mark_fee_accounting": "For a hypothetical 1000 USDT budget, consume displayed asks; deduct assumed 10bps buy fee from acquired base quantity. Additional slippage stresses are quantity haircuts. Exit consumes displayed bids and deducts assumed 10bps sell fee and the extra slippage haircut from quote proceeds. Daily v2 neighbor-score cost algebra remains frozen; book-mark accounting is a distinct declared observation proxy. Lot-size rounding, account restrictions and tax are not certified.",
++  "synthetic_control_plan": "Seed 20260907: fixed 1600-observation two-cluster kNN200 positive/negative geometry control over 80 weeks, one censored-neighbor guard, 100 stipulated zero-log-drift week-common-shock replicates (two candidate queries each). Report qualification count without interpreting it as general null calibration. Conditional planning grid uses absolute annual net-return scenarios 1/5/10/20%, weekly log standard deviations 1/3/5% and dependence multipliers 1/4, against zero net profit. These are planning assumptions, not user targets, forecasts or an external comparison. An arbitrarily small positive edge has no fixed finite detection horizon.",
++  "registered_at": "2026-09-07T23:12:31.156466+00:00",
++  "economic_objective": {
++    "kind": "ABSOLUTE_NET_PROFIT",
++    "acceptance": "Ending value exceeds starting value after all applicable costs, in the same currency. Do not require beating Selic, BTC, a basket or any external investment.",
++    "reporting_currency": "BRL",
++    "observed_mark_currency": "USDT",
++    "unknown_costs": "Public book marks use stated fee/slippage scenarios. Account commission, conversion and taxes are not certified. Missing costs are unknown, not zero; a partial USDT mark is not certified net BRL investor profit.",
++    "minimum_user_profit_amount": null,
++    "minimum_user_annual_return": null,
++    "external_benchmark_required": false,
++    "venue_preselection_required_from_user": false
++  },
++  "venue_policy": "No user-imposed venue preference. Agent may choose public research venues by suitable data, liquidity and all-in costs. Current tested adapter is Binance public spot only; permission to research other venues is not a claim of implemented worldwide coverage or account accessibility.",
++  "universe_mode": "all_current_spot_usdt",
++  "comparisons": false,
++  "operational_review": {
++    "parent_profile": "altcoin_profit_20260907",
++    "parent_freeze_sha256": "4a98d527c43b4aa385cf1393353de64a0c35a60681e53b1e152f4d9faba941cf",
++    "current_data_directory": "work/altcoin-reviewed-data",
++    "locking": "Persistent observer.lock metadata file with OS advisory lock. Process death releases the lock; file existence alone is not a running process. Do not delete it while another process might run.",
++    "accounting": "Each weekly selection uses a new fixed 5000 USDT sizing reference. Status sums completed-week hypothetical P&L and reports missing due slots separately; whole-pilot sum remains null until every slot is known. No compounded account equity or actual investor profit claim.",
++    "retrospective_outcome": "0 selected holdings in 140 weeks, 0 simulated return; no trading evidence. Scorer remains unmodified.",
++    "preserved_legacy": "Old v4 freezes remain immutable and run using their saved source revision/package, not this changed observer. Existing v4 ledger is retained separately."
++  }
++}
+diff --git a/docs/evidence/project_review_20260907/automation.json b/docs/evidence/project_review_20260907/automation.json
+new file mode 100644
+index 0000000..429d9f0
+--- /dev/null
++++ b/docs/evidence/project_review_20260907/automation.json
+@@ -0,0 +1,12 @@
++{
++  "id": "observar-altcoins-semanalmente",
++  "name": "Observar altcoins semanalmente",
++  "status": "ACTIVE",
++  "profile": "altcoin_reviewed_20260907",
++  "schedule": "Domingos às 21h America/Sao_Paulo",
++  "first_entry": "2026-09-13 21:00 America/Sao_Paulo",
++  "final_exit": "2026-12-06 21:00 America/Sao_Paulo",
++  "prompt_sha256": "d966a6fcbf9eafb94e9d38cb544061a9fb6cf1597fa005cbc45ddbe93744c70c",
++  "notification_intent": "Somente mudança relevante, falha, conclusão ou informação necessária",
++  "target_thread_id": "01a07d06-406f-7781-adad-0d0ea3ae9424"
++}
+diff --git a/docs/evidence/project_review_20260907/carry_absolute_profit.json b/docs/evidence/project_review_20260907/carry_absolute_profit.json
+new file mode 100644
+index 0000000..79b83d9
+--- /dev/null
++++ b/docs/evidence/project_review_20260907/carry_absolute_profit.json
+@@ -0,0 +1,236 @@
++{
++  "id": "project-quality-review-20260907-v6-carry",
++  "period": {
++    "start": "2025-09-07",
++    "end": "2026-09-07",
++    "days": 365
++  },
++  "source_response_hashes_verified": 8,
++  "raw_sources": [
++    {
++      "artifact": "BTCUSDT_funding_0.json",
++      "url": "https://fapi.binance.com/fapi/v1/fundingRate?symbol=BTCUSDT&startTime=1757203200000&endTime=1788739199999&limit=1000",
++      "known_at": "2026-09-07T18:27:54.831628+00:00",
++      "http_status": 200,
++      "sha256": "ee784cc0e5a4bbe3796c83083f8d8cc68396a18c51c6daa7810c50887ae6433e"
++    },
++    {
++      "artifact": "ETHUSDT_funding_0.json",
++      "url": "https://fapi.binance.com/fapi/v1/fundingRate?symbol=ETHUSDT&startTime=1757203200000&endTime=1788739199999&limit=1000",
++      "known_at": "2026-09-07T18:27:54.831934+00:00",
++      "http_status": 200,
++      "sha256": "21f3a57d1cbcad04face2f3b56326236cae8dfd91d7a7d3eaae37be4cfcd480c"
++    },
++    {
++      "artifact": "BTCUSDT_funding_1.json",
++      "url": "https://fapi.binance.com/fapi/v1/fundingRate?symbol=BTCUSDT&startTime=1785974400003&endTime=1788739199999&limit=1000",
++      "known_at": "2026-09-07T18:27:55.244721+00:00",
++      "http_status": 200,
++      "sha256": "51123315198443bdcfbf16ff7dc1179df8a91acdc47ff77a65205e861b9d144a"
++    },
++    {
++      "artifact": "ETHUSDT_funding_1.json",
++      "url": "https://fapi.binance.com/fapi/v1/fundingRate?symbol=ETHUSDT&startTime=1785974400003&endTime=1788739199999&limit=1000",
++      "known_at": "2026-09-07T18:27:55.251889+00:00",
++      "http_status": 200,
++      "sha256": "6f20b0b28f29ab73e97bab8ffef8715ec7a15a92ca8ff5d7ce4ab6dfaf2124cf"
++    },
++    {
++      "artifact": "BTCUSDT_spot_daily.json",
++      "url": "https://api.binance.com/api/v3/klines?symbol=BTCUSDT&interval=1d&startTime=1757203200000&endTime=1788739200000&limit=500",
++      "known_at": "2026-09-07T18:27:55.576312+00:00",
++      "http_status": 200,
++      "sha256": "dfe185b422bfae8c7b1615e6dedf60a6c7b64631b3f8cbb1e162f39688a3ccac"
++    },
++    {
++      "artifact": "ETHUSDT_spot_daily.json",
++      "url": "https://api.binance.com/api/v3/klines?symbol=ETHUSDT&interval=1d&startTime=1757203200000&endTime=1788739200000&limit=500",
++      "known_at": "2026-09-07T18:27:55.578225+00:00",
++      "http_status": 200,
++      "sha256": "b4f943bb104481c12e77df5c4384e8ed9f86b83c9ca0ed9987a0669de02706b8"
++    },
++    {
++      "artifact": "BTCUSDT_mark_daily.json",
++      "url": "https://fapi.binance.com/fapi/v1/markPriceKlines?symbol=BTCUSDT&interval=1d&startTime=1757203200000&endTime=1788739200000&limit=500",
++      "known_at": "2026-09-07T18:27:55.917809+00:00",
++      "http_status": 200,
++      "sha256": "38c40fab1a4d2ed7c15d75ab578a76daf7ccd13cede613db597229c73f4c02d5"
++    },
++    {
++      "artifact": "ETHUSDT_mark_daily.json",
++      "url": "https://fapi.binance.com/fapi/v1/markPriceKlines?symbol=ETHUSDT&interval=1d&startTime=1757203200000&endTime=1788739200000&limit=500",
++      "known_at": "2026-09-07T18:27:56.182595+00:00",
++      "http_status": 200,
++      "sha256": "42b20536776fd8ce11e3268e81dfbfc7dc387e0c5a526d5628655fc0783516f1"
++    }
++  ],
++  "arithmetic": "Independent Decimal reconstruction, fixed hedge quantity; eight raw responses and both normalized funding histories verified.",
++  "assets": {
++    "BTCUSDT": {
++      "capital_reference_usdt": 5000,
++      "spot_initial_notional_usdt": 2500,
++      "cash_margin_reference_usdt": 2500,
++      "quantity": "0.02268850014311905890279502355883100860911",
++      "eligible_settlements": 1094,
++      "funding_usdt": 65.99276864314137,
++      "basis_pnl_usdt": -0.3470036017086437,
++      "assumed_trading_fees_usdt": 6.483231703793486,
++      "assumed_slippage_usdt": 4.321813893066762,
++      "simulated_profit_usdt": 54.840719444572485,
++      "simulated_return_on_total_capital": 0.010968143888914497,
++      "simulated_ending_usdt": 5054.840719444573,
++      "additional_cost_budget_before_zero_profit_usdt": 54.840719444572485,
++      "additional_cost_budget_fraction_of_capital": 0.010968143888914497,
++      "cost_scenarios": [
++        {
++          "slippage_bps_each_leg": 0,
++          "additional_cost_fraction_of_capital": 0.0,
++          "simulated_net_usdt": 59.162533337639246,
++          "meaning": "Pre-existing cost assumptions applied to the same fixed-quantity cashflows; not actual costs or a prediction."
++        },
++        {
++          "slippage_bps_each_leg": 0,
++          "additional_cost_fraction_of_capital": 0.005,
++          "simulated_net_usdt": 34.162533337639246,
++          "meaning": "Pre-existing cost assumptions applied to the same fixed-quantity cashflows; not actual costs or a prediction."
++        },
++        {
++          "slippage_bps_each_leg": 0,
++          "additional_cost_fraction_of_capital": 0.01,
++          "simulated_net_usdt": 9.162533337639248,
++          "meaning": "Pre-existing cost assumptions applied to the same fixed-quantity cashflows; not actual costs or a prediction."
++        },
++        {
++          "slippage_bps_each_leg": 5,
++          "additional_cost_fraction_of_capital": 0.0,
++          "simulated_net_usdt": 54.840719444572485,
++          "meaning": "Pre-existing cost assumptions applied to the same fixed-quantity cashflows; not actual costs or a prediction."
++        },
++        {
++          "slippage_bps_each_leg": 5,
++          "additional_cost_fraction_of_capital": 0.005,
++          "simulated_net_usdt": 29.840719444572485,
++          "meaning": "Pre-existing cost assumptions applied to the same fixed-quantity cashflows; not actual costs or a prediction."
++        },
++        {
++          "slippage_bps_each_leg": 5,
++          "additional_cost_fraction_of_capital": 0.01,
++          "simulated_net_usdt": 4.840719444572486,
++          "meaning": "Pre-existing cost assumptions applied to the same fixed-quantity cashflows; not actual costs or a prediction."
++        },
++        {
++          "slippage_bps_each_leg": 10,
++          "additional_cost_fraction_of_capital": 0.0,
++          "simulated_net_usdt": 50.518905551505725,
++          "meaning": "Pre-existing cost assumptions applied to the same fixed-quantity cashflows; not actual costs or a prediction."
++        },
++        {
++          "slippage_bps_each_leg": 10,
++          "additional_cost_fraction_of_capital": 0.005,
++          "simulated_net_usdt": 25.518905551505725,
++          "meaning": "Pre-existing cost assumptions applied to the same fixed-quantity cashflows; not actual costs or a prediction."
++        },
++        {
++          "slippage_bps_each_leg": 10,
++          "additional_cost_fraction_of_capital": 0.01,
++          "simulated_net_usdt": 0.518905551505724,
++          "meaning": "Pre-existing cost assumptions applied to the same fixed-quantity cashflows; not actual costs or a prediction."
++        }
++      ],
++      "decision": "POSITIVE_HISTORICAL_PRICE_PROXY_NOT_VERIFIED_INVESTOR_PROFIT",
++      "actual_profit": null,
++      "verified_net_brl_profit": null,
++      "executable_margin_path_certified": false
++    },
++    "ETHUSDT": {
++      "capital_reference_usdt": 5000,
++      "spot_initial_notional_usdt": 2500,
++      "cash_margin_reference_usdt": 2500,
++      "quantity": "0.5850485005206931654634169172624410563636",
++      "eligible_settlements": 1094,
++      "funding_usdt": 45.263175926868044,
++      "basis_pnl_usdt": -0.713207902835145,
++      "assumed_trading_fees_usdt": 5.9559192450943685,
++      "assumed_slippage_usdt": 3.970372868299732,
++      "simulated_profit_usdt": 34.6236759106388,
++      "simulated_return_on_total_capital": 0.00692473518212776,
++      "simulated_ending_usdt": 5034.623675910639,
++      "additional_cost_budget_before_zero_profit_usdt": 34.6236759106388,
++      "additional_cost_budget_fraction_of_capital": 0.00692473518212776,
++      "cost_scenarios": [
++        {
++          "slippage_bps_each_leg": 0,
++          "additional_cost_fraction_of_capital": 0.0,
++          "simulated_net_usdt": 38.594048778938536,
++          "meaning": "Pre-existing cost assumptions applied to the same fixed-quantity cashflows; not actual costs or a prediction."
++        },
++        {
++          "slippage_bps_each_leg": 0,
++          "additional_cost_fraction_of_capital": 0.005,
++          "simulated_net_usdt": 13.594048778938532,
++          "meaning": "Pre-existing cost assumptions applied to the same fixed-quantity cashflows; not actual costs or a prediction."
++        },
++        {
++          "slippage_bps_each_leg": 0,
++          "additional_cost_fraction_of_capital": 0.01,
++          "simulated_net_usdt": -11.405951221061468,
++          "meaning": "Pre-existing cost assumptions applied to the same fixed-quantity cashflows; not actual costs or a prediction."
++        },
++        {
++          "slippage_bps_each_leg": 5,
++          "additional_cost_fraction_of_capital": 0.0,
++          "simulated_net_usdt": 34.6236759106388,
++          "meaning": "Pre-existing cost assumptions applied to the same fixed-quantity cashflows; not actual costs or a prediction."
++        },
++        {
++          "slippage_bps_each_leg": 5,
++          "additional_cost_fraction_of_capital": 0.005,
++          "simulated_net_usdt": 9.6236759106388,
++          "meaning": "Pre-existing cost assumptions applied to the same fixed-quantity cashflows; not actual costs or a prediction."
++        },
++        {
++          "slippage_bps_each_leg": 5,
++          "additional_cost_fraction_of_capital": 0.01,
++          "simulated_net_usdt": -15.3763240893612,
++          "meaning": "Pre-existing cost assumptions applied to the same fixed-quantity cashflows; not actual costs or a prediction."
++        },
++        {
++          "slippage_bps_each_leg": 10,
++          "additional_cost_fraction_of_capital": 0.0,
++          "simulated_net_usdt": 30.65330304233907,
++          "meaning": "Pre-existing cost assumptions applied to the same fixed-quantity cashflows; not actual costs or a prediction."
++        },
++        {
++          "slippage_bps_each_leg": 10,
++          "additional_cost_fraction_of_capital": 0.005,
++          "simulated_net_usdt": 5.653303042339068,
++          "meaning": "Pre-existing cost assumptions applied to the same fixed-quantity cashflows; not actual costs or a prediction."
++        },
++        {
++          "slippage_bps_each_leg": 10,
++          "additional_cost_fraction_of_capital": 0.01,
++          "simulated_net_usdt": -19.34669695766093,
++          "meaning": "Pre-existing cost assumptions applied to the same fixed-quantity cashflows; not actual costs or a prediction."
++        }
++      ],
++      "decision": "POSITIVE_HISTORICAL_PRICE_PROXY_NOT_VERIFIED_INVESTOR_PROFIT",
++      "actual_profit": null,
++      "verified_net_brl_profit": null,
++      "executable_margin_path_certified": false
++    }
++  },
++  "external_benchmark": false,
++  "new_market_parameter_search": false,
++  "prior_rejection": "Applied a benchmark later rejected by the user. Original evidence remains unchanged; that priority decision no longer determines the current absolute-profit objective.",
++  "quality": "HISTORICAL_SIMULATED_POSITIVE_CARRY_EXISTS; NO_VERIFIED_INVESTOR_NET_PROFIT",
++  "limitations": [
++    "Already consumed single historical period; adaptive interpretation, not independent validation",
++    "Spot and perpetual mark-price proxies are not executable fills",
++    "Fees/slippage are assumptions, not account-specific realized costs",
++    "Margin maintenance, intraday equity path and liquidation are not certified",
++    "Account access, USDT/USD/BRL conversion, transfers and tax remain unknown",
++    "Each asset uses its own hypothetical 5000 USDT; these are separate scenarios, not additive profits on one portfolio"
++  ],
++  "capital": false,
++  "orders": false
++}
+diff --git a/docs/evidence/project_review_20260907/full_tests.txt b/docs/evidence/project_review_20260907/full_tests.txt
+new file mode 100644
+index 0000000..9723ea1
+--- /dev/null
++++ b/docs/evidence/project_review_20260907/full_tests.txt
+@@ -0,0 +1,16 @@
++........................................................................ [  6%]
++........................................................................ [ 13%]
++........................................................................ [ 20%]
++........................................................................ [ 27%]
++........................................................................ [ 34%]
++........................................................................ [ 41%]
++........................................................................ [ 48%]
++........................................................................ [ 55%]
++........................................................................ [ 62%]
++........................................................................ [ 68%]
++........................................................................ [ 75%]
++........................................................................ [ 82%]
++........................................................................ [ 89%]
++........................................................................ [ 96%]
++.....................................                                    [100%]
++1045 passed in 111.76s (0:01:51)
+diff --git a/docs/evidence/project_review_20260907/minimal_ci_tests.txt b/docs/evidence/project_review_20260907/minimal_ci_tests.txt
+new file mode 100644
+index 0000000..587feb4
+--- /dev/null
++++ b/docs/evidence/project_review_20260907/minimal_ci_tests.txt
+@@ -0,0 +1,16 @@
++........................................................................ [  7%]
++........................................................................ [ 14%]
++........................................................................ [ 21%]
++........................................................................ [ 28%]
++........................................................................ [ 35%]
++........................................................................ [ 42%]
++........................................................................ [ 49%]
++........................................................................ [ 56%]
++........................................................................ [ 64%]
++........................................................................ [ 71%]
++........................................................................ [ 78%]
++........................................................................ [ 85%]
++.................................................................s...... [ 92%]
++........................................................................ [ 99%]
++....                                                                     [100%]
++1011 passed, 4 skipped in 124.49s (0:02:04)
+diff --git a/docs/evidence/project_review_20260907/observer_status.json b/docs/evidence/project_review_20260907/observer_status.json
+new file mode 100644
+index 0000000..d0fcd9b
+--- /dev/null
++++ b/docs/evidence/project_review_20260907/observer_status.json
+@@ -0,0 +1,36 @@
++{
++  "updated_at": "2026-09-07T23:29:15.609119+00:00",
++  "protocol_id": "discovery-altcoin-absolute-profit-20260907-v6-reviewed",
++  "universe_mode": "all_current_spot_usdt",
++  "external_comparisons": false,
++  "mode": "tick",
++  "ledger_rows": 2,
++  "ledger_head": "9c3e303cf4e1d659f3eccec156ed74dd49d537f669253dc28ece256251fc5a35",
++  "prospective_decisions": 0,
++  "matured_observations": 0,
++  "first_entry_utc": "2026-09-14T00:00:00+00:00",
++  "last_due_utc": "2026-12-07T00:00:00+00:00",
++  "pilot_finished": false,
++  "observation_quality": {
++    "expected_slots": 12,
++    "due_slots": 0,
++    "known_due_weeks": 0,
++    "missing_due_weeks": 0,
++    "missing_slots": [],
++    "decision_status_counts": {},
++    "cash_due_weeks": 0,
++    "active_due_weeks": 0,
++    "selected_holdings": 0,
++    "coverage_complete_for_due_weeks": false,
++    "standardized_completed_week_profit_usdt": null,
++    "standardized_pilot_profit_usdt": null,
++    "accounting": "Sum of independent weekly marks at a fixed 5000 USDT sizing reference; not compounded account equity. Primary scenario assumes 10bps fees and 10bps extra slippage per leg, plus displayed book costs. Missing weeks are not zero.",
++    "quality": "AWAITING_NEW_OBSERVATIONS",
++    "realized_profit": null,
++    "investor_net_brl_profit": null
++  },
++  "last_run_error": null,
++  "execution_ready": false,
++  "formal_promotion": false,
++  "capital": false
++}
+\ No newline at end of file
+diff --git a/docs/evidence/project_review_20260907/package_validation.json b/docs/evidence/project_review_20260907/package_validation.json
+new file mode 100644
+index 0000000..6452552
+--- /dev/null
++++ b/docs/evidence/project_review_20260907/package_validation.json
+@@ -0,0 +1,14 @@
++{
++  "status": "PASS",
++  "packaged_file_hashes": 4665,
++  "selected_tests_passed": 62,
++  "reproduced_result_files_byte_identical": 6,
++  "forward_snapshot": "REPLAYED_FROM_SAVED_RESPONSES",
++  "forward_eligible": 44,
++  "forward_selected": [],
++  "public_requests_during_reproduction": 0,
++  "orders": false,
++  "archive_sha256": "99d2063d33b9e517b58c1c35e5fec2c16cd29b3f1f6b1a34ce15879c3439fbb3",
++  "archive_bytes": 73738508,
++  "package_source_commit": "51c5a88084c9cf77c36731c5a26eb1e6574a3d8f"
++}
+diff --git a/docs/evidence/project_review_20260907/protocol.json b/docs/evidence/project_review_20260907/protocol.json
+new file mode 100644
+index 0000000..a11aba8
+--- /dev/null
++++ b/docs/evidence/project_review_20260907/protocol.json
+@@ -0,0 +1,16 @@
++{
++  "id": "project-quality-review-20260907-v6",
++  "base_commit": "5d28a63c1b2a147d17054ace3914de698a7959a4",
++  "authorization": "User requests a complete final review, implementation of justified corrections, execution and validation, and an honest assessment of quality and profit.",
++  "mode": "SOFTWARE_AND_EVIDENCE_AUDIT",
++  "scope": ["Review all prior conclusions against the user's absolute-profit objective", "Recompute both original carry assets from frozen raw observations with Decimal and no external benchmark", "Revalidate existing historical results without model or threshold search", "Repair observer crash locking and add complete coverage-aware hypothetical accounting", "Validate installation, tests, lint, typing, build, package integrity and scheduled observation configuration"],
++  "economic_correction": "The previous passive carry rejection depended on a benchmark the user subsequently rejected. Preserve that original report and reclassify its same existing cashflows under absolute profit. A positive price-proxy scenario is not actual investor net profit or certified margin viability.",
++  "model": "Keep the existing scorer, training, ranking, eligibility and thresholds fixed. Zero historical entries is a failed demonstration of profitability, not justification for threshold tuning in this audit.",
++  "operational_amendment": "Version observer fixes in a separate v6 profile and data directory before any prospective decisions. Keep v4 protocol, freeze, data and ledgers intact; preserve scheduled dates and notification preferences.",
++  "new_historical_model_performance_searches": 0,
++  "already_consumed_evidence": true,
++  "independent_validation_claim": false,
++  "stopping_rule": "Complete justified fixes and their verification; publish favorable and unfavorable evidence together. No forced trades, unbounded strategy search, capital, leverage, production changes or reopened frozen families. Future outcomes cannot be manufactured during this audit.",
++  "capital_authorized": false,
++  "orders": false
++}
+diff --git a/docs/evidence/project_review_20260907/python_build.txt b/docs/evidence/project_review_20260907/python_build.txt
+new file mode 100644
+index 0000000..b5bb53c
+--- /dev/null
++++ b/docs/evidence/project_review_20260907/python_build.txt
+@@ -0,0 +1,6 @@
++* Creating isolated environment: virtualenv+pip...
++* Installing packages in isolated environment:
++  - hatchling>=1.27
++* Getting build dependencies for wheel...
++* Building wheel...
++Successfully built cripto_predictor-1.0.0-py3-none-any.whl
+diff --git a/docs/evidence/project_review_20260907/reconciliation.json b/docs/evidence/project_review_20260907/reconciliation.json
+new file mode 100644
+index 0000000..58598bd
+--- /dev/null
++++ b/docs/evidence/project_review_20260907/reconciliation.json
+@@ -0,0 +1,46 @@
++{
++  "live_preflight": {
++    "sample_size": 487,
++    "currently_trading_after_exclusions": 472,
++    "eligible": 44,
++    "selected": [],
++    "raw_response_hashes": 616,
++    "independent_book_entry_checks": 44,
++    "offline_snapshot_replay": "EXACT_EXCEPT_NEW_EXECUTION_TIMESTAMP_AND_LEDGER_LINK_FIELDS",
++    "freeze_sha256": "2bc8f67c704780acff78973404c7a8f5915d05d90f8b05bba72d16aa360a25f6",
++    "ledger_integrity": "PASS",
++    "prospective": false
++  },
++  "historical_replay": {
++    "status": "BYTE_IDENTICAL",
++    "sha256": {
++      "results.json": "9f70b6aa9a43d9541638d5f96a7b91c9383a3d0af5a265bce8be9bc75333dad0",
++      "weekly_results.json": "033c80a0d8fa1c9dc27670e49b5658e6e894fdd5fb4097f545b9fb5cb4f05132",
++      "decisions.json": "fc68054d7dd3cbb390d994068daa38433f85f1f9462b0684da4d832eb11981f2",
++      "scores.json.gz": "1e50d0009a24201c9c7a48752b86946838e43fa87956d7dbc025617e44d13243"
++    }
++  },
++  "protected_files_unchanged": {
++    "charters/scientific_state.json": "f9d20abdef2fa77df98784a90f5d4c2e1a45907e6438ffa9d8235e5a9e063c75",
++    "GarimpoInvestimentos/trials.json": "7193b15df347b8243a65ab92449503dd64f90a9777207aadc8c80da2e0ac844b",
++    "GarimpoInvestimentos/v3/costs.py": "8b35cbc6e000896720ca12c075e86938187cb826be0b573c81a42754aecf21e1",
++    "charters/h6_definition_frozen.json": "301c1acd549c99d543085486a5559414b00001290f1ae28a63cfa2b66aa0b23f",
++    "GarimpoInvestimentos/h6_status.json": "1ec2d8460466db156283a9a2535adbb579e811f8dd6e9881802980ce8d0482b1",
++    "CR_RESEARCH_FREEZE.md": "0bf34ab59e4111a1910a38a07387719727750f68e3bfb8504de866a2b43b4a26",
++    "CR_FREEZE_INDEX.md": "f24d05e8748f50302c37abd562356f2d7c5ce585482938cbdfc9c94fd0124820",
++    "scripts/prepare_altcoin_payoff.py": "0c349fe67d4466db008cf1728c57767ee01fce9c122f85e539eeff6f8af30ad0",
++    "scripts/research_altcoin_analogs.py": "22b5456ae7c56c09b51cb295b784fad7b9b5685241f9fa54a31e5cb6a1aa7626",
++    "docs/evidence/altcoin_profit_20260907/freeze.json": "4a98d527c43b4aa385cf1393353de64a0c35a60681e53b1e152f4d9faba941cf",
++    "docs/evidence/altcoin_profit_20260907/protocol.json": "f708725abc533404a1236dab4e0d2939d62c8471ab71888a99c10cc40cc7321b"
++  },
++  "prior_reproduction_archives_unchanged": {
++    "ALTCOINS_REPRODUCAO.zip": "56e24223d6e97e9240d7f0af907010b68ddaee6a734a12de7bf570fda8361789",
++    "CRIPTO_ACOMPANHAMENTO_REPRODUCAO.zip": "93d3a741ed0706eead5bdc2d17016d9484adb8b94d806aceb22a3fe4e92ae3eb",
++    "CRIPTO_CONTINUACAO_REPRODUCAO.zip": "2e3a7a5901baa6a29cd72a458a8c32b72792d8f4eb505a4af17e298277779db9",
++    "CRIPTO_LUCRO_ABSOLUTO_REPRODUCAO.zip": "079b160fd7596c791d1041c268e47591f91bba7c7915db352a4a32cffab51fc3",
++    "CRIPTO_TESTE_HISTORICO_REPRODUCAO.zip": "327a717ef910f39b38d4e2afc7abbffab236aace4846dd3a952aef09d2fe1983",
++    "FUNDING_CARRY_REPRODUCAO.zip": "d0a4444ce97b56ded07f290036181f6c6b41c45c5967c7b589a7ead21cb7997d"
++  },
++  "model_tuning": false,
++  "orders": false
++}
+diff --git a/docs/evidence/project_review_20260907/recovery_controls_before_fix.txt b/docs/evidence/project_review_20260907/recovery_controls_before_fix.txt
+new file mode 100644
+index 0000000..001a16d
+--- /dev/null
++++ b/docs/evidence/project_review_20260907/recovery_controls_before_fix.txt
+@@ -0,0 +1,143 @@
++FFFFFFF                                                                  [100%]
++================================== FAILURES ===================================
++________ test_os_lock_is_released_after_process_exits_without_finally _________
++
++tmp_path = WindowsPath('C:/Users/Superleo13/AppData/Local/Temp/pytest-of-Superleo13/pytest-2624/test_os_lock_is_released_after0')
++
++    def test_os_lock_is_released_after_process_exits_without_finally(tmp_path):
++        code = (
++            "import os, sys; from pathlib import Path; "
++            "from scripts.observe_altcoin_forward import exclusive; "
++            "guard = exclusive(Path(sys.argv[1])); guard.__enter__(); os._exit(0)"
++        )
++        subprocess.run([sys.executable, "-c", code, str(tmp_path)], check=True, cwd=f.ROOT)
++>       with f.exclusive(tmp_path):
++             ^^^^^^^^^^^^^^^^^^^^^
++
++tests\test_altcoin_observer_review.py:31:
++_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
++..\..\..\..\..\..\AppData\Roaming\uv\python\cpython-3.13-windows-x86_64-none\Lib\contextlib.py:141: in __enter__
++    return next(self.gen)
++           ^^^^^^^^^^^^^^
++_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
++
++directory = WindowsPath('C:/Users/Superleo13/AppData/Local/Temp/pytest-of-Superleo13/pytest-2624/test_os_lock_is_released_after0')
++
++    @contextmanager
++    def exclusive(directory: Path):
++        directory.mkdir(parents=True, exist_ok=True)
++        lock = directory / "observer.lock"
++>       fd = os.open(lock, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
++             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
++E       FileExistsError: [Errno 17] File exists: 'C:\\Users\\Superleo13\\AppData\\Local\\Temp\\pytest-of-Superleo13\\pytest-2624\\test_os_lock_is_released_after0\\observer.lock'
++
++scripts\observe_altcoin_forward.py:59: FileExistsError
++__________ test_existing_unlocked_lock_file_is_not_a_running_process __________
++
++tmp_path = WindowsPath('C:/Users/Superleo13/AppData/Local/Temp/pytest-of-Superleo13/pytest-2624/test_existing_unlocked_lock_fi0')
++
++    def test_existing_unlocked_lock_file_is_not_a_running_process(tmp_path):
++        (tmp_path / "observer.lock").write_text('{"pid":99999999}')
++>       with f.exclusive(tmp_path):
++             ^^^^^^^^^^^^^^^^^^^^^
++
++tests\test_altcoin_observer_review.py:39:
++_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
++..\..\..\..\..\..\AppData\Roaming\uv\python\cpython-3.13-windows-x86_64-none\Lib\contextlib.py:141: in __enter__
++    return next(self.gen)
++           ^^^^^^^^^^^^^^
++_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
++
++directory = WindowsPath('C:/Users/Superleo13/AppData/Local/Temp/pytest-of-Superleo13/pytest-2624/test_existing_unlocked_lock_fi0')
++
++    @contextmanager
++    def exclusive(directory: Path):
++        directory.mkdir(parents=True, exist_ok=True)
++        lock = directory / "observer.lock"
++>       fd = os.open(lock, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
++             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
++E       FileExistsError: [Errno 17] File exists: 'C:\\Users\\Superleo13\\AppData\\Local\\Temp\\pytest-of-Superleo13\\pytest-2624\\test_existing_unlocked_lock_fi0\\observer.lock'
++
++scripts\observe_altcoin_forward.py:59: FileExistsError
++_______________ test_no_observations_does_not_claim_zero_profit _______________
++
++tmp_path = WindowsPath('C:/Users/Superleo13/AppData/Local/Temp/pytest-of-Superleo13/pytest-2624/test_no_observations_does_not_0')
++
++    def test_no_observations_does_not_claim_zero_profit(tmp_path):
++>       summary = f.observation_quality(f.Ledger(tmp_path / "ledger.jsonl"), protocol(),
++                  ^^^^^^^^^^^^^^^^^^^^^
++                                        datetime(2026, 9, 7, tzinfo=UTC))
++E       AttributeError: module 'scripts.observe_altcoin_forward' has no attribute 'observation_quality'
++
++tests\test_altcoin_observer_review.py:56: AttributeError
++__________________ test_all_missed_slots_are_unknown_profit ___________________
++
++tmp_path = WindowsPath('C:/Users/Superleo13/AppData/Local/Temp/pytest-of-Superleo13/pytest-2624/test_all_missed_slots_are_unkn0')
++
++    def test_all_missed_slots_are_unknown_profit(tmp_path):
++        config = protocol()
++        log = f.Ledger(tmp_path / "ledger.jsonl")
++        first = datetime.fromisoformat(config["start_utc"])
++        for i in range(12):
++            log.append("DECISION", (first + timedelta(weeks=i)).isoformat(),
++                       {"status": "MISSED_ENTRY", "prospective": False})
++>       summary = f.observation_quality(log, config, first + timedelta(weeks=12))
++                  ^^^^^^^^^^^^^^^^^^^^^
++E       AttributeError: module 'scripts.observe_altcoin_forward' has no attribute 'observation_quality'
++
++tests\test_altcoin_observer_review.py:71: AttributeError
++_______________ test_cash_weeks_do_not_count_as_winning_trades ________________
++
++tmp_path = WindowsPath('C:/Users/Superleo13/AppData/Local/Temp/pytest-of-Superleo13/pytest-2624/test_cash_weeks_do_not_count_a0')
++
++    def test_cash_weeks_do_not_count_as_winning_trades(tmp_path):
++        config = protocol()
++        log = f.Ledger(tmp_path / "ledger.jsonl")
++        first = datetime.fromisoformat(config["start_utc"])
++        for i in range(12):
++            record(log, (first + timedelta(weeks=i)).isoformat(), 0)
++>       summary = f.observation_quality(log, config, first + timedelta(weeks=12))
++                  ^^^^^^^^^^^^^^^^^^^^^
++E       AttributeError: module 'scripts.observe_altcoin_forward' has no attribute 'observation_quality'
++
++tests\test_altcoin_observer_review.py:84: AttributeError
++_____________ test_partial_profit_does_not_erase_missing_due_week _____________
++
++tmp_path = WindowsPath('C:/Users/Superleo13/AppData/Local/Temp/pytest-of-Superleo13/pytest-2624/test_partial_profit_does_not_e0')
++
++    def test_partial_profit_does_not_erase_missing_due_week(tmp_path):
++        config = protocol()
++        log = f.Ledger(tmp_path / "ledger.jsonl")
++        first = datetime.fromisoformat(config["start_utc"])
++        record(log, first.isoformat(), 0.01, ("AUSDT",))
++        record(log, (first + timedelta(weeks=1)).isoformat(), None, ("BUSDT",))
++>       summary = f.observation_quality(log, config, first + timedelta(weeks=2))
++                  ^^^^^^^^^^^^^^^^^^^^^
++E       AttributeError: module 'scripts.observe_altcoin_forward' has no attribute 'observation_quality'
++
++tests\test_altcoin_observer_review.py:98: AttributeError
++______________ test_incompatible_status_and_return_are_rejected _______________
++
++tmp_path = WindowsPath('C:/Users/Superleo13/AppData/Local/Temp/pytest-of-Superleo13/pytest-2624/test_incompatible_status_and_r0')
++
++    def test_incompatible_status_and_return_are_rejected(tmp_path):
++        config = protocol()
++        log = f.Ledger(tmp_path / "ledger.jsonl")
++        slot = config["start_utc"]
++        record(log, slot, 0.01, ("AUSDT",))
++        log.rows[-1]["payload"]["portfolios"]["payoff"]["status"] = "CENSORED"
++        with pytest.raises(ValueError, match="status/return"):
++>           f.observation_quality(log, config, datetime(2026, 9, 21, tzinfo=UTC))
++            ^^^^^^^^^^^^^^^^^^^^^
++E           AttributeError: module 'scripts.observe_altcoin_forward' has no attribute 'observation_quality'
++
++tests\test_altcoin_observer_review.py:113: AttributeError
++=========================== short test summary info ===========================
++FAILED tests/test_altcoin_observer_review.py::test_os_lock_is_released_after_process_exits_without_finally
++FAILED tests/test_altcoin_observer_review.py::test_existing_unlocked_lock_file_is_not_a_running_process
++FAILED tests/test_altcoin_observer_review.py::test_no_observations_does_not_claim_zero_profit
++FAILED tests/test_altcoin_observer_review.py::test_all_missed_slots_are_unknown_profit
++FAILED tests/test_altcoin_observer_review.py::test_cash_weeks_do_not_count_as_winning_trades
++FAILED tests/test_altcoin_observer_review.py::test_partial_profit_does_not_erase_missing_due_week
++FAILED tests/test_altcoin_observer_review.py::test_incompatible_status_and_return_are_rejected
++7 failed in 2.60s
+diff --git a/docs/evidence/project_review_20260907/retrospective_audit.json b/docs/evidence/project_review_20260907/retrospective_audit.json
+new file mode 100644
+index 0000000..3643eb0
+--- /dev/null
++++ b/docs/evidence/project_review_20260907/retrospective_audit.json
+@@ -0,0 +1,22 @@
++{
++  "raw_response_hash_checks": 1133,
++  "raw_retrieval_interval": [
++    "2026-09-07T18:50:08.596033+00:00",
++    "2026-09-07T22:26:11.828067+00:00"
++  ],
++  "raw_bars_used_in_independent_feature_checks": 3881,
++  "independent_raw_feature_vectors": 32,
++  "independent_numpy_neighbor_and_stdlib_score_checks": 32,
++  "neighbor_boundary_ties": 0,
++  "max_feature_difference": 3.3306690738754696e-16,
++  "max_score_difference": 2.7755575615628914e-17,
++  "decimal_weekly_portfolio_checks": 560,
++  "selected_trade_price_return_checks": 0,
++  "selected_trade_price_check_limitation": "Zero selected trades means there are no executed-position price returns to audit, not evidence of perfect fills.",
++  "partial_or_placeholder_candles": 200,
++  "qualifying_before_minimum_universe": 0,
++  "positive_neighbor_mean_before_uncertainty_penalty": 1448,
++  "software_validation": "Recorded separately in validation.json; this auditor does not run pytest, Ruff or Pyright.",
++  "outcome": "SAVED_RESULT_CONFIRMED",
++  "formal_attestation": false
++}
+\ No newline at end of file
+diff --git a/docs/evidence/project_review_20260907/runtime_integrity.json b/docs/evidence/project_review_20260907/runtime_integrity.json
+new file mode 100644
+index 0000000..3e36033
+--- /dev/null
++++ b/docs/evidence/project_review_20260907/runtime_integrity.json
+@@ -0,0 +1,50 @@
++{
++  "numpy": {
++    "version": "2.5.1",
++    "files_checked": 950,
++    "missing": [],
++    "mismatches": []
++  },
++  "scikit-learn": {
++    "version": "1.9.0",
++    "files_checked": 1060,
++    "missing": [],
++    "mismatches": []
++  },
++  "scipy": {
++    "version": "1.18.0",
++    "files_checked": 1536,
++    "missing": [],
++    "mismatches": []
++  },
++  "httpx": {
++    "version": "0.28.1",
++    "files_checked": 31,
++    "missing": [],
++    "mismatches": []
++  },
++  "predictor-core": {
++    "version": "3.2.0",
++    "files_checked": 46,
++    "missing": [],
++    "mismatches": []
++  },
++  "predictor-ops": {
++    "version": "4.1.0",
++    "files_checked": 20,
++    "missing": [],
++    "mismatches": []
++  },
++  "distlib": {
++    "version": "0.4.3",
++    "files_checked": 27,
++    "missing": [],
++    "mismatches": []
++  },
++  "virtualenv": {
++    "version": "21.7.1",
++    "files_checked": 115,
++    "missing": [],
++    "mismatches": []
++  }
++}
+diff --git a/docs/evidence/project_review_20260907/runtime_integrity_before.json b/docs/evidence/project_review_20260907/runtime_integrity_before.json
+new file mode 100644
+index 0000000..5d816d9
+--- /dev/null
++++ b/docs/evidence/project_review_20260907/runtime_integrity_before.json
+@@ -0,0 +1,280 @@
++{
++  "numpy": {
++    "version": "2.5.1",
++    "files_checked": 950,
++    "missing": [],
++    "mismatches": []
++  },
++  "scikit-learn": {
++    "version": "1.9.0",
++    "files_checked": 1060,
++    "missing": [],
++    "mismatches": []
++  },
++  "scipy": {
++    "version": "1.18.0",
++    "files_checked": 1536,
++    "missing": [],
++    "mismatches": []
++  },
++  "httpx": {
++    "version": "0.28.1",
++    "files_checked": 31,
++    "missing": [],
++    "mismatches": []
++  },
++  "predictor-core": {
++    "version": "3.2.0",
++    "files_checked": 46,
++    "missing": [],
++    "mismatches": []
++  },
++  "predictor-ops": {
++    "version": "4.1.0",
++    "files_checked": 20,
++    "missing": [],
++    "mismatches": []
++  },
++  "distlib": {
++    "version": "0.4.3",
++    "files_checked": 25,
++    "missing": [],
++    "mismatches": [
++      {
++        "path": "distlib/__init__.py",
++        "matches_after_lf_normalization": false
++      },
++      {
++        "path": "distlib/compat.py",
++        "matches_after_lf_normalization": false
++      },
++      {
++        "path": "distlib/database.py",
++        "matches_after_lf_normalization": false
++      },
++      {
++        "path": "distlib/index.py",
++        "matches_after_lf_normalization": false
++      },
++      {
++        "path": "distlib/locators.py",
++        "matches_after_lf_normalization": false
++      },
++      {
++        "path": "distlib/manifest.py",
++        "matches_after_lf_normalization": false
++      },
++      {
++        "path": "distlib/markers.py",
++        "matches_after_lf_normalization": false
++      },
++      {
++        "path": "distlib/metadata.py",
++        "matches_after_lf_normalization": false
++      },
++      {
++        "path": "distlib/resources.py",
++        "matches_after_lf_normalization": false
++      },
++      {
++        "path": "distlib/scripts.py",
++        "matches_after_lf_normalization": false
++      },
++      {
++        "path": "distlib/util.py",
++        "matches_after_lf_normalization": false
++      },
++      {
++        "path": "distlib/version.py",
++        "matches_after_lf_normalization": false
++      },
++      {
++        "path": "distlib/wheel.py",
++        "matches_after_lf_normalization": false
++      }
++    ]
++  },
++  "virtualenv": {
++    "version": "21.7.1",
++    "files_checked": 113,
++    "missing": [],
++    "mismatches": [
++      {
++        "path": "virtualenv/__main__.py",
++        "matches_after_lf_normalization": false
++      },
++      {
++        "path": "virtualenv/activation/activator.py",
++        "matches_after_lf_normalization": false
++      },
++      {
++        "path": "virtualenv/activation/bash/__init__.py",
++        "matches_after_lf_normalization": false
++      },
++      {
++        "path": "virtualenv/activation/batch/__init__.py",
++        "matches_after_lf_normalization": false
++      },
++      {
++        "path": "virtualenv/activation/fish/__init__.py",
++        "matches_after_lf_normalization": false
++      },
++      {
++        "path": "virtualenv/activation/python/__init__.py",
++        "matches_after_lf_normalization": false
++      },
++      {
++        "path": "virtualenv/activation/via_template.py",
++        "matches_after_lf_normalization": false
++      },
++      {
++        "path": "virtualenv/activation/xonsh/__init__.py",
++        "matches_after_lf_normalization": false
++      },
++      {
++        "path": "virtualenv/app_data/__init__.py",
++        "matches_after_lf_normalization": false
++      },
++      {
++        "path": "virtualenv/app_data/via_disk_folder.py",
++        "matches_after_lf_normalization": false
++      },
++      {
++        "path": "virtualenv/config/cli/parser.py",
++        "matches_after_lf_normalization": false
++      },
++      {
++        "path": "virtualenv/config/convert.py",
++        "matches_after_lf_normalization": false
++      },
++      {
++        "path": "virtualenv/config/ini.py",
++        "matches_after_lf_normalization": false
++      },
++      {
++        "path": "virtualenv/create/creator.py",
++        "matches_after_lf_normalization": false
++      },
++      {
++        "path": "virtualenv/create/describe.py",
++        "matches_after_lf_normalization": false
++      },
++      {
++        "path": "virtualenv/create/pyenv_cfg.py",
++        "matches_after_lf_normalization": false
++      },
++      {
++        "path": "virtualenv/create/via_global_ref/api.py",
++        "matches_after_lf_normalization": false
++      },
++      {
++        "path": "virtualenv/create/via_global_ref/builtin/cpython/common.py",
++        "matches_after_lf_normalization": false
++      },
++      {
++        "path": "virtualenv/create/via_global_ref/builtin/cpython/cpython3.py",
++        "matches_after_lf_normalization": false
++      },
++      {
++        "path": "virtualenv/create/via_global_ref/builtin/cpython/mac_os.py",
++        "matches_after_lf_normalization": false
++      },
++      {
++        "path": "virtualenv/create/via_global_ref/builtin/graalpy/__init__.py",
++        "matches_after_lf_normalization": false
++      },
++      {
++        "path": "virtualenv/create/via_global_ref/builtin/pypy/common.py",
++        "matches_after_lf_normalization": false
++      },
++      {
++        "path": "virtualenv/create/via_global_ref/builtin/ref.py",
++        "matches_after_lf_normalization": false
++      },
++      {
++        "path": "virtualenv/create/via_global_ref/builtin/rustpython/__init__.py",
++        "matches_after_lf_normalization": false
++      },
++      {
++        "path": "virtualenv/create/via_global_ref/builtin/via_global_self_do.py",
++        "matches_after_lf_normalization": false
++      },
++      {
++        "path": "virtualenv/create/via_global_ref/store.py",
++        "matches_after_lf_normalization": false
++      },
++      {
++        "path": "virtualenv/create/via_global_ref/venv.py",
++        "matches_after_lf_normalization": false
++      },
++      {
++        "path": "virtualenv/run/__init__.py",
++        "matches_after_lf_normalization": false
++      },
++      {
++        "path": "virtualenv/run/plugin/activators.py",
++        "matches_after_lf_normalization": false
++      },
++      {
++        "path": "virtualenv/run/plugin/base.py",
++        "matches_after_lf_normalization": false
++      },
++      {
++        "path": "virtualenv/run/plugin/creators.py",
++        "matches_after_lf_normalization": false
++      },
++      {
++        "path": "virtualenv/run/session.py",
++        "matches_after_lf_normalization": false
++      },
++      {
++        "path": "virtualenv/seed/embed/base_embed.py",
++        "matches_after_lf_normalization": false
++      },
++      {
++        "path": "virtualenv/seed/embed/pip_invoke.py",
++        "matches_after_lf_normalization": false
++      },
++      {
++        "path": "virtualenv/seed/embed/via_app_data/pip_install/base.py",
++        "matches_after_lf_normalization": false
++      },
++      {
++        "path": "virtualenv/seed/embed/via_app_data/pip_install/copy.py",
++        "matches_after_lf_normalization": false
++      },
++      {
++        "path": "virtualenv/seed/embed/via_app_data/via_app_data.py",
++        "matches_after_lf_normalization": false
++      },
++      {
++        "path": "virtualenv/seed/seeder.py",
++        "matches_after_lf_normalization": false
++      },
++      {
++        "path": "virtualenv/seed/wheels/acquire.py",
++        "matches_after_lf_normalization": false
++      },
++      {
++        "path": "virtualenv/seed/wheels/bundle.py",
++        "matches_after_lf_normalization": false
++      },
++      {
++        "path": "virtualenv/seed/wheels/periodic_update.py",
++        "matches_after_lf_normalization": false
++      },
++      {
++        "path": "virtualenv/seed/wheels/util.py",
++        "matches_after_lf_normalization": false
++      },
++      {
++        "path": "virtualenv/util/lock.py",
++        "matches_after_lf_normalization": false
++      },
++      {
++        "path": "virtualenv/version.py",
++        "matches_after_lf_normalization": false
++      }
++    ]
++  }
++}
+\ No newline at end of file
+diff --git a/docs/evidence/project_review_20260907/runtime_repair.json b/docs/evidence/project_review_20260907/runtime_repair.json
+new file mode 100644
+index 0000000..3df9712
+--- /dev/null
++++ b/docs/evidence/project_review_20260907/runtime_repair.json
+@@ -0,0 +1,14 @@
++[
++  {
++    "package": "distlib",
++    "version": "0.4.3",
++    "sha256": "4b0ce306c966eb73bc3a7b6abad017c556dadd92c44701562cd528ac7fde4d5b",
++    "url": "https://files.pythonhosted.org/packages/02/08/9c41fb51ab5b43eb21674aff13df270e8ba6c4b29c8624e328dc7a9482af/distlib-0.4.3-py2.py3-none-any.whl"
++  },
++  {
++    "package": "virtualenv",
++    "version": "21.7.1",
++    "sha256": "6394973f990536e34c05157179146c020284c42fe01da1dfeb0ba16c345280d9",
++    "url": "https://files.pythonhosted.org/packages/4b/a7/ded126c19495158a05c7202b3389139839d4cf78d622d453867778e0f7a8/virtualenv-21.7.1-py3-none-any.whl"
++  }
++]
+\ No newline at end of file
+diff --git a/docs/evidence/project_review_20260907/secret_scan.json b/docs/evidence/project_review_20260907/secret_scan.json
+new file mode 100644
+index 0000000..6fd3b2c
+--- /dev/null
++++ b/docs/evidence/project_review_20260907/secret_scan.json
+@@ -0,0 +1,4 @@
++{
++  "finding_count": 0,
++  "findings": []
++}
+diff --git a/docs/evidence/project_review_20260907/uv_build.txt b/docs/evidence/project_review_20260907/uv_build.txt
+new file mode 100644
+index 0000000..6f8f99c
+--- /dev/null
++++ b/docs/evidence/project_review_20260907/uv_build.txt
+@@ -0,0 +1,2 @@
++Building wheel...
++Successfully built C:\Users\Superleo13\Documents\Codex\2026-09-07\files-mentioned-by-the-user-cripto\work\review-build\cripto_predictor-1.0.0-py3-none-any.whl
+diff --git a/docs/evidence/project_review_20260907/validation.json b/docs/evidence/project_review_20260907/validation.json
+new file mode 100644
+index 0000000..8c31437
+--- /dev/null
++++ b/docs/evidence/project_review_20260907/validation.json
+@@ -0,0 +1,43 @@
++{
++  "as_of_utc": "2026-09-07T23:34:17.240708+00:00",
++  "base_commit": "5d28a63c1b2a147d17054ace3914de698a7959a4",
++  "full_suite": {
++    "passed": 1045,
++    "failed": 0,
++    "skipped": 0,
++    "source": "full_tests.txt"
++  },
++  "isolated_minimal_ci_profile": {
++    "passed": 1011,
++    "skipped": 4,
++    "extras": [
++      "test",
++      "science"
++    ],
++    "source": "minimal_ci_tests.txt"
++  },
++  "observer_review_controls": {
++    "passed": 28,
++    "includes": "OS lock crash recovery, concurrency, missingness, full 12-slot lifecycle, loss accounting and idempotency"
++  },
++  "ruff": "PASS",
++  "ruff_format": "PASS",
++  "pyright": "PASS",
++  "build_uv": "PASS",
++  "build_python_isolated": "PASS_AFTER_EXACT_RUNTIME_REPAIR",
++  "installed_wheel_outside_checkout": "PASS",
++  "wheel_sha256": "90c7e91417dfc62c715940f375cae6e965b53249773053584a786b83a6489e19",
++  "runtime_integrity": {
++    "status": "PASS",
++    "files_checked": 3785
++  },
++  "secret_scan_findings": 0,
++  "historical_replay": "BYTE_IDENTICAL",
++  "live_snapshot_offline_replay": "PASS",
++  "docker": "NOT_VALIDATED: daemon unavailable; Windows denied service startup",
++  "remote_ci": "NOT_EXECUTED",
++  "posix_lock_branch": "NOT_EXECUTED_ON_WINDOWS",
++  "new_model_searches": 0,
++  "profit_attestation": false,
++  "capital": false
++}
+diff --git a/scripts/observe_altcoin_forward.py b/scripts/observe_altcoin_forward.py
+index f0a16e3..e358625 100644
+--- a/scripts/observe_altcoin_forward.py
++++ b/scripts/observe_altcoin_forward.py
+@@ -14,6 +14,7 @@ import math
+ import os
+ import time
+ import uuid
++from collections import Counter
+ from concurrent.futures import ThreadPoolExecutor
+ from contextlib import contextmanager
+ from datetime import UTC, datetime, timedelta
+@@ -23,6 +24,11 @@ from pathlib import Path
+ import httpx
+ import numpy as np
+ 
++if os.name == "nt":
++    import msvcrt
++else:
++    import fcntl
++
+ from scripts.collect_altcoin_analogs import time_ms
+ from scripts.prepare_altcoin_payoff import is_known_leveraged_symbol, payoff_summary
+ from scripts.research_altcoin_analogs import AnalogModel, extract_features
+@@ -56,14 +62,27 @@ def write_json(path: Path, value) -> None:
+ def exclusive(directory: Path):
+     directory.mkdir(parents=True, exist_ok=True)
+     lock = directory / "observer.lock"
+-    fd = os.open(lock, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
++    # Keep a stable inode: removing a lock file can let concurrent processes
++    # lock different files at the same path. The OS releases this lock on crash.
++    fd = os.open(lock, os.O_CREAT | os.O_RDWR)
+     try:
++        if os.fstat(fd).st_size == 0:
++            os.write(fd, b" ")
++        os.lseek(fd, 0, os.SEEK_SET)
++        try:
++            if os.name == "nt":
++                msvcrt.locking(fd, msvcrt.LK_NBLCK, 1)
++            else:
++                fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
++        except OSError as error:
++            raise FileExistsError("observer already running") from error
++        os.ftruncate(fd, 0)
++        os.lseek(fd, 0, os.SEEK_SET)
+         os.write(fd, encoded({"pid": os.getpid(), "known_at": now().isoformat()}))
+         os.fsync(fd)
+         yield
+     finally:
+         os.close(fd)
+-        lock.unlink()
+ 
+ 
+ class Ledger:
+@@ -571,6 +590,113 @@ def verify_freeze(base_data: Path, training: Path, evidence: Path = EVIDENCE):
+     return sha((evidence / "freeze.json").read_bytes())
+ 
+ 
++def observation_quality(ledger: Ledger, protocol: dict, instant: datetime) -> dict:
++    """Describe fixed-5000 weekly observations, preserving every missing slot.
++
++    Each entry uses 5000 USDT as a sizing reference again. Summed weekly marks
++    are not the compounded equity of a funded account with changing sizes.
++    """
++    first = datetime.fromisoformat(protocol["start_utc"])
++    last = datetime.fromisoformat(protocol["last_entry_utc"])
++    slots = [first + timedelta(weeks=i) for i in range((last - first).days // 7 + 1)]
++    known, missing, statuses = [], [], Counter()
++    cash_due = active_due = selected_count = 0
++    for anchor in slots:
++        slot = anchor.isoformat()
++        decision = ledger.find("DECISION", slot)
++        selected = []
++        if decision:
++            statuses[decision["payload"]["status"]] += 1
++            selected = (
++                decision["payload"].get("portfolios", {}).get("payoff", {}).get("positions", [])
++            )
++            selected_count += len(selected)
++        if instant < anchor + timedelta(days=7):
++            continue
++        outcome = ledger.find("OUTCOME", slot)
++        result = None if outcome is None else outcome["payload"]["portfolios"]["payoff"]
++        value = None if result is None else result["net_return_by_extra_slippage_bps"]["10"]
++        if result is not None and ((value is None) != (result["status"] == "CENSORED")):
++            raise ValueError("outcome status/return mismatch")
++        if value is None:
++            missing.append(
++                {
++                    "slot": slot,
++                    "reason": result["status"]
++                    if result
++                    else decision["payload"]["status"]
++                    if decision
++                    else "NO_DECISION",
++                }
++            )
++            continue
++        if not decision or not decision["payload"].get("prospective"):
++            raise ValueError("outcome lacks a prospective decision")
++        if not math.isfinite(value) or value < -1 or (not selected and value != 0):
++            raise ValueError("invalid observed return or nonzero cash return")
++        known.append(Decimal(str(value)) * 5000)
++        active_due += bool(selected)
++        cash_due += not selected
++    due = len(known) + len(missing)
++    observed_sum = float(sum(known, Decimal(0))) if known else None
++    all_complete = due == len(slots) and not missing
++    return {
++        "expected_slots": len(slots),
++        "due_slots": due,
++        "known_due_weeks": len(known),
++        "missing_due_weeks": len(missing),
++        "missing_slots": missing,
++        "decision_status_counts": dict(statuses),
++        "cash_due_weeks": cash_due,
++        "active_due_weeks": active_due,
++        "selected_holdings": selected_count,
++        "coverage_complete_for_due_weeks": bool(due) and not missing,
++        "standardized_completed_week_profit_usdt": observed_sum,
++        "standardized_pilot_profit_usdt": observed_sum if all_complete else None,
++        "accounting": "Sum of independent weekly marks at a fixed 5000 USDT sizing reference; not compounded account equity. Primary scenario assumes 10bps fees and 10bps extra slippage per leg, plus displayed book costs. Missing weeks are not zero.",
++        "quality": "INCOMPLETE_OBSERVATIONS"
++        if missing
++        else "AWAITING_NEW_OBSERVATIONS"
++        if not known
++        else "NO_TRADING_EVIDENCE_RULE_ABSTAINS"
++        if not active_due
++        else "POSITIVE_HYPOTHETICAL_MARKS_NOT_VERIFIED_PROFIT"
++        if observed_sum is not None and observed_sum > 0
++        else "NONPOSITIVE_HYPOTHETICAL_MARKS",
++        "realized_profit": None,
++        "investor_net_brl_profit": None,
++    }
++
++
++def save_status(args, ledger, protocol, error=None):
++    summary = {
++        "updated_at": now().isoformat(),
++        "protocol_id": protocol["id"],
++        "universe_mode": protocol.get("universe_mode", "legacy_sample"),
++        "external_comparisons": protocol.get("comparisons", True),
++        "mode": args.mode,
++        "ledger_rows": len(ledger.rows),
++        "ledger_head": ledger.rows[-1]["sha256"] if ledger.rows else None,
++        "prospective_decisions": sum(
++            r["kind"] == "DECISION" and r["payload"].get("prospective") is True for r in ledger.rows
++        ),
++        "matured_observations": sum(r["kind"] == "OUTCOME" for r in ledger.rows),
++        "first_entry_utc": protocol["start_utc"],
++        "last_due_utc": protocol["last_due_utc"],
++        "pilot_finished": now() >= datetime.fromisoformat(protocol["last_due_utc"])
++        and all(
++            ledger.find("OUTCOME", r["slot"]) for r in ledger.rows if r["kind"] == "ENTRY_MARKS"
++        ),
++        "observation_quality": observation_quality(ledger, protocol, now()),
++        "last_run_error": error,
++        "execution_ready": False,
++        "formal_promotion": False,
++        "capital": False,
++    }
++    write_json(args.data_dir / "status.json", summary)
++    return summary
++
++
+ def run(args):
+     evidence = getattr(args, "evidence_dir", EVIDENCE)
+     freeze_hash = verify_freeze(args.base_data_dir, args.training, evidence)
+@@ -691,33 +817,11 @@ def run(args):
+                             },
+                         )
+                     slot_time += timedelta(days=7)
+-            summary = {
+-                "updated_at": now().isoformat(),
+-                "protocol_id": protocol["id"],
+-                "universe_mode": universe_mode,
+-                "external_comparisons": comparisons,
+-                "mode": args.mode,
+-                "ledger_rows": len(ledger.rows),
+-                "ledger_head": ledger.rows[-1]["sha256"] if ledger.rows else None,
+-                "prospective_decisions": sum(
+-                    r["kind"] == "DECISION" and r["payload"].get("prospective") is True
+-                    for r in ledger.rows
+-                ),
+-                "matured_observations": sum(r["kind"] == "OUTCOME" for r in ledger.rows),
+-                "first_entry_utc": protocol["start_utc"],
+-                "last_due_utc": protocol["last_due_utc"],
+-                "pilot_finished": now() >= datetime.fromisoformat(protocol["last_due_utc"])
+-                and all(
+-                    ledger.find("OUTCOME", r["slot"])
+-                    for r in ledger.rows
+-                    if r["kind"] == "ENTRY_MARKS"
+-                ),
+-                "execution_ready": False,
+-                "formal_promotion": False,
+-                "capital": False,
+-            }
+-            write_json(args.data_dir / "status.json", summary)
++            summary = save_status(args, ledger, protocol)
+             print(json.dumps(summary, indent=2))
++        except (httpx.HTTPError, ValueError, KeyError) as error:
++            save_status(args, ledger, protocol, f"{type(error).__name__}: {error}")
++            raise
+         finally:
+             source.close()
+ 
+diff --git a/scripts/review_carry_absolute_profit.py b/scripts/review_carry_absolute_profit.py
+new file mode 100644
+index 0000000..6a17179
+--- /dev/null
++++ b/scripts/review_carry_absolute_profit.py
+@@ -0,0 +1,169 @@
++"""Independent Decimal reconciliation of the two already-observed carry cases.
++
++No new markets, periods, trades or tuned parameters. No outside benchmark.
++"""
++
++from __future__ import annotations
++
++import argparse
++import hashlib
++import json
++from datetime import UTC, datetime
++from decimal import Decimal, localcontext
++from pathlib import Path
++
++END = int(datetime(2026, 9, 7, tzinfo=UTC).timestamp() * 1000)
++DAY = 86_400_000
++START = END - 365 * DAY
++SLOT = 8 * 3_600_000
++
++
++def read(path):
++    return json.loads(path.read_text(encoding="utf-8"))
++
++
++def review(directory: Path):
++    manifest = read(directory / "manifest.json")
++    checked = []
++    for row in manifest:
++        if row["artifact"].startswith(("BTCUSDT_", "ETHUSDT_")):
++            path = directory / row["artifact"]
++            if hashlib.sha256(path.read_bytes()).hexdigest() != row["sha256"]:
++                raise ValueError("raw source changed: " + row["artifact"])
++            checked.append(row)
++    if len(checked) != 8:
++        raise ValueError("expected eight original raw responses")
++    original = read(directory / "results.json")
++    assets = {}
++    for symbol in ("BTCUSDT", "ETHUSDT"):
++        raw = sorted(
++            read(directory / f"{symbol}_funding_0.json")
++            + read(directory / f"{symbol}_funding_1.json"),
++            key=lambda r: r["fundingTime"],
++        )
++        if raw != read(directory / f"{symbol}_funding.json"):
++            raise ValueError("normalized funding differs from original responses")
++        buckets = [r["fundingTime"] // SLOT for r in raw]
++        if buckets != list(range(START // SLOT, END // SLOT)):
++            raise ValueError("missing, duplicated or out-of-period funding")
++        if any(not START <= r["fundingTime"] < END for r in raw):
++            raise ValueError("future funding")
++        bars = {}
++        for kind in ("spot", "mark"):
++            rows = read(directory / f"{symbol}_{kind}_daily.json")
++            if [r[0] for r in rows] != list(range(START, END + DAY, DAY)):
++                raise ValueError("incomplete daily price endpoints")
++            bars[kind] = rows
++        # Only the opening field at the final cutoff is read. Later fields of
++        # that candle cannot enter this accounting.
++        s0, s1 = (Decimal(bars["spot"][i][1]) for i in (0, -1))
++        f0, f1 = (Decimal(bars["mark"][i][1]) for i in (0, -1))
++        quantity = Decimal(2500) / s0
++        eligible = [r for r in raw if r["fundingTime"] // SLOT > START // SLOT]
++        funding = sum(
++            (quantity * Decimal(r["markPrice"]) * Decimal(r["fundingRate"]) for r in eligible),
++            Decimal(0),
++        )
++        spot_pnl = quantity * (s1 - s0)
++        short_pnl = quantity * (f0 - f1)
++        basis = quantity * ((f0 - s0) - (f1 - s1))
++        if abs(spot_pnl + short_pnl - basis) > Decimal("1e-25"):
++            raise ValueError("hedged P&L identity does not reconcile")
++        fees = quantity * (Decimal("0.001") * (s0 + s1) + Decimal("0.0005") * (f0 + f1))
++        four_legs = quantity * (s0 + s1 + f0 + f1)
++        slip = four_legs * Decimal("0.0005")
++        net = funding + basis - fees - slip
++        if abs(
++            net - Decimal(str(original["assets"][symbol]["fixed_quantity"]["net_scenario_usdt"]))
++        ) > Decimal("1e-8"):
++            raise ValueError("independent calculation differs from saved result")
++        scenarios = []
++        for slip_bps in (0, 5, 10):
++            after_trading = funding + basis - fees - four_legs * Decimal(slip_bps) / 10000
++            for additional_fraction in ("0", "0.005", "0.01"):
++                extra = Decimal(5000) * Decimal(additional_fraction)
++                scenarios.append(
++                    {
++                        "slippage_bps_each_leg": slip_bps,
++                        "additional_cost_fraction_of_capital": float(additional_fraction),
++                        "simulated_net_usdt": float(after_trading - extra),
++                        "meaning": "Pre-existing cost assumptions applied to the same fixed-quantity cashflows; not actual costs or a prediction.",
++                    }
++                )
++        assets[symbol] = {
++            "capital_reference_usdt": 5000,
++            "spot_initial_notional_usdt": 2500,
++            "cash_margin_reference_usdt": 2500,
++            "quantity": str(quantity),
++            "eligible_settlements": len(eligible),
++            "funding_usdt": float(funding),
++            "basis_pnl_usdt": float(basis),
++            "assumed_trading_fees_usdt": float(fees),
++            "assumed_slippage_usdt": float(slip),
++            "simulated_profit_usdt": float(net),
++            "simulated_return_on_total_capital": float(net / 5000),
++            "simulated_ending_usdt": float(5000 + net),
++            "additional_cost_budget_before_zero_profit_usdt": float(net),
++            "additional_cost_budget_fraction_of_capital": float(net / 5000),
++            "cost_scenarios": scenarios,
++            "decision": "POSITIVE_HISTORICAL_PRICE_PROXY_NOT_VERIFIED_INVESTOR_PROFIT"
++            if net > 0
++            else "NONPOSITIVE_HISTORICAL_PRICE_PROXY",
++            "actual_profit": None,
++            "verified_net_brl_profit": None,
++            "executable_margin_path_certified": False,
++        }
++    return {
++        "id": "project-quality-review-20260907-v6-carry",
++        "period": {"start": "2025-09-07", "end": "2026-09-07", "days": 365},
++        "source_response_hashes_verified": len(checked),
++        "raw_sources": checked,
++        "arithmetic": "Independent Decimal reconstruction, fixed hedge quantity; eight raw responses and both normalized funding histories verified.",
++        "assets": assets,
++        "external_benchmark": False,
++        "new_market_parameter_search": False,
++        "prior_rejection": "Applied a benchmark later rejected by the user. Original evidence remains unchanged; that priority decision no longer determines the current absolute-profit objective.",
++        "quality": "HISTORICAL_SIMULATED_POSITIVE_CARRY_EXISTS; NO_VERIFIED_INVESTOR_NET_PROFIT",
++        "limitations": [
++            "Already consumed single historical period; adaptive interpretation, not independent validation",
++            "Spot and perpetual mark-price proxies are not executable fills",
++            "Fees/slippage are assumptions, not account-specific realized costs",
++            "Margin maintenance, intraday equity path and liquidation are not certified",
++            "Account access, USDT/USD/BRL conversion, transfers and tax remain unknown",
++            "Each asset uses its own hypothetical 5000 USDT; these are separate scenarios, not additive profits on one portfolio",
++        ],
++        "capital": False,
++        "orders": False,
++    }
++
++
++def main():
++    parser = argparse.ArgumentParser(description=__doc__)
++    parser.add_argument("--data-dir", required=True, type=Path)
++    parser.add_argument("--output", required=True, type=Path)
++    args = parser.parse_args()
++    with localcontext() as context:
++        context.prec = 40
++        result = review(args.data_dir)
++    args.output.parent.mkdir(parents=True, exist_ok=True)
++    args.output.write_text(json.dumps(result, indent=2, allow_nan=False) + "\n", encoding="utf-8")
++    print(
++        json.dumps(
++            {
++                symbol: {
++                    key: row[key]
++                    for key in (
++                        "simulated_profit_usdt",
++                        "simulated_return_on_total_capital",
++                        "decision",
++                    )
++                }
++                for symbol, row in result["assets"].items()
++            },
++            indent=2,
++        )
++    )
++
++
++if __name__ == "__main__":
++    main()
+diff --git a/scripts/verify_research_runtime.py b/scripts/verify_research_runtime.py
+new file mode 100644
+index 0000000..4be18eb
+--- /dev/null
++++ b/scripts/verify_research_runtime.py
+@@ -0,0 +1,80 @@
++"""Detect missing/modified installed distribution files against their RECORD.
++
++This is an integrity check, not a signature or a profitability attestation.
++"""
++
++import argparse
++import base64
++import hashlib
++import importlib.metadata as metadata
++import json
++from pathlib import Path
++
++PACKAGES = (
++    "numpy",
++    "scikit-learn",
++    "scipy",
++    "httpx",
++    "predictor-core",
++    "predictor-ops",
++    "distlib",
++    "virtualenv",
++)
++
++
++def verify():
++    result = {}
++    for name in PACKAGES:
++        package = metadata.distribution(name)
++        checked, missing, mismatches = 0, [], []
++        for item in package.files or []:
++            if item.hash is None:
++                continue
++            path = item.locate()
++            if not path.exists():
++                missing.append(str(item))
++                continue
++            actual = (
++                base64.urlsafe_b64encode(hashlib.new(item.hash.mode, path.read_bytes()).digest())
++                .rstrip(b"=")
++                .decode()
++            )
++            checked += 1
++            if actual != item.hash.value:
++                mismatches.append(str(item))
++        result[name] = {
++            "version": package.version,
++            "files_checked": checked,
++            "missing": missing,
++            "mismatches": mismatches,
++        }
++    return result
++
++
++def main():
++    parser = argparse.ArgumentParser(description=__doc__)
++    parser.add_argument("--output", type=Path)
++    args = parser.parse_args()
++    result = verify()
++    if args.output:
++        args.output.parent.mkdir(parents=True, exist_ok=True)
++        args.output.write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
++    failed = [
++        name
++        for name, row in result.items()
++        if row["missing"] or row["mismatches"] or not row["files_checked"]
++    ]
++    print(
++        json.dumps(
++            {
++                "status": "FAIL" if failed else "PASS",
++                "failed_packages": failed,
++                "files_checked": sum(row["files_checked"] for row in result.values()),
++            }
++        )
++    )
++    return int(bool(failed))
++
++
++if __name__ == "__main__":
++    raise SystemExit(main())
+diff --git a/tests/test_altcoin_forward.py b/tests/test_altcoin_forward.py
+index 6dd4f61..1959af1 100644
+--- a/tests/test_altcoin_forward.py
++++ b/tests/test_altcoin_forward.py
+@@ -73,7 +73,9 @@ def test_single_writer(tmp_path):
+         with pytest.raises(FileExistsError):
+             with f.exclusive(tmp_path):
+                 pytest.fail("second writer entered")
+-    assert not (tmp_path / "observer.lock").exists()
++    # The persistent file is metadata; a released OS lock permits another run.
++    with f.exclusive(tmp_path):
++        pass
+ 
+ 
+ def rows_for(anchor):
+@@ -233,6 +235,10 @@ def test_acquisition_failure_is_recorded_not_silently_dropped(tmp_path, monkeypa
+     row = f.Ledger(args.data_dir / "ledger.jsonl").rows[0]
+     assert row["payload"]["status"] == "ACQUISITION_FAILED"
+     assert row["payload"]["prospective"] is False
++    import json
++
++    status = json.loads((args.data_dir / "status.json").read_text())
++    assert "acquisition failure" in status["last_run_error"]
+ 
+ 
+ def test_catalog_diff_preserves_suspension_and_removal():
+@@ -280,3 +286,35 @@ def test_absolute_profit_does_not_create_comparison_portfolios():
+     assert f.portfolio_specs(snap, comparisons=False) == {
+         "payoff": {"positions": [{"symbol": "AAAUSDT", "weight": 0.2}], "cash_weight": 0.8}
+     }
++
++
++def test_complete_twelve_week_observer_cycle_reports_cost_losses(tmp_path, monkeypatch):
++    import json
++
++    first = datetime(2026, 9, 14, 0, 10, tzinfo=UTC)
++    args, clock = setup_tick(tmp_path, monkeypatch, first)
++    for week in range(13):
++        clock[0] = first + timedelta(weeks=week)
++        f.run(args)
++    status = json.loads((args.data_dir / "status.json").read_text())
++    quality = status["observation_quality"]
++    assert status["pilot_finished"] is True
++    assert status["prospective_decisions"] == status["matured_observations"] == 12
++    assert quality["known_due_weeks"] == quality["active_due_weeks"] == 12
++    assert quality["missing_due_weeks"] == 0
++    assert quality["standardized_pilot_profit_usdt"] < 0
++    assert quality["quality"] == "NONPOSITIVE_HYPOTHETICAL_MARKS"
++    before = (args.data_dir / "ledger.jsonl").read_bytes()
++    f.run(args)
++    assert (args.data_dir / "ledger.jsonl").read_bytes() == before
++
++
++def test_calendar_completion_without_observations_is_not_zero_profit(tmp_path, monkeypatch):
++    import json
++
++    args, _ = setup_tick(tmp_path, monkeypatch, datetime(2026, 12, 7, 0, 10, tzinfo=UTC))
++    f.run(args)
++    status = json.loads((args.data_dir / "status.json").read_text())
++    assert status["pilot_finished"] is True
++    assert status["observation_quality"]["missing_due_weeks"] == 12
++    assert status["observation_quality"]["standardized_pilot_profit_usdt"] is None
+diff --git a/tests/test_altcoin_observer_review.py b/tests/test_altcoin_observer_review.py
+new file mode 100644
+index 0000000..d65ba3d
+--- /dev/null
++++ b/tests/test_altcoin_observer_review.py
+@@ -0,0 +1,130 @@
++"""Recovery and honest coverage/accounting, including complete inactivity."""
++
++import subprocess
++import sys
++from datetime import UTC, datetime, timedelta
++
++import pytest
++
++from scripts import observe_altcoin_forward as f
++
++
++def protocol():
++    first = datetime(2026, 9, 14, tzinfo=UTC)
++    return {
++        "id": "review-control",
++        "start_utc": first.isoformat(),
++        "last_entry_utc": (first + timedelta(weeks=11)).isoformat(),
++        "last_due_utc": (first + timedelta(weeks=12)).isoformat(),
++    }
++
++
++def test_os_lock_is_released_after_process_exits_without_finally(tmp_path):
++    code = (
++        "import os, sys; from pathlib import Path; "
++        "from scripts.observe_altcoin_forward import exclusive; "
++        "guard = exclusive(Path(sys.argv[1])); guard.__enter__(); os._exit(0)"
++    )
++    subprocess.run([sys.executable, "-c", code, str(tmp_path)], check=True, cwd=f.ROOT)
++    with f.exclusive(tmp_path):
++        with pytest.raises(FileExistsError):
++            with f.exclusive(tmp_path):
++                pytest.fail("two writers acquired the lock")
++
++
++def test_existing_unlocked_lock_file_is_not_a_running_process(tmp_path):
++    (tmp_path / "observer.lock").write_text('{"pid":99999999}')
++    with f.exclusive(tmp_path):
++        assert (tmp_path / "observer.lock").exists()
++
++
++def record(log, slot, net, symbols=()):
++    portfolios = {
++        "payoff": {
++            "positions": [{"symbol": s, "weight": 0.2} for s in symbols],
++            "cash_weight": 1 - 0.2 * len(symbols),
++        }
++    }
++    log.append(
++        "DECISION",
++        slot,
++        {"prospective": True, "status": "RECORDED_BEFORE_QUOTES", "portfolios": portfolios},
++    )
++    log.append("ENTRY_MARKS", slot, portfolios)
++    log.append(
++        "OUTCOME",
++        slot,
++        {
++            "portfolios": {
++                "payoff": {
++                    "status": "CENSORED" if net is None else "HYPOTHETICAL_MARKS_COMPLETE",
++                    "net_return_by_extra_slippage_bps": {str(s): net for s in f.SLIPS},
++                }
++            }
++        },
++    )
++
++
++def test_no_observations_does_not_claim_zero_profit(tmp_path):
++    summary = f.observation_quality(
++        f.Ledger(tmp_path / "ledger.jsonl"), protocol(), datetime(2026, 9, 7, tzinfo=UTC)
++    )
++    assert summary["expected_slots"] == 12
++    assert summary["known_due_weeks"] == 0
++    assert summary["standardized_completed_week_profit_usdt"] is None
++    assert summary["quality"] == "AWAITING_NEW_OBSERVATIONS"
++
++
++def test_all_missed_slots_are_unknown_profit(tmp_path):
++    config = protocol()
++    log = f.Ledger(tmp_path / "ledger.jsonl")
++    first = datetime.fromisoformat(config["start_utc"])
++    for i in range(12):
++        log.append(
++            "DECISION",
++            (first + timedelta(weeks=i)).isoformat(),
++            {"status": "MISSED_ENTRY", "prospective": False},
++        )
++    summary = f.observation_quality(log, config, first + timedelta(weeks=12))
++    assert summary["missing_due_weeks"] == 12
++    assert summary["coverage_complete_for_due_weeks"] is False
++    assert summary["standardized_pilot_profit_usdt"] is None
++    assert summary["quality"] == "INCOMPLETE_OBSERVATIONS"
++
++
++def test_cash_weeks_do_not_count_as_winning_trades(tmp_path):
++    config = protocol()
++    log = f.Ledger(tmp_path / "ledger.jsonl")
++    first = datetime.fromisoformat(config["start_utc"])
++    for i in range(12):
++        record(log, (first + timedelta(weeks=i)).isoformat(), 0)
++    summary = f.observation_quality(log, config, first + timedelta(weeks=12))
++    assert summary["cash_due_weeks"] == 12
++    assert summary["known_due_weeks"] == 12
++    assert summary["selected_holdings"] == 0
++    assert summary["standardized_pilot_profit_usdt"] == 0
++    assert summary["quality"] == "NO_TRADING_EVIDENCE_RULE_ABSTAINS"
++
++
++def test_partial_profit_does_not_erase_missing_due_week(tmp_path):
++    config = protocol()
++    log = f.Ledger(tmp_path / "ledger.jsonl")
++    first = datetime.fromisoformat(config["start_utc"])
++    record(log, first.isoformat(), 0.01, ("AUSDT",))
++    record(log, (first + timedelta(weeks=1)).isoformat(), None, ("BUSDT",))
++    summary = f.observation_quality(log, config, first + timedelta(weeks=2))
++    assert summary["standardized_completed_week_profit_usdt"] == 50
++    assert summary["missing_due_weeks"] == 1
++    assert summary["standardized_pilot_profit_usdt"] is None
++    assert summary["quality"] == "INCOMPLETE_OBSERVATIONS"
++    assert summary["realized_profit"] is None
++
++
++def test_incompatible_status_and_return_are_rejected(tmp_path):
++    config = protocol()
++    log = f.Ledger(tmp_path / "ledger.jsonl")
++    slot = config["start_utc"]
++    record(log, slot, 0.01, ("AUSDT",))
++    log.rows[-1]["payload"]["portfolios"]["payoff"]["status"] = "CENSORED"
++    with pytest.raises(ValueError, match="status/return"):
++        f.observation_quality(log, config, datetime(2026, 9, 21, tzinfo=UTC))

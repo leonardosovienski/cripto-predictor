@@ -1,0 +1,252 @@
+{
+  "captured_at_utc": "2026-09-08T00:26:53.103928+00:00",
+  "base_commit": "07794acbc5a3f779eb8d45c932be5070d36251a7",
+  "prior_deliverables": 41,
+  "revised_prompt_deliverable": 1,
+  "workspace_files_verified": 7136,
+  "workspace_directories_included": [
+    "altcoin-data",
+    "altcoin-forward-data",
+    "altcoin-forward-probes",
+    "altcoin-payoff-data",
+    "altcoin-payoff-results",
+    "altcoin-profit-data",
+    "altcoin-results",
+    "altcoin-retro-data",
+    "altcoin-retro-results",
+    "altcoin-reviewed-data",
+    "build-artifacts",
+    "carry-data",
+    "core-wheel",
+    "public-sources",
+    "review-build",
+    "review-runtime-wheels"
+  ],
+  "workspace_root_files_included": true,
+  "workspace_directories_excluded": [
+    ".pytest_cache",
+    "altcoin-payoff-reproduced",
+    "altcoin-reproduce",
+    "altcoin-retro-package",
+    "altcoin-retro-package-check",
+    "altcoin-retro-replay",
+    "cripto-v1.2",
+    "forward-package-check",
+    "profit-package-check",
+    "project-review-package",
+    "project-review-package-check",
+    "review-ci-data",
+    "review-ci-env",
+    "review-retro-replay",
+    "review-test-data",
+    "test-runtime-data",
+    "wheel-check-env"
+  ],
+  "exclusion_reason": "Git source is committed separately; other directories contain virtual environments, caches, isolated test data, or redundant extracted/reproduced copies. __pycache__ and OS lock files excluded.",
+  "original_attachment_available": false,
+  "chat_deletion_performed": false,
+  "automation_migrated": false,
+  "files": {
+    "automation_snapshot.json": {
+      "sha256": "ca90f9530f120be73d1dcb6a2f52ef37a307fd85291f91fd09724180d7c17a12",
+      "bytes": 4472
+    },
+    "deliverables/ACOMPANHAMENTO_CRIPTO.md": {
+      "sha256": "fc622289a05e7b439c3e775e7a5e30141fad12d8ab9de98529bbe130c363129e",
+      "bytes": 1425
+    },
+    "deliverables/ACOMPANHAMENTO_CRIPTO_V3_20260907.md": {
+      "sha256": "0a5b4089da35741ae14f0d71cec9502c5ca6da0a8cafeb77949ffb387640bc68",
+      "bytes": 3358
+    },
+    "deliverables/ACOMPANHAMENTO_CRIPTO_V4_20260907.md": {
+      "sha256": "e62123a004e8ed62f6316848ee4cbdcbfc5abd25508bdacedf138eede7a10f07",
+      "bytes": 2633
+    },
+    "deliverables/ACOMPANHAMENTO_CRIPTO_V5_20260907.md": {
+      "sha256": "fb89a9516eebc69f014d5145472789ab29be26a67973dc87888c0bac2e029391",
+      "bytes": 3751
+    },
+    "deliverables/ALTCOINS_DELTA.patch": {
+      "sha256": "77fde226f397a67f3f0e87b9fdf22da8122fcbfe3fd16441f311286ce1d36a9f",
+      "bytes": 357125
+    },
+    "deliverables/ALTCOINS_MANIFESTO.json": {
+      "sha256": "87a1571e76c15af5a0e34bcd98d263f38a6792e89f360b7ca3b85a47ba97fb03",
+      "bytes": 1149
+    },
+    "deliverables/ALTCOINS_RANKING_PESQUISA.md": {
+      "sha256": "ddeb8d98ce4d487352e6a1d7e140a5cb864c1d96ccb016b942690302e09cc337",
+      "bytes": 4245
+    },
+    "deliverables/ALTCOINS_REPRODUCAO.zip": {
+      "sha256": "56e24223d6e97e9240d7f0af907010b68ddaee6a734a12de7bf570fda8361789",
+      "bytes": 22654348
+    },
+    "deliverables/ALTCOINS_RESULTADO.md": {
+      "sha256": "5d5491c4dace524b329066e3cbed7cf7998315b1ac458ec66901a60575eadb55",
+      "bytes": 8799
+    },
+    "deliverables/ALTCOINS_RESULTADOS.json": {
+      "sha256": "565eb1cb09676220cb3fa11d97ad3b0682ba58161837d3900bf0ca78a1dc5ae0",
+      "bytes": 137801
+    },
+    "deliverables/CRIPTO_ACOMPANHAMENTO.patch": {
+      "sha256": "162aad06e4ccaf10f62c0e7ceab79d2ed67b264138017f5aa1ea69e7d22e1a0a",
+      "bytes": 87894
+    },
+    "deliverables/CRIPTO_ACOMPANHAMENTO_MANIFESTO.json": {
+      "sha256": "ceff488789e31685d27bae6d196d2c66131e4bcbff04faf90d511ea8a89e7289",
+      "bytes": 1239
+    },
+    "deliverables/CRIPTO_ACOMPANHAMENTO_REPRODUCAO.zip": {
+      "sha256": "93d3a741ed0706eead5bdc2d17016d9484adb8b94d806aceb22a3fe4e92ae3eb",
+      "bytes": 3235571
+    },
+    "deliverables/CRIPTO_CONTINUACAO.json": {
+      "sha256": "6b6e76a7ebdbe9f77d35cf1c645116d3db74642be3262727f98efbecfc20e7cc",
+      "bytes": 31871
+    },
+    "deliverables/CRIPTO_CONTINUACAO.md": {
+      "sha256": "37e474dc1414619a6c2b167fa6ce3188cc7f3fcc6bb4eabc041d9b948734030f",
+      "bytes": 6507
+    },
+    "deliverables/CRIPTO_CONTINUACAO.patch": {
+      "sha256": "340e22bf54dac9abf0a79c6939be247116240cc5eec9422408ead5f204abfe02",
+      "bytes": 62872
+    },
+    "deliverables/CRIPTO_CONTINUACAO_MANIFESTO.json": {
+      "sha256": "7bd723fc589e30178a9eaaa23390eafb2499b155979a06b7973a87ab20f98dbe",
+      "bytes": 999
+    },
+    "deliverables/CRIPTO_CONTINUACAO_REPRODUCAO.zip": {
+      "sha256": "2e3a7a5901baa6a29cd72a458a8c32b72792d8f4eb505a4af17e298277779db9",
+      "bytes": 1070931
+    },
+    "deliverables/CRIPTO_LUCRO_ABSOLUTO.json": {
+      "sha256": "0d3496816eddcf8c59ee567c4d14356dd5c612c4b37dbef2b07de8fe7557543a",
+      "bytes": 14805
+    },
+    "deliverables/CRIPTO_LUCRO_ABSOLUTO.patch": {
+      "sha256": "9d4028827aa5b65a76ae506b63d948d1f6837a71d0aeeaf65254690dae679df2",
+      "bytes": 43960
+    },
+    "deliverables/CRIPTO_LUCRO_ABSOLUTO_MANIFESTO.json": {
+      "sha256": "dbf9cc87637745b7155433043bcbc5e20b5fad5c342da26340ab7b8f30a74af6",
+      "bytes": 1183
+    },
+    "deliverables/CRIPTO_LUCRO_ABSOLUTO_REPRODUCAO.zip": {
+      "sha256": "079b160fd7596c791d1041c268e47591f91bba7c7915db352a4a32cffab51fc3",
+      "bytes": 4973400
+    },
+    "deliverables/CRIPTO_PROXIMOS_PASSOS.json": {
+      "sha256": "24099f9edefe2943b4897594d58fc5a5d287e2c79340e8767c6452e63063074e",
+      "bytes": 21967
+    },
+    "deliverables/CRIPTO_REVISAO_FINAL.json": {
+      "sha256": "77188afd748f71371c090e678092f8adad268eca6c672a4a566c1fb814dab03c",
+      "bytes": 19526
+    },
+    "deliverables/CRIPTO_REVISAO_FINAL.md": {
+      "sha256": "4181d3e96d07bdb307157145692c8caf8bc403a6c99d6d7d0bf2391d7f23b3e2",
+      "bytes": 4126
+    },
+    "deliverables/CRIPTO_REVISAO_FINAL.patch": {
+      "sha256": "d9d2d59e1f05e9c1513dc2f298376f4331243ae6fefb7e0d16326aa085f4ff1e",
+      "bytes": 103406
+    },
+    "deliverables/CRIPTO_REVISAO_FINAL_MANIFESTO.json": {
+      "sha256": "4b898e80787c547f111c98df3dd84e65a71357aa231c2d5cfeb9bd24476922a9",
+      "bytes": 1724
+    },
+    "deliverables/CRIPTO_REVISAO_FINAL_REPRODUCAO.zip": {
+      "sha256": "99d2063d33b9e517b58c1c35e5fec2c16cd29b3f1f6b1a34ce15879c3439fbb3",
+      "bytes": 73738508
+    },
+    "deliverables/CRIPTO_TESTE_HISTORICO.json": {
+      "sha256": "300203a02c8dec457e8eda89e14e8768de0578764713fd7d16d634a3bff673f0",
+      "bytes": 14791
+    },
+    "deliverables/CRIPTO_TESTE_HISTORICO.md": {
+      "sha256": "626050c2a0ff14df161733d4528d8f273bc55bca934ced496bd158cc7322cc5c",
+      "bytes": 3992
+    },
+    "deliverables/CRIPTO_TESTE_HISTORICO.patch": {
+      "sha256": "b7d6f610dfa7943d93b9c48e5c5f7fb3a72ba987a365700ed66565926286c57a",
+      "bytes": 2812756
+    },
+    "deliverables/CRIPTO_TESTE_HISTORICO_MANIFESTO.json": {
+      "sha256": "e40440502f8ab7b2dd0d0d51f9133db9d3ae9bfcac4618608c330380314c77d8",
+      "bytes": 1359
+    },
+    "deliverables/CRIPTO_TESTE_HISTORICO_REPRODUCAO.zip": {
+      "sha256": "327a717ef910f39b38d4e2afc7abbffab236aace4846dd3a952aef09d2fe1983",
+      "bytes": 67209500
+    },
+    "deliverables/CRIPTO_V1.2.patch": {
+      "sha256": "4b08ad834d78336e99f485f4098904fc501c5d740e112ebfc37a6c3d63dfec1d",
+      "bytes": 99254
+    },
+    "deliverables/EXECUCAO_CRIPTO_V1.2.md": {
+      "sha256": "25b5c3a5fb2b2e76bf7b5ab21be7be2ee2181bda651213466a5ff1d27e4dae40",
+      "bytes": 3437
+    },
+    "deliverables/FUNDING_CARRY_DECISAO.md": {
+      "sha256": "2b4c2cc03df7ad93ca55221182adcd98c2979916a4602f4ec2285443ec39afe3",
+      "bytes": 8729
+    },
+    "deliverables/FUNDING_CARRY_DELTA.patch": {
+      "sha256": "4e712068cd2059de6ecf005e9e112820e8f6bc4f05a51256e04a444845403fd2",
+      "bytes": 35021
+    },
+    "deliverables/FUNDING_CARRY_MANIFESTO.json": {
+      "sha256": "0bbb40aa91cea9ee6b617b06c15ebc3aad32342a91842cca23ef1b255f1ba203",
+      "bytes": 7343
+    },
+    "deliverables/FUNDING_CARRY_REPRODUCAO.zip": {
+      "sha256": "d0a4444ce97b56ded07f290036181f6c6b41c45c5967c7b589a7ead21cb7997d",
+      "bytes": 155593
+    },
+    "deliverables/FUNDING_CARRY_RESULTADOS.json": {
+      "sha256": "636181fe198f98559f152050e9ebd50a6dcb364f8a519f5df138a3c1ef7ccd4c",
+      "bytes": 19223
+    },
+    "deliverables/PROMPT_NOVO_CHAT.txt": {
+      "sha256": "1ce9da58539cdf7b7bc638cfbd24d49aff09ac0216247679086ee7357120962c",
+      "bytes": 7850
+    },
+    "deliverables/validacao.json": {
+      "sha256": "0666c9104d927f682d0dd23cb5d457caa4cf73576f2b8cfe386a19f55dea4d11",
+      "bytes": 1304
+    },
+    "observer_status_snapshot.json": {
+      "sha256": "bc28c507b9a68b333fafb2f41cc2113e8b8c197f8f00fa5125a5a4cb79a2e50d",
+      "bytes": 1421
+    },
+    "previous_prompt.txt": {
+      "sha256": "ce12fede67b82eaa4ac90e855fc6f1ccdaeb9fff400f5db1d4bb9af5c46da19f",
+      "bytes": 4310
+    },
+    "prompt_review.json": {
+      "sha256": "3ef306549a5314214124a9a9b909a493a5c2cfe2c4988d3ac4902dc88800cea9",
+      "bytes": 1462
+    },
+    "WORKSPACE_RESEARCH.zip.001": {
+      "sha256": "a4cf5784e246b136c429a9a4adab461d550c638d2e98e752726c37ca7f1c0139",
+      "bytes": 67108864
+    },
+    "WORKSPACE_RESEARCH.zip.002": {
+      "sha256": "939f90d99c3a10b151f2b1b13f4f7f959ffcd6a643a74cd249ab549527d5219b",
+      "bytes": 38477074
+    }
+  },
+  "workspace_archive": {
+    "sha256": "f103e8831182263319e80bfd3dbd16e1d058203e564b6e5497774a5dcb2903e9",
+    "bytes": 105585938,
+    "parts": [
+      "WORKSPACE_RESEARCH.zip.001",
+      "WORKSPACE_RESEARCH.zip.002"
+    ],
+    "reassembly": "Concatenate part bytes in listed order; no decompression between parts."
+  }
+}

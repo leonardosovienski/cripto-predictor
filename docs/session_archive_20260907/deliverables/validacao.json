@@ -1,0 +1,32 @@
+{
+  "base_commit": "3c104ceb8f20b6c8c7ca26d344d733ff20ececbe",
+  "code_commit": "package:3.2.0;git:b765948f5f7b48986dcbb00533193669d1202b41",
+  "branch": "codex/cripto-v1-2-execution-20260907",
+  "tests": {
+    "passed": 983,
+    "failed": 0,
+    "python": "3.13.14",
+    "core": "3.2.0"
+  },
+  "input_sha256": "e0e2d24e54130571448eb0dcf770e1b2990ea52b1b1a387b6c1b55808a69bc4c",
+  "protected_artifacts": {
+    "GarimpoInvestimentos/v3/costs.py": {
+      "git_content_unchanged": true,
+      "sha256_on_disk": "8b35cbc6e000896720ca12c075e86938187cb826be0b573c81a42754aecf21e1"
+    },
+    "GarimpoInvestimentos/trials.json": {
+      "git_content_unchanged": true,
+      "sha256_on_disk": "7193b15df347b8243a65ab92449503dd64f90a9777207aadc8c80da2e0ac844b"
+    },
+    "charters/h6_definition_frozen.json": {
+      "git_content_unchanged": true,
+      "sha256_on_disk": "301c1acd549c99d543085486a5559414b00001290f1ae28a63cfa2b66aa0b23f"
+    },
+    "GarimpoInvestimentos/h6_status.json": {
+      "git_content_unchanged": true,
+      "sha256_on_disk": "1ec2d8460466db156283a9a2535adbb579e811f8dd6e9881802980ce8d0482b1"
+    }
+  },
+  "final_commit": "6a8295c5c1ceac0f136368bbf272eb501feb461d",
+  "patch_sha256": "4b08ad834d78336e99f485f4098904fc501c5d740e112ebfc37a6c3d63dfec1d"
+}

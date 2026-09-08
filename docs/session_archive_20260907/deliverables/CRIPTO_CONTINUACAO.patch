@@ -1,0 +1,1374 @@
+diff --git a/docs/HYPOTHESES.md b/docs/HYPOTHESES.md
+index c8c92af..0bf8d57 100644
+--- a/docs/HYPOTHESES.md
++++ b/docs/HYPOTHESES.md
+@@ -1653,3 +1653,50 @@ seis carteiras reconstruídas independentemente; Ruff/Pyright passaram.
+ Produção, coleta, ledger H1-H9, scientific_state, costs e selos preservados.
+ Resultados originais e diagnóstico permanecem separados em `results.json`
+ e `audit.json` no diretório de evidência. Nenhuma ordem ou capital ativado.
++
++### Continuação: identidade e payoff líquido — 2026-09-07
++
++O usuário pediu continuar a partir da infraestrutura existente. Protocolo de
++preparação `bbe7a8b`; implementação e controles antes da consulta de novos
++preços `34b599a`. Escopo: resolver os 13 desfechos censurados já identificados,
++preservar a evidência anterior e preparar um scorer que considere payoff
++líquido e permita abstenção. **Zero novas trials de performance histórica.**
++
++Dez casos receberam marcação de preço com identidade/quantidade corrigida:
++NPXS/PUNDIX, BZRX/OOKI, COCOS/COMBO, OCEAN/FET, MATIC/POL, FTM/S, BNX/FORM,
++EOS/A e os pares HNT/BUSD e FTT/BUSD convertidos pelo fechamento BUSD/USDT
++observado. Preços são referências diárias, não fills sincronizados. BTT,
++CVP e VIDT permanecem censurados: a saída no horizonte original não foi
++verificada; novo ticker de BTT só negocia depois desse horizonte. Nenhum
++preço futuro é usado para preencher a lacuna. `gross_return=null` substitui
++o stress -100% apenas no dataset derivado; original, controles e ledger
++permanecem preservados. Todas as 5.204 observações de treino são mantidas,
++incluindo a única censurada remanescente nessa janela.
++
++Sensibilidade contábil das mesmas escolhas V1, agora com migrações conhecidas:
++2025–2026 permanece aproximadamente -97,83% com perda total na VIDT
++censurada ou -97,33% com retorno zero nessa posição. São cenários para o
++resíduo desconhecido, não resultado executável. Não mudam a decisão de
++não promoção da V1 nem tornam qualquer modelo novo lucrativo.
++
++Protótipo adaptativo V2: mesmos vizinhos/features/universo; usa log-payoff
++após custos assumidos de 20 bps por perna, agrupa vizinhos por semana e
++exige margem positiva após penalidade heurística de incerteza. Observação
++censurada entre vizinhos força abstenção, em vez de desaparecer do treino.
++Até cinco alocações de 20%; vagas vazias ficam em caixa. A fotografia já
++consumida de 07/09 teve **0 de 14 candidatos aprovados, 100% caixa simulado**.
++Isso testa funcionamento, não rentabilidade ou evidência prospectiva.
++
++Status: `IMPLEMENTED_DRY_RUN_ONLY_NOT_PROMOTED`. Antes da comparação
++prospectiva: universo e feed de eventos/suspensões com known_at completo,
++equivalência live, preços/fills de paper, benchmark/FX/fricção e atestado
++específico/poder adequado. A amostra legada ainda não é taxonomia completa
++de altcoins: inclui RLUSD entre os elegíveis atuais; não há claim de universo
++sem stablecoins. O helper para uso futuro corrige JUP/SYRUP como falsos
++positivos de produto alavancado, sem trocar silenciosamente a amostra V1.
++Primeira semana futura possível após este protocolo: 14/09; não há scheduler
++ou coleta nova ativados. Evidência já vista não volta a ser intocada.
++
++30 testes direcionados passaram (11 V1, 11 novos de payoff/identidade e oito
++do gate). Ruff/Pyright passaram. Modo offline reproduziu resultados e dataset
++derivado byte a byte. Detalhes: `docs/evidence/altcoin_payoff_20260907/`.
+diff --git a/docs/evidence/altcoin_payoff_20260907/identity_events.json b/docs/evidence/altcoin_payoff_20260907/identity_events.json
+new file mode 100644
+index 0000000..2d672f5
+--- /dev/null
++++ b/docs/evidence/altcoin_payoff_20260907/identity_events.json
+@@ -0,0 +1,20 @@
++{
++  "scope": "Only the 13 known v1 censored observations, not a complete corporate-action database.",
++  "source_access_date": "2026-09-07",
++  "historical_feature_use": false,
++  "events": [
++    {"symbol":"NPXSUSDT","entry":"2021-04-05","kind":"TOKEN_MIGRATION","exit_pair":"PUNDIXUSDT","new_units_per_old":"0.001","source":"https://www.binance.com/en/support/announcement/detail/3776ecbf694a4dfda138c0d7262ea4b2"},
++    {"symbol":"BZRXUSDT","entry":"2021-12-20","kind":"TOKEN_MIGRATION","exit_pair":"OOKIUSDT","new_units_per_old":"10","source":"https://www.binance.com/en/support/announcement/detail/dff27dc6bcbb432c902bcbea5e24ddfa"},
++    {"symbol":"BTTUSDT","entry":"2022-01-17","kind":"TOKEN_MIGRATION","exit_pair":"BTTCUSDT","new_units_per_old":"1000","source":"https://www.binance.com/en/support/announcement/detail/2722e6da4f5141dd9b2fb07b5b1f3f75","note":"New trading opens after the original 7-day horizon. Do not use later prices to fill the old label."},
++    {"symbol":"HNTUSDT","entry":"2022-10-10","kind":"CROSS_QUOTE_MARK","exit_pair":"HNTBUSD","quote_conversion_pair":"BUSDUSDT","new_units_per_old":"1","source":"https://www.binance.com/en/support/announcement/detail/64b9451dc9394f058802dd9ee4b52913"},
++    {"symbol":"FTTUSDT","entry":"2022-11-14","kind":"CROSS_QUOTE_MARK","exit_pair":"FTTBUSD","quote_conversion_pair":"BUSDUSDT","new_units_per_old":"1","source":"https://api.binance.com/api/v3/klines","note":"Observed public FTT/BUSD and BUSD/USDT prices establish a same-base quotation proxy. Account execution and synchronized quotes are not measured."},
++    {"symbol":"COCOSUSDT","entry":"2023-05-29","kind":"TOKEN_MIGRATION","exit_pair":"COMBOUSDT","new_units_per_old":"1","source":"https://www.binance.com/en/square/post/536095"},
++    {"symbol":"OCEANUSDT","entry":"2024-07-01","kind":"TOKEN_MIGRATION","exit_pair":"FETUSDT","new_units_per_old":"0.433226","source":"https://www.binance.com/en/support/announcement/detail/3dc0eae584cd4accb34cb914dacf670d"},
++    {"symbol":"CVPUSDT","entry":"2024-08-26","kind":"DELISTING_UNRESOLVED","source":"https://www.binance.com/en/square/post/14411092185154","note":"No verified same-venue 7-day exit or realized recovery; no fabricated zero value."},
++    {"symbol":"MATICUSDT","entry":"2024-09-09","kind":"TOKEN_MIGRATION","exit_pair":"POLUSDT","new_units_per_old":"1","source":"https://www.binance.com/en/support/announcement/detail/619c4929fc3f4a0d9df7f9ae1d4519a5"},
++    {"symbol":"FTMUSDT","entry":"2025-01-13","kind":"TOKEN_MIGRATION","exit_pair":"SUSDT","new_units_per_old":"1","source":"https://www.binance.com/en/support/announcement/detail/aec6fcbc84b749eeab6690e6bcac2f3d"},
++    {"symbol":"BNXUSDT","entry":"2025-03-17","kind":"TOKEN_MIGRATION","exit_pair":"FORMUSDT","new_units_per_old":"1","source":"https://www.binance.com/en/support/announcement/detail/7d5accdcf8f446f3ba3d79f8747a28e2"},
++    {"symbol":"VIDTUSDT","entry":"2025-04-14","kind":"DELISTING_UNRESOLVED","source":"https://www.binance.com/en/support/announcement/detail/fac9c3e401da4cc8b604566fd261d70c","note":"No verified same-venue 7-day exit or realized recovery; no fabricated zero value."},
++    {"symbol":"EOSUSDT","entry":"2025-05-26","kind":"TOKEN_MIGRATION","exit_pair":"AUSDT","new_units_per_old":"1","source":"https://www.binance.com/en-JP/support/announcement/detail/f965dc3d62be48a1a21d134162aa1d51","note":"The official completed-swap notice verifies token ratio. USDT price availability is separately verified from the global public endpoint."}
++  ]
++}
+diff --git a/docs/evidence/altcoin_payoff_20260907/protocol.json b/docs/evidence/altcoin_payoff_20260907/protocol.json
+new file mode 100644
+index 0000000..2e49315
+--- /dev/null
++++ b/docs/evidence/altcoin_payoff_20260907/protocol.json
+@@ -0,0 +1,37 @@
++{
++  "id": "discovery-altcoin-payoff-20260907-v2",
++  "mode": "DISCOVERY_PREPARATION",
++  "authorization": "User asks to continue from the current infrastructure and findings on 2026-09-07.",
++  "base_commit": "2b346e2600917133a51274fb9fa50b944595aa90",
++  "adaptive_origin": "v1 found more large-rally targets but lost money; this is an explicitly adaptive new objective, not untouched validation of v1.",
++  "scope_this_round": [
++    "Resolve the 13 already-identified missing outcomes using documented token quantities and public prices exactly at the existing 7-day horizon.",
++    "Keep unresolved exits censored rather than labeling them -100% or zero.",
++    "Recalculate fixed v1 selections only as accounting sensitivity; never rewrite original evidence.",
++    "Implement and unit-test a net-payoff and abstention scorer; produce a current dry-run snapshot without measuring new historical performance."
++  ],
++  "identity_policy": "Use official migration ratios and successor closing prices on the exact original exit day. For unchanged assets with another quote pair, use that pair's close multiplied by the quote/USDT close; no stablecoin peg assumption. This is a valuation proxy, not synchronized executable fills. No price after the outcome horizon, no last-price forward-fill, no automatic zero recovery. Raw requests and sources retain actual retrieval known_at.",
++  "frozen_inputs": "Same 240-symbol v1 sample, 8 features, Monday decision, full 24h feature delay, 7-day holding and fixed 2021-2023 training geometry. Keep the original universe to isolate the objective; fix the separate future universe helper so JUP/SYRUP are not mistaken for leveraged products. No resampling after outcomes.",
++  "model": {
++    "neighbors": 200,
++    "geometry": "Training-only median/IQR, zero IQR=>1, clip [-5,5], Euclidean nearest neighbors; same as v1.",
++    "target": "Log wealth factor after assumed transaction costs, including the magnitude of gains and losses. For a direct USDT exit, factor=(1+r)*(1-c)/(1+c). A cross-quote exit uses two sell legs: factor=(1+r)*(1-c)^2/(1+c).",
++    "cost_per_leg_bps": 20,
++    "cost_status": "ASSUMED_UNCALIBRATED, inherited v1 scenario; not a change to v3/costs.py.",
++    "dependence": "Average log payoffs within each distinct training week among neighbors, then weight those weeks equally. Require >=20 distinct weeks. For a conservative heuristic uncertainty penalty, effective_n=floor(number_of_weeks/4), score=mean_weekly_group_log_payoff - 1.96*sample_sd/sqrt(effective_n). This is not a calibrated confidence interval or a probability.",
++    "censoring": "All training observations remain in the neighbor geometry. If any of the 200 neighbor outcomes is censored, abstain for that candidate; never delete the losing/censored case or replace its return with zero.",
++    "selection": "Rank positive scores only. Up to five candidates, each 20% of starting research portfolio; unused slots remain zero-yield USDT cash, including 100% cash if none pass. No forcing five purchases. Ties by symbol.",
++    "snapshot": "A diagnostic snapshot from the already-consumed 2026-09-07 inputs, explicitly not a prospective recommendation or executable signal."
++  },
++  "new_evidence": {
++    "historical_performance_trials_this_round": 0,
++    "already_consumed": "2021-2023 training, 2024 and 2025-2026 evaluation are Discovery data; no relabeling them as independent test.",
++    "earliest_new_week": "2026-09-14",
++    "before_prospective_activation": ["freeze complete investability and delisting-event feed with observation known_at", "verify live feed/latency parity and paper fills", "resolve operator benchmark/FX/friction and execution envelope", "issue a model-specific harness/power attestation before formal promotion", "derive evidence horizon from economically relevant paired effect; a few weeks cannot establish profitability"],
++    "scheduler_status": "NOT_CREATED; this round does not create a recurring monitor or background execution."
++  },
++  "stopping_rule": "One scorer specification, no tuning if it abstains or looks unattractive. Record readiness and remaining blockers. Do not open a new historical performance search in this round.",
++  "capital_authorized": false,
++  "production_changes": false,
++  "funding_oi_hmm_reopened": false
++}
+diff --git a/docs/evidence/altcoin_payoff_20260907/results.json b/docs/evidence/altcoin_payoff_20260907/results.json
+new file mode 100644
+index 0000000..4049717
+--- /dev/null
++++ b/docs/evidence/altcoin_payoff_20260907/results.json
+@@ -0,0 +1,682 @@
++{
++  "id": "discovery-altcoin-payoff-20260907-v2",
++  "status": "IMPLEMENTED_DRY_RUN_ONLY_NOT_PROMOTED",
++  "protocol_sha256": "071a50b6ffbc535d226c73a02a1211f1bd4512554fd4844d039b6226c6a3da15",
++  "identity_resolutions": [
++    {
++      "symbol": "NPXSUSDT",
++      "entry": "2021-04-05",
++      "kind": "TOKEN_MIGRATION",
++      "exit_pair": "PUNDIXUSDT",
++      "new_units_per_old": "0.001",
++      "source": "https://www.binance.com/en/support/announcement/detail/3776ecbf694a4dfda138c0d7262ea4b2",
++      "entry_price": "0.00713350",
++      "entry_raw_source": {
++        "open": "0.00713350",
++        "source": "https://api.binance.com/api/v3/klines?symbol=NPXSUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
++        "known_at": "2026-09-07T18:50:17.298576+00:00"
++      },
++      "exit_day": "2021-04-11",
++      "gross_return": -0.37337912665591927,
++      "sell_legs": 1,
++      "successor_close": "4.47000000",
++      "quote_usdt_close": "1",
++      "status": "QUANTITY_ADJUSTED_DAILY_MARK"
++    },
++    {
++      "symbol": "BZRXUSDT",
++      "entry": "2021-12-20",
++      "kind": "TOKEN_MIGRATION",
++      "exit_pair": "OOKIUSDT",
++      "new_units_per_old": "10",
++      "source": "https://www.binance.com/en/support/announcement/detail/dff27dc6bcbb432c902bcbea5e24ddfa",
++      "entry_price": "0.20830000",
++      "entry_raw_source": {
++        "open": "0.20830000",
++        "source": "https://api.binance.com/api/v3/klines?symbol=BZRXUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
++        "known_at": "2026-09-07T18:50:58.435802+00:00"
++      },
++      "exit_day": "2021-12-26",
++      "gross_return": 1.2966874699951991,
++      "sell_legs": 1,
++      "successor_close": "0.04784000",
++      "quote_usdt_close": "1",
++      "status": "QUANTITY_ADJUSTED_DAILY_MARK"
++    },
++    {
++      "symbol": "BTTUSDT",
++      "entry": "2022-01-17",
++      "kind": "TOKEN_MIGRATION",
++      "exit_pair": "BTTCUSDT",
++      "new_units_per_old": "1000",
++      "source": "https://www.binance.com/en/support/announcement/detail/2722e6da4f5141dd9b2fb07b5b1f3f75",
++      "note": "New trading opens after the original 7-day horizon. Do not use later prices to fill the old label.",
++      "entry_price": "0.00267700",
++      "entry_raw_source": {
++        "open": "0.00267700",
++        "source": "https://api.binance.com/api/v3/klines?symbol=BTTUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
++        "known_at": "2026-09-07T18:50:20.380223+00:00"
++      },
++      "exit_day": "2022-01-23",
++      "gross_return": null,
++      "sell_legs": 1,
++      "successor_close": null,
++      "quote_usdt_close": "1",
++      "status": "CENSORED_NO_PRICE_AT_ORIGINAL_HORIZON"
++    },
++    {
++      "symbol": "HNTUSDT",
++      "entry": "2022-10-10",
++      "kind": "CROSS_QUOTE_MARK",
++      "exit_pair": "HNTBUSD",
++      "quote_conversion_pair": "BUSDUSDT",
++      "new_units_per_old": "1",
++      "source": "https://www.binance.com/en/support/announcement/detail/64b9451dc9394f058802dd9ee4b52913",
++      "entry_price": "4.60000000",
++      "entry_raw_source": {
++        "open": "4.60000000",
++        "source": "https://api.binance.com/api/v3/klines?symbol=HNTUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
++        "known_at": "2026-09-07T18:50:15.158435+00:00"
++      },
++      "exit_day": "2022-10-16",
++      "gross_return": -0.010869565217391304,
++      "sell_legs": 2,
++      "successor_close": "4.55000000",
++      "quote_usdt_close": "1.00000000",
++      "status": "CROSS_QUOTE_DAILY_MARK"
++    },
++    {
++      "symbol": "FTTUSDT",
++      "entry": "2022-11-14",
++      "kind": "CROSS_QUOTE_MARK",
++      "exit_pair": "FTTBUSD",
++      "quote_conversion_pair": "BUSDUSDT",
++      "new_units_per_old": "1",
++      "source": "https://api.binance.com/api/v3/klines",
++      "note": "Observed public FTT/BUSD and BUSD/USDT prices establish a same-base quotation proxy. Account execution and synchronized quotes are not measured.",
++      "entry_price": "1.48610000",
++      "entry_raw_source": {
++        "open": "1.48610000",
++        "source": "https://api.binance.com/api/v3/klines?symbol=FTTUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
++        "known_at": "2026-09-07T18:51:22.207892+00:00"
++      },
++      "exit_day": "2022-11-20",
++      "gross_return": -0.11661097503532737,
++      "sell_legs": 2,
++      "successor_close": "1.31110000",
++      "quote_usdt_close": "1.00130000",
++      "status": "CROSS_QUOTE_DAILY_MARK"
++    },
++    {
++      "symbol": "COCOSUSDT",
++      "entry": "2023-05-29",
++      "kind": "TOKEN_MIGRATION",
++      "exit_pair": "COMBOUSDT",
++      "new_units_per_old": "1",
++      "source": "https://www.binance.com/en/square/post/536095",
++      "entry_price": "1.76380000",
++      "entry_raw_source": {
++        "open": "1.76380000",
++        "source": "https://api.binance.com/api/v3/klines?symbol=COCOSUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
++        "known_at": "2026-09-07T18:50:31.179282+00:00"
++      },
++      "exit_day": "2023-06-04",
++      "gross_return": -0.16487130060097516,
++      "sell_legs": 1,
++      "successor_close": "1.47300000",
++      "quote_usdt_close": "1",
++      "status": "QUANTITY_ADJUSTED_DAILY_MARK"
++    },
++    {
++      "symbol": "OCEANUSDT",
++      "entry": "2024-07-01",
++      "kind": "TOKEN_MIGRATION",
++      "exit_pair": "FETUSDT",
++      "new_units_per_old": "0.433226",
++      "source": "https://www.binance.com/en/support/announcement/detail/3dc0eae584cd4accb34cb914dacf670d",
++      "entry_price": "0.61380000",
++      "entry_raw_source": {
++        "open": "0.61380000",
++        "source": "https://api.binance.com/api/v3/klines?symbol=OCEANUSDT&interval=1d&startTime=1687910400000&endTime=1788739199999&limit=1000",
++        "known_at": "2026-09-07T18:51:23.956548+00:00"
++      },
++      "exit_day": "2024-07-07",
++      "gross_return": -0.2130221733463669,
++      "sell_legs": 1,
++      "successor_close": "1.11500000",
++      "quote_usdt_close": "1",
++      "status": "QUANTITY_ADJUSTED_DAILY_MARK"
++    },
++    {
++      "symbol": "CVPUSDT",
++      "entry": "2024-08-26",
++      "kind": "DELISTING_UNRESOLVED",
++      "source": "https://www.binance.com/en/square/post/14411092185154",
++      "note": "No verified same-venue 7-day exit or realized recovery; no fabricated zero value.",
++      "entry_price": "0.05110000",
++      "entry_raw_source": {
++        "open": "0.05110000",
++        "source": "https://api.binance.com/api/v3/klines?symbol=CVPUSDT&interval=1d&startTime=1719705600000&endTime=1788739199999&limit=1000",
++        "known_at": "2026-09-07T18:50:15.316453+00:00"
++      },
++      "exit_day": "2024-09-01",
++      "gross_return": null,
++      "sell_legs": 1,
++      "status": "CENSORED_NO_VERIFIED_EXIT"
++    },
++    {
++      "symbol": "MATICUSDT",
++      "entry": "2024-09-09",
++      "kind": "TOKEN_MIGRATION",
++      "exit_pair": "POLUSDT",
++      "new_units_per_old": "1",
++      "source": "https://www.binance.com/en/support/announcement/detail/619c4929fc3f4a0d9df7f9ae1d4519a5",
++      "entry_price": "0.37580000",
++      "entry_raw_source": {
++        "open": "0.37580000",
++        "source": "https://api.binance.com/api/v3/klines?symbol=MATICUSDT&interval=1d&startTime=1687910400000&endTime=1788739199999&limit=1000",
++        "known_at": "2026-09-07T18:50:22.916523+00:00"
++      },
++      "exit_day": "2024-09-15",
++      "gross_return": 0.034326769558275676,
++      "sell_legs": 1,
++      "successor_close": "0.38870000",
++      "quote_usdt_close": "1",
++      "status": "QUANTITY_ADJUSTED_DAILY_MARK"
++    },
++    {
++      "symbol": "FTMUSDT",
++      "entry": "2025-01-13",
++      "kind": "TOKEN_MIGRATION",
++      "exit_pair": "SUSDT",
++      "new_units_per_old": "1",
++      "source": "https://www.binance.com/en/support/announcement/detail/aec6fcbc84b749eeab6690e6bcac2f3d",
++      "entry_price": "0.69990000",
++      "entry_raw_source": {
++        "open": "0.69990000",
++        "source": "https://api.binance.com/api/v3/klines?symbol=FTMUSDT&interval=1d&startTime=1687910400000&endTime=1788739199999&limit=1000",
++        "known_at": "2026-09-07T18:50:57.559985+00:00"
++      },
++      "exit_day": "2025-01-19",
++      "gross_return": -0.19345620802971852,
++      "sell_legs": 1,
++      "successor_close": "0.56450000",
++      "quote_usdt_close": "1",
++      "status": "QUANTITY_ADJUSTED_DAILY_MARK"
++    },
++    {
++      "symbol": "BNXUSDT",
++      "entry": "2025-03-17",
++      "kind": "TOKEN_MIGRATION",
++      "exit_pair": "FORMUSDT",
++      "new_units_per_old": "1",
++      "source": "https://www.binance.com/en/support/announcement/detail/7d5accdcf8f446f3ba3d79f8747a28e2",
++      "entry_price": "1.42500000",
++      "entry_raw_source": {
++        "open": "1.42500000",
++        "source": "https://api.binance.com/api/v3/klines?symbol=BNXUSDT&interval=1d&startTime=1722816000000&endTime=1788739199999&limit=1000",
++        "known_at": "2026-09-07T18:50:45.234831+00:00"
++      },
++      "exit_day": "2025-03-23",
++      "gross_return": 0.42547368421052634,
++      "sell_legs": 1,
++      "successor_close": "2.03130000",
++      "quote_usdt_close": "1",
++      "status": "QUANTITY_ADJUSTED_DAILY_MARK"
++    },
++    {
++      "symbol": "VIDTUSDT",
++      "entry": "2025-04-14",
++      "kind": "DELISTING_UNRESOLVED",
++      "source": "https://www.binance.com/en/support/announcement/detail/fac9c3e401da4cc8b604566fd261d70c",
++      "note": "No verified same-venue 7-day exit or realized recovery; no fabricated zero value.",
++      "entry_price": "0.00280000",
++      "entry_raw_source": {
++        "open": "0.00280000",
++        "source": "https://api.binance.com/api/v3/klines?symbol=VIDTUSDT&interval=1d&startTime=1718236800000&endTime=1788739199999&limit=1000",
++        "known_at": "2026-09-07T18:51:12.073615+00:00"
++      },
++      "exit_day": "2025-04-20",
++      "gross_return": null,
++      "sell_legs": 1,
++      "status": "CENSORED_NO_VERIFIED_EXIT"
++    },
++    {
++      "symbol": "EOSUSDT",
++      "entry": "2025-05-26",
++      "kind": "TOKEN_MIGRATION",
++      "exit_pair": "AUSDT",
++      "new_units_per_old": "1",
++      "source": "https://www.binance.com/en-JP/support/announcement/detail/f965dc3d62be48a1a21d134162aa1d51",
++      "note": "The official completed-swap notice verifies token ratio. USDT price availability is separately verified from the global public endpoint.",
++      "entry_price": "0.76600000",
++      "entry_raw_source": {
++        "open": "0.76600000",
++        "source": "https://api.binance.com/api/v3/klines?symbol=EOSUSDT&interval=1d&startTime=1687910400000&endTime=1788739199999&limit=1000",
++        "known_at": "2026-09-07T18:50:52.282703+00:00"
++      },
++      "exit_day": "2025-06-01",
++      "gross_return": -0.15718015665796345,
++      "sell_legs": 1,
++      "successor_close": "0.64560000",
++      "quote_usdt_close": "1",
++      "status": "QUANTITY_ADJUSTED_DAILY_MARK"
++    }
++  ],
++  "counts": {
++    "original_censored": 13,
++    "resolved_price_proxies": 10,
++    "still_censored": 3,
++    "training_samples_preserved": 5204,
++    "training_still_censored": 1
++  },
++  "fixed_v1_selection_accounting": {
++    "evaluation_1": {
++      "analogs": {
++        "exact_executable_return": null,
++        "unresolved_holdings": [
++          {
++            "date": "2024-08-26",
++            "symbol": "CVPUSDT"
++          }
++        ],
++        "scenario_compounded_returns": {
++          "unresolved_total_loss_stress": -0.5509804934045788,
++          "unresolved_flat_recovery_scenario": -0.40557386546440355
++        },
++        "meaning": "Fixed v1 selections, corrected known quantity/quote marks. Scenarios for residual censoring, not executable P&L or universal recovery bounds."
++      },
++      "equal_basket": {
++        "exact_executable_return": null,
++        "unresolved_holdings": [
++          {
++            "date": "2024-08-26",
++            "symbol": "CVPUSDT"
++          }
++        ],
++        "scenario_compounded_returns": {
++          "unresolved_total_loss_stress": -0.32736347788083886,
++          "unresolved_flat_recovery_scenario": -0.2997749176592396
++        },
++        "meaning": "Fixed v1 selections, corrected known quantity/quote marks. Scenarios for residual censoring, not executable P&L or universal recovery bounds."
++      },
++      "momentum": {
++        "exact_executable_return": null,
++        "unresolved_holdings": [],
++        "scenario_compounded_returns": {
++          "unresolved_total_loss_stress": -0.6706900716418411,
++          "unresolved_flat_recovery_scenario": -0.6706900716418411
++        },
++        "meaning": "Fixed v1 selections, corrected known quantity/quote marks. Scenarios for residual censoring, not executable P&L or universal recovery bounds."
++      }
++    },
++    "evaluation_2": {
++      "analogs": {
++        "exact_executable_return": null,
++        "unresolved_holdings": [
++          {
++            "date": "2025-04-14",
++            "symbol": "VIDTUSDT"
++          }
++        ],
++        "scenario_compounded_returns": {
++          "unresolved_total_loss_stress": -0.9783027247558249,
++          "unresolved_flat_recovery_scenario": -0.9733036653691685
++        },
++        "meaning": "Fixed v1 selections, corrected known quantity/quote marks. Scenarios for residual censoring, not executable P&L or universal recovery bounds."
++      },
++      "equal_basket": {
++        "exact_executable_return": null,
++        "unresolved_holdings": [
++          {
++            "date": "2025-04-14",
++            "symbol": "VIDTUSDT"
++          }
++        ],
++        "scenario_compounded_returns": {
++          "unresolved_total_loss_stress": -0.9267168151680533,
++          "unresolved_flat_recovery_scenario": -0.9244313579119509
++        },
++        "meaning": "Fixed v1 selections, corrected known quantity/quote marks. Scenarios for residual censoring, not executable P&L or universal recovery bounds."
++      },
++      "momentum": {
++        "exact_executable_return": null,
++        "unresolved_holdings": [],
++        "scenario_compounded_returns": {
++          "unresolved_total_loss_stress": -0.9631502018827341,
++          "unresolved_flat_recovery_scenario": -0.9631502018827341
++        },
++        "meaning": "Fixed v1 selections, corrected known quantity/quote marks. Scenarios for residual censoring, not executable P&L or universal recovery bounds."
++      }
++    }
++  },
++  "payoff_snapshot": {
++    "input_date": "2026-09-07",
++    "prospective": false,
++    "performance_claim": false,
++    "ranked": [
++      {
++        "symbol": "XLMUSDT",
++        "neighbor_count": 200,
++        "status": "ABSTAIN_NO_POSITIVE_MARGIN",
++        "qualified": false,
++        "distinct_weeks": 48,
++        "effective_n_heuristic": 12,
++        "mean_log_payoff": 0.018920857201820105,
++        "geometric_payoff_proxy": 0.0191009909216628,
++        "uncertainty_penalty_log": 0.06493463262185716,
++        "score_log": -0.046013775420037054,
++        "score_return_equivalent": -0.044971193822852536,
++        "confidence_claim": "heuristic penalty, not a calibrated confidence interval"
++      },
++      {
++        "symbol": "RLUSDUSDT",
++        "neighbor_count": 200,
++        "status": "ABSTAIN_NO_POSITIVE_MARGIN",
++        "qualified": false,
++        "distinct_weeks": 66,
++        "effective_n_heuristic": 16,
++        "mean_log_payoff": -0.0029464803989760996,
++        "geometric_payoff_proxy": -0.0029421437858994114,
++        "uncertainty_penalty_log": 0.046619408862107456,
++        "score_log": -0.04956588926108355,
++        "score_return_equivalent": -0.048357546947358325,
++        "confidence_claim": "heuristic penalty, not a calibrated confidence interval"
++      },
++      {
++        "symbol": "FILUSDT",
++        "neighbor_count": 200,
++        "status": "ABSTAIN_NO_POSITIVE_MARGIN",
++        "qualified": false,
++        "distinct_weeks": 51,
++        "effective_n_heuristic": 12,
++        "mean_log_payoff": 0.010392115465805344,
++        "geometric_payoff_proxy": 0.010446301035969932,
++        "uncertainty_penalty_log": 0.07208132124438872,
++        "score_log": -0.061689205778583375,
++        "score_return_equivalent": -0.0598249576411086,
++        "confidence_claim": "heuristic penalty, not a calibrated confidence interval"
++      },
++      {
++        "symbol": "PEPEUSDT",
++        "neighbor_count": 200,
++        "status": "ABSTAIN_NO_POSITIVE_MARGIN",
++        "qualified": false,
++        "distinct_weeks": 45,
++        "effective_n_heuristic": 11,
++        "mean_log_payoff": 0.015866484299147235,
++        "geometric_payoff_proxy": 0.015993025329082883,
++        "uncertainty_penalty_log": 0.07793210581353338,
++        "score_log": -0.062065621514386146,
++        "score_return_equivalent": -0.06017878772367827,
++        "confidence_claim": "heuristic penalty, not a calibrated confidence interval"
++      },
++      {
++        "symbol": "ASTERUSDT",
++        "neighbor_count": 200,
++        "status": "ABSTAIN_NO_POSITIVE_MARGIN",
++        "qualified": false,
++        "distinct_weeks": 52,
++        "effective_n_heuristic": 13,
++        "mean_log_payoff": 0.003883736073234341,
++        "geometric_payoff_proxy": 0.0038912875489924524,
++        "uncertainty_penalty_log": 0.06698668426570685,
++        "score_log": -0.0631029481924725,
++        "score_return_equivalent": -0.06115318386887109,
++        "confidence_claim": "heuristic penalty, not a calibrated confidence interval"
++      },
++      {
++        "symbol": "ICPUSDT",
++        "neighbor_count": 200,
++        "status": "ABSTAIN_NO_POSITIVE_MARGIN",
++        "qualified": false,
++        "distinct_weeks": 53,
++        "effective_n_heuristic": 13,
++        "mean_log_payoff": -0.0008945859993873367,
++        "geometric_payoff_proxy": -0.0008941859766259993,
++        "uncertainty_penalty_log": 0.06878399863973154,
++        "score_log": -0.06967858463911888,
++        "score_return_equivalent": -0.0673064462309899,
++        "confidence_claim": "heuristic penalty, not a calibrated confidence interval"
++      },
++      {
++        "symbol": "AAVEUSDT",
++        "neighbor_count": 200,
++        "status": "ABSTAIN_NO_POSITIVE_MARGIN",
++        "qualified": false,
++        "distinct_weeks": 40,
++        "effective_n_heuristic": 10,
++        "mean_log_payoff": -0.012154836753338841,
++        "geometric_payoff_proxy": -0.012081265110543025,
++        "uncertainty_penalty_log": 0.07912839397330386,
++        "score_log": -0.0912832307266427,
++        "score_return_equivalent": -0.0872408471529089,
++        "confidence_claim": "heuristic penalty, not a calibrated confidence interval"
++      },
++      {
++        "symbol": "UNIUSDT",
++        "neighbor_count": 200,
++        "status": "ABSTAIN_NO_POSITIVE_MARGIN",
++        "qualified": false,
++        "distinct_weeks": 77,
++        "effective_n_heuristic": 19,
++        "mean_log_payoff": -0.028555756396396705,
++        "geometric_payoff_proxy": -0.028151894112749657,
++        "uncertainty_penalty_log": 0.07729081044802287,
++        "score_log": -0.10584656684441958,
++        "score_return_equivalent": -0.10043733977456579,
++        "confidence_claim": "heuristic penalty, not a calibrated confidence interval"
++      },
++      {
++        "symbol": "TUTUSDT",
++        "neighbor_count": 200,
++        "status": "ABSTAIN_NO_POSITIVE_MARGIN",
++        "qualified": false,
++        "distinct_weeks": 67,
++        "effective_n_heuristic": 16,
++        "mean_log_payoff": -0.03103656514683904,
++        "geometric_payoff_proxy": -0.03055987529256909,
++        "uncertainty_penalty_log": 0.07551238366082774,
++        "score_log": -0.10654894880766679,
++        "score_return_equivalent": -0.1010689545185501,
++        "confidence_claim": "heuristic penalty, not a calibrated confidence interval"
++      },
++      {
++        "symbol": "PUMPUSDT",
++        "neighbor_count": 200,
++        "status": "ABSTAIN_NO_POSITIVE_MARGIN",
++        "qualified": false,
++        "distinct_weeks": 61,
++        "effective_n_heuristic": 15,
++        "mean_log_payoff": -0.046537101125925386,
++        "geometric_payoff_proxy": -0.04547085419302743,
++        "uncertainty_penalty_log": 0.06551687937784342,
++        "score_log": -0.1120539805037688,
++        "score_return_equivalent": -0.10600400215650221,
++        "confidence_claim": "heuristic penalty, not a calibrated confidence interval"
++      },
++      {
++        "symbol": "BICOUSDT",
++        "neighbor_count": 200,
++        "status": "ABSTAIN_NO_POSITIVE_MARGIN",
++        "qualified": false,
++        "distinct_weeks": 66,
++        "effective_n_heuristic": 16,
++        "mean_log_payoff": -0.048204427122137954,
++        "geometric_payoff_proxy": -0.0470610394050129,
++        "uncertainty_penalty_log": 0.07508131442717147,
++        "score_log": -0.12328574154930944,
++        "score_return_equivalent": -0.11598897221227264,
++        "confidence_claim": "heuristic penalty, not a calibrated confidence interval"
++      },
++      {
++        "symbol": "ONGUSDT",
++        "neighbor_count": 200,
++        "status": "ABSTAIN_NO_POSITIVE_MARGIN",
++        "qualified": false,
++        "distinct_weeks": 83,
++        "effective_n_heuristic": 20,
++        "mean_log_payoff": -0.037674344812570364,
++        "geometric_payoff_proxy": -0.03697349559157178,
++        "uncertainty_penalty_log": 0.09364112365964326,
++        "score_log": -0.13131546847221362,
++        "score_return_equivalent": -0.12305891651411895,
++        "confidence_claim": "heuristic penalty, not a calibrated confidence interval"
++      },
++      {
++        "symbol": "BMTUSDT",
++        "neighbor_count": 200,
++        "status": "ABSTAIN_NO_POSITIVE_MARGIN",
++        "qualified": false,
++        "distinct_weeks": 84,
++        "effective_n_heuristic": 21,
++        "mean_log_payoff": -0.048658601854679136,
++        "geometric_payoff_proxy": -0.04749374193385358,
++        "uncertainty_penalty_log": 0.08915986570405789,
++        "score_log": -0.13781846755873703,
++        "score_return_equivalent": -0.1287431612281345,
++        "confidence_claim": "heuristic penalty, not a calibrated confidence interval"
++      },
++      {
++        "symbol": "HEMIUSDT",
++        "neighbor_count": 200,
++        "status": "ABSTAIN_NO_POSITIVE_MARGIN",
++        "qualified": false,
++        "distinct_weeks": 44,
++        "effective_n_heuristic": 11,
++        "mean_log_payoff": -0.010160498085274479,
++        "geometric_payoff_proxy": -0.010109054602495822,
++        "uncertainty_penalty_log": 0.15334484305444307,
++        "score_log": -0.16350534113971754,
++        "score_return_equivalent": -0.1508380365032183,
++        "confidence_claim": "heuristic penalty, not a calibrated confidence interval"
++      }
++    ],
++    "candidate_symbols": [],
++    "research_weight_each": 0.2,
++    "cash_weight": 1.0,
++    "status_counts": {
++      "ABSTAIN_NO_POSITIVE_MARGIN": 14
++    }
++  },
++  "new_historical_performance_trials": 0,
++  "raw_requests": [
++    {
++      "url": "https://api.binance.com/api/v3/klines?symbol=FTTBUSD&interval=1d&startTime=1668902400000&endTime=1668988799999&limit=2",
++      "retrieved_at_utc": "2026-09-07T19:25:11.782651+00:00",
++      "http_status": 200,
++      "sha256": "a9316c22ba5f9be2a49d6366068fec0e5a4860a1540209d54247a07007694e42",
++      "bytes": 173,
++      "server_date": "Mon, 07 Sep 2026 19:25:11 GMT"
++    },
++    {
++      "url": "https://api.binance.com/api/v3/klines?symbol=BTTCUSDT&interval=1d&startTime=1642896000000&endTime=1642982399999&limit=2",
++      "retrieved_at_utc": "2026-09-07T19:25:10.879445+00:00",
++      "http_status": 200,
++      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
++      "bytes": 2,
++      "server_date": "Mon, 07 Sep 2026 19:25:11 GMT"
++    },
++    {
++      "url": "https://api.binance.com/api/v3/klines?symbol=POLUSDT&interval=1d&startTime=1726358400000&endTime=1726444799999&limit=2",
++      "retrieved_at_utc": "2026-09-07T19:25:13.051283+00:00",
++      "http_status": 200,
++      "sha256": "fccfbd663234025771b94a8dcb4671f7c404c7b8cf3ad16a24b9f55254273969",
++      "bytes": 172,
++      "server_date": "Mon, 07 Sep 2026 19:25:13 GMT"
++    },
++    {
++      "url": "https://api.binance.com/api/v3/klines?symbol=AUSDT&interval=1d&startTime=1748736000000&endTime=1748822399999&limit=2",
++      "retrieved_at_utc": "2026-09-07T19:25:14.066705+00:00",
++      "http_status": 200,
++      "sha256": "f0ba612a6c020640a2cd19db58e5ceb462d10efc8af1d5539f1545831c04683a",
++      "bytes": 174,
++      "server_date": "Mon, 07 Sep 2026 19:25:14 GMT"
++    },
++    {
++      "url": "https://api.binance.com/api/v3/klines?symbol=FETUSDT&interval=1d&startTime=1720310400000&endTime=1720396799999&limit=2",
++      "retrieved_at_utc": "2026-09-07T19:25:12.746055+00:00",
++      "http_status": 200,
++      "sha256": "c6a36b3aed6db847c61bf5bda5ef1fbb9087ce19d9f9dbde28bdb025b2b16949",
++      "bytes": 174,
++      "server_date": "Mon, 07 Sep 2026 19:25:12 GMT"
++    },
++    {
++      "url": "https://api.binance.com/api/v3/klines?symbol=FORMUSDT&interval=1d&startTime=1742688000000&endTime=1742774399999&limit=2",
++      "retrieved_at_utc": "2026-09-07T19:25:13.644360+00:00",
++      "http_status": 200,
++      "sha256": "4a4001bfeb87d0242aed2e5ef3446280dfc338d3047e0671e5e8272c4c319f25",
++      "bytes": 173,
++      "server_date": "Mon, 07 Sep 2026 19:25:13 GMT"
++    },
++    {
++      "url": "https://api.binance.com/api/v3/klines?symbol=OOKIUSDT&interval=1d&startTime=1640476800000&endTime=1640563199999&limit=2",
++      "retrieved_at_utc": "2026-09-07T19:25:10.580805+00:00",
++      "http_status": 200,
++      "sha256": "3107d564231ee431c4ccc0318cec9ecba793f8c9f338640e69b07269b9355627",
++      "bytes": 179,
++      "server_date": "Mon, 07 Sep 2026 19:25:10 GMT"
++    },
++    {
++      "url": "https://api.binance.com/api/v3/klines?symbol=COMBOUSDT&interval=1d&startTime=1685836800000&endTime=1685923199999&limit=2",
++      "retrieved_at_utc": "2026-09-07T19:25:12.437132+00:00",
++      "http_status": 200,
++      "sha256": "a58d1b2575d5a7b54bf7a269ab3736d3e4c60389d2c7be8896a34e620abceb57",
++      "bytes": 170,
++      "server_date": "Mon, 07 Sep 2026 19:25:12 GMT"
++    },
++    {
++      "url": "https://api.binance.com/api/v3/klines?symbol=SUSDT&interval=1d&startTime=1737244800000&endTime=1737331199999&limit=2",
++      "retrieved_at_utc": "2026-09-07T19:25:13.340988+00:00",
++      "http_status": 200,
++      "sha256": "283c80cbb71cf6ab7a9ad96592b5c7fbc0ead817d7242ded1ebb25130a63d252",
++      "bytes": 176,
++      "server_date": "Mon, 07 Sep 2026 19:25:13 GMT"
++    },
++    {
++      "url": "https://api.binance.com/api/v3/klines?symbol=PUNDIXUSDT&interval=1d&startTime=1618099200000&endTime=1618185599999&limit=2",
++      "retrieved_at_utc": "2026-09-07T19:25:10.290730+00:00",
++      "http_status": 200,
++      "sha256": "9881289f0654740d776212efc0a37a93866f74b8748fc43a9ed54c95423631ab",
++      "bytes": 173,
++      "server_date": "Mon, 07 Sep 2026 19:25:10 GMT"
++    },
++    {
++      "url": "https://api.binance.com/api/v3/klines?symbol=HNTBUSD&interval=1d&startTime=1665878400000&endTime=1665964799999&limit=2",
++      "retrieved_at_utc": "2026-09-07T19:25:11.185292+00:00",
++      "http_status": 200,
++      "sha256": "1f3e8d24fce51bf8b4cda7740fc62e68acb9e501a85ae72cb8544218c0fbe69e",
++      "bytes": 165,
++      "server_date": "Mon, 07 Sep 2026 19:25:11 GMT"
++    },
++    {
++      "url": "https://api.binance.com/api/v3/klines?symbol=BUSDUSDT&interval=1d&startTime=1668902400000&endTime=1668988799999&limit=2",
++      "retrieved_at_utc": "2026-09-07T19:25:12.138842+00:00",
++      "http_status": 200,
++      "sha256": "de263779918f1b8f42cccf2cf80574ebec75aa8d32db626dec4b01d34c01a6f5",
++      "bytes": 178,
++      "server_date": "Mon, 07 Sep 2026 19:25:12 GMT"
++    },
++    {
++      "url": "https://api.binance.com/api/v3/klines?symbol=BUSDUSDT&interval=1d&startTime=1665878400000&endTime=1665964799999&limit=2",
++      "retrieved_at_utc": "2026-09-07T19:25:11.481867+00:00",
++      "http_status": 200,
++      "sha256": "80ba6f9076d42e80a02cd81951684a96ee0a945e3841d9da76fd06c18f9669bd",
++      "bytes": 178,
++      "server_date": "Mon, 07 Sep 2026 19:25:11 GMT"
++    }
++  ],
++  "activation": {
++    "capital": false,
++    "orders": false,
++    "scheduler": false,
++    "prospective": false
++  },
++  "remaining": [
++    "freeze complete investability and delisting-event feed with observation known_at",
++    "verify live feed/latency parity and paper fills",
++    "resolve operator benchmark/FX/friction and execution envelope",
++    "issue a model-specific harness/power attestation before formal promotion",
++    "derive evidence horizon from economically relevant paired effect; a few weeks cannot establish profitability"
++  ]
++}
+\ No newline at end of file
+diff --git a/docs/evidence/altcoin_payoff_20260907/search_log.json b/docs/evidence/altcoin_payoff_20260907/search_log.json
+new file mode 100644
+index 0000000..0c511ef
+--- /dev/null
++++ b/docs/evidence/altcoin_payoff_20260907/search_log.json
+@@ -0,0 +1,26 @@
++{
++  "id": "discovery-altcoin-payoff-20260907-v2",
++  "protocol_commit": "bbe7a8b",
++  "implementation_before_new_prices_commit": "34b599a",
++  "adaptive_changes": [
++    "quantity/identity correction for known missing outcomes",
++    "objective switches from rally frequency to net log payoff",
++    "week grouping and uncertainty penalty",
++    "abstention/cash allowed"
++  ],
++  "preserved": [
++    "240-symbol sample",
++    "8 feature definitions",
++    "1-day information delay",
++    "7-day horizon",
++    "2021-2023 training geometry",
++    "all original observations and output files"
++  ],
++  "new_model_specifications": 1,
++  "new_historical_performance_trials": 0,
++  "snapshot_date": "2026-09-07",
++  "snapshot_is_prospective": false,
++  "decision": "PREPARED_NOT_PROMOTED; no candidate passed the dry-run margin",
++  "data_censoring": "BTT, CVP, VIDT retained with null return; no fabricated full-loss label",
++  "notes": "Daily marks and same-base cross-quote identity are accounting assumptions, not evidence of actual fills. Historical v1 scenarios are sensitivity only. No formal Core trial/power attestation or capital activation."
++}
+\ No newline at end of file
+diff --git a/docs/evidence/altcoin_payoff_20260907/validation.json b/docs/evidence/altcoin_payoff_20260907/validation.json
+new file mode 100644
+index 0000000..3d752bd
+--- /dev/null
++++ b/docs/evidence/altcoin_payoff_20260907/validation.json
+@@ -0,0 +1,18 @@
++{
++  "targeted_tests": {
++    "total": 30,
++    "prior_analog": 11,
++    "new_payoff_identity": 11,
++    "freeze_gate": 8
++  },
++  "ruff": "PASS",
++  "pyright": "PASS",
++  "offline_byte_identical": [
++    "results.json",
++    "samples_identity_corrected.json.gz"
++  ],
++  "new_price_requests": 13,
++  "new_historical_performance_trials": 0,
++  "scheduler_created": false,
++  "capital_authorized": false
++}
+\ No newline at end of file
+diff --git a/scripts/prepare_altcoin_payoff.py b/scripts/prepare_altcoin_payoff.py
+new file mode 100644
+index 0000000..3b1690e
+--- /dev/null
++++ b/scripts/prepare_altcoin_payoff.py
+@@ -0,0 +1,389 @@
++"""Repair outcome identities and prepare one net-payoff/abstention prototype.
++
++This is preparation plus a dry run, not a new historical performance trial.
++Original samples, models, results, production and frozen files are immutable.
++"""
++
++from __future__ import annotations
++
++import argparse
++import gzip
++import hashlib
++import json
++import math
++from collections import Counter, defaultdict
++from datetime import date, timedelta
++from decimal import Decimal
++from pathlib import Path
++from urllib.parse import parse_qs, urlparse
++
++import numpy as np
++
++from scripts.collect_altcoin_analogs import Acquisition, time_ms
++from scripts.research_altcoin_analogs import AnalogModel
++
++ROOT = Path(__file__).resolve().parents[1]
++EVIDENCE = ROOT / "docs/evidence/altcoin_payoff_20260907"
++EPOCH = date(1970, 1, 1)
++DAY = 86_400_000
++LEVERAGED_BASES = {
++    "1INCH",
++    "AAVE",
++    "ADA",
++    "BCH",
++    "BNB",
++    "BTC",
++    "DOT",
++    "EOS",
++    "ETH",
++    "FIL",
++    "LINK",
++    "LTC",
++    "SUSHI",
++    "SXP",
++    "TRX",
++    "UNI",
++    "XLM",
++    "XRP",
++    "XTZ",
++    "YFI",
++}
++
++
++def is_known_leveraged_symbol(symbol: str) -> bool:
++    """Explicit legacy product families; a name merely ending in UP is insufficient."""
++    if not symbol.endswith("USDT"):
++        return False
++    base = symbol[:-4]
++    if base in {"BULL", "BEAR"}:
++        return True
++    return any(
++        base == asset + suffix
++        for asset in LEVERAGED_BASES
++        for suffix in ("UP", "DOWN", "BULL", "BEAR")
++    )
++
++
++def raw_entries(raw_dir: Path, requested: set[tuple[str, int]]) -> dict:
++    result = {}
++    for metadata_path in raw_dir.glob("*.json"):
++        metadata = json.loads(metadata_path.read_text())
++        url = urlparse(metadata["url"])
++        if url.path != "/api/v3/klines":
++            continue
++        symbol = parse_qs(url.query)["symbol"][0]
++        if not any(key[0] == symbol for key in requested):
++            continue
++        body = gzip.decompress(metadata_path.with_suffix(".bin.gz").read_bytes())
++        assert hashlib.sha256(body).hexdigest() == metadata["sha256"]
++        for row in json.loads(body):
++            key = (symbol, time_ms(row[0]))
++            if key in requested:
++                result[key] = {
++                    "open": row[1],
++                    "source": metadata["url"],
++                    "known_at": metadata["retrieved_at_utc"],
++                }
++    if set(result) != requested:
++        raise ValueError("Original entry prices are not fully traceable")
++    return result
++
++
++def exact_close(rows: list, on_day: date) -> str | None:
++    start = (on_day - EPOCH).days * DAY
++    end = start + DAY
++    matches = [
++        row
++        for row in rows
++        if time_ms(row[0]) == start
++        and time_ms(row[6]) < end
++        and Decimal(row[4]) > 0
++        and Decimal(row[5]) > 0
++    ]
++    if len(matches) > 1:
++        raise ValueError("duplicate exact-day price")
++    return matches[0][4] if matches else None
++
++
++def adjusted_gross(entry_price: str, close: str, ratio: str, quote_close: str = "1") -> float:
++    values = [Decimal(x) for x in (entry_price, close, ratio, quote_close)]
++    if any(x <= 0 for x in values):
++        raise ValueError("nonpositive price/conversion ratio")
++    entry, price, units, quote = values
++    return float(price * units * quote / entry - 1)
++
++
++def net_factor(gross: float, sell_legs: int = 1, side_bps: float = 20) -> float:
++    if not math.isfinite(gross) or gross < -1 or sell_legs < 1:
++        raise ValueError("invalid payoff or exit route")
++    cost = side_bps / 10000
++    return (1 + gross) * (1 - cost) ** sell_legs / (1 + cost)
++
++
++def payoff_summary(neighbors: list[dict]) -> dict:
++    unresolved = sum(s["gross_return"] is None for s in neighbors)
++    if unresolved:
++        return {
++            "status": "ABSTAIN_CENSORED_NEIGHBOR",
++            "unresolved_neighbors": unresolved,
++            "score_log": None,
++            "qualified": False,
++        }
++    by_week = defaultdict(list)
++    for sample in neighbors:
++        factor = net_factor(sample["gross_return"], sample.get("sell_legs", 1))
++        if factor <= 0:
++            return {"status": "ABSTAIN_TOTAL_LOSS_NEIGHBOR", "score_log": None, "qualified": False}
++        by_week[sample["date"]].append(math.log(factor))
++    values = np.array([np.mean(v) for v in by_week.values()])
++    if len(values) < 20:
++        return {
++            "status": "ABSTAIN_TOO_FEW_DISTINCT_WEEKS",
++            "distinct_weeks": len(values),
++            "score_log": None,
++            "qualified": False,
++        }
++    effective = len(values) // 4
++    mean = float(values.mean())
++    penalty = float(1.96 * values.std(ddof=1) / np.sqrt(effective))
++    score = mean - penalty
++    return {
++        "status": "RESEARCH_CANDIDATE" if score > 0 else "ABSTAIN_NO_POSITIVE_MARGIN",
++        "qualified": score > 0,
++        "distinct_weeks": len(values),
++        "effective_n_heuristic": effective,
++        "mean_log_payoff": mean,
++        "geometric_payoff_proxy": math.expm1(mean),
++        "uncertainty_penalty_log": penalty,
++        "score_log": score,
++        "score_return_equivalent": math.expm1(score),
++        "confidence_claim": "heuristic penalty, not a calibrated confidence interval",
++    }
++
++
++def repair_samples(samples: list[dict], resolutions: list[dict]) -> list[dict]:
++    lookup = {(x["symbol"], x["entry"]): x for x in resolutions}
++    expected = {(x["symbol"], x["date"]) for x in samples if x["missing_outcome"]}
++    if set(lookup) != expected:
++        raise ValueError("resolution register does not cover exactly the original missing outcomes")
++    enriched = []
++    for original in samples:
++        sample = dict(original)
++        sample["gross_return_original_stress"] = original["gross_return"]
++        sample["target_original_stress"] = original["target"]
++        sample["sell_legs"] = 1
++        sample["outcome_status"] = (
++            "PENDING" if original["period"] == "current" else "DIRECT_DAILY_PRICE_PROXY"
++        )
++        resolution = lookup.get((original["symbol"], original["date"]))
++        if resolution:
++            sample["gross_return"] = resolution["gross_return"]
++            sample["outcome_status"] = resolution["status"]
++            sample["sell_legs"] = resolution["sell_legs"]
++            sample["target"] = (
++                None
++                if resolution["gross_return"] is None
++                else int(
++                    resolution["gross_return"] >= 0.2
++                    and resolution["gross_return"] - original["btc_gross_return"] >= 0.1
++                )
++            )
++        enriched.append(sample)
++    return enriched
++
++
++def fixed_selection_sensitivity(samples: list[dict], weeks: list[dict]) -> dict:
++    lookup = {(s["date"], s["symbol"]): s for s in samples}
++    reports = {}
++    for period in ("evaluation_1", "evaluation_2"):
++        reports[period] = {}
++        for method in ("analogs", "equal_basket", "momentum"):
++            streams = {"unresolved_total_loss_stress": [], "unresolved_flat_recovery_scenario": []}
++            unknown = []
++            for week in (w for w in weeks if w["period"] == period):
++                holdings = [lookup[(week["date"], symbol)] for symbol in week["selections"][method]]
++                if not holdings:
++                    for values in streams.values():
++                        values.append(1.0)
++                    continue
++                factors = []
++                for sample in holdings:
++                    if sample["gross_return"] is None:
++                        factors.append(None)
++                        unknown.append({"date": sample["date"], "symbol": sample["symbol"]})
++                    else:
++                        factors.append(net_factor(sample["gross_return"], sample["sell_legs"]))
++                streams["unresolved_total_loss_stress"].append(
++                    float(np.mean([0 if x is None else x for x in factors]))
++                )
++                streams["unresolved_flat_recovery_scenario"].append(
++                    float(np.mean([1 if x is None else x for x in factors]))
++                )
++            reports[period][method] = {
++                "exact_executable_return": None,
++                "unresolved_holdings": unknown,
++                "scenario_compounded_returns": {
++                    key: float(np.prod(values) - 1) for key, values in streams.items()
++                },
++                "meaning": "Fixed v1 selections, corrected known quantity/quote marks. Scenarios for residual censoring, not executable P&L or universal recovery bounds.",
++            }
++    return reports
++
++
++def main():
++    parser = argparse.ArgumentParser(description=__doc__)
++    parser.add_argument("--base-data-dir", required=True, type=Path)
++    parser.add_argument("--base-results-dir", required=True, type=Path)
++    parser.add_argument("--data-dir", required=True, type=Path)
++    parser.add_argument("--output-dir", required=True, type=Path)
++    parser.add_argument(
++        "--offline",
++        action="store_true",
++        help="Require every price request in the recorded cache; never contact the provider",
++    )
++    args = parser.parse_args()
++    args.output_dir.mkdir(parents=True, exist_ok=True)
++    events = json.loads((EVIDENCE / "identity_events.json").read_text())["events"]
++    protocol = json.loads((EVIDENCE / "protocol.json").read_text())
++    requested = {(e["symbol"], (date.fromisoformat(e["entry"]) - EPOCH).days * DAY) for e in events}
++    entries = raw_entries(args.base_data_dir / "raw", requested)
++    acquisition = Acquisition(args.data_dir)
++
++    def close_for(symbol: str, day: date):
++        start = (day - EPOCH).days * DAY
++        url = "https://api.binance.com/api/v3/klines"
++        params = {
++            "symbol": symbol,
++            "interval": "1d",
++            "startTime": start,
++            "endTime": start + DAY - 1,
++            "limit": 2,
++        }
++        if args.offline:
++            request = acquisition.client.build_request("GET", url, params=params)
++            key = hashlib.sha256(str(request.url).encode()).hexdigest()
++            metadata = json.loads((args.data_dir / "raw" / f"{key}.json").read_text())
++            body = gzip.decompress((args.data_dir / "raw" / f"{key}.bin.gz").read_bytes())
++            if hashlib.sha256(body).hexdigest() != metadata["sha256"]:
++                raise ValueError("offline cached price hash mismatch")
++        else:
++            body = acquisition.get(url, params)
++        return exact_close(json.loads(body), day)
++
++    resolutions = []
++    for event in events:
++        entered = date.fromisoformat(event["entry"])
++        exit_day = entered + timedelta(days=6)
++        entry = entries[(event["symbol"], (entered - EPOCH).days * DAY)]
++        row = dict(
++            event,
++            entry_price=entry["open"],
++            entry_raw_source=entry,
++            exit_day=exit_day.isoformat(),
++            gross_return=None,
++            sell_legs=1,
++        )
++        if event["kind"] == "DELISTING_UNRESOLVED":
++            row["status"] = "CENSORED_NO_VERIFIED_EXIT"
++        else:
++            price = close_for(event["exit_pair"], exit_day)
++            quote = (
++                close_for(event["quote_conversion_pair"], exit_day)
++                if event.get("quote_conversion_pair")
++                else "1"
++            )
++            row.update(
++                {
++                    "successor_close": price,
++                    "quote_usdt_close": quote,
++                    "sell_legs": 2 if event.get("quote_conversion_pair") else 1,
++                }
++            )
++            if price is None or quote is None:
++                row["status"] = "CENSORED_NO_PRICE_AT_ORIGINAL_HORIZON"
++            else:
++                row["gross_return"] = adjusted_gross(
++                    entry["open"], price, event["new_units_per_old"], quote
++                )
++                row["status"] = (
++                    "QUANTITY_ADJUSTED_DAILY_MARK"
++                    if event["kind"] == "TOKEN_MIGRATION"
++                    else "CROSS_QUOTE_DAILY_MARK"
++                )
++        resolutions.append(row)
++    raw_metadata = [
++        json.loads(p.read_text()) for p in sorted((args.data_dir / "raw").glob("*.json"))
++    ]
++    samples = json.loads(gzip.decompress((args.base_results_dir / "samples.json.gz").read_bytes()))
++    enriched = repair_samples(samples, resolutions)
++    train = [s for s in enriched if s["period"] == "train"]
++    current = [s for s in enriched if s["period"] == "current"]
++    # Only the v1 neighbor geometry is reused. Dummy labels are not return imputations:
++    # they are never scored; the complete/censored payoffs are handled separately.
++    geometry = AnalogModel().fit(np.array([s["features"] for s in train]), np.zeros(len(train)))
++    _, _, indices = geometry.predict(np.array([s["features"] for s in current]))
++    snapshot = []
++    for sample, neighbors in zip(current, indices, strict=True):
++        summary = payoff_summary([train[int(i)] for i in neighbors])
++        snapshot.append({"symbol": sample["symbol"], "neighbor_count": 200, **summary})
++    snapshot.sort(
++        key=lambda s: (
++            s["score_log"] is None,
++            -(s["score_log"] if s["score_log"] is not None else 0),
++            s["symbol"],
++        )
++    )
++    selected = [s["symbol"] for s in snapshot if s["qualified"]][:5]
++    weeks = json.loads((args.base_results_dir / "weekly_portfolios.json").read_text())
++    output = {
++        "id": protocol["id"],
++        "status": "IMPLEMENTED_DRY_RUN_ONLY_NOT_PROMOTED",
++        "protocol_sha256": hashlib.sha256((EVIDENCE / "protocol.json").read_bytes()).hexdigest(),
++        "identity_resolutions": resolutions,
++        "counts": {
++            "original_censored": len(resolutions),
++            "resolved_price_proxies": sum(r["gross_return"] is not None for r in resolutions),
++            "still_censored": sum(r["gross_return"] is None for r in resolutions),
++            "training_samples_preserved": len(train),
++            "training_still_censored": sum(s["gross_return"] is None for s in train),
++        },
++        "fixed_v1_selection_accounting": fixed_selection_sensitivity(enriched, weeks),
++        "payoff_snapshot": {
++            "input_date": "2026-09-07",
++            "prospective": False,
++            "performance_claim": False,
++            "ranked": snapshot,
++            "candidate_symbols": selected,
++            "research_weight_each": 0.2,
++            "cash_weight": 1 - 0.2 * len(selected),
++            "status_counts": dict(Counter(s["status"] for s in snapshot)),
++        },
++        "new_historical_performance_trials": 0,
++        "raw_requests": raw_metadata,
++        "activation": {"capital": False, "orders": False, "scheduler": False, "prospective": False},
++        "remaining": protocol["new_evidence"]["before_prospective_activation"],
++    }
++    (args.output_dir / "results.json").write_text(
++        json.dumps(output, indent=2, allow_nan=False), encoding="utf-8"
++    )
++    (args.output_dir / "samples_identity_corrected.json.gz").write_bytes(
++        gzip.compress(json.dumps(enriched, allow_nan=False).encode(), mtime=0)
++    )
++    print(
++        json.dumps(
++            {
++                "counts": output["counts"],
++                "resolutions": [
++                    {k: row.get(k) for k in ("symbol", "entry", "status", "gross_return")}
++                    for row in resolutions
++                ],
++                "snapshot": output["payoff_snapshot"],
++                "fixed_accounting": output["fixed_v1_selection_accounting"],
++            },
++            indent=2,
++        )
++    )
++
++
++if __name__ == "__main__":
++    main()
+diff --git a/tests/test_altcoin_payoff.py b/tests/test_altcoin_payoff.py
+new file mode 100644
+index 0000000..013e941
+--- /dev/null
++++ b/tests/test_altcoin_payoff.py
+@@ -0,0 +1,102 @@
++"""Quantity conservation, censoring and payoff controls; no alpha claims."""
++
++from datetime import date
++
++import pytest
++
++from scripts.prepare_altcoin_payoff import (
++    adjusted_gross,
++    exact_close,
++    is_known_leveraged_symbol,
++    net_factor,
++    payoff_summary,
++    repair_samples,
++)
++
++
++@pytest.mark.parametrize(
++    "entry,close,ratio",
++    [("0.01", "10", "0.001"), ("0.2", "0.02", "10"), ("0.002", "0.000002", "1000")],
++)
++def test_redenomination_alone_does_not_create_gain_or_loss(entry, close, ratio):
++    assert adjusted_gross(entry, close, ratio) == 0
++
++
++def test_cross_quote_uses_observed_conversion_instead_of_assumed_peg():
++    assert adjusted_gross("100", "100", "1", "0.9") == pytest.approx(-0.1)
++    assert net_factor(0, 2) < net_factor(0, 1)
++
++
++def test_later_listing_cannot_fill_earlier_missing_exit():
++    row = [1643068800000, "1", "1", "1", "1", "100", 1643155199999]
++    assert exact_close([row], date(2022, 1, 23)) is None
++    assert exact_close([row], date(2022, 1, 25)) == "1"
++
++
++def test_censored_neighbor_forces_abstention_instead_of_silent_removal():
++    neighbors = [{"date": f"week-{i}", "gross_return": 0.2} for i in range(200)]
++    neighbors[99]["gross_return"] = None
++    result = payoff_summary(neighbors)
++    assert result["status"] == "ABSTAIN_CENSORED_NEIGHBOR"
++    assert not result["qualified"]
++
++
++def test_many_coins_in_one_week_are_not_many_independent_weeks():
++    result = payoff_summary([{"date": "one-week", "gross_return": 0.9}] * 200)
++    assert result["status"] == "ABSTAIN_TOO_FEW_DISTINCT_WEEKS"
++
++
++def test_net_payoff_rejects_lottery_with_negative_expected_wealth():
++    # In every independent week, two 30% winners and eight 20% losers.
++    neighbors = [
++        {"date": f"week-{w}", "gross_return": 0.3 if k < 2 else -0.2}
++        for w in range(20)
++        for k in range(10)
++    ]
++    assert not payoff_summary(neighbors)["qualified"]
++
++
++def test_positive_control_can_qualify_and_fee_only_case_cannot():
++    neighbors = [{"date": f"week-{i // 5}", "gross_return": 0.02} for i in range(200)]
++    assert payoff_summary(neighbors)["qualified"]
++    for row in neighbors:
++        row["gross_return"] = 0.0
++    assert not payoff_summary(neighbors)["qualified"]
++
++
++def test_legitimate_names_ending_in_up_are_not_leveraged_products():
++    assert not is_known_leveraged_symbol("JUPUSDT")
++    assert not is_known_leveraged_symbol("SYRUPUSDT")
++    assert is_known_leveraged_symbol("BTCUPUSDT")
++    assert is_known_leveraged_symbol("ETHBEARUSDT")
++
++
++def test_repair_preserves_original_evidence_and_censored_observations():
++    original = [
++        {
++            "symbol": "XUSDT",
++            "date": "2021-01-04",
++            "period": "train",
++            "gross_return": -1,
++            "target": 0,
++            "missing_outcome": "missing",
++            "btc_gross_return": 0,
++        }
++    ]
++    repaired = repair_samples(
++        original,
++        [
++            {
++                "symbol": "XUSDT",
++                "entry": "2021-01-04",
++                "gross_return": None,
++                "sell_legs": 1,
++                "status": "CENSORED",
++            }
++        ],
++    )
++    assert len(repaired) == 1
++    assert original[0]["gross_return"] == -1
++    assert repaired[0]["gross_return"] is None
++    assert repaired[0]["target"] is None
++    assert repaired[0]["gross_return_original_stress"] == -1

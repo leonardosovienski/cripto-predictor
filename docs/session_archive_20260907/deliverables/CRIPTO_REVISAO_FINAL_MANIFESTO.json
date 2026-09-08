@@ -1,0 +1,45 @@
+{
+  "base_commit": "5d28a63c1b2a147d17054ace3914de698a7959a4",
+  "head_commit": "07794acbc5a3f779eb8d45c932be5070d36251a7",
+  "files": {
+    "CRIPTO_REVISAO_FINAL.md": {
+      "sha256": "4181d3e96d07bdb307157145692c8caf8bc403a6c99d6d7d0bf2391d7f23b3e2",
+      "bytes": 4126
+    },
+    "CRIPTO_REVISAO_FINAL.json": {
+      "sha256": "77188afd748f71371c090e678092f8adad268eca6c672a4a566c1fb814dab03c",
+      "bytes": 19526
+    },
+    "CRIPTO_REVISAO_FINAL.patch": {
+      "sha256": "d9d2d59e1f05e9c1513dc2f298376f4331243ae6fefb7e0d16326aa085f4ff1e",
+      "bytes": 103406
+    },
+    "CRIPTO_REVISAO_FINAL_REPRODUCAO.zip": {
+      "sha256": "99d2063d33b9e517b58c1c35e5fec2c16cd29b3f1f6b1a34ce15879c3439fbb3",
+      "bytes": 73738508
+    },
+    "ACOMPANHAMENTO_CRIPTO.md": {
+      "sha256": "fc622289a05e7b439c3e775e7a5e30141fad12d8ab9de98529bbe130c363129e",
+      "bytes": 1425
+    },
+    "ACOMPANHAMENTO_CRIPTO_V5_20260907.md": {
+      "sha256": "fb89a9516eebc69f014d5145472789ab29be26a67973dc87888c0bac2e029391",
+      "bytes": 3751
+    }
+  },
+  "standalone_reproduction": {
+    "status": "PASS",
+    "packaged_file_hashes": 4665,
+    "selected_tests_passed": 62,
+    "reproduced_result_files_byte_identical": 6,
+    "forward_snapshot": "REPLAYED_FROM_SAVED_RESPONSES",
+    "forward_eligible": 44,
+    "forward_selected": [],
+    "public_requests_during_reproduction": 0,
+    "orders": false,
+    "archive_sha256": "99d2063d33b9e517b58c1c35e5fec2c16cd29b3f1f6b1a34ce15879c3439fbb3",
+    "archive_bytes": 73738508,
+    "package_source_commit": "51c5a88084c9cf77c36731c5a26eb1e6574a3d8f"
+  },
+  "profit": "Historical carry scenarios positive; real investor net profit unverified"
+}

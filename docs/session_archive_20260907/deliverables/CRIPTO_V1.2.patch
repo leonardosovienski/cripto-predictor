@@ -1,0 +1,1807 @@
+diff --git a/.github/workflows/ci.yml b/.github/workflows/ci.yml
+index 676369b..3bbbf5a 100644
+--- a/.github/workflows/ci.yml
++++ b/.github/workflows/ci.yml
+@@ -32,7 +32,7 @@ jobs:
+           python -m venv "$RUNNER_TEMP/wheel-contract"
+           "$RUNNER_TEMP/wheel-contract/bin/pip" install --upgrade pip
+           "$RUNNER_TEMP/wheel-contract/bin/pip" install \
+-            "predictor-core @ https://github.com/leonardosovienski/core-predictor/releases/download/v3.0.0/predictor_core-3.0.0-py3-none-any.whl" \
++            "predictor-core @ https://github.com/leonardosovienski/core-predictor/releases/download/v3.2.0/predictor_core-3.2.0-py3-none-any.whl" \
+             "predictor-ops @ https://github.com/leonardosovienski/predictor-ops/releases/download/v4.1.0/predictor_ops-4.1.0-py3-none-any.whl" \
+             dist/cripto_predictor-1.0.0-py3-none-any.whl
+           cd "$RUNNER_TEMP"
+diff --git a/CR_FREEZE_INDEX.md b/CR_FREEZE_INDEX.md
+index 53691b7..484f2dc 100644
+--- a/CR_FREEZE_INDEX.md
++++ b/CR_FREEZE_INDEX.md
+@@ -18,7 +18,7 @@ em `CR_RESEARCH_FREEZE.md` e o gate técnico em `scripts/check_reopen_dossier.py
+ 
+ | Arquivo | O que contém |
+ |---|---|
+-| **`CR_RESEARCH_FREEZE.md`** (raiz) | O documento mestre. Hipóteses ativas (nenhuma), observações passivas (H6, H6_binance_collection, H7), hipóteses encerradas (H1-H5 + ancestral), componentes preservados/arquivados, inventário formal de componentes (REUSE/KEEP_DOMAIN_OWNED/ARCHIVE), atestado do harness, verificação de preservação (backup real, testado), auditoria de sweep, política de reabertura |
++| **`CR_RESEARCH_FREEZE.md`** (raiz) | O documento mestre. Hipóteses ativas (nenhuma), observação passiva Binance; H7/H8 registradas sem ativação; hipóteses encerradas (H1-H6, H9 + ancestral), componentes preservados/arquivados, inventário formal de componentes (REUSE/KEEP_DOMAIN_OWNED/ARCHIVE), atestado do harness, verificação de preservação (backup real, testado), auditoria de sweep, política de reabertura |
+ 
+ ## 3. Governança e reabertura
+ 
+@@ -75,7 +75,7 @@ em `CR_RESEARCH_FREEZE.md` e o gate técnico em `scripts/check_reopen_dossier.py
+ | Arquivo | O que contém |
+ |---|---|
+ | `scripts/attest_harness.py` | Reemite o atestado de controle positivo/negativo dos 2 juízes (V3/PSR, Fase1/Spearman) |
+-| `GarimpoInvestimentos/trials.harness_attestation.json` | Atestado real, `core_version: 3.0.0`, reemitido nesta rodada (não editado manualmente) |
++| `GarimpoInvestimentos/trials.harness_attestation.json` | Atestado real Core 3.2.0, reemitido 2026-09-07 em árvore limpa; errata P0-A em HYPOTHESES.md |
+ | `GarimpoInvestimentos/trials.phase1_harness_attestation.json` | Idem, juiz Fase1 |
+ 
+ ## 9. Segurança
+diff --git a/CR_RESEARCH_FREEZE.md b/CR_RESEARCH_FREEZE.md
+index 1abaf0b..a5120b3 100644
+--- a/CR_RESEARCH_FREEZE.md
++++ b/CR_RESEARCH_FREEZE.md
+@@ -9,7 +9,7 @@ schema_version: cr-research-freeze/1
+ generated_at: 2026-09-02
+ updated_at: 2026-09-03  # segunda camada: verificação executável (não apenas leitura de código)
+ based_on_charter: charters/scientific_state.json (as_of_commit 9949b510586cafe08c11a4733c19ebf30edf253c)
+-core_version_pinned: predictor-core==3.0.0 (pyproject.toml + uv.lock, consistentes)
++core_version_pinned: predictor-core==3.2.0 (pyproject.toml + uv.lock, consistentes)
+ 
+ preservation_verification:
+   # CR_PRESERVATION = PASS. Fechado em 2026-09-03 pelo dono do projeto na
+@@ -145,24 +145,25 @@ sweep_count_audit:
+   correction_applied: none  # decisão deliberada — ver nota acima
+ 
+ harness_attestation:
++  # Reemissão real 2026-09-07, árvore limpa: package:3.2.0;git:b765948f5f7b48986dcbb00533193669d1202b41
+   # scripts/attest_harness.py rodado de verdade em 2026-09-03 (não editado manualmente).
+   # O atestado anterior (core_version=2.3.0, passed_at=2026-08-21) estava expirado
+   # (expires_at=2026-08-28) e contra Core desatualizado — trocado por reemissão real.
+   v3_judge:
+     metric: psr
+-    core_version: "3.0.0"
+-    passed_at: "2026-09-03T00:45:53Z"
+-    expires_at: "2026-09-10T00:45:53Z"
++    core_version: "3.2.0"
++    passed_at: "2026-09-07T18:19:27Z"
++    expires_at: "2026-09-14T18:19:27Z"
+     positive_control: GO (sinal plantado detectado — sensibilidade OK)
+     negative_control: NO-GO em ruído puro (especificidade OK)
+   phase1_judge:
+     metric: spearman_ic
+-    core_version: "3.0.0"
+-    passed_at: "2026-09-03T00:45:43Z"
+-    expires_at: "2026-09-10T00:45:43Z"
++    core_version: "3.2.0"
++    passed_at: "2026-09-07T18:19:19Z"
++    expires_at: "2026-09-14T18:19:19Z"
+     positive_control: VALIDADO (sinal plantado detectado)
+     negative_control: RUIDO rejeitado (IC95 cruza zero)
+-  test_suite: "853 passed, 0 failed (uv run pytest tests/, all-extras, 2026-09-03)"
++  test_suite: "983 passed, 0 failed (pytest all-extras, Core 3.2.0, 2026-09-07)"
+   # inclui: hash chain (tamper/append), DPL bitemporal (published_at>=timestamp,
+   # rejeição de leitura antes do cutoff), PBO/CSCV (ruído->PBO alto, skill real->PBO baixo),
+   # gate_power (UNDERPOWERED vs REFUTED distintos), no-lookahead do HMM V3.
+@@ -173,13 +174,14 @@ active_hypotheses: []
+ # capital_authorized=false, leverage_authorized=false, llm_direct_trading_authorized=false
+ # (charters/scientific_state.json).
+ 
+-passive_observations:
++closed_observations:
+   - id: H6
+     trial: h6-sinal-invertido-d7
+-    status: COLLECTION_ONLY_IMMATURE (charters/scientific_state.json — NÃO alterado; ver nota)
++    status: CLOSED_INSUFFICIENT_SAMPLE (errata 2026-09-07; INCONCLUSIVE_DUE_TO_POWER)
+     gate: "n >= 30 (H6_MIN_N), IC95 do Spearman invertido não cruzando zero"
+     last_recorded_state: "GarimpoInvestimentos/h6_status.json — observed_at 2026-09-03T05:55:26Z, n=84, rho=-0.057, IC95%[-0.231, +0.129], gate_atingido=true, veredito 'RUIDO (IC cruza 0)'"
+     frozen_definition_hash: 5582ec23370e58ae0fe961d41a3127674c136027b28ec511034efb0bd99b9f0a (docs/H6_REFREEZE_2026-08-27.md)
++    errata_2026-09-07: "O texto de 03/09 abaixo é histórico. O charter fechou H6 em 04/09; a causa agora é amostra insuficiente. Não há reabertura nem mudança da coleta."
+     evidence_update_2026-09-03: >
+       Rodada real de quality_snapshot.py na máquina de produção (C:\predictor\prod),
+       após corrigir dois bugs de wiring de env var (DATA_DIR e COINGECKO_API_KEY
+@@ -197,6 +199,8 @@ passive_observations:
+       alterado); isto é um evidence update dentro do protocolo já registrado, não
+       reabertura nem novo ciclo de otimização (bloco 18).
+     note: "n=0 na leitura anterior (24/08) era estado legítimo, não banco vazio — confirmado agora que o pipeline voltou a rodar."
++
++passive_observations:
+   - id: H6_binance_collection
+     plan: observation_plans/binance_funding_oi_v1.yaml
+     status: COLLECTION_ONLY (docs/COLLECTION_ONLY_OBSERVATION.md)
+diff --git a/Dockerfile b/Dockerfile
+index 8a2c002..a99874f 100644
+--- a/Dockerfile
++++ b/Dockerfile
+@@ -10,7 +10,7 @@ COPY charters ./charters
+ COPY observation_plans ./observation_plans
+ RUN pip install --no-cache-dir --upgrade pip && \
+     pip install --no-cache-dir \
+-        "predictor-core @ https://github.com/leonardosovienski/core-predictor/releases/download/v3.0.0/predictor_core-3.0.0-py3-none-any.whl" \
++        "predictor-core @ https://github.com/leonardosovienski/core-predictor/releases/download/v3.2.0/predictor_core-3.2.0-py3-none-any.whl" \
+         "predictor-ops @ https://github.com/leonardosovienski/predictor-ops/releases/download/v4.1.0/predictor_ops-4.1.0-py3-none-any.whl" \
+         ".[llm,excel,v3]" && \
+     pip uninstall -y pip
+diff --git a/GarimpoInvestimentos/analyzers/backtest.py b/GarimpoInvestimentos/analyzers/backtest.py
+index 6ef323c..9d1157e 100644
+--- a/GarimpoInvestimentos/analyzers/backtest.py
++++ b/GarimpoInvestimentos/analyzers/backtest.py
+@@ -25,7 +25,12 @@ from predictor_core.net import get_http_client, with_retry
+ from predictor_core.obs import emit_event
+ from predictor_core.stats import spearman_block_ci
+ 
+-from GarimpoInvestimentos.analyzers.trials import deflated_sharpe_ratio, load_trials, register_trial
++from GarimpoInvestimentos.analyzers.trials import (
++    DeflationNotEstimableError,
++    load_trials,
++    register_trial,
++    registry_deflated_sharpe_ratio,
++)
+ from GarimpoInvestimentos.config import settings
+ from GarimpoInvestimentos.core.history import migrate_csv_to_store
+ from GarimpoInvestimentos.core.paths import FEATURE_STORE_DB, OUTPUT_DIR
+@@ -865,18 +870,22 @@ def _metrics(enriched: list[dict], horizon: int) -> None:
+         # reportar a melhor fabrica significância — o desconto que ninguém media.
+         trials = load_trials()
+         if trials and len(rets) >= 3:
+-            # Trials abertas têm sharpe=null (ex.: H6 aguardando gate) — não
+-            # entram no denominador do máximo-por-sorte (auditoria externa).
+-            d = deflated_sharpe_ratio(
+-                [x / 100 for x in rets],
+-                [t["sharpe"] for t in trials if t.get("sharpe") is not None],
+-            )
+-            if not math.isnan(d["dsr"]):  # NaN check legível (era d != d)
+-                print(
+-                    f"  DSR (N={d['n_trials']} tentativas registradas): "
+-                    f"P(SR > máx-por-sorte) = {d['dsr']:.2f} | SR0 = {d['sr0']:.3f} "
+-                    f"— {'passa' if d['dsr'] >= 0.95 else 'NÃO passa'} o corte 0.95"
++            # Tentativas sem Sharpe contam em N, mas não na variância.
++            try:
++                d = registry_deflated_sharpe_ratio(
++                    [x / 100 for x in rets], trials, sharpe_basis=f"per_trade_d{horizon}"
+                 )
++            except DeflationNotEstimableError as exc:
++                print(f"  DSR: UNKNOWN (N={len(trials)}) — {exc}; promoção bloqueada")
++            else:
++                if not math.isnan(d["dsr"]):
++                    print(
++                        f"  DSR (N={d['n_trials']} tentativas registradas, "
++                        f"{d['n_sharpes']} Sharpes finitos): "
++                        f"P(SR > máx-por-sorte) = {d['dsr']:.2f} | SR0 = {d['sr0']:.3f} "
++                        f"— {'passa' if d['dsr'] >= 0.95 else 'NÃO passa'} o corte 0.95"
++                    )
++
+     else:
+         print(f"  Hit rate (score ≥ {threshold}): nenhum sinal forte ainda")
+ 
+diff --git a/GarimpoInvestimentos/analyzers/trials.py b/GarimpoInvestimentos/analyzers/trials.py
+index 8cd7f5a..a20069b 100644
+--- a/GarimpoInvestimentos/analyzers/trials.py
++++ b/GarimpoInvestimentos/analyzers/trials.py
+@@ -12,15 +12,18 @@ positivo (testing.harness.attest_pipeline_power) — o arquivo irmão
+ que prova que o juiz GO/NO-GO detecta edge plantado e rejeita ruído.
+ """
+ 
++import json
++import math
+ from pathlib import Path
+ 
+ from predictor_core.measurement.trials import (  # noqa: F401 — re-export
++    DeflationNotEstimableError,
+     PowerAttestationMissingError,
+     attestation_path_for,
+-    deflated_sharpe_ratio,
+     expected_max_sharpe,
+     validate_trials,
+ )
++from predictor_core.measurement.trials import deflated_sharpe_ratio as _core_dsr
+ from predictor_core.measurement.trials import load_trials as _core_load
+ from predictor_core.measurement.trials import register_trial as _core_register
+ 
+@@ -28,6 +31,56 @@ from predictor_core.measurement.trials import register_trial as _core_register
+ TRIALS_PATH = Path(__file__).resolve().parent.parent / "trials.json"
+ 
+ 
++def deflated_sharpe_ratio(returns: list, trial_sharpes: list) -> dict:
++    """Não publica PSR sob rótulo DSR quando a variância não é estimável."""
++    return _core_dsr(returns, trial_sharpes, strict=True)
++
++
++def registry_deflated_sharpe_ratio(returns: list, trials: list[dict], *, sharpe_basis: str) -> dict:
++    """Recusa variância entre Sharpes sem unidade/período comparáveis.
++
++    O ledger histórico mistura Sharpe por trade e mean/std * sqrt(n) do WFA.
++    Não normalizamos sem o n original, nem alteramos resultados congelados.
++    """
++    for trial in trials:
++        sharpe = trial.get("sharpe")
++        if sharpe is not None and math.isfinite(sharpe):
++            if trial.get("params", {}).get("sharpe_basis") != sharpe_basis:
++                raise DeflationNotEstimableError(
++                    f"base/unidade de Sharpe não comprovada para {trial['name']!r}; "
++                    f"esperado {sharpe_basis!r}"
++                )
++    return deflated_sharpe_ratio(returns, [trial.get("sharpe") for trial in trials])
++
++
++def _update_attestation(target: Path, name: str, extra: dict) -> dict:
++    """Encaminha o atestado da métrica já registrada; o Core valida sua vigência.
++
++    Não emite atestados, não inventa métrica e não libera família fechada.
++    Chamadores que fornecem explicitamente o atestado preservam esse contrato.
++    """
++    if "power_attestation" in extra or "pipeline_fingerprint" in extra:
++        return extra
++    trial = next((t for t in load_trials(target) if t["name"] == name), None)
++    if trial is None or not trial.get("metric"):
++        return extra
++    metric = trial["metric"]
++    att = (
++        target.with_name(target.stem + ".phase1_harness_attestation.json")
++        if metric == "spearman_ic"
++        else attestation_path_for(target)
++    )
++    try:
++        record = json.loads(att.read_text(encoding="utf-8"))
++    except (OSError, ValueError):
++        record = {}
++    return {
++        **extra,
++        "power_attestation": att,
++        "pipeline_fingerprint": record.get("pipeline_fingerprint"),
++    }
++
++
+ def load_trials(path: Path | None = None) -> list[dict]:
+     target = path or TRIALS_PATH
+     trials = _core_load(target)
+@@ -112,4 +165,6 @@ def register_trial(
+         _reject_frozen_family(
+             name, params, state.frozen_families, {t["name"] for t in load_trials(target)}
+         )
++    if sharpe is not None or "status" in extra:
++        extra = _update_attestation(Path(target), name, extra)
+     return _core_register(name, params=params, sharpe=sharpe, notes=notes, path=target, **extra)
+diff --git a/GarimpoInvestimentos/trials.harness_attestation.json b/GarimpoInvestimentos/trials.harness_attestation.json
+index 640061f..fde4bcb 100644
+--- a/GarimpoInvestimentos/trials.harness_attestation.json
++++ b/GarimpoInvestimentos/trials.harness_attestation.json
+@@ -1,8 +1,9 @@
+ {
+   "schema_version": "pipeline-power/2",
+-  "passed_at": "2026-09-03T00:45:53Z",
+-  "expires_at": "2026-09-10T00:45:53Z",
+-  "core_version": "3.0.0",
++  "passed_at": "2026-09-07T18:19:27Z",
++  "expires_at": "2026-09-14T18:19:27Z",
++  "core_version": "3.2.0",
++  "code_version": "package:3.2.0;git:b765948f5f7b48986dcbb00533193669d1202b41",
+   "evaluate": "judge_go_nogo",
+   "edge_verdict": "GO",
+   "note": "Juiz V3 (backtest_v3): GO/NO-GO via PSR>=0.80 & IC_lower>0, seeds 7/8, n=400 — edge plantado e ruido",
+diff --git a/GarimpoInvestimentos/trials.phase1_harness_attestation.json b/GarimpoInvestimentos/trials.phase1_harness_attestation.json
+index 95ff5ea..e3113aa 100644
+--- a/GarimpoInvestimentos/trials.phase1_harness_attestation.json
++++ b/GarimpoInvestimentos/trials.phase1_harness_attestation.json
+@@ -1,8 +1,9 @@
+ {
+   "schema_version": "pipeline-power/2",
+-  "passed_at": "2026-09-03T00:45:43Z",
+-  "expires_at": "2026-09-10T00:45:43Z",
+-  "core_version": "3.0.0",
++  "passed_at": "2026-09-07T18:19:19Z",
++  "expires_at": "2026-09-14T18:19:19Z",
++  "core_version": "3.2.0",
++  "code_version": "package:3.2.0;git:b765948f5f7b48986dcbb00533193669d1202b41",
+   "evaluate": "judge_phase1",
+   "edge_verdict": "VALIDADO",
+   "note": "Juiz da Fase 1 (analyzers/backtest._report): VALIDADO/RUIDO via Spearman IC95 block bootstrap nao cruza zero, seeds 21/22, n=120 — edge plantado e ruido",
+diff --git a/HANDOFF.md b/HANDOFF.md
+index 7653889..b97ad99 100644
+--- a/HANDOFF.md
++++ b/HANDOFF.md
+@@ -1,5 +1,12 @@
+ # HANDOFF — GarimpoInvestimentos (Fase 1 + melhorias)
+ 
++> **Delta CRIPTO v1.2 — 2026-09-07:** Core 3.2.0 preparado em worktree isolado;
++> seis pins consistentes, DSR estrito e N incluindo Sharpes ausentes. H6/H9
++> encerradas por insuficiência de amostra; custos assumidos reclassificados.
++> Rodada, validação e limitações: `docs/HYPOTHESES.md`, errata 2026-09-07.
++> Produção permanece intacta; as notas de 06/09 abaixo são históricas.
++
++
+ > **Estado técnico corrente — 2026-09-06:** pacote `GarimpoInvestimentos`, Core
+ > **3.0.0** e Ops **4.1.0** por wheels. Referências posteriores a vendors, Core 2.x,
+ > Ops 3.x, ambientes antigos ou contagens históricas permanecem apenas como
+diff --git a/README.md b/README.md
+index 1203529..745336d 100644
+--- a/README.md
++++ b/README.md
+@@ -76,10 +76,10 @@ travado em código por `charters/scientific_state.json`):
+ | H3 | Horizonte 48h amortiza a fricção | `v3-hmm-funding-oi-fr90-h48` | **CLOSED_NO_GO** — edge bruto vira negativo; MaxDD 50,3% |
+ | H4 | Score do LLM prevê retorno D+7 | `v2-dpl-gemini-h7` | **CLOSED_INSUFFICIENT_SAMPLE** — coleta encerrada com n=5 |
+ | H5 | Idem, partição multi-juiz | `v2-dpl-multi-h7` | **CLOSED_NO_GO** — Spearman −0,166 [−0,266; −0,057], n=440 (IC não cruza zero, mas na direção oposta) |
+-| H6 | Leitura **invertida** do score do LLM | `h6-sinal-invertido-d7` | **CLOSED_NO_GO** — rho −0,057 [−0,231; +0,129] com n=84: cruza zero, e o sinal voltou a ser negativo, não positivo como a inversão previa |
++| H6 | Leitura **invertida** do score do LLM | `h6-sinal-invertido-d7` | **CLOSED_INSUFFICIENT_SAMPLE** — rho −0,057 [−0,231; +0,129] com n=84: cruza zero, e o sinal voltou a ser negativo, não positivo como a inversão previa |
+ | H7 | Calendário macro (FOMC/CPI/PPI) + DXY | `h7-macro-dxy-hmm-v1` | **REGISTERED_NOT_ACTIVATED** — infra pronta; backtest TENTADO em 2026-09-04 e abortado por bug de infraestrutura (corrigido no PR #91), sem veredito válido |
+ | H8 | LLM como GERADOR de hipóteses (não preditor) | `h8-llm-hypothesis-generator` | **REGISTERED_NOT_ACTIVATED** — loop propor→avaliar→traçar implementado; coleta não iniciada |
+-| H9 | Razão OI/volume (crowding especulativo) | `h9-oi-volume-ratio-hmm-v1` | **CLOSED_NO_GO** — PSR 0,162; IC cruza zero. Ressalva registrada: 44 dos 45 folds saíram `INSUFFICIENT_DATA`, então o agregado repousa sobre UMA janela |
++| H9 | Razão OI/volume (crowding especulativo) | `h9-oi-volume-ratio-hmm-v1` | **CLOSED_INSUFFICIENT_SAMPLE** — PSR 0,162; IC cruza zero. Ressalva registrada: 44 dos 45 folds saíram `INSUFFICIENT_DATA`, então o agregado repousa sobre UMA janela |
+ 
+ O NO-GO da V3 é o primeiro veredito *confiável* do projeto: HMM auditado sem
+ look-ahead, custos modelados, controle positivo provando que o pipeline detecta edge
+diff --git a/charters/scientific_state.json b/charters/scientific_state.json
+index b7f6e20..fb18172 100644
+--- a/charters/scientific_state.json
++++ b/charters/scientific_state.json
+@@ -11,10 +11,10 @@
+     "H3": "CLOSED_NO_GO",
+     "H4": "CLOSED_INSUFFICIENT_SAMPLE",
+     "H5": "CLOSED_NO_GO",
+-    "H6": "CLOSED_NO_GO",
++    "H6": "CLOSED_INSUFFICIENT_SAMPLE",
+     "H7": "REGISTERED_NOT_ACTIVATED",
+     "H8": "REGISTERED_NOT_ACTIVATED",
+-    "H9": "CLOSED_NO_GO"
++    "H9": "CLOSED_INSUFFICIENT_SAMPLE"
+   },
+   "hypothesis_trials": {
+     "H1": "v3-hmm-funding-oi-fr90",
+@@ -30,5 +30,5 @@
+   "frozen_families": [
+     "funding_oi_hmm_v3"
+   ],
+-  "notes": "H1-H3/V3 cannot be reopened or reparameterized silently. Any materially new hypothesis requires a new trial and valid power attestation. Correção 2026-08-19: 'H1' era confundido com a trial 'v1-direct-gemini-h7' (ancestral pré-protocolo da linha LLM, sem rótulo formal). O H1 real é 'v3-hmm-funding-oi-fr90' (docs/HYPOTHESES.md) — ver hypothesis_trials para o mapeamento explícito H<N> -> nome real em trials.json, que existe justamente para impedir essa ambiguidade se repetir."
++  "notes": "H1-H3/V3 cannot be reopened or reparameterized silently. Any materially new hypothesis requires a new trial and valid power attestation. Correção 2026-08-19: 'H1' era confundido com a trial 'v1-direct-gemini-h7' (ancestral pré-protocolo da linha LLM, sem rótulo formal). O H1 real é 'v3-hmm-funding-oi-fr90' (docs/HYPOTHESES.md) — ver hypothesis_trials para o mapeamento explícito H<N> -> nome real em trials.json, que existe justamente para impedir essa ambiguidade se repetir. Errata CRIPTO v1.2, 2026-09-07: H6 e H9 permanecem encerradas, agora CLOSED_INSUFFICIENT_SAMPLE. H6: INCONCLUSIVE_DUE_TO_POWER (n=84, IC cruza zero, poder 23% para rho=0.2); H9: INCONCLUSIVE (44/45 folds insuficientes). A decisão de não promoção de 2026-09-04 é mantida; sua leitura como refutação científica é retirada. Ver docs/HYPOTHESES.md, errata 2026-09-07. Isto não reativa hipóteses nem altera coleta, ledger, selos ou frozen_families."
+ }
+diff --git a/docs/EVIDENCE_REGISTRY.md b/docs/EVIDENCE_REGISTRY.md
+index ba596be..cc933ee 100644
+--- a/docs/EVIDENCE_REGISTRY.md
++++ b/docs/EVIDENCE_REGISTRY.md
+@@ -20,7 +20,7 @@ preditivo sobre BTC/ETH perp após custos.
+ 
+ - **state:** REFUTED
+ - **L:** fraco (nenhuma sub-série sobreviveu à reanálise independente)
+-- **Q:** alta (pré-registrado, custos reais via CostModel calibrado, WFA com
++- **Q:** média (pré-registrado, custos assumidos via CostModel testado, WFA com
+   purge, reanálise independente em base estendida)
+ - **evidence:** H1 (v3-hmm-funding-oi-fr90) CLOSED_NO_GO — líquido −0.09bps/sinal
+   BTC, PSR 0.445; ETH PSR 0.051. H2 (fr21) CLOSED_NO_GO — PSR 0.215, líquido
+@@ -50,7 +50,8 @@ prospectiva acima do acaso.
+ - **Q:** alta para H5 (n=440, prospectivo real, não retrospectivo); baixa para
+   H4 (n=5, amostra insuficiente por decisão operacional, não por desenho)
+ - **evidence:** H5 (v2-dpl-multi-h7) CLOSED_NO_GO — Spearman pooled −0.166
+-  [IC95 −0.266; −0.057], n=440, DSR 0.00 vs corte 0.95, acurácia direcional
++  [IC95 −0.266; −0.057], n=440, DSR histórico 0.00 (recalibração exata pendente dos retornos
++  originais; errata P0-A 2026-09-07), acurácia direcional
+   45.2% (abaixo do acaso). H4 (v2-dpl-gemini-h7) CLOSED_INSUFFICIENT_SAMPLE —
+   coleta interrompida em n=5 por risco de estouro de cota, sem veredito
+   estatístico possível.
+@@ -58,8 +59,8 @@ prospectiva acima do acaso.
+   nada — não deve ser lido como "LLM não funciona", só como "não foi possível
+   testar".
+ - **new_evidence?:** não.
+-- **decision:** ambas encerradas. H5 é o resultado forte (negativo,
+-  bem-poderizado); H4 é inconclusivo por desenho interrompido, não por
++- **decision:** ambas encerradas. H5 tem evidência negativa na direção testada;
++  n=440, isoladamente, não demonstra poder para todos os efeitos/regimes; H4 é inconclusivo por desenho interrompido, não por
+   refutação.
+ - **reopen_conditions:** mesmas do CLAIM-CR-HMM (dossiê + atestado de poder).
+   Para H4 especificamente, exigiria também resolver o risco operacional de
+@@ -71,8 +72,8 @@ prospectiva acima do acaso.
+ **Descrição:** Trend-following / momentum / SMA200 tem edge sobre cripto
+ após custos.
+ 
+-- **state:** REFUTED (por decisão de escopo do dono, ver docs/HYPOTHESES.md —
+-  não há trial numerada dedicada em trials.json com o mesmo rigor de H1-H5)
++- **state:** CLOSED_BY_SCOPE / INCONCLUSIVE — decisão de escopo não é refutação
++  científica; não há trial dedicada com evidência equivalente a H1-H5.
+ - **L:** UNKNOWN — não há trial formal registrada com PSR/DSR para esta
+   família especificamente nesta auditoria; a decisão de não promoção está
+   documentada em `docs/HYPOTHESES.md`, não em `trials.json`.
+@@ -125,35 +126,26 @@ construção (não apenas por convenção).
+ ---
+ 
+ ## CLAIM-CR-COSTS
+-**Descrição:** Ganhos brutos aparentes em backtests desaparecem quando custos
+-reais são aplicados (CostModel calibrado).
+-
+-- **state:** SUPPORTED
+-- **L:** forte
+-- **Q:** alta — CostModel classificado `MEASURED/CALIBRATED` para perp (taker
+-  10bps + slippage 5bps/perna + funding real), testado nesta auditoria
+-  (`test_v3_costs.py`, 5/5 passando)
+-- **evidence:** H1 é o caso mais direto: sinal bruto existia, mas líquido de
+-  custos ficou negativo (−0.09bps BTC). `test_costs_turn_small_predictive_edge_into_no_trade`
+-  e `test_edge_menor_que_custo_vira_prejuizo_liquido` provam isso por código,
+-  não só por resultado histórico.
+-- **limitations:** modelo de custo para spot (`trading/costs.py`,
+-  walk-the-book) segue explicitamente NÃO CALIBRADO e bloqueado
+-  (`UncalibratedCostModel`) — não pode sustentar veredito algum.
+-- **LACUNA DE PROVENIÊNCIA (2026-09-04, varredura de engenharia):** o "MEASURED/
+-  CALIBRATED" acima descreve que o CostModel de perp é testado por código
+-  (`test_v3_costs.py`), não que os valores 10bps taker + 5bps slippage foram
+-  conferidos contra uma tabela de fees real (tier VIP, data, fonte). Essa
+-  citação não existe em nenhum doc do repo. Como H1 perdeu por margem estreita
+-  (−0,09bps líquido vs. −0,53bps de custo), isto é relevante para saber quanta
+-  folga existe — mas NÃO é convite a reduzir o custo e re-rodar H1 esperando
+-  GO: qualquer mudança neste valor está sob a mesma trava de `frozen_families`
+-  que protege o sinal, exatamente porque mudar o denominador de um veredito
+-  perto do limite é tão sensível a p-hacking quanto mudar o numerador.
+-- **new_evidence?:** não desde o fechamento de H1-H3.
+-- **decision:** CostModel perp preservado como ativo central do case
+-  científico (CASE-CR-001).
+-- **reopen_conditions:** N/A (claim de suporte).
++**Descrição:** O modelo de custos assumido reduz o resultado simulado; a fricção
++executável em conta real ainda não foi medida.
++
++- **state:** SUPPORTED_UNDER_ASSUMED_COST_MODEL
++- **L:** forte para a identidade contábil; fraco para atribuir a perda real a fees.
++- **Q:** baixa para calibração econômica; testes validam aritmética, não execução.
++- **classification:** ASSUMED / UNCALIBRATED (fee 10bps e slippage 5bps por perna).
++- **evidence:** H1 bruto +0,44bps/sinal, líquido −0,09bps sob o modelo congelado.
++  Funding usa a taxa vigente na abertura repetida pelo horizonte; não equivale a
++  pagamentos realizados. Sensibilidade e proveniência: `HYPOTHESES.md`, P0-B
++  de 2026-09-07. O FAQ público ilustra 2bps maker e 5bps taker; sua própria
++  ressalva diz que são taxas hipotéticas. Fee efetiva da conta: UNKNOWN.
++- **limitations:** posição média absoluta e decomposição de funding de H1-H3 não
++  foram preservadas em um artefato identificado; o agregado não permite calcular
++  PSR/MaxDD sob nova fee. Spot segue `UncalibratedCostModel`.
++- **new_evidence?:** correção de proveniência, sem reexecução científica.
++- **decision:** retirados Q alta e MEASURED/CALIBRATED; valores em `v3/costs.py`
++  preservados integralmente. H1-H3 e a família permanecem fechadas.
++- **reopen_conditions:** mudar parâmetros exige proposta pré-registrada,
++  dossiê e evidência independente; a proposta P0-B não autoriza a execução.
+ 
+ ---
+ 
+@@ -170,8 +162,9 @@ reais são aplicados (CostModel calibrado).
+ - **evidence:** `GarimpoInvestimentos/h6_status.json` — rodada real de
+   `quality_snapshot.py` em 2026-09-03T05:55:26Z na máquina de produção
+   (`C:\predictor\prod`), n=84, gate_atingido=true, veredito "RUIDO (IC cruza
+-  0)". `charters/scientific_state.json` continua `COLLECTION_ONLY_IMMATURE`
+-  — não alterado, ver decision abaixo.
++  0)". `charters/scientific_state.json` era `CLOSED_NO_GO` na base auditada;
++  a afirmação anterior de que continuava COLLECTION_ONLY_IMMATURE era falsa.
++  Errata 2026-09-07: `CLOSED_INSUFFICIENT_SAMPLE`, sem reativação.
+ - **limitations:** poder de 23% (rho=0.2) e 47% (rho=0.3) em n=84 — mesmo
+   cruzando o gate de 30, a amostra não é adequada para descartar um efeito
+   real pequeno-a-moderado. Distinguir isso de refutação é exatamente o que o
+@@ -187,13 +180,15 @@ reais são aplicados (CostModel calibrado).
+   `analyzers/backtest.py:_fetch_price`) resolvido nesta sessão via
+   `COINGECKO_API_KEY` como variável de ambiente real do Windows (mesma classe
+   de bug do `DATA_DIR` — lida via `os.getenv()` direto, não pelo `.env`).
+-- **decision:** `CR_PASSIVE_COLLECTION = ENABLED` para H6 — continua
+-  `COLLECTION_ONLY`, charter não alterado, não autoriza capital/shadow/GO.
+-  Resultado INCONCLUSIVE não é motivo para engenharia nova de poder (bloco
+-  18) — é só registro do estado real observado.
+-- **reopen_conditions:** N/A — não é uma hipótese fechada, é observação
+-  passiva em curso. Este resultado é um evidence update dentro do protocolo
+-  já registrado, não reabertura nem fechamento.
++- **decision:** manter a não promoção operacional registrada em 2026-09-04,
++  corrigindo sua causa para `CLOSED_INSUFFICIENT_SAMPLE` / UNDERPOWERED. O
++  fechamento existe em `HYPOTHESES.md` e na reconciliação de 2026-09-05; não há
++  ali justificativa de poder que permita chamar o IC cruzando zero de refutação.
++  A coleta Binance é um plano independente e continua intocada. A disponibilidade
++  desse feed não significa que H6 esteja aberta para maturação automática.
++- **reopen_conditions:** H6 está encerrada; a afirmação anterior de “N/A, não é
++  hipótese fechada” foi retirada. Qualquer nova inferência exige novidade material,
++  poder dimensionado, protocolo e evidência independente. Nenhuma reabertura aqui.
+ 
+ ---
+ 
+diff --git a/docs/H6_REFREEZE_2026-08-27.md b/docs/H6_REFREEZE_2026-08-27.md
+index e666e57..c8e6cf2 100644
+--- a/docs/H6_REFREEZE_2026-08-27.md
++++ b/docs/H6_REFREEZE_2026-08-27.md
+@@ -1,5 +1,13 @@
+ # Registro de governanca — correção e recongelamento da H6
+ 
++> **Errata CRIPTO v1.2 — 2026-09-07:** H6 não é refutação estatística:
++> IC95 cruza zero e o poder em n=84 é 23% para rho=0,2. O estado corrente é
++> CLOSED_INSUFFICIENT_SAMPLE; H9 recebe a mesma classe (só 1/45 folds avaliável).
++> Ambos continuam encerrados. Referências históricas a CLOSED_NO_GO ou coleta
++> H6 aberta ficam superadas por `charters/scientific_state.json` e pela errata
++> de `docs/HYPOTHESES.md`. Não houve mudança de coleta, parâmetros ou selos.
++
++
+ **Data:** 2026-08-27  
+ **Classificacao:** reparo de implementacao de veredito; nao e nova hipotese nem
+ alteracao retroativa dos criterios pre-registrados.
+diff --git a/docs/HYPOTHESES.md b/docs/HYPOTHESES.md
+index d708bfb..3332611 100644
+--- a/docs/HYPOTHESES.md
++++ b/docs/HYPOTHESES.md
+@@ -129,7 +129,15 @@
+   zero), mistral −0,023 (n=20, IC cruza zero = ruído p/ ele). Mesmo padrão
+   que encerrou a H4. Motivou o pré-registro da H6 (inversão do sinal).
+ 
+-### H6 — Sinal invertido do LLM prevê retorno D+7 (status: **REFUTADA / NO-GO — 2026-09-04**)
++### H6 — Sinal invertido do LLM prevê retorno D+7 (status: **CLOSED_INSUFFICIENT_SAMPLE — errata 2026-09-07**)
++
++> **Errata CRIPTO v1.2 — 2026-09-07:** H6 não é refutação estatística:
++> IC95 cruza zero e o poder em n=84 é 23% para rho=0,2. O estado corrente é
++> CLOSED_INSUFFICIENT_SAMPLE; H9 recebe a mesma classe (só 1/45 folds avaliável).
++> Ambos continuam encerrados. Referências históricas a CLOSED_NO_GO ou coleta
++> H6 aberta ficam superadas por `charters/scientific_state.json` e pela errata
++> de `docs/HYPOTHESES.md`. Não houve mudança de coleta, parâmetros ou selos.
++
+ 
+ > **Veredito 2026-09-04.** Gate atingido (`h6_status.json`): n=84 (≥30 exigido),
+ > Spearman rho=-0,0567, IC95% [-0,2312, 0,1294] — **o IC CRUZA ZERO**.
+@@ -223,7 +231,7 @@
+ - Critério de sucesso (definido ANTES): idêntico ao da H4/H5 — Spearman IC95
+   não cruza zero (positivo desta vez) com n ≥ 30 previsões maduras SOB A
+   CONFIGURAÇÃO INVERTIDA; depois, Sharpe líquido por trade + DSR ≥ 0,95.
+-- Resultado: **REFUTADA — IC cruza zero em n=84** (ver veredito 2026-09-04 no
++- Resultado histórico, superado pela errata 2026-09-07: **REFUTADA — IC cruza zero em n=84** (ver veredito 2026-09-04 no
+   topo desta seção). Histórico intermediário preservado acima por transparência
+   (n=6, Sharpe auxiliar +0,3479) — nunca foi o veredito, só uma leitura
+   imatura de passagem.
+@@ -403,7 +411,10 @@
+ 
+ ---
+ 
+-### H9 — Razão OI/Volume (crowding especulativo) como covariável exógena do regime (status: **REFUTADA / NO-GO — 2026-09-04**)
++### H9 — Razão OI/Volume (crowding especulativo) como covariável exógena do regime (status: **CLOSED_INSUFFICIENT_SAMPLE — errata 2026-09-07**)
++
++> Um fold avaliável não isola a covariável nem demonstra ausência de efeito.
++> Histórico abaixo preservado; fechamento mantido sem refutação causal.
+ 
+ > **Veredito 2026-09-04.** Primeiro WFA completo rodado em produção
+ > (`backtest_v3.py --use-oi-volume-ratio`, BTCUSDT, dado real, sem crash —
+@@ -1274,3 +1285,282 @@ um NO-GO real (H9) e tem um pendente (H7). Um terceiro NO-GO na mesma
+ arquitetura não é azar — é evidência sobre a arquitetura, e o B4 (meta-análise
+ dos NO-GO) merece prioridade sobre promover B14/B15. Nenhuma das duas foi
+ registrada em `trials.json`: registro exige `decided_by: owner`.
++
++## Errata e decisões CRIPTO v1.2 — 2026-09-07
++
++Base auditada: `3c104ce` (origin/main). Trabalho isolado da produção. Esta seção
++substitui interpretações causais conflitantes acima, sem reescrever observações
++históricas, parâmetros, trials ou hashes congelados.
++
++### P0-D / P0-C — causa científica versus encerramento operacional
++
++O fechamento de H6 EXISTE: foi publicado em 2026-09-04, reafirmado pela
++reconciliação de 05/09. Sua justificativa confundiu “não passou o gate de
++validação” com “refutada”. O protocolo de 27/08 exige IC inteiramente negativo
++para refutação direcional; o IC observado cruza zero. Não há teste de
++equivalência/futilidade com poder adequado sustentando ausência de efeito.
++Corrigido o charter para `CLOSED_INSUFFICIENT_SAMPLE`: mantém a decisão de
++não promover e o bloqueio de reescrita, mas retira a inferência de refutação.
++H9 recebe a mesma classe operacional, por apenas um fold avaliável. Nenhuma
++das duas foi reaberta, nem qualquer job de coleta foi alterado.
++
++| Hipótese | Diagnóstico causal sustentado | Decisão / limitação |
++|---|---|---|
++| H1 | COST_FAILURE_UNDER_ASSUMED_MODEL; bruto histórico positivo pequeno | CLOSED_NO_GO; causalidade exclusiva de fee real não demonstrada; reanálise forward também negativa |
++| H2 | INCONCLUSIVE quanto à atribuição causal; edge insuficiente no cenário testado | CLOSED_NO_GO; +0,07 → −0,37bps; PSR 0,215; poder não documentado |
++| H3 | NO_GROSS_EDGE_IN_TESTED_CONFIGURATION | CLOSED_NO_GO; bruto −0,35bps, PSR 0,192, MaxDD 50,3%; fee não explica a origem do bruto negativo |
++| H4 | LOW_POWER / coleta interrompida | CLOSED_INSUFFICIENT_SAMPLE, n=5; não refuta feature/LLM |
++| H5 | OPPOSITE_DIRECTION_EVIDENCE na amostra prospectiva especificada | CLOSED_NO_GO; rho −0,166, IC95 [−0,266; −0,057], n=440. Não prova ausência universal de alpha; DSR histórico não é confirmação atual |
++| H6 | INCONCLUSIVE_DUE_TO_POWER / UNDERPOWERED | CLOSED_INSUFFICIENT_SAMPLE; n=84, IC95 [−0,231; +0,129], poder 23% para rho=0,2 |
++| H7 | HARNESS_FAILURE_NO_VALID_RESULT | REGISTERED_NOT_ACTIVATED; tentativa abortou por matriz de transição; correção do bug não é evidência sobre DXY |
++| H8 | NOT_TESTED | REGISTERED_NOT_ACTIVATED; pipeline implementado não demonstra valor de hipóteses geradas |
++| H9 | INCONCLUSIVE / LOW_EFFECTIVE_SAMPLE | CLOSED_INSUFFICIENT_SAMPLE; 44/45 folds insuficientes, sem ablação que isole OI/volume |
++
++`CONFIRMED_NO_EDGE` irrestrito não é sustentado para nenhuma feature isolada
++por esta rodada. A decisão de manter `funding_oi_hmm_v3` congelada é preservada
++pelos múltiplos resultados negativos existentes. O claim TREND foi corrigido:
++decisão de escopo sem trial não é refutação estatística.
++
++### P0-B — fees, unidades e sensibilidade sem reexecutar H1-H3
++
++Fontes públicas consultadas em **2026-09-07**:
++
++| Insumo | Observado / fonte | Classificação |
++|---|---|---|
++| USDⓈ-M maker 0,02% = 2bps; taker 0,05% = 5bps por perna | [FAQ Binance](https://www.binance.com/en/support/faq/detail/360033544231), atualizado 2026-05-01 | Exemplos públicos explicitamente hipotéticos, NÃO fee confirmada de conta |
++| Desconto BNB de 10% em USDⓈ-M | mesmo FAQ | Regra condicionada a BNB suficiente; cenário 1,8/4,5bps, sem assumir elegibilidade |
++| Tabela atual por tier | [Fee Rate Table](https://www.binance.com/en/fee/futureFee) retornou “No records found”; sonda pública auxiliar retornou 404 | UNKNOWN; não substituir por exemplo do FAQ |
++| Fee específica do operador | [User Commission Rate](https://developers.binance.com/docs/derivatives/usds-margined-futures/account/rest-api/User-Commission-Rate), endpoint USER_DATA assinado | UNKNOWN sem conta/consulta autorizada; exemplo JSON de API não é tabela comercial |
++| Modelo V3 | 10bps fee + 5bps slippage/perna; funding corrente repetido | ASSUMED/UNCALIBRATED; arquivo byte-idêntico ao freeze |
++
++**Correção de unidade:** os números H1/H2/H3 em bps/sinal são retornos sobre
++capital ponderados pela posição. A fee é bps de nocional POR PERNA. Não se
++subtrai 5bps diretamente de −0,09bps/sinal. Denote `a_i = média(|position|)`
++sobre exatamente os mesmos sinais do agregado original. Mantendo posições,
++funding e slippage fixos, a identidade exata é:
++
++`net_i(f) [bps/sinal] = net_i(10) + 2 × (10 − f) × a_i`.
++
++| Fee f, bps/perna | H1 líquido, bps/sinal | H2 | H3 |
++|---|---|---|---|
++| 10 (congelada) | −0,09 | −0,37 | −0,75 |
++| 5 (exemplo público) | −0,09 + 10a₁ | −0,37 + 10a₂ | −0,75 + 10a₃ |
++| 2 (cenário, NÃO fill maker assumido) | −0,09 + 16a₁ | −0,37 + 16a₂ | −0,75 + 16a₃ |
++| 0 (limite matemático) | −0,09 + 20a₁ | −0,37 + 20a₂ | −0,75 + 20a₃ |
++
++No cenário de 5bps, o líquido cruza zero somente se `a₁>0,009`, `a₂>0,037`
++ou `a₃>0,075`, respectivamente. Isto NÃO diz que cruza PSR/IC/MaxDD ou o
++hurdle econômico. `a_i`, retornos por sinal e funding realizado por sinal
++das três execuções originais: UNKNOWN. Não é possível separá-los do custo
++total agregado porque funding é assinado. O `wfa_returns.json` atualmente
++presente em produção não identifica H1/H2/H3 e não contém posições: recusado
++como substituto silencioso da amostra original. A busca cobriu artefatos
++versionados e os arquivos de resultados locais identificáveis, sem rodar WFA.
++
++**Decisão:** Q de CLAIM-CR-COSTS rebaixada; H1 é sensível a uma premissa
++não calibrada, mas a hipótese/família segue encerrada. PSR sob nova fee é
++UNKNOWN; nenhum GO foi inferido da sensibilidade algébrica.
++
++**Proposta de pré-registro `cost-provenance-v1` — DRAFT_NOT_REGISTERED:**
++pergunta exclusiva: qual a fricção de uma estrutura especificada? Universo
++BTCUSDT/ETHUSDT USDⓈ-M, sem escolha posterior por performance; código de
++estratégia/posição e dados de H1-H3 não serão reexecutados. Fixar antes da
++coleta independente: venue/conta/tier, tamanho nocional, tipo de ordem, horários,
++known_at, endpoint de fee e protocolo de mensuração. Comparar a referência
++congelada 10bps com a tarifa efetivamente observada, sem selecionar fee que
++resgate resultado. Orçamentos separados: análise contábil DISCOVERY sem capital;
++fills realizados só após autorização própria. Missing fee/fill → UNKNOWN;
++sem fee autenticada e sem fills não existe MEASURED_EXPECTED_FRICTION.
++Pré-definir precisão/IC e tamanho amostral após a estrutura ser conhecida,
++antes de observar seus resultados. Desfechos: erro de proveniência, amplitude
++de custo e decisão de envelope; nunca reabertura de `funding_oi_hmm_v3`.
++
++### P0-A — DSR instalado, migração e retificação dos números
++
++Core 3.0.0 encontrado em `C:/predictor/prod/.venv`; checkout antigo do usuário
++tinha Core 2.2.0. O ambiente isolado reproduziu o lock 3.0.0 e a degeneração:
++retornos `[0.01, -0.02, 0.03, 0.01]`, Sharpes `[None, 0.3]` → N=2,
++SR0=0, DSR=0,7450734876819202 (PSR puro). A release vigente verificada foi
++[Core 3.2.0](https://github.com/leonardosovienski/core-predictor/releases/tag/v3.2.0).
++Sua função permanece permissiva por padrão: apenas trocar a wheel NÃO basta.
++O domínio agora chama `strict=True`, tratando não estimável como UNKNOWN.
++
++Migrados os seis arquivos: pyproject, uv.lock, Dockerfile, CI,
++verify_installed_wheels e test_core_integrity. SHA256 da wheel:
++`9166dd6bd3be99668c0eb8bd3c59a92061e765186608465c0caf48a2417e3009`.
++Os cinco caminhos de update listados no HANDOFF agora executam controles
++sintéticos reais e encaminham o atestado correspondente à métrica gravada;
++validade, versão e fingerprint continuam verificados pelo Core. A emissão dos
++dois atestados usa staging externo para que o primeiro arquivo não suje a
++árvore antes do segundo controle. Não há `allow_dirty=True` na emissão canônica.
++
++**Achado adicional material:** `run_wfa` calcula `aggregate_sharpe` como
++`mean/population_std × sqrt(n)`, e `run_threshold_grid` grava esse número no
++campo `sharpe` do ledger. O registro também contém Sharpes por trade e outras
++frequências. Assim, sua variância conjunta NÃO está em uma unidade comum.
++Não corrigimos esses resultados congelados sem n e séries originais.
++O relatório agora exige `params.sharpe_basis` compatível com seu horizonte
++para cada Sharpe finito; metadado desconhecido ou incompatível → DSR UNKNOWN.
++Nenhum metadado foi inventado retroativamente para liberar o cálculo.
++
++| Número publicado / diagnóstico | Resultado desta auditoria |
++|---|---|
++| SR0 com N filtrado (23 Sharpes finitos) | 0,9524130493332158, reprodução aritmética do ledger atual |
++| SR0 contando todas as 26 tentativas | 0,9777608299827842, reprodução aritmética corrigida de N |
++| Validade dos dois SR0 acima | INVALID_FOR_INFERENCE: unidades/períodos incompatíveis; números de diagnóstico, não benchmarks científicos |
++| DSR H5 histórico 0,00, SR0 0,447, N=7 | Revalidação exata UNKNOWN: não foram localizados retornos congelados + snapshot de ledger usados naquela publicação |
++| H1/ETH, DSR histórico ≤ PSR | São limites publicados, não uma série DSR reconstruível; não promovem alpha |
++| DSRs em HANDOFF e relatórios históricos de outras datas | NOT_RECOMPUTABLE_FROM_SUMMARY: Sharpe/n agregado não determina assimetria/curtose exigidas pelo PSR/DSR |
++
++O inventário de ocorrências numéricas publicadas está em
++`docs/evidence/cripto_v12_dsr_inventory.json`. Tentativas com Sharpe null
++continuam em N. Converter t-like para Sharpe requer n e convenção original;
++normalizar períodos distintos exige protocolo próprio. Nem usar a série WFA
++atual sem identidade, nem criar retornos sintéticos com o mesmo Sharpe,
++recalcula legitimamente uma publicação passada. Portanto não alegamos ter
++recalculado DSRs irrecuperáveis. Todos ficam retirados de uso como evidência
++atual até recuperação dos inputs; o NO-GO direcional da H5 permanece sustentado
++pelo Spearman prospectivo, independentemente de DSR.
++
++### §8–§10 — moedas e custo de oportunidade, as of 2026-09-07
++
++Fontes consultadas em 2026-09-07. OBSERVADO: [PTAX fechamento
++04/09](https://ptax.bcb.gov.br/ptax_internet/consultarUltimaCotacaoDolar.do),
++USD compra 5,1247 / venda 5,1253 BRL. Reporting currency fixada para esta
++rodada: BRL. US$5.000 = R$25.626,50 usando PTAX venda como marca contábil,
++nunca como cotação executável. P&L de carry em USDT, com referência USD e risco
++de descolamento USDT/USD explícito. Benchmark em BRL. Hedge: NENHUM modelado.
++Exposição cambial: aproximadamente US$5.000 de principal + P&L líquido, sem
++hedge; ±10% de USD/BRL representa ±R$2.562,65 sobre o principal, sem alpha.
++
++| Campo obrigatório | Valor / ressalva |
++|---|---|
++| BENCHMARK_SOURCE | Candidato concreto: [Tesouro Reserva via BB](https://www.tesourodireto.com.br/tesouro-reserva), 100% Selic. Conta BB e escolha efetiva pelo operador: UNKNOWN. Não foi aberta conta. |
++| BENCHMARK_GROSS_RATE | Selic efetiva anualizada 13,90% em 04/09, [BCB SGS 1178](https://api.bcb.gov.br/dados/serie/bcdata.sgs.1178/dados/ultimos/1?formato=json). Meta 14,00% é referência macro separada. Projeção de 365 dias a taxa constante é cenário, não retorno contratado. |
++| BENCHMARK_TAX | Cenário PF, resgate após 365 dias: IR 17,5% do rendimento; IOF zero após 30 dias ([B3](https://www.b3.com.br/pt_br/produtos-e-servicos/tesouro-direto/tesouro-direto/perguntas-frequentes/)). Perfil tributário efetivo: UNKNOWN. |
++| BENCHMARK_FEES | Custódia B3 0,20% a.a., isenção até R$10.000. Taxa adicional do intermediário e isenção já consumida pelo CPF: UNKNOWN. |
++| BENCHMARK_NET_RETURN | Efetivamente acessível ao operador: UNKNOWN. Cenário descrito abaixo, com taxa do intermediário zero e isenção integral disponível, produz 11,318%–11,346% em um ano. |
++| AS_OF_DATE | 2026-09-07; câmbio e Selic efetiva com data do último dia útil disponível, 2026-09-04. |
++
++Controle temporal: SGS432 `/ultimos/1` devolveu data 16/09/2026 (futura no
++momento da consulta), logo foi rejeitada. Consulta delimitada 04–07/09 confirmou
++meta 14,00%. A indicação da constituição “desde 06/08” não foi promovida a dado
++histórico confirmado. O endpoint antigo de preços do Tesouro retornou 410;
++a página corrente de títulos não expôs cotação de Tesouro Selic. Não se
++inventou spread para completar o benchmark.
++
++FX_CONVERSION_COST: **UNKNOWN** para entrada e saída (spread, taxa, tributos,
++rede e rota não escolhidos). PTAX não mede esse custo; a marcação não assume
++conversão gratuita. Prêmio de risco exigido por venue/colateral/stablecoin:
++UNKNOWN, decisão do operador. Custo fixo operacional e atenção reais: UNKNOWN.
++Estimar 2h/mês a R$50/h produz R$1.200/ano apenas como sensibilidade explícita.
++
++**Cálculo reproduzível do cenário**, sem misturar taxa com moeda:
++
++- Capital marcado C=5.000×5,1253=R$25.626,50.
++- Rendimento bruto, taxa constante 13,9%: R$3.562,0835/ano.
++- IR do cenário: 17,5% do rendimento. Custódia entre R$31,253 e R$38,377167,
++  limitando a base entre saldo inicial e saldo final bruto; não é simulação
++  exata de apropriação diária/tributação de cada fluxo.
++- Ganho líquido ilustrativo: R$2.900,34–R$2.907,47/ano.
++- ANNUAL_REQUIRED_VALUE real = BENCHMARK_NET_RETURN×C + prêmio de risco +
++  custo fixo + atenção: **UNKNOWN**. No cenário, sem os três acréscimos,
++  a referência é R$2.900,34–R$2.907,47; com a atenção ilustrativa,
++  R$4.100,34–R$4.107,47, antes de prêmio de risco, FX e custos fixos.
++- Estrutura ilustrativa spot integralmente pago + margem integral separada:
++  C=N_spot+M, M=N_spot; logo C/N=2 por construção desta estrutura, não por lei.
++  N=R$12.813,25; hurdle ilustrativo 22,635%–22,691% sobre esse nocional antes
++  dos acréscimos. Colateral eficiente só muda o fator quando venue e regras
++  forem conhecidos. Não há leverage autorizada nem medida.
++
++O valor real exigido não virou um número preciso com campos faltantes. O
++cenário é referência condicional; não é limite inferior universal, pois o
++benchmark futuro e a elegibilidade do operador também não estão fixados.
++MIN_GROSS_EDGE_WORTH_PURSUING permanece UNKNOWN por fricção não medida.
++FX_CONVERSION_COST será incluído uma única vez nos custos fixos e não também
++como desconto duplicado no retorno do benchmark.
++
++### Funding carry, gates, oportunidades e ranking
++
++Novidade material proposta: captar pagamentos de funding mantendo spot comprado
++e perp vendido, alvo FINANCING_PREMIUM / STRUCTURAL_CONSTRAINT. H1-H3 testaram
++funding/OI como preditor de direção; isso não mede essa transferência de valor.
++Distinção causal aceita para preparar dossiê, não para autorizar reabertura.
++`docs/reopen_dossiers/funding_carry_structural_v1.json` contém os seis campos
++do gate vigente e protocolo preliminar. Passar no validador só comprova
++completude documental. Não modifica `frozen_families`, não registra trial e
++não autoriza execução econômica antes dos insumos acima serem conhecidos.
++
++**G1 — FAIL para executar hoje:** sem venue/adapter real, nenhuma estrutura
++de colateral verificável ou autorização de capital. Veredito:
++`KILL_UNDER_CURRENT_ENVELOPE` para deployment; `BACKLOG` para a tese. G2–G7
++**NOT_RUN**, obedecendo à regra do primeiro gate que reprova. Além disso, G2
++estaria UNKNOWN sem benchmark efetivo e fricção; não tratá-lo como aprovado.
++A tese de dez perguntas não foi aprofundada antes de fechar esses insumos.
++
++Apenas disponibilidade pública foi sondada: [funding BTCUSDT gratuito](https://fapi.binance.com/fapi/v1/fundingRate?symbol=BTCUSDT&limit=3)
++respondeu HTTP 200 em 07/09 às 18:07 UTC. Três settlements não estimam
++estabilidade, APY futuro ou P&L capturável; não foram usados para um backtest.
++`known_at` é a hora da consulta, distinto de `fundingTime`. A sonda independente
++não substitui nem redireciona o coletor prospectivo existente.
++
++| Família | Fidelidade, concorrência e half-life | Lacuna / primeiro gate |
++|---|---|---|
++| Structural/carry | Funding 8h pesquisa pagamentos; sem fills/book/margem, execução UNKNOWN. Competição profissional em basis/carry; vantagem própria não demonstrada. Half-life econômica UNKNOWN (settlement 8h não é half-life). | Venue, colateral e custos reais; G1 bloqueia deployment; G2 não computável |
++| Predictive | OHLCV diário/OI1h/funding8h permitem apenas mecanismos lentos; competição sistemática, sem vantagem demonstrada. Half-life deve ser medida por alvo; 24/48h de forecast não prova duração do edge. | Família HMM congelada; H7/H8 sem evidência; não priorizar mais busca adaptativa |
++| Execution/MM | Sem L2/tape/queue, latência e fill model: INCONCLUSIVE_DATA_FIDELITY. Competidores com infraestrutura mais rápida. | G1 KILL_UNDER_CURRENT_ENVELOPE; feed+venue+host apropriado destravam |
++| Cross-venue | Sem execução simultânea e capital pré-posicionado; concorrência automatizada; half-life UNKNOWN com dado atual. | G1 KILL_UNDER_CURRENT_ENVELOPE; duas venues+capital+execução destravam |
++| Options/on-chain | known_at defensável e histórico equivalente ainda UNKNOWN; APY divulgado não mede edge. | HOLD_ON_DATA; futura comparação depende de proveniência gratuita e estrutura |
++
++**FREE_ALPHA_CANDIDATE — lending de stablecoin sem alavancagem:**
++classe FINANCING_PREMIUM; tomadores pagam juros, potencialmente por segmentação
++de crédito/colateral. Protocolo e cadeia não escolhidos, concorrência de
++depositantes e fundos; contrato/oráculo, supply/borrow, utilização, custos de
++rede e known_at são dados necessários. Feed live específico, capital mínimo,
++edge bruto/líquido, half-life e capacidade: UNKNOWN. Pesquisa pública inicial
++gratuita; falsificação mais barata é demonstrar um caminho autorizado para
++custódia/execução e depois comparar juros líquidos com o hurdle em BRL.
++Confiança baixa; tempo até veredito de envelope: esta rodada; até evidência
++deployable: UNKNOWN. **BACKLOG, G1 KILL_UNDER_CURRENT_ENVELOPE** (nenhuma wallet,
++venue ou infraestrutura de contrato autorizada). Não se examinou APY para
++escolher um vencedor; G2–G7 não foram rodados. Candidato registrado e morto
++barato sob o envelope, sem afirmar que não existe alpha na classe.
++
++**Expected Value of Research — ranking qualitativo, não EV financeiro inventado:**
++1. Correção DSR/causal já executada: impede conclusões ilegítimas a custo limitado.
++2. Structural/carry: próxima frente exploratória apenas quando estrutura e
++   benchmark forem conhecidos; mecanismo de pagamento mais direto, mas nenhuma
++   vantagem ou expectativa líquida demonstrada hoje.
++3. Predictive H7/H8: BACKLOG, abaixo de carry; dado/gerador precisa sustentar
++   identificação e poder antes de qualquer novo resultado. HMM congelado.
++4. Lending FREE_ALPHA_CANDIDATE: BACKLOG sob G1. Nenhum candidato novo passou
++   G1–G7, portanto nenhum qualifica para Proof.
++
++CURRENT_NEXT_IRREVERSIBLE_DECISION: **NONE_AUTHORIZED**. Próxima decisão
++externa necessária para deployment é escolher/autorizar estrutura de venue,
++custódia e capital depois da evidência de execução requerida. Para concluir o
++hurdle, dependem do operador: alternativa efetivamente acessível, rota/custo FX,
++prêmio de risco e custo de atenção. Esta rodada não gasta, transfere, abre
++conta, altera coleta, aprova ou mergeia em nome de terceiros.
++
++
++### Validação da entrega — 2026-09-07
++
++983 testes passaram (all-extras, Python 3.13.14, Core 3.2.0). Ruff check e
++format, Pyright, scan de segredos (0 achados), build wheel/sdist e instalação
++da wheel em ambiente novo fora do checkout: PASS. Snapshot H6 confere; costs,
++trials, h6_status e selos permanecem byte-idênticos à base. Docker e CI remoto
++não foram executados. A primeira execução de testes teve 979 passes e uma
++falha do path de isolamento escolhido dentro do checkout; mudado apenas o
++DATA_DIR de teste para pasta externa, a suíte final passou sem essa falha.
++
++Atestados realmente reemitidos: Fase 1 2026-09-07T18:19:19Z, V3 2026-09-07T18:19:27Z,
++Core 3.2.0, ambos contra `package:3.2.0;git:b765948f5f7b48986dcbb00533193669d1202b41`. Expiração: 2026-09-14;
++nenhuma validade permanente inferida. Os arquivos novos não foram instalados
++na produção. Antes de qualquer implantação, é necessária revisão concreta
++do diff científico e uma decisão de deployment que preserve a coleta.
++
++Limites que continuam abertos: tarifa atual por tier/conta e fills não
++medidos; benchmark do operador e FX não confirmados; séries originais dos
++DSRs e posições de H1-H3 não identificadas. Resultado honesto nesses campos
++é UNKNOWN, com as condições de desbloqueio descritas acima.
+diff --git a/docs/OVERVIEW_E_ROADMAP_2026-08-21.md b/docs/OVERVIEW_E_ROADMAP_2026-08-21.md
+index bf056d9..5750585 100644
+--- a/docs/OVERVIEW_E_ROADMAP_2026-08-21.md
++++ b/docs/OVERVIEW_E_ROADMAP_2026-08-21.md
+@@ -1,5 +1,13 @@
+ # Overview e Roadmap — 2026-08-21
+ 
++> **Errata CRIPTO v1.2 — 2026-09-07:** H6 não é refutação estatística:
++> IC95 cruza zero e o poder em n=84 é 23% para rho=0,2. O estado corrente é
++> CLOSED_INSUFFICIENT_SAMPLE; H9 recebe a mesma classe (só 1/45 folds avaliável).
++> Ambos continuam encerrados. Referências históricas a CLOSED_NO_GO ou coleta
++> H6 aberta ficam superadas por `charters/scientific_state.json` e pela errata
++> de `docs/HYPOTHESES.md`. Não houve mudança de coleta, parâmetros ou selos.
++
++
+ > **Para que serve este documento.** Ele é o ponto de partida frio: escrito para
+ > que um leitor (ou uma sessão nova) que não acompanhou nada consiga entender o
+ > projeto inteiro e saber exatamente o que fazer a seguir, sem depender de
+diff --git a/docs/case_studies/CASE-CR-001-custos-comem-sinal.md b/docs/case_studies/CASE-CR-001-custos-comem-sinal.md
+index cb6141b..3603979 100644
+--- a/docs/case_studies/CASE-CR-001-custos-comem-sinal.md
++++ b/docs/case_studies/CASE-CR-001-custos-comem-sinal.md
+@@ -1,5 +1,10 @@
+ # CASE-CR-001 — Custos líquidos comem um edge bruto positivo (H1/H2/H3)
+ 
++> **Errata 2026-09-07:** custos ASSUMED/UNCALIBRATED; teste aritmético não mede
++> fees, slippage ou fills reais. H1 perdeu sob esse cenário, mas a atribuição
++> exclusiva a custos reais não está demonstrada. Ver CLAIM-CR-COSTS e P0-B.
++
++
+ **Fonte:** `GarimpoInvestimentos/trials.json` (v3-hmm-funding-oi-fr90/fr21/fr90-h48),
+ `docs/HYPOTHESES.md`, `GarimpoInvestimentos/v3/costs.py`.
+ 
+diff --git a/docs/case_studies/CASE-CR-003-multiplas-hipoteses-sem-falso-vencedor.md b/docs/case_studies/CASE-CR-003-multiplas-hipoteses-sem-falso-vencedor.md
+index 0c2cccb..516ed52 100644
+--- a/docs/case_studies/CASE-CR-003-multiplas-hipoteses-sem-falso-vencedor.md
++++ b/docs/case_studies/CASE-CR-003-multiplas-hipoteses-sem-falso-vencedor.md
+@@ -1,4 +1,4 @@
+-# CASE-CR-003 — Sete hipóteses, zero GO: disciplina de múltiplas tentativas sem
++# CASE-CR-003 — Nove hipóteses, zero GO: disciplina de múltiplas tentativas sem
+ promover um falso vencedor
+ 
+ **Fonte:** `charters/scientific_state.json`, `GarimpoInvestimentos/trials.json`,
+@@ -6,7 +6,7 @@ promover um falso vencedor
+ `GarimpoInvestimentos/analyzers/pbo.py`.
+ 
+ ## Claim
+-Ao longo de sete hipóteses registradas (H1–H7), nenhuma foi promovida a capital
++Ao longo de nove hipóteses registradas (H1–H9), nenhuma foi promovida a capital
+ real, e o projeto manteve controles estruturais (trava de poder, PBO/CSCV,
+ registro append-only) para impedir que a família com melhor número aparente
+ fosse escolhida por acaso amostral.
+@@ -36,8 +36,10 @@ Status real por hipótese (charter, campo `hypotheses`):
+ | H3 | v3-hmm-funding-oi-fr90-h48 | CLOSED_NO_GO |
+ | H4 | v2-dpl-gemini-h7 | CLOSED_INSUFFICIENT_SAMPLE |
+ | H5 | v2-dpl-multi-h7 | CLOSED_NO_GO |
+-| H6 | h6-sinal-invertido-d7 | COLLECTION_ONLY_IMMATURE |
+-| H7 | (não registrada em trials.json) | REGISTERED_NOT_ACTIVATED |
++| H6 | h6-sinal-invertido-d7 | CLOSED_INSUFFICIENT_SAMPLE — UNDERPOWERED |
++| H7 | h7-macro-dxy-hmm-v1 | REGISTERED_NOT_ACTIVATED |
++| H8 | h8-llm-hypothesis-generator | REGISTERED_NOT_ACTIVATED |
++| H9 | h9-oi-volume-ratio-hmm-v1 | CLOSED_INSUFFICIENT_SAMPLE — 1/45 folds avaliável |
+ 
+ Nenhuma linha é GO. Nenhuma foi "resgatada" via reparametrização pós-hoc — a
+ H3 (horizonte 48h), por exemplo, é tratada como aprendizado ("o sinal é de
+diff --git a/docs/evidence/cripto_v12_dsr_inventory.json b/docs/evidence/cripto_v12_dsr_inventory.json
+new file mode 100644
+index 0000000..4b7e825
+--- /dev/null
++++ b/docs/evidence/cripto_v12_dsr_inventory.json
+@@ -0,0 +1,302 @@
++{
++  "as_of": "2026-09-07",
++  "base_commit": "3c104ce",
++  "scope": "All versioned Markdown numeric mentions of DSR/SR0; thresholds and historical claims distinguished in HYPOTHESES.md P0-A.",
++  "decision": "Do not use historical DSR as current evidence until original returns, ledger snapshot and comparable Sharpe bases are recovered.",
++  "current_ledger_sha256": "7193b15df347b8243a65ab92449503dd64f90a9777207aadc8c80da2e0ac844b",
++  "n_trials": 26,
++  "n_finite_sharpes": 23,
++  "diagnostic_sr0_filtered": 0.9524130493332158,
++  "diagnostic_sr0_all": 0.9777608299827842,
++  "diagnostic_valid_for_inference": false,
++  "mentions": [
++    {
++      "path": "CR_RESEARCH_FREEZE.md",
++      "line_at_audit": 233,
++      "text": "result: \"Spearman pooled −0.166 [IC95 −0.266; −0.057], n=440; DSR 0.00 vs corte 0.95; acurácia direcional 45.2%\"",
++      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
++    },
++    {
++      "path": "HANDOFF-2026-07-02.md",
++      "line_at_audit": 27,
++      "text": "| 01-02/07 | **Merge DPL+discovery** (`e8b2fa3`): carimbo **Fonte**, `--discover` exige `--ingest`, universo da análise = Feature Store. **DSR + trials.json** (`ab346d3`). **Equivalência DPL vs direto** (`6416a71`): indicadores bit-idênticos em candle fechado; `change_*` diverge 0,1-7,8pp (semântico). |",
++      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
++    },
++    {
++      "path": "HANDOFF-2026-07-02.md",
++      "line_at_audit": 34,
++      "text": "| **`claude/merge-dpl-discovery`** | **Linha principal.** DPL + discovery + Fonte + DSR + Feature-Store-como-histórico | 117 verdes (py 3.14) |",
++      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
++    },
++    {
++      "path": "HANDOFF.md",
++      "line_at_audit": 4,
++      "text": "> seis pins consistentes, DSR estrito e N incluindo Sharpes ausentes. H6/H9",
++      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
++    },
++    {
++      "path": "HANDOFF.md",
++      "line_at_audit": 281,
++      "text": "> rate score≥60 = 24%; estratégia retorno médio −6,87%, Sharpe −0,33; DSR",
++      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
++    },
++    {
++      "path": "HANDOFF.md",
++      "line_at_audit": 326,
++      "text": "backtest (Spearman+IC95+DSR) morava no `run_daily.ps1` da ColetaDiaria (18:00),",
++      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
++    },
++    {
++      "path": "HANDOFF.md",
++      "line_at_audit": 344,
++      "text": "ERRADA (motivo do NO-GO); hit rate 20%, estratégia −7,67% vs BTC +0,60%, DSR",
++      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
++    },
++    {
++      "path": "README.md",
++      "line_at_audit": 53,
++      "text": "predictions (histórico oficial) → BACKTEST (Spearman IC95% + DSR)",
++      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
++    },
++    {
++      "path": "README.md",
++      "line_at_audit": 120,
++      "text": "| Backtest | Spearman(score, retorno D+1/7/30) com IC95% (block bootstrap pareado, `block_length` overlap-aware), estratificado por divergência e por Fonte; **DSR** contra o máximo-por-sorte das tentativas |",
++      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
++    },
++    {
++      "path": "README.md",
++      "line_at_audit": 123,
++      "text": "| Governança | Controle positivo (edge sintético → \"validado\"; ruído → \"RUÍDO\"); `trials.json` versionado; charters com checksum; migrações aditivas (ADR-017); **PBO/CSCV** ao lado do DSR (perguntas complementares: o DSR desconta por N tentativas, o PBO mede se a SELEÇÃO entre configurações é frágil) |",
++      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
++    },
++    {
++      "path": "README.md",
++      "line_at_audit": 142,
++      "text": "│                             backtest (inclui os gates da H6), trials (DSR), equivalence,",
++      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
++    },
++    {
++      "path": "README.md",
++      "line_at_audit": 251,
++      "text": "# 3) BACKTEST (absorve CSV legado automaticamente; estratifica por Fonte; imprime DSR)",
++      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
++    },
++    {
++      "path": "docs/ARQUITETURA_CONSOLIDADA.md",
++      "line_at_audit": 68,
++      "text": "- Passo 5.3 (veredito com custos + DSR): re-execução do WFA de BTC/ETH em andamento —",
++      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
++    },
++    {
++      "path": "docs/ARQUITETURA_CONSOLIDADA.md",
++      "line_at_audit": 98,
++      "text": "| Validação estatística | 7,0 | Governança completa (controle positivo + DSR + look-ahead auditado + custos); edge NÃO demonstrado — e agora o NO-GO é confiável |",
++      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
++    },
++    {
++      "path": "docs/ARQUITETURA_CONSOLIDADA.md",
++      "line_at_audit": 110,
++      "text": "3. ~~Múltiplos testes sem correção~~ → **FECHADO** (`ab346d3`): DSR + `trials.json`",
++      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
++    },
++    {
++      "path": "docs/ARQUITETURA_CONSOLIDADA.md",
++      "line_at_audit": 129,
++      "text": "| DSR (N=4 tentativas) | **≤ 0,445** (corte: 0,95) | ≪ 0,45 |",
++      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
++    },
++    {
++      "path": "docs/CONFERENCIA_GERAL.md",
++      "line_at_audit": 25,
++      "text": "| 4 | DSR + `trials.json` versionado | `ab346d3`; 7 testes; fio no backtest; 4 tentativas registradas, v3-fr90 com veredito preenchido | ✅ |",
++      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
++    },
++    {
++      "path": "docs/CONFERENCIA_GERAL.md",
++      "line_at_audit": 36,
++      "text": "| 17 | WFA final com custos + DSR + controle positivo | Executado 2026-07-02: **NO-GO BTC e ETH** (ver §4) | ✅ **concluído** |",
++      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
++    },
++    {
++      "path": "docs/CONFERENCIA_GERAL.md",
++      "line_at_audit": 59,
++      "text": "| 2 | Falso GO por múltiplos testes | **FECHADO** | DSR + trials.json; o \"GO\" pré-custos de 27/06 foi efetivamente desmascarado |",
++      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
++    },
++    {
++      "path": "docs/CONFERENCIA_GERAL.md",
++      "line_at_audit": 66,
++      "text": "| 9 | Decisão de arquitetura por anedota | **FECHADO (processo)** | Gates formais (pedágio+DSR+controle positivo); dois NO-GO aceitos com base em número |",
++      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
++    },
++    {
++      "path": "docs/CONFERENCIA_GERAL.md",
++      "line_at_audit": 72,
++      "text": "PSR 0,445; DSR ≤ 0,445 (corte 0,95); IC do líquido cruza zero; MaxDD 29%. ETHUSDT pior",
++      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
++    },
++    {
++      "path": "docs/ERRATA_2026-08-21.md",
++      "line_at_audit": 55,
++      "text": "| \"DPL não promovida ao core\" (C-02) | **fechado** | contratos, routers, circuit breaker, trials/DSR e stats vivem em `predictor_core`; os módulos locais são compat shims |",
++      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
++    },
++    {
++      "path": "docs/EVIDENCE_REGISTRY.md",
++      "line_at_audit": 53,
++      "text": "[IC95 −0.266; −0.057], n=440, DSR histórico 0.00 (recalibração exata pendente dos retornos",
++      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
++    },
++    {
++      "path": "docs/H5_ACOMPANHAMENTO_2026-07-25.md",
++      "line_at_audit": 7,
++      "text": "> IC não cruza zero, mas na direção oposta à hipótese; Sharpe por trade −0,312; DSR",
++      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
++    },
++    {
++      "path": "docs/HYPOTHESES.md",
++      "line_at_audit": 66,
++      "text": "estratificado por Fonte; depois disso, Sharpe líquido por trade + DSR ≥ 0,95.",
++      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
++    },
++    {
++      "path": "docs/HYPOTHESES.md",
++      "line_at_audit": 89,
++      "text": "> DSR            0.00  contra corte 0.95   (SR0 0.447, N=7)",
++      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
++    },
++    {
++      "path": "docs/HYPOTHESES.md",
++      "line_at_audit": 119,
++      "text": "também reportado por juiz); depois, Sharpe líquido por trade + DSR ≥ 0,95.",
++      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
++    },
++    {
++      "path": "docs/HYPOTHESES.md",
++      "line_at_audit": 126,
++      "text": "−0,6725 (n=45). DSR 0,00, não passa o corte 0,95. Estratégia (score≥60)",
++      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
++    },
++    {
++      "path": "docs/HYPOTHESES.md",
++      "line_at_audit": 167,
++      "text": "> é o que mais infla a variância entre tentativas, e portanto o `SR0` do",
++      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
++    },
++    {
++      "path": "docs/HYPOTHESES.md",
++      "line_at_audit": 169,
++      "text": "> o Sharpe dela é −0,312, negativo, e o DSR fica ~0 com qualquer `SR0`",
++      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
++    },
++    {
++      "path": "docs/HYPOTHESES.md",
++      "line_at_audit": 233,
++      "text": "CONFIGURAÇÃO INVERTIDA; depois, Sharpe líquido por trade + DSR ≥ 0,95.",
++      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
++    },
++    {
++      "path": "docs/HYPOTHESES.md",
++      "line_at_audit": 649,
++      "text": "determinísticos (DSR, IC95 por block bootstrap, custos) e dados point-in-time",
++      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
++    },
++    {
++      "path": "docs/HYPOTHESES.md",
++      "line_at_audit": 1079,
++      "text": "A nota da H5 registra `DSR 0.00 (SR0 0.447, N=7 tentativas)`. Com a grade, N",
++      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
++    },
++    {
++      "path": "docs/NEXT_TRIAL_SCIENTIFIC_GATE.md",
++      "line_at_audit": 10,
++      "text": "- declarar autocorrelacao, overlap D+7 e regra de multiplicidade/DSR;",
++      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
++    },
++    {
++      "path": "docs/OVERVIEW_E_ROADMAP_2026-08-21.md",
++      "line_at_audit": 93,
++      "text": "| **H5** — idem, partição multi-juiz | `v2-dpl-multi-h7` | **CLOSED_NO_GO** | Spearman **−0,166** [−0,266; −0,057], n=440. O IC não cruza zero — **na direção oposta**. Acurácia direcional 45,2%. DSR 0,00 contra corte 0,95 |",
++      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
++    },
++    {
++      "path": "docs/OVERVIEW_E_ROADMAP_2026-08-21.md",
++      "line_at_audit": 117,
++      "text": "n=6 não existe IC que decida coisa alguma. Ele também é o que mais infla o `SR0`",
++      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
++    },
++    {
++      "path": "docs/OVERVIEW_E_ROADMAP_2026-08-21.md",
++      "line_at_audit": 322,
++      "text": "certo) e **DSR ≥ 0,95** contra o `N` de tentativas do `trials.json` — que hoje",
++      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
++    },
++    {
++      "path": "docs/OVERVIEW_E_ROADMAP_2026-08-21.md",
++      "line_at_audit": 334,
++      "text": "registro, e o DSR desconta por ela —, e/ou promover a **H7** (macro/DXY), cuja",
++      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
++    },
++    {
++      "path": "docs/OVERVIEW_E_ROADMAP_2026-08-21.md",
++      "line_at_audit": 392,
++      "text": "uv run python -m GarimpoInvestimentos.analyzers.backtest            # juiz + DSR + H6",
++      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
++    },
++    {
++      "path": "docs/PANORAMA_2026-08-21.md",
++      "line_at_audit": 69,
++      "text": "| `analyzers/` | 2.326 | LLM, backtest, DSR, PBO, DSL de fatores, laço de hipóteses, calibração |",
++      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
++    },
++    {
++      "path": "docs/PANORAMA_2026-08-21.md",
++      "line_at_audit": 103,
++      "text": "7 tentativas no denominador do DSR. Família `funding_oi_hmm_v3` congelada.",
++      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
++    },
++    {
++      "path": "docs/RECONCILIACAO_V3.md",
++      "line_at_audit": 23,
++      "text": "| Núcleo | `dpl/` (Feature Store bitemporal, routers, providers), `discovery`, DSR/trials, equivalência | `v3/` (regime_engine HMM causal, signal_engine, paper_trader, backtest_v3, collectors funding/OI/vision) |",
++      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
++    },
++    {
++      "path": "docs/RELATORIO_FINAL.md",
++      "line_at_audit": 11,
++      "text": "--discover `799cd27` (2) · controle positivo `e00e776` (3) · DSR+trials `ab346d3` (4) ·",
++      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
++    },
++    {
++      "path": "docs/RELATORIO_FINAL.md",
++      "line_at_audit": 59,
++      "text": "**Fechados (6):** look-ahead HMM · múltiplos testes (DSR/trials) · pipeline sem poder",
++      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
++    },
++    {
++      "path": "docs/RELATORIO_FINAL.md",
++      "line_at_audit": 69,
++      "text": "por sinal, n=3.958; PSR 0,445; **DSR ≤ 0,445**, registrado em `trials.json`",
++      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
++    },
++    {
++      "path": "docs/TRIAL_TEMPLATE_MULTI_NEWS_PREFILTER.md",
++      "line_at_audit": 41,
++      "text": "\"notes\": \"Criterio: Spearman IC95 nao cruza zero com n>=30 maduro; depois Sharpe liquido por trade + DSR>=0.95. Nao misturar com H5.\"",
++      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
++    },
++    {
++      "path": "docs/case_studies/CASE-CR-002-llm-prospectivo-negativo.md",
++      "line_at_audit": 16,
++      "text": "Sharpe líquido por trade + DSR ≥ 0.95.",
++      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
++    },
++    {
++      "path": "docs/case_studies/CASE-CR-002-llm-prospectivo-negativo.md",
++      "line_at_audit": 28,
++      "text": "na direção OPOSTA à hipótese. Sharpe/trade −0.312 (n=134). DSR 0.00 contra",
++      "status": "HISTORICAL_OR_THRESHOLD_NOT_REVALIDATED"
++    }
++  ]
++}
+diff --git a/docs/evidence/cripto_v12_sources.json b/docs/evidence/cripto_v12_sources.json
+new file mode 100644
+index 0000000..13af424
+--- /dev/null
++++ b/docs/evidence/cripto_v12_sources.json
+@@ -0,0 +1,111 @@
++[
++  {
++    "name": "fees",
++    "url": "https://www.binance.com/bapi/futures/v1/public/future/common/trade-fee",
++    "accessed_at": "2026-09-07T18:07:45.963200+00:00",
++    "status": 404,
++    "sha256": "8cfd2b9e52063870642e7b71f7fd78c52269714ae9165c0d76608074bd1cc3d8",
++    "data": {
++      "status": 404,
++      "path": "/v1/public/future/common/trade-fee",
++      "error": "Not Found",
++      "timestamp": 1788804467088,
++      "message": "No message available"
++    },
++    "interpretation": "UNAVAILABLE_NO_INFERRED_VALUE"
++  },
++  {
++    "name": "funding",
++    "url": "https://fapi.binance.com/fapi/v1/fundingRate?symbol=BTCUSDT&limit=3",
++    "accessed_at": "2026-09-07T18:07:45.963623+00:00",
++    "status": 200,
++    "sha256": "c70e9bb20d3f0c25a5a525cae3d30b5b597c5f1d95fb9f8f74aa0ca3549bdd7b",
++    "data": [
++      {
++        "symbol": "BTCUSDT",
++        "fundingTime": 1788739200004,
++        "fundingRate": "0.00002792",
++        "markPrice": "80303.33555472",
++        "rateType": "Regular"
++      },
++      {
++        "symbol": "BTCUSDT",
++        "fundingTime": 1788768000000,
++        "fundingRate": "0.00003113",
++        "markPrice": "79355.30000000",
++        "rateType": "Regular"
++      },
++      {
++        "symbol": "BTCUSDT",
++        "fundingTime": 1788796800003,
++        "fundingRate": "0.00002185",
++        "markPrice": "78776.74225362",
++        "rateType": "Regular"
++      }
++    ],
++    "interpretation": "AVAILABILITY_ONLY_NOT_ALPHA"
++  },
++  {
++    "name": "treasury",
++    "url": "https://www.tesourodireto.com.br/json/br/com/b3/tesourodireto/service/api/treasurybondsinfo.json",
++    "accessed_at": "2026-09-07T18:07:45.963793+00:00",
++    "status": 410,
++    "sha256": "283bb9deef02e6843abfb538efa1eca70801bd8a701c3f98191e123496339247",
++    "data": "NON_JSON",
++    "interpretation": "UNAVAILABLE_NO_INFERRED_VALUE"
++  },
++  {
++    "name": "selic",
++    "url": "https://api.bcb.gov.br/dados/serie/bcdata.sgs.432/dados/ultimos/1?formato=json",
++    "accessed_at": "2026-09-07T18:07:45.963902+00:00",
++    "status": 200,
++    "sha256": "e3c4daac32eab22c323500b18394ff9e399066fd82c6d95b0aafe2de23917ef3",
++    "data": [
++      {
++        "data": "16/09/2026",
++        "valor": "14.00"
++      }
++    ],
++    "interpretation": "REJECTED_FUTURE_EVENT_DATE"
++  },
++  {
++    "name": "selic_effective",
++    "url": "https://api.bcb.gov.br/dados/serie/bcdata.sgs.1178/dados/ultimos/1?formato=json",
++    "accessed_at": "2026-09-07T18:07:45.964286+00:00",
++    "status": 200,
++    "sha256": "237a3c38cb4aeed080854035825af2863b1f934070f886d6827f0b931a756e03",
++    "data": [
++      {
++        "data": "04/09/2026",
++        "valor": "13.90"
++      }
++    ],
++    "interpretation": "OBSERVED_AS_OF_2026_09_04_NOT_FORWARD_GUARANTEE"
++  },
++  {
++    "name": "selic_bounded",
++    "url": "https://api.bcb.gov.br/dados/serie/bcdata.sgs.432/dados?formato=json&dataInicial=04%2F09%2F2026&dataFinal=07%2F09%2F2026",
++    "accessed_at": "2026-09-07T18:18:04.668167+00:00",
++    "status": 200,
++    "sha256": "2d1442c6b94bc1c4a4421387c01a38322ebeea0c69cb83f43712beba61b846f1",
++    "data": [
++      {
++        "data": "04/09/2026",
++        "valor": "14.00"
++      },
++      {
++        "data": "05/09/2026",
++        "valor": "14.00"
++      },
++      {
++        "data": "06/09/2026",
++        "valor": "14.00"
++      },
++      {
++        "data": "07/09/2026",
++        "valor": "14.00"
++      }
++    ],
++    "interpretation": "OBSERVED_POLICY_RATE_WITH_EVENT_DATE_CUTOFF"
++  }
++]
+diff --git a/docs/reopen_dossiers/funding_carry_structural_v1.json b/docs/reopen_dossiers/funding_carry_structural_v1.json
+new file mode 100644
+index 0000000..791f236
+--- /dev/null
++++ b/docs/reopen_dossiers/funding_carry_structural_v1.json
+@@ -0,0 +1,33 @@
++{
++  "status": "DRAFT_NOT_REGISTERED_NOT_AUTHORIZED",
++  "as_of": "2026-09-07",
++  "proposed_family": "funding_carry_structural_v1",
++  "related_frozen_family": "funding_oi_hmm_v3",
++  "previous_result": "H1-H3 CLOSED_NO_GO: funding/OI as directional predictor; family remains frozen.",
++  "closure_reason": "Directional edge did not survive registered PSR/IC/MaxDD and assumed execution costs; no family reopening.",
++  "new_information": "Economically different target: funding payments to a delta-hedged spot-long/perp-short structure, not directional forecasts. No new alpha result claimed.",
++  "causal_reason": "Payment from perpetual longs to shorts when funding is positive; compensates financing, basis, liquidation and counterparty constraints. Sign can reverse.",
++  "why_old_test_no_longer_answers_question": "Predictive score-return correlation does not identify net funding cashflows on a hedged collateral structure; this distinction alone does not establish deployability or approve research.",
++  "new_protocol": {
++    "mode": "DISCOVERY",
++    "activate": false,
++    "capital_authorized": false,
++    "first_gate": "G1_KILL_UNDER_CURRENT_ENVELOPE",
++    "stopping_rule": "No outcome test until venue/collateral G1 and a same-currency benchmark/cost G2 are decidable; then G3-G7 in order.",
++    "universe_proposed": [
++      "BTCUSDT",
++      "ETHUSDT"
++    ],
++    "target": "Net funding receipts plus basis P&L minus spot/perp fees, fills, unwind, FX, taxes and capital opportunity cost.",
++    "temporal_rule": "Record event_time and actual observation known_at; historical settlement data are discovery-only.",
++    "sample_power": "UNKNOWN until concrete structure and minimum economically relevant effect are fixed; pre-register before outcomes.",
++    "no_reuse": "No re-run/reparameterization of H1-H3; no modification of production collection.",
++    "required_before_activation": [
++      "operator benchmark accessibility",
++      "venue and collateral structure",
++      "observed friction",
++      "FX route and costs",
++      "risk premium and attention costs"
++    ]
++  }
++}
+diff --git a/pyproject.toml b/pyproject.toml
+index 87b58e1..dc4796d 100644
+--- a/pyproject.toml
++++ b/pyproject.toml
+@@ -11,7 +11,7 @@ requires-python = ">=3.13,<3.15"
+ license = { text = "Proprietary" }
+ dependencies = [
+   "httpx>=0.28.1,<1",
+-  "predictor-core>=3.0.0,<4",
++  "predictor-core>=3.2.0,<4",
+   "predictor-ops>=4.1.0,<5",
+   "pydantic>=2.12,<3",
+   "pydantic-settings>=2.10,<3",
+@@ -65,5 +65,5 @@ ignore = ["E402", "E501", "E731", "E741", "UP017", "UP031"]
+ dev = ["build>=1.3,<2", "coverage[toml]>=7.10,<8", "pre-commit>=4.3,<5", "pyright>=1.1.403,<2", "pytest>=8.4,<9", "pytest-cov>=6.2,<7", "ruff>=0.12,<1"]
+ 
+ [tool.uv.sources]
+-predictor-core = { url = "https://github.com/leonardosovienski/core-predictor/releases/download/v3.0.0/predictor_core-3.0.0-py3-none-any.whl" }
++predictor-core = { url = "https://github.com/leonardosovienski/core-predictor/releases/download/v3.2.0/predictor_core-3.2.0-py3-none-any.whl" }
+ predictor-ops = { url = "https://github.com/leonardosovienski/predictor-ops/releases/download/v4.1.0/predictor_ops-4.1.0-py3-none-any.whl" }
+diff --git a/scripts/attest_harness.py b/scripts/attest_harness.py
+index bcff5cc..7c31cc5 100644
+--- a/scripts/attest_harness.py
++++ b/scripts/attest_harness.py
+@@ -33,6 +33,7 @@ import argparse
+ import json
+ import random
+ import sys
++import tempfile
+ from pathlib import Path
+ 
+ ROOT = Path(__file__).resolve().parent.parent
+@@ -188,39 +189,45 @@ def main() -> int:
+         print("controle positivo PASSOU (dry-run; atestados nao gravados)")
+         return 0
+ 
+-    # Cada juiz grava o SEU atestado, com a SUA metrica — arquivos irmaos
+-    # distintos, um por familia de trial (measurement/trials.py so casa uma
+-    # trial nova contra o atestado cujo metric+pipeline_fingerprint batem).
+-    rec_phase1 = attest_pipeline_power(
+-        judge_phase1,
+-        phase1_edge_series,
+-        phase1_noise_series,
+-        attestation_path=PHASE1_ATTESTATION_PATH,
+-        note="Juiz da Fase 1 (analyzers/backtest._report): VALIDADO/RUIDO via "
+-        "Spearman IC95 block bootstrap nao cruza zero, seeds 21/22, n=120 "
+-        "— edge plantado e ruido",
+-        edge_verdict="VALIDADO",
+-        null_verdict="RUIDO",
+-        metric=_METRIC_PHASE1,
+-    )
+-    print("juiz Fase 1 (Spearman IC95): sensibilidade e especificidade OK")
+-    print(f"atestado da Fase 1 gravado em {PHASE1_ATTESTATION_PATH} ({rec_phase1['passed_at']})")
+-
+-    rec_v3 = attest_pipeline_power(
+-        judge_go_nogo,
+-        edge_series,
+-        noise_series,
+-        attestation_path=attestation_path_for(TRIALS_PATH),
+-        note="Juiz V3 (backtest_v3): GO/NO-GO via PSR>=0.80 & IC_lower>0, "
+-        "seeds 7/8, n=400 — edge plantado e ruido",
+-        edge_verdict="GO",
+-        metric=_METRIC_V3,
+-    )
+-    print("juiz V3 (PSR & IC_lower): sensibilidade e especificidade OK")
+-    print(
+-        f"controle positivo PASSOU — atestado gravado em "
+-        f"{attestation_path_for(TRIALS_PATH)} ({rec_v3['passed_at']})"
+-    )
++    # Core 3.2 recusa árvore suja. O primeiro arquivo canônico alterado
++    # sujaria o repo e impediria atestar o segundo juiz. Os dois controles
++    # rodam em staging externo contra a mesma árvore limpa; só então publicamos.
++    with tempfile.TemporaryDirectory(prefix="cripto-attest-") as directory:
++        staged_phase1 = Path(directory) / "phase1.json"
++        staged_v3 = Path(directory) / "v3.json"
++        # Cada juiz grava o SEU atestado, com a SUA metrica — arquivos irmaos
++        # distintos, um por familia de trial (measurement/trials.py so casa uma
++        # trial nova contra o atestado cujo metric+pipeline_fingerprint batem).
++        rec_phase1 = attest_pipeline_power(
++            judge_phase1,
++            phase1_edge_series,
++            phase1_noise_series,
++            attestation_path=staged_phase1,
++            repo=ROOT,
++            note="Juiz da Fase 1 (analyzers/backtest._report): VALIDADO/RUIDO via "
++            "Spearman IC95 block bootstrap nao cruza zero, seeds 21/22, n=120 "
++            "— edge plantado e ruido",
++            edge_verdict="VALIDADO",
++            null_verdict="RUIDO",
++            metric=_METRIC_PHASE1,
++        )
++        print("juiz Fase 1 (Spearman IC95): sensibilidade e especificidade OK")
++
++        rec_v3 = attest_pipeline_power(
++            judge_go_nogo,
++            edge_series,
++            noise_series,
++            attestation_path=staged_v3,
++            repo=ROOT,
++            note="Juiz V3 (backtest_v3): GO/NO-GO via PSR>=0.80 & IC_lower>0, "
++            "seeds 7/8, n=400 — edge plantado e ruido",
++            edge_verdict="GO",
++            metric=_METRIC_V3,
++        )
++        print("juiz V3 (PSR & IC_lower): sensibilidade e especificidade OK")
++        PHASE1_ATTESTATION_PATH.write_bytes(staged_phase1.read_bytes())
++        attestation_path_for(TRIALS_PATH).write_bytes(staged_v3.read_bytes())
++    print(f"atestados emitidos: Fase 1 {rec_phase1['passed_at']}; V3 {rec_v3['passed_at']}")
+     return 0
+ 
+ 
+diff --git a/scripts/verify_installed_wheels.py b/scripts/verify_installed_wheels.py
+index f0b48f5..e2c04f2 100644
+--- a/scripts/verify_installed_wheels.py
++++ b/scripts/verify_installed_wheels.py
+@@ -10,8 +10,8 @@ from pathlib import Path
+ 
+ EXPECTED = {
+     "predictor-core": (
+-        "https://github.com/leonardosovienski/core-predictor/releases/download/v3.0.0/predictor_core-3.0.0-py3-none-any.whl",
+-        "sha256:fdc1d3e27b6805a1d125702b6e3bb88f6fa3483791c22ea310bf6c56d5581c4d",
++        "https://github.com/leonardosovienski/core-predictor/releases/download/v3.2.0/predictor_core-3.2.0-py3-none-any.whl",
++        "sha256:9166dd6bd3be99668c0eb8bd3c59a92061e765186608465c0caf48a2417e3009",
+     ),
+     "predictor-ops": (
+         "https://github.com/leonardosovienski/predictor-ops/releases/download/v4.1.0/predictor_ops-4.1.0-py3-none-any.whl",
+@@ -34,7 +34,7 @@ def main() -> int:
+     import predictor_core
+     import predictor_ops
+ 
+-    assert importlib.metadata.version("predictor-core") == "3.0.0"
++    assert importlib.metadata.version("predictor-core") == "3.2.0"
+     assert importlib.metadata.version("predictor-ops") == "4.1.0"
+     for module in (predictor_core, predictor_ops):
+         assert "site-packages" in Path(module.__file__).resolve().as_posix().lower()
+diff --git a/tests/conftest.py b/tests/conftest.py
+index 33e450c..d3b5fec 100644
+--- a/tests/conftest.py
++++ b/tests/conftest.py
+@@ -27,3 +27,35 @@ for _k, _v in _TEST_CREDS.items():
+ # emit_event agora é chamado por cache.py/logger.py durante os testes — redireciona
+ # o JSONL para a pasta de build dos testes para não poluir o cwd do projeto.
+ os.environ.setdefault("PREDICTOR_EVENTS_PATH", str(ROOT / "tests" / "_events_test.jsonl"))
++
++
++import pytest
++
++
++@pytest.fixture
++def registry_attestation(tmp_path):
++    """Executa o juiz real sobre controles sintéticos; só escreve no tmp do teste."""
++    from predictor_core.testing.harness import attest_pipeline_power
++
++    from scripts.attest_harness import judge_phase1, phase1_edge_series, phase1_noise_series
++
++    def emit(path):
++        att = path.with_name(path.stem + ".phase1_harness_attestation.json")
++        record = attest_pipeline_power(
++            judge_phase1,
++            phase1_edge_series,
++            phase1_noise_series,
++            attestation_path=att,
++            edge_verdict="VALIDADO",
++            null_verdict="RUIDO",
++            metric="spearman_ic",
++            repo=tmp_path,
++            note="Controle real do juiz em fixture sintética; não autoriza registro canônico.",
++        )
++        return {
++            "metric": "spearman_ic",
++            "power_attestation": att,
++            "pipeline_fingerprint": record["pipeline_fingerprint"],
++        }
++
++    return emit
+diff --git a/tests/test_core_integrity.py b/tests/test_core_integrity.py
+index 315b61d..4aa9e11 100644
+--- a/tests/test_core_integrity.py
++++ b/tests/test_core_integrity.py
+@@ -15,8 +15,8 @@ ROOT = Path(__file__).resolve().parents[1]
+ # truth is the lockfile itself.
+ EXPECTED = {
+     "predictor-core": (
+-        "https://github.com/leonardosovienski/core-predictor/releases/download/v3.0.0/predictor_core-3.0.0-py3-none-any.whl",
+-        "sha256:fdc1d3e27b6805a1d125702b6e3bb88f6fa3483791c22ea310bf6c56d5581c4d",
++        "https://github.com/leonardosovienski/core-predictor/releases/download/v3.2.0/predictor_core-3.2.0-py3-none-any.whl",
++        "sha256:9166dd6bd3be99668c0eb8bd3c59a92061e765186608465c0caf48a2417e3009",
+     ),
+     "predictor-ops": (
+         "https://github.com/leonardosovienski/predictor-ops/releases/download/v4.1.0/predictor_ops-4.1.0-py3-none-any.whl",
+@@ -26,7 +26,7 @@ EXPECTED = {
+ 
+ 
+ def test_shared_versions_are_exactly_compatible():
+-    assert importlib.metadata.version("predictor-core") == "3.0.0"
++    assert importlib.metadata.version("predictor-core") == "3.2.0"
+     assert importlib.metadata.version("predictor-ops") == "4.1.0"
+ 
+ 
+diff --git a/tests/test_dsr_provenance.py b/tests/test_dsr_provenance.py
+new file mode 100644
+index 0000000..5d4f53e
+--- /dev/null
++++ b/tests/test_dsr_provenance.py
+@@ -0,0 +1,44 @@
++import json
++
++import pytest
++
++from GarimpoInvestimentos.analyzers.trials import (
++    DeflationNotEstimableError,
++    PowerAttestationMissingError,
++    load_trials,
++    register_trial,
++    registry_deflated_sharpe_ratio,
++)
++
++
++def test_ledger_historico_nao_produz_dsr_com_unidades_misturadas():
++    with pytest.raises(DeflationNotEstimableError, match="base/unidade"):
++        registry_deflated_sharpe_ratio(
++            [0.01, -0.01, 0.02], load_trials(), sharpe_basis="per_trade_d7"
++        )
++
++
++def test_bases_compativeis_preservam_tentativas_sem_sharpe_no_n():
++    trials = [
++        {"name": "a", "sharpe": 0.3, "params": {"sharpe_basis": "per_trade_d7"}},
++        {"name": "b", "sharpe": -0.1, "params": {"sharpe_basis": "per_trade_d7"}},
++        {"name": "c", "sharpe": None, "params": {}},
++    ]
++    result = registry_deflated_sharpe_ratio(
++        [0.01, -0.01, 0.02], trials, sharpe_basis="per_trade_d7"
++    )
++    assert result["n_trials"] == 3 and result["n_sharpes"] == 2
++
++
++def test_update_recusa_atestado_expirado_sem_tocar_trial(tmp_path, registry_attestation):
++    path = tmp_path / "trials.json"
++    kwargs = registry_attestation(path)
++    register_trial("synthetic", params={"h": 7}, path=path, **kwargs)
++    before = path.read_bytes()
++    att = kwargs["power_attestation"]
++    record = json.loads(att.read_text(encoding="utf8"))
++    record["expires_at"] = "2000-01-01T00:00:00Z"
++    att.write_text(json.dumps(record), encoding="utf8")
++    with pytest.raises(PowerAttestationMissingError, match="expirado"):
++        register_trial("synthetic", params={"h": 7}, sharpe=0.5, path=path)
++    assert path.read_bytes() == before
+diff --git a/tests/test_experiment_registry.py b/tests/test_experiment_registry.py
+index c171545..f14baad 100644
+--- a/tests/test_experiment_registry.py
++++ b/tests/test_experiment_registry.py
+@@ -78,8 +78,8 @@ def test_toda_hipotese_fechada_bloqueia_update_antes_do_core(tmp_path, monkeypat
+ 
+ 
+ def test_h6_fechada_bloqueia_reescrita_pelo_hardening(tmp_path, monkeypatch):
+-    """H6 fechou REFUTADA/NO-GO em 2026-09-04 (docs/HYPOTHESES.md, veredito real:
+-    IC cruza zero, n=84). O hardening que protege hipóteses fechadas contra
++    """H6 permanece encerrada por amostra insuficiente (errata 2026-09-07):
++    IC cruza zero, n=84; o rótulo causal não libera reescrita. O hardening que protege hipóteses fechadas contra
+     reescrita silenciosa (mesmo mecanismo do H1-H3 congelado) precisa bloquear
+     isso de verdade agora que H6 é um caso real fechado, não só sintético."""
+     from GarimpoInvestimentos.governance import load_scientific_state
+@@ -203,11 +203,15 @@ def test_schema_rejeita_nome_duplicado():
+ # --- governança de identidade (N+1) -------------------------------------------
+ 
+ 
+-def test_reexecucao_mesma_config_atualiza_sharpe_preservando_registro(tmp_path):
++def test_reexecucao_mesma_config_atualiza_sharpe_preservando_registro(
++    tmp_path, registry_attestation
++):
+     p = tmp_path / "trials.json"
+-    register_trial("t-a", params=PARAMS, path=p, **_NOGATE)
++    register_trial("t-a", params=PARAMS, path=p, **registry_attestation(p))
+     original = load_trials(p)[0]["registered_at"]
+-    register_trial("t-a", params=PARAMS, sharpe=0.12, notes="maturou", path=p)  # update: sem trava
++    register_trial(
++        "t-a", params=PARAMS, sharpe=0.12, notes="maturou", path=p
++    )  # update: atestado validado pelo Core
+     trials = load_trials(p)
+     assert len(trials) == 1
+     assert trials[0]["sharpe"] == 0.12
+@@ -258,9 +262,9 @@ def _pred(score, var, fonte="dpl:fallback"):
+     return {"score": score, "var_d7_pct": var, "fonte": fonte}
+ 
+ 
+-def test_backtest_fecha_sharpe_da_trial_casada(tmp_path):
++def test_backtest_fecha_sharpe_da_trial_casada(tmp_path, registry_attestation):
+     p = tmp_path / "trials.json"
+-    register_trial("v2-teste", params=PARAMS, path=p, **_NOGATE)
++    register_trial("v2-teste", params=PARAMS, path=p, **registry_attestation(p))
+     enriched = [
+         _pred(80, 2.0),
+         _pred(75, -1.0),
+@@ -309,7 +313,7 @@ def test_backtest_ignora_trial_fechada_sem_impedir_pipeline(tmp_path):
+     assert p.read_bytes() == before
+ 
+ 
+-def test_backtest_divide_eras_entre_trial_encerrada_e_sucessora(tmp_path):
++def test_backtest_divide_eras_entre_trial_encerrada_e_sucessora(tmp_path, registry_attestation):
+     """Duas trials com os MESMOS params de casamento (fonte, horizonte) — caso
+     real: v2-dpl-gemini-h7 encerrada e v2-dpl-multi-h7 sucessora. Cada previsão
+     matura a trial VIGENTE na sua data (fronteira = registered_at da sucessora);
+@@ -318,8 +322,8 @@ def test_backtest_divide_eras_entre_trial_encerrada_e_sucessora(tmp_path):
+     from datetime import datetime
+ 
+     p = tmp_path / "trials.json"
+-    register_trial("era-1", params=PARAMS, path=p, **_NOGATE)
+-    register_trial("era-2", params=PARAMS, path=p, **_NOGATE)
++    register_trial("era-1", params=PARAMS, path=p, **registry_attestation(p))
++    register_trial("era-2", params=PARAMS, path=p, **registry_attestation(p))
+     trials = _json.loads(p.read_text(encoding="utf-8"))
+     trials[0]["registered_at"] = "2026-07-01T00:00:00Z"
+     trials[1]["registered_at"] = "2026-07-10T00:00:00Z"
+@@ -375,9 +379,9 @@ def test_h6_ignora_dado_anterior_ao_registro_mesmo_com_score_baixo(tmp_path):
+     assert load_trials(p)[0]["sharpe"] is None
+ 
+ 
+-def test_h6_matura_com_dado_posterior_ao_registro_e_score_baixo(tmp_path):
++def test_h6_matura_com_dado_posterior_ao_registro_e_score_baixo(tmp_path, registry_attestation):
+     p = tmp_path / "trials.json"
+-    register_trial(H6_TRIAL_NAME, params=H6_PARAMS, path=p, **_NOGATE)
++    register_trial(H6_TRIAL_NAME, params=H6_PARAMS, path=p, **registry_attestation(p))
+     trials = json.loads(p.read_text(encoding="utf-8"))
+     trials[0]["registered_at"] = "2026-07-20T00:00:00Z"
+     p.write_text(json.dumps(trials), encoding="utf-8")
+diff --git a/tests/test_scientific_state_charter.py b/tests/test_scientific_state_charter.py
+index be24f27..f0ba5ef 100644
+--- a/tests/test_scientific_state_charter.py
++++ b/tests/test_scientific_state_charter.py
+@@ -14,7 +14,7 @@ def test_scientific_state_freezes_no_go_and_fails_closed():
+     state = load_scientific_state()
+     assert state.hypotheses["H1"] == "CLOSED_NO_GO"
+     assert state.hypotheses["H3"] == "CLOSED_NO_GO"
+-    assert state.hypotheses["H6"] == "CLOSED_NO_GO"
++    assert state.hypotheses["H6"] == "CLOSED_INSUFFICIENT_SAMPLE"
+     assert state.hypotheses["H7"] == "REGISTERED_NOT_ACTIVATED"
+     assert "funding_oi_hmm_v3" in state.frozen_families
+     assert not state.capital_authorized
+@@ -25,7 +25,7 @@ def test_scientific_state_freezes_no_go_and_fails_closed():
+ def test_charter_real_cobre_exatamente_o_vocabulario_tipado():
+     state = load_scientific_state()
+     assert state.hypotheses["H4"] is HypothesisStatus.CLOSED_INSUFFICIENT_SAMPLE
+-    assert state.hypotheses["H6"] is HypothesisStatus.CLOSED_NO_GO
++    assert state.hypotheses["H6"] is HypothesisStatus.CLOSED_INSUFFICIENT_SAMPLE
+     assert state.hypotheses["H7"] is HypothesisStatus.REGISTERED_NOT_ACTIVATED
+     assert state.hypotheses["H4"].is_closed
+     assert state.hypotheses["H6"].is_closed
+diff --git a/tests/test_trials.py b/tests/test_trials.py
+index f74cb58..e8ea937 100644
+--- a/tests/test_trials.py
++++ b/tests/test_trials.py
+@@ -5,13 +5,13 @@ variância nula) e CRESCE com o nº de tentativas — logo o DSR só pode cair q
+ se tenta mais. Registrar de novo a mesma configuração NÃO conta tentativa nova.
+ """
+ 
+-import math
+ import random
+ 
+ import pytest
+ from predictor_core.stats import probabilistic_sharpe_ratio
+ 
+ from GarimpoInvestimentos.analyzers.trials import (
++    DeflationNotEstimableError,
+     FrozenFamilyError,
+     _reject_frozen_family,
+     deflated_sharpe_ratio,
+@@ -44,37 +44,37 @@ def test_benchmark_cresce_com_tentativas_e_variancia():
+ # ---------- deflated_sharpe_ratio ----------
+ 
+ 
+-def test_uma_tentativa_dsr_equivale_ao_psr():
+-    rets = _returns()
+-    d = deflated_sharpe_ratio(rets, [0.3])
+-    assert d["sr0"] == 0.0 and d["n_trials"] == 1
+-    assert d["dsr"] == probabilistic_sharpe_ratio(rets, benchmark_sharpe=0.0)
++@pytest.mark.parametrize("sharpes", [[], [0.3], [None, float("inf"), 0.3]])
++def test_dsr_sem_variancia_estimavel_bloqueia_em_vez_de_publicar_psr(sharpes):
++    with pytest.raises(DeflationNotEstimableError):
++        deflated_sharpe_ratio(_returns(), sharpes)
+ 
+ 
+ def test_mais_tentativas_so_reduzem_o_dsr():
+     rets = _returns()
+-    um = deflated_sharpe_ratio(rets, [0.3])
++    psr = probabilistic_sharpe_ratio(rets, benchmark_sharpe=0.0)
+     dez = deflated_sharpe_ratio(rets, [0.3, -0.1, 0.2, 0.05, -0.3, 0.4, 0.1, -0.2, 0.25, 0.0])
+     assert dez["sr0"] > 0
+-    assert dez["dsr"] < um["dsr"]  # o desconto existe e aperta
++    assert dez["dsr"] < psr
+ 
+ 
+-def test_sharpes_nulos_ou_infinitos_contam_no_n_mas_nao_na_variancia():
++def test_sharpes_ausentes_contam_no_n_sem_entrar_na_variancia():
+     rets = _returns()
+-    d = deflated_sharpe_ratio(rets, [None, float("inf"), 0.3])
+-    assert d["n_trials"] == 3
+-    assert math.isfinite(d["sr0"])  # var só dos finitos (1 → var 0 → sr0 0)
+-    assert d["sr0"] == 0.0
++    complete = deflated_sharpe_ratio(rets, [0.3, -0.1])
++    missing = deflated_sharpe_ratio(rets, [0.3, -0.1, None, float("inf")])
++    assert missing["n_trials"] == 4 and missing["n_sharpes"] == 2
++    assert missing["sr0"] > complete["sr0"]
++    assert missing["dsr"] < complete["dsr"]
+ 
+ 
+ # ---------- registro versionado ----------
+ 
+ 
+-def test_registro_roundtrip_e_dedup_por_nome(tmp_path):
++def test_registro_roundtrip_e_dedup_por_nome(tmp_path, registry_attestation):
+     p = tmp_path / "trials.json"
+     # criação usa bypass explícito da trava de poder (mecânica do registro;
+     # a trava tem testes próprios em test_experiment_registry)
+-    register_trial("cfg-a", params={"h": 7}, sharpe=0.1, path=p, power_attestation=False)
++    register_trial("cfg-a", params={"h": 7}, sharpe=0.1, path=p, **registry_attestation(p))
+     register_trial("cfg-b", params={"h": 30}, path=p, power_attestation=False)
+     register_trial(
+         "cfg-a", params={"h": 7}, sharpe=0.15, notes="reavaliada com mais n", path=p
+diff --git a/uv.lock b/uv.lock
+index 92eb269..015e1c2 100644
+--- a/uv.lock
++++ b/uv.lock
+@@ -468,7 +468,7 @@ requires-dist = [
+     { name = "openpyxl", marker = "extra == 'excel'", specifier = ">=3.1.5,<4" },
+     { name = "platformdirs", specifier = ">=4.3,<5" },
+     { name = "pre-commit", marker = "extra == 'test'", specifier = ">=4.3,<5" },
+-    { name = "predictor-core", url = "https://github.com/leonardosovienski/core-predictor/releases/download/v3.0.0/predictor_core-3.0.0-py3-none-any.whl" },
++    { name = "predictor-core", url = "https://github.com/leonardosovienski/core-predictor/releases/download/v3.2.0/predictor_core-3.2.0-py3-none-any.whl" },
+     { name = "predictor-ops", url = "https://github.com/leonardosovienski/predictor-ops/releases/download/v4.1.0/predictor_ops-4.1.0-py3-none-any.whl" },
+     { name = "pydantic", specifier = ">=2.12,<3" },
+     { name = "pydantic-settings", specifier = ">=2.10,<3" },
+@@ -1086,10 +1086,10 @@ wheels = [
+ 
+ [[package]]
+ name = "predictor-core"
+-version = "3.0.0"
+-source = { url = "https://github.com/leonardosovienski/core-predictor/releases/download/v3.0.0/predictor_core-3.0.0-py3-none-any.whl" }
++version = "3.2.0"
++source = { url = "https://github.com/leonardosovienski/core-predictor/releases/download/v3.2.0/predictor_core-3.2.0-py3-none-any.whl" }
+ wheels = [
+-    { url = "https://github.com/leonardosovienski/core-predictor/releases/download/v3.0.0/predictor_core-3.0.0-py3-none-any.whl", hash = "sha256:fdc1d3e27b6805a1d125702b6e3bb88f6fa3483791c22ea310bf6c56d5581c4d" },
++    { url = "https://github.com/leonardosovienski/core-predictor/releases/download/v3.2.0/predictor_core-3.2.0-py3-none-any.whl", hash = "sha256:9166dd6bd3be99668c0eb8bd3c59a92061e765186608465c0caf48a2417e3009" },
+ ]
+ 
+ [package.metadata]

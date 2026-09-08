@@ -1,3 +1,5 @@
+> Continuidade sem o chat antigo: `docs/SESSION_HANDOFF_20260907.md`; prompt conferido: `docs/NEXT_CHAT_PROMPT.md`; tag do fechamento: `cripto-session-20260907-final`.
+
 # HANDOFF — GarimpoInvestimentos (Fase 1 + melhorias)
 
 > **Revisão final — 07/09/2026:** consultar [estado consolidado](docs/PROJECT_STATE_20260907.md).

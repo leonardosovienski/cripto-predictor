@@ -1,0 +1,30 @@
+{
+  "created_at": "2026-09-07T21:26:50.926592+00:00",
+  "repository_head": "3eabcf4a6b5a68b0c7d39e1346599cea99fbe8a2",
+  "base_commit": "0fd58c90a7d4ae32fbbce02cba035e0dbdeed469",
+  "active_objective": "ABSOLUTE_NET_PROFIT",
+  "active_protocol": "discovery-altcoin-absolute-profit-20260907-v4",
+  "files": {
+    "ACOMPANHAMENTO_CRIPTO.md": {
+      "sha256": "e62123a004e8ed62f6316848ee4cbdcbfc5abd25508bdacedf138eede7a10f07",
+      "bytes": 2633
+    },
+    "CRIPTO_LUCRO_ABSOLUTO.json": {
+      "sha256": "0d3496816eddcf8c59ee567c4d14356dd5c612c4b37dbef2b07de8fe7557543a",
+      "bytes": 14805
+    },
+    "CRIPTO_LUCRO_ABSOLUTO.patch": {
+      "sha256": "9d4028827aa5b65a76ae506b63d948d1f6837a71d0aeeaf65254690dae679df2",
+      "bytes": 43960
+    },
+    "CRIPTO_LUCRO_ABSOLUTO_REPRODUCAO.zip": {
+      "sha256": "079b160fd7596c791d1041c268e47591f91bba7c7915db352a4a32cffab51fc3",
+      "bytes": 4973400
+    }
+  },
+  "zip_entries": 1265,
+  "zip_hashes": "PASS",
+  "reverse_patch_check": "PASS",
+  "historical_evidence": "Previous reports and packages retain their original meaning; active report now reflects user correction.",
+  "real_capital": false
+}

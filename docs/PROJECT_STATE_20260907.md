@@ -1,3 +1,5 @@
+> Continuidade sem o chat antigo: `docs/SESSION_HANDOFF_20260907.md`; prompt conferido: `docs/NEXT_CHAT_PROMPT.md`; tag do fechamento: `cripto-session-20260907-final`.
+
 # Estado consolidado após a revisão de 07/09/2026
 
 **Há cenários históricos de carry positivos após custos assumidos. Não há lucro real nem lucro líquido do investidor comprovado. O seletor atual de altcoins não operou nas 140 semanas históricas.**

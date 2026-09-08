@@ -1,0 +1,460 @@
+{
+  "audit": {
+    "known_at": "2026-09-07T21:24:51.277183+00:00",
+    "protocol_id": "discovery-altcoin-absolute-profit-20260907-v4",
+    "objective": "ABSOLUTE_NET_PROFIT",
+    "external_comparisons": false,
+    "user_venue_preference": "ANY_SUITABLE_VENUE_AGENT_MAY_CHOOSE",
+    "adapter_coverage": "BINANCE_PUBLIC_SPOT_USDT_ONLY",
+    "current_spot_usdt_catalog": 487,
+    "candidate_pairs_after_declared_exclusions": 472,
+    "eligible_pairs": 44,
+    "qualified_symbols": [],
+    "selected": [],
+    "cash_weight": 1.0,
+    "prospective": false,
+    "prospective_decisions": 0,
+    "realized_profit": null,
+    "investor_net_brl_profit": null,
+    "ranked": [
+      {
+        "symbol": "POLUSDT",
+        "status": "ABSTAIN_NO_POSITIVE_MARGIN",
+        "score_log": -0.027212742598714756
+      },
+      {
+        "symbol": "AVAXUSDT",
+        "status": "ABSTAIN_NO_POSITIVE_MARGIN",
+        "score_log": -0.04025792086995976
+      },
+      {
+        "symbol": "ONDOUSDT",
+        "status": "ABSTAIN_NO_POSITIVE_MARGIN",
+        "score_log": -0.04071987861193614
+      },
+      {
+        "symbol": "WLFIUSDT",
+        "status": "ABSTAIN_NO_POSITIVE_MARGIN",
+        "score_log": -0.04140729503315777
+      },
+      {
+        "symbol": "PENGUUSDT",
+        "status": "ABSTAIN_NO_POSITIVE_MARGIN",
+        "score_log": -0.041473356868353635
+      },
+      {
+        "symbol": "TRXUSDT",
+        "status": "ABSTAIN_NO_POSITIVE_MARGIN",
+        "score_log": -0.04301815490927895
+      },
+      {
+        "symbol": "XLMUSDT",
+        "status": "ABSTAIN_NO_POSITIVE_MARGIN",
+        "score_log": -0.046013775420037054
+      },
+      {
+        "symbol": "UUSDT",
+        "status": "ABSTAIN_NO_POSITIVE_MARGIN",
+        "score_log": -0.04769056428046522
+      },
+      {
+        "symbol": "INJUSDT",
+        "status": "ABSTAIN_NO_POSITIVE_MARGIN",
+        "score_log": -0.048241300073967
+      },
+      {
+        "symbol": "ETHUSDT",
+        "status": "ABSTAIN_NO_POSITIVE_MARGIN",
+        "score_log": -0.05150170128649477
+      },
+      {
+        "symbol": "HBARUSDT",
+        "status": "ABSTAIN_NO_POSITIVE_MARGIN",
+        "score_log": -0.05364399583499492
+      },
+      {
+        "symbol": "BTCUSDT",
+        "status": "ABSTAIN_NO_POSITIVE_MARGIN",
+        "score_log": -0.054508500127460086
+      },
+      {
+        "symbol": "ADAUSDT",
+        "status": "ABSTAIN_NO_POSITIVE_MARGIN",
+        "score_log": -0.05778380491314464
+      },
+      {
+        "symbol": "WLDUSDT",
+        "status": "ABSTAIN_NO_POSITIVE_MARGIN",
+        "score_log": -0.05804426176315854
+      },
+      {
+        "symbol": "NEARUSDT",
+        "status": "ABSTAIN_NO_POSITIVE_MARGIN",
+        "score_log": -0.05941396254748514
+      },
+      {
+        "symbol": "TAOUSDT",
+        "status": "ABSTAIN_NO_POSITIVE_MARGIN",
+        "score_log": -0.059715515662442056
+      },
+      {
+        "symbol": "FILUSDT",
+        "status": "ABSTAIN_NO_POSITIVE_MARGIN",
+        "score_log": -0.061689205778583375
+      },
+      {
+        "symbol": "DOGEUSDT",
+        "status": "ABSTAIN_NO_POSITIVE_MARGIN",
+        "score_log": -0.06176840578134794
+      },
+      {
+        "symbol": "PEPEUSDT",
+        "status": "ABSTAIN_NO_POSITIVE_MARGIN",
+        "score_log": -0.062065621514386146
+      },
+      {
+        "symbol": "ASTERUSDT",
+        "status": "ABSTAIN_NO_POSITIVE_MARGIN",
+        "score_log": -0.0631029481924725
+      },
+      {
+        "symbol": "BCHUSDT",
+        "status": "ABSTAIN_NO_POSITIVE_MARGIN",
+        "score_log": -0.06327420032962983
+      },
+      {
+        "symbol": "SOLUSDT",
+        "status": "ABSTAIN_NO_POSITIVE_MARGIN",
+        "score_log": -0.06644733186611176
+      },
+      {
+        "symbol": "LINKUSDT",
+        "status": "ABSTAIN_NO_POSITIVE_MARGIN",
+        "score_log": -0.06742148628918279
+      },
+      {
+        "symbol": "XPLUSDT",
+        "status": "ABSTAIN_NO_POSITIVE_MARGIN",
+        "score_log": -0.06807471141398387
+      },
+      {
+        "symbol": "ICPUSDT",
+        "status": "ABSTAIN_NO_POSITIVE_MARGIN",
+        "score_log": -0.06967858463911888
+      },
+      {
+        "symbol": "FETUSDT",
+        "status": "ABSTAIN_NO_POSITIVE_MARGIN",
+        "score_log": -0.07004111576747857
+      },
+      {
+        "symbol": "SUIUSDT",
+        "status": "ABSTAIN_NO_POSITIVE_MARGIN",
+        "score_log": -0.07078139627971901
+      },
+      {
+        "symbol": "XRPUSDT",
+        "status": "ABSTAIN_NO_POSITIVE_MARGIN",
+        "score_log": -0.07175588820918778
+      },
+      {
+        "symbol": "ZECUSDT",
+        "status": "ABSTAIN_NO_POSITIVE_MARGIN",
+        "score_log": -0.07358981282320172
+      },
+      {
+        "symbol": "TRUMPUSDT",
+        "status": "ABSTAIN_NO_POSITIVE_MARGIN",
+        "score_log": -0.07936411068776465
+      },
+      {
+        "symbol": "BNBUSDT",
+        "status": "ABSTAIN_NO_POSITIVE_MARGIN",
+        "score_log": -0.0830936911931597
+      },
+      {
+        "symbol": "LTCUSDT",
+        "status": "ABSTAIN_NO_POSITIVE_MARGIN",
+        "score_log": -0.08817050494159648
+      },
+      {
+        "symbol": "ENAUSDT",
+        "status": "ABSTAIN_NO_POSITIVE_MARGIN",
+        "score_log": -0.09054641963251087
+      },
+      {
+        "symbol": "AAVEUSDT",
+        "status": "ABSTAIN_NO_POSITIVE_MARGIN",
+        "score_log": -0.0912832307266427
+      },
+      {
+        "symbol": "UNIUSDT",
+        "status": "ABSTAIN_NO_POSITIVE_MARGIN",
+        "score_log": -0.10584656684441958
+      },
+      {
+        "symbol": "TUTUSDT",
+        "status": "ABSTAIN_NO_POSITIVE_MARGIN",
+        "score_log": -0.10654894880766679
+      },
+      {
+        "symbol": "PUMPUSDT",
+        "status": "ABSTAIN_NO_POSITIVE_MARGIN",
+        "score_log": -0.1120539805037688
+      },
+      {
+        "symbol": "ACEUSDT",
+        "status": "ABSTAIN_NO_POSITIVE_MARGIN",
+        "score_log": -0.12094811804960674
+      },
+      {
+        "symbol": "BICOUSDT",
+        "status": "ABSTAIN_NO_POSITIVE_MARGIN",
+        "score_log": -0.12328574154930944
+      },
+      {
+        "symbol": "DASHUSDT",
+        "status": "ABSTAIN_NO_POSITIVE_MARGIN",
+        "score_log": -0.12680902556075105
+      },
+      {
+        "symbol": "ONGUSDT",
+        "status": "ABSTAIN_NO_POSITIVE_MARGIN",
+        "score_log": -0.13131546847221362
+      },
+      {
+        "symbol": "PROMUSDT",
+        "status": "ABSTAIN_NO_POSITIVE_MARGIN",
+        "score_log": -0.13151778100792103
+      },
+      {
+        "symbol": "BMTUSDT",
+        "status": "ABSTAIN_NO_POSITIVE_MARGIN",
+        "score_log": -0.13781846755873703
+      },
+      {
+        "symbol": "HEMIUSDT",
+        "status": "ABSTAIN_NO_POSITIVE_MARGIN",
+        "score_log": -0.16350534113971754
+      }
+    ],
+    "validation": {
+      "tests_passed": 46,
+      "ruff": "PASS",
+      "pyright": "PASS",
+      "raw_hashes_verified": 616,
+      "offline_snapshot_replay": "PASS",
+      "network_requests_during_replay": 0,
+      "ledger_chain": "PASS",
+      "freeze_sha256": "4a98d527c43b4aa385cf1393353de64a0c35a60681e53b1e152f4d9faba941cf",
+      "no_comparison_portfolios": "PASS",
+      "scorer_and_training_unchanged": true,
+      "capital": false
+    },
+    "raw_interval": [
+      "2026-09-07T21:20:49.287472+00:00",
+      "2026-09-07T21:21:50.750343+00:00"
+    ],
+    "event_catalogs": [
+      {
+        "catalog_id": 161,
+        "reported_total": 428,
+        "unique_articles": 428,
+        "pagination_count_matches": true,
+        "complete_investability_event_feed": false
+      },
+      {
+        "catalog_id": 49,
+        "reported_total": 4404,
+        "unique_articles": 4404,
+        "pagination_count_matches": true,
+        "complete_investability_event_feed": false
+      }
+    ],
+    "limits": [
+      "Actual account commissions, tax and conversion remain unverified. Public book marks are hypothetical, not investor net profit.",
+      "Coverage is current Binance spot USDT, not all exchanges or all tokens.",
+      "No prospective outcome exists yet; no formal promotion or profitability proof.",
+      "Current asset classification and interpreted event completeness are not certified."
+    ],
+    "sources": {
+      "account_commission_documentation": "https://developers.binance.com/en/docs/products/spot/faqs/commission_faq",
+      "public_api": "https://data-api.binance.vision/api/v3/"
+    }
+  },
+  "automation": {
+    "id": "observar-altcoins-semanalmente",
+    "name": "Observar altcoins semanalmente",
+    "status": "ACTIVE",
+    "target_thread_id": "01a07d06-406f-7781-adad-0d0ea3ae9424",
+    "schedule_unchanged": "Domingos às 21h America/Sao_Paulo; primeira janela 13/09/2026.",
+    "objective": "Lucro líquido absoluto, sem comparação com outros investimentos.",
+    "current_profile": "altcoin_profit_20260907",
+    "current_data_directory": "work/altcoin-profit-data",
+    "notification_intent": "Somente mudança relevante, conclusão, falha ou informação necessária."
+  },
+  "planning": {
+    "objective": "ABSOLUTE_NET_PROFIT",
+    "external_investment_comparison": false,
+    "null_net_return": 0,
+    "minimum_profit_requested_by_user": null,
+    "grid": [
+      {
+        "annual_net_return_scenario": 0.01,
+        "weekly_log_sd_assumed": 0.01,
+        "dependence_multiplier_assumed": 1,
+        "weeks_normal_design": 21443
+      },
+      {
+        "annual_net_return_scenario": 0.01,
+        "weekly_log_sd_assumed": 0.01,
+        "dependence_multiplier_assumed": 4,
+        "weeks_normal_design": 85772
+      },
+      {
+        "annual_net_return_scenario": 0.01,
+        "weekly_log_sd_assumed": 0.03,
+        "dependence_multiplier_assumed": 1,
+        "weeks_normal_design": 192980
+      },
+      {
+        "annual_net_return_scenario": 0.01,
+        "weekly_log_sd_assumed": 0.03,
+        "dependence_multiplier_assumed": 4,
+        "weeks_normal_design": 771920
+      },
+      {
+        "annual_net_return_scenario": 0.01,
+        "weekly_log_sd_assumed": 0.05,
+        "dependence_multiplier_assumed": 1,
+        "weeks_normal_design": 536054
+      },
+      {
+        "annual_net_return_scenario": 0.01,
+        "weekly_log_sd_assumed": 0.05,
+        "dependence_multiplier_assumed": 4,
+        "weeks_normal_design": 2144216
+      },
+      {
+        "annual_net_return_scenario": 0.05,
+        "weekly_log_sd_assumed": 0.01,
+        "dependence_multiplier_assumed": 1,
+        "weeks_normal_design": 892
+      },
+      {
+        "annual_net_return_scenario": 0.05,
+        "weekly_log_sd_assumed": 0.01,
+        "dependence_multiplier_assumed": 4,
+        "weeks_normal_design": 3568
+      },
+      {
+        "annual_net_return_scenario": 0.05,
+        "weekly_log_sd_assumed": 0.03,
+        "dependence_multiplier_assumed": 1,
+        "weeks_normal_design": 8027
+      },
+      {
+        "annual_net_return_scenario": 0.05,
+        "weekly_log_sd_assumed": 0.03,
+        "dependence_multiplier_assumed": 4,
+        "weeks_normal_design": 32108
+      },
+      {
+        "annual_net_return_scenario": 0.05,
+        "weekly_log_sd_assumed": 0.05,
+        "dependence_multiplier_assumed": 1,
+        "weeks_normal_design": 22296
+      },
+      {
+        "annual_net_return_scenario": 0.05,
+        "weekly_log_sd_assumed": 0.05,
+        "dependence_multiplier_assumed": 4,
+        "weeks_normal_design": 89184
+      },
+      {
+        "annual_net_return_scenario": 0.1,
+        "weekly_log_sd_assumed": 0.01,
+        "dependence_multiplier_assumed": 1,
+        "weeks_normal_design": 234
+      },
+      {
+        "annual_net_return_scenario": 0.1,
+        "weekly_log_sd_assumed": 0.01,
+        "dependence_multiplier_assumed": 4,
+        "weeks_normal_design": 936
+      },
+      {
+        "annual_net_return_scenario": 0.1,
+        "weekly_log_sd_assumed": 0.03,
+        "dependence_multiplier_assumed": 1,
+        "weeks_normal_design": 2104
+      },
+      {
+        "annual_net_return_scenario": 0.1,
+        "weekly_log_sd_assumed": 0.03,
+        "dependence_multiplier_assumed": 4,
+        "weeks_normal_design": 8416
+      },
+      {
+        "annual_net_return_scenario": 0.1,
+        "weekly_log_sd_assumed": 0.05,
+        "dependence_multiplier_assumed": 1,
+        "weeks_normal_design": 5843
+      },
+      {
+        "annual_net_return_scenario": 0.1,
+        "weekly_log_sd_assumed": 0.05,
+        "dependence_multiplier_assumed": 4,
+        "weeks_normal_design": 23372
+      },
+      {
+        "annual_net_return_scenario": 0.2,
+        "weekly_log_sd_assumed": 0.01,
+        "dependence_multiplier_assumed": 1,
+        "weeks_normal_design": 64
+      },
+      {
+        "annual_net_return_scenario": 0.2,
+        "weekly_log_sd_assumed": 0.01,
+        "dependence_multiplier_assumed": 4,
+        "weeks_normal_design": 256
+      },
+      {
+        "annual_net_return_scenario": 0.2,
+        "weekly_log_sd_assumed": 0.03,
+        "dependence_multiplier_assumed": 1,
+        "weeks_normal_design": 575
+      },
+      {
+        "annual_net_return_scenario": 0.2,
+        "weekly_log_sd_assumed": 0.03,
+        "dependence_multiplier_assumed": 4,
+        "weeks_normal_design": 2300
+      },
+      {
+        "annual_net_return_scenario": 0.2,
+        "weekly_log_sd_assumed": 0.05,
+        "dependence_multiplier_assumed": 1,
+        "weeks_normal_design": 1597
+      },
+      {
+        "annual_net_return_scenario": 0.2,
+        "weekly_log_sd_assumed": 0.05,
+        "dependence_multiplier_assumed": 4,
+        "weeks_normal_design": 6388
+      }
+    ],
+    "limitation": "Planning assumptions only, not forecasts, user profit targets, a calibrated horizon or a formal attestation. Arbitrarily small positive net return has no fixed finite evidence horizon. Twelve observation windows test operation; they do not establish profitability automatically."
+  },
+  "search_log": {
+    "registered_protocol_commit": "330619f",
+    "code_and_freeze_before_new_preflight": "007432c",
+    "user_directed_change": "Absolute net profit and agent-selected research venue; no outside benchmark and no original 240-symbol cap.",
+    "new_historical_performance_trials": 0,
+    "prospective_decisions": 0,
+    "model_scorer_and_training_changes": 0,
+    "candidate_universe": "All current Binance spot USDT subject to declared exclusions and unchanged data/liquidity rules.",
+    "preflight_selected": [],
+    "scope_limit": "Other venues are allowed by user preference, but no other venue adapter is claimed."
+  }
+}

@@ -1,0 +1,728 @@
+{
+  "results": {
+    "id": "discovery-altcoin-payoff-20260907-v2",
+    "status": "IMPLEMENTED_DRY_RUN_ONLY_NOT_PROMOTED",
+    "protocol_sha256": "071a50b6ffbc535d226c73a02a1211f1bd4512554fd4844d039b6226c6a3da15",
+    "identity_resolutions": [
+      {
+        "symbol": "NPXSUSDT",
+        "entry": "2021-04-05",
+        "kind": "TOKEN_MIGRATION",
+        "exit_pair": "PUNDIXUSDT",
+        "new_units_per_old": "0.001",
+        "source": "https://www.binance.com/en/support/announcement/detail/3776ecbf694a4dfda138c0d7262ea4b2",
+        "entry_price": "0.00713350",
+        "entry_raw_source": {
+          "open": "0.00713350",
+          "source": "https://api.binance.com/api/v3/klines?symbol=NPXSUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+          "known_at": "2026-09-07T18:50:17.298576+00:00"
+        },
+        "exit_day": "2021-04-11",
+        "gross_return": -0.37337912665591927,
+        "sell_legs": 1,
+        "successor_close": "4.47000000",
+        "quote_usdt_close": "1",
+        "status": "QUANTITY_ADJUSTED_DAILY_MARK"
+      },
+      {
+        "symbol": "BZRXUSDT",
+        "entry": "2021-12-20",
+        "kind": "TOKEN_MIGRATION",
+        "exit_pair": "OOKIUSDT",
+        "new_units_per_old": "10",
+        "source": "https://www.binance.com/en/support/announcement/detail/dff27dc6bcbb432c902bcbea5e24ddfa",
+        "entry_price": "0.20830000",
+        "entry_raw_source": {
+          "open": "0.20830000",
+          "source": "https://api.binance.com/api/v3/klines?symbol=BZRXUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+          "known_at": "2026-09-07T18:50:58.435802+00:00"
+        },
+        "exit_day": "2021-12-26",
+        "gross_return": 1.2966874699951991,
+        "sell_legs": 1,
+        "successor_close": "0.04784000",
+        "quote_usdt_close": "1",
+        "status": "QUANTITY_ADJUSTED_DAILY_MARK"
+      },
+      {
+        "symbol": "BTTUSDT",
+        "entry": "2022-01-17",
+        "kind": "TOKEN_MIGRATION",
+        "exit_pair": "BTTCUSDT",
+        "new_units_per_old": "1000",
+        "source": "https://www.binance.com/en/support/announcement/detail/2722e6da4f5141dd9b2fb07b5b1f3f75",
+        "note": "New trading opens after the original 7-day horizon. Do not use later prices to fill the old label.",
+        "entry_price": "0.00267700",
+        "entry_raw_source": {
+          "open": "0.00267700",
+          "source": "https://api.binance.com/api/v3/klines?symbol=BTTUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+          "known_at": "2026-09-07T18:50:20.380223+00:00"
+        },
+        "exit_day": "2022-01-23",
+        "gross_return": null,
+        "sell_legs": 1,
+        "successor_close": null,
+        "quote_usdt_close": "1",
+        "status": "CENSORED_NO_PRICE_AT_ORIGINAL_HORIZON"
+      },
+      {
+        "symbol": "HNTUSDT",
+        "entry": "2022-10-10",
+        "kind": "CROSS_QUOTE_MARK",
+        "exit_pair": "HNTBUSD",
+        "quote_conversion_pair": "BUSDUSDT",
+        "new_units_per_old": "1",
+        "source": "https://www.binance.com/en/support/announcement/detail/64b9451dc9394f058802dd9ee4b52913",
+        "entry_price": "4.60000000",
+        "entry_raw_source": {
+          "open": "4.60000000",
+          "source": "https://api.binance.com/api/v3/klines?symbol=HNTUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+          "known_at": "2026-09-07T18:50:15.158435+00:00"
+        },
+        "exit_day": "2022-10-16",
+        "gross_return": -0.010869565217391304,
+        "sell_legs": 2,
+        "successor_close": "4.55000000",
+        "quote_usdt_close": "1.00000000",
+        "status": "CROSS_QUOTE_DAILY_MARK"
+      },
+      {
+        "symbol": "FTTUSDT",
+        "entry": "2022-11-14",
+        "kind": "CROSS_QUOTE_MARK",
+        "exit_pair": "FTTBUSD",
+        "quote_conversion_pair": "BUSDUSDT",
+        "new_units_per_old": "1",
+        "source": "https://api.binance.com/api/v3/klines",
+        "note": "Observed public FTT/BUSD and BUSD/USDT prices establish a same-base quotation proxy. Account execution and synchronized quotes are not measured.",
+        "entry_price": "1.48610000",
+        "entry_raw_source": {
+          "open": "1.48610000",
+          "source": "https://api.binance.com/api/v3/klines?symbol=FTTUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+          "known_at": "2026-09-07T18:51:22.207892+00:00"
+        },
+        "exit_day": "2022-11-20",
+        "gross_return": -0.11661097503532737,
+        "sell_legs": 2,
+        "successor_close": "1.31110000",
+        "quote_usdt_close": "1.00130000",
+        "status": "CROSS_QUOTE_DAILY_MARK"
+      },
+      {
+        "symbol": "COCOSUSDT",
+        "entry": "2023-05-29",
+        "kind": "TOKEN_MIGRATION",
+        "exit_pair": "COMBOUSDT",
+        "new_units_per_old": "1",
+        "source": "https://www.binance.com/en/square/post/536095",
+        "entry_price": "1.76380000",
+        "entry_raw_source": {
+          "open": "1.76380000",
+          "source": "https://api.binance.com/api/v3/klines?symbol=COCOSUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+          "known_at": "2026-09-07T18:50:31.179282+00:00"
+        },
+        "exit_day": "2023-06-04",
+        "gross_return": -0.16487130060097516,
+        "sell_legs": 1,
+        "successor_close": "1.47300000",
+        "quote_usdt_close": "1",
+        "status": "QUANTITY_ADJUSTED_DAILY_MARK"
+      },
+      {
+        "symbol": "OCEANUSDT",
+        "entry": "2024-07-01",
+        "kind": "TOKEN_MIGRATION",
+        "exit_pair": "FETUSDT",
+        "new_units_per_old": "0.433226",
+        "source": "https://www.binance.com/en/support/announcement/detail/3dc0eae584cd4accb34cb914dacf670d",
+        "entry_price": "0.61380000",
+        "entry_raw_source": {
+          "open": "0.61380000",
+          "source": "https://api.binance.com/api/v3/klines?symbol=OCEANUSDT&interval=1d&startTime=1687910400000&endTime=1788739199999&limit=1000",
+          "known_at": "2026-09-07T18:51:23.956548+00:00"
+        },
+        "exit_day": "2024-07-07",
+        "gross_return": -0.2130221733463669,
+        "sell_legs": 1,
+        "successor_close": "1.11500000",
+        "quote_usdt_close": "1",
+        "status": "QUANTITY_ADJUSTED_DAILY_MARK"
+      },
+      {
+        "symbol": "CVPUSDT",
+        "entry": "2024-08-26",
+        "kind": "DELISTING_UNRESOLVED",
+        "source": "https://www.binance.com/en/square/post/14411092185154",
+        "note": "No verified same-venue 7-day exit or realized recovery; no fabricated zero value.",
+        "entry_price": "0.05110000",
+        "entry_raw_source": {
+          "open": "0.05110000",
+          "source": "https://api.binance.com/api/v3/klines?symbol=CVPUSDT&interval=1d&startTime=1719705600000&endTime=1788739199999&limit=1000",
+          "known_at": "2026-09-07T18:50:15.316453+00:00"
+        },
+        "exit_day": "2024-09-01",
+        "gross_return": null,
+        "sell_legs": 1,
+        "status": "CENSORED_NO_VERIFIED_EXIT"
+      },
+      {
+        "symbol": "MATICUSDT",
+        "entry": "2024-09-09",
+        "kind": "TOKEN_MIGRATION",
+        "exit_pair": "POLUSDT",
+        "new_units_per_old": "1",
+        "source": "https://www.binance.com/en/support/announcement/detail/619c4929fc3f4a0d9df7f9ae1d4519a5",
+        "entry_price": "0.37580000",
+        "entry_raw_source": {
+          "open": "0.37580000",
+          "source": "https://api.binance.com/api/v3/klines?symbol=MATICUSDT&interval=1d&startTime=1687910400000&endTime=1788739199999&limit=1000",
+          "known_at": "2026-09-07T18:50:22.916523+00:00"
+        },
+        "exit_day": "2024-09-15",
+        "gross_return": 0.034326769558275676,
+        "sell_legs": 1,
+        "successor_close": "0.38870000",
+        "quote_usdt_close": "1",
+        "status": "QUANTITY_ADJUSTED_DAILY_MARK"
+      },
+      {
+        "symbol": "FTMUSDT",
+        "entry": "2025-01-13",
+        "kind": "TOKEN_MIGRATION",
+        "exit_pair": "SUSDT",
+        "new_units_per_old": "1",
+        "source": "https://www.binance.com/en/support/announcement/detail/aec6fcbc84b749eeab6690e6bcac2f3d",
+        "entry_price": "0.69990000",
+        "entry_raw_source": {
+          "open": "0.69990000",
+          "source": "https://api.binance.com/api/v3/klines?symbol=FTMUSDT&interval=1d&startTime=1687910400000&endTime=1788739199999&limit=1000",
+          "known_at": "2026-09-07T18:50:57.559985+00:00"
+        },
+        "exit_day": "2025-01-19",
+        "gross_return": -0.19345620802971852,
+        "sell_legs": 1,
+        "successor_close": "0.56450000",
+        "quote_usdt_close": "1",
+        "status": "QUANTITY_ADJUSTED_DAILY_MARK"
+      },
+      {
+        "symbol": "BNXUSDT",
+        "entry": "2025-03-17",
+        "kind": "TOKEN_MIGRATION",
+        "exit_pair": "FORMUSDT",
+        "new_units_per_old": "1",
+        "source": "https://www.binance.com/en/support/announcement/detail/7d5accdcf8f446f3ba3d79f8747a28e2",
+        "entry_price": "1.42500000",
+        "entry_raw_source": {
+          "open": "1.42500000",
+          "source": "https://api.binance.com/api/v3/klines?symbol=BNXUSDT&interval=1d&startTime=1722816000000&endTime=1788739199999&limit=1000",
+          "known_at": "2026-09-07T18:50:45.234831+00:00"
+        },
+        "exit_day": "2025-03-23",
+        "gross_return": 0.42547368421052634,
+        "sell_legs": 1,
+        "successor_close": "2.03130000",
+        "quote_usdt_close": "1",
+        "status": "QUANTITY_ADJUSTED_DAILY_MARK"
+      },
+      {
+        "symbol": "VIDTUSDT",
+        "entry": "2025-04-14",
+        "kind": "DELISTING_UNRESOLVED",
+        "source": "https://www.binance.com/en/support/announcement/detail/fac9c3e401da4cc8b604566fd261d70c",
+        "note": "No verified same-venue 7-day exit or realized recovery; no fabricated zero value.",
+        "entry_price": "0.00280000",
+        "entry_raw_source": {
+          "open": "0.00280000",
+          "source": "https://api.binance.com/api/v3/klines?symbol=VIDTUSDT&interval=1d&startTime=1718236800000&endTime=1788739199999&limit=1000",
+          "known_at": "2026-09-07T18:51:12.073615+00:00"
+        },
+        "exit_day": "2025-04-20",
+        "gross_return": null,
+        "sell_legs": 1,
+        "status": "CENSORED_NO_VERIFIED_EXIT"
+      },
+      {
+        "symbol": "EOSUSDT",
+        "entry": "2025-05-26",
+        "kind": "TOKEN_MIGRATION",
+        "exit_pair": "AUSDT",
+        "new_units_per_old": "1",
+        "source": "https://www.binance.com/en-JP/support/announcement/detail/f965dc3d62be48a1a21d134162aa1d51",
+        "note": "The official completed-swap notice verifies token ratio. USDT price availability is separately verified from the global public endpoint.",
+        "entry_price": "0.76600000",
+        "entry_raw_source": {
+          "open": "0.76600000",
+          "source": "https://api.binance.com/api/v3/klines?symbol=EOSUSDT&interval=1d&startTime=1687910400000&endTime=1788739199999&limit=1000",
+          "known_at": "2026-09-07T18:50:52.282703+00:00"
+        },
+        "exit_day": "2025-06-01",
+        "gross_return": -0.15718015665796345,
+        "sell_legs": 1,
+        "successor_close": "0.64560000",
+        "quote_usdt_close": "1",
+        "status": "QUANTITY_ADJUSTED_DAILY_MARK"
+      }
+    ],
+    "counts": {
+      "original_censored": 13,
+      "resolved_price_proxies": 10,
+      "still_censored": 3,
+      "training_samples_preserved": 5204,
+      "training_still_censored": 1
+    },
+    "fixed_v1_selection_accounting": {
+      "evaluation_1": {
+        "analogs": {
+          "exact_executable_return": null,
+          "unresolved_holdings": [
+            {
+              "date": "2024-08-26",
+              "symbol": "CVPUSDT"
+            }
+          ],
+          "scenario_compounded_returns": {
+            "unresolved_total_loss_stress": -0.5509804934045788,
+            "unresolved_flat_recovery_scenario": -0.40557386546440355
+          },
+          "meaning": "Fixed v1 selections, corrected known quantity/quote marks. Scenarios for residual censoring, not executable P&L or universal recovery bounds."
+        },
+        "equal_basket": {
+          "exact_executable_return": null,
+          "unresolved_holdings": [
+            {
+              "date": "2024-08-26",
+              "symbol": "CVPUSDT"
+            }
+          ],
+          "scenario_compounded_returns": {
+            "unresolved_total_loss_stress": -0.32736347788083886,
+            "unresolved_flat_recovery_scenario": -0.2997749176592396
+          },
+          "meaning": "Fixed v1 selections, corrected known quantity/quote marks. Scenarios for residual censoring, not executable P&L or universal recovery bounds."
+        },
+        "momentum": {
+          "exact_executable_return": null,
+          "unresolved_holdings": [],
+          "scenario_compounded_returns": {
+            "unresolved_total_loss_stress": -0.6706900716418411,
+            "unresolved_flat_recovery_scenario": -0.6706900716418411
+          },
+          "meaning": "Fixed v1 selections, corrected known quantity/quote marks. Scenarios for residual censoring, not executable P&L or universal recovery bounds."
+        }
+      },
+      "evaluation_2": {
+        "analogs": {
+          "exact_executable_return": null,
+          "unresolved_holdings": [
+            {
+              "date": "2025-04-14",
+              "symbol": "VIDTUSDT"
+            }
+          ],
+          "scenario_compounded_returns": {
+            "unresolved_total_loss_stress": -0.9783027247558249,
+            "unresolved_flat_recovery_scenario": -0.9733036653691685
+          },
+          "meaning": "Fixed v1 selections, corrected known quantity/quote marks. Scenarios for residual censoring, not executable P&L or universal recovery bounds."
+        },
+        "equal_basket": {
+          "exact_executable_return": null,
+          "unresolved_holdings": [
+            {
+              "date": "2025-04-14",
+              "symbol": "VIDTUSDT"
+            }
+          ],
+          "scenario_compounded_returns": {
+            "unresolved_total_loss_stress": -0.9267168151680533,
+            "unresolved_flat_recovery_scenario": -0.9244313579119509
+          },
+          "meaning": "Fixed v1 selections, corrected known quantity/quote marks. Scenarios for residual censoring, not executable P&L or universal recovery bounds."
+        },
+        "momentum": {
+          "exact_executable_return": null,
+          "unresolved_holdings": [],
+          "scenario_compounded_returns": {
+            "unresolved_total_loss_stress": -0.9631502018827341,
+            "unresolved_flat_recovery_scenario": -0.9631502018827341
+          },
+          "meaning": "Fixed v1 selections, corrected known quantity/quote marks. Scenarios for residual censoring, not executable P&L or universal recovery bounds."
+        }
+      }
+    },
+    "payoff_snapshot": {
+      "input_date": "2026-09-07",
+      "prospective": false,
+      "performance_claim": false,
+      "ranked": [
+        {
+          "symbol": "XLMUSDT",
+          "neighbor_count": 200,
+          "status": "ABSTAIN_NO_POSITIVE_MARGIN",
+          "qualified": false,
+          "distinct_weeks": 48,
+          "effective_n_heuristic": 12,
+          "mean_log_payoff": 0.018920857201820105,
+          "geometric_payoff_proxy": 0.0191009909216628,
+          "uncertainty_penalty_log": 0.06493463262185716,
+          "score_log": -0.046013775420037054,
+          "score_return_equivalent": -0.044971193822852536,
+          "confidence_claim": "heuristic penalty, not a calibrated confidence interval"
+        },
+        {
+          "symbol": "RLUSDUSDT",
+          "neighbor_count": 200,
+          "status": "ABSTAIN_NO_POSITIVE_MARGIN",
+          "qualified": false,
+          "distinct_weeks": 66,
+          "effective_n_heuristic": 16,
+          "mean_log_payoff": -0.0029464803989760996,
+          "geometric_payoff_proxy": -0.0029421437858994114,
+          "uncertainty_penalty_log": 0.046619408862107456,
+          "score_log": -0.04956588926108355,
+          "score_return_equivalent": -0.048357546947358325,
+          "confidence_claim": "heuristic penalty, not a calibrated confidence interval"
+        },
+        {
+          "symbol": "FILUSDT",
+          "neighbor_count": 200,
+          "status": "ABSTAIN_NO_POSITIVE_MARGIN",
+          "qualified": false,
+          "distinct_weeks": 51,
+          "effective_n_heuristic": 12,
+          "mean_log_payoff": 0.010392115465805344,
+          "geometric_payoff_proxy": 0.010446301035969932,
+          "uncertainty_penalty_log": 0.07208132124438872,
+          "score_log": -0.061689205778583375,
+          "score_return_equivalent": -0.0598249576411086,
+          "confidence_claim": "heuristic penalty, not a calibrated confidence interval"
+        },
+        {
+          "symbol": "PEPEUSDT",
+          "neighbor_count": 200,
+          "status": "ABSTAIN_NO_POSITIVE_MARGIN",
+          "qualified": false,
+          "distinct_weeks": 45,
+          "effective_n_heuristic": 11,
+          "mean_log_payoff": 0.015866484299147235,
+          "geometric_payoff_proxy": 0.015993025329082883,
+          "uncertainty_penalty_log": 0.07793210581353338,
+          "score_log": -0.062065621514386146,
+          "score_return_equivalent": -0.06017878772367827,
+          "confidence_claim": "heuristic penalty, not a calibrated confidence interval"
+        },
+        {
+          "symbol": "ASTERUSDT",
+          "neighbor_count": 200,
+          "status": "ABSTAIN_NO_POSITIVE_MARGIN",
+          "qualified": false,
+          "distinct_weeks": 52,
+          "effective_n_heuristic": 13,
+          "mean_log_payoff": 0.003883736073234341,
+          "geometric_payoff_proxy": 0.0038912875489924524,
+          "uncertainty_penalty_log": 0.06698668426570685,
+          "score_log": -0.0631029481924725,
+          "score_return_equivalent": -0.06115318386887109,
+          "confidence_claim": "heuristic penalty, not a calibrated confidence interval"
+        },
+        {
+          "symbol": "ICPUSDT",
+          "neighbor_count": 200,
+          "status": "ABSTAIN_NO_POSITIVE_MARGIN",
+          "qualified": false,
+          "distinct_weeks": 53,
+          "effective_n_heuristic": 13,
+          "mean_log_payoff": -0.0008945859993873367,
+          "geometric_payoff_proxy": -0.0008941859766259993,
+          "uncertainty_penalty_log": 0.06878399863973154,
+          "score_log": -0.06967858463911888,
+          "score_return_equivalent": -0.0673064462309899,
+          "confidence_claim": "heuristic penalty, not a calibrated confidence interval"
+        },
+        {
+          "symbol": "AAVEUSDT",
+          "neighbor_count": 200,
+          "status": "ABSTAIN_NO_POSITIVE_MARGIN",
+          "qualified": false,
+          "distinct_weeks": 40,
+          "effective_n_heuristic": 10,
+          "mean_log_payoff": -0.012154836753338841,
+          "geometric_payoff_proxy": -0.012081265110543025,
+          "uncertainty_penalty_log": 0.07912839397330386,
+          "score_log": -0.0912832307266427,
+          "score_return_equivalent": -0.0872408471529089,
+          "confidence_claim": "heuristic penalty, not a calibrated confidence interval"
+        },
+        {
+          "symbol": "UNIUSDT",
+          "neighbor_count": 200,
+          "status": "ABSTAIN_NO_POSITIVE_MARGIN",
+          "qualified": false,
+          "distinct_weeks": 77,
+          "effective_n_heuristic": 19,
+          "mean_log_payoff": -0.028555756396396705,
+          "geometric_payoff_proxy": -0.028151894112749657,
+          "uncertainty_penalty_log": 0.07729081044802287,
+          "score_log": -0.10584656684441958,
+          "score_return_equivalent": -0.10043733977456579,
+          "confidence_claim": "heuristic penalty, not a calibrated confidence interval"
+        },
+        {
+          "symbol": "TUTUSDT",
+          "neighbor_count": 200,
+          "status": "ABSTAIN_NO_POSITIVE_MARGIN",
+          "qualified": false,
+          "distinct_weeks": 67,
+          "effective_n_heuristic": 16,
+          "mean_log_payoff": -0.03103656514683904,
+          "geometric_payoff_proxy": -0.03055987529256909,
+          "uncertainty_penalty_log": 0.07551238366082774,
+          "score_log": -0.10654894880766679,
+          "score_return_equivalent": -0.1010689545185501,
+          "confidence_claim": "heuristic penalty, not a calibrated confidence interval"
+        },
+        {
+          "symbol": "PUMPUSDT",
+          "neighbor_count": 200,
+          "status": "ABSTAIN_NO_POSITIVE_MARGIN",
+          "qualified": false,
+          "distinct_weeks": 61,
+          "effective_n_heuristic": 15,
+          "mean_log_payoff": -0.046537101125925386,
+          "geometric_payoff_proxy": -0.04547085419302743,
+          "uncertainty_penalty_log": 0.06551687937784342,
+          "score_log": -0.1120539805037688,
+          "score_return_equivalent": -0.10600400215650221,
+          "confidence_claim": "heuristic penalty, not a calibrated confidence interval"
+        },
+        {
+          "symbol": "BICOUSDT",
+          "neighbor_count": 200,
+          "status": "ABSTAIN_NO_POSITIVE_MARGIN",
+          "qualified": false,
+          "distinct_weeks": 66,
+          "effective_n_heuristic": 16,
+          "mean_log_payoff": -0.048204427122137954,
+          "geometric_payoff_proxy": -0.0470610394050129,
+          "uncertainty_penalty_log": 0.07508131442717147,
+          "score_log": -0.12328574154930944,
+          "score_return_equivalent": -0.11598897221227264,
+          "confidence_claim": "heuristic penalty, not a calibrated confidence interval"
+        },
+        {
+          "symbol": "ONGUSDT",
+          "neighbor_count": 200,
+          "status": "ABSTAIN_NO_POSITIVE_MARGIN",
+          "qualified": false,
+          "distinct_weeks": 83,
+          "effective_n_heuristic": 20,
+          "mean_log_payoff": -0.037674344812570364,
+          "geometric_payoff_proxy": -0.03697349559157178,
+          "uncertainty_penalty_log": 0.09364112365964326,
+          "score_log": -0.13131546847221362,
+          "score_return_equivalent": -0.12305891651411895,
+          "confidence_claim": "heuristic penalty, not a calibrated confidence interval"
+        },
+        {
+          "symbol": "BMTUSDT",
+          "neighbor_count": 200,
+          "status": "ABSTAIN_NO_POSITIVE_MARGIN",
+          "qualified": false,
+          "distinct_weeks": 84,
+          "effective_n_heuristic": 21,
+          "mean_log_payoff": -0.048658601854679136,
+          "geometric_payoff_proxy": -0.04749374193385358,
+          "uncertainty_penalty_log": 0.08915986570405789,
+          "score_log": -0.13781846755873703,
+          "score_return_equivalent": -0.1287431612281345,
+          "confidence_claim": "heuristic penalty, not a calibrated confidence interval"
+        },
+        {
+          "symbol": "HEMIUSDT",
+          "neighbor_count": 200,
+          "status": "ABSTAIN_NO_POSITIVE_MARGIN",
+          "qualified": false,
+          "distinct_weeks": 44,
+          "effective_n_heuristic": 11,
+          "mean_log_payoff": -0.010160498085274479,
+          "geometric_payoff_proxy": -0.010109054602495822,
+          "uncertainty_penalty_log": 0.15334484305444307,
+          "score_log": -0.16350534113971754,
+          "score_return_equivalent": -0.1508380365032183,
+          "confidence_claim": "heuristic penalty, not a calibrated confidence interval"
+        }
+      ],
+      "candidate_symbols": [],
+      "research_weight_each": 0.2,
+      "cash_weight": 1.0,
+      "status_counts": {
+        "ABSTAIN_NO_POSITIVE_MARGIN": 14
+      }
+    },
+    "new_historical_performance_trials": 0,
+    "raw_requests": [
+      {
+        "url": "https://api.binance.com/api/v3/klines?symbol=FTTBUSD&interval=1d&startTime=1668902400000&endTime=1668988799999&limit=2",
+        "retrieved_at_utc": "2026-09-07T19:25:11.782651+00:00",
+        "http_status": 200,
+        "sha256": "a9316c22ba5f9be2a49d6366068fec0e5a4860a1540209d54247a07007694e42",
+        "bytes": 173,
+        "server_date": "Mon, 07 Sep 2026 19:25:11 GMT"
+      },
+      {
+        "url": "https://api.binance.com/api/v3/klines?symbol=BTTCUSDT&interval=1d&startTime=1642896000000&endTime=1642982399999&limit=2",
+        "retrieved_at_utc": "2026-09-07T19:25:10.879445+00:00",
+        "http_status": 200,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "bytes": 2,
+        "server_date": "Mon, 07 Sep 2026 19:25:11 GMT"
+      },
+      {
+        "url": "https://api.binance.com/api/v3/klines?symbol=POLUSDT&interval=1d&startTime=1726358400000&endTime=1726444799999&limit=2",
+        "retrieved_at_utc": "2026-09-07T19:25:13.051283+00:00",
+        "http_status": 200,
+        "sha256": "fccfbd663234025771b94a8dcb4671f7c404c7b8cf3ad16a24b9f55254273969",
+        "bytes": 172,
+        "server_date": "Mon, 07 Sep 2026 19:25:13 GMT"
+      },
+      {
+        "url": "https://api.binance.com/api/v3/klines?symbol=AUSDT&interval=1d&startTime=1748736000000&endTime=1748822399999&limit=2",
+        "retrieved_at_utc": "2026-09-07T19:25:14.066705+00:00",
+        "http_status": 200,
+        "sha256": "f0ba612a6c020640a2cd19db58e5ceb462d10efc8af1d5539f1545831c04683a",
+        "bytes": 174,
+        "server_date": "Mon, 07 Sep 2026 19:25:14 GMT"
+      },
+      {
+        "url": "https://api.binance.com/api/v3/klines?symbol=FETUSDT&interval=1d&startTime=1720310400000&endTime=1720396799999&limit=2",
+        "retrieved_at_utc": "2026-09-07T19:25:12.746055+00:00",
+        "http_status": 200,
+        "sha256": "c6a36b3aed6db847c61bf5bda5ef1fbb9087ce19d9f9dbde28bdb025b2b16949",
+        "bytes": 174,
+        "server_date": "Mon, 07 Sep 2026 19:25:12 GMT"
+      },
+      {
+        "url": "https://api.binance.com/api/v3/klines?symbol=FORMUSDT&interval=1d&startTime=1742688000000&endTime=1742774399999&limit=2",
+        "retrieved_at_utc": "2026-09-07T19:25:13.644360+00:00",
+        "http_status": 200,
+        "sha256": "4a4001bfeb87d0242aed2e5ef3446280dfc338d3047e0671e5e8272c4c319f25",
+        "bytes": 173,
+        "server_date": "Mon, 07 Sep 2026 19:25:13 GMT"
+      },
+      {
+        "url": "https://api.binance.com/api/v3/klines?symbol=OOKIUSDT&interval=1d&startTime=1640476800000&endTime=1640563199999&limit=2",
+        "retrieved_at_utc": "2026-09-07T19:25:10.580805+00:00",
+        "http_status": 200,
+        "sha256": "3107d564231ee431c4ccc0318cec9ecba793f8c9f338640e69b07269b9355627",
+        "bytes": 179,
+        "server_date": "Mon, 07 Sep 2026 19:25:10 GMT"
+      },
+      {
+        "url": "https://api.binance.com/api/v3/klines?symbol=COMBOUSDT&interval=1d&startTime=1685836800000&endTime=1685923199999&limit=2",
+        "retrieved_at_utc": "2026-09-07T19:25:12.437132+00:00",
+        "http_status": 200,
+        "sha256": "a58d1b2575d5a7b54bf7a269ab3736d3e4c60389d2c7be8896a34e620abceb57",
+        "bytes": 170,
+        "server_date": "Mon, 07 Sep 2026 19:25:12 GMT"
+      },
+      {
+        "url": "https://api.binance.com/api/v3/klines?symbol=SUSDT&interval=1d&startTime=1737244800000&endTime=1737331199999&limit=2",
+        "retrieved_at_utc": "2026-09-07T19:25:13.340988+00:00",
+        "http_status": 200,
+        "sha256": "283c80cbb71cf6ab7a9ad96592b5c7fbc0ead817d7242ded1ebb25130a63d252",
+        "bytes": 176,
+        "server_date": "Mon, 07 Sep 2026 19:25:13 GMT"
+      },
+      {
+        "url": "https://api.binance.com/api/v3/klines?symbol=PUNDIXUSDT&interval=1d&startTime=1618099200000&endTime=1618185599999&limit=2",
+        "retrieved_at_utc": "2026-09-07T19:25:10.290730+00:00",
+        "http_status": 200,
+        "sha256": "9881289f0654740d776212efc0a37a93866f74b8748fc43a9ed54c95423631ab",
+        "bytes": 173,
+        "server_date": "Mon, 07 Sep 2026 19:25:10 GMT"
+      },
+      {
+        "url": "https://api.binance.com/api/v3/klines?symbol=HNTBUSD&interval=1d&startTime=1665878400000&endTime=1665964799999&limit=2",
+        "retrieved_at_utc": "2026-09-07T19:25:11.185292+00:00",
+        "http_status": 200,
+        "sha256": "1f3e8d24fce51bf8b4cda7740fc62e68acb9e501a85ae72cb8544218c0fbe69e",
+        "bytes": 165,
+        "server_date": "Mon, 07 Sep 2026 19:25:11 GMT"
+      },
+      {
+        "url": "https://api.binance.com/api/v3/klines?symbol=BUSDUSDT&interval=1d&startTime=1668902400000&endTime=1668988799999&limit=2",
+        "retrieved_at_utc": "2026-09-07T19:25:12.138842+00:00",
+        "http_status": 200,
+        "sha256": "de263779918f1b8f42cccf2cf80574ebec75aa8d32db626dec4b01d34c01a6f5",
+        "bytes": 178,
+        "server_date": "Mon, 07 Sep 2026 19:25:12 GMT"
+      },
+      {
+        "url": "https://api.binance.com/api/v3/klines?symbol=BUSDUSDT&interval=1d&startTime=1665878400000&endTime=1665964799999&limit=2",
+        "retrieved_at_utc": "2026-09-07T19:25:11.481867+00:00",
+        "http_status": 200,
+        "sha256": "80ba6f9076d42e80a02cd81951684a96ee0a945e3841d9da76fd06c18f9669bd",
+        "bytes": 178,
+        "server_date": "Mon, 07 Sep 2026 19:25:11 GMT"
+      }
+    ],
+    "activation": {
+      "capital": false,
+      "orders": false,
+      "scheduler": false,
+      "prospective": false
+    },
+    "remaining": [
+      "freeze complete investability and delisting-event feed with observation known_at",
+      "verify live feed/latency parity and paper fills",
+      "resolve operator benchmark/FX/friction and execution envelope",
+      "issue a model-specific harness/power attestation before formal promotion",
+      "derive evidence horizon from economically relevant paired effect; a few weeks cannot establish profitability"
+    ]
+  },
+  "validation": {
+    "targeted_tests": {
+      "total": 30,
+      "prior_analog": 11,
+      "new_payoff_identity": 11,
+      "freeze_gate": 8
+    },
+    "ruff": "PASS",
+    "pyright": "PASS",
+    "offline_byte_identical": [
+      "results.json",
+      "samples_identity_corrected.json.gz"
+    ],
+    "new_price_requests": 13,
+    "new_historical_performance_trials": 0,
+    "scheduler_created": false,
+    "capital_authorized": false
+  },
+  "search_log": {
+    "id": "discovery-altcoin-payoff-20260907-v2",
+    "protocol_commit": "bbe7a8b",
+    "implementation_before_new_prices_commit": "34b599a",
+    "adaptive_changes": [
+      "quantity/identity correction for known missing outcomes",
+      "objective switches from rally frequency to net log payoff",
+      "week grouping and uncertainty penalty",
+      "abstention/cash allowed"
+    ],
+    "preserved": [
+      "240-symbol sample",
+      "8 feature definitions",
+      "1-day information delay",
+      "7-day horizon",
+      "2021-2023 training geometry",
+      "all original observations and output files"
+    ],
+    "new_model_specifications": 1,
+    "new_historical_performance_trials": 0,
+    "snapshot_date": "2026-09-07",
+    "snapshot_is_prospective": false,
+    "decision": "PREPARED_NOT_PROMOTED; no candidate passed the dry-run margin",
+    "data_censoring": "BTT, CVP, VIDT retained with null return; no fabricated full-loss label",
+    "notes": "Daily marks and same-base cross-quote identity are accounting assumptions, not evidence of actual fills. Historical v1 scenarios are sensitivity only. No formal Core trial/power attestation or capital activation."
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "created_at": "2026-09-07T17:00:57.865362-03:00",
+  "repository_head": "0fd58c90a7d4ae32fbbce02cba035e0dbdeed469",
+  "base_commit": "9e492f07f05b161beaed3cb7d343ff97011d5c14",
+  "branch": "codex/cripto-v1-2-execution-20260907",
+  "artifacts": {
+    "ACOMPANHAMENTO_CRIPTO.md": {
+      "sha256": "0a5b4089da35741ae14f0d71cec9502c5ca6da0a8cafeb77949ffb387640bc68",
+      "bytes": 3358
+    },
+    "CRIPTO_PROXIMOS_PASSOS.json": {
+      "sha256": "24099f9edefe2943b4897594d58fc5a5d287e2c79340e8767c6452e63063074e",
+      "bytes": 21967
+    },
+    "CRIPTO_ACOMPANHAMENTO.patch": {
+      "sha256": "162aad06e4ccaf10f62c0e7ceab79d2ed67b264138017f5aa1ea69e7d22e1a0a",
+      "bytes": 87894
+    },
+    "CRIPTO_ACOMPANHAMENTO_REPRODUCAO.zip": {
+      "sha256": "93d3a741ed0706eead5bdc2d17016d9484adb8b94d806aceb22a3fe4e92ae3eb",
+      "bytes": 3235571
+    }
+  },
+  "zip_files": 595,
+  "zip_internal_hash_check": "PASS",
+  "reverse_patch_check": "PASS",
+  "automation_id": "observar-altcoins-semanalmente",
+  "formal_profitability_proof": false,
+  "real_capital": false,
+  "extracted_package_validation": {
+    "packaged_tests_passed": 39,
+    "offline_replay": "PASS",
+    "network_requests_in_replay": 0
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "base": "2b346e2600917133a51274fb9fa50b944595aa90",
+  "head": "9e492f07f05b161beaed3cb7d343ff97011d5c14",
+  "clean": true,
+  "patch_check": "PASS",
+  "protected_blobs_unchanged": [
+    "charters/scientific_state.json",
+    "GarimpoInvestimentos/trials.json",
+    "GarimpoInvestimentos/v3/costs.py",
+    "CR_FREEZE_INDEX.md",
+    "CR_RESEARCH_FREEZE.md"
+  ],
+  "files": {
+    "CRIPTO_CONTINUACAO.json": {
+      "sha256": "6b6e76a7ebdbe9f77d35cf1c645116d3db74642be3262727f98efbecfc20e7cc",
+      "bytes": 31871
+    },
+    "CRIPTO_CONTINUACAO.md": {
+      "sha256": "37e474dc1414619a6c2b167fa6ce3188cc7f3fcc6bb4eabc041d9b948734030f",
+      "bytes": 6507
+    },
+    "CRIPTO_CONTINUACAO.patch": {
+      "sha256": "340e22bf54dac9abf0a79c6939be247116240cc5eec9422408ead5f204abfe02",
+      "bytes": 62872
+    },
+    "CRIPTO_CONTINUACAO_REPRODUCAO.zip": {
+      "sha256": "2e3a7a5901baa6a29cd72a458a8c32b72792d8f4eb505a4af17e298277779db9",
+      "bytes": 1070931
+    }
+  }
+}

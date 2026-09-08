@@ -1,0 +1,143 @@
+{
+  "zip_sha256": "d0a4444ce97b56ded07f290036181f6c6b41c45c5967c7b589a7ead21cb7997d",
+  "results_sha256": "636181fe198f98559f152050e9ebd50a6dcb364f8a519f5df138a3c1ef7ccd4c",
+  "data_check": "PASS",
+  "decision": "DO_NOT_DEEPEN_PASSIVE_BTC_ETH_CARRY_UNDER_THIS_CAPITAL_AND_BENCHMARK",
+  "created_at": "2026-09-07T18:35:41.172200+00:00",
+  "source_manifest": {
+    "as_of": "2026-09-07",
+    "raw_requests": [
+      {
+        "artifact": "BTCUSDT_funding_0.json",
+        "url": "https://fapi.binance.com/fapi/v1/fundingRate?symbol=BTCUSDT&startTime=1757203200000&endTime=1788739199999&limit=1000",
+        "known_at": "2026-09-07T18:27:54.831628+00:00",
+        "http_status": 200,
+        "sha256": "ee784cc0e5a4bbe3796c83083f8d8cc68396a18c51c6daa7810c50887ae6433e"
+      },
+      {
+        "artifact": "ETHUSDT_funding_0.json",
+        "url": "https://fapi.binance.com/fapi/v1/fundingRate?symbol=ETHUSDT&startTime=1757203200000&endTime=1788739199999&limit=1000",
+        "known_at": "2026-09-07T18:27:54.831934+00:00",
+        "http_status": 200,
+        "sha256": "21f3a57d1cbcad04face2f3b56326236cae8dfd91d7a7d3eaae37be4cfcd480c"
+      },
+      {
+        "artifact": "BTCUSDT_funding_1.json",
+        "url": "https://fapi.binance.com/fapi/v1/fundingRate?symbol=BTCUSDT&startTime=1785974400003&endTime=1788739199999&limit=1000",
+        "known_at": "2026-09-07T18:27:55.244721+00:00",
+        "http_status": 200,
+        "sha256": "51123315198443bdcfbf16ff7dc1179df8a91acdc47ff77a65205e861b9d144a"
+      },
+      {
+        "artifact": "ETHUSDT_funding_1.json",
+        "url": "https://fapi.binance.com/fapi/v1/fundingRate?symbol=ETHUSDT&startTime=1785974400003&endTime=1788739199999&limit=1000",
+        "known_at": "2026-09-07T18:27:55.251889+00:00",
+        "http_status": 200,
+        "sha256": "6f20b0b28f29ab73e97bab8ffef8715ec7a15a92ca8ff5d7ce4ab6dfaf2124cf"
+      },
+      {
+        "artifact": "BTCUSDT_spot_daily.json",
+        "url": "https://api.binance.com/api/v3/klines?symbol=BTCUSDT&interval=1d&startTime=1757203200000&endTime=1788739200000&limit=500",
+        "known_at": "2026-09-07T18:27:55.576312+00:00",
+        "http_status": 200,
+        "sha256": "dfe185b422bfae8c7b1615e6dedf60a6c7b64631b3f8cbb1e162f39688a3ccac"
+      },
+      {
+        "artifact": "ETHUSDT_spot_daily.json",
+        "url": "https://api.binance.com/api/v3/klines?symbol=ETHUSDT&interval=1d&startTime=1757203200000&endTime=1788739200000&limit=500",
+        "known_at": "2026-09-07T18:27:55.578225+00:00",
+        "http_status": 200,
+        "sha256": "b4f943bb104481c12e77df5c4384e8ed9f86b83c9ca0ed9987a0669de02706b8"
+      },
+      {
+        "artifact": "BTCUSDT_mark_daily.json",
+        "url": "https://fapi.binance.com/fapi/v1/markPriceKlines?symbol=BTCUSDT&interval=1d&startTime=1757203200000&endTime=1788739200000&limit=500",
+        "known_at": "2026-09-07T18:27:55.917809+00:00",
+        "http_status": 200,
+        "sha256": "38c40fab1a4d2ed7c15d75ab578a76daf7ccd13cede613db597229c73f4c02d5"
+      },
+      {
+        "artifact": "ETHUSDT_mark_daily.json",
+        "url": "https://fapi.binance.com/fapi/v1/markPriceKlines?symbol=ETHUSDT&interval=1d&startTime=1757203200000&endTime=1788739200000&limit=500",
+        "known_at": "2026-09-07T18:27:56.182595+00:00",
+        "http_status": 200,
+        "sha256": "42b20536776fd8ce11e3268e81dfbfc7dc387e0c5a526d5628655fc0783516f1"
+      },
+      {
+        "artifact": "selic_effective.json",
+        "url": "https://api.bcb.gov.br/dados/serie/bcdata.sgs.1178/dados?formato=json&dataInicial=04%2F09%2F2026&dataFinal=07%2F09%2F2026",
+        "known_at": "2026-09-07T18:27:56.506146+00:00",
+        "http_status": 200,
+        "sha256": "237a3c38cb4aeed080854035825af2863b1f934070f886d6827f0b931a756e03"
+      },
+      {
+        "artifact": "selic_policy.json",
+        "url": "https://api.bcb.gov.br/dados/serie/bcdata.sgs.432/dados?formato=json&dataInicial=04%2F09%2F2026&dataFinal=07%2F09%2F2026",
+        "known_at": "2026-09-07T18:27:59.447657+00:00",
+        "http_status": 200,
+        "sha256": "2d1442c6b94bc1c4a4421387c01a38322ebeea0c69cb83f43712beba61b846f1"
+      }
+    ],
+    "documentary_sources": [
+      {
+        "name": "Funding history endpoint and pagination",
+        "url": "https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Get-Funding-Rate-History",
+        "observed": "Public settlement data; no fills or strategy validity.",
+        "access_date": "2026-09-07"
+      },
+      {
+        "name": "Binance public spot fees",
+        "url": "https://www.binance.com/en/fee/trading",
+        "observed": "Regular User: maker/taker 0.100% per side; account-specific eligibility unverified.",
+        "access_date": "2026-09-07"
+      },
+      {
+        "name": "Binance public futures example",
+        "url": "https://www.binance.com/en/support/faq/detail/360033544231",
+        "observed": "2bps maker/5bps taker example explicitly hypothetical; current account tariff UNKNOWN.",
+        "access_date": "2026-09-07"
+      },
+      {
+        "name": "PTAX latest close",
+        "url": "https://ptax.bcb.gov.br/ptax_internet/consultarUltimaCotacaoDolar.do",
+        "observed": "2026-09-04: bid5.1247 ask5.1253 BRL/USD; accounting mark, not executable FX quote.",
+        "access_date": "2026-09-07"
+      },
+      {
+        "name": "Tesouro Reserva",
+        "url": "https://www.tesourodireto.com.br/tesouro-reserva",
+        "observed": "100% Selic, B3 custody0.20% above R$10000, initially BB; operator access unknown.",
+        "access_date": "2026-09-07"
+      },
+      {
+        "name": "B3 treasury taxation",
+        "url": "https://www.b3.com.br/pt_br/produtos-e-servicos/tesouro-direto/tesouro-direto/perguntas-frequentes/",
+        "observed": "17.5% IR at361-720days, custody0.20% with R$10000 exemption; conditional PF illustration.",
+        "access_date": "2026-09-07"
+      },
+      {
+        "name": "Federal Receita offshore FAQ",
+        "url": "https://www.gov.br/fazenda/pt-br/acesso-a-informacao/perguntas-frequentes/tributacao-offshore/perguntas-e-respostas-offshores-in-rfb-2-180-22-05-24.pdf",
+        "observed": "Virtual-asset classification and location affect treatment. 15% is only a sensitivity in this report, not a determination of operator tax liability.",
+        "access_date": "2026-09-07"
+      },
+      {
+        "name": "Funding mechanism",
+        "url": "https://www.binance.com/en/academy/articles/what-are-funding-rates-in-crypto-markets",
+        "observed": "Rate applies to position value at settlement; payment sign can reverse.",
+        "access_date": "2026-09-07"
+      }
+    ],
+    "protocol_commit": "d85d75b",
+    "known_at_policy": "download timestamps, never retroactive availability",
+    "quality": "2190 unique funding records, complete365days; final daily candle uses only the opening quote at cutoff; its later OHLC fields excluded",
+    "checks": [
+      "raw SHA256 verified",
+      "Decimal independently matches float aggregate",
+      "two assets and three windows retained",
+      "spot+short price P&L equals endpoint basis difference"
+    ],
+    "no_runtime_changes": true,
+    "no_capital_or_collection_changes": true
+  }
+}

@@ -1,0 +1,814 @@
+diff --git a/docs/HYPOTHESES.md b/docs/HYPOTHESES.md
+index 3332611..1ddb2c9 100644
+--- a/docs/HYPOTHESES.md
++++ b/docs/HYPOTHESES.md
+@@ -1564,3 +1564,39 @@ Limites que continuam abertos: tarifa atual por tier/conta e fills não
+ medidos; benchmark do operador e FX não confirmados; séries originais dos
+ DSRs e posições de H1-H3 não identificadas. Resultado honesto nesses campos
+ é UNKNOWN, com as condições de desbloqueio descritas acima.
++
++
++### Funding carry — triagem econômica autorizada em 2026-09-07
++
++O usuário pediu explicitamente para fechar a conta econômica e decidir se
++vale aprofundar. Isso autoriza a falsificação barata em Discovery apesar de
++G1 deployment permanecer bloqueado; não altera coleta, capital ou freeze.
++Protocolo antes do download: commit `d85d75b`, em
++`docs/evidence/funding_carry_screen_20260907/protocol.json`.
++
++**Decisão: REJECT nesta triagem; carry passivo BTC/ETH sai da prioridade de
++pesquisa sob a estrutura C=US$5.000, N=US$2.500 e benchmark de referência BRL.**
++As taxas de funding de 365 dias somaram 3,352476% BTC e 2,487086% ETH. Mesmo a
++comparação otimista N=C, custo zero, fica em R$859/R$637 contra referência
++condicional de R$2.900–2.907. Não é refutação universal da classe.
++
++Reconstrução contábil por quantidade fixa, incluindo basis por mark price e
++custos ilustrativos: US$54,84 BTC / US$34,62 ETH, ou R$281,08/R$177,46 com
++FX constante 5,1253. Antes de imposto, FX e atenção; não são fills realizados.
++O primeiro settlement foi excluído para não atribuir recebimento antes de
++manter a posição. A referência do benchmark usa taxa corrente constante;
++essa comparação com cripto retrospectivo prioriza pesquisa, não é retorno
++histórico sincronizado do Tesouro nem previsão de funding.
++
++Taxa anual requerida na estrutura padronizada: 23,14% sobre nocional, ou 32,50%
++com R$1.200/ano de atenção ilustrativa. BTC/ETH ficam abaixo também nas
++janelas de 30/90 dias pré-fixadas. Reduzir fee a zero não resgata a conta.
++FX favorável não conta como alpha: seria necessária alta do USD/BRL de
++10,11%/10,55% para igualar a referência antes de imposto.
++
++Validação: 2.190 registros públicos, sem duplicações/lacunas de 8h; somas
++Decimal, corte temporal, hashes e identidade spot+short conferidos. Campos
++da vela final posteriores ao corte foram descartados. Reabertura só com
++mudança material em remuneração, benchmark ou estrutura mensurável.
++Resultados, cenários e fontes canônicos: `docs/evidence/funding_carry_screen_20260907/`.
++Nenhuma migração adicional de runtime ou reexecução de H1-H9 foi feita.
+diff --git a/docs/evidence/funding_carry_screen_20260907/protocol.json b/docs/evidence/funding_carry_screen_20260907/protocol.json
+new file mode 100644
+index 0000000..7b6b7f2
+--- /dev/null
++++ b/docs/evidence/funding_carry_screen_20260907/protocol.json
+@@ -0,0 +1,43 @@
++{
++  "id": "funding-carry-economic-screen-20260907",
++  "mode": "DISCOVERY_ONE_SHOT",
++  "recorded_before_download": true,
++  "authorization": "User 'faz isso' authorizes closing funding-carry economics and deciding whether research is worthwhile. This updates the previous self-imposed stop on a public economic screen; G1 for deployment remains failed. No live execution, family reopening or data-collection change.",
++  "family": "funding_carry_structural_v1",
++  "venue_reference": "Binance USD-M USDT perpetual plus spot; public availability does not establish operator eligibility",
++  "symbols": ["BTCUSDT", "ETHUSDT"],
++  "end_exclusive_utc": "2026-09-07T00:00:00Z",
++  "windows_days": [30, 90, 365],
++  "primary_window_days": 365,
++  "capital_usd": 5000,
++  "reporting_currency": "BRL",
++  "capital_allocations": {
++    "fully_reserved": {"spot_notional_usd": 2500, "cash_margin_usd": 2500},
++    "optimistic_undeployable_bound": {"spot_notional_usd": 5000, "cash_margin_usd": 0}
++  },
++  "benchmark_reference": "Previous sourced candidate: effective Selic 13.90%, IR17.5%, B3 custody0.2% with R$10000 exemption; actual operator eligibility unknown",
++  "fx_entry_reference_brl_per_usd": 5.1253,
++  "fx_exit_changes": [-0.20, -0.10, 0, 0.10, 0.20],
++  "cost_scenarios": {
++    "zero_cost_optimistic": {"fee": 0, "slippage": 0, "fixed_cost": 0, "attention": 0, "risk_premium": 0, "tax": 0},
++    "public_fee_illustration": {"spot_bps_per_side": 10, "perp_bps_per_side": 5},
++    "sensitivity": {"slippage_bps_per_side": [0, 5, 10], "roundtrip_fx_cost_fraction_capital": [0, 0.005, 0.01], "attention_brl_annual": [0, 1200], "crypto_tax_rate_illustrative": [0, 0.15]}
++  },
++  "primary_statistic": "Signed sum of historical settlement rates, simple annualization for 30/90d, and observed 365d normalized-notional funding. Never advertised APY or forecast.",
++  "secondary_accounting": "If mark prices and historical spot prices cover the fixed window, compute funding for fixed hedge quantity, endpoint basis change, and cash margin stress; no invented fills or liquidations.",
++  "data_checks": ["fixed exclusive cutoff", "pagination complete", "unique timestamps", "event_time vs download known_at", "rate spacing and missing settlements", "future events reject", "no interpolation", "all two symbols and three horizons reported"],
++  "decision_rule": "If even zero-cost normalized funding in the primary window at N=C fails the conditional BRL benchmark with FX unchanged, do not deepen this passive carry structure at this capital. Short-window outliers do not override the primary screen. Missing coverage gives INCONCLUSIVE_DATA_FIDELITY. No CONFIRMED_NO_EDGE claim for the whole class.",
++  "maximum_search": "Two predefined assets, one venue, three fixed descriptive windows, no timing/threshold optimization, no candidate expansion after results.",
++  "economic_thesis": {
++    "money": "Funding received by the perpetual short while spot hedges cryptocurrency direction, plus endpoint basis P&L.",
++    "payer": "Perpetual long holders when funding is positive; the short pays when funding is negative.",
++    "why_exists": "Demand for leveraged long exposure and constraints on financing/custody/capital.",
++    "persistence": "Conditional on leverage demand and intermediation constraints; not guaranteed.",
++    "competition": "Professional carry desks compete; no measured execution or funding advantage for this stack.",
++    "constrained_participant": "Directional traders seeking leverage rather than spot ownership.",
++    "capacity": "Collateral, margin liquidity, counterparty concentration and book liquidity; unmeasured at scale.",
++    "kills_edge": "Funding compression/reversal, basis unwind, liquidation, costs, FX and opportunity cost.",
++    "latency": "Funding receipts are low frequency; hedge entry/unwind and liquidation risk still require timely execution.",
++    "cheapest_falsification": "Compare fixed-window historical receipts under zero-cost favorable conditions with the same-currency benchmark before funding execution infrastructure."
++  }
++}
+diff --git a/docs/evidence/funding_carry_screen_20260907/results.json b/docs/evidence/funding_carry_screen_20260907/results.json
+new file mode 100644
+index 0000000..ba693b9
+--- /dev/null
++++ b/docs/evidence/funding_carry_screen_20260907/results.json
+@@ -0,0 +1,541 @@
++{
++  "protocol_id": "funding-carry-economic-screen-20260907",
++  "protocol_sha256": "87f5289c52f22d003d99c6f170ea0baf36b613588ce12b84b69d90d23eadec4a",
++  "mode": "DISCOVERY_DESCRIPTIVE_NOT_PROOF",
++  "benchmark": {
++    "capital_brl": 25626.5,
++    "gross_gain_brl": 3562.0835,
++    "tax_rate": 0.175,
++    "custody_brl_range": [
++      31.253,
++      38.377167
++    ],
++    "net_gain_brl_range": [
++      2900.3417205,
++      2907.4658875
++    ],
++    "net_return_range": [
++      0.11317744212046124,
++      0.11345544212046124
++    ]
++  },
++  "assets": {
++    "BTCUSDT": {
++      "quality": {
++        "observations": 1095,
++        "expected": 1095,
++        "missing": 0,
++        "duplicates": 0,
++        "max_timestamp_offset_ms": 26,
++        "schedule_hours": 8,
++        "event_window_start": "2025-09-07T00:00:00+00:00",
++        "event_window_end": "2026-09-06T16:00:00.004000+00:00"
++      },
++      "windows": [
++        {
++          "days": 30,
++          "n": 90,
++          "rate_sum": 0.00613393,
++          "simple_annualized_rate": 0.07462948166666666,
++          "negative_fraction": 0.011111111111111112,
++          "funding_rate_min": -1.5e-06,
++          "funding_rate_max": 0.0001,
++          "monthly_signed_sums": {
++            "2026-08": 0.005182139999999999,
++            "2026-09": 0.0009517899999999999
++          }
++        },
++        {
++          "days": 90,
++          "n": 270,
++          "rate_sum": 0.0140474,
++          "simple_annualized_rate": 0.056970011111111114,
++          "negative_fraction": 0.06296296296296296,
++          "funding_rate_min": -6.685e-05,
++          "funding_rate_max": 0.0001,
++          "monthly_signed_sums": {
++            "2026-06": 0.0012566500000000002,
++            "2026-07": 0.0056560800000000026,
++            "2026-08": 0.006182880000000003,
++            "2026-09": 0.0009517899999999999
++          }
++        },
++        {
++          "days": 365,
++          "n": 1095,
++          "rate_sum": 0.03352476,
++          "simple_annualized_rate": 0.03352476,
++          "negative_fraction": 0.23835616438356164,
++          "funding_rate_min": -0.00015178,
++          "funding_rate_max": 0.0001,
++          "monthly_signed_sums": {
++            "2025-09": 0.0033586299999999996,
++            "2025-10": 0.003073509999999999,
++            "2025-11": 0.004468559999999996,
++            "2025-12": 0.00424408,
++            "2026-01": 0.004576380000000002,
++            "2026-02": -0.0006341300000000001,
++            "2026-03": -0.00092486,
++            "2026-04": -0.00177227,
++            "2026-05": 0.0023134799999999997,
++            "2026-06": 0.00203063,
++            "2026-07": 0.0056560800000000026,
++            "2026-08": 0.006182880000000003,
++            "2026-09": 0.0009517899999999999
++          }
++        }
++      ],
++      "normalized_notional": {
++        "funding_usdt_2500": 83.81190000000001,
++        "funding_brl_2500": 429.56113107000004,
++        "funding_usdt_5000_zero_cost": 167.62380000000002,
++        "funding_brl_5000_zero_cost": 859.1222621400001,
++        "roundtrip_fee_scenario_usdt": 7.5,
++        "roundtrip_slippage_scenario_usdt": 5.0,
++        "net_scenario_usdt": 71.31190000000001,
++        "net_scenario_brl": 365.4948810700001,
++        "annual_funding_required_base": 0.23135488424092251,
++        "annual_funding_required_with_attention": 0.3250079386962715,
++        "zero_cost_notional_needed_for_benchmark_usdt": 16879.67969352521,
++        "zero_cost_required_n_over_capital": 3.375935938705042
++      },
++      "fixed_quantity": {
++        "quantity": 0.02268850014311906,
++        "spot_start": 110187.98,
++        "spot_end": 80341.83,
++        "mark_start": 110135.3,
++        "mark_end": 80304.44425037,
++        "eligible_settlements": 1094,
++        "first_settlement_excluded": true,
++        "funding_usdt": 65.99276864314137,
++        "basis_change_usdt": -0.34700360170838807,
++        "spot_pnl_usdt": -677.1643785465527,
++        "perp_price_pnl_usdt": 676.8173749448443,
++        "gross_mark_pnl_usdt": 65.64576504143298,
++        "fee_illustration_usdt": 6.483231703793486,
++        "slippage_5bps_each_side_usdt": 4.3218138930667624,
++        "net_scenario_usdt": 54.840719444572734,
++        "net_scenario_brl_fx_unchanged": 281.07513936926864,
++        "maximum_daily_mark_high": 126180.1,
++        "max_price_only_short_loss_usdt": 364.03244709631673,
++        "margin_cash_usdt": 2500,
++        "margin_test": "NOT_A_LIQUIDATION_SIMULATION",
++        "executable": false,
++        "missing_execution": [
++          "fills",
++          "liquidation/maintenance rules",
++          "unwind slippage",
++          "venue eligibility",
++          "USDT/USD conversion",
++          "tax classification"
++        ]
++      },
++      "cost_sensitivity": [
++        {
++          "slippage_bps_each_side": 0,
++          "fx_cost_fraction": 0,
++          "attention_brl": 0,
++          "economic_value_brl_fx_flat": 391.12138107000004
++        },
++        {
++          "slippage_bps_each_side": 0,
++          "fx_cost_fraction": 0,
++          "attention_brl": 1200,
++          "economic_value_brl_fx_flat": -808.8786189299999
++        },
++        {
++          "slippage_bps_each_side": 0,
++          "fx_cost_fraction": 0.005,
++          "attention_brl": 0,
++          "economic_value_brl_fx_flat": 262.98888107000005
++        },
++        {
++          "slippage_bps_each_side": 0,
++          "fx_cost_fraction": 0.005,
++          "attention_brl": 1200,
++          "economic_value_brl_fx_flat": -937.01111893
++        },
++        {
++          "slippage_bps_each_side": 0,
++          "fx_cost_fraction": 0.01,
++          "attention_brl": 0,
++          "economic_value_brl_fx_flat": 134.85638107000005
++        },
++        {
++          "slippage_bps_each_side": 0,
++          "fx_cost_fraction": 0.01,
++          "attention_brl": 1200,
++          "economic_value_brl_fx_flat": -1065.14361893
++        },
++        {
++          "slippage_bps_each_side": 5,
++          "fx_cost_fraction": 0,
++          "attention_brl": 0,
++          "economic_value_brl_fx_flat": 365.4948810700001
++        },
++        {
++          "slippage_bps_each_side": 5,
++          "fx_cost_fraction": 0,
++          "attention_brl": 1200,
++          "economic_value_brl_fx_flat": -834.50511893
++        },
++        {
++          "slippage_bps_each_side": 5,
++          "fx_cost_fraction": 0.005,
++          "attention_brl": 0,
++          "economic_value_brl_fx_flat": 237.36238107000008
++        },
++        {
++          "slippage_bps_each_side": 5,
++          "fx_cost_fraction": 0.005,
++          "attention_brl": 1200,
++          "economic_value_brl_fx_flat": -962.6376189299999
++        },
++        {
++          "slippage_bps_each_side": 5,
++          "fx_cost_fraction": 0.01,
++          "attention_brl": 0,
++          "economic_value_brl_fx_flat": 109.22988107000009
++        },
++        {
++          "slippage_bps_each_side": 5,
++          "fx_cost_fraction": 0.01,
++          "attention_brl": 1200,
++          "economic_value_brl_fx_flat": -1090.7701189299999
++        },
++        {
++          "slippage_bps_each_side": 10,
++          "fx_cost_fraction": 0,
++          "attention_brl": 0,
++          "economic_value_brl_fx_flat": 339.86838107000005
++        },
++        {
++          "slippage_bps_each_side": 10,
++          "fx_cost_fraction": 0,
++          "attention_brl": 1200,
++          "economic_value_brl_fx_flat": -860.13161893
++        },
++        {
++          "slippage_bps_each_side": 10,
++          "fx_cost_fraction": 0.005,
++          "attention_brl": 0,
++          "economic_value_brl_fx_flat": 211.73588107000006
++        },
++        {
++          "slippage_bps_each_side": 10,
++          "fx_cost_fraction": 0.005,
++          "attention_brl": 1200,
++          "economic_value_brl_fx_flat": -988.26411893
++        },
++        {
++          "slippage_bps_each_side": 10,
++          "fx_cost_fraction": 0.01,
++          "attention_brl": 0,
++          "economic_value_brl_fx_flat": 83.60338107000007
++        },
++        {
++          "slippage_bps_each_side": 10,
++          "fx_cost_fraction": 0.01,
++          "attention_brl": 1200,
++          "economic_value_brl_fx_flat": -1116.39661893
++        }
++      ],
++      "fx_sensitivity": [
++        {
++          "usdbrl_change": -0.2,
++          "gross_of_tax_value_brl": -4900.439888504584,
++          "illustrative_after_15pct_tax_brl": -4900.439888504584,
++          "after_tax_excess_over_benchmark_brl": -7800.7816090045835
++        },
++        {
++          "usdbrl_change": -0.1,
++          "gross_of_tax_value_brl": -2309.6823745676593,
++          "illustrative_after_15pct_tax_brl": -2309.6823745676593,
++          "after_tax_excess_over_benchmark_brl": -5210.02409506766
++        },
++        {
++          "usdbrl_change": 0,
++          "gross_of_tax_value_brl": 281.0751393692682,
++          "illustrative_after_15pct_tax_brl": 238.91386846387798,
++          "after_tax_excess_over_benchmark_brl": -2661.427852036122
++        },
++        {
++          "usdbrl_change": 0.1,
++          "gross_of_tax_value_brl": 2871.8326533061954,
++          "illustrative_after_15pct_tax_brl": 2441.057755310266,
++          "after_tax_excess_over_benchmark_brl": -459.28396518973386
++        },
++        {
++          "usdbrl_change": 0.2,
++          "gross_of_tax_value_brl": 5462.590167243123,
++          "illustrative_after_15pct_tax_brl": 4643.201642156654,
++          "after_tax_excess_over_benchmark_brl": 1742.859921656654
++        }
++      ],
++      "fx_appreciation_needed_to_match_benchmark_pre_tax": 0.10110041433983863,
++      "decision": "REJECT_FOR_THIS_ECONOMIC_SCREEN"
++    },
++    "ETHUSDT": {
++      "quality": {
++        "observations": 1095,
++        "expected": 1095,
++        "missing": 0,
++        "duplicates": 0,
++        "max_timestamp_offset_ms": 26,
++        "schedule_hours": 8,
++        "event_window_start": "2025-09-07T00:00:00+00:00",
++        "event_window_end": "2026-09-06T16:00:00.004000+00:00"
++      },
++      "windows": [
++        {
++          "days": 30,
++          "n": 90,
++          "rate_sum": 0.00503669,
++          "simple_annualized_rate": 0.06127972833333333,
++          "negative_fraction": 0.03333333333333333,
++          "funding_rate_min": -6.75e-06,
++          "funding_rate_max": 0.0001,
++          "monthly_signed_sums": {
++            "2026-08": 0.004096479999999998,
++            "2026-09": 0.0009402099999999999
++          }
++        },
++        {
++          "days": 90,
++          "n": 270,
++          "rate_sum": 0.00948556,
++          "simple_annualized_rate": 0.038469215555555554,
++          "negative_fraction": 0.14814814814814814,
++          "funding_rate_min": -8.135e-05,
++          "funding_rate_max": 0.0001,
++          "monthly_signed_sums": {
++            "2026-06": 0.00023365,
++            "2026-07": 0.0034836800000000003,
++            "2026-08": 0.004828019999999998,
++            "2026-09": 0.0009402099999999999
++          }
++        },
++        {
++          "days": 365,
++          "n": 1095,
++          "rate_sum": 0.02487086,
++          "simple_annualized_rate": 0.02487086,
++          "negative_fraction": 0.2684931506849315,
++          "funding_rate_min": -0.00036526,
++          "funding_rate_max": 0.0001,
++          "monthly_signed_sums": {
++            "2025-09": 0.002710619999999999,
++            "2025-10": 0.00295345,
++            "2025-11": 0.004235290000000001,
++            "2025-12": 0.0035931300000000004,
++            "2026-01": 0.0041013099999999995,
++            "2026-02": -0.0030729200000000003,
++            "2026-03": -0.0009299100000000002,
++            "2026-04": -0.0013526899999999997,
++            "2026-05": 0.0028839900000000016,
++            "2026-06": 0.0004966800000000002,
++            "2026-07": 0.0034836800000000003,
++            "2026-08": 0.004828019999999998,
++            "2026-09": 0.0009402099999999999
++          }
++        }
++      ],
++      "normalized_notional": {
++        "funding_usdt_2500": 62.177150000000005,
++        "funding_brl_2500": 318.67654689500006,
++        "funding_usdt_5000_zero_cost": 124.35430000000001,
++        "funding_brl_5000_zero_cost": 637.3530937900001,
++        "roundtrip_fee_scenario_usdt": 7.5,
++        "roundtrip_slippage_scenario_usdt": 5.0,
++        "net_scenario_usdt": 49.677150000000005,
++        "net_scenario_brl": 254.61029689500003,
++        "annual_funding_required_base": 0.23135488424092251,
++        "annual_funding_required_with_attention": 0.3250079386962715,
++        "zero_cost_notional_needed_for_benchmark_usdt": 22753.021431599318,
++        "zero_cost_required_n_over_capital": 4.550604286319864
++      },
++      "fixed_quantity": {
++        "quantity": 0.5850485005206932,
++        "spot_start": 4273.15,
++        "spot_end": 2514.48,
++        "mark_start": 4271.31,
++        "mark_end": 2513.85905774,
++        "eligible_settlements": 1094,
++        "first_settlement_excluded": true,
++        "funding_usdt": 45.26317592686805,
++        "basis_change_usdt": -0.7132079028347025,
++        "spot_pnl_usdt": -1028.9072464107273,
++        "perp_price_pnl_usdt": 1028.1940385078926,
++        "gross_mark_pnl_usdt": 44.54996802403335,
++        "fee_illustration_usdt": 5.9559192450943685,
++        "slippage_5bps_each_side_usdt": 3.9703728682997323,
++        "net_scenario_usdt": 34.62367591063924,
++        "net_scenario_brl_fx_unchanged": 177.45672614479932,
++        "maximum_daily_mark_high": 4764.16,
++        "max_price_only_short_loss_usdt": 288.34115348162334,
++        "margin_cash_usdt": 2500,
++        "margin_test": "NOT_A_LIQUIDATION_SIMULATION",
++        "executable": false,
++        "missing_execution": [
++          "fills",
++          "liquidation/maintenance rules",
++          "unwind slippage",
++          "venue eligibility",
++          "USDT/USD conversion",
++          "tax classification"
++        ]
++      },
++      "cost_sensitivity": [
++        {
++          "slippage_bps_each_side": 0,
++          "fx_cost_fraction": 0,
++          "attention_brl": 0,
++          "economic_value_brl_fx_flat": 280.23679689500005
++        },
++        {
++          "slippage_bps_each_side": 0,
++          "fx_cost_fraction": 0,
++          "attention_brl": 1200,
++          "economic_value_brl_fx_flat": -919.763203105
++        },
++        {
++          "slippage_bps_each_side": 0,
++          "fx_cost_fraction": 0.005,
++          "attention_brl": 0,
++          "economic_value_brl_fx_flat": 152.10429689500006
++        },
++        {
++          "slippage_bps_each_side": 0,
++          "fx_cost_fraction": 0.005,
++          "attention_brl": 1200,
++          "economic_value_brl_fx_flat": -1047.895703105
++        },
++        {
++          "slippage_bps_each_side": 0,
++          "fx_cost_fraction": 0.01,
++          "attention_brl": 0,
++          "economic_value_brl_fx_flat": 23.971796895000068
++        },
++        {
++          "slippage_bps_each_side": 0,
++          "fx_cost_fraction": 0.01,
++          "attention_brl": 1200,
++          "economic_value_brl_fx_flat": -1176.0282031049999
++        },
++        {
++          "slippage_bps_each_side": 5,
++          "fx_cost_fraction": 0,
++          "attention_brl": 0,
++          "economic_value_brl_fx_flat": 254.61029689500003
++        },
++        {
++          "slippage_bps_each_side": 5,
++          "fx_cost_fraction": 0,
++          "attention_brl": 1200,
++          "economic_value_brl_fx_flat": -945.389703105
++        },
++        {
++          "slippage_bps_each_side": 5,
++          "fx_cost_fraction": 0.005,
++          "attention_brl": 0,
++          "economic_value_brl_fx_flat": 126.47779689500004
++        },
++        {
++          "slippage_bps_each_side": 5,
++          "fx_cost_fraction": 0.005,
++          "attention_brl": 1200,
++          "economic_value_brl_fx_flat": -1073.522203105
++        },
++        {
++          "slippage_bps_each_side": 5,
++          "fx_cost_fraction": 0.01,
++          "attention_brl": 0,
++          "economic_value_brl_fx_flat": -1.6547031049999532
++        },
++        {
++          "slippage_bps_each_side": 5,
++          "fx_cost_fraction": 0.01,
++          "attention_brl": 1200,
++          "economic_value_brl_fx_flat": -1201.654703105
++        },
++        {
++          "slippage_bps_each_side": 10,
++          "fx_cost_fraction": 0,
++          "attention_brl": 0,
++          "economic_value_brl_fx_flat": 228.98379689500004
++        },
++        {
++          "slippage_bps_each_side": 10,
++          "fx_cost_fraction": 0,
++          "attention_brl": 1200,
++          "economic_value_brl_fx_flat": -971.0162031049999
++        },
++        {
++          "slippage_bps_each_side": 10,
++          "fx_cost_fraction": 0.005,
++          "attention_brl": 0,
++          "economic_value_brl_fx_flat": 100.85129689500005
++        },
++        {
++          "slippage_bps_each_side": 10,
++          "fx_cost_fraction": 0.005,
++          "attention_brl": 1200,
++          "economic_value_brl_fx_flat": -1099.1487031049999
++        },
++        {
++          "slippage_bps_each_side": 10,
++          "fx_cost_fraction": 0.01,
++          "attention_brl": 0,
++          "economic_value_brl_fx_flat": -27.281203104999946
++        },
++        {
++          "slippage_bps_each_side": 10,
++          "fx_cost_fraction": 0.01,
++          "attention_brl": 1200,
++          "economic_value_brl_fx_flat": -1227.281203105
++        }
++      ],
++      "fx_sensitivity": [
++        {
++          "usdbrl_change": -0.2,
++          "gross_of_tax_value_brl": -4983.3346190841585,
++          "illustrative_after_15pct_tax_brl": -4983.3346190841585,
++          "after_tax_excess_over_benchmark_brl": -7883.676339584159
++        },
++        {
++          "usdbrl_change": -0.1,
++          "gross_of_tax_value_brl": -2402.9389464696765,
++          "illustrative_after_15pct_tax_brl": -2402.9389464696765,
++          "after_tax_excess_over_benchmark_brl": -5303.2806669696765
++        },
++        {
++          "usdbrl_change": 0,
++          "gross_of_tax_value_brl": 177.45672614480102,
++          "illustrative_after_15pct_tax_brl": 150.83821722308087,
++          "after_tax_excess_over_benchmark_brl": -2749.503503276919
++        },
++        {
++          "usdbrl_change": 0.1,
++          "gross_of_tax_value_brl": 2757.852398759283,
++          "illustrative_after_15pct_tax_brl": 2344.1745389453904,
++          "after_tax_excess_over_benchmark_brl": -556.1671815546097
++        },
++        {
++          "usdbrl_change": 0.2,
++          "gross_of_tax_value_brl": 5338.2480713737605,
++          "illustrative_after_15pct_tax_brl": 4537.510860667697,
++          "after_tax_excess_over_benchmark_brl": 1637.1691401676967
++        }
++      ],
++      "fx_appreciation_needed_to_match_benchmark_pre_tax": 0.10552199506660731,
++      "decision": "REJECT_FOR_THIS_ECONOMIC_SCREEN"
++    }
++  },
++  "decision": "DO_NOT_DEEPEN_PASSIVE_BTC_ETH_CARRY_UNDER_THIS_CAPITAL_AND_BENCHMARK",
++  "limitations": [
++    "Historical rates are not forecasts",
++    "Zero-cost N=C scenario is a favorable normalized comparison, not a deployable structure or universal upper bound",
++    "Operator benchmark, taxes, realized friction and collateral efficiency remain unknown",
++    "No alternative assets or timing rules searched after results"
++  ]
++}
+diff --git a/docs/evidence/funding_carry_screen_20260907/sources.json b/docs/evidence/funding_carry_screen_20260907/sources.json
+new file mode 100644
+index 0000000..6256d38
+--- /dev/null
++++ b/docs/evidence/funding_carry_screen_20260907/sources.json
+@@ -0,0 +1,136 @@
++{
++  "as_of": "2026-09-07",
++  "raw_requests": [
++    {
++      "artifact": "BTCUSDT_funding_0.json",
++      "url": "https://fapi.binance.com/fapi/v1/fundingRate?symbol=BTCUSDT&startTime=1757203200000&endTime=1788739199999&limit=1000",
++      "known_at": "2026-09-07T18:27:54.831628+00:00",
++      "http_status": 200,
++      "sha256": "ee784cc0e5a4bbe3796c83083f8d8cc68396a18c51c6daa7810c50887ae6433e"
++    },
++    {
++      "artifact": "ETHUSDT_funding_0.json",
++      "url": "https://fapi.binance.com/fapi/v1/fundingRate?symbol=ETHUSDT&startTime=1757203200000&endTime=1788739199999&limit=1000",
++      "known_at": "2026-09-07T18:27:54.831934+00:00",
++      "http_status": 200,
++      "sha256": "21f3a57d1cbcad04face2f3b56326236cae8dfd91d7a7d3eaae37be4cfcd480c"
++    },
++    {
++      "artifact": "BTCUSDT_funding_1.json",
++      "url": "https://fapi.binance.com/fapi/v1/fundingRate?symbol=BTCUSDT&startTime=1785974400003&endTime=1788739199999&limit=1000",
++      "known_at": "2026-09-07T18:27:55.244721+00:00",
++      "http_status": 200,
++      "sha256": "51123315198443bdcfbf16ff7dc1179df8a91acdc47ff77a65205e861b9d144a"
++    },
++    {
++      "artifact": "ETHUSDT_funding_1.json",
++      "url": "https://fapi.binance.com/fapi/v1/fundingRate?symbol=ETHUSDT&startTime=1785974400003&endTime=1788739199999&limit=1000",
++      "known_at": "2026-09-07T18:27:55.251889+00:00",
++      "http_status": 200,
++      "sha256": "6f20b0b28f29ab73e97bab8ffef8715ec7a15a92ca8ff5d7ce4ab6dfaf2124cf"
++    },
++    {
++      "artifact": "BTCUSDT_spot_daily.json",
++      "url": "https://api.binance.com/api/v3/klines?symbol=BTCUSDT&interval=1d&startTime=1757203200000&endTime=1788739200000&limit=500",
++      "known_at": "2026-09-07T18:27:55.576312+00:00",
++      "http_status": 200,
++      "sha256": "dfe185b422bfae8c7b1615e6dedf60a6c7b64631b3f8cbb1e162f39688a3ccac"
++    },
++    {
++      "artifact": "ETHUSDT_spot_daily.json",
++      "url": "https://api.binance.com/api/v3/klines?symbol=ETHUSDT&interval=1d&startTime=1757203200000&endTime=1788739200000&limit=500",
++      "known_at": "2026-09-07T18:27:55.578225+00:00",
++      "http_status": 200,
++      "sha256": "b4f943bb104481c12e77df5c4384e8ed9f86b83c9ca0ed9987a0669de02706b8"
++    },
++    {
++      "artifact": "BTCUSDT_mark_daily.json",
++      "url": "https://fapi.binance.com/fapi/v1/markPriceKlines?symbol=BTCUSDT&interval=1d&startTime=1757203200000&endTime=1788739200000&limit=500",
++      "known_at": "2026-09-07T18:27:55.917809+00:00",
++      "http_status": 200,
++      "sha256": "38c40fab1a4d2ed7c15d75ab578a76daf7ccd13cede613db597229c73f4c02d5"
++    },
++    {
++      "artifact": "ETHUSDT_mark_daily.json",
++      "url": "https://fapi.binance.com/fapi/v1/markPriceKlines?symbol=ETHUSDT&interval=1d&startTime=1757203200000&endTime=1788739200000&limit=500",
++      "known_at": "2026-09-07T18:27:56.182595+00:00",
++      "http_status": 200,
++      "sha256": "42b20536776fd8ce11e3268e81dfbfc7dc387e0c5a526d5628655fc0783516f1"
++    },
++    {
++      "artifact": "selic_effective.json",
++      "url": "https://api.bcb.gov.br/dados/serie/bcdata.sgs.1178/dados?formato=json&dataInicial=04%2F09%2F2026&dataFinal=07%2F09%2F2026",
++      "known_at": "2026-09-07T18:27:56.506146+00:00",
++      "http_status": 200,
++      "sha256": "237a3c38cb4aeed080854035825af2863b1f934070f886d6827f0b931a756e03"
++    },
++    {
++      "artifact": "selic_policy.json",
++      "url": "https://api.bcb.gov.br/dados/serie/bcdata.sgs.432/dados?formato=json&dataInicial=04%2F09%2F2026&dataFinal=07%2F09%2F2026",
++      "known_at": "2026-09-07T18:27:59.447657+00:00",
++      "http_status": 200,
++      "sha256": "2d1442c6b94bc1c4a4421387c01a38322ebeea0c69cb83f43712beba61b846f1"
++    }
++  ],
++  "documentary_sources": [
++    {
++      "name": "Funding history endpoint and pagination",
++      "url": "https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Get-Funding-Rate-History",
++      "observed": "Public settlement data; no fills or strategy validity.",
++      "access_date": "2026-09-07"
++    },
++    {
++      "name": "Binance public spot fees",
++      "url": "https://www.binance.com/en/fee/trading",
++      "observed": "Regular User: maker/taker 0.100% per side; account-specific eligibility unverified.",
++      "access_date": "2026-09-07"
++    },
++    {
++      "name": "Binance public futures example",
++      "url": "https://www.binance.com/en/support/faq/detail/360033544231",
++      "observed": "2bps maker/5bps taker example explicitly hypothetical; current account tariff UNKNOWN.",
++      "access_date": "2026-09-07"
++    },
++    {
++      "name": "PTAX latest close",
++      "url": "https://ptax.bcb.gov.br/ptax_internet/consultarUltimaCotacaoDolar.do",
++      "observed": "2026-09-04: bid5.1247 ask5.1253 BRL/USD; accounting mark, not executable FX quote.",
++      "access_date": "2026-09-07"
++    },
++    {
++      "name": "Tesouro Reserva",
++      "url": "https://www.tesourodireto.com.br/tesouro-reserva",
++      "observed": "100% Selic, B3 custody0.20% above R$10000, initially BB; operator access unknown.",
++      "access_date": "2026-09-07"
++    },
++    {
++      "name": "B3 treasury taxation",
++      "url": "https://www.b3.com.br/pt_br/produtos-e-servicos/tesouro-direto/tesouro-direto/perguntas-frequentes/",
++      "observed": "17.5% IR at361-720days, custody0.20% with R$10000 exemption; conditional PF illustration.",
++      "access_date": "2026-09-07"
++    },
++    {
++      "name": "Federal Receita offshore FAQ",
++      "url": "https://www.gov.br/fazenda/pt-br/acesso-a-informacao/perguntas-frequentes/tributacao-offshore/perguntas-e-respostas-offshores-in-rfb-2-180-22-05-24.pdf",
++      "observed": "Virtual-asset classification and location affect treatment. 15% is only a sensitivity in this report, not a determination of operator tax liability.",
++      "access_date": "2026-09-07"
++    },
++    {
++      "name": "Funding mechanism",
++      "url": "https://www.binance.com/en/academy/articles/what-are-funding-rates-in-crypto-markets",
++      "observed": "Rate applies to position value at settlement; payment sign can reverse.",
++      "access_date": "2026-09-07"
++    }
++  ],
++  "protocol_commit": "d85d75b",
++  "known_at_policy": "download timestamps, never retroactive availability",
++  "quality": "2190 unique funding records, complete365days; final daily candle uses only the opening quote at cutoff; its later OHLC fields excluded",
++  "checks": [
++    "raw SHA256 verified",
++    "Decimal independently matches float aggregate",
++    "two assets and three windows retained",
++    "spot+short price P&L equals endpoint basis difference"
++  ],
++  "no_runtime_changes": true,
++  "no_capital_or_collection_changes": true
++}
+diff --git a/docs/reopen_dossiers/funding_carry_structural_v1.json b/docs/reopen_dossiers/funding_carry_structural_v1.json
+index 791f236..5be60fd 100644
+--- a/docs/reopen_dossiers/funding_carry_structural_v1.json
++++ b/docs/reopen_dossiers/funding_carry_structural_v1.json
+@@ -1,5 +1,5 @@
+ {
+-  "status": "DRAFT_NOT_REGISTERED_NOT_AUTHORIZED",
++  "status": "ECONOMIC_SCREEN_REJECTED_NO_ACTIVATION",
+   "as_of": "2026-09-07",
+   "proposed_family": "funding_carry_structural_v1",
+   "related_frozen_family": "funding_oi_hmm_v3",
+@@ -13,7 +13,7 @@
+     "activate": false,
+     "capital_authorized": false,
+     "first_gate": "G1_KILL_UNDER_CURRENT_ENVELOPE",
+-    "stopping_rule": "No outcome test until venue/collateral G1 and a same-currency benchmark/cost G2 are decidable; then G3-G7 in order.",
++    "stopping_rule": "User authorized one-shot economic screen on 2026-09-07. Screen rejected passive BTC/ETH carry under the declared structure/benchmark; no further outcome research or activation without material change. G1 deployment remains failed.",
+     "universe_proposed": [
+       "BTCUSDT",
+       "ETHUSDT"
+@@ -29,5 +29,11 @@
+       "FX route and costs",
+       "risk premium and attention costs"
+     ]
++  },
++  "economic_screen": {
++    "protocol_commit": "d85d75b",
++    "result_path": "docs/evidence/funding_carry_screen_20260907/results.json",
++    "decision": "DO_NOT_DEEPEN_PASSIVE_BTC_ETH_CARRY_UNDER_THIS_CAPITAL_AND_BENCHMARK",
++    "operator_benchmark_accessibility": "UNKNOWN; conditional comparison remains explicit"
+   }
+ }

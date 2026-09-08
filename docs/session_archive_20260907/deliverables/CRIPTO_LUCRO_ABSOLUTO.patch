@@ -1,0 +1,898 @@
+diff --git a/docs/HYPOTHESES.md b/docs/HYPOTHESES.md
+index 7fe82f8..89ae118 100644
+--- a/docs/HYPOTHESES.md
++++ b/docs/HYPOTHESES.md
+@@ -1711,3 +1711,12 @@ Live preflight: 275 preserved public responses; 160 of the 240 sampled symbols c
+ Forty-four targeted tests, Ruff and Pyright pass; offline snapshot replay matches apart from its new execution timestamp. Full-geometry synthetic known-pattern controls and censoring guard pass; zero qualifications in 200 stipulated-null queries do not certify general false-positive rates. Normal-design power sensitivity is conditional, not a Core model-specific attestation.
+ 
+ Weekly local Codex heartbeat scheduled from September 13, 21:00 America/Sao_Paulo, for a bounded 12-entry-slot observer and final due observation December 6, 21:00. No prospective decisions or matured outcomes exist at registration. Decisions are durable before entry quotes; missed slots/outcomes remain censored; no retuning. This explicitly separate observation pilot does not pass executable readiness or G1-G7. Exact account fees, attainable operator benchmark, full events, execution parity and formal attestation remain unresolved. Frozen state/trials/costs, production, funding/OI/HMM and capital unchanged.
++
++
++### 2026-09-07 — User-defined absolute-profit scope v4
++
++User explicitly rejects comparison to any other investment and delegates the choice of research venue/crypto. This instruction replaces prior external-benchmark requirements for the user's objective. Protocol 330619f and code freeze 007432c precede a new full-current-universe diagnostic. The existing weekly automation is updated, not duplicated, with the same schedule and notification intent.
++
++All-current Binance spot USDT scope: 487 current catalog pairs, 472 after declared exclusions, 44 eligible delayed/liquid histories and zero qualifying selections. No original 240-symbol cap; BTC may be a candidate and remains a model input, but no comparison portfolios are recorded in v4. The trained geometry/payoff scorer is unchanged. Other venues are allowed by preference but not implemented by this adapter. New data lives in work/altcoin-profit-data and does not overwrite v3 observations.
++
++Forty-six tests, Ruff, Pyright, all 616 public response hashes and full offline snapshot replay pass. No new historical performance trial, no prospective decision, no matured outcome and no real capital. Absolute net profit requires the same currency after applicable costs; account/FX/tax unknowns remain unknown. Prior Selic-relative planning remains historical; v4 planning uses absolute positive-net-return scenarios without imposing them as user targets. Deployment/Proof/attestation remain unpassed. Protected state, trials, production costs and frozen funding/OI/HMM families are untouched.
+diff --git a/docs/evidence/altcoin_profit_20260907/RUNBOOK.md b/docs/evidence/altcoin_profit_20260907/RUNBOOK.md
+new file mode 100644
+index 0000000..79d67a1
+--- /dev/null
++++ b/docs/evidence/altcoin_profit_20260907/RUNBOOK.md
+@@ -0,0 +1,21 @@
++# Objetivo e acompanhamento v4
++
++O usuário definiu o objetivo em 07/09/2026: **lucro líquido positivo**, sem comparação com outro investimento e sem preferência de corretora ou moeda. Não pedir novamente escolha de Selic, BTC, cesta ou corretora preferida como condição para continuar a pesquisa.
++
++O critério econômico é terminar com mais dinheiro do que começou, depois dos custos aplicáveis, na mesma moeda. Custos desconhecidos permanecem desconhecidos. As marcas públicas em USDT ainda não certificam lucro líquido em reais, porque conta, conversão e tributação não foram verificadas. Nenhuma taxa específica foi informada pelo usuário. Ele autorizou liberdade de pesquisa, não contas, transferências ou ordens.
++
++O adaptador disponível é Binance spot público. A busca foi ampliada da amostra original para todos os pares USDT atualmente negociáveis, respeitando exclusões declaradas e os mesmos filtros de 90 dias completos, atraso de um dia e liquidez. Outras corretoras e outras criptos são permitidas pelo objetivo; isso não significa que já exista cobertura de todas elas. Não remover critérios de dados ou custos apenas para produzir uma candidata.
++
++O modelo de vizinhos e seus dados de treino continuam fixos. BTC permanece uma entrada estatística usada nas oito características já definidas, e também pode ser candidato; não existe carteira de comparação com BTC, cesta ou Selic nesta versão.
++
++No worktree `work/cripto-v1.2`, executar:
++
++```powershell
++.venv\Scripts\python.exe -m scripts.observe_altcoin_forward --mode tick --base-data-dir '..\altcoin-data' --training '..\altcoin-payoff-results\samples_identity_corrected.json.gz' --data-dir '..\altcoin-profit-data' --evidence-dir 'docs\evidence\altcoin_profit_20260907'
++```
++
++Horário mantido: domingos às 21h de Brasília, primeira janela 13/09/2026; 12 entradas previstas, última saída 06/12/2026. O computador e o aplicativo precisam estar ativos. A janela de coleta termina 60 minutos depois da âncora. Não retroagir entradas nem substituir saídas ausentes por zero ou por uma cotação escolhida depois. O registro de decisão deve preceder a consulta das ofertas de entrada.
++
++Conferir código de saída, `work/altcoin-profit-data/status.json`, livro `ledger.jsonl`, fontes, custos, candidatas e preços ausentes. Se `pilot_finished` for verdadeiro, registrar o balanço descritivo e pausar o próprio acompanhamento pelo recurso de automações. Atualizar `outputs/ACOMPANHAMENTO_CRIPTO.md` em linguagem simples, focando resultado líquido absoluto e suas limitações. Avisar apenas sobre mudança relevante, conclusão, falha ou informação necessária; ficar em silêncio quando nada relevante mudou.
++
++Esta versão usa um livro separado. As versões anteriores permanecem como evidência histórica em seus arquivos e pacotes. A primeira coleta v4 é diagnóstico, não entrada prospectiva. Não ajustar a seleção após observar resultados. Os estudos sintéticos de tamanho de amostra não prometem lucro e não constituem atestação formal. As 12 semanas testam o funcionamento e acumulam dados; não estabelecem automaticamente rentabilidade.
+diff --git a/docs/evidence/altcoin_profit_20260907/audit.json b/docs/evidence/altcoin_profit_20260907/audit.json
+new file mode 100644
+index 0000000..e07be93
+--- /dev/null
++++ b/docs/evidence/altcoin_profit_20260907/audit.json
+@@ -0,0 +1,283 @@
++{
++  "known_at": "2026-09-07T21:24:51.277183+00:00",
++  "protocol_id": "discovery-altcoin-absolute-profit-20260907-v4",
++  "objective": "ABSOLUTE_NET_PROFIT",
++  "external_comparisons": false,
++  "user_venue_preference": "ANY_SUITABLE_VENUE_AGENT_MAY_CHOOSE",
++  "adapter_coverage": "BINANCE_PUBLIC_SPOT_USDT_ONLY",
++  "current_spot_usdt_catalog": 487,
++  "candidate_pairs_after_declared_exclusions": 472,
++  "eligible_pairs": 44,
++  "qualified_symbols": [],
++  "selected": [],
++  "cash_weight": 1.0,
++  "prospective": false,
++  "prospective_decisions": 0,
++  "realized_profit": null,
++  "investor_net_brl_profit": null,
++  "ranked": [
++    {
++      "symbol": "POLUSDT",
++      "status": "ABSTAIN_NO_POSITIVE_MARGIN",
++      "score_log": -0.027212742598714756
++    },
++    {
++      "symbol": "AVAXUSDT",
++      "status": "ABSTAIN_NO_POSITIVE_MARGIN",
++      "score_log": -0.04025792086995976
++    },
++    {
++      "symbol": "ONDOUSDT",
++      "status": "ABSTAIN_NO_POSITIVE_MARGIN",
++      "score_log": -0.04071987861193614
++    },
++    {
++      "symbol": "WLFIUSDT",
++      "status": "ABSTAIN_NO_POSITIVE_MARGIN",
++      "score_log": -0.04140729503315777
++    },
++    {
++      "symbol": "PENGUUSDT",
++      "status": "ABSTAIN_NO_POSITIVE_MARGIN",
++      "score_log": -0.041473356868353635
++    },
++    {
++      "symbol": "TRXUSDT",
++      "status": "ABSTAIN_NO_POSITIVE_MARGIN",
++      "score_log": -0.04301815490927895
++    },
++    {
++      "symbol": "XLMUSDT",
++      "status": "ABSTAIN_NO_POSITIVE_MARGIN",
++      "score_log": -0.046013775420037054
++    },
++    {
++      "symbol": "UUSDT",
++      "status": "ABSTAIN_NO_POSITIVE_MARGIN",
++      "score_log": -0.04769056428046522
++    },
++    {
++      "symbol": "INJUSDT",
++      "status": "ABSTAIN_NO_POSITIVE_MARGIN",
++      "score_log": -0.048241300073967
++    },
++    {
++      "symbol": "ETHUSDT",
++      "status": "ABSTAIN_NO_POSITIVE_MARGIN",
++      "score_log": -0.05150170128649477
++    },
++    {
++      "symbol": "HBARUSDT",
++      "status": "ABSTAIN_NO_POSITIVE_MARGIN",
++      "score_log": -0.05364399583499492
++    },
++    {
++      "symbol": "BTCUSDT",
++      "status": "ABSTAIN_NO_POSITIVE_MARGIN",
++      "score_log": -0.054508500127460086
++    },
++    {
++      "symbol": "ADAUSDT",
++      "status": "ABSTAIN_NO_POSITIVE_MARGIN",
++      "score_log": -0.05778380491314464
++    },
++    {
++      "symbol": "WLDUSDT",
++      "status": "ABSTAIN_NO_POSITIVE_MARGIN",
++      "score_log": -0.05804426176315854
++    },
++    {
++      "symbol": "NEARUSDT",
++      "status": "ABSTAIN_NO_POSITIVE_MARGIN",
++      "score_log": -0.05941396254748514
++    },
++    {
++      "symbol": "TAOUSDT",
++      "status": "ABSTAIN_NO_POSITIVE_MARGIN",
++      "score_log": -0.059715515662442056
++    },
++    {
++      "symbol": "FILUSDT",
++      "status": "ABSTAIN_NO_POSITIVE_MARGIN",
++      "score_log": -0.061689205778583375
++    },
++    {
++      "symbol": "DOGEUSDT",
++      "status": "ABSTAIN_NO_POSITIVE_MARGIN",
++      "score_log": -0.06176840578134794
++    },
++    {
++      "symbol": "PEPEUSDT",
++      "status": "ABSTAIN_NO_POSITIVE_MARGIN",
++      "score_log": -0.062065621514386146
++    },
++    {
++      "symbol": "ASTERUSDT",
++      "status": "ABSTAIN_NO_POSITIVE_MARGIN",
++      "score_log": -0.0631029481924725
++    },
++    {
++      "symbol": "BCHUSDT",
++      "status": "ABSTAIN_NO_POSITIVE_MARGIN",
++      "score_log": -0.06327420032962983
++    },
++    {
++      "symbol": "SOLUSDT",
++      "status": "ABSTAIN_NO_POSITIVE_MARGIN",
++      "score_log": -0.06644733186611176
++    },
++    {
++      "symbol": "LINKUSDT",
++      "status": "ABSTAIN_NO_POSITIVE_MARGIN",
++      "score_log": -0.06742148628918279
++    },
++    {
++      "symbol": "XPLUSDT",
++      "status": "ABSTAIN_NO_POSITIVE_MARGIN",
++      "score_log": -0.06807471141398387
++    },
++    {
++      "symbol": "ICPUSDT",
++      "status": "ABSTAIN_NO_POSITIVE_MARGIN",
++      "score_log": -0.06967858463911888
++    },
++    {
++      "symbol": "FETUSDT",
++      "status": "ABSTAIN_NO_POSITIVE_MARGIN",
++      "score_log": -0.07004111576747857
++    },
++    {
++      "symbol": "SUIUSDT",
++      "status": "ABSTAIN_NO_POSITIVE_MARGIN",
++      "score_log": -0.07078139627971901
++    },
++    {
++      "symbol": "XRPUSDT",
++      "status": "ABSTAIN_NO_POSITIVE_MARGIN",
++      "score_log": -0.07175588820918778
++    },
++    {
++      "symbol": "ZECUSDT",
++      "status": "ABSTAIN_NO_POSITIVE_MARGIN",
++      "score_log": -0.07358981282320172
++    },
++    {
++      "symbol": "TRUMPUSDT",
++      "status": "ABSTAIN_NO_POSITIVE_MARGIN",
++      "score_log": -0.07936411068776465
++    },
++    {
++      "symbol": "BNBUSDT",
++      "status": "ABSTAIN_NO_POSITIVE_MARGIN",
++      "score_log": -0.0830936911931597
++    },
++    {
++      "symbol": "LTCUSDT",
++      "status": "ABSTAIN_NO_POSITIVE_MARGIN",
++      "score_log": -0.08817050494159648
++    },
++    {
++      "symbol": "ENAUSDT",
++      "status": "ABSTAIN_NO_POSITIVE_MARGIN",
++      "score_log": -0.09054641963251087
++    },
++    {
++      "symbol": "AAVEUSDT",
++      "status": "ABSTAIN_NO_POSITIVE_MARGIN",
++      "score_log": -0.0912832307266427
++    },
++    {
++      "symbol": "UNIUSDT",
++      "status": "ABSTAIN_NO_POSITIVE_MARGIN",
++      "score_log": -0.10584656684441958
++    },
++    {
++      "symbol": "TUTUSDT",
++      "status": "ABSTAIN_NO_POSITIVE_MARGIN",
++      "score_log": -0.10654894880766679
++    },
++    {
++      "symbol": "PUMPUSDT",
++      "status": "ABSTAIN_NO_POSITIVE_MARGIN",
++      "score_log": -0.1120539805037688
++    },
++    {
++      "symbol": "ACEUSDT",
++      "status": "ABSTAIN_NO_POSITIVE_MARGIN",
++      "score_log": -0.12094811804960674
++    },
++    {
++      "symbol": "BICOUSDT",
++      "status": "ABSTAIN_NO_POSITIVE_MARGIN",
++      "score_log": -0.12328574154930944
++    },
++    {
++      "symbol": "DASHUSDT",
++      "status": "ABSTAIN_NO_POSITIVE_MARGIN",
++      "score_log": -0.12680902556075105
++    },
++    {
++      "symbol": "ONGUSDT",
++      "status": "ABSTAIN_NO_POSITIVE_MARGIN",
++      "score_log": -0.13131546847221362
++    },
++    {
++      "symbol": "PROMUSDT",
++      "status": "ABSTAIN_NO_POSITIVE_MARGIN",
++      "score_log": -0.13151778100792103
++    },
++    {
++      "symbol": "BMTUSDT",
++      "status": "ABSTAIN_NO_POSITIVE_MARGIN",
++      "score_log": -0.13781846755873703
++    },
++    {
++      "symbol": "HEMIUSDT",
++      "status": "ABSTAIN_NO_POSITIVE_MARGIN",
++      "score_log": -0.16350534113971754
++    }
++  ],
++  "validation": {
++    "tests_passed": 46,
++    "ruff": "PASS",
++    "pyright": "PASS",
++    "raw_hashes_verified": 616,
++    "offline_snapshot_replay": "PASS",
++    "network_requests_during_replay": 0,
++    "ledger_chain": "PASS",
++    "freeze_sha256": "4a98d527c43b4aa385cf1393353de64a0c35a60681e53b1e152f4d9faba941cf",
++    "no_comparison_portfolios": "PASS",
++    "scorer_and_training_unchanged": true,
++    "capital": false
++  },
++  "raw_interval": [
++    "2026-09-07T21:20:49.287472+00:00",
++    "2026-09-07T21:21:50.750343+00:00"
++  ],
++  "event_catalogs": [
++    {
++      "catalog_id": 161,
++      "reported_total": 428,
++      "unique_articles": 428,
++      "pagination_count_matches": true,
++      "complete_investability_event_feed": false
++    },
++    {
++      "catalog_id": 49,
++      "reported_total": 4404,
++      "unique_articles": 4404,
++      "pagination_count_matches": true,
++      "complete_investability_event_feed": false
++    }
++  ],
++  "limits": [
++    "Actual account commissions, tax and conversion remain unverified. Public book marks are hypothetical, not investor net profit.",
++    "Coverage is current Binance spot USDT, not all exchanges or all tokens.",
++    "No prospective outcome exists yet; no formal promotion or profitability proof.",
++    "Current asset classification and interpreted event completeness are not certified."
++  ],
++  "sources": {
++    "account_commission_documentation": "https://developers.binance.com/en/docs/products/spot/faqs/commission_faq",
++    "public_api": "https://data-api.binance.vision/api/v3/"
++  }
++}
+\ No newline at end of file
+diff --git a/docs/evidence/altcoin_profit_20260907/automation.json b/docs/evidence/altcoin_profit_20260907/automation.json
+new file mode 100644
+index 0000000..b1e225d
+--- /dev/null
++++ b/docs/evidence/altcoin_profit_20260907/automation.json
+@@ -0,0 +1,11 @@
++{
++  "id": "observar-altcoins-semanalmente",
++  "name": "Observar altcoins semanalmente",
++  "status": "ACTIVE",
++  "target_thread_id": "01a07d06-406f-7781-adad-0d0ea3ae9424",
++  "schedule_unchanged": "Domingos às 21h America/Sao_Paulo; primeira janela 13/09/2026.",
++  "objective": "Lucro líquido absoluto, sem comparação com outros investimentos.",
++  "current_profile": "altcoin_profit_20260907",
++  "current_data_directory": "work/altcoin-profit-data",
++  "notification_intent": "Somente mudança relevante, conclusão, falha ou informação necessária."
++}
+diff --git a/docs/evidence/altcoin_profit_20260907/freeze.json b/docs/evidence/altcoin_profit_20260907/freeze.json
+new file mode 100644
+index 0000000..cd9b685
+--- /dev/null
++++ b/docs/evidence/altcoin_profit_20260907/freeze.json
+@@ -0,0 +1,16 @@
++{
++  "known_at": "2026-09-07T21:20:46.459842+00:00",
++  "repository_files": {
++    "scripts/observe_altcoin_forward.py": "3b7a49369cdba7ff5c0f883359b37fe648636f01cb17ed1d7229d5f187183386",
++    "scripts/plan_absolute_profit.py": "c7b20fd1cefef2dd5153f93d665bc861498aef2c64eedcb3be529258a678955b",
++    "scripts/prepare_altcoin_payoff.py": "0c349fe67d4466db008cf1728c57767ee01fce9c122f85e539eeff6f8af30ad0",
++    "scripts/research_altcoin_analogs.py": "22b5456ae7c56c09b51cb295b784fad7b9b5685241f9fa54a31e5cb6a1aa7626",
++    "scripts/collect_altcoin_analogs.py": "ca1dfd1f8f93d6174c23829c8729c6c772376de0ef4af28b2738ada261b96e7f",
++    "docs/evidence/altcoin_profit_20260907/protocol.json": "f708725abc533404a1236dab4e0d2939d62c8471ab71888a99c10cc40cc7321b",
++    "docs/evidence/altcoin_analogs_20260907/protocol.json": "fa5e8a6a29d0e7dda4711e82b4bf11c4026c2101ba079a763200a284ac410ab4",
++    "docs/evidence/altcoin_payoff_20260907/protocol.json": "071a50b6ffbc535d226c73a02a1211f1bd4512554fd4844d039b6226c6a3da15"
++  },
++  "acquisition_sha256": "b0823fd898bb46043f1d6d328b74d033f1bfbddfe98ea13ea11fad7b82d35f6e",
++  "training_sha256": "42e5bfadec6414c4148ccd4f048329256483e91715fd9e78542633d8a5a5e972",
++  "note": "User-directed v4 scope. Frozen before new full-universe preflight. Training/scorer unchanged; no comparative portfolios. Legacy v3 uses its preserved Git revision or original reproduction archive, not this changed recorder."
++}
+diff --git a/docs/evidence/altcoin_profit_20260907/planning.json b/docs/evidence/altcoin_profit_20260907/planning.json
+new file mode 100644
+index 0000000..4d448fd
+--- /dev/null
++++ b/docs/evidence/altcoin_profit_20260907/planning.json
+@@ -0,0 +1,153 @@
++{
++  "objective": "ABSOLUTE_NET_PROFIT",
++  "external_investment_comparison": false,
++  "null_net_return": 0,
++  "minimum_profit_requested_by_user": null,
++  "grid": [
++    {
++      "annual_net_return_scenario": 0.01,
++      "weekly_log_sd_assumed": 0.01,
++      "dependence_multiplier_assumed": 1,
++      "weeks_normal_design": 21443
++    },
++    {
++      "annual_net_return_scenario": 0.01,
++      "weekly_log_sd_assumed": 0.01,
++      "dependence_multiplier_assumed": 4,
++      "weeks_normal_design": 85772
++    },
++    {
++      "annual_net_return_scenario": 0.01,
++      "weekly_log_sd_assumed": 0.03,
++      "dependence_multiplier_assumed": 1,
++      "weeks_normal_design": 192980
++    },
++    {
++      "annual_net_return_scenario": 0.01,
++      "weekly_log_sd_assumed": 0.03,
++      "dependence_multiplier_assumed": 4,
++      "weeks_normal_design": 771920
++    },
++    {
++      "annual_net_return_scenario": 0.01,
++      "weekly_log_sd_assumed": 0.05,
++      "dependence_multiplier_assumed": 1,
++      "weeks_normal_design": 536054
++    },
++    {
++      "annual_net_return_scenario": 0.01,
++      "weekly_log_sd_assumed": 0.05,
++      "dependence_multiplier_assumed": 4,
++      "weeks_normal_design": 2144216
++    },
++    {
++      "annual_net_return_scenario": 0.05,
++      "weekly_log_sd_assumed": 0.01,
++      "dependence_multiplier_assumed": 1,
++      "weeks_normal_design": 892
++    },
++    {
++      "annual_net_return_scenario": 0.05,
++      "weekly_log_sd_assumed": 0.01,
++      "dependence_multiplier_assumed": 4,
++      "weeks_normal_design": 3568
++    },
++    {
++      "annual_net_return_scenario": 0.05,
++      "weekly_log_sd_assumed": 0.03,
++      "dependence_multiplier_assumed": 1,
++      "weeks_normal_design": 8027
++    },
++    {
++      "annual_net_return_scenario": 0.05,
++      "weekly_log_sd_assumed": 0.03,
++      "dependence_multiplier_assumed": 4,
++      "weeks_normal_design": 32108
++    },
++    {
++      "annual_net_return_scenario": 0.05,
++      "weekly_log_sd_assumed": 0.05,
++      "dependence_multiplier_assumed": 1,
++      "weeks_normal_design": 22296
++    },
++    {
++      "annual_net_return_scenario": 0.05,
++      "weekly_log_sd_assumed": 0.05,
++      "dependence_multiplier_assumed": 4,
++      "weeks_normal_design": 89184
++    },
++    {
++      "annual_net_return_scenario": 0.1,
++      "weekly_log_sd_assumed": 0.01,
++      "dependence_multiplier_assumed": 1,
++      "weeks_normal_design": 234
++    },
++    {
++      "annual_net_return_scenario": 0.1,
++      "weekly_log_sd_assumed": 0.01,
++      "dependence_multiplier_assumed": 4,
++      "weeks_normal_design": 936
++    },
++    {
++      "annual_net_return_scenario": 0.1,
++      "weekly_log_sd_assumed": 0.03,
++      "dependence_multiplier_assumed": 1,
++      "weeks_normal_design": 2104
++    },
++    {
++      "annual_net_return_scenario": 0.1,
++      "weekly_log_sd_assumed": 0.03,
++      "dependence_multiplier_assumed": 4,
++      "weeks_normal_design": 8416
++    },
++    {
++      "annual_net_return_scenario": 0.1,
++      "weekly_log_sd_assumed": 0.05,
++      "dependence_multiplier_assumed": 1,
++      "weeks_normal_design": 5843
++    },
++    {
++      "annual_net_return_scenario": 0.1,
++      "weekly_log_sd_assumed": 0.05,
++      "dependence_multiplier_assumed": 4,
++      "weeks_normal_design": 23372
++    },
++    {
++      "annual_net_return_scenario": 0.2,
++      "weekly_log_sd_assumed": 0.01,
++      "dependence_multiplier_assumed": 1,
++      "weeks_normal_design": 64
++    },
++    {
++      "annual_net_return_scenario": 0.2,
++      "weekly_log_sd_assumed": 0.01,
++      "dependence_multiplier_assumed": 4,
++      "weeks_normal_design": 256
++    },
++    {
++      "annual_net_return_scenario": 0.2,
++      "weekly_log_sd_assumed": 0.03,
++      "dependence_multiplier_assumed": 1,
++      "weeks_normal_design": 575
++    },
++    {
++      "annual_net_return_scenario": 0.2,
++      "weekly_log_sd_assumed": 0.03,
++      "dependence_multiplier_assumed": 4,
++      "weeks_normal_design": 2300
++    },
++    {
++      "annual_net_return_scenario": 0.2,
++      "weekly_log_sd_assumed": 0.05,
++      "dependence_multiplier_assumed": 1,
++      "weeks_normal_design": 1597
++    },
++    {
++      "annual_net_return_scenario": 0.2,
++      "weekly_log_sd_assumed": 0.05,
++      "dependence_multiplier_assumed": 4,
++      "weeks_normal_design": 6388
++    }
++  ],
++  "limitation": "Planning assumptions only, not forecasts, user profit targets, a calibrated horizon or a formal attestation. Arbitrarily small positive net return has no fixed finite evidence horizon. Twelve observation windows test operation; they do not establish profitability automatically."
++}
+\ No newline at end of file
+diff --git a/docs/evidence/altcoin_profit_20260907/protocol.json b/docs/evidence/altcoin_profit_20260907/protocol.json
+new file mode 100644
+index 0000000..70fb09b
+--- /dev/null
++++ b/docs/evidence/altcoin_profit_20260907/protocol.json
+@@ -0,0 +1,58 @@
++{
++  "id": "discovery-altcoin-absolute-profit-20260907-v4",
++  "base_commit": "0fd58c90a7d4ae32fbbce02cba035e0dbdeed469",
++  "mode": "PROSPECTIVE_OBSERVATION_PILOT",
++  "authorization": "2026-09-07 user: Qualquer corretora pq pode ser qualquer cripto e não compara com nada é só pra dar lucro só isso.",
++  "amendment": "User-directed objective and research scope correction before any prospective entries. Replace the comparison-oriented v3 observer with this separate cohort. No prior evidence, training, outcomes or old ledger are overwritten. No outcome-driven parameter search.",
++  "model": "Unchanged v2 payoff_summary and training-only kNN200 geometry, 8 delayed features, fixed repaired 2021-2023 training observations including censored cases. No historical evaluation, refit, parameter search or tuning from this pilot.",
++  "universe": "All currently TRADING, spot-enabled Binance USDT symbols, with no original 240-symbol cap and no ranking by past outcome for inclusion. Keep declared non-crypto/stable exclusions plus RLUSD and explicit leveraged-token identification. BTC may itself be a candidate. Every candidate must still have the same 90 complete delayed daily bars and median quote volume >=5 million USDT. Asset classification and coverage are not globally certified. Other exchanges/quotes remain outside the current adapter, not prohibited by user preference.",
++  "start_utc": "2026-09-14T00:00:00+00:00",
++  "last_entry_utc": "2026-11-30T00:00:00+00:00",
++  "last_due_utc": "2026-12-07T00:00:00+00:00",
++  "entry_window_minutes": 60,
++  "feature_contract": "Monday 00 UTC anchor; exactly 90 consecutive positive complete daily bars ending Saturday. Use extract_features with the same full-day delay. Actual source retrieval known_at must precede committed decision. Live acquisition finishes within entry window; otherwise record MISSED, never backdate or use a Monday open after observing later prices.",
++  "selection": "Require at least 10 eligible samples; rank strictly positive fixed payoff scores, symbol tie-break, at most five with 20% initial research weight each. Unused allocation is zero-yield USDT reference cash. Preserve both qualified model candidates and final selections. No purchase instruction.",
++  "entry_mark": "Commit decision to a hash-linked local append-only ledger and fsync it BEFORE requesting any entry book. Then record read-only public depth ask VWAP for 1000 USDT gross simulated notional per candidate. No actual fills. Quote age is bounded by request round trip and request time only; REST book has no per-level timestamp. Fail on slow requests, insufficient visible depth or invalid prices. Record only the hypothetical selected portfolio; no BTC or basket reference portfolio.",
++  "outcome": "Due at the next Monday 00 UTC, allowing up to 60 minutes for actual retrieval. Fetch exit depth and use bid VWAP for the recorded quantity. Never choose a price retroactively. If entry or due observation is missed, suspended, unpriced, or outside the window, censor the affected outcome. Keep its weight and reason. No symbol migration is assumed without a separately recorded official identity event. An unresolved component makes the portfolio return null; never silently renormalize survivors.",
++  "costs": {
++    "status": "ASSUMED_NOT_ACCOUNT_CALIBRATED",
++    "entry_fee_bps": 10,
++    "exit_fee_bps": 10,
++    "extra_slippage_bps_per_side": [
++      0,
++      10,
++      40,
++      90
++    ],
++    "book_cost": "Spread and displayed depth impact measured only at observation; additional slippage scenarios do not relabel them as actual realized costs.",
++    "account_commission": null,
++    "fx_conversion_tax_transfer_costs": null
++  },
++  "events": "Save complete current public exchangeInfo response, diffs against prior observation and attempts to retrieve official delisting/update announcements with observed known_at. A successful page is not evidence of complete event coverage. Public event-feed completeness remains UNKNOWN unless separately audited. Missing notices block executable readiness, not read-only observation. Historical BTT/CVP/VIDT remain censored until an exact-horizon exit is verified.",
++  "economic_reference": "No external investment benchmark. Compare only the same portfolio starting and ending value after costs. USDT marks and eventual BRL economic profit must be labeled separately until conversion and tax route are verified. User delegates venue selection for research; do not keep asking them to choose a benchmark or a preferred exchange.",
++  "evidence": "Twelve entry slots test operation and generate genuinely new observations. This is not a profitability proof horizon. Publish a normal-design power sensitivity grid, explicitly conditional on unmeasured paired weekly dispersion and dependence. No formal model-specific Core attestation or G1-G7 pass may be inferred from unit tests or synthetic checks.",
++  "stopping_rule": "Do not change the model when it abstains or loses. No significance testing during the 12 slots; report descriptive marks and missingness. After last due slot stop the recurring pilot and report feasibility, candidates, costs and unresolved gates. Operational bug fixes must be versioned before later decisions; preserve all prior ledger records.",
++  "scheduler": "Update the existing thread heartbeat, preserving weekly timing and notification preferences. Use this v4 protocol and a separate v4 data directory; first future anchor and last due anchor unchanged.",
++  "capital_authorized": false,
++  "order_submission": false,
++  "production_changes": false,
++  "formal_promotion": false,
++  "registration_amendments": [],
++  "mark_fee_accounting": "For a hypothetical 1000 USDT budget, consume displayed asks; deduct assumed 10bps buy fee from acquired base quantity. Additional slippage stresses are quantity haircuts. Exit consumes displayed bids and deducts assumed 10bps sell fee and the extra slippage haircut from quote proceeds. Daily v2 neighbor-score cost algebra remains frozen; book-mark accounting is a distinct declared observation proxy. Lot-size rounding, account restrictions and tax are not certified.",
++  "synthetic_control_plan": "Seed 20260907: fixed 1600-observation two-cluster kNN200 positive/negative geometry control over 80 weeks, one censored-neighbor guard, 100 stipulated zero-log-drift week-common-shock replicates (two candidate queries each). Report qualification count without interpreting it as general null calibration. Conditional planning grid uses absolute annual net-return scenarios 1/5/10/20%, weekly log standard deviations 1/3/5% and dependence multipliers 1/4, against zero net profit. These are planning assumptions, not user targets, forecasts or an external comparison. An arbitrarily small positive edge has no fixed finite detection horizon.",
++  "registered_at": "2026-09-07T21:18:07.067888+00:00",
++  "economic_objective": {
++    "kind": "ABSOLUTE_NET_PROFIT",
++    "acceptance": "Ending value exceeds starting value after all applicable costs, in the same currency. Do not require beating Selic, BTC, a basket or any external investment.",
++    "reporting_currency": "BRL",
++    "observed_mark_currency": "USDT",
++    "unknown_costs": "Public book marks use stated fee/slippage scenarios. Account commission, conversion and taxes are not certified. Missing costs are unknown, not zero; a partial USDT mark is not certified net BRL investor profit.",
++    "minimum_user_profit_amount": null,
++    "minimum_user_annual_return": null,
++    "external_benchmark_required": false,
++    "venue_preselection_required_from_user": false
++  },
++  "venue_policy": "No user-imposed venue preference. Agent may choose public research venues by suitable data, liquidity and all-in costs. Current tested adapter is Binance public spot only; permission to research other venues is not a claim of implemented worldwide coverage or account accessibility.",
++  "universe_mode": "all_current_spot_usdt",
++  "comparisons": false
++}
+diff --git a/docs/evidence/altcoin_profit_20260907/search_log.json b/docs/evidence/altcoin_profit_20260907/search_log.json
+new file mode 100644
+index 0000000..3bc6973
+--- /dev/null
++++ b/docs/evidence/altcoin_profit_20260907/search_log.json
+@@ -0,0 +1,11 @@
++{
++  "registered_protocol_commit": "330619f",
++  "code_and_freeze_before_new_preflight": "007432c",
++  "user_directed_change": "Absolute net profit and agent-selected research venue; no outside benchmark and no original 240-symbol cap.",
++  "new_historical_performance_trials": 0,
++  "prospective_decisions": 0,
++  "model_scorer_and_training_changes": 0,
++  "candidate_universe": "All current Binance spot USDT subject to declared exclusions and unchanged data/liquidity rules.",
++  "preflight_selected": [],
++  "scope_limit": "Other venues are allowed by user preference, but no other venue adapter is claimed."
++}
+diff --git a/docs/evidence/altcoin_profit_20260907/status.json b/docs/evidence/altcoin_profit_20260907/status.json
+new file mode 100644
+index 0000000..76c8af8
+--- /dev/null
++++ b/docs/evidence/altcoin_profit_20260907/status.json
+@@ -0,0 +1,17 @@
++{
++  "updated_at": "2026-09-07T21:24:52.671172+00:00",
++  "protocol_id": "discovery-altcoin-absolute-profit-20260907-v4",
++  "universe_mode": "all_current_spot_usdt",
++  "external_comparisons": false,
++  "mode": "tick",
++  "ledger_rows": 2,
++  "ledger_head": "efa036d2929369ffa190dd1d9c6124572f46247a443a163c05beb1b67b8934e0",
++  "prospective_decisions": 0,
++  "matured_observations": 0,
++  "first_entry_utc": "2026-09-14T00:00:00+00:00",
++  "last_due_utc": "2026-12-07T00:00:00+00:00",
++  "pilot_finished": false,
++  "execution_ready": false,
++  "formal_promotion": false,
++  "capital": false
++}
+\ No newline at end of file
+diff --git a/scripts/observe_altcoin_forward.py b/scripts/observe_altcoin_forward.py
+index ae716e8..f0a16e3 100644
+--- a/scripts/observe_altcoin_forward.py
++++ b/scripts/observe_altcoin_forward.py
+@@ -288,7 +288,32 @@ def event_catalog(source: PublicSource, catalog_id: int) -> dict:
+     }
+ 
+ 
+-def snapshot(source: PublicSource, anchor: datetime, base_data: Path, training: Path) -> dict:
++def universe_symbols(exchange: dict, manifest: dict, excluded: set[str], mode: str):
++    excluded = set(excluded)
++    if mode == "legacy_sample":
++        sampled = set(manifest["selected"])
++    elif mode == "all_current_spot_usdt":
++        sampled = {
++            s["symbol"]
++            for s in exchange["symbols"]
++            if s["quoteAsset"] == "USDT"
++            and s["status"] == "TRADING"
++            and s.get("isSpotTradingAllowed") is True
++        }
++        excluded.discard("BTC")
++    else:
++        raise ValueError("unregistered universe mode")
++    current = sorted(s["symbol"] for s in exchange["symbols"] if eligibility(s, sampled, excluded))
++    return sampled, current
++
++
++def snapshot(
++    source: PublicSource,
++    anchor: datetime,
++    base_data: Path,
++    training: Path,
++    universe_mode: str = "legacy_sample",
++) -> dict:
+     clock, clock_meta = source.get("time")
+     if not isinstance(clock, dict):
+         raise ValueError("invalid public clock response")
+@@ -307,8 +332,7 @@ def snapshot(source: PublicSource, anchor: datetime, base_data: Path, training:
+         (ROOT / "docs/evidence/altcoin_analogs_20260907/protocol.json").read_text()
+     )
+     excluded = set(original_protocol["data"]["exclude_bases"]) | {"RLUSD"}
+-    sampled = set(manifest["selected"])
+-    current = sorted(s["symbol"] for s in exchange["symbols"] if eligibility(s, sampled, excluded))
++    sampled, current = universe_symbols(exchange, manifest, excluded, universe_mode)
+     statuses = {s["symbol"]: s["status"] for s in exchange["symbols"] if s["symbol"] in sampled}
+     start = int((anchor - timedelta(days=91)).timestamp() * 1000)
+     end = int((anchor - timedelta(days=1)).timestamp() * 1000) - 1
+@@ -336,7 +360,7 @@ def snapshot(source: PublicSource, anchor: datetime, base_data: Path, training:
+             return symbol, None, None, str(error), True
+ 
+     with ThreadPoolExecutor(max_workers=6) as pool:
+-        histories = list(pool.map(history, ["BTCUSDT"] + current))
++        histories = list(pool.map(history, ["BTCUSDT"] + [s for s in current if s != "BTCUSDT"]))
+     btc = histories[0][1]
+     if btc is None:
+         raise ValueError("BTC reference history unavailable")
+@@ -344,7 +368,8 @@ def snapshot(source: PublicSource, anchor: datetime, base_data: Path, training:
+     if failures:
+         raise ValueError(f"acquisition failures must not shrink selection universe: {failures}")
+     candidates, rejected = [], []
+-    for symbol, bars, metadata, error, _ in histories[1:]:
++    history_by_symbol = {row[0]: row for row in histories}
++    for symbol, bars, metadata, error, _ in [history_by_symbol[s] for s in current]:
+         features = None if bars is None else extract_features(bars, btc, 91)
+         if features is None:
+             rejected.append(
+@@ -449,8 +474,10 @@ def attach_catalog_changes(snap: dict, ledger: Ledger):
+         snap["compared_with_ledger_sha256"] = None
+ 
+ 
+-def portfolio_specs(snap: dict) -> dict:
++def portfolio_specs(snap: dict, comparisons: bool = True) -> dict:
+     selected = [{"symbol": s, "weight": 0.2} for s in snap["selected"]]
++    if not comparisons:
++        return {"payoff": {"positions": selected, "cash_weight": snap["cash_weight"]}}
+     eligible = [s["symbol"] for s in snap["ranked"]] if snap["minimum_universe_met"] else []
+     basket = [{"symbol": s, "weight": 1 / len(eligible)} for s in eligible]
+     return {
+@@ -531,8 +558,8 @@ def settle(source: PublicSource, entry: dict, due: datetime, missed: bool) -> di
+     return result
+ 
+ 
+-def verify_freeze(base_data: Path, training: Path):
+-    freeze = json.loads((EVIDENCE / "freeze.json").read_text())
++def verify_freeze(base_data: Path, training: Path, evidence: Path = EVIDENCE):
++    freeze = json.loads((evidence / "freeze.json").read_text())
+     paths = {
+         **{str(ROOT / k): v for k, v in freeze["repository_files"].items()},
+         str(base_data / "acquisition.json"): freeze["acquisition_sha256"],
+@@ -541,18 +568,23 @@ def verify_freeze(base_data: Path, training: Path):
+     for path, digest in paths.items():
+         if sha(Path(path).read_bytes()) != digest:
+             raise ValueError(f"frozen input/code changed: {path}")
+-    return sha((EVIDENCE / "freeze.json").read_bytes())
++    return sha((evidence / "freeze.json").read_bytes())
+ 
+ 
+ def run(args):
+-    freeze_hash = verify_freeze(args.base_data_dir, args.training)
+-    protocol = json.loads((EVIDENCE / "protocol.json").read_text())
++    evidence = getattr(args, "evidence_dir", EVIDENCE)
++    freeze_hash = verify_freeze(args.base_data_dir, args.training, evidence)
++    protocol = json.loads((evidence / "protocol.json").read_text(encoding="utf-8"))
++    universe_mode = protocol.get("universe_mode", "legacy_sample")
++    comparisons = protocol.get("comparisons", True)
+     with exclusive(args.data_dir):
+         ledger = Ledger(args.data_dir / "ledger.jsonl")
+         source = PublicSource(args.data_dir)
+         try:
+             if args.mode == "preflight":
+-                snap = snapshot(source, anchor_for(now()), args.base_data_dir, args.training)
++                snap = snapshot(
++                    source, anchor_for(now()), args.base_data_dir, args.training, universe_mode
++                )
+                 attach_catalog_changes(snap, ledger)
+                 run_id = "preflight-" + uuid.uuid4().hex
+                 path = args.data_dir / "snapshots" / f"{run_id}.json"
+@@ -568,7 +600,7 @@ def run(args):
+                         "freeze_sha256": freeze_hash,
+                     },
+                 )
+-                specs = portfolio_specs(snap)
++                specs = portfolio_specs(snap, comparisons)
+                 specs["cost_probe_1000"] = {
+                     "positions": [{"symbol": s["symbol"], "weight": 0.2} for s in snap["ranked"]],
+                     "cash_weight": None,
+@@ -592,14 +624,18 @@ def run(args):
+                         else:
+                             try:
+                                 snap = snapshot(
+-                                    source, slot_time, args.base_data_dir, args.training
++                                    source,
++                                    slot_time,
++                                    args.base_data_dir,
++                                    args.training,
++                                    universe_mode,
+                                 )
+                                 attach_catalog_changes(snap, ledger)
+                                 if not in_window(now(), slot_time):
+                                     raise ValueError("acquisition finished after entry window")
+                                 path = args.data_dir / "snapshots" / f"{slot_time.date()}.json"
+                                 write_json(path, snap)
+-                                specs = portfolio_specs(snap)
++                                specs = portfolio_specs(snap, comparisons)
+                                 ledger.append(
+                                     "DECISION",
+                                     slot,
+@@ -657,6 +693,9 @@ def run(args):
+                     slot_time += timedelta(days=7)
+             summary = {
+                 "updated_at": now().isoformat(),
++                "protocol_id": protocol["id"],
++                "universe_mode": universe_mode,
++                "external_comparisons": comparisons,
+                 "mode": args.mode,
+                 "ledger_rows": len(ledger.rows),
+                 "ledger_head": ledger.rows[-1]["sha256"] if ledger.rows else None,
+@@ -689,6 +728,7 @@ def main():
+     parser.add_argument("--base-data-dir", type=Path, required=True)
+     parser.add_argument("--training", type=Path, required=True)
+     parser.add_argument("--data-dir", type=Path, required=True)
++    parser.add_argument("--evidence-dir", type=Path, default=EVIDENCE)
+     run(parser.parse_args())
+ 
+ 
+diff --git a/scripts/plan_absolute_profit.py b/scripts/plan_absolute_profit.py
+new file mode 100644
+index 0000000..1097460
+--- /dev/null
++++ b/scripts/plan_absolute_profit.py
+@@ -0,0 +1,44 @@
++"""Conditional sample-size planning for positive net return; no outside benchmark."""
++
++import argparse
++import json
++import math
++from pathlib import Path
++
++
++def planning_grid():
++    rows = []
++    for annual_net in (0.01, 0.05, 0.10, 0.20):
++        weekly_log = math.log1p(annual_net) / 52
++        for weekly_sd in (0.01, 0.03, 0.05):
++            for dependence in (1, 4):
++                weeks = math.ceil(((1.96 + 0.842) * weekly_sd / weekly_log) ** 2) * dependence
++                rows.append(
++                    {
++                        "annual_net_return_scenario": annual_net,
++                        "weekly_log_sd_assumed": weekly_sd,
++                        "dependence_multiplier_assumed": dependence,
++                        "weeks_normal_design": weeks,
++                    }
++                )
++    return {
++        "objective": "ABSOLUTE_NET_PROFIT",
++        "external_investment_comparison": False,
++        "null_net_return": 0,
++        "minimum_profit_requested_by_user": None,
++        "grid": rows,
++        "limitation": "Planning assumptions only, not forecasts, user profit targets, a calibrated horizon or a formal attestation. Arbitrarily small positive net return has no fixed finite evidence horizon. Twelve observation windows test operation; they do not establish profitability automatically.",
++    }
++
++
++def main():
++    parser = argparse.ArgumentParser(description=__doc__)
++    parser.add_argument("--output", type=Path, required=True)
++    args = parser.parse_args()
++    args.output.parent.mkdir(parents=True, exist_ok=True)
++    args.output.write_text(json.dumps(planning_grid(), indent=2), encoding="utf-8")
++    print("Absolute net-profit planning saved; no external benchmark or market-performance trial.")
++
++
++if __name__ == "__main__":
++    main()
+diff --git a/tests/test_altcoin_forward.py b/tests/test_altcoin_forward.py
+index 955ae16..6dd4f61 100644
+--- a/tests/test_altcoin_forward.py
++++ b/tests/test_altcoin_forward.py
+@@ -244,3 +244,39 @@ def test_catalog_diff_preserves_suspension_and_removal():
+         {"symbol": "B", "previous": "TRADING", "current": "MISSING"},
+         {"symbol": "D", "previous": "MISSING", "current": "TRADING"},
+     ]
++
++
++def test_all_current_universe_can_include_unsampled_coins_and_btc():
++    def market(base, status="TRADING"):
++        return {
++            "symbol": base + "USDT",
++            "baseAsset": base,
++            "quoteAsset": "USDT",
++            "status": status,
++            "isSpotTradingAllowed": True,
++        }
++
++    exchange = {
++        "symbols": [
++            market("AAA"),
++            market("NEW"),
++            market("BTC"),
++            market("RLUSD"),
++            market("OLD", "BREAK"),
++        ]
++    }
++    manifest = {"selected": ["AAAUSDT"]}
++    excluded = {"BTC", "RLUSD"}
++    _, current = f.universe_symbols(exchange, manifest, excluded, "all_current_spot_usdt")
++    assert current == ["AAAUSDT", "BTCUSDT", "NEWUSDT"]
++    assert excluded == {"BTC", "RLUSD"}
++    assert f.universe_symbols(exchange, manifest, excluded, "legacy_sample")[1] == ["AAAUSDT"]
++    with pytest.raises(ValueError):
++        f.universe_symbols(exchange, manifest, excluded, "whatever")
++
++
++def test_absolute_profit_does_not_create_comparison_portfolios():
++    snap = {"selected": ["AAAUSDT"], "cash_weight": 0.8}
++    assert f.portfolio_specs(snap, comparisons=False) == {
++        "payoff": {"positions": [{"symbol": "AAAUSDT", "weight": 0.2}], "cash_weight": 0.8}
++    }

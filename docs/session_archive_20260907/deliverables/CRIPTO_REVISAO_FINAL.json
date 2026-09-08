@@ -1,0 +1,390 @@
+{
+  "validation": {
+    "as_of_utc": "2026-09-07T23:34:17.240708+00:00",
+    "base_commit": "5d28a63c1b2a147d17054ace3914de698a7959a4",
+    "full_suite": {
+      "passed": 1045,
+      "failed": 0,
+      "skipped": 0,
+      "source": "full_tests.txt"
+    },
+    "isolated_minimal_ci_profile": {
+      "passed": 1011,
+      "skipped": 4,
+      "extras": [
+        "test",
+        "science"
+      ],
+      "source": "minimal_ci_tests.txt"
+    },
+    "observer_review_controls": {
+      "passed": 28,
+      "includes": "OS lock crash recovery, concurrency, missingness, full 12-slot lifecycle, loss accounting and idempotency"
+    },
+    "ruff": "PASS",
+    "ruff_format": "PASS",
+    "pyright": "PASS",
+    "build_uv": "PASS",
+    "build_python_isolated": "PASS_AFTER_EXACT_RUNTIME_REPAIR",
+    "installed_wheel_outside_checkout": "PASS",
+    "wheel_sha256": "90c7e91417dfc62c715940f375cae6e965b53249773053584a786b83a6489e19",
+    "runtime_integrity": {
+      "status": "PASS",
+      "files_checked": 3785
+    },
+    "secret_scan_findings": 0,
+    "historical_replay": "BYTE_IDENTICAL",
+    "live_snapshot_offline_replay": "PASS",
+    "docker": "NOT_VALIDATED: daemon unavailable; Windows denied service startup",
+    "remote_ci": "NOT_EXECUTED",
+    "posix_lock_branch": "NOT_EXECUTED_ON_WINDOWS",
+    "new_model_searches": 0,
+    "profit_attestation": false,
+    "capital": false
+  },
+  "carry": {
+    "id": "project-quality-review-20260907-v6-carry",
+    "period": {
+      "start": "2025-09-07",
+      "end": "2026-09-07",
+      "days": 365
+    },
+    "source_response_hashes_verified": 8,
+    "raw_sources": [
+      {
+        "artifact": "BTCUSDT_funding_0.json",
+        "url": "https://fapi.binance.com/fapi/v1/fundingRate?symbol=BTCUSDT&startTime=1757203200000&endTime=1788739199999&limit=1000",
+        "known_at": "2026-09-07T18:27:54.831628+00:00",
+        "http_status": 200,
+        "sha256": "ee784cc0e5a4bbe3796c83083f8d8cc68396a18c51c6daa7810c50887ae6433e"
+      },
+      {
+        "artifact": "ETHUSDT_funding_0.json",
+        "url": "https://fapi.binance.com/fapi/v1/fundingRate?symbol=ETHUSDT&startTime=1757203200000&endTime=1788739199999&limit=1000",
+        "known_at": "2026-09-07T18:27:54.831934+00:00",
+        "http_status": 200,
+        "sha256": "21f3a57d1cbcad04face2f3b56326236cae8dfd91d7a7d3eaae37be4cfcd480c"
+      },
+      {
+        "artifact": "BTCUSDT_funding_1.json",
+        "url": "https://fapi.binance.com/fapi/v1/fundingRate?symbol=BTCUSDT&startTime=1785974400003&endTime=1788739199999&limit=1000",
+        "known_at": "2026-09-07T18:27:55.244721+00:00",
+        "http_status": 200,
+        "sha256": "51123315198443bdcfbf16ff7dc1179df8a91acdc47ff77a65205e861b9d144a"
+      },
+      {
+        "artifact": "ETHUSDT_funding_1.json",
+        "url": "https://fapi.binance.com/fapi/v1/fundingRate?symbol=ETHUSDT&startTime=1785974400003&endTime=1788739199999&limit=1000",
+        "known_at": "2026-09-07T18:27:55.251889+00:00",
+        "http_status": 200,
+        "sha256": "6f20b0b28f29ab73e97bab8ffef8715ec7a15a92ca8ff5d7ce4ab6dfaf2124cf"
+      },
+      {
+        "artifact": "BTCUSDT_spot_daily.json",
+        "url": "https://api.binance.com/api/v3/klines?symbol=BTCUSDT&interval=1d&startTime=1757203200000&endTime=1788739200000&limit=500",
+        "known_at": "2026-09-07T18:27:55.576312+00:00",
+        "http_status": 200,
+        "sha256": "dfe185b422bfae8c7b1615e6dedf60a6c7b64631b3f8cbb1e162f39688a3ccac"
+      },
+      {
+        "artifact": "ETHUSDT_spot_daily.json",
+        "url": "https://api.binance.com/api/v3/klines?symbol=ETHUSDT&interval=1d&startTime=1757203200000&endTime=1788739200000&limit=500",
+        "known_at": "2026-09-07T18:27:55.578225+00:00",
+        "http_status": 200,
+        "sha256": "b4f943bb104481c12e77df5c4384e8ed9f86b83c9ca0ed9987a0669de02706b8"
+      },
+      {
+        "artifact": "BTCUSDT_mark_daily.json",
+        "url": "https://fapi.binance.com/fapi/v1/markPriceKlines?symbol=BTCUSDT&interval=1d&startTime=1757203200000&endTime=1788739200000&limit=500",
+        "known_at": "2026-09-07T18:27:55.917809+00:00",
+        "http_status": 200,
+        "sha256": "38c40fab1a4d2ed7c15d75ab578a76daf7ccd13cede613db597229c73f4c02d5"
+      },
+      {
+        "artifact": "ETHUSDT_mark_daily.json",
+        "url": "https://fapi.binance.com/fapi/v1/markPriceKlines?symbol=ETHUSDT&interval=1d&startTime=1757203200000&endTime=1788739200000&limit=500",
+        "known_at": "2026-09-07T18:27:56.182595+00:00",
+        "http_status": 200,
+        "sha256": "42b20536776fd8ce11e3268e81dfbfc7dc387e0c5a526d5628655fc0783516f1"
+      }
+    ],
+    "arithmetic": "Independent Decimal reconstruction, fixed hedge quantity; eight raw responses and both normalized funding histories verified.",
+    "assets": {
+      "BTCUSDT": {
+        "capital_reference_usdt": 5000,
+        "spot_initial_notional_usdt": 2500,
+        "cash_margin_reference_usdt": 2500,
+        "quantity": "0.02268850014311905890279502355883100860911",
+        "eligible_settlements": 1094,
+        "funding_usdt": 65.99276864314137,
+        "basis_pnl_usdt": -0.3470036017086437,
+        "assumed_trading_fees_usdt": 6.483231703793486,
+        "assumed_slippage_usdt": 4.321813893066762,
+        "simulated_profit_usdt": 54.840719444572485,
+        "simulated_return_on_total_capital": 0.010968143888914497,
+        "simulated_ending_usdt": 5054.840719444573,
+        "additional_cost_budget_before_zero_profit_usdt": 54.840719444572485,
+        "additional_cost_budget_fraction_of_capital": 0.010968143888914497,
+        "cost_scenarios": [
+          {
+            "slippage_bps_each_leg": 0,
+            "additional_cost_fraction_of_capital": 0.0,
+            "simulated_net_usdt": 59.162533337639246,
+            "meaning": "Pre-existing cost assumptions applied to the same fixed-quantity cashflows; not actual costs or a prediction."
+          },
+          {
+            "slippage_bps_each_leg": 0,
+            "additional_cost_fraction_of_capital": 0.005,
+            "simulated_net_usdt": 34.162533337639246,
+            "meaning": "Pre-existing cost assumptions applied to the same fixed-quantity cashflows; not actual costs or a prediction."
+          },
+          {
+            "slippage_bps_each_leg": 0,
+            "additional_cost_fraction_of_capital": 0.01,
+            "simulated_net_usdt": 9.162533337639248,
+            "meaning": "Pre-existing cost assumptions applied to the same fixed-quantity cashflows; not actual costs or a prediction."
+          },
+          {
+            "slippage_bps_each_leg": 5,
+            "additional_cost_fraction_of_capital": 0.0,
+            "simulated_net_usdt": 54.840719444572485,
+            "meaning": "Pre-existing cost assumptions applied to the same fixed-quantity cashflows; not actual costs or a prediction."
+          },
+          {
+            "slippage_bps_each_leg": 5,
+            "additional_cost_fraction_of_capital": 0.005,
+            "simulated_net_usdt": 29.840719444572485,
+            "meaning": "Pre-existing cost assumptions applied to the same fixed-quantity cashflows; not actual costs or a prediction."
+          },
+          {
+            "slippage_bps_each_leg": 5,
+            "additional_cost_fraction_of_capital": 0.01,
+            "simulated_net_usdt": 4.840719444572486,
+            "meaning": "Pre-existing cost assumptions applied to the same fixed-quantity cashflows; not actual costs or a prediction."
+          },
+          {
+            "slippage_bps_each_leg": 10,
+            "additional_cost_fraction_of_capital": 0.0,
+            "simulated_net_usdt": 50.518905551505725,
+            "meaning": "Pre-existing cost assumptions applied to the same fixed-quantity cashflows; not actual costs or a prediction."
+          },
+          {
+            "slippage_bps_each_leg": 10,
+            "additional_cost_fraction_of_capital": 0.005,
+            "simulated_net_usdt": 25.518905551505725,
+            "meaning": "Pre-existing cost assumptions applied to the same fixed-quantity cashflows; not actual costs or a prediction."
+          },
+          {
+            "slippage_bps_each_leg": 10,
+            "additional_cost_fraction_of_capital": 0.01,
+            "simulated_net_usdt": 0.518905551505724,
+            "meaning": "Pre-existing cost assumptions applied to the same fixed-quantity cashflows; not actual costs or a prediction."
+          }
+        ],
+        "decision": "POSITIVE_HISTORICAL_PRICE_PROXY_NOT_VERIFIED_INVESTOR_PROFIT",
+        "actual_profit": null,
+        "verified_net_brl_profit": null,
+        "executable_margin_path_certified": false
+      },
+      "ETHUSDT": {
+        "capital_reference_usdt": 5000,
+        "spot_initial_notional_usdt": 2500,
+        "cash_margin_reference_usdt": 2500,
+        "quantity": "0.5850485005206931654634169172624410563636",
+        "eligible_settlements": 1094,
+        "funding_usdt": 45.263175926868044,
+        "basis_pnl_usdt": -0.713207902835145,
+        "assumed_trading_fees_usdt": 5.9559192450943685,
+        "assumed_slippage_usdt": 3.970372868299732,
+        "simulated_profit_usdt": 34.6236759106388,
+        "simulated_return_on_total_capital": 0.00692473518212776,
+        "simulated_ending_usdt": 5034.623675910639,
+        "additional_cost_budget_before_zero_profit_usdt": 34.6236759106388,
+        "additional_cost_budget_fraction_of_capital": 0.00692473518212776,
+        "cost_scenarios": [
+          {
+            "slippage_bps_each_leg": 0,
+            "additional_cost_fraction_of_capital": 0.0,
+            "simulated_net_usdt": 38.594048778938536,
+            "meaning": "Pre-existing cost assumptions applied to the same fixed-quantity cashflows; not actual costs or a prediction."
+          },
+          {
+            "slippage_bps_each_leg": 0,
+            "additional_cost_fraction_of_capital": 0.005,
+            "simulated_net_usdt": 13.594048778938532,
+            "meaning": "Pre-existing cost assumptions applied to the same fixed-quantity cashflows; not actual costs or a prediction."
+          },
+          {
+            "slippage_bps_each_leg": 0,
+            "additional_cost_fraction_of_capital": 0.01,
+            "simulated_net_usdt": -11.405951221061468,
+            "meaning": "Pre-existing cost assumptions applied to the same fixed-quantity cashflows; not actual costs or a prediction."
+          },
+          {
+            "slippage_bps_each_leg": 5,
+            "additional_cost_fraction_of_capital": 0.0,
+            "simulated_net_usdt": 34.6236759106388,
+            "meaning": "Pre-existing cost assumptions applied to the same fixed-quantity cashflows; not actual costs or a prediction."
+          },
+          {
+            "slippage_bps_each_leg": 5,
+            "additional_cost_fraction_of_capital": 0.005,
+            "simulated_net_usdt": 9.6236759106388,
+            "meaning": "Pre-existing cost assumptions applied to the same fixed-quantity cashflows; not actual costs or a prediction."
+          },
+          {
+            "slippage_bps_each_leg": 5,
+            "additional_cost_fraction_of_capital": 0.01,
+            "simulated_net_usdt": -15.3763240893612,
+            "meaning": "Pre-existing cost assumptions applied to the same fixed-quantity cashflows; not actual costs or a prediction."
+          },
+          {
+            "slippage_bps_each_leg": 10,
+            "additional_cost_fraction_of_capital": 0.0,
+            "simulated_net_usdt": 30.65330304233907,
+            "meaning": "Pre-existing cost assumptions applied to the same fixed-quantity cashflows; not actual costs or a prediction."
+          },
+          {
+            "slippage_bps_each_leg": 10,
+            "additional_cost_fraction_of_capital": 0.005,
+            "simulated_net_usdt": 5.653303042339068,
+            "meaning": "Pre-existing cost assumptions applied to the same fixed-quantity cashflows; not actual costs or a prediction."
+          },
+          {
+            "slippage_bps_each_leg": 10,
+            "additional_cost_fraction_of_capital": 0.01,
+            "simulated_net_usdt": -19.34669695766093,
+            "meaning": "Pre-existing cost assumptions applied to the same fixed-quantity cashflows; not actual costs or a prediction."
+          }
+        ],
+        "decision": "POSITIVE_HISTORICAL_PRICE_PROXY_NOT_VERIFIED_INVESTOR_PROFIT",
+        "actual_profit": null,
+        "verified_net_brl_profit": null,
+        "executable_margin_path_certified": false
+      }
+    },
+    "external_benchmark": false,
+    "new_market_parameter_search": false,
+    "prior_rejection": "Applied a benchmark later rejected by the user. Original evidence remains unchanged; that priority decision no longer determines the current absolute-profit objective.",
+    "quality": "HISTORICAL_SIMULATED_POSITIVE_CARRY_EXISTS; NO_VERIFIED_INVESTOR_NET_PROFIT",
+    "limitations": [
+      "Already consumed single historical period; adaptive interpretation, not independent validation",
+      "Spot and perpetual mark-price proxies are not executable fills",
+      "Fees/slippage are assumptions, not account-specific realized costs",
+      "Margin maintenance, intraday equity path and liquidation are not certified",
+      "Account access, USDT/USD/BRL conversion, transfers and tax remain unknown",
+      "Each asset uses its own hypothetical 5000 USDT; these are separate scenarios, not additive profits on one portfolio"
+    ],
+    "capital": false,
+    "orders": false
+  },
+  "reconciliation": {
+    "live_preflight": {
+      "sample_size": 487,
+      "currently_trading_after_exclusions": 472,
+      "eligible": 44,
+      "selected": [],
+      "raw_response_hashes": 616,
+      "independent_book_entry_checks": 44,
+      "offline_snapshot_replay": "EXACT_EXCEPT_NEW_EXECUTION_TIMESTAMP_AND_LEDGER_LINK_FIELDS",
+      "freeze_sha256": "2bc8f67c704780acff78973404c7a8f5915d05d90f8b05bba72d16aa360a25f6",
+      "ledger_integrity": "PASS",
+      "prospective": false
+    },
+    "historical_replay": {
+      "status": "BYTE_IDENTICAL",
+      "sha256": {
+        "results.json": "9f70b6aa9a43d9541638d5f96a7b91c9383a3d0af5a265bce8be9bc75333dad0",
+        "weekly_results.json": "033c80a0d8fa1c9dc27670e49b5658e6e894fdd5fb4097f545b9fb5cb4f05132",
+        "decisions.json": "fc68054d7dd3cbb390d994068daa38433f85f1f9462b0684da4d832eb11981f2",
+        "scores.json.gz": "1e50d0009a24201c9c7a48752b86946838e43fa87956d7dbc025617e44d13243"
+      }
+    },
+    "protected_files_unchanged": {
+      "charters/scientific_state.json": "f9d20abdef2fa77df98784a90f5d4c2e1a45907e6438ffa9d8235e5a9e063c75",
+      "GarimpoInvestimentos/trials.json": "7193b15df347b8243a65ab92449503dd64f90a9777207aadc8c80da2e0ac844b",
+      "GarimpoInvestimentos/v3/costs.py": "8b35cbc6e000896720ca12c075e86938187cb826be0b573c81a42754aecf21e1",
+      "charters/h6_definition_frozen.json": "301c1acd549c99d543085486a5559414b00001290f1ae28a63cfa2b66aa0b23f",
+      "GarimpoInvestimentos/h6_status.json": "1ec2d8460466db156283a9a2535adbb579e811f8dd6e9881802980ce8d0482b1",
+      "CR_RESEARCH_FREEZE.md": "0bf34ab59e4111a1910a38a07387719727750f68e3bfb8504de866a2b43b4a26",
+      "CR_FREEZE_INDEX.md": "f24d05e8748f50302c37abd562356f2d7c5ce585482938cbdfc9c94fd0124820",
+      "scripts/prepare_altcoin_payoff.py": "0c349fe67d4466db008cf1728c57767ee01fce9c122f85e539eeff6f8af30ad0",
+      "scripts/research_altcoin_analogs.py": "22b5456ae7c56c09b51cb295b784fad7b9b5685241f9fa54a31e5cb6a1aa7626",
+      "docs/evidence/altcoin_profit_20260907/freeze.json": "4a98d527c43b4aa385cf1393353de64a0c35a60681e53b1e152f4d9faba941cf",
+      "docs/evidence/altcoin_profit_20260907/protocol.json": "f708725abc533404a1236dab4e0d2939d62c8471ab71888a99c10cc40cc7321b"
+    },
+    "prior_reproduction_archives_unchanged": {
+      "ALTCOINS_REPRODUCAO.zip": "56e24223d6e97e9240d7f0af907010b68ddaee6a734a12de7bf570fda8361789",
+      "CRIPTO_ACOMPANHAMENTO_REPRODUCAO.zip": "93d3a741ed0706eead5bdc2d17016d9484adb8b94d806aceb22a3fe4e92ae3eb",
+      "CRIPTO_CONTINUACAO_REPRODUCAO.zip": "2e3a7a5901baa6a29cd72a458a8c32b72792d8f4eb505a4af17e298277779db9",
+      "CRIPTO_LUCRO_ABSOLUTO_REPRODUCAO.zip": "079b160fd7596c791d1041c268e47591f91bba7c7915db352a4a32cffab51fc3",
+      "CRIPTO_TESTE_HISTORICO_REPRODUCAO.zip": "327a717ef910f39b38d4e2afc7abbffab236aace4846dd3a952aef09d2fe1983",
+      "FUNDING_CARRY_REPRODUCAO.zip": "d0a4444ce97b56ded07f290036181f6c6b41c45c5967c7b589a7ead21cb7997d"
+    },
+    "model_tuning": false,
+    "orders": false
+  },
+  "observer_status": {
+    "updated_at": "2026-09-07T23:29:15.609119+00:00",
+    "protocol_id": "discovery-altcoin-absolute-profit-20260907-v6-reviewed",
+    "universe_mode": "all_current_spot_usdt",
+    "external_comparisons": false,
+    "mode": "tick",
+    "ledger_rows": 2,
+    "ledger_head": "9c3e303cf4e1d659f3eccec156ed74dd49d537f669253dc28ece256251fc5a35",
+    "prospective_decisions": 0,
+    "matured_observations": 0,
+    "first_entry_utc": "2026-09-14T00:00:00+00:00",
+    "last_due_utc": "2026-12-07T00:00:00+00:00",
+    "pilot_finished": false,
+    "observation_quality": {
+      "expected_slots": 12,
+      "due_slots": 0,
+      "known_due_weeks": 0,
+      "missing_due_weeks": 0,
+      "missing_slots": [],
+      "decision_status_counts": {},
+      "cash_due_weeks": 0,
+      "active_due_weeks": 0,
+      "selected_holdings": 0,
+      "coverage_complete_for_due_weeks": false,
+      "standardized_completed_week_profit_usdt": null,
+      "standardized_pilot_profit_usdt": null,
+      "accounting": "Sum of independent weekly marks at a fixed 5000 USDT sizing reference; not compounded account equity. Primary scenario assumes 10bps fees and 10bps extra slippage per leg, plus displayed book costs. Missing weeks are not zero.",
+      "quality": "AWAITING_NEW_OBSERVATIONS",
+      "realized_profit": null,
+      "investor_net_brl_profit": null
+    },
+    "last_run_error": null,
+    "execution_ready": false,
+    "formal_promotion": false,
+    "capital": false
+  },
+  "automation": {
+    "id": "observar-altcoins-semanalmente",
+    "name": "Observar altcoins semanalmente",
+    "status": "ACTIVE",
+    "profile": "altcoin_reviewed_20260907",
+    "schedule": "Domingos às 21h America/Sao_Paulo",
+    "first_entry": "2026-09-13 21:00 America/Sao_Paulo",
+    "final_exit": "2026-12-06 21:00 America/Sao_Paulo",
+    "prompt_sha256": "d966a6fcbf9eafb94e9d38cb544061a9fb6cf1597fa005cbc45ddbe93744c70c",
+    "notification_intent": "Somente mudança relevante, falha, conclusão ou informação necessária",
+    "target_thread_id": "01a07d06-406f-7781-adad-0d0ea3ae9424"
+  },
+  "conclusion": "HISTORICAL_CARRY_SCENARIOS_POSITIVE; CURRENT_SELECTOR_ZERO_TRADES; NO_VERIFIED_REAL_PROFIT",
+  "standalone_reproduction": {
+    "status": "PASS",
+    "packaged_file_hashes": 4665,
+    "selected_tests_passed": 62,
+    "reproduced_result_files_byte_identical": 6,
+    "forward_snapshot": "REPLAYED_FROM_SAVED_RESPONSES",
+    "forward_eligible": 44,
+    "forward_selected": [],
+    "public_requests_during_reproduction": 0,
+    "orders": false,
+    "archive_sha256": "99d2063d33b9e517b58c1c35e5fec2c16cd29b3f1f6b1a34ce15879c3439fbb3",
+    "archive_bytes": 73738508,
+    "package_source_commit": "51c5a88084c9cf77c36731c5a26eb1e6574a3d8f"
+  }
+}

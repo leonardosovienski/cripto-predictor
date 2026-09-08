@@ -1,0 +1,21 @@
+{
+  "status": "PASS",
+  "prior_code_review_commit": "07794acbc5a3f779eb8d45c932be5070d36251a7",
+  "closure_changes": "Documentation, archival data and standard-library restoration helper",
+  "restoration": {
+    "archived_files_verified": 48,
+    "workspace_files_verified": 7136,
+    "restored_into_new_directory": true,
+    "public_requests": 0,
+    "automation_changed": false
+  },
+  "checks": {
+    "ruff_restore_helper": "PASS",
+    "plaintext_archive_secret_scan_findings": 0,
+    "previous_final_package_hash": "99d2063d33b9e517b58c1c35e5fec2c16cd29b3f1f6b1a34ce15879c3439fbb3",
+    "prior_1045_test_result_reinterpreted": false
+  },
+  "full_suite_repeated": false,
+  "bundle_verification": "Performed after commit; final commit and bundle checksum recorded in independent backup receipt",
+  "original_attachment_available": false
+}

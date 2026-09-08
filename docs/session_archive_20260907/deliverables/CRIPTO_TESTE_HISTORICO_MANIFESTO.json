@@ -1,0 +1,36 @@
+{
+  "created_at_utc": "2026-09-07T22:47:18.370597+00:00",
+  "base_commit": "3eabcf4a6b5a68b0c7d39e1346599cea99fbe8a2",
+  "head_commit": "5d28a63c1b2a147d17054ace3914de698a7959a4",
+  "branch": "codex/cripto-v1-2-execution-20260907",
+  "decision": "NO_TRADING_EVIDENCE_RULE_ABSTAINS",
+  "new_historical_performance_trials": 1,
+  "files": {
+    "CRIPTO_TESTE_HISTORICO.md": {
+      "sha256": "626050c2a0ff14df161733d4528d8f273bc55bca934ced496bd158cc7322cc5c",
+      "bytes": 3992
+    },
+    "CRIPTO_TESTE_HISTORICO.json": {
+      "sha256": "300203a02c8dec457e8eda89e14e8768de0578764713fd7d16d634a3bff673f0",
+      "bytes": 14791
+    },
+    "CRIPTO_TESTE_HISTORICO.patch": {
+      "sha256": "b7d6f610dfa7943d93b9c48e5c5f7fb3a72ba987a365700ed66565926286c57a",
+      "bytes": 2812756
+    },
+    "CRIPTO_TESTE_HISTORICO_REPRODUCAO.zip": {
+      "sha256": "327a717ef910f39b38d4e2afc7abbffab236aace4846dd3a952aef09d2fe1983",
+      "bytes": 67209500
+    },
+    "ACOMPANHAMENTO_CRIPTO.md": {
+      "sha256": "fb89a9516eebc69f014d5145472789ab29be26a67973dc87888c0bac2e029391",
+      "bytes": 3751
+    },
+    "ACOMPANHAMENTO_CRIPTO_V4_20260907.md": {
+      "sha256": "e62123a004e8ed62f6316848ee4cbdcbfc5abd25508bdacedf138eede7a10f07",
+      "bytes": 2633
+    }
+  },
+  "offline_replay": "BYTE_IDENTICAL",
+  "formal_attestation": false
+}

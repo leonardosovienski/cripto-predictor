@@ -1,0 +1,35 @@
+{
+  "reviewed_against": [
+    "previous_prompt.txt",
+    "docs/PROJECT_STATE_20260907.md",
+    "deliverables/CRIPTO_REVISAO_FINAL.json",
+    "automation_snapshot.json"
+  ],
+  "manual_semantic_review": "PASS",
+  "preserved": [
+    "absolute net profit objective",
+    "free research venue/asset choice",
+    "solo work",
+    "no real capital/accounts/orders/paid services",
+    "1045 tests refer to prior review",
+    "140 weeks with zero selected trades",
+    "BTC +54.84 and ETH +34.62 USDT are separate assumed-cost scenarios",
+    "no verified investor profit",
+    "new registered historical research authorized",
+    "old consumed data remain adaptive",
+    "frozen families and observer preserved"
+  ],
+  "added_for_chat_independence": [
+    "tracked report paths",
+    "snapshot of all deliverables",
+    "shared Git location and independent bundle",
+    "successor heartbeat migration instruction",
+    "data path and byte-sensitive freeze restoration notes",
+    "missing original attachment disclosed",
+    "local commit versus push distinction"
+  ],
+  "original_prompt_sha256": "ce12fede67b82eaa4ac90e855fc6f1ccdaeb9fff400f5db1d4bb9af5c46da19f",
+  "revised_prompt_sha256": "1ce9da58539cdf7b7bc638cfbd24d49aff09ac0216247679086ee7357120962c",
+  "scientific_reassessment_in_this_closure": false,
+  "last_review_conclusion": "HISTORICAL_CARRY_SCENARIOS_POSITIVE; CURRENT_SELECTOR_ZERO_TRADES; NO_VERIFIED_REAL_PROFIT"
+}

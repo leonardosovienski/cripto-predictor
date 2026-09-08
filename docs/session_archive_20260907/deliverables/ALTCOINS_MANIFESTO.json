@@ -1,0 +1,35 @@
+{
+  "base_commit": "4cf37a8",
+  "final_commit": "2b346e2600917133a51274fb9fa50b944595aa90",
+  "working_tree_clean": true,
+  "patch_reverse_check": "PASS",
+  "protected_git_blobs_unchanged": [
+    "charters/scientific_state.json",
+    "GarimpoInvestimentos/trials.json",
+    "GarimpoInvestimentos/v3/costs.py",
+    "CR_FREEZE_INDEX.md",
+    "CR_RESEARCH_FREEZE.md"
+  ],
+  "files": {
+    "ALTCOINS_DELTA.patch": {
+      "sha256": "77fde226f397a67f3f0e87b9fdf22da8122fcbfe3fd16441f311286ce1d36a9f",
+      "bytes": 357125
+    },
+    "ALTCOINS_RANKING_PESQUISA.md": {
+      "sha256": "ddeb8d98ce4d487352e6a1d7e140a5cb864c1d96ccb016b942690302e09cc337",
+      "bytes": 4245
+    },
+    "ALTCOINS_REPRODUCAO.zip": {
+      "sha256": "56e24223d6e97e9240d7f0af907010b68ddaee6a734a12de7bf570fda8361789",
+      "bytes": 22654348
+    },
+    "ALTCOINS_RESULTADO.md": {
+      "sha256": "5d5491c4dace524b329066e3cbed7cf7998315b1ac458ec66901a60575eadb55",
+      "bytes": 8799
+    },
+    "ALTCOINS_RESULTADOS.json": {
+      "sha256": "565eb1cb09676220cb3fa11d97ad3b0682ba58161837d3900bf0ca78a1dc5ae0",
+      "bytes": 137801
+    }
+  }
+}
