@@ -1,0 +1,16 @@
+{
+  "id": "corrections-20260908",
+  "base_commit": "3b015b7",
+  "authorization": "User requested: Resolve e corrige todas as falhas. Resolve technical and methodological issues identified in the chat review, within the original public-data, solo, no-orders scope.",
+  "work": [
+    "Supported planner v3 with strict JSON, finite integer timestamps, source identity/path checks, complete book validation and a failing CLI status for rejected diagnostics. Frozen v1/v2 stay as historical evidence.",
+    "Separate stdlib raw-data reconstruction audit, without importing historical normalization code.",
+    "Consolidated current state and issue register distinguishing modeled historical profit, future evidence, actual fees and external author independence.",
+    "Separately preregistered daily BTC carry observer with durable decisions, isolated ledger, public quotes/funding/mark data, finite calendar and no backdated entry or exit. Preserve the existing altcoin observer."
+  ],
+  "confirmed_v2_defect": "validate_sample accepted NaN request_start_ns and received_ns because comparisons with NaN were false; reproduced before correction.",
+  "historical_strategy_changes": 0,
+  "historical_parameter_searches": 0,
+  "preserve": "All historical freezes, negative results, delivered packages, original repository, main and existing altcoin observer/ledger.",
+  "completion_limit": "Technical defects and infrastructure gaps can be corrected now. Elapsed future evidence, real account fees, taxes, actual fills and independent external authorship cannot be manufactured or marked verified."
+}
