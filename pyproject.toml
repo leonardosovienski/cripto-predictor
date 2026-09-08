@@ -37,6 +37,9 @@ cripto = "GarimpoInvestimentos.plugin:PLUGIN"
 [tool.hatch.build.targets.wheel]
 packages = ["GarimpoInvestimentos"]
 
+[tool.hatch.build.targets.sdist]
+include = ["/GarimpoInvestimentos", "/charters", "/observation_plans", "/README.md", "/pyproject.toml"]
+
 [tool.hatch.build.targets.wheel.force-include]
 "charters" = "GarimpoInvestimentos/charters"
 "observation_plans" = "GarimpoInvestimentos/observation_plans"

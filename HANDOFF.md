@@ -1,4 +1,4 @@
-> Continuidade sem o chat antigo: `docs/SESSION_HANDOFF_20260907.md`; prompt conferido: `docs/NEXT_CHAT_PROMPT.md`; tag do fechamento: `cripto-session-20260907-final`.
+> Continuidade vigente após consolidar as branches em main: `docs/SESSION_HANDOFF_20260908.md`. A sessão anterior continua em `docs/SESSION_HANDOFF_20260907.md` e na tag `cripto-session-20260907-final`.
 
 # HANDOFF — GarimpoInvestimentos (Fase 1 + melhorias)
 

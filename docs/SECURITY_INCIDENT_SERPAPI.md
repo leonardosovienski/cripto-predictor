@@ -28,6 +28,8 @@ Essas duas ações continuam como `EXTERNAL_BLOCKER` para fins de auditoria form
 
 ## Integridade dos inputs da H5 na janela de exposição — discussão registrada em 2026-08-24
 
+> Registro histórico recuperado da branch 4129035 na consolidação de 08/09/2026. A discussão abaixo não constitui nova verificação de credenciais ou dos inputs perdidos. Afirmações de impossibilidade absoluta e de ausência de mecanismos alternativos refletem a interpretação daquela revisão; o que permanece demonstrado é a limitação da evidência disponível. O estado científico vigente é definido em `charters/scientific_state.json`.
+
 Pergunta em aberto desde o incidente, nunca respondida por escrito: a H5
 (`v2-dpl-multi-h7`, coletada 2026-07-10 a 2026-07-28, REFUTADA/NO-GO em
 2026-07-28) usou notícias via SerpAPI como parte do input do juiz LLM. Se a

@@ -1,4 +1,5 @@
 import re
+import tarfile
 import zipfile
 from pathlib import Path
 
@@ -6,6 +7,25 @@ ROOT = Path(__file__).resolve().parents[1]
 SECRET = re.compile(
     rb"(?:sk-[A-Za-z0-9_-]{20,}|AIza[0-9A-Za-z_-]{20,}|SERP_API_KEY\s*=\s*[^\r\n]+)"
 )
+
+
+def test_sdist_contains_build_sources_without_research_archives():
+    sdists = sorted((ROOT / "dist").glob("*.tar.gz"))
+    assert sdists, "rode uv build antes da suíte para validar o pacote fonte"
+    for sdist in sdists:
+        with tarfile.open(sdist, "r:gz") as archive:
+            names = [
+                member.name.split("/", 1)[1] for member in archive.getmembers() if member.isfile()
+            ]
+            assert "pyproject.toml" in names
+            assert "GarimpoInvestimentos/cli.py" in names
+            assert any(name.startswith("charters/") for name in names)
+            assert any(name.startswith("observation_plans/") for name in names)
+            assert not any(
+                name.split("/", 1)[0] in {"docs", "dist", "work", ".git", ".venv"}
+                or name.endswith((".zip", ".bundle", ".whl", ".tar.gz", ".db", ".jsonl", ".env"))
+                for name in names
+            )
 
 
 def test_built_wheels_contain_no_runtime_artifacts_or_secrets():

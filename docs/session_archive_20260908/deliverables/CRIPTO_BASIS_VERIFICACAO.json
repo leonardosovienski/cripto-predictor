@@ -1,0 +1,39 @@
+{
+  "verified_utc": "2026-09-08T02:27:40.499289+00:00",
+  "package": {
+    "packaged_code_commit": "23be49d5b3ca9dff4179b790f46462d9ecb5af40",
+    "package_sha256": "6d55febc6a49500c401667b9ec7d402225d971e91915cf4d413b557a7fccbc2b",
+    "package_bytes": 16715392,
+    "extracted_files_verified": 1167,
+    "outputs": {
+      "CRIPTO_BASIS_IMPLEMENTACAO.zip": "6d55febc6a49500c401667b9ec7d402225d971e91915cf4d413b557a7fccbc2b",
+      "CRIPTO_BASIS_RESULTADOS.md": "f85ad7369f1588fdfef06f5db36bc5288703d22bbb19ccd7ef03b7dc6112d85b",
+      "CRIPTO_BASIS_RESULTADOS.json": "b05e9f3fd8db17ec16561aefc9c19ddc94954fcea2316a375e091a775787e3bf",
+      "CRIPTO_BASIS_REPRODUZIR.md": "b8666745e1c9c938050c985e51c9524c6ed0ec0552b90009eceb006689fd4d6a"
+    }
+  },
+  "reproduction": {
+    "status": "PASS",
+    "historical_result_files_byte_identical": 9,
+    "public_source_responses_rebuilt": 532,
+    "accounting_audit": "PASS",
+    "saved_quote_plans_byte_identical": true,
+    "network_requests": 0
+  },
+  "network_socket_connections_disabled_during_replay": true,
+  "extracted_package_new_tests_passed": 28,
+  "distinct_targeted_tests_passed_in_repository": 42,
+  "previous_delivery_and_observer_preservation": {
+    "checked_utc": "2026-09-08T02:23:53.889894+00:00",
+    "original_repository_clean": true,
+    "original_head": "fbf4c714a092668bc1b82942ebdececd396e3ab7",
+    "main_head": "7834a60dcf044ad65a118e323cb79f163ff0bbcc",
+    "automation_unchanged": true,
+    "observer_ledger_sha256": "42e96f95f1765784e12cbf9fed2d77d26cbd0f268bbbaf46bcdf3715ec6141a5",
+    "observer_runtime_verification": {
+      "status": "PASS",
+      "files_checked": 3785
+    },
+    "previous_delivery_unchanged": true
+  }
+}

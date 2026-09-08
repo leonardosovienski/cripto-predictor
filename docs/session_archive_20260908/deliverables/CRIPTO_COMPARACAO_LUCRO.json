@@ -1,0 +1,352 @@
+{
+  "scope": {
+    "id": "profit-comparison-20260908-v1",
+    "authorization": "User requested: testa o projeto ver se melhorou a projecao de lucro",
+    "source_head": "d619be9",
+    "classification": "Verification of already inspected adaptive historical results, not a new strategy trial or independent validation",
+    "strategy_variants_added": 0,
+    "parameter_searches": 0,
+    "scope": "Recompute all twelve frozen AR1/AR2 carry cost cases and all six frozen BR1/BR2 cases. Compare exact saved output bytes. Independently audit BR1/BR2 Decimal accounting and replay twelve saved execution plans. Run existing relevant software tests.",
+    "comparison": "Compare separate 5000 USDT simulations from 2024-01-01 UTC to the cutoff opening price at 2026-09-07 UTC. Report every replayed stream; existing AR1 BTC is the observed best prior carry result, not a prospectively selected winner. Show calendar contributions for 2024, 2025 and partial 2026; do not restart or resize holdings at year boundaries. Cost cases remain exactly as frozen.",
+    "limitations": [
+      "Different holding times and changing exposure; identical initial account size does not imply identical risk.",
+      "Prior AR drawdown samples daily trade close; BR drawdown samples hourly mark close. Do not rank these as the same measurement.",
+      "Dated futures use settlement fees and no funding; stress mechanisms are applied where economically relevant, not identical realized costs.",
+      "Original one-year 50-percent-allocation carry checkpoint is not directly comparable to the 980-day 25-percent-initial-allocation studies.",
+      "No sum of independently funded streams is a result for one 5000 USDT portfolio.",
+      "Previously reported AR3 losses are retained as context and not rerun in this carry comparison.",
+      "No annualized or monthly historical average is promoted to a future profit forecast. Validated future expected profit remains unknown."
+    ],
+    "network": "Disabled during historical and saved-quote replay. No additional prices or prospective performance are consumed.",
+    "preservation": "Only add comparison tooling and evidence in the isolated research worktree. Preserve frozen files, previous deliveries, original repository, weekly observer and ledger. No orders or account access."
+  },
+  "verification": {
+    "existing_carry_result_files_byte_identical": 14,
+    "existing_carry_source_responses_verified": 68,
+    "basis": {
+      "status": "PASS",
+      "historical_result_files_byte_identical": 9,
+      "public_source_responses_rebuilt": 532,
+      "accounting_audit": "PASS",
+      "saved_quote_plans_byte_identical": true,
+      "network_requests": 0
+    },
+    "basis_decimal_audit": {
+      "status": "PASS",
+      "raw_sources_rebuilt": 532,
+      "normalized_series_rebuilt": 29,
+      "decision_records_checked": 23994,
+      "economic_cost_cases_checked": 6,
+      "decimal_comparisons": 165258,
+      "maximum_absolute_difference_usdt": "9.76876712325760E-10",
+      "hourly_margin_and_jump_checks": 73104,
+      "economic_engine_imported": false,
+      "real_profit_certified": false
+    },
+    "network_socket_connections_disabled_during_replay": true,
+    "network_requests": 0
+  },
+  "rows": {
+    "AR1_BTCUSDT": {
+      "implementation": "existing",
+      "scenarios": {
+        "base": {
+          "profit_usdt": 424.2528895770447,
+          "return_fraction": 0.08485057791540895,
+          "calendar_contributions_usdt": {
+            "2024": 235.25657850198058,
+            "2025": 155.71072957849992,
+            "2026": 33.28558149656419
+          },
+          "hedges": 1,
+          "active_weeks": 140,
+          "cash_weeks": 0,
+          "minimum_jump_surplus_usdt": 532.5803867652437
+        },
+        "adverse": {
+          "profit_usdt": 341.12758968089474,
+          "return_fraction": 0.06822551793617904,
+          "calendar_contributions_usdt": {
+            "2024": 204.6683138013277,
+            "2025": 130.71072957852903,
+            "2026": 5.7485463010380045
+          },
+          "hedges": 1,
+          "active_weeks": 140,
+          "cash_weeks": 0,
+          "minimum_jump_surplus_usdt": 482.8825330235157
+        },
+        "compression": {
+          "profit_usdt": 104.11964566012102,
+          "return_fraction": 0.020823929132024244,
+          "calendar_contributions_usdt": {
+            "2024": 77.82724931741541,
+            "2025": 48.24643250656027,
+            "2026": -21.954036163854653
+          },
+          "hedges": 1,
+          "active_weeks": 140,
+          "cash_weeks": 0,
+          "minimum_jump_surplus_usdt": 289.62062949448665
+        }
+      }
+    },
+    "AR1_ETHUSDT": {
+      "implementation": "existing",
+      "scenarios": {
+        "base": {
+          "profit_usdt": 328.9443272131266,
+          "return_fraction": 0.0657888654426253,
+          "calendar_contributions_usdt": {
+            "2024": 229.659083320229,
+            "2025": 87.37031242115518,
+            "2026": 11.91493147174242
+          },
+          "hedges": 1,
+          "active_weeks": 140,
+          "cash_weeks": 0,
+          "minimum_jump_surplus_usdt": 1711.5992905308087
+        },
+        "adverse": {
+          "profit_usdt": 250.0137737769801,
+          "return_fraction": 0.05000275475539606,
+          "calendar_contributions_usdt": {
+            "2024": 198.97161198457616,
+            "2025": 62.37031242118701,
+            "2026": -11.328150628783078
+          },
+          "hedges": 1,
+          "active_weeks": 140,
+          "cash_weeks": 0,
+          "minimum_jump_surplus_usdt": 1664.7474356335326
+        },
+        "compression": {
+          "profit_usdt": 65.9370356031759,
+          "return_fraction": 0.013187407120635264,
+          "calendar_contributions_usdt": {
+            "2024": 76.39918413355463,
+            "2025": 15.270123914332544,
+            "2026": -25.73227244471127
+          },
+          "hedges": 1,
+          "active_weeks": 140,
+          "cash_weeks": 0,
+          "minimum_jump_surplus_usdt": 1510.9055081850004
+        }
+      }
+    },
+    "AR2_BTCUSDT": {
+      "implementation": "existing",
+      "scenarios": {
+        "base": {
+          "profit_usdt": 17.79110437593954,
+          "return_fraction": 0.0035582208751878674,
+          "calendar_contributions_usdt": {
+            "2024": 17.79110437593954,
+            "2025": 0.0,
+            "2026": 0.0
+          },
+          "hedges": 3,
+          "active_weeks": 12,
+          "cash_weeks": 128,
+          "minimum_jump_surplus_usdt": 3130.5684604099597
+        },
+        "adverse": {
+          "profit_usdt": -82.25798634520652,
+          "return_fraction": -0.01645159726904133,
+          "calendar_contributions_usdt": {
+            "2024": -40.20319182471212,
+            "2025": -24.999999999968168,
+            "2026": -17.05479452052623
+          },
+          "hedges": 3,
+          "active_weeks": 12,
+          "cash_weeks": 128,
+          "minimum_jump_surplus_usdt": 3124.295264202426
+        },
+        "compression": {
+          "profit_usdt": -117.41943116522634,
+          "return_fraction": -0.023483886233045315,
+          "calendar_contributions_usdt": {
+            "2024": -75.36463664473195,
+            "2025": -24.999999999968168,
+            "2026": -17.05479452052623
+          },
+          "hedges": 3,
+          "active_weeks": 12,
+          "cash_weeks": 128,
+          "minimum_jump_surplus_usdt": 3114.9776214504614
+        }
+      }
+    },
+    "AR2_ETHUSDT": {
+      "implementation": "existing",
+      "scenarios": {
+        "base": {
+          "profit_usdt": 30.687756592333244,
+          "return_fraction": 0.006137551318466716,
+          "calendar_contributions_usdt": {
+            "2024": 30.687756592333244,
+            "2025": 0.0,
+            "2026": 0.0
+          },
+          "hedges": 4,
+          "active_weeks": 16,
+          "cash_weeks": 124,
+          "minimum_jump_surplus_usdt": 3043.8936047936195
+        },
+        "adverse": {
+          "profit_usdt": -80.17623967967029,
+          "return_fraction": -0.016035247935934027,
+          "calendar_contributions_usdt": {
+            "2024": -38.12144515917589,
+            "2025": -24.999999999968168,
+            "2026": -17.05479452052623
+          },
+          "hedges": 4,
+          "active_weeks": 16,
+          "cash_weeks": 124,
+          "minimum_jump_surplus_usdt": 3037.4527088004015
+        },
+        "compression": {
+          "profit_usdt": -130.09324208973067,
+          "return_fraction": -0.0260186484179461,
+          "calendar_contributions_usdt": {
+            "2024": -88.03844756923627,
+            "2025": -24.999999999968168,
+            "2026": -17.05479452052623
+          },
+          "hedges": 4,
+          "active_weeks": 16,
+          "cash_weeks": 124,
+          "minimum_jump_surplus_usdt": 3027.591006595739
+        }
+      }
+    },
+    "BR1_DATED_BTC": {
+      "implementation": "added",
+      "verdict": "POSITIVE_BUT_DESCRIPTIVELY_UNCERTAIN",
+      "scenarios": {
+        "base": {
+          "profit_usdt": 230.16869599000074,
+          "return_fraction": 0.04603373919800015,
+          "calendar_contributions_usdt": {
+            "2024": 164.48200165077105,
+            "2025": 65.68669433922969,
+            "2026": 0.0
+          },
+          "hedges": 5,
+          "active_weeks": 75,
+          "cash_weeks": 65,
+          "minimum_jump_surplus_usdt": 2187.0073644401054
+        },
+        "adverse": {
+          "profit_usdt": 110.07199712974398,
+          "return_fraction": 0.022014399425948794,
+          "calendar_contributions_usdt": {
+            "2024": 99.46297866045006,
+            "2025": 27.66381298959368,
+            "2026": -17.054794520299765
+          },
+          "hedges": 5,
+          "active_weeks": 75,
+          "cash_weeks": 65,
+          "minimum_jump_surplus_usdt": 2176.410491909355
+        },
+        "stress": {
+          "profit_usdt": 78.41616366974267,
+          "return_fraction": 0.015683232733948536,
+          "calendar_contributions_usdt": {
+            "2024": 74.14253020044998,
+            "2025": 21.328427989592456,
+            "2026": -17.054794520299765
+          },
+          "hedges": 5,
+          "active_weeks": 75,
+          "cash_weeks": 65,
+          "minimum_jump_surplus_usdt": 2170.2793728093557
+        }
+      }
+    },
+    "BR2_CONVERGENCE_BTC": {
+      "implementation": "added",
+      "verdict": "NO_OPPORTUNITY_UNDER_REGISTERED_RULE",
+      "scenarios": {
+        "base": {
+          "profit_usdt": 0.0,
+          "return_fraction": 0.0,
+          "calendar_contributions_usdt": {
+            "2024": 0.0,
+            "2025": 0.0,
+            "2026": 0.0
+          },
+          "hedges": 0,
+          "active_weeks": 0,
+          "cash_weeks": 140,
+          "minimum_jump_surplus_usdt": null
+        },
+        "adverse": {
+          "profit_usdt": 0.0,
+          "return_fraction": 0.0,
+          "calendar_contributions_usdt": {
+            "2024": 0.0,
+            "2025": 0.0,
+            "2026": 0.0
+          },
+          "hedges": 0,
+          "active_weeks": 0,
+          "cash_weeks": 140,
+          "minimum_jump_surplus_usdt": null
+        },
+        "stress": {
+          "profit_usdt": 0.0,
+          "return_fraction": 0.0,
+          "calendar_contributions_usdt": {
+            "2024": 0.0,
+            "2025": 0.0,
+            "2026": 0.0
+          },
+          "hedges": 0,
+          "active_weeks": 0,
+          "cash_weeks": 140,
+          "minimum_jump_surplus_usdt": null
+        }
+      }
+    }
+  },
+  "added_models_vs_existing_btc_carry": {
+    "BR1_DATED_BTC": {
+      "base": {
+        "existing_scenario": "base",
+        "new_minus_existing_profit_usdt": -194.08419358704396
+      },
+      "adverse": {
+        "existing_scenario": "adverse",
+        "new_minus_existing_profit_usdt": -231.05559255115077
+      },
+      "stress": {
+        "existing_scenario": "compression",
+        "new_minus_existing_profit_usdt": -25.70348199037835
+      }
+    },
+    "BR2_CONVERGENCE_BTC": {
+      "base": {
+        "existing_scenario": "base",
+        "new_minus_existing_profit_usdt": -424.2528895770447
+      },
+      "adverse": {
+        "existing_scenario": "adverse",
+        "new_minus_existing_profit_usdt": -341.12758968089474
+      },
+      "stress": {
+        "existing_scenario": "compression",
+        "new_minus_existing_profit_usdt": -104.11964566012102
+      }
+    }
+  },
+  "validated_future_expected_profit_usdt": null,
+  "new_evidence_of_improved_future_profit": false,
+  "independent_confirmation": false,
+  "historical_strategies_changed": false,
+  "projection_warning": "Historical arithmetic under assumed costs; future expected profit remains unknown."
+}

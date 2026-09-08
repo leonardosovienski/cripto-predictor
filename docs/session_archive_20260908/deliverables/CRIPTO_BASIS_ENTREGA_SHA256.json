@@ -1,0 +1,12 @@
+{
+  "packaged_code_commit": "23be49d5b3ca9dff4179b790f46462d9ecb5af40",
+  "package_sha256": "6d55febc6a49500c401667b9ec7d402225d971e91915cf4d413b557a7fccbc2b",
+  "package_bytes": 16715392,
+  "extracted_files_verified": 1167,
+  "outputs": {
+    "CRIPTO_BASIS_IMPLEMENTACAO.zip": "6d55febc6a49500c401667b9ec7d402225d971e91915cf4d413b557a7fccbc2b",
+    "CRIPTO_BASIS_RESULTADOS.md": "f85ad7369f1588fdfef06f5db36bc5288703d22bbb19ccd7ef03b7dc6112d85b",
+    "CRIPTO_BASIS_RESULTADOS.json": "b05e9f3fd8db17ec16561aefc9c19ddc94954fcea2316a375e091a775787e3bf",
+    "CRIPTO_BASIS_REPRODUZIR.md": "b8666745e1c9c938050c985e51c9524c6ed0ec0552b90009eceb006689fd4d6a"
+  }
+}
