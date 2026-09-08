@@ -1,0 +1,32 @@
+{
+  "registered_utc": "2026-09-08T06:40:35.942414+00:00",
+  "protocol_commit": "46d52b9",
+  "before_market_collection": true,
+  "files": {
+    "scripts/research_io.py": "7f9230aeb36351823de96f5f77babfa2b43ef7d6a071cfc7df0563aaa5c762b8",
+    "scripts/plan_btc_hedge_v3.py": "c14dd59386006eaabc7648909ca067a93d038b0f8899835f225bfafcb93907fa",
+    "scripts/audit_basis_sources.py": "52192b3fbca393b58f06aabaf78add853fd61dfb65f4a24d7c226549f7c45e73",
+    "scripts/carry_public.py": "9e3c9e3e7767330121a0862e104ea6b7746417dc1f8b726d3194e34b26e89a0c",
+    "scripts/carry_forward_math.py": "344550507912f7eb4d416a23aff9b0024d0f0f14906d8f4f5bf74fba68d1e777",
+    "scripts/observe_carry_forward.py": "2044e0090cb2cf75ae6df4b1b1b2edc050baadb72fd4159c603f5550ec7663a7",
+    "scripts/plan_btc_hedge_v2.py": "c619cfde3c85720fd52317f65e63d3a1d04590d7807720cdfb0e5ee3d962bb15",
+    "scripts/plan_btc_hedge.py": "8b926086a2e5b509cc2fb5d9a1b2dd766db101e66e7ce05927a4ca7b057c917c",
+    "scripts/diagnose_btc_execution.py": "5f316589e5bbbbebea18e4b4b67023f09d6593601b3d9d956176705b10889cd4",
+    "scripts/basis_data.py": "4b62d143208781a36be691691678fa84a6d5ceac51db1fde446c97ad2feb157b",
+    "tests/test_research_corrections.py": "68791e48dfeb8e975a2200606210f013426cb44ee9132f4f178cdcd9a123793c",
+    "tests/test_carry_forward.py": "4eb6a504e3f2517b58d39e38ee00b28d998a9f9876ddfc00a90bd88504e2bbc9",
+    "tests/test_carry_public.py": "4323db954cfab5242c736c9194b9def81cf05b3740eecb75a1e936dfb0ec6cf9",
+    "docs/evidence/carry_forward_20260908/protocol.json": "f8394581f6b228dded956d6396cdffd9ea6891c4f3d1c2b0597f539d8f8370ca",
+    "scripts/__init__.py": "8b4065a16729ae34434335699f16fb7348d665b026efd991ba918944d04a1128",
+    "scripts/immediate_public.py": "67454ae07fb6242d63db8ee19f2026868957859b29f718c2014cc1ac232bbff6",
+    "scripts/run_immediate_audit.py": "1c6761d1ad6a8aaf30d4e945289b9099ebc9540d19c74bd30e9b34822f06ca89",
+    "scripts/audit_immediate_decimal.py": "ab4ca618c8ee1d916ee698d0ee79b15060d9840ce3f934bc1f5a435da02ab2e9",
+    "tests/test_immediate_audit.py": "25a49c37fd595800f9c434db67c39861a3db1c6ff7442656cfc9d868b6366f9d",
+    "docs/evidence/immediate_audit_20260908/protocol.json": "b578c0ab3509c778f9f35522f6316a84df0f7d8c80b05e5d2be80aadf73994c9"
+  },
+  "tests_passed_before_collection": 57,
+  "new_tests": 8,
+  "ruff": "PASS",
+  "pyright_errors": 0,
+  "same_author": true
+}
