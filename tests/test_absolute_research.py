@@ -143,6 +143,16 @@ def test_no_trade_has_no_profit_no_residual_cost_or_win_rate(flat_asset):
     assert result["bootstrap"]["interval_95_usdt"] is None
 
 
+def test_current_venue_filters_cannot_change_any_historical_quantity(flat_asset):
+    plan = carry_decisions(flat_asset, "AR1")
+    before = simulate(flat_asset, plan, cost())
+    flat_asset["step"] = Decimal("100")
+    flat_asset["filters"] = {
+        k: {"min_qty": 999, "max_qty": 0, "min_notional": 100000000} for k in ("spot", "perp")
+    }
+    assert simulate(flat_asset, plan, cost()) == before
+
+
 def test_reserve_stress_cannot_use_spot_gains_or_positive_future_funding():
     assert hourly_surplus(3750, -10, 12.5, 100, 200) == pytest.approx(2452.5)
     assert hourly_surplus(3750, -10, 12.5, 100, 200, 0.3) < hourly_surplus(

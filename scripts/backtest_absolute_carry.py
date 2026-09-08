@@ -17,6 +17,7 @@ from scripts.backtest_absolute_spot import block_interval, concentration
 from scripts.collect_absolute_carry import DAY, END, HOUR, START, SYMBOLS, write
 
 ENTRY = int(datetime(2024, 1, 1, tzinfo=UTC).timestamp() * 1000)
+SIMULATION_STEP = Decimal("0.001")
 
 
 def stamp(t: int) -> str:
@@ -70,7 +71,7 @@ def load_dataset(directory: Path, protocol_path: Path):
         if sha((directory / name).read_bytes()) != expected:
             raise ValueError("Normalized data changed: " + name)
     for source in manifest["sources"]:
-        raw = gzip.decompress((directory / source["raw"]).read_bytes())
+        raw = gzip.decompress((directory / source["raw"].replace("\\", "/")).read_bytes())
         if sha(raw) != source["sha256"] or source["status"] != 200:
             raise ValueError("Raw source changed")
     info = {
@@ -246,17 +247,14 @@ def simulate(asset: dict, decisions: list[dict], cost: dict) -> dict:
         if decision and decision["enter"]:
             if current or cash <= 0:
                 raise ValueError("Invalid account/overlapping hold")
-            q = rounded_quantity(0.25 * cash, s_open, asset["step"])
-            feasible = all(
-                f["min_qty"] <= q <= f["max_qty"]
-                and q * (s_open if kind == "spot" else f_open) >= f["min_notional"]
-                for kind, f in asset["filters"].items()
-            )
+            # Fixed model unit; current venue filters cannot enter historical sizing.
+            q = rounded_quantity(0.25 * cash, s_open, SIMULATION_STEP)
+            feasible = q > 0
             if not feasible:
                 orders.append(
                     {
                         "time": stamp(day),
-                        "action": "NO_ENTRY_CURRENT_QUANTITY_FILTER",
+                        "action": "NO_ENTRY_ZERO_QUANTIZED_MODEL_SIZE",
                         "quantity": q,
                     }
                 )
@@ -458,6 +456,8 @@ def run_carry(assets: dict, costs: dict, output: Path) -> dict:
         summaries[name] = {
             "scenarios": scenarios,
             "current_quantity_step": str(assets[symbol]["step"]),
+            "historical_simulation_quantity_step": str(SIMULATION_STEP),
+            "current_filters_used_for_historical_sizing": False,
             "current_filters": assets[symbol]["filters"],
             "future_observation_candidate": bool(
                 adverse["profit_usdt_mechanical"] > 0

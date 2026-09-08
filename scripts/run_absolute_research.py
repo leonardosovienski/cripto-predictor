@@ -39,6 +39,9 @@ def main():
     result = {
         "protocol_id": protocol["id"],
         "protocol_sha256": registry["protocol_sha256"],
+        "causality_amendment_sha256": hashlib.sha256(
+            (EVIDENCE / "causality_amendment.json").read_bytes()
+        ).hexdigest(),
         "strategy_streams": 5,
         "evidence_class": "ADAPTIVE_HISTORICAL",
         "carry": carry,

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import gzip
+import hashlib
 import json
 import math
 from collections import Counter
@@ -96,7 +97,8 @@ def selector_diagnosis(scores_path: Path) -> dict:
     known = [r for r in scores if r.get("score_log") is not None]
     positive_mean = [r for r in known if r["mean_log_payoff"] > 0]
     return {
-        "source": str(scores_path),
+        "source": "Preserved v5 scores.json.gz",
+        "source_sha256": hashlib.sha256(scores_path.read_bytes()).hexdigest(),
         "observations": len(scores),
         "status_counts": dict(Counter(r["status"] for r in scores)),
         "scorable": len(known),
@@ -127,7 +129,7 @@ def run_spot(history: Path, output: Path, root: Path) -> dict:
     decisions = momentum_decisions(data)
     write(output / "decisions.json", decisions)
     resolutions = json.loads(
-        (root / "docs/evidence/altcoin_payoff_20260907/results.json").read_text()
+        (root / "docs/evidence/altcoin_payoff_20260907/results.json").read_text(encoding="utf-8")
     )["identity_resolutions"]
     weeks = attach_outcomes(decisions, data, resolutions)
     write(output / "weekly_results.json", weeks)
