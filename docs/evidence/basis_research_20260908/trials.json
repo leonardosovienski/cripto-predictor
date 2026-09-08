@@ -1,0 +1,17 @@
+{
+  "protocol_sha256": "f602de0270aaf998618c8a78212d8b95233cc9f8569387df29af8c33e98d424f",
+  "registered_utc": "2026-09-08T01:44:13.753828+00:00",
+  "streams": [
+    {
+      "id": "BR1_DATED_BTC",
+      "status": "REGISTERED_NOT_EVALUATED",
+      "economic_evaluations": 0
+    },
+    {
+      "id": "BR2_CONVERGENCE_BTC",
+      "status": "REGISTERED_NOT_EVALUATED",
+      "economic_evaluations": 0
+    }
+  ],
+  "runs": []
+}
