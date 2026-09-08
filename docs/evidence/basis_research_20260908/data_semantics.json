@@ -1,0 +1,8 @@
+{
+  "registered_before_evaluation": true,
+  "kind": "SOURCE_TIMESTAMP_CLARIFICATION_NOT_PARAMETER_CHANGE",
+  "finding": "delivery-price deliveryTime labels the settlement date at 00:00 UTC; current exchangeInfo deliveryDate identifies quarterly expiry at 08:00 UTC. Treating deliveryTime as the event instant would expose the outcome eight hours early.",
+  "implementation": "Match a published delivery-price record by UTC calendar date to the deterministic symbol expiry at 08:00 UTC. Preserve its original deliveryTime. Expose deliveryPrice only at the 08:00 exit event; never at the midnight date label. Missing or ambiguous date mapping is unknown, never synthesized from spot.",
+  "evidence": "Capability probe raw response hashes retained; exchangeInfo current BTCUSDT_260925 and BTCUSDT_261225 both specify 08:00. Closed-quarter delivery records label their days at 00:00. No economic result or settlement price inspected to choose this interpretation.",
+  "impact": "Clarifies timestamp semantics only; the registered expiry calendar, entry/exit policy, threshold and cost parameters remain unchanged."
+}
