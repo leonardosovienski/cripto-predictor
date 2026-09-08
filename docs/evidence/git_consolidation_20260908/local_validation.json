@@ -1,0 +1,57 @@
+{
+  "date": "2026-09-08",
+  "tested_code_commit": "e661cf748255308716441d36a77d9f93b3d9acd4",
+  "python": "3.13.14",
+  "pytest": {
+    "passed": 1170,
+    "failed": 0,
+    "duration_seconds": 106.51
+  },
+  "ruff_check": "PASS",
+  "ruff_format": {
+    "status": "PASS",
+    "files": 410
+  },
+  "pyright": {
+    "errors": 0,
+    "warnings": 0
+  },
+  "secret_scan": {
+    "findings": 0
+  },
+  "uv_lock_check": "PASS",
+  "uv_build": "PASS: sdist and wheel",
+  "research_files_and_manifests_in_git": {
+    "checked": 105,
+    "mismatches": 0
+  },
+  "checkout_filters": {
+    "autocrlf_values": [
+      true,
+      false
+    ],
+    "total_file_checks": 270,
+    "mismatches": 0
+  },
+  "h6_frozen_definition": "PASS",
+  "carry_observer_freeze": "PASS",
+  "immediate_audit_freeze": "PASS",
+  "ancestry": {
+    "original_refs": 21,
+    "all_ancestor_of_consolidated_history": true
+  },
+  "semantic_changes_to_application_research_charters_from_2668865": 0,
+  "initial_failures": "Six tests rejected a protocol whose checkout line endings had changed. Restored the original bytes without changing the registered hash; all affected tests and the full suite then passed.",
+  "altcoin_automation_sha256": "3b70e3f068c41ef3c964fed543ba388f8237b6f207ce49f5a4ff3c8caec95cfb",
+  "altcoin_ledger_sha256": "42e96f95f1765784e12cbf9fed2d77d26cbd0f268bbbaf46bcdf3715ec6141a5",
+  "carry_ledger_sha256": "ba505dc92ac32645294106342b6be93a3905a4c5ab89570db1a28c3f20896a18",
+  "remote_ci": "Must be verified on the final pushed commit; not inferred from these local checks.",
+  "packaging": {
+    "sdist_bytes": 252436,
+    "wheel_bytes": 334842,
+    "focused_tests_passed": 5,
+    "unpublished_objects_checked": 435,
+    "blobs_over_100_MiB": 0,
+    "generated_dist_files_untracked": true
+  }
+}
