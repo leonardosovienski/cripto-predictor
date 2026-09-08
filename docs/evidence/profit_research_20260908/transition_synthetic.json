@@ -1,0 +1,9 @@
+{
+  "current_instrument": "SYNTHETIC:EXAMPLE-PERP:USDT",
+  "target_instrument": "SYNTHETIC:EXAMPLE-PERP:USDT",
+  "current_quantity": "-1",
+  "target_quantity": "-1",
+  "price": "100",
+  "quantity_step": "0.1",
+  "cost_bps": "10"
+}

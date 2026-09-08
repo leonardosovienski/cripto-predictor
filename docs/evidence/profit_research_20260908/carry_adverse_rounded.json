@@ -1,0 +1,29 @@
+[
+  {
+    "id": "AR1-84D-ADVERSE-ROUNDED-AUDIT",
+    "family": "carry",
+    "asset": "BTC",
+    "venue": "Binance hypothetical spot/perpetual",
+    "currency": "USDT",
+    "capital": "5000",
+    "period_start": "2026-06-16T00:00:00Z",
+    "period_end": "2026-09-08T00:00:00Z",
+    "scenario": "adverse",
+    "evidence_kind": "ADAPTIVE_BACKTEST",
+    "evidence_ref": "docs/evidence/immediate_audit_20260908/RESULTADOS.md @ 522de73de85ada9f3491cd4c7c7d666557381f98; published rounded summary, not new data",
+    "cashflows": {"funding": "17.22", "basis": "-0.12"},
+    "costs": {"execution": "18.32", "financing": "0", "infrastructure": "5.75", "tax": null, "conversion": null, "other": null},
+    "cost_notes": {
+      "execution": "Published rounded fees/slippage for BOTH legs and entry/exit, assumed not measured fills",
+      "financing": "No borrowing in original funded simulation; signed funding already in cashflows",
+      "infrastructure": "Published fixed model cost allocated to 84 days",
+      "tax": "Unknown; not zero",
+      "conversion": "Unknown; not zero",
+      "other": "Any additional applicable cost remains unverified"
+    },
+    "risk_limit": "0",
+    "stress_loss": null,
+    "risk_evidence": null,
+    "execution_evidence": null
+  }
+]

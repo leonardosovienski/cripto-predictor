@@ -13,6 +13,7 @@
     "GarimpoInvestimentos/observation_watchdog.py",
     "GarimpoInvestimentos/persistence.py",
     "GarimpoInvestimentos/plugin.py",
+    "GarimpoInvestimentos/profit_research.py",
     "GarimpoInvestimentos/providers",
     "GarimpoInvestimentos/security",
     "GarimpoInvestimentos/services/inference.py"
