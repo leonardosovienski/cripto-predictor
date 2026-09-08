@@ -1,0 +1,120 @@
+{
+  "research_date_brasilia": "2026-09-07",
+  "prepared_utc": "2026-09-08T01:32:59.685588+00:00",
+  "scope": "Public literature research and arithmetic checks against existing results; no new strategy evaluation, account access or automation change",
+  "project_evidence_commit": "e3d94833f104694b8b96431db7113a2cc474513b",
+  "prior_head": "c40b929",
+  "report_sha256": "a8bf8490e05715f08393f17f5d973af479740b6cbb0b5b5fd31d1def771871cc",
+  "existing_results_sha256": "351711ddcf492a6592e5fa3a3007878094f74b528a40fb1ebd6564e330dcce54",
+  "validation": {
+    "carry_accounting_reconciliations": 12,
+    "reported_carry_values_checked": 9,
+    "replacement_characters": 0
+  },
+  "source_count": 11,
+  "sources": [
+    {
+      "id": "bis_crypto_carry",
+      "title": "Crypto carry",
+      "authors": "Maik Schmeling; Andreas Schrimpf; Karamfil Todorov",
+      "version": "BIS Working Paper 1087, HTML summary published 2023-04-04",
+      "url": "https://www.bis.org/publications/working-paper-1087-crypto-carry",
+      "access": "web; Focus, Findings and Abstract"
+    },
+    {
+      "id": "perpetual_fundamentals",
+      "title": "Fundamentals of Perpetual Futures",
+      "authors": "Songrun He; Asaf Manela; Omri Ross; Victor von Wachter",
+      "version": "arXiv 2212.06888v3, 2023-04-12",
+      "url": "https://arxiv.org/html/2212.06888v3",
+      "access": "web; introduction, section 4.3, tables 4-6",
+      "limitation": "Historical 2020-2022 model, not reproduced; fee tiers are not current account fees"
+    },
+    {
+      "id": "cme_efp",
+      "title": "Cryptocurrency Futures Exchange for Physical Transactions",
+      "url": "https://www.cmegroup.com/articles/2025/bitcoin-futures-exchange-for-physical-transactions.html",
+      "access": "web; EFP definition, spot-futures execution examples",
+      "limitation": "Product mechanism and hypothetical examples; no account eligibility or fee certification"
+    },
+    {
+      "id": "ethereum_staking",
+      "title": "Proof-of-stake rewards and penalties",
+      "url": "https://ethereum.org/developers/docs/consensus-mechanisms/pos/rewards-and-penalties/",
+      "access": "web; rewards and penalties",
+      "limitation": "Protocol mechanism; no current yield forecast"
+    },
+    {
+      "id": "mit_arbitrage",
+      "title": "Trading and Arbitrage in Cryptocurrency Markets",
+      "authors": "Igor Makarov; Antoinette Schoar",
+      "version": "JFE 135(2), 2020, pages 293-319; MIT author research summary",
+      "url": "https://mitsloan.mit.edu/cfi/trading-and-arbitrage-cryptocurrency-markets",
+      "access": "web; research summary",
+      "limitation": "Historical cross-exchange spot segmentation; does not validate the funding-difference extension"
+    },
+    {
+      "id": "yale_factors",
+      "title": "Common Risk Factors in Cryptocurrency",
+      "authors": "Yukun Liu; Aleh Tsyvinski; Xi Wu",
+      "version": "2019-04-15 working paper, sample 2014-2018; not substituted with the later published version",
+      "url": "https://economics.yale.edu/sites/default/files/2022-10/LiuTsyvinskiWu2019%20COMMON%20RISK%20FACTORS.pdf",
+      "access": "web; PDF introduction, sections 2, 3.1, 3.2",
+      "limitation": "Long-short factor evidence, not certified executable net performance"
+    },
+    {
+      "id": "avellaneda_stoikov",
+      "title": "High-frequency trading in a limit order book",
+      "authors": "Marco Avellaneda; Sasha Stoikov",
+      "version": "Quantitative Finance 8(3), April 2008, pages 217-224",
+      "url": "https://math.nyu.edu/inmemoriam/avellaneda/HighFrequencyTrading.pdf",
+      "access": "web; original PDF introduction",
+      "limitation": "Inventory model; not live crypto execution evidence"
+    },
+    {
+      "id": "ethena_revenue",
+      "url": "https://docs.ethena.fi/backing-assets/protocol-revenue.md",
+      "final_url": "https://docs.ethena.fi/backing-assets/protocol-revenue.md",
+      "retrieved_utc": "2026-09-08T01:27:41.712572+00:00",
+      "status": 200,
+      "sha256": "0dd196d468c63498ba0ff0908102e498eb2492c942c9c1910a3b033406bd3be7",
+      "bytes": 3357,
+      "access": "Direct public HTTPS; original bytes retained in task scratch directory",
+      "limitation": "Operator documentation; historical allocation and yield statistics were not treated as current. Not independent audited profit."
+    },
+    {
+      "id": "ethena_funding_risk",
+      "url": "https://docs.ethena.fi/protocol-overview/risks/funding-risk.md",
+      "final_url": "https://docs.ethena.fi/protocol-overview/risks/funding-risk.md",
+      "retrieved_utc": "2026-09-08T01:27:41.712224+00:00",
+      "status": 200,
+      "sha256": "307b6bb7c5913faa0ca5bfde5e5edd3c5d685a78cbdf59cd2023d96f1bbe05dc",
+      "bytes": 7261,
+      "access": "Direct public HTTPS; original bytes retained in task scratch directory",
+      "limitation": "Operator documentation; historical allocation and yield statistics were not treated as current. Not independent audited profit."
+    },
+    {
+      "id": "ethena_backing_risk",
+      "url": "https://docs.ethena.fi/protocol-overview/risks/backing-assets-risk.md",
+      "final_url": "https://docs.ethena.fi/protocol-overview/risks/backing-assets-risk.md",
+      "retrieved_utc": "2026-09-08T01:27:41.729170+00:00",
+      "status": 200,
+      "sha256": "59215cf72e26520eadcfe4f4566179731b9d864116578d7ff67c7886f293e897",
+      "bytes": 2816,
+      "access": "Direct public HTTPS; original bytes retained in task scratch directory",
+      "limitation": "Operator documentation; historical allocation and yield statistics were not treated as current. Not independent audited profit."
+    },
+    {
+      "id": "ethena_exchange_risk",
+      "url": "https://docs.ethena.fi/protocol-overview/risks/exchange-failure-risk.md",
+      "final_url": "https://docs.ethena.fi/protocol-overview/risks/exchange-failure-risk.md",
+      "retrieved_utc": "2026-09-08T01:27:41.702959+00:00",
+      "status": 200,
+      "sha256": "6a28a656f0f1f0532cbbd70fc5b5865bd09971ef1400121b7f524103ac519027",
+      "bytes": 4671,
+      "access": "Direct public HTTPS; original bytes retained in task scratch directory",
+      "limitation": "Operator documentation; historical allocation and yield statistics were not treated as current. Not independent audited profit."
+    }
+  ],
+  "scope_note": "The earlier code/data delivery ZIP remains the earlier frozen delivery; this research note is a later documentation-only addition."
+}
