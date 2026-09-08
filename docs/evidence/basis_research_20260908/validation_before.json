@@ -1,0 +1,7 @@
+{
+  "targeted_tests_passed": 36,
+  "new_basis_tests": 22,
+  "prior_absolute_tests": 14,
+  "ruff": "PASS",
+  "pyright_errors": 0
+}

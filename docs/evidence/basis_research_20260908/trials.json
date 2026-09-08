@@ -4,14 +4,21 @@
   "streams": [
     {
       "id": "BR1_DATED_BTC",
-      "status": "REGISTERED_NOT_EVALUATED",
-      "economic_evaluations": 0
+      "status": "EVALUATING",
+      "economic_evaluations": 1
     },
     {
       "id": "BR2_CONVERGENCE_BTC",
-      "status": "REGISTERED_NOT_EVALUATED",
-      "economic_evaluations": 0
+      "status": "EVALUATING",
+      "economic_evaluations": 1
     }
   ],
-  "runs": []
+  "runs": [
+    {
+      "id": "basis-results-v1",
+      "started_utc": "2026-09-08T02:04:48.744005+00:00",
+      "kind": "FIRST_REGISTERED_ECONOMIC_EVALUATION",
+      "status": "RUNNING"
+    }
+  ]
 }
