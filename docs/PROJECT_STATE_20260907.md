@@ -1,10 +1,10 @@
-> Continuidade sem o chat antigo: `docs/SESSION_HANDOFF_20260907.md`; prompt conferido: `docs/NEXT_CHAT_PROMPT.md`; tag do fechamento: `cripto-session-20260907-final`.
+> **Registro histórico de 07/09/2026.** A continuidade vigente está na [sessão de 08/09](SESSION_HANDOFF_20260908.md) e no [estado atual da pesquisa](CURRENT_RESEARCH_STATE_20260908.md). Os resultados e limites abaixo descrevem a etapa anterior à nova pesquisa e ao push.
 
 # Estado consolidado após a revisão de 07/09/2026
 
 **Há cenários históricos de carry positivos após custos assumidos. Não há lucro real nem lucro líquido do investidor comprovado. O seletor atual de altcoins não operou nas 140 semanas históricas.**
 
-Este é o ponto de entrada corrente desta linha de trabalho. Os relatórios, hipóteses e freezes anteriores permanecem registros das suas respectivas datas. O objetivo adotado pelo usuário é lucro líquido absoluto; nenhuma comparação com outro investimento é exigida.
+Este foi o ponto de entrada da revisão de 07/09. Os relatórios, hipóteses e freezes permanecem registros das suas respectivas datas. O objetivo adotado pelo usuário é lucro líquido absoluto; nenhuma comparação com outro investimento é exigida.
 
 ## Resultado econômico revisado
 

@@ -1,5 +1,7 @@
 # Pré-registro de Hipóteses — protocolo anti-data-snooping
 
+> Este arquivo preserva o histórico de registros e decisões. Para a síntese após todas as etapas de 08/09 — incluindo futuros com vencimento, correções e coleta imediata — consulte o [estado vigente](CURRENT_RESEARCH_STATE_20260908.md). A publicação e a recuperação estão na [continuidade](SESSION_HANDOFF_20260908.md); os estados das famílias anteriores continuam definidos pelo [charter](../charters/scientific_state.json).
+
 > Continuação de 08/09/2026 UTC: três hipóteses e cinco séries de pesquisa adaptativa registradas antes da avaliação em `docs/evidence/absolute_research_20260908/protocol.json` (e41773a). AR1, carry contínuo com reserva de 75%, produziu +424,25 USDT BTC / +328,94 USDT ETH por cenário separado de 5.000 USDT entre 01/01/2024 e 07/09/2026; no adverso, +341,13 / +250,01; sob compressão, +104,12 / +65,94. AR2, carry condicionado, perde −82,26 / −80,18 no adverso. AR3, momentum spot, perde −4.945,35 no base. Correção de causalidade registrada em 3ceef8f remove filtros presentes do dimensionamento histórico, sem mudar quantidades ou contas. Resultados completos, inclusive negativos, em `DECISAO.md` e `absolute-results-v3` nessa pasta. Nenhuma reabertura de H1–H9/funding_oi_hmm_v3, retuning do observador, nova aprovação científica ou capital. O histórico abaixo permanece intacto.
 
 > Regra do projeto (complementa o `trials.json`): **hipótese se registra ANTES de rodar.**

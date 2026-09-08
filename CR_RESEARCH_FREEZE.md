@@ -1,5 +1,7 @@
 # CR_RESEARCH_FREEZE — Manifesto de Congelamento Científico
 
+> Manifesto histórico das famílias anteriores. Seu conteúdo científico permanece preservado; o estado global posterior está na [continuidade de 08/09](docs/SESSION_HANDOFF_20260908.md) e no [estado vigente da pesquisa](docs/CURRENT_RESEARCH_STATE_20260908.md). Uma autorização posterior para pesquisa separada não reabre automaticamente famílias congeladas.
+
 > Gerado por auditoria de preservação (não é nova pesquisa). Baseado exclusivamente
 > em artefatos reais do repositório `cripto-predictor` no commit corrente. Onde não
 > há evidência no repo, o campo diz `UNKNOWN` em vez de supor.

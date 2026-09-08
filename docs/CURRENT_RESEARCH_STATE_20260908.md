@@ -2,6 +2,8 @@
 
 Esta é a referência vigente após a revisão e as correções. Relatórios anteriores permanecem como evidência histórica; suas afirmações devem ser lidas com as retificações abaixo. Não existe projeção validada de lucro futuro nem resultado de execução real.
 
+**Situação técnica após a consolidação:** trabalho publicado na `main`, única branch local e remota. A suíte completa passou em **1.170 testes**; os quatro jobs do [CI da consolidação](https://github.com/leonardosovienski/cripto-predictor/actions/runs/34228309330) passaram, incluindo container. Os registros abaixo de 1.167 testes se referem à etapa anterior. [Continuidade, arquivos e caminhos](SESSION_HANDOFF_20260908.md).
+
 Atualização após o pedido de auditar agora: `docs/evidence/immediate_audit_20260908/RESULTADOS.md` registra a nova coleta pública. Nos 84 dias encerrados em 08/09, o carry hipotético ficou em +10,56 USDT no cenário base, −6,97 USDT no adverso e −21,65 USDT no estresse. Houve também onze observações de livros ao longo de cinco minutos, com conferência de preços na OKX. As contas passaram na reconstrução separada; o ganho histórico recente não resistiu aos custos adversos. Essa rodada não substituiu nem iniciou o piloto futuro de 84 dias. A suíte completa passou em 1.167 testes.
 
 ## Correções e versões

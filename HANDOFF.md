@@ -1,9 +1,10 @@
-> Continuidade vigente após consolidar as branches em main: `docs/SESSION_HANDOFF_20260908.md`. A sessão anterior continua em `docs/SESSION_HANDOFF_20260907.md` e na tag `cripto-session-20260907-final`.
+> Continuidade vigente: [sessão de 08/09](docs/SESSION_HANDOFF_20260908.md) e [estado da pesquisa](docs/CURRENT_RESEARCH_STATE_20260908.md). A sessão anterior continua no [registro de 07/09](docs/SESSION_HANDOFF_20260907.md) e na tag `cripto-session-20260907-final`.
 
 # HANDOFF — GarimpoInvestimentos (Fase 1 + melhorias)
 
-> **Revisão final — 07/09/2026:** consultar [estado consolidado](docs/PROJECT_STATE_20260907.md).
-> Perfil corrente do observador: `altcoin_reviewed_20260907` (v6 operacional), mesma regra e datas. Carry reclassificado pelo objetivo de lucro absoluto; nenhuma promoção para capital.
+> **Consolidação concluída — 08/09/2026:** somente `main`, local e no GitHub; 1.170 testes e quatro jobs do CI aprovados. Core 3.2.0 e Ops 4.1.0. Código, dados e entregas preservados; ver [auditoria Git](docs/evidence/git_consolidation_20260908/README.md). O agendamento do novo carry continua pendente; o observador de altcoins permanece em seu diretório original.
+>
+> As notas seguintes são históricas. Datas, contagens de testes e pendências antigas devem ser lidas com as atualizações posteriores, não como estado corrente.
 
 > **Delta CRIPTO v1.2 — 2026-09-07:** Core 3.2.0 preparado em worktree isolado;
 > seis pins consistentes, DSR estrito e N incluindo Sharpes ausentes. H6/H9
@@ -12,13 +13,13 @@
 > Produção permanece intacta; as notas de 06/09 abaixo são históricas.
 
 
-> **Estado técnico corrente — 2026-09-06:** pacote `GarimpoInvestimentos`, Core
+> **Estado técnico histórico — 2026-09-06:** pacote `GarimpoInvestimentos`, Core
 > **3.0.0** e Ops **4.1.0** por wheels. Referências posteriores a vendors, Core 2.x,
 > Ops 3.x, ambientes antigos ou contagens históricas permanecem apenas como
 > registro da data em que foram escritas. (A linha "Core 3.0.x e Ops 4.0.x" do
 > checkpoint de 2026-09-01 está superada quanto ao Ops.)
 
-> ## PENDÊNCIA — o bump do Core para 3.2.0 é trabalho, não troca de pin (2026-09-06)
+> ## Registro histórico — migração do Core planejada em 06/09 e concluída em 07/09
 >
 > Ops subiu para 4.1.0 nesta data (aditivo; suíte 945 verdes). **O Core segue em
 > 3.0.0 de propósito.** O 3.2.0 mudou contrato: `register_trial` passou a exigir

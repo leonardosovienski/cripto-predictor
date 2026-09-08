@@ -35,4 +35,6 @@ O worktree antigo `git-final` continha alterações locais e arquivos sem commit
 
 Há também um Git bundle local validado, com o histórico completo das referências anteriores. Os hashes dos dois backups constam em `reconciliation.json`. Os backups estão na pasta de entregas da tarefa; não foram adicionados ao repositório público.
 
-O fechamento e a limpeza só devem ser declarados concluídos depois de verificar o push, o CI do commit final, a main local/remota e a ausência de outras branches. Os diretórios dos observadores permanecem em seus commits originais, com HEAD destacado, para preservar código, hashes e caminhos.
+**Fechamento concluído no commit `dd8dbe26f10be23340d9248764da1e485633f7b8`.** O push foi confirmado, os quatro jobs do [CI desse commit](https://github.com/leonardosovienski/cripto-predictor/actions/runs/34228309330) passaram e a consulta final confirmou somente `main`, local e no GitHub. Todas as 21 referências anteriores são ancestrais dessa main. A [validação local](local_validation.json) registra 1.170 testes aprovados.
+
+Os diretórios dos observadores permaneceram nos commits originais, com HEAD destacado. Os 337 arquivos da cópia de segurança, a automação e os diários conservaram seus hashes. A [continuidade vigente](../../SESSION_HANDOFF_20260908.md) distingue esse fechamento das pendências de pesquisa ainda existentes.

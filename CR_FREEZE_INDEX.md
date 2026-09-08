@@ -1,12 +1,14 @@
 # Índice do Congelamento Científico — onde está cada coisa
 
+> **Escopo deste índice:** congelamento das famílias anteriores, documentado em 02–03/09/2026. Para o estado global após as pesquisas e a consolidação de 08/09, leia a [continuidade vigente](docs/SESSION_HANDOFF_20260908.md). As novas linhas têm registros próprios e não reabrem as famílias encerradas.
+
 > Ponto único de entrada para a auditoria de congelamento científico deste
 > repositório. Escrito para sobreviver sem o histórico da conversa que o
 > gerou — cada linha abaixo aponta para um arquivo real, commitado e
 > mergeado no `main`, verificável por qualquer pessoa (ou sessão de IA
 > futura) só com `git log` e `cat`.
 
-## 1. Estado atual em uma frase
+## 1. Estado documentado no congelamento de 02–03/09/2026
 
 O `cripto-predictor` está **congelado cientificamente**: nenhuma hipótese
 ativa busca alpha, todos os resultados negativos estão preservados como

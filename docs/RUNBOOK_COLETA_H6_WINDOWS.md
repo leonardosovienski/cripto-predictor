@@ -1,5 +1,7 @@
 # Runbook — a coleta da H6 na máquina Windows
 
+> **Runbook histórico.** H6 está encerrada como `CLOSED_INSUFFICIENT_SAMPLE`, conforme o [charter](../charters/scientific_state.json). Os procedimentos abaixo descrevem a etapa anterior e não orientam retomar essa coleta. Para os observadores atuais e seus caminhos, leia a [continuidade de 08/09](SESSION_HANDOFF_20260908.md).
+
 > **Para quem é.** Para a pessoa sentada na máquina de coleta. Tudo aqui roda
 > **lá** e em nenhum outro lugar: o `feature_store.db` é gitignored e vive fora do
 > repositório (§10.2 do `OVERVIEW_E_ROADMAP_2026-08-21.md`), então nenhuma sessão

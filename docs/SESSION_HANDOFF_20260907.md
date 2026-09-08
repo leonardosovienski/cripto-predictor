@@ -1,6 +1,8 @@
 # Continuidade da sessão de 07/09/2026
 
-Este documento permite retomar a pesquisa sem ler o chat antigo. O prompt conferido está em `docs/NEXT_CHAT_PROMPT.md`. A tag local `cripto-session-20260907-final` identifica o fechamento completo; a revisão de código e resultados termina em `07794acbc5a3f779eb8d45c932be5070d36251a7`. A documentação e os arquivos de recuperação acrescentados depois não representam novos testes de rentabilidade.
+> **Documento histórico.** Para retomar a versão publicada e os observadores atuais, leia [SESSION_HANDOFF_20260908.md](SESSION_HANDOFF_20260908.md). As branches citadas abaixo foram integradas e removidas; os diretórios e commits foram preservados. As limitações de CI/Docker abaixo pertencem àquela sessão; a consolidação posterior foi validada no GitHub.
+
+Este documento permite recuperar a pesquisa daquela sessão sem ler o chat antigo. O [prompt usado naquela etapa](https://github.com/leonardosovienski/cripto-predictor/blob/dd8dbe26f10be23340d9248764da1e485633f7b8/docs/NEXT_CHAT_PROMPT.md) permanece no histórico Git; [NEXT_CHAT_PROMPT.md](NEXT_CHAT_PROMPT.md) contém a orientação atual. A tag `cripto-session-20260907-final` identifica o fechamento completo; a revisão de código e resultados termina em `07794acbc5a3f779eb8d45c932be5070d36251a7`. A documentação e os arquivos de recuperação acrescentados depois não representam novos testes de rentabilidade.
 
 ## Objetivo e decisões do usuário
 

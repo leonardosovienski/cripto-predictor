@@ -1,80 +1,43 @@
-Quero evoluir meu projeto de pesquisa em criptomoedas para encontrar uma estratégia com lucro líquido mensurável e evidência confiável. Parta do trabalho existente, implemente melhorias justificadas e execute os testes históricos necessários.
+# Prompt de continuidade — atualizado em 08/09/2026
 
-Projeto:
-C:\Users\Superleo13\Documents\Codex\2026-09-07\files-mentioned-by-the-user-cripto\work\cripto-v1.2
+Retome o projeto a partir do estado abaixo e do meu pedido mais recente. Confira o repositório antes de agir; não repita pesquisas ou tarefas já encerradas apenas porque aparecem em documentos antigos.
 
-Base da revisão econômica: commit 07794ac. O encerramento completo desta sessão está na tag local cripto-session-20260907-final, na branch codex/cripto-v1-2-execution-20260907. Verifique o HEAD atual antes de trabalhar; os 1.045 testes se referem à revisão de código, e o encerramento posterior acrescenta documentação e arquivos de recuperação.
+## Projeto e leitura inicial
 
-Leia primeiro docs/SESSION_HANDOFF_20260907.md nesse repositório e depois:
-C:\Users\Superleo13\Documents\Codex\2026-09-07\files-mentioned-by-the-user-cripto\work\cripto-v1.2\docs\PROJECT_STATE_20260907.md
+- Repositório principal: `C:\Users\Superleo13\cripto-predictor`, branch `main`.
+- GitHub: [cripto-predictor](https://github.com/leonardosovienski/cripto-predictor).
+- Leia [SESSION_HANDOFF_20260908.md](SESSION_HANDOFF_20260908.md), [CURRENT_RESEARCH_STATE_20260908.md](CURRENT_RESEARCH_STATE_20260908.md) e o [índice da documentação](README.md).
+- A consolidação foi publicada em `dd8dbe26f10be23340d9248764da1e485633f7b8`. As branches anteriores foram integradas e removidas; só restou `main`. Commits documentais posteriores não representam novas avaliações econômicas. Confira o HEAD atual.
+- A validação da consolidação teve 1.170 testes aprovados e quatro jobs do [CI](https://github.com/leonardosovienski/cripto-predictor/actions/runs/34228309330) aprovados, incluindo container. Core 3.2.0 e Ops 4.1.0.
 
-Relatório da revisão:
-C:\Users\Superleo13\Documents\Codex\2026-09-07\files-mentioned-by-the-user-cripto\work\cripto-v1.2\docs\session_archive_20260907\deliverables\CRIPTO_REVISAO_FINAL.md
+## Objetivo e limites da pesquisa
 
-Confira também os protocolos, o histórico de hipóteses, os dados preservados e o estado atual do acompanhamento.
+O objetivo é lucro líquido absoluto positivo, na mesma moeda e após os custos aplicáveis. Não exijo superar Selic, BTC ou outro benchmark. Quando houver pedido de pesquisa, você pode decidir moedas, corretoras públicas e abordagens sem perguntar novamente essas escolhas.
 
-CONTEXTO DO ÚLTIMO CHECKPOINT
+Trabalhe sozinho, sem coordenar agentes. Use dados públicos e recursos disponíveis. Não envie ordens, movimente dinheiro, use contas de negociação autenticadas ou contrate serviços pagos. Os 5.000 USDT são referência de simulação. O acesso ao GitHub para o push já autorizado não autoriza operações financeiras.
 
-- A revisão técnica terminou com 1.045 testes aprovados. Docker e CI remoto ficaram sem validação.
-- O seletor atual de altcoins não selecionou nenhuma operação em 140 semanas históricas: lucro simulado zero.
-- O carry de BTC apresentou +54,84 USDT e o de ETH +34,62 USDT em um ano, cada cenário usando separadamente 5.000 USDT hipotéticos.
-- Esses resultados de carry descontam taxas e deslizamento assumidos. Execução, margem, custos reais, conversão e impostos ainda não estão certificados.
-- A rejeição antiga do carry dependia de uma comparação externa que eu retirei.
-- Existe um observador semanal de pesquisa, perfil v6 altcoin_reviewed_20260907. A automação observar-altcoins-semanalmente estava ACTIVE e vinculada ao chat antigo no encerramento. Não presuma que continua funcionando depois que esse chat for apagado. Preserve seus registros e verifique seu estado atual.
-- O adaptador existente cobre Binance spot/USDT. Liberdade de escolha de corretora e moeda não significa cobertura universal já implementada.
-- Ainda não há lucro real comprovado.
+Registre especificação, parâmetros, critérios e orçamento de tentativas antes de avaliar variantes. Preserve resultados negativos, código congelado e períodos já consultados como pesquisa adaptativa. Não os apresente como validação independente nem reabra silenciosamente famílias encerradas. Não escolha custos favoráveis ou force entradas para fabricar lucro.
 
-OBJETIVO
+Use um diretório de trabalho separado dos observadores para mudanças de pesquisa. O pedido de consolidação autorizou a main e removeu as outras branches; não recrie branches antigas ou mude seus diretórios apenas para seguir um texto histórico. Preserve arquivos locais sem commit. Meus pedidos posteriores prevalecem sobre instruções históricas.
 
-Quero lucro líquido positivo após os custos aplicáveis, na mesma moeda. Não exijo superar Selic, Bitcoin, uma cesta ou qualquer outro investimento. Você pode escolher moedas, corretoras e abordagens de pesquisa; não precisa me pedir novamente essas escolhas.
+## Resultado que deve acompanhar a continuação
 
-TRABALHO AUTORIZADO
+- Não há lucro real comprovado nem projeção validada de lucro futuro.
+- AR1 BTC produziu +424,25 USDT base e +341,13 USDT adverso em 980 dias históricos. BR1 BTC produziu +230,17 e +110,07 no mesmo intervalo; são cenários separados de 5.000 USDT, não somáveis.
+- No diagnóstico mais recente de 84 dias, o carry ficou em +10,56 USDT base, −6,97 adverso e −21,65 no estresse. O ganho recente não resistiu aos custos adversos.
+- O seletor atual de altcoins não abriu operações nas 140 semanas históricas. Os números de +54,84 BTC e +34,62 ETH pertencem ao estudo anterior de um ano e não são comparação direta de melhoria.
+- Taxas reais, preenchimentos, impostos, conversão e margem efetiva continuam desconhecidos. A reconstrução separada das contas foi feita pelo mesmo assistente; não é auditoria externa.
 
-1. Identifique o que impede as estratégias atuais de produzir resultados úteis: ausência de sinal, filtros inadequados, custos, dados ou execução.
+## Observadores e dados
 
-2. Escolha poucas hipóteses justificadas economicamente. Você pode substituir o seletor atual ou desenvolver outra abordagem. Avalie o carry pelo objetivo de lucro absoluto e por sua viabilidade de execução.
+O observador semanal de altcoins continua em `C:\Users\Superleo13\Documents\Codex\2026-09-07\files-mentioned-by-the-user-cripto\work\cripto-v1.2`, com HEAD destacado em `fbf4c71`. Seus dados são diretórios irmãos: `altcoin-data`, `altcoin-payoff-results`, `altcoin-reviewed-data` e `altcoin-retro-data`. Preserve a `.venv`, os arquivos de aquisição e o diário.
 
-3. Antes de avaliar cada variante, registre sua especificação, parâmetros, critérios de decisão e limite de tentativas. Preserve todos os resultados, inclusive negativos.
+A automação `observar-altcoins-semanalmente` foi recriada e vinculada à tarefa `01a07e75-d166-7430-859b-2af2c6ab0b0f`; sua configuração e seus arquivos foram preservados na consolidação. Horário: domingos às 21h de Brasília, primeira entrada prevista em 13/09/2026 e última saída em 06/12/2026. Verifique seu estado pelo recurso de automações antes de afirmar que está operante. Não recrie nem transfira automaticamente uma configuração existente. Avise somente em mudança relevante, falha, conclusão ou necessidade de informação; não retrodate janelas perdidas.
 
-4. Implemente e execute os testes retrospectivos. Use separação temporal adequada e impeça informações futuras de influenciarem decisões. Trate migrações, deslistagens, liquidez, custos e observações ausentes explicitamente.
+O observador de carry está preparado em `C:\Users\Superleo13\Documents\Codex\2026-09-07\files-pasted-by-the-user-quero\work\cripto-research`, com HEAD destacado em `2668865`, e dados irmãos em `carry-forward-data`. Seu agendamento não foi criado: o aplicativo recusou uma segunda automação na mesma tarefa. Leia [scheduling.json](evidence/carry_forward_20260908/scheduling.json) e o [runbook](evidence/carry_forward_20260908/RUNBOOK.md). Essa pendência não foi resolvida pelo push. Não crie tarefa separada ou cron alternativo sem a autorização correspondente.
 
-5. Os períodos já consultados continuam sendo pesquisa adaptativa. Não os apresente como validação independente. Reserve evidência nova para confirmação futura, enquanto conclui a investigação histórica possível agora.
+## Recuperação e entrega
 
-6. Meça lucro/prejuízo, operações, exposição, semanas em caixa, perdas máximas, sensibilidade aos custos e concentração dos ganhos. Testes de software aprovados não comprovam rentabilidade.
+Os pacotes de código, dados, decisões e relatórios estão em [session_archive_20260908](session_archive_20260908/), com manifesto SHA256. Os arquivos da sessão anterior continuam em [session_archive_20260907](session_archive_20260907/) e na tag `cripto-session-20260907-final`. Consulte os guias dentro dos pacotes; extraia em diretórios novos. Não substitua diários operacionais por snapshots e não recalcule hashes para aceitar diferenças de bytes.
 
-7. Trabalhe em um worktree separado para preservar o observador existente. Versione qualquer atualização posterior e mantenha a evidência anterior. Não reabra silenciosamente famílias científicas congeladas.
-
-8. Conclua as mudanças justificadas, valide-as e entregue código, dados, decisões e resultados reproduzíveis.
-
-LIMITES
-
-Trabalhe sozinho, sem coordenar outros agentes. Use dados públicos e recursos disponíveis. Não envie ordens, movimente dinheiro, use contas autenticadas ou contrate serviços pagos. Os 5.000 USDT são apenas uma referência de simulação.
-
-Não force entradas nem escolha custos favoráveis para fabricar lucro. Resolva decisões técnicas rotineiras autonomamente; pergunte apenas quando faltar uma informação indispensável.
-
-ENTREGA
-
-Explique em português simples:
-- O que mudou e por quê.
-- Quais hipóteses foram testadas.
-- Quanto cada uma ganhou ou perdeu nas condições declaradas.
-- Se o resultado permanece positivo sob custos e condições desfavoráveis plausíveis.
-- O que está demonstrado e o que continua desconhecido.
-
-Se nenhuma abordagem demonstrar lucro confiável, diga isso claramente. Quero progresso concreto e uma conclusão sustentada pelos resultados.
-
-CONTINUIDADE SEM O CHAT ANTIGO
-
-As decisões, limitações, resultados, arquivos de entrega e dados de pesquisa estão preservados no Git. O documento original de Downloads já não estava disponível no encerramento; não afirme que o releu. Diferencie registros históricos de instruções atuais. As exigências antigas de comparação externa e a proibição de novos testes retrospectivos foram superadas pelos meus pedidos posteriores; as evidências antigas e as famílias congeladas continuam preservadas.
-
-Ao iniciar esta nova tarefa, cuide da transferência do acompanhamento semanal para ela: procure a automação observar-altcoins-semanalmente e prefira atualizar seu destino para esta tarefa, preservando o horário, o prompt, os caminhos, as notificações e os registros. Use o recurso de automações. Se a antiga já não existir, recrie uma única automação nesta tarefa com a configuração documentada em docs/session_archive_20260907/automation_snapshot.json. Confira o vínculo e a leitura dos arquivos antes de afirmar que a transferência funcionou. Não crie um cron independente como substituição silenciosa. Não retrodate janelas perdidas.
-
-O acompanhamento é domingo às 21h de Brasília, primeira entrada prevista em 13/09/2026, última saída em 06/12/2026. Avise somente sobre mudança relevante, falha, conclusão ou informação indispensável. Preservar o piloto fixo é compatível com pesquisar novas regras separadamente.
-
-Os caminhos originais dos dados são irmãos do repositório, sob work/: altcoin-data, altcoin-payoff-results, altcoin-reviewed-data e altcoin-retro-data. Criar um worktree em outro lugar não copia esses diretórios nem a .venv; resolva explicitamente os caminhos dos novos experimentos. Não aponte uma regra alterada para o ledger do observador atual.
-
-Se a pasta original estiver indisponível, o Git comum está em C:\Users\Superleo13\cripto-predictor\.git. Também há uma cópia independente em C:\Users\Superleo13\Documents\CriptoBackup\2026-09-07\CRIPTO_SESSAO.bundle. Clone o bundle em um diretório novo usando a tag cripto-session-20260907-final; não altere a main nem sobrescreva outra pesquisa.
-
-Leia SESSION_HANDOFF_20260907.md para restaurar os dados preservados, verificar os hashes e reproduzir os resultados. A restauração para reprodução offline não migra automaticamente caminhos absolutos do ledger nem reativa a automação. O código congelado pode depender de bytes exatos e finais de linha; use as cópias originais nos pacotes quando necessário, sem recalcular hashes para aceitar diferenças.
-
-Esta sessão fez commits locais. Não suponha que houve push para o GitHub. Não dependa da memória, do título nem do histórico do chat antigo para prosseguir.
+Explique em português simples o que mudou, o que foi verificado, os resultados nas condições declaradas e as pendências restantes. Não conclua que testes aprovados demonstram lucro. Não dependa da memória nem do histórico de outro chat para localizar o trabalho.

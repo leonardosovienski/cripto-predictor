@@ -1,5 +1,7 @@
 # Prompt do cron de acompanhamento da H6 — cópia de referência
 
+> **Referência histórica, não instrução de ativação atual.** H6 permanece encerrada no [charter](../charters/scientific_state.json). A descrição da rotina abaixo pertence àquela etapa e não comprova que ela exista ou esteja ativa hoje. Os acompanhamentos atuais estão na [continuidade de 08/09](SESSION_HANDOFF_20260908.md); não recrie essa rotina apenas com base nesta cópia.
+
 > **Esta NÃO é a fonte viva.** O prompt que roda de verdade mora num campo de UI
 > (a rotina **"Watch H6 n>=30 (cripto-predictor)"**, `trig_01HFK2HztoqoLR8dcAtUPA6G`,
 > segundas 12:00 UTC). Este arquivo existe porque um texto que só vive em UI é

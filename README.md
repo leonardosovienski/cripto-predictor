@@ -1,19 +1,17 @@
-> Continuidade sem o chat antigo: `docs/SESSION_HANDOFF_20260907.md`; prompt conferido: `docs/NEXT_CHAT_PROMPT.md`; tag do fechamento: `cripto-session-20260907-final`.
-
 # cripto-predictor (GarimpoInvestimentos + DPL)
 
-> **Estado desta linha após revisão — 07/09/2026:** [resultado consolidado](docs/PROJECT_STATE_20260907.md).
-> O seletor de altcoins não operou no histórico; carry tem cenários positivos após custos assumidos, sem lucro real comprovado. Pesquisa/observação autorizada separadamente; as famílias científicas antigas continuam congeladas.
+**Estado verificado em 08/09/2026:** pesquisa consolidada na `main`, única branch local e remota. A validação da consolidação passou em **1.170 testes** e nos quatro jobs do [CI](https://github.com/leonardosovienski/cripto-predictor/actions/runs/34228309330), incluindo container. Core **3.2.0** e Ops **4.1.0** estão fixados nas dependências.
 
-> ## 🧊 Projeto cientificamente congelado — comece por `CR_FREEZE_INDEX.md`
->
-> Este repositório passou por um congelamento científico completo
-> (preservação, harness, evidence registry, componentes reutilizáveis).
-> **Antes de mexer em qualquer coisa aqui — humano ou IA —, leia
-> [`CR_FREEZE_INDEX.md`](CR_FREEZE_INDEX.md)**, o índice de onde está cada
-> parte da auditoria, e depois [`CR_RESEARCH_FREEZE.md`](CR_RESEARCH_FREEZE.md),
-> o manifesto completo. Não reabra hipótese fechada nem crie feature nova sem
-> ler os dois primeiro.
+Não há lucro real nem projeção validada de lucro futuro. No diagnóstico histórico mais recente, o carry de 84 dias ficou em **+10,56 USDT** no cenário base, **−6,97 USDT** no adverso e **−21,65 USDT** no estresse, com referência de 5.000 USDT por cenário. As contas históricas não demonstram rentabilidade futura.
+
+## Por onde começar
+
+- [Estado vigente da pesquisa](docs/CURRENT_RESEARCH_STATE_20260908.md): resultados, correções e pendências reais.
+- [Continuidade e recuperação](docs/SESSION_HANDOFF_20260908.md): código, pacotes de dados, caminhos dos observadores e situação do Git.
+- [Prompt de continuidade](docs/NEXT_CHAT_PROMPT.md): referência para retomar o trabalho sem depender do chat.
+- [Auditoria da consolidação](docs/evidence/git_consolidation_20260908/README.md): branches integradas, validações e preservação.
+
+As famílias científicas anteriores continuam sujeitas ao [índice de congelamento](CR_FREEZE_INDEX.md), ao [manifesto](CR_RESEARCH_FREEZE.md) e ao [charter](charters/scientific_state.json). A pesquisa posterior possui protocolos separados; não reabre silenciosamente hipóteses encerradas.
 
 > **Atualização econômica — 2026-09-01.** A V3 possui uma trava experimental
 > fee+slippage+funding calibrada apenas em sinais in-sample já maturados. Ela é
@@ -63,13 +61,12 @@ A **V3 quantitativa** (HMM de regimes + funding/OI + walk-forward com custos) vi
 [docs/RECONCILIACAO_V3.md](docs/RECONCILIACAO_V3.md) foi executada, e a branch
 `claude/v3-quant-wip` citada naquele plano não existe mais.
 
-## Status do projeto (2026-08-21)
+## Estado científico e histórico das hipóteses
 
-**Pesquisa. Nenhuma recomendação de capital real.** Nota da auditoria: **6,0/10**
-([docs/ARQUITETURA_CONSOLIDADA.md](docs/ARQUITETURA_CONSOLIDADA.md) §5). Modo atual:
-`PROSPECTIVE_OBSERVATION` — auditoria e remediação fechadas (`AUDIT_AND_REMEDIATION =
-CLOSED`, sem blockers de código), o próximo passo é acumular coleta, não nova auditoria.
-Fechamento canônico em [docs/RELATORIO_FINAL.md](docs/RELATORIO_FINAL.md) §9.
+**Pesquisa. Nenhuma autorização de capital real.** A nota 6,0/10 e o modo
+`PROSPECTIVE_OBSERVATION` descritos na [auditoria de 21/08](docs/ARQUITETURA_CONSOLIDADA.md)
+são registros daquela etapa. As linhas de pesquisa de setembro e suas pendências
+estão no [estado vigente](docs/CURRENT_RESEARCH_STATE_20260908.md).
 
 Estado das hipóteses pré-registradas ([docs/HYPOTHESES.md](docs/HYPOTHESES.md);
 travado em código por `charters/scientific_state.json`):
@@ -86,12 +83,12 @@ travado em código por `charters/scientific_state.json`):
 | H8 | LLM como GERADOR de hipóteses (não preditor) | `h8-llm-hypothesis-generator` | **REGISTERED_NOT_ACTIVATED** — loop propor→avaliar→traçar implementado; coleta não iniciada |
 | H9 | Razão OI/volume (crowding especulativo) | `h9-oi-volume-ratio-hmm-v1` | **CLOSED_INSUFFICIENT_SAMPLE** — PSR 0,162; IC cruza zero. Ressalva registrada: 44 dos 45 folds saíram `INSUFFICIENT_DATA`, então o agregado repousa sobre UMA janela |
 
-O NO-GO da V3 é o primeiro veredito *confiável* do projeto: HMM auditado sem
-look-ahead, custos modelados, controle positivo provando que o pipeline detecta edge
-quando ele existe, e DSR descontando as tentativas registradas em
-`GarimpoInvestimentos/trials.json` — **26** desde a reconciliação de 2026-09-05, que
-trouxe para o registro versionado as 16 tentativas da varredura de threshold que
-existiam só na máquina de produção (o N do desconto estava subestimado até então).
+Os veredictos negativos anteriores da V3 permanecem registrados. A reconciliação
+de 05/09 levou o registro a **26 tentativas**, incluindo 16 avaliações de threshold
+que existiam apenas na máquina de produção. O DSR atual recusa uma conclusão quando
+as unidades dos Sharpes históricos não são comprovadamente comparáveis; preserva
+as tentativas no registro sem fabricar uma normalização. A aprovação dos controles
+sintéticos é evidência sobre o software, não sobre lucro de mercado.
 
 **Limitação registrada:** `HISTORICAL_REPRODUCIBILITY = LIMITED` — os dados brutos da
 H5 foram perdidos, então a reanálise retrospectiva não é reproduzível. O IC histórico
@@ -104,9 +101,9 @@ sobrepostos mergeados com o CI ainda rodando. O CI **já** roda no `main`; o que
 é *esperar por ele*. Ver [docs/POLITICA_DE_MERGE.md](docs/POLITICA_DE_MERGE.md) para a
 linha do tempo, o diagnóstico e as duas caixas de branch protection que fecham o buraco.
 
-**Lacunas conhecidas e não corrigidas** (dedup do H8, suposição do calendário macro,
-controle do H7/H9 nunca rodado) estão listadas em
-[docs/HYPOTHESES.md](docs/HYPOTHESES.md), seção "Lacunas conhecidas e NÃO corrigidas".
+O [histórico de hipóteses](docs/HYPOTHESES.md) preserva as lacunas identificadas em
+cada etapa. Para distinguir correções concluídas de pendências atuais, consulte o
+[estado vigente](docs/CURRENT_RESEARCH_STATE_20260908.md).
 
 **Onde as coisas estão na máquina de coleta** — caminhos dos bancos, tarefas
 agendadas, logs de resultado, snapshots pré-limpeza e o que só roda lá:
@@ -142,7 +139,7 @@ GarimpoInvestimentos/
 ├── config.py              ← Settings tipado (pydantic-settings) + fail-fast de segredos
 ├── collectors/            ← discovery.py (candidatos), news.py, serpapi_news.py
 ├── dpl/                   ← contratos, providers, routers, feature_store, migrações,
-│                             macro_calendar.py (calendário FOMC — B1/H7)
+│                             macro_calendar.py (calendários FOMC/CPI/PPI — H7)
 ├── analyzers/             ← ai_insights (LLM), indicators, prefilter, score_engine,
 │                             backtest (inclui os gates da H6), trials (DSR), equivalence,
 │                             pbo (Probabilidade de Overfitting via CSCV — B10),
@@ -173,7 +170,7 @@ GarimpoInvestimentos/
 ├── security/redaction.py  ← redação de segredos em log (delega a predictor_ops)
 ├── core/                  ← paths, cache, history (store-first), logger, api_guard
 ├── output/reporter.py     ← exportação CSV/XLSX
-├── macro_calendar.json    ← calendário FOMC 2026 (sourced/citado — ver source_note)
+├── macro_calendar.json    ← 33 eventos FOMC/CPI/PPI de 2026; fontes em source_note
 ├── trials.json            ← registro VERSIONADO de tentativas (denominador do DSR)
 └── h6_status.json         ← estado publicado da H6 (n, gate, veredito quando abrir).
                               Ponte produção→git: o n real vem do feature_store.db,
@@ -183,10 +180,9 @@ GarimpoInvestimentos/
 charters/                  ← estado científico, definição congelada da H6, charters de coleta
 observation_plans/         ← planos e ativações COLLECTION_ONLY (imutáveis, com checksum)
 scripts/                   ← atestado do harness, backup, scan de segredos, CI check
-tests/                     ← 978 verdes com `--all-extras`; 944 verdes + 4 skips com
-                              `--extra test`. Repare no total: 978 contra 948 — 30 testes
-                              não chegam a ser COLETADOS sem os extras. Só o CI
-                              (`all-extras`) exercita o núcleo HMM; ver docs/POLITICA_DE_MERGE.md
+tests/                     ← 1.170 aprovados na consolidação de 08/09, com todos os extras.
+                              Ambientes sem extras opcionais não exercitam toda a suíte;
+                              ver docs/POLITICA_DE_MERGE.md.
 docs/                      ← ADRs e auditorias (ver HANDOFF)
 ```
 
@@ -221,12 +217,14 @@ principal, e `DATA_DIR`, `OUTPUT_DIR` e `CACHE_DIR` são configuráveis.
 
 ```bash
 # suíte offline, sem chaves:
-uv sync --locked --extra test     # 944 verdes + 4 skips (numpy/hmmlearn ausentes)
+uv sync --locked --extra test --extra science
 uv build                          # necessário: test_distribution_security.py inspeciona dist/
 uv run pytest -q
 
 # suíte completa, sem skips:
-uv sync --locked --all-extras && uv build && uv run pytest -q   # 978 verdes
+uv sync --locked --all-extras
+uv build
+uv run pytest -q                   # 1.170 aprovados na validação de 08/09
 ```
 
 Extras disponíveis: `llm`, `v3`, `excel`, `science` e `test`.
@@ -289,40 +287,31 @@ O histórico oficial é a tabela `predictions` de `output/feature_store.db`; o
 `garimpo_historico.csv`, se existir, é absorvido uma vez (backfill `Fonte=direct`)
 e fica congelado.
 
-## Próximos passos
+## Pendências vigentes
 
-1. **Observação prospectiva** — acumular coleta diária (`--ingest --discover` + análise)
-   até a H6 atingir `n >= 30` maduras e o gate pré-registrado poder rodar. O `n` real
-   vive no `feature_store.db` de produção, não em ambiente de auditoria; a única via
-   pela qual ele sai de lá é `GarimpoInvestimentos/h6_status.json`, gravado pelo
-   `quality_snapshot` e **commitado à mão**.
-   O critério diz "`n >= 30` antes de calcular veredito"; ele **não** diz "pare em 30".
-   O poder do gate foi medido em 2026-08-21 (B12 em `docs/HYPOTHESES.md`): em `n=30`
-   um efeito real de rho=0,2 é detectado em apenas **14,7%** das vezes, e o mesmo
-   critério — sem nenhuma alteração — só fica bem dimensionado por volta de `n≈250`.
-   Um "RUÍDO" em n=30 é ausência de evidência, não evidência de ausência.
-2. Rodar `python -m scripts.freeze_h6_definition --check` antes de cada deploy enquanto
-   a H6 estiver ativa — hash divergente é bloqueante até investigação humana.
-3. **H7** — CPI/PPI ainda vazios em `macro_calendar.json` (fonte primária indisponível
-   nas últimas sessões); `publish_lag_days=1` do `DXYProvider` não confirmado contra o
-   release H.10 oficial do Fed; integração V3-vs-Fase1 a decidir. Nenhuma coleta começou.
-4. **Pivot de pesquisa da V3** — o NO-GO líquido fecha a família funding/OI + HMM como
-   formulada (`frozen_families`); hipótese nova exige trial nova e atestado de poder.
-5. Camada `trading/` — gap remanescente: **sem venue real** (`ExchangeAdapter` só tem
-   implementação simulada), o que é decisão humana adjacente a capital, não tarefa
-   técnica. Os outros dois gaps fecharam em 2026-08-21: o adapter
-   `SignalRecord`→`TradeIntent` existe (`trading/signal_adapter.py`, e RECUSA converter
-   sinal de família congelada), e os modelos de custo ganharam ponto de entrada único
-   (`trading/cost_policy.py`) — que ao ser implementado dissolveu a premissa do gap:
-   `v3/costs.py` e `trading/microstructure.py` não são respostas concorrentes à mesma
-   pergunta, são respostas a **instrumentos** diferentes (perp com funding × spot
-   walk-the-book); fundi-los cobraria funding de spot. O dispatcher escolhe pelo
-   instrumento e recusa que o modelo não calibrado sustente veredito científico.
-6. Verificação externa da revogação das chaves antigas da SerpAPI (ver banner no topo).
+1. **Altcoins:** preservar o observador semanal `altcoin_reviewed_20260907`, seu
+   diretório original e seu diário. A programação começa em 13/09/2026; a existência
+   da configuração não garante uma execução futura. Consulte os caminhos e a
+   situação registrada na [continuidade](docs/SESSION_HANDOFF_20260908.md).
+2. **Carry BTC:** o código e o protocolo do observador de 84 dias estão prontos,
+   mas o agendamento permanece pendente. O pré-teste não abriu posição.
+   [Runbook](docs/evidence/carry_forward_20260908/RUNBOOK.md) e
+   [registro do agendamento](docs/evidence/carry_forward_20260908/scheduling.json).
+3. **Evidência econômica:** execução real, taxas da conta, tributação e margem
+   efetiva continuam sem certificação. As coletas públicas e os cenários de custo
+   não substituem essas evidências.
+4. **Famílias antigas:** H6 e H9 estão encerradas por insuficiência de amostra;
+   não retomar sua coleta como se estivessem ativas. H7 e H8 continuam registradas
+   sem ativação, conforme o [charter](charters/scientific_state.json).
+5. **Governança do Git e incidente antigo:** a consolidação esperou o CI completo;
+   a configuração de branch protection não foi alterada. Os registros de
+   [merge](docs/POLITICA_DE_MERGE.md) e do
+   [incidente SerpAPI](docs/SECURITY_INCIDENT_SERPAPI.md) distinguem o que foi
+   conferido do que depende de verificação externa.
 
-Qualquer ativação real exige, sem exceção: atestado do harness
-(`scripts/attest_harness.py`, expira em 7 dias), registro em `trials.json` com `metric`
-declarado, e dado coletado **depois** do registro — nunca reaproveitando histórico já visto.
+As instruções de pesquisa posteriores autorizam linhas separadas com registro
+prévio, sem reabrir silenciosamente famílias congeladas. Nenhuma validação de
+software ou de hipótese autoriza ordens ou capital real.
 
 ## Histórico e decisões
 
@@ -332,11 +321,12 @@ declarado, e dado coletado **depois** do registro — nunca reaproveitando hist�
 [docs/CONFERENCIA_GERAL.md](docs/CONFERENCIA_GERAL.md) ·
 [docs/RELATORIO_FINAL.md](docs/RELATORIO_FINAL.md) (fechamento canônico).
 
-**Partida frio — leia primeiro:** [docs/OVERVIEW_E_ROADMAP_2026-08-21.md](docs/OVERVIEW_E_ROADMAP_2026-08-21.md)
-reúne o estado do projeto e o roadmap da fase de coleta num documento só.
+**Para retomar hoje:** [índice da documentação](docs/README.md) e
+[continuidade de 08/09](docs/SESSION_HANDOFF_20260908.md).
 
-Panorama geral do estado atual — o que existe, o que falta e o que **não** falta:
-[docs/PANORAMA_2026-08-21.md](docs/PANORAMA_2026-08-21.md).
+O [roadmap de 21/08](docs/OVERVIEW_E_ROADMAP_2026-08-21.md) e o
+[panorama daquela data](docs/PANORAMA_2026-08-21.md) documentam a etapa anterior;
+suas pendências não substituem o estado vigente.
 
 Os documentos datados são **registros históricos** e não são reescritos: correções
 entram como errata ou adendo, preservando o texto original. O índice consolidado do
