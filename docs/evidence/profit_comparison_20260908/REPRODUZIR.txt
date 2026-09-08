@@ -1,0 +1,15 @@
+Comparação de lucro — reprodução
+
+Este ZIP é um complemento de código e evidência. Não substitui os dois pacotes anteriores nem contém novamente seus dados ou o interpretador.
+Requer o worktree de pesquisa preservado, seus scripts congelados e os três diretórios de dados já existentes: carry-research-data, basis-research-data e btc-execution-diagnostic-v1. Os pacotes anteriores CRIPTO_CODIGO_DADOS_REPRODUCAO.zip e CRIPTO_BASIS_IMPLEMENTACAO.zip continuam com os dados e instruções de restauração próprios.
+
+No worktree C:/Users/Superleo13/Documents/Codex/2026-09-07/files-pasted-by-the-user-quero/work/cripto-research, com Python 3.13.14, NumPy 2.5.1 e httpx 0.28.1 instalados:
+
+python -m scripts.compare_absolute_profit --carry-data ../carry-research-data --basis-data ../basis-research-data --diagnostic ../btc-execution-diagnostic-v1 --output ../profit-comparison-NOVA-PASTA
+
+A pasta de saída deve ser nova. O comando bloqueia conexões de rede, reproduz 12 cenários antigos e seis novos, verifica 23 arquivos históricos byte a byte, executa a auditoria Decimal separada e reproduz os 12 planos de quantidades usando cotações salvas. comparison.json é determinístico; run_receipt.json tem a data da nova execução.
+
+Testes de software (pytest 8.4.2):
+python -m pytest tests/test_btc_basis.py tests/test_btc_execution_plan.py tests/test_absolute_research.py -q
+
+Não alterar arquivos congelados nem recalcular hashes para aceitar diferenças. Este comparador não baixa evidência futura, não procura parâmetros, não envia ordens e não produz previsão validada de lucro. Os resultados são históricos e adaptativos.
