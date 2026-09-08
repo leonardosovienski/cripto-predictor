@@ -1,0 +1,22 @@
+{
+  "source_commit": "e3d94833f104694b8b96431db7113a2cc474513b",
+  "package": "CRIPTO_CODIGO_DADOS_REPRODUCAO.zip",
+  "package_sha256": "7a241c10356fa253d942970430e189cbd7b07892f8c5c734e0734a6f74aa0831",
+  "package_bytes": 73410305,
+  "package_files_verified": 552,
+  "report_sha256": "e5e6c1b376b6ee42bab618f532f17f7d62b96761000e1773b774b1343f1e1573",
+  "data_archive_sha256": "2887d25e991fa4c177f03aa044446a9ce65addfff60acf9c213df91eb6602301",
+  "extracted_package_standard_library_audit": {
+    "data_files_checked": 3077,
+    "data_archive_sha256": "2887d25e991fa4c177f03aa044446a9ce65addfff60acf9c213df91eb6602301",
+    "network_used": false,
+    "independent_audit": "PASS"
+  },
+  "relocated_full_replay": {
+    "data_files_checked": 3077,
+    "data_archive_sha256": "2887d25e991fa4c177f03aa044446a9ce65addfff60acf9c213df91eb6602301",
+    "network_used": false,
+    "independent_audit": "PASS",
+    "byte_identical_result_files": 19
+  }
+}
