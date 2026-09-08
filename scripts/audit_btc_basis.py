@@ -7,7 +7,7 @@ from collections import defaultdict
 from decimal import ROUND_FLOOR, Decimal
 from pathlib import Path
 
-from scripts.basis_data import DAY, END, ENTRY, HOUR, load, protocol, sha, write
+from scripts.basis_data import DAY, END, ENTRY, HOUR, cost_scenarios, load, protocol, sha, write
 
 D = lambda value: Decimal(str(value))
 
@@ -81,7 +81,7 @@ def audit(data_dir: Path, result_dir: Path, output: Path) -> dict:
         assert [r["execution_ms"] for r in plan["decisions"] if r["enter"]] == [
             p["entry_ms"] for p in spells
         ]
-        for name, cost in spec["costs"].items():
+        for name, cost in cost_scenarios(spec).items():
             result = read_gz(directory / (name + ".json.gz"))
             if result["summary"]["profit_usdt"] is None:
                 assert result["summary"]["failure"]

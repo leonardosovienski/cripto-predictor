@@ -1,13 +1,13 @@
 {
-  "frozen_utc": "2026-09-08T02:04:48.742429+00:00",
-  "stage": "BEFORE_FIRST_ECONOMIC_EVALUATION",
+  "frozen_utc": "2026-09-08T02:06:59.486922+00:00",
+  "stage": "SOFTWARE_CORRECTION_REPLAY_NO_PARAMETER_CHANGE",
   "files": {
-    "scripts/basis_data.py": "e8c8f44835a4ea304cfad862d3fd75ba92d343c813e0370f2275afe5d8bdaada",
+    "scripts/basis_data.py": "4b62d143208781a36be691691678fa84a6d5ceac51db1fde446c97ad2feb157b",
     "scripts/backtest_btc_basis.py": "b87aee83b9a998470e78f4ff7676fa4d7667f44f068405a675722948d83bfa26",
     "scripts/diagnose_btc_execution.py": "5f316589e5bbbbebea18e4b4b67023f09d6593601b3d9d956176705b10889cd4",
-    "scripts/run_btc_basis.py": "5517dd796f9fc5a68190f93a15919f2577f6dc831dee536115c78a47014d2557",
-    "scripts/audit_btc_basis.py": "52b215ff05f107767982792a10a679be14b3d8488df555d2aea3981f0d093c7f",
-    "tests/test_btc_basis.py": "445ccc19ec02e210d43410c6a94cfd4fc7d66ec3c21f889bf0a1458fed056df0",
+    "scripts/run_btc_basis.py": "78b9b25c4db7d873206b3536ef902c4fe90d04be861ec62876b53477f13a9496",
+    "scripts/audit_btc_basis.py": "9692b3eff61bddc564160b975dff3c800b2637d7088485511231502e95050006",
+    "tests/test_btc_basis.py": "bf2903fe082e8327ba62fe019c33ab205f908c4f965f26c5844254659315beb2",
     "docs/evidence/basis_research_20260908/data_semantics.json": "87043c9155a37434587b2f5424bd5b186ced1697e360865704a3e6e9a206ecd4"
   },
   "runtime": {

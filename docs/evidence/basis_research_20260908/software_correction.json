@@ -1,0 +1,14 @@
+{
+  "cause": "The costs object includes accounting prose; generic iteration attempted a fourth non-scenario after the three BR1 scenarios were saved. TypeError: string indices must be integers, not str.",
+  "fix": "Read exactly base/adverse/stress and validate schema; same helper for runner and audit.",
+  "new_parameters": false,
+  "old_implementation_commit": "5b16c5e",
+  "preserved_partial_hashes": {
+    "BR1_DATED_BTC/adverse.json.gz": "f06ed39f764da80575bb0094035f6d4a558d63b8207bdc6f689e1de47b0e664e",
+    "BR1_DATED_BTC/base.json.gz": "c0e71e2cc94a51a75cdfb853799d960ce7af0bfd2fe85d37459896b308819e43",
+    "BR1_DATED_BTC/plan.json.gz": "b6cb0f34c5a22c9f96f53d7b7f0cb6c87b0c075ab8b278fff9f87c537a376f62",
+    "BR1_DATED_BTC/stress.json.gz": "665a1c48d7a97c03247422c88032ec321bd0d55a51f27b8bdbbd999b920654d6"
+  },
+  "tests_after_fix": 37,
+  "pyright_errors": 0
+}

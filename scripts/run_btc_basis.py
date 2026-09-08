@@ -6,7 +6,7 @@ import json
 from pathlib import Path
 
 from scripts.backtest_btc_basis import make_plan, simulate, verdict
-from scripts.basis_data import EVIDENCE, ROOT, load, protocol, sha, write
+from scripts.basis_data import EVIDENCE, ROOT, cost_scenarios, load, protocol, sha, write
 
 
 def verify_code() -> dict:
@@ -32,7 +32,7 @@ def run(data_dir: Path, output: Path) -> None:
             gzip.compress(json.dumps(plan, separators=(",", ":")).encode(), mtime=0)
         )
         scenarios = {}
-        for name, cost in spec["costs"].items():
+        for name, cost in cost_scenarios(spec).items():
             result = simulate(data, plan, cost)
             scenarios[name] = result
             (destination / (name + ".json.gz")).write_bytes(

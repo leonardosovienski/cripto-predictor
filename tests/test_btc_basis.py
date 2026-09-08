@@ -11,7 +11,16 @@ from scripts.backtest_btc_basis import (
     simulate,
     trade_cost,
 )
-from scripts.basis_data import END, ENTRY, HOUR, START, contracts, normalize_bars, protocol
+from scripts.basis_data import (
+    END,
+    ENTRY,
+    HOUR,
+    START,
+    contracts,
+    cost_scenarios,
+    normalize_bars,
+    protocol,
+)
 from scripts.diagnose_btc_execution import common_grid, estimate, walk
 
 ZERO = dict(
@@ -23,6 +32,14 @@ ZERO = dict(
     positive_funding_multiplier=1,
     entry_mismatch_fraction=0,
 )
+
+
+def test_cost_metadata_cannot_be_evaluated_as_a_fourth_variant():
+    assert list(cost_scenarios(protocol())) == ["base", "adverse", "stress"]
+    invalid = copy.deepcopy(protocol())
+    invalid["costs"]["base"] = "accounting prose"
+    with pytest.raises(ValueError):
+        cost_scenarios(invalid)
 
 
 def candle(t, price):

@@ -52,6 +52,28 @@ def protocol() -> dict:
     return json.loads(raw)
 
 
+def cost_scenarios(spec: dict) -> dict:
+    """The accounting prose is metadata, not a fourth economic scenario."""
+    result = {name: spec["costs"][name] for name in ("base", "adverse", "stress")}
+    required = {
+        "spot_fee_bps",
+        "future_fee_bps",
+        "slippage_bps",
+        "settlement_fee_bps",
+        "annual_residual_usdt",
+        "positive_funding_multiplier",
+        "entry_mismatch_fraction",
+    }
+    for value in result.values():
+        if not isinstance(value, dict) or set(value) != required:
+            raise ValueError("Unexpected registered cost schema")
+        if any(
+            not isinstance(v, (int, float)) or not math.isfinite(v) or v < 0 for v in value.values()
+        ):
+            raise ValueError("Invalid registered cost value")
+    return result
+
+
 def contracts() -> dict[str, int]:
     result = {}
     for year in range(2024, 2027):

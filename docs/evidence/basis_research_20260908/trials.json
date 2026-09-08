@@ -18,7 +18,14 @@
       "id": "basis-results-v1",
       "started_utc": "2026-09-08T02:04:48.744005+00:00",
       "kind": "FIRST_REGISTERED_ECONOMIC_EVALUATION",
-      "status": "RUNNING"
+      "status": "PARTIAL_SOFTWARE_FAILURE",
+      "completed_cost_cases": 3
+    },
+    {
+      "id": "basis-results-v2",
+      "kind": "SOFTWARE_CORRECTION_REPLAY",
+      "status": "RUNNING",
+      "started_utc": "2026-09-08T02:06:59.505361+00:00"
     }
   ]
 }
