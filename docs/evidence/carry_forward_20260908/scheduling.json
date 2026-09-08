@@ -1,0 +1,20 @@
+{
+  "requested_name": "Observar carry BTC diariamente",
+  "requested_local_time": "21:15 America/Sao_Paulo",
+  "first_local_date": "2026-09-08",
+  "last_local_date": "2026-12-01",
+  "status": "NOT_CREATED_ONE_HEARTBEAT_LIMIT",
+  "existing_altcoin_automation_unchanged": true,
+  "user_choice_pending": true,
+  "tool_result": {
+    "content": [
+      {
+        "type": "text",
+        "text": "This thread already has an active heartbeat automation. Only one automation can be attached to this thread. Either update the existing automation, or confirm with the user what they would like you to do. Don't make a workaround cron automation unless the user explicitly asked for that."
+      }
+    ],
+    "isError": true
+  },
+  "prepared_prompt": "Acompanhe exclusivamente o novo protocolo carry-btc-forward-20260908-v1 desta tarefa, preparado e congelado após a solicitação do usuário para corrigir as falhas. Trabalhe sozinho, sem outros agentes. Leia docs/CURRENT_RESEARCH_STATE_20260908.md e docs/evidence/carry_forward_20260908/RUNBOOK.md no repositório C:/Users/Superleo13/Documents/Codex/2026-09-07/files-pasted-by-the-user-quero/work/cripto-research. Use apenas dados públicos e marcas hipotéticas. Não acesse contas autenticadas, não envie ordens, não use capital, serviços pagos nem altere produção.\n\nUse o executável C:/Users/Superleo13/Documents/Codex/2026-09-07/files-mentioned-by-the-user-cripto/work/cripto-v1.2/.venv/Scripts/python.exe. Primeiro, no diretório C:/Users/Superleo13/Documents/Codex/2026-09-07/files-mentioned-by-the-user-cripto/work/cripto-v1.2, execute esse Python com -m scripts.verify_research_runtime. Apenas se o código de saída for zero, no diretório C:/Users/Superleo13/Documents/Codex/2026-09-07/files-pasted-by-the-user-quero/work/cripto-research, execute o mesmo Python com -X utf8 -m scripts.observe_carry_forward --data C:/Users/Superleo13/Documents/Codex/2026-09-07/files-pasted-by-the-user-quero/work/carry-forward-data --mode tick. O próprio observador verifica seu congelamento de código, diário e fontes salvas. Não altere hashes, apague registros nem mude parâmetros para contornar falhas.\n\nA primeira janela é 08/09/2026 das 21h às 22h de Brasília, com coleta prevista às 21h15. A saída final tem janela em 01/12/2026 das 21h às 22h, também com coleta às 21h15. São 84 dias de uma única posição BTC spot-long/perp-short hipotética, quantidade fixa, três cenários de custos. Não recrie entrada, saída ou cotação diária perdida com dados posteriores; interrupções de entrada/saída são terminais desconhecidas. Pré-teste não é entrada prospectiva. Ausência de observação não é lucro zero.\n\nLeia o código de saída e last_run.json antes de status.json, que pode estar desatualizado após erro de integridade. Preserve ledger.jsonl e raw/. O arquivo observer.lock pode permanecer no disco; não o apague para contornar um processo ativo. Confira fase, erros, dias conhecidos/ausentes, cobertura de margem, violações e final_value. As contas são marcas modeladas em USDT, sem taxas efetivas de conta, execução, tributos ou conversão para reais certificados. Uma posição de 84 dias, mesmo positiva, não comprova lucro futuro. Não compare com benchmark nem ajuste parâmetros.\n\nMantenha silêncio se não houver mudança relevante ou acionável. Avise apenas sobre primeira entrada, falha, mudança significativa de qualidade, violação de margem, conclusão ou informação necessária. Use notification_signature para auxiliar a comparação; mudanças rotineiras de preço e de lucro marcado não justificam aviso. Quando houver novidade, atualize um relato simples em português em C:/Users/Superleo13/Documents/Codex/2026-09-07/files-pasted-by-the-user-quero/outputs/ACOMPANHAMENTO_CARRY_BTC.md com horários, observações e limites. Quando observation_finished for verdadeiro, faça o balanço descritivo incluindo lacunas e pause somente esta automação de carry pelo recurso de automações, preservando seus demais campos.\n\nA automação observar-altcoins-semanalmente, seu protocolo e seu diário são separados e devem permanecer intocados. Resultados de altcoins não confirmam o carry e vice-versa."
+}
+

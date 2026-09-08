@@ -1,0 +1,9 @@
+{
+  "extracted_tests_passed": 49,
+  "files_hashes_verified": 70,
+  "freeze_verified": true,
+  "saved_quote_plans_equal": 12,
+  "network_blocked_for_replay": true,
+  "package_sha256": "78f3f311c92ed291bd24066befe4fc6978e2ed11bf2b1096efba985e9ef1a93e",
+  "package_bytes": 642948
+}

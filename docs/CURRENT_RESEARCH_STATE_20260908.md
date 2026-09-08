@@ -29,7 +29,7 @@ A redução de BTC descoberto no planejador é uma correção de quantidade. O v
 
 ## Evidência prospectiva e limites explícitos
 
-O novo protocolo observa uma única posição durante 84 dias. Primeira janela: 08/09/2026 às 21h de Brasília; coleta programada para 21h15. Última janela: 01/12/2026 às 21h, coleta às 21h15. Cada janela dura uma hora. A configuração efetiva de agendamento é registrada na entrega, sem alterar a automação de altcoins.
+O novo protocolo foi preparado para observar uma única posição durante 84 dias. Primeira janela: 08/09/2026 às 21h de Brasília; horário previsto de coleta às 21h15. Última janela: 01/12/2026 às 21h, coleta às 21h15. Cada janela dura uma hora. O pré-teste público passou e não abriu posição. O agendamento ainda não foi criado: o aplicativo recusou uma segunda automação nesta tarefa, que já contém a de altcoins. A autorização para criar uma tarefa separada foi solicitada ao usuário. Consulte `docs/evidence/carry_forward_20260908/scheduling.json` para o registro; a automação de altcoins não foi alterada.
 
 Resultados intermediários são marcas hipotéticas de encerramento pelos livros públicos. Incluem spread, profundidade e cenários explícitos de custos, funding com sinal, caixa de margem separado e teste adicional de salto de 30%. O teste usa máximas de horas completas e não certifica liquidação real, horas incompletas ou simultaneidade dos negócios. A cobertura de funding verifica os intervalos de oito horas definidos no protocolo; não é uma certificação independente da integralidade do provedor em mudanças de calendário.
 

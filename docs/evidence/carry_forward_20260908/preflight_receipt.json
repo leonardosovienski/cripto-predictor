@@ -1,0 +1,48 @@
+{
+  "checked_utc": "2026-09-08T03:49:16.166282+00:00",
+  "code_commit_before_network": "3f4a1f1",
+  "status": "PASS",
+  "public_requests": 6,
+  "public_bytes": 18682949,
+  "maximum_request_seconds": 0.4501834,
+  "clock_offsets_ms": {
+    "future": 662.266845703125,
+    "spot": 675.60595703125
+  },
+  "quote_utc": "2026-09-08T03:44:13.552717+00:00",
+  "actual_entry_recorded": false,
+  "ledger_rows": 1,
+  "ledger_head": "87cccf3e90cde95f5d8f6044c0c72371bf350e40d9d2605a0e6c4dd4d3aeb4b0",
+  "pre_start_tick_ledger_unchanged": true,
+  "code_freeze_sha256": "b2dae12cbed306b84f9e2e34027fe34c43b1343222915a1bd9962f8bcbe5548b",
+  "three_cost_entry_calculation_diagnostic": {
+    "quantity_btc": "0.015",
+    "spot_entry": "78942.01000000",
+    "future_entry": "78909.60",
+    "entry_ms": 1788839053552,
+    "cases": {
+      "base": {
+        "cash_after_entry": "3812.91001077500",
+        "entry_cost_usdt": "2.95983922500",
+        "mismatch_usdt": "0E-11"
+      },
+      "adverse": {
+        "cash_after_entry": "3807.58239740000",
+        "entry_cost_usdt": "8.28745260000",
+        "mismatch_usdt": "0E-11"
+      },
+      "stress": {
+        "cash_after_entry": "3801.66174665000000",
+        "entry_cost_usdt": "8.28745260000",
+        "mismatch_usdt": "5.92065075000000"
+      }
+    },
+    "fee_asset_assumption": "USDT-equivalent; actual account commission asset/rate unknown",
+    "net_delta_btc_model": "0",
+    "real_fills": false
+  },
+  "orders": 0,
+  "real_profit": null,
+  "prospective_outcome": null,
+  "meaning": "Only a public preflight; no synthetic entry was written to the prospective journal."
+}
