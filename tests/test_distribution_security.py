@@ -10,7 +10,10 @@ SECRET = re.compile(
 
 def test_built_wheels_contain_no_runtime_artifacts_or_secrets():
     wheels = sorted((ROOT / "dist").glob("*.whl"))
-    assert wheels
+    assert wheels, (
+        f"nenhum .whl em {ROOT / 'dist'} — rode `uv build` antes da suíte "
+        "(este teste inspeciona o wheel construído, não o checkout)"
+    )
     for wheel in wheels:
         with zipfile.ZipFile(wheel) as archive:
             names = archive.namelist()
