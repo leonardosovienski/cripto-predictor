@@ -1,0 +1,34 @@
+{
+  "registered_at_utc": "2026-09-08T00:47:23.718541+00:00",
+  "protocol_commit": "e41773a",
+  "protocol_sha256": "078f130eba63dfdae35fc6cc6a7da65b368731faaa3a5ab14522456a5e440d0f",
+  "mode": "ADAPTIVE_DISCOVERY",
+  "full_historical_search_count": null,
+  "trials": [
+    {
+      "id": "AR1_BTCUSDT",
+      "status": "REGISTERED",
+      "evaluations": 0
+    },
+    {
+      "id": "AR1_ETHUSDT",
+      "status": "REGISTERED",
+      "evaluations": 0
+    },
+    {
+      "id": "AR2_BTCUSDT",
+      "status": "REGISTERED",
+      "evaluations": 0
+    },
+    {
+      "id": "AR2_ETHUSDT",
+      "status": "REGISTERED",
+      "evaluations": 0
+    },
+    {
+      "id": "AR3_UNIVERSE",
+      "status": "REGISTERED",
+      "evaluations": 0
+    }
+  ]
+}

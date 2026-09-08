@@ -1,0 +1,14 @@
+{
+  "charters/binance_spot_microstructure_v1.json": "c32e899060cabbf9fbcb76b3914e4ae06d59c4cc3e540e58da08ab8ca298230e",
+  "charters/funding_oi_v3.json": "37a36180884962830ea4c197b2e18ab8b3523e9276390e26812bc53a0af945b3",
+  "charters/h6_definition_frozen.json": "301c1acd549c99d543085486a5559414b00001290f1ae28a63cfa2b66aa0b23f",
+  "charters/scientific_state.json": "f9d20abdef2fa77df98784a90f5d4c2e1a45907e6438ffa9d8235e5a9e063c75",
+  "charters/trend_following_spot_4h_v1.json": "d9fb577eb1cf020798d440e16bb1c1a968a1bfbe850a660ffacb15bc293230af",
+  "GarimpoInvestimentos/trials.harness_attestation.json": "97ceb19036967be7519b633c1087140237630d920a094894e762cbef346f10b1",
+  "GarimpoInvestimentos/trials.json": "7193b15df347b8243a65ab92449503dd64f90a9777207aadc8c80da2e0ac844b",
+  "GarimpoInvestimentos/trials.phase1_harness_attestation.json": "3656accf2eec642812bc5f09fdc2c3abb094fdd2d32f8572300143496a345d15",
+  "GarimpoInvestimentos/trials_migrated_preview.json": "89e78722e4d02da10750d184a95958c02001ca4606a75c446ddba2b6802bc557",
+  "docs/evidence/altcoin_reviewed_20260907/freeze.json": "2bc8f67c704780acff78973404c7a8f5915d05d90f8b05bba72d16aa360a25f6",
+  "docs/evidence/altcoin_reviewed_20260907/protocol.json": "3a00ae198fbfeebd4a8a69ea763c21edd9ddac6ff94961eb3f93186f783e851a",
+  "docs/evidence/altcoin_reviewed_20260907/RUNBOOK.md": "64f9fd73a446d34b0c40b244c277ad21a6f6f9f23f10af3dd6c24b02c9918746"
+}
