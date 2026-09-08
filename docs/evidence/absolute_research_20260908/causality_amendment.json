@@ -1,0 +1,12 @@
+{
+  "id": "absolute-research-20260908-causal-sizing-correction",
+  "base_protocol_commit": "e41773a",
+  "prior_result": "absolute-results-v2, all five strategy streams retained",
+  "reason": "Code review after first results identified that applying current exchange filters to historical sizing uses future venue constraints. The user requires causal decisions. Current filters must remain present-day feasibility diagnostics only.",
+  "correction": "Use a constant base-unit quantity grid of 0.001 for BTCUSDT and ETHUSDT, declared here before rerunning; no current exchangeInfo min/max/status filters may enter historical decisions or sizing. This is an explicit simulation unit, not a claimed historical venue rule. Check current filter compatibility separately after the simulation.",
+  "parameter_provenance": "0.001 is the common grid already used in all prior saved carry streams; retain that exact value rather than optimize or introduce another quantity. Independent comparison must show all historical quantities, entries and P&L unchanged. If not, flag a material result correction, preserve both outputs and explain.",
+  "unchanged": "Hypotheses, funding gate, dates, 25% target allocation, momentum rule, all costs and stress tests remain fixed. No new strategy or search attempt. Do not change original protocol hash or acquisition manifest to hide the correction.",
+  "registered_before_corrected_rerun": true,
+  "current_filters": "May inform only a separately labeled current compatibility check; historical executable sizing/fees still unverified.",
+  "production": false
+}
