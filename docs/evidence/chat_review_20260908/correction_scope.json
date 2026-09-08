@@ -1,0 +1,14 @@
+{
+  "id": "chat-review-20260908",
+  "review_base_commit": "d7ee333",
+  "user_request": "Reread and review the entire chat, assess correctness and whether the approach should be repeated",
+  "finding": "The standalone net_hedge_plan in plan_btc_hedge.py validates selected fill sides but does not reject crossed books. A synthetic spot bid of 1100 and ask of 1000 produced a plan. This is an input-validation defect, not evidence that the twelve preserved public snapshots or historical profits are wrong.",
+  "correction": "Add plan_btc_hedge_v2.py as the supported entry point for new saved-quote diagnostics. Validate both complete books and numeric lot constraints before calling the preserved v1 quantity arithmetic. Reject failed or stale saved samples during replay. Preserve the frozen v1 code for exact historical reproduction.",
+  "validation_plan": "Regression test crossed/locked books on both venues, invalid or unordered levels including unconsumed depth, invalid filters and stale samples. Replay all twelve preserved public snapshots with no network, require exact equality of valid plan economic fields to v1. Run the six existing relevant research/observer test modules plus new validation tests. Check frozen hashes and prior delivery manifests.",
+  "economic_parameters_changed": false,
+  "historical_variants_added": 0,
+  "future_performance_consumed": false,
+  "accounts_or_orders": false,
+  "author_independence": "Single assistant as explicitly requested. Prior independent-audit wording means separate accounting implementation, not external author, data-source or statistical independence. The BR auditor shares normalization functions with the engine.",
+  "governance": "Add corrective evidence and a new supported diagnostic module; do not modify frozen engines, past evidence, original repository, observer or original delivered packages."
+}
