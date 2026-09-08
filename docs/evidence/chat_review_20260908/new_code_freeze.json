@@ -1,0 +1,7 @@
+{
+  "purpose": "Record validated correction, not overwrite historical freezes",
+  "files": {
+    "scripts/plan_btc_hedge_v2.py": "c619cfde3c85720fd52317f65e63d3a1d04590d7807720cdfb0e5ee3d962bb15",
+    "tests/test_btc_execution_validation.py": "14bb96e8fd576ef0a6b38280c72c92647d727e438be0f35cb4985e0dbf51ff99"
+  }
+}

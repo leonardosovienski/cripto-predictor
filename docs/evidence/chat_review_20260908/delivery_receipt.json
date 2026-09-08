@@ -1,0 +1,16 @@
+{
+  "verified_utc": "2026-09-08T03:01:45.800618+00:00",
+  "correction_code_commit": "9375670",
+  "package": "CRIPTO_REVISAO_DO_CHAT_CORRECAO.zip",
+  "sha256": "2e284937a915f9f294cdc17fc4e769198f21f8328741bc74695450b04beadb14",
+  "bytes": 30784,
+  "package_files_checked": 15,
+  "extracted_package_validation_tests_passed": 23,
+  "extracted_package_saved_quote_plans_economically_equal": 12,
+  "network_blocked_during_packaged_replay": true,
+  "original_runtime_verification": {
+    "status": "PASS",
+    "files_checked": 3785
+  },
+  "scope": "Review and diagnostic input validation only; no economic strategy or observer change"
+}
