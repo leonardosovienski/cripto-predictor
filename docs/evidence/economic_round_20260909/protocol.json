@@ -1,0 +1,71 @@
+{
+  "id": "ECONOMIC-ROUND-20260909-R1",
+  "registered_date_utc": "2026-09-09",
+  "base_commit": "48fd271b06486866289f3e93cdc80504259b196f",
+  "stage": "PREREGISTERED_EXPLORATION",
+  "capital_permission": false,
+  "objective": "Decide whether a public-data mechanism warrants further validation of net executable crypto income after costs, capital and risks.",
+  "selection_before_new_market_data": {
+    "primary": "H1-AAVE-ARBITRUM-NATIVE-USDC-SUPPLY",
+    "alternative": "H2-AR2-BTC-RENEWAL-TURNOVER",
+    "rationale": "Unlevered supply uses borrower-paid interest and may avoid the multiple entry/exit legs and idle margin that consumed recent carry income. Protocol income indices and withdrawal liquidity can test this premise directly. The alternative isolates avoidable execution turnover on preserved data without searching new directional signals.",
+    "parked_mechanisms": {
+      "continuous_btc_carry": "Recent 84-day evidence already known: +10.56 USDT base, -6.97 adverse, -21.65 stress; repeating the same window alone adds little decision value.",
+      "dated_futures_basis": "Known five-trade result and no 2026 entries; further execution/history adapters would not be the first decisive experiment.",
+      "directional_signals_and_market_making": "No new material reason to reopen frozen directional families; queue/fill and adverse-selection evidence is insufficient for a cheap valid market-making test. Not economically rejected."
+    }
+  },
+  "round_budget": {
+    "hypotheses_max": 2,
+    "h1_reserves_max": 1,
+    "h1_historical_windows": 1,
+    "h1_weekly_observations_max": 13,
+    "h1_public_rpc_calls_max_including_failures": 500,
+    "h1_public_rpc_endpoints_max": 2,
+    "h1_supporting_public_http_gets_max": 8,
+    "h1_rpc_response_bytes_max_total": 20000000,
+    "h2_assets_max": 1,
+    "h2_signal_variants_max": 1,
+    "h2_execution_variants_max": 2,
+    "h2_new_market_acquisitions": 0,
+    "new_paid_resources": 0,
+    "reserve": "After the market experiment, complete accounting reconstruction, material regression tests, required engineering checks, evidence preservation and a resumable report. No additional search round merely because neither hypothesis proves profit."
+  },
+  "h1": {
+    "hypothesis": "Borrower-paid base interest on native USDC supplied without borrowing to Aave V3 on Arbitrum can leave a positive historical remainder after explicit entry/exit costs at plausible hypothetical capital sizes, subject to withdrawal liquidity and risks.",
+    "universe": "Exactly Aave V3 Arbitrum, native Circle USDC (not bridged USDC.e); address identities from the official Aave address book, verified against on-chain reserve identity.",
+    "currency": "USDC",
+    "position": "One hypothetical supply held continuously, no borrowing, no leverage, no rewards monetization and no wallet/transaction signing.",
+    "period_rule": "84 completed UTC days ending 2026-09-09T00:00:00Z. Select the last block at or before each of 13 weekly boundaries; record block hashes and timestamps. No shifting the window after seeing results.",
+    "sources": ["Official Aave protocol/address-book source", "Public Arbitrum RPC and at most one unauthenticated archive fallback"],
+    "first_test": "Verify correct chain, fresh header, reserve identity and access to historical normalized-income state. Historical API failure means DATA_ACCESS_BLOCKED, not absence of opportunity.",
+    "measurement": "Reconstruct aToken base-balance growth from normalized-income index ratios, with conservative token-unit rounding. Verify reserve state and unborrowed underlying liquidity at the same historical blocks and a current finalized/latest-safe block. Do not annualize the observed result as a forecast.",
+    "capital_scenarios_usdc": [1000, 5000, 25000],
+    "entry_exit_execution_cost_scenarios_usdc": [2, 10, 30],
+    "cost_convention": "Scenario cost is total approval/supply/withdraw gas and relevant entry/exit friction in USDC-equivalent, not an observed fill quote. Initial capital is explicitly assumed already in native USDC on Arbitrum. Funding/bridge/conversion into that initial state and taxes remain unknown and displayed separately; no assertion of personal all-in net profit.",
+    "other_costs": "No borrowing financing cost by construction; no reward gas or reinvestment transactions. No recurring server is needed to keep a passive position, so that incremental infrastructure scenario is zero, with development effort treated as already incurred. Additional personal/custody costs remain unknown.",
+    "risks": ["USDC depeg/issuer or freezing risk", "Smart-contract loss or bad debt", "Reserve pause and insufficient unborrowed withdrawal liquidity", "Chain/sequencer outage", "Variable future borrower demand and interest", "Gas/conversion and unknown tax costs"],
+    "adverse_scenarios": ["Future base interest falls to zero", "Separate 1% and 5% loss of exit value relative to the initial accounting numeraire", "100% permanent principal loss", "Withdrawal delayed or unavailable despite accrued token balance"],
+    "no_owner_risk_preference": "Capital and stress cases are analytical scenarios, not the owner's capital or approved loss budget. Do not fabricate a risk_limit to obtain an approval from the existing comparator.",
+    "decision_rules": {
+      "reject_in_scope": "A defensible best-cost remainder is non-positive, or the selected amount cannot fit observed unborrowed liquidity at a required boundary; report scope and distinguish capacity from profitability.",
+      "inconclusive": "Positive partial historical remainder with material missing costs, incomplete index/exit path, unstable/concentrated income or insufficient future evidence.",
+      "candidate_for_additional_validation": "Complete index/accounting path with positive partial remainder under the declared cost scenarios and sufficient observed exit liquidity, while explicitly withholding personal net-profit and future-performance claims.",
+      "stop": "One fixed reserve/window, or archive/access budget exhausted, or premise refuted; no replacing the pool by a higher-yield winner."
+    },
+    "prior_exposure": "Official mechanism/address documentation and existing project results consulted before registration; no new reserve income observations or APY outcomes consulted. Historical analysis remains exploratory, not a prospective/out-of-sample profitability attestation."
+  },
+  "h2": {
+    "hypothesis": "Avoidable full close/reopen turnover at adjacent AR2 BTC renewals materially reduces the historical cash remainder; adjusting only the same-instrument quantity may change the decision.",
+    "activation": "Activate only if H1 is blocked/rejected or cannot resolve its economic question within the budget. Otherwise park the alternative without inspecting new AR2 outcomes.",
+    "universe_and_period": "BTCUSDT only, preserved acquisition and fixed AR2 signal from 2024-01-01 through 2026-09-07; no threshold, horizon or universe tuning.",
+    "currency": "USDT; do not equate or directly rank with USDC results.",
+    "variant_count": "One signal policy, two execution treatments: preserved close/reopen reference and same-venue/same-contract delta adjustment. Use original target quantities as a causal reference trajectory to isolate execution; savings stay in cash and do not alter sizing.",
+    "first_test": "Reproduce the reference and compute a defensible upper bound removing only adjacent renewal turnover; retain initial/final costs, signed funding, fixed expenses and all other original costs. If that bound is still negative, stop in this scope.",
+    "continuation": "If the bound can change the decision, replay the fixed quantity trajectory with reconciled cash, positions, costs and margin. Separate avoided turnover from changes in funding at boundary hours and from changes in unhedged-risk assumptions; no free benefit from omitting negative funding.",
+    "gate": "Record the material execution distinction in a separate dossier before outcome evaluation. This does not reopen directional funding/OI/HMM families, change frozen AR2 or authorize deployment.",
+    "decisions": "Reject if the valid upper bound or full replay fails in scope; otherwise inconclusive/candidate for further validation with historical fill, tax, margin and adapted-window limitations. No prospective validation from reused history."
+  },
+  "completion_rule": "Close the round after the fixed primary experiment and, only if activated, the bounded alternative; record each status and next decisive information. Do not wait for future market observations or create recurring automations.",
+  "preservation": ["Original migration package", "Restored observer code/environments/raw files/ledgers", "Frozen evidence and protocols", "Owner fred_test.csv", "Existing schedules and capital gates"]
+}
