@@ -71,6 +71,7 @@ def test_external_path_fails_before_creating_any_operational_directory(tmp_path,
     result = run(root, "from GarimpoInvestimentos.core import paths", **{name: str(outside)})
     assert result.returncode != 0
     assert "fora de CRIPTO_ROOT" in result.stderr
+    assert str(outside) not in result.stderr
     assert not outside.exists()
     assert not (root / "operacao").exists()
 
@@ -93,6 +94,7 @@ def test_pipeline_output_flag_cannot_escape_root(tmp_path):
     result = run(tmp_path / "Cripto", code)
     assert result.returncode != 0
     assert "fora de CRIPTO_ROOT" in result.stderr
+    assert str(outside) not in result.stderr
     assert not outside.exists()
 
 

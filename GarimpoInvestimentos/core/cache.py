@@ -1,3 +1,4 @@
+import hashlib
 import json
 import logging
 import os
@@ -14,6 +15,17 @@ logger = logging.getLogger(__name__)
 CACHE_PATH = str(OUTPUT_DIR / "cache.json")
 TTL_HOURS = settings.CACHE_TTL_HOURS
 _DOMAIN = "previsao_cripto"
+
+
+def analysis_fingerprint(market_data: dict, judge: str, source: str, policy: str) -> str:
+    """Cache identity includes public inputs and the current analysis configuration."""
+    payload = json.dumps(
+        {"market": market_data, "judge": judge, "source": source, "policy": policy},
+        sort_keys=True,
+        separators=(",", ":"),
+        default=str,
+    )
+    return hashlib.sha256(payload.encode("utf-8")).hexdigest()
 
 
 def load_cache() -> dict[str, Any]:

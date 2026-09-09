@@ -124,3 +124,22 @@ def test_load_cache_malformed_cached_at_excluded():
             result = cache_mod.load_cache()
     assert "bitcoin" in result
     assert "broken" not in result
+
+
+def test_analysis_cache_changes_with_market_judge_source_or_policy():
+    from GarimpoInvestimentos.core.cache import analysis_fingerprint
+
+    original = analysis_fingerprint(
+        {"close": 100, "ts": "day1"}, "gemini:model:hash", "binance", "v1"
+    )
+    assert original == analysis_fingerprint(
+        {"ts": "day1", "close": 100}, "gemini:model:hash", "binance", "v1"
+    )
+    for market, judge, source, policy in [
+        ({"close": 101, "ts": "day1"}, "gemini:model:hash", "binance", "v1"),
+        ({"close": 100, "ts": "day2"}, "gemini:model:hash", "binance", "v1"),
+        ({"close": 100, "ts": "day1"}, "groq:model:hash", "binance", "v1"),
+        ({"close": 100, "ts": "day1"}, "gemini:model:hash", "coingecko", "v1"),
+        ({"close": 100, "ts": "day1"}, "gemini:model:hash", "binance", "v2"),
+    ]:
+        assert original != analysis_fingerprint(market, judge, source, policy)

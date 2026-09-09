@@ -22,6 +22,8 @@ import time
 
 from predictor_core.obs import emit_event
 
+from GarimpoInvestimentos.security.redaction import safe_error_message
+
 _DOMAIN = "previsao_cripto"
 _logger = logging.getLogger("previsao_cripto")
 
@@ -51,10 +53,11 @@ def log_error(ativo: str, error: Exception) -> None:
     """Falha em qualquer etapa — tipo da exceção e mensagem no evento."""
     duration_ms = int((time.monotonic() - _LOG_STARTED.pop(ativo, time.monotonic())) * 1000)
     error_type = type(error).__name__
-    _logger.error("[erro] %s — %s: %s", ativo.upper(), error_type, error)
+    message = safe_error_message(error)
+    _logger.error("[erro] %s — %s: %s", ativo.upper(), error_type, message)
     emit_event(
         _DOMAIN,
         "pipeline_error",
         metrics={"duration_ms": float(duration_ms)},
-        metadata={"ativo": ativo, "error_type": error_type, "error_msg": str(error)[:200]},
+        metadata={"ativo": ativo, "error_type": error_type, "error_msg": message[:200]},
     )

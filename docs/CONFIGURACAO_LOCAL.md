@@ -43,6 +43,10 @@ O perfil configura o armazenamento do projeto, não é uma sandbox do Windows pa
 
 `pipeline.env` parte do exemplo público com as chaves vazias. Configure valores reais somente nesse arquivo local ou em um ambiente de processo privado. Não cole segredos no chat, documentação, commits ou relatórios. O perfil não importa credenciais do computador antigo nem inventa chaves.
 
+**Estado verificado em 09/09/2026:** Gemini e Groq geraram análises reais; SerpAPI forneceu notícias em plano de preço zero; CoinGecko respondeu ao endpoint de verificação. A geração Cerebras retornou HTTP 402 (pagamento necessário), apesar de a listagem de modelos responder. O modo atual é Gemini + SerpAPI. O modelo Groq foi atualizado para `openai/gpt-oss-120b`; GNews e credenciais privadas Binance continuam sem uso. Consulte [o fechamento e seus limites](FECHAMENTO_PENDENCIAS_20260909.md).
+
+Os limites diários persistentes são 28 unidades de ingestão, 8 tentativas de notícias por provedor e 6 chamadas lógicas de LLM por provedor, por dia UTC. O dono confirmou planos gratuitos. Isso não é teto monetário nem cobertura de todos os retries internos. Duas execuções pontuais de diagnóstico produziram dados e resultados em `operacao\saidas`, sem ativar agendamentos ou capital. As 48 observações de futuros recuperadas estão na nova base `operacao\dados\basis-recovered-20260909`, separada dos originais.
+
 O comando `status` mostra os caminhos e se a configuração do pipeline carrega, sem imprimir credenciais nem fazer requisições. Enquanto faltarem as chaves exigidas pelos provedores selecionados, ele informa a falha de configuração e o pipeline mantém a recusa existente. Pesquisa local e diagnóstico AR2 não exigem essas APIs. Configurar pastas não comprova conectividade, disponibilidade de dados históricos ou lucro.
 
 Os observadores preservados ficam separados:

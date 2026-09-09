@@ -48,7 +48,17 @@ def _build_router(
         klass = _PROVIDER_REGISTRY.get(name)
         if klass is None:
             raise ValueError(f"sources.json: provedor desconhecido '{name}'")
-        providers.append(klass(symbol_map=defs.get(name, {}).get("symbol_map", {})))
+        symbol_map = defs.get(name, {}).get("symbol_map", {})
+        if name == "coingecko":
+            # A fachada pertence ao domínio; o conector permanece independente
+            # de Settings e recebe também chaves carregadas somente do dotenv.
+            from GarimpoInvestimentos.config import settings
+
+            providers.append(
+                CoinGeckoProvider(symbol_map=symbol_map, api_key=settings.COINGECKO_API_KEY)
+            )
+        else:
+            providers.append(klass(symbol_map=symbol_map))
 
     breakers = (
         {p.name: CircuitBreaker(p.name, domain=_DOMAIN) for p in providers}
