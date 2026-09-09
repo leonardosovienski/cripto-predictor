@@ -14,6 +14,10 @@ PROJECT = Path(__file__).resolve().parents[1]
 MARKER = PROJECT / ".cripto-root"
 
 
+class LocalRuntimePathError(ValueError):
+    """An operational destination escapes the configured project root."""
+
+
 def local_root() -> Path | None:
     raw = os.environ.get("CRIPTO_ROOT")
     if not raw and MARKER.is_file():
@@ -34,7 +38,7 @@ def within_root(root: Path, value: str | Path) -> Path:
         candidate = root / candidate
     resolved = candidate.resolve()
     if not resolved.is_relative_to(root):
-        raise ValueError("Caminho operacional fora de CRIPTO_ROOT: " + str(resolved))
+        raise LocalRuntimePathError("Caminho operacional fora de CRIPTO_ROOT: " + str(resolved))
     return resolved
 
 

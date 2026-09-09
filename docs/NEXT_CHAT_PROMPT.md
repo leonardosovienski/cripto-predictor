@@ -1,6 +1,6 @@
 # Continuidade: revisão de arquitetura, lógica e resultado econômico
 
-Atualizado em 09/09/2026, depois da configuração das chaves. Este é o ponto de entrada canônico para o novo chat. Confira o estado real antes de agir; documentos antigos são evidência datada, não autorização nova nem certificado do código atual.
+Atualizado em 09/09/2026, depois da preparação, correções e execuções reais de diagnóstico. Leia primeiro [FECHAMENTO_PENDENCIAS_20260909.md](FECHAMENTO_PENDENCIAS_20260909.md) e sua validação final; os estados de partida abaixo são históricos. Este é o ponto de entrada canônico para o novo chat. Confira o estado real antes de agir; documentos antigos são evidência datada, não autorização nova nem certificado do código atual.
 
 ## Pedido atual do dono
 
@@ -40,7 +40,7 @@ A configuração carrega sem erro desde 09/09/2026 às 18:41 UTC. Estão preench
 
 As chaves foram importadas do arquivo local `C:\Cripto\.env.txt`, que contém uma lista anotada e foi preservado. Não o trate como um arquivo dotenv diretamente carregável. Ele contém também GNews e credenciais de Binance. GNews não é NewsAPI.ai e não deve ser mapeada silenciosamente para `NEWSAPIAI_API_KEY`; as credenciais da Binance não foram usadas e não autorizam acesso à conta.
 
-As verificações feitas foram locais, sem chamadas de API. Não declare chaves, modelos, cotas ou endpoints como validados externamente. As credenciais opcionais restantes continuam vazias; não são todas necessárias para o modo atual. Prova atual: [configuração das chaves](C:/Cripto/operacao/relatorios/CONFIGURACAO_CHAVES_20260909T184135656844Z.json).
+As verificações conectadas posteriores confirmaram geração Gemini e Groq, notícias SerpAPI e resposta de verificação CoinGecko. A geração Cerebras retornou HTTP 402 e permanece indisponível para o uso gratuito verificado. Groq usa agora `openai/gpt-oss-120b`. O dono confirmou planos gratuitos; preserve a recusa de recursos pagos. As chaves opcionais ausentes não impedem Gemini + SerpAPI. As provas atuais estão no documento de fechamento; a importação inicial continua como evidência histórica.
 
 A guarda de API está ligada e recebeu limites finitos em 09/09: 28 unidades de ingestão, 8 tentativas de notícias por provedor e 6 chamadas lógicas de LLM por provedor, por dia UTC, conforme o exemplo documentado em [API_GUARDS.md](API_GUARDS.md). Veja o [comprovante](C:/Cripto/operacao/relatorios/LIMITES_API_20260909T192125822404Z.json). Antes de verificações conectadas, confira recursos gratuitos disponíveis e retries; esses limites não são teto monetário nem certificado das cotas do provedor. Não gere novas despesas nem apague o banco de orçamento para reiniciar cotas. Se a gratuidade não puder ser confirmada, prossiga com verificações locais e fontes públicas utilizáveis, registrando essa dependência.
 
@@ -48,7 +48,9 @@ Não imprima valores, prefixos, hashes de chaves ou conteúdos privados em ferra
 
 ## Preparação de dados posterior ao repasse inicial
 
-Leia [PRONTIDAO_DADOS.md](PRONTIDAO_DADOS.md) antes da revisão. Uma nova conferência local passou em 68 fontes brutas e 10 arquivos de carry e na reconstrução de 532 fontes e 29 séries de futuros. O catálogo e os critérios de conclusão estão nesse documento. Foram explicitadas duas lacunas de 24 horas nas séries de marcação de futuros de 2026, a falta de certificação do banco operacional antigo e a ausência da primeira coleta nas novas pastas. A atualização dos limites de API está concluída; conexões externas, fluxo completo e avaliação futura permanecem pendentes. Essas verificações específicas não substituem o reteste geral pedido.
+Leia [PRONTIDAO_DADOS.md](PRONTIDAO_DADOS.md) e [FECHAMENTO_PENDENCIAS_20260909.md](FECHAMENTO_PENDENCIAS_20260909.md). As 48 observações de futuros foram recuperadas em uma nova base, com reconstrução independente do normalizador. As duas bases de altcoins foram verificadas; os 12 intervalos ausentes da retrospectiva não retornaram dados em consultas públicas específicas. A busca ampliada não encontrou o banco antigo. O pipeline produziu mercado, notícias, análises, histórico e cache em `C:\Cripto\operacao`; o teste real também originou correções de chave CoinGecko, candle fechado, volume e identidade do cache. Esses registros são diagnósticos operacionais, não amostra prospectiva independente.
+
+O dono confirmou que só dispõe dos arquivos desta pasta, autorizou buscar dados públicos faltantes e manteve 5.000 USDT como capital hipotético. Não repetir pedidos de outro backup nem de confirmação da gratuidade já dada. Despesas pessoais, custo de desenvolvimento e perda tolerável continuam desconhecidos; isso permite cenários, não valores inventados. Aave permanece estacionada por acesso histórico; a busca de dados não produziu estimativa de rendimento.
 
 ## Leitura e revisão do funcionamento
 

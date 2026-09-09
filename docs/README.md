@@ -29,3 +29,5 @@ Os diretórios `evidence/` e `session_archive_*/` preservam decisões e entregas
 - [Handoff com notas históricas](../HANDOFF.md), [roadmap de agosto](OVERVIEW_E_ROADMAP_2026-08-21.md) e [panorama de agosto](PANORAMA_2026-08-21.md).
 
 H6 e H9 permanecem encerradas por insuficiência de amostra. Os runbooks e prompts antigos de acompanhamento da H6 documentam sua operação passada; não autorizam reiniciar essa coleta. As novas pesquisas têm protocolos separados.
+
+- [Fechamento da preparação de 09/09/2026: correções, execução real e limites](FECHAMENTO_PENDENCIAS_20260909.md).

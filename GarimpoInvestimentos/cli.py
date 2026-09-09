@@ -3,6 +3,8 @@ import asyncio
 import os
 import sys
 
+from GarimpoInvestimentos.local_runtime import LocalRuntimePathError
+
 
 def main() -> None:
     if any(argument in {"-h", "--help"} for argument in sys.argv[1:]):
@@ -32,5 +34,10 @@ def main() -> None:
     except Exception as error:
         # A falha pode ocorrer durante Settings, antes de conhecermos os segredos.
         # O tipo é seguro; traceback/ValidationError podem conter entradas privadas.
-        print(f"Pipeline interrompido ({type(error).__name__}).", file=sys.stderr)
+        reason = (
+            "caminho fora de CRIPTO_ROOT"
+            if isinstance(error, LocalRuntimePathError)
+            else type(error).__name__
+        )
+        print(f"Pipeline interrompido ({reason}).", file=sys.stderr)
         raise SystemExit(1) from None
