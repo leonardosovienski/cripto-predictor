@@ -38,7 +38,7 @@ def within_root(root: Path, value: str | Path) -> Path:
         candidate = root / candidate
     resolved = candidate.resolve()
     if not resolved.is_relative_to(root):
-        raise LocalRuntimePathError("Caminho operacional fora de CRIPTO_ROOT: " + str(resolved))
+        raise LocalRuntimePathError("Caminho operacional fora de CRIPTO_ROOT")
     return resolved
 
 
