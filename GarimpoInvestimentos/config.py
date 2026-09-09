@@ -7,6 +7,8 @@ from predictor_core.settings import require_secrets
 from pydantic import Field, field_validator, model_validator
 from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
 
+from GarimpoInvestimentos.local_runtime import environment_file
+
 CsvList = Annotated[list[str], NoDecode]
 
 
@@ -14,7 +16,7 @@ class Settings(BaseSettings):
     """Typed operational settings. Scientific defaults remain unchanged."""
 
     model_config = SettingsConfigDict(
-        env_file=Path(__file__).with_name(".env"),
+        env_file=environment_file(),
         env_file_encoding="utf-8",
         extra="ignore",
         case_sensitive=True,

@@ -1,5 +1,7 @@
 # Pesquisa de lucro multiestratégia — entrega de engenharia de 08/09/2026
 
+Neste PC, execute e salve toda pesquisa somente dentro de `C:\Cripto`, seguindo [CONFIGURACAO_LOCAL.md](CONFIGURACAO_LOCAL.md). Código atual em `C:\Cripto\pesquisa-20260909`; dados originais em `C:\Cripto\restaurado-20260908`; novas entregas em `C:\Cripto\operacao\relatorios`.
+
 A rodada econômica posterior está em [RESULTADOS — 09/09/2026](evidence/economic_round_20260909/RESULTADOS.md): acesso histórico ao Aave bloqueado e economia de renovação AR2 insuficiente para resolver as perdas dos cenários adversos registrados. Esta página preserva o contexto da entrega de engenharia anterior.
 
 ## Objetivo e estado

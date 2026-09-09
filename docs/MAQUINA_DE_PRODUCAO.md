@@ -1,5 +1,7 @@
 # Mapa da máquina de produção — onde cada coisa vive
 
+**Mapa histórico do computador anterior.** Para este PC, a raiz exclusiva do projeto é `C:\Cripto`; use [CONFIGURACAO_LOCAL.md](CONFIGURACAO_LOCAL.md). Os caminhos e agendamentos descritos abaixo foram preservados como evidência histórica e não significam que estejam configurados ou ativos aqui.
+
 > **Por que este documento existe.** A informação abaixo estava espalhada por
 > oito arquivos (`RUNBOOK_COLETA_H6_WINDOWS.md`, `OVERVIEW_E_ROADMAP`,
 > `PANORAMA`, `EVIDENCE_REGISTRY`, `COLLECTION_ONLY_OBSERVATION`,

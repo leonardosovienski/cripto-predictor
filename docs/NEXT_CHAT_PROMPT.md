@@ -1,12 +1,14 @@
-# Prompt de continuidade — atualizado em 08/09/2026
+# Prompt de continuidade — atualizado em 09/09/2026
 
 Retome o projeto a partir do estado abaixo e do meu pedido mais recente. Confira o repositório antes de agir; não repita pesquisas ou tarefas já encerradas apenas porque aparecem em documentos antigos.
+
+**Regra de armazenamento deste PC:** trabalhe somente em `C:\Cripto` e suas subpastas. Leia primeiro [CONFIGURACAO_LOCAL.md](CONFIGURACAO_LOCAL.md). Código atual em `C:\Cripto\pesquisa-20260909`, arquivos restaurados em `C:\Cripto\restaurado-20260908`, configuração privada em `C:\Cripto\configuracao\pipeline.env` e novas entregas em `C:\Cripto\operacao\relatorios`. Use `C:\Cripto\CRIPTO.cmd` para aplicar também os caminhos de cache, estado e temporários. Não crie novos arquivos do projeto no AppData, Documents, Desktop ou nas pastas de tarefas do Codex.
 
 Atualização de pesquisa de 09/09/2026: leia primeiro o [registro canônico da rodada econômica](evidence/economic_round_20260909/RESULTADOS.md), com protocolo, decisões, fontes, contas e condições de retomada. A rodada terminou com H1 bloqueada por acesso histórico e H2 rejeitada como correção suficiente das perdas adversas modeladas; não existe autorização de capital nem nova rentabilidade final demonstrada. O trabalho Windows desta rodada está em `C:\Cripto\pesquisa-20260909`; os caminhos abaixo são históricos.
 
 ## Projeto e leitura inicial
 
-- Repositório principal: `C:\Users\Superleo13\cripto-predictor`, branch `main`.
+- Repositório de trabalho: `C:\Cripto\pesquisa-20260909`; confira a branch atual e `origin/main`. `C:\Cripto\restaurado-20260908\projeto` é o snapshot preservado da migração.
 - GitHub: [cripto-predictor](https://github.com/leonardosovienski/cripto-predictor).
 - Leia [SESSION_HANDOFF_20260908.md](SESSION_HANDOFF_20260908.md), [CURRENT_RESEARCH_STATE_20260908.md](CURRENT_RESEARCH_STATE_20260908.md) e o [índice da documentação](README.md).
 - A consolidação foi publicada em `dd8dbe26f10be23340d9248764da1e485633f7b8`. As branches anteriores foram integradas e removidas; só restou `main` naquele momento. Commits documentais posteriores não representam novas avaliações econômicas. Confira o HEAD atual.
@@ -40,11 +42,11 @@ Use um diretório de trabalho separado dos observadores para mudanças de pesqui
 
 ## Observadores e dados
 
-O observador semanal de altcoins continua em `C:\Users\Superleo13\Documents\Codex\2026-09-07\files-mentioned-by-the-user-cripto\work\cripto-v1.2`, com HEAD destacado em `fbf4c71`. Seus dados são diretórios irmãos: `altcoin-data`, `altcoin-payoff-results`, `altcoin-reviewed-data` e `altcoin-retro-data`. Preserve a `.venv`, os arquivos de aquisição e o diário.
+O observador semanal de altcoins foi restaurado em `C:\Cripto\restaurado-20260908\sessoes\20260907-altcoins\work\cripto-v1.2`, a partir da versão congelada `fbf4c71`. Seus dados são diretórios irmãos: `altcoin-data`, `altcoin-payoff-results`, `altcoin-reviewed-data` e `altcoin-retro-data`. Preserve a `.venv`, os arquivos de aquisição e o diário.
 
-A automação `observar-altcoins-semanalmente` foi recriada e vinculada à tarefa `01a07e75-d166-7430-859b-2af2c6ab0b0f`; sua configuração e seus arquivos foram preservados na consolidação. Horário: domingos às 21h de Brasília, primeira entrada prevista em 13/09/2026 e última saída em 06/12/2026. Verifique seu estado pelo recurso de automações antes de afirmar que está operante. Não recrie nem transfira automaticamente uma configuração existente. Avise somente em mudança relevante, falha, conclusão ou necessidade de informação; não retrodate janelas perdidas.
+A configuração histórica da automação `observar-altcoins-semanalmente`, vinculada à tarefa antiga `01a07e75-d166-7430-859b-2af2c6ab0b0f`, foi preservada no pacote. Não foi ativada por esta migração/configuração local. O horário histórico era domingo às 21h de Brasília, com entradas previstas de 13/09 a 06/12/2026. Não recrie, transfira ou ative agendamentos por interpretar essa configuração como autorização atual. Não retrodate janelas perdidas.
 
-O observador de carry está preparado em `C:\Users\Superleo13\Documents\Codex\2026-09-07\files-pasted-by-the-user-quero\work\cripto-research`, com HEAD destacado em `2668865`, e dados irmãos em `carry-forward-data`. Seu agendamento não foi criado: o aplicativo recusou uma segunda automação na mesma tarefa. Leia [scheduling.json](evidence/carry_forward_20260908/scheduling.json) e o [runbook](evidence/carry_forward_20260908/RUNBOOK.md). Essa pendência não foi resolvida pelo push. Não crie tarefa separada ou cron alternativo sem a autorização correspondente.
+O observador de carry foi restaurado em `C:\Cripto\restaurado-20260908\sessoes\20260907-pesquisa\work\cripto-research`, a partir da versão congelada `2668865`, com dados irmãos em `carry-forward-data`. Seu agendamento continua desativado neste PC. [scheduling.json](evidence/carry_forward_20260908/scheduling.json) e o [runbook](evidence/carry_forward_20260908/RUNBOOK.md) preservam o contexto histórico; seus caminhos antigos não são destinos atuais.
 
 ## Recuperação e entrega
 

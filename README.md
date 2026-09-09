@@ -1,10 +1,14 @@
 # cripto-predictor (GarimpoInvestimentos + DPL)
 
+**Configuração atual deste PC — 09/09/2026:** o projeto trabalha somente dentro de **`C:\Cripto`**, conforme o [mapa de pastas e execução local](docs/CONFIGURACAO_LOCAL.md). Código atual em `C:\Cripto\pesquisa-20260909`, dados preservados em `C:\Cripto\restaurado-20260908`; configuração privada em `C:\Cripto\configuracao` e novos dados, saídas, cache, logs e temporários em `C:\Cripto\operacao`. Use `C:\Cripto\CRIPTO.cmd status` para conferir os caminhos. As notas datadas abaixo preservam o histórico; a rodada econômica mais recente está no [registro de 09/09](docs/evidence/economic_round_20260909/RESULTADOS.md).
+
 **Estado verificado em 08/09/2026:** pesquisa consolidada na `main`, única branch local e remota. A validação da consolidação passou em **1.170 testes** e nos quatro jobs do [CI](https://github.com/leonardosovienski/cripto-predictor/actions/runs/34228309330), incluindo container. Core **3.2.0** e Ops **4.1.0** estão fixados nas dependências.
 
 Não há lucro real nem projeção validada de lucro futuro. No diagnóstico histórico mais recente, o carry de 84 dias ficou em **+10,56 USDT** no cenário base, **−6,97 USDT** no adverso e **−21,65 USDT** no estresse, com referência de 5.000 USDT por cenário. As contas históricas não demonstram rentabilidade futura.
 
 ## Por onde começar
+
+- [Configuração local em C:\Cripto](docs/CONFIGURACAO_LOCAL.md): caminhos vigentes, atalhos e configuração privada neste Windows.
 
 - [Estado vigente da pesquisa](docs/CURRENT_RESEARCH_STATE_20260908.md): resultados, correções e pendências reais.
 - [Continuidade e recuperação](docs/SESSION_HANDOFF_20260908.md): código, pacotes de dados, caminhos dos observadores e situação do Git.
