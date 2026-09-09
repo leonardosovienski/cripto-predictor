@@ -5,7 +5,7 @@ alargar o MarketDataPoint, e que o serving reconstrói o hard_data que o pipelin
 consome (price/change no topo, indicadores aninhados).
 """
 
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 
 from GarimpoInvestimentos.dpl.contracts import MarketDataPoint
 from GarimpoInvestimentos.dpl.feature_engineering import derive_features, to_hard_data
@@ -16,7 +16,7 @@ UTC = UTC
 def _series(closes: list[float]) -> list[MarketDataPoint]:
     pts = []
     for i, c in enumerate(closes, start=1):
-        ts = datetime(2026, 1, 1, tzinfo=UTC).replace(day=min(i, 28))
+        ts = datetime(2026, 1, 1, tzinfo=UTC) + timedelta(days=i - 1)
         pts.append(
             MarketDataPoint(
                 symbol="bitcoin",

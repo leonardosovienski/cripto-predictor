@@ -113,7 +113,7 @@ def test_backtest_le_da_store_com_mesmo_resultado_do_loader_csv(tmp_path, monkey
     monkeypatch.setattr(backtest, "FEATURE_STORE_DB", db)
     monkeypatch.setattr(history, "HIST_CSV", str(tmp_path / "inexistente.csv"))
 
-    rows = backtest._load_rows()
+    rows = backtest._load_rows(include_legacy=True)
     # VELVET (fallback de LLM) e ZERADA (preço <= 0) ficam fora — como no CSV
     assert [r["ativo"] for r in rows] == ["bitcoin", "solana"]
     btc, sol = rows
@@ -165,7 +165,7 @@ def test_load_rows_ignora_ts_ilegivel_sem_quebrar_as_demais(tmp_path, monkeypatc
     monkeypatch.setattr(backtest, "FEATURE_STORE_DB", db)
     monkeypatch.setattr(history, "HIST_CSV", str(tmp_path / "inexistente.csv"))
 
-    rows = backtest._load_rows()  # não deve levantar StrptimeError/ValueError
+    rows = backtest._load_rows(include_legacy=True)  # leitura histórica explícita
     assert [r["ativo"] for r in rows] == ["solana"]
 
 
@@ -180,9 +180,9 @@ def test_analise_persiste_previsao_ANTES_de_fechar_a_store():
     src = (Path(__file__).parent.parent / "GarimpoInvestimentos" / "main.py").read_text(
         encoding="utf-8"
     )
-    assert "append_history(resultados, store)" in src
+    assert "append_history([resultado], store)" in src
     assert "store.close()" in src
-    assert src.index("append_history(resultados, store)") < src.index("store.close()"), (
+    assert src.index("append_history([resultado], store)") < src.rindex("store.close()"), (
         "store.close() antes do append_history: previsões seriam descartadas em silêncio"
     )
 

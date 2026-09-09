@@ -95,6 +95,12 @@ def _directional_stats(enriched: list[dict], horizon: int) -> dict:
 
 
 def _spearman_stats(enriched: list[dict], horizon: int) -> dict | None:
+    from GarimpoInvestimentos.dpl.snapshots import EVALUATION_CONTRACT
+
+    if any(r.get("evaluation_contract") == EVALUATION_CONTRACT for r in enriched):
+        # The new contract has no registered inferential trial. Pooled rows
+        # across assets/days must not acquire a confidence claim by default.
+        return None
     key = f"var_d{horizon}_pct"
     pairs = [(r["score"], r[key]) for r in enriched if r.get(key) is not None]
     if len(pairs) < 4:
@@ -225,7 +231,7 @@ def _fmt_rho(stats: dict | None) -> str:
     )
 
 
-async def build_snapshot(now: datetime | None = None) -> dict:
+async def build_snapshot(now: datetime | None = None, *, include_legacy: bool = False) -> dict:
     stamp = now or datetime.now(UTC)
     today_str = stamp.strftime("%Y-%m-%d")
 
@@ -237,7 +243,8 @@ async def build_snapshot(now: datetime | None = None) -> dict:
 
     health = check_phase1_health(db_path=_backtest_module.FEATURE_STORE_DB, now=stamp)
 
-    rows_real = _load_rows()  # já exclui llm_fallback=1 (previsão de verdade)
+    # Legacy mode is only for explicitly requested historical reproduction.
+    rows_real = _load_rows(include_legacy=True) if include_legacy else _load_rows()
     with_price = await enrich_with_realized_prices(rows_real) if rows_real else []
 
     by_asset = Counter(r["ativo"] for r in rows_real)
@@ -251,9 +258,12 @@ async def build_snapshot(now: datetime | None = None) -> dict:
     d7 = _directional_stats(with_price, PRIMARY_HORIZON)
     spearman_primary = _spearman_stats(with_price, PRIMARY_HORIZON)
 
+    from GarimpoInvestimentos.dpl.snapshots import EVALUATION_CONTRACT
+
     h6_result = None
-    if with_price:
-        h6_result = h6_spearman_verdict(with_price, PRIMARY_HORIZON)
+    legacy_prices = [r for r in with_price if r.get("evaluation_contract") != EVALUATION_CONTRACT]
+    if legacy_prices:
+        h6_result = h6_spearman_verdict(legacy_prices, PRIMARY_HORIZON)
     # Contexto de LEITURA, calculado fora de h6_spearman_verdict de proposito
     # (ver print_h6_power_context em analyzers/backtest.py): tabela estatica
     # publicada em docs/HYPOTHESES.md B12, nao uma simulacao nova a cada
@@ -270,6 +280,7 @@ async def build_snapshot(now: datetime | None = None) -> dict:
 
     return {
         "checked_at": stamp.isoformat(),
+        "evidence_class": "HISTORICAL_REPRODUCTION" if include_legacy else "OPERATIONAL_DIAGNOSTIC",
         # Resultado canônico bruto da H6. Antes daqui só o `n` sobrevivia em
         # sample.h6_valid_n — o que basta enquanto n < gate (a função devolve
         # rho/IC como None de propósito), mas descartaria o VEREDITO no dia em

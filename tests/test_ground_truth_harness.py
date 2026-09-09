@@ -24,7 +24,7 @@ def _rodar(tmp_path, monkeypatch, **kw):
     db = tmp_path / "feature_store.db"
     world = plant_world(db, **kw)
     monkeypatch.setattr(bt, "FEATURE_STORE_DB", db)
-    rows = bt._load_rows()
+    rows = bt._load_rows(include_legacy=True)
     enriched = asyncio.run(bt.enrich_with_realized_prices(rows))
     return world, enriched
 

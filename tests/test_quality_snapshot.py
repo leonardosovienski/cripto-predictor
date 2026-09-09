@@ -67,7 +67,7 @@ def test_previsao_do_mesmo_dia_nao_conta_como_madura(db_path):
     with FeatureStore(db_path) as store:
         store.write_predictions([_row("bitcoin", ts, 55.0, "mistral:mistral-small-latest:hash")])
 
-    snap = asyncio.run(quality_snapshot.build_snapshot(now=now))
+    snap = asyncio.run(quality_snapshot.build_snapshot(now=now, include_legacy=True))
     assert snap["sample"]["total_predictions"] == 1
     assert snap["pipeline"]["predictions_today"] == 1
     # a previsão é de agora — D+1 ainda não existe, não pode aparecer madura
@@ -89,7 +89,7 @@ def test_fallback_do_llm_nao_entra_na_contagem_de_predictions(db_path):
             ]
         )
 
-    snap = asyncio.run(quality_snapshot.build_snapshot(now=now))
+    snap = asyncio.run(quality_snapshot.build_snapshot(now=now, include_legacy=True))
     # só a previsao real conta — fallback do LLM eh explicitamente diferente
     # de "fonte=dpl:fallback" (nome de dado de origem, nao de falha do juiz)
     assert snap["sample"]["total_predictions"] == 1
@@ -544,7 +544,7 @@ def test_ponta_a_ponta_build_snapshot_publica_e_depois_recusa_banco_vazio(db_pat
             ]
         )
 
-    snap = asyncio.run(quality_snapshot.build_snapshot(now=now))
+    snap = asyncio.run(quality_snapshot.build_snapshot(now=now, include_legacy=True))
     assert quality_snapshot.write_h6_status(snap, destino) == quality_snapshot.H6_WRITTEN
     publicado = json.loads(destino.read_text(encoding="utf-8"))
     assert publicado["gate"] == quality_snapshot.H6_MIN_N
@@ -566,7 +566,7 @@ def test_ponta_a_ponta_build_snapshot_publica_e_depois_recusa_banco_vazio(db_pat
 
     original, bt.FEATURE_STORE_DB = bt.FEATURE_STORE_DB, vazio
     try:
-        snap_vazio = asyncio.run(quality_snapshot.build_snapshot(now=now))
+        snap_vazio = asyncio.run(quality_snapshot.build_snapshot(now=now, include_legacy=True))
     finally:
         bt.FEATURE_STORE_DB = original
     assert snap_vazio["sample"]["h6_valid_n"] == 0  # nenhuma exceção: só zero

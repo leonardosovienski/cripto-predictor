@@ -66,6 +66,7 @@ async def ingest_stocks(
         signal_providers=facade.signal_providers,
         max_staleness=max_staleness,
         record_provenance=False,  # proveniência própria (mais rica) logo abaixo
+        domain="previsao_acoes",
     )
     store.write_provenance(
         source="stocks",
