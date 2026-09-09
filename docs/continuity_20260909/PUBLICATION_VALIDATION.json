@@ -1,0 +1,17 @@
+{
+  "state": "PUBLICATION_SNAPSHOT_NOT_COMPLETED_REVIEW",
+  "base_commit": "276d6db224f266e9ec889b6de4ab5ba0328cc321",
+  "captured_at_utc": "2026-09-09T19:31:15.276808-03:00",
+  "archives": 22,
+  "archived_files": 9713,
+  "archive_bytes": 128042479,
+  "known_secret_matches_in_export": 0,
+  "source_secret_scanner_findings": 0,
+  "sqlite_read_only_backup_integrity": "ok",
+  "archive_hash_and_member_verification": "passed",
+  "selective_recovery_verification": "passed",
+  "lint": "passed",
+  "format": "passed",
+  "ci": "See GitHub Actions for the published commit",
+  "original_active_checkout_preserved": true
+}

@@ -225,7 +225,7 @@ def _fmt_rho(stats: dict | None) -> str:
     )
 
 
-async def build_snapshot(now: datetime | None = None) -> dict:
+async def build_snapshot(now: datetime | None = None, *, include_legacy: bool = False) -> dict:
     stamp = now or datetime.now(UTC)
     today_str = stamp.strftime("%Y-%m-%d")
 
@@ -237,7 +237,8 @@ async def build_snapshot(now: datetime | None = None) -> dict:
 
     health = check_phase1_health(db_path=_backtest_module.FEATURE_STORE_DB, now=stamp)
 
-    rows_real = _load_rows()  # já exclui llm_fallback=1 (previsão de verdade)
+    # Legacy mode is only for explicitly requested historical reproduction.
+    rows_real = _load_rows(include_legacy=True) if include_legacy else _load_rows()
     with_price = await enrich_with_realized_prices(rows_real) if rows_real else []
 
     by_asset = Counter(r["ativo"] for r in rows_real)

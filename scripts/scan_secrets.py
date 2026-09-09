@@ -1,9 +1,10 @@
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
+import os
 import re
+import subprocess
 from pathlib import Path
 
 PATTERNS = {
@@ -17,9 +18,38 @@ PATTERNS = {
 ALLOWLIST = ("test-", "unit-test", "example", "placeholder", "dummy", "fake_", "synthetic", "your_")
 
 
+def source_files(root: Path):
+    """Scan publishable Git sources, not ignored environments and dependency caches.
+
+    Outside a Git checkout, walk ordinary files without following directory links.
+    Built archives have a separate byte-level security contract in the test suite.
+    """
+    try:
+        result = subprocess.run(
+            ["git", "ls-files", "--cached", "--others", "--exclude-standard", "-z", "--", "."],
+            cwd=root,
+            capture_output=True,
+        )
+    except FileNotFoundError:
+        result = None
+    if result is not None and result.returncode == 0:
+        paths = (root / name for name in result.stdout.decode("utf-8").split("\0") if name)
+    else:
+        files = []
+        for folder, directories, names in os.walk(root, followlinks=False):
+            directories[:] = [
+                name for name in directories if name not in {".git", ".venv", "__pycache__"}
+            ]
+            files.extend(Path(folder) / name for name in names)
+        paths = iter(files)
+    return sorted(
+        {path for path in paths if path.is_file() and path.resolve().is_relative_to(root)}
+    )
+
+
 def scan(root: Path) -> list[dict[str, object]]:
     findings: list[dict[str, object]] = []
-    for path in sorted(root.rglob("*")):
+    for path in source_files(root):
         if not path.is_file() or any(
             part in {".git", ".venv", "__pycache__"} for part in path.parts
         ):
@@ -43,7 +73,6 @@ def scan(root: Path) -> list[dict[str, object]]:
                             "path": path.relative_to(root).as_posix(),
                             "line": line_number,
                             "kind": kind,
-                            "fingerprint": hashlib.sha256(value.encode()).hexdigest()[:12],
                         }
                     )
     return findings

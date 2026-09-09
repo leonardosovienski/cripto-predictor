@@ -15,9 +15,11 @@ import hashlib
 import inspect
 import json
 import logging
+import math
 from statistics import median, pstdev
 
 from GarimpoInvestimentos.config import settings
+from GarimpoInvestimentos.security.redaction import configured_secret_values, safe_redact_text
 
 _log = logging.getLogger("previsao_cripto.ai_insights")
 
@@ -58,6 +60,10 @@ def _build_prompt(asset_name: str, hard_data: dict, news_snippets: list[str]) ->
     return f"""
     Você é um analista quantitativo de criptoativos. Avalie {asset_name.upper()} para um
     horizonte de {horizon} dias — todas as estimativas devem se referir a esse prazo.
+    A avaliação começa no próximo fechamento diário UTC estritamente posterior
+    à resposta e termina {horizon} dias depois desse fechamento. O preço do
+    contexto é histórico, não um preço de execução. O score não é probabilidade
+    calibrada nem retorno líquido de custos.
 
     • Dados de mercado e indicadores técnicos:
     {json.dumps(hard_data, indent=2, ensure_ascii=False)}
@@ -261,6 +267,7 @@ async def _call_openai(prompt: str, provider: str = "openai") -> str:
 async def _analyze_once(asset_name: str, prompt: str, provider: str) -> dict:
     """Uma amostra do juiz — a chamada única de sempre, isolada para o ensemble
     poder repeti-la N vezes sem duplicar o parsing/fallback."""
+    raw_response = None
     try:
         if provider in _OPENAI_COMPAT:
             text = await _call_openai(prompt, provider)
@@ -269,22 +276,36 @@ async def _analyze_once(asset_name: str, prompt: str, provider: str) -> dict:
         else:
             raise ValueError(f"provider LLM desconhecido: {provider!r}")
 
+        raw_response = safe_redact_text(text, configured_secret_values())
         text = text.strip()
         if "{" in text and "}" in text:
             text = text[text.find("{") : text.rfind("}") + 1]
         data = json.loads(text)
+        score = data.get("opportunity_score")
+        if (
+            isinstance(score, bool)
+            or not isinstance(score, (int, float))
+            or not math.isfinite(score)
+            or not 0 <= score <= 100
+        ):
+            raise ValueError("LLM response requires finite opportunity_score in [0,100]")
+        if (
+            data.get("sentiment") not in {"positivo", "neutro", "negativo"}
+            or not isinstance(data.get("summary"), str)
+            or not data["summary"].strip()
+        ):
+            raise ValueError("LLM response has invalid sentiment or summary")
 
         return {
             "sentiment": data.get("sentiment", "neutro"),
             "summary": data.get("summary", "sem resumo disponível"),
             "opportunity_score": data.get("opportunity_score", 50),
             "llm_fallback": False,
+            "raw_response": raw_response,
         }
 
     except Exception as e:
-        _log.warning(
-            "erro ao analisar %s (%s: %s) — fallback aplicado", asset_name, type(e).__name__, e
-        )
+        _log.warning("erro ao analisar %s (%s) — fallback aplicado", asset_name, type(e).__name__)
         # llm_fallback=True é o carimbo ESTRUTURAL (migração 0009): o backtest
         # exclui por ele, não pela string do summary (que segue por compat/legado).
         return {
@@ -292,6 +313,8 @@ async def _analyze_once(asset_name: str, prompt: str, provider: str) -> dict:
             "summary": "erro na análise (fallback aplicado)",
             "opportunity_score": 50,
             "llm_fallback": True,
+            "raw_response": raw_response,
+            "failure_type": type(e).__name__,
         }
 
 
@@ -308,6 +331,7 @@ def _aggregate_ensemble(samples: list[dict]) -> dict:
         result["ensemble_n"] = len(samples)
         result["ensemble_samples_used"] = 0
         result["opportunity_score_std"] = 0.0
+        result["samples"] = samples
         return result
     scores = [float(s["opportunity_score"]) for s in successful]
     score_median = median(scores)
@@ -320,6 +344,7 @@ def _aggregate_ensemble(samples: list[dict]) -> dict:
         "ensemble_n": len(samples),
         "ensemble_samples_used": len(successful),
         "opportunity_score_std": round(pstdev(scores), 2) if len(scores) > 1 else 0.0,
+        "samples": samples,
     }
 
 

@@ -10,7 +10,8 @@ from __future__ import annotations
 import hashlib
 import logging
 import xml.etree.ElementTree as ET
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from datetime import UTC, datetime
 from typing import Protocol
 from urllib.parse import quote_plus
 
@@ -50,6 +51,7 @@ class NewsResult:
     titles: list[str]
     provider: str
     degraded_reason: str | None = None
+    received_at: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
 
     @property
     def degraded(self) -> bool:
@@ -208,7 +210,7 @@ _PROVIDERS: dict[str, NewsProvider] = {
     "curated_rss": CuratedRssProvider(),
 }
 _OPEN_CIRCUITS: set[str] = set()
-_NEWS_CACHE: dict[tuple[str, str, int], list[str]] = {}
+_NEWS_CACHE: dict[tuple[str, str, int], NewsResult] = {}
 
 
 def provider_order_for_asset(asset: str, providers: list[str] | None = None) -> list[str]:
@@ -262,7 +264,11 @@ async def get_news_result(query: str, limit: int = 5) -> NewsResult:
             continue
         cache_key = (name, query.strip().lower(), limit)
         if cache_key in _NEWS_CACHE:
-            return NewsResult(_NEWS_CACHE[cache_key], name)
+            cached = _NEWS_CACHE[cache_key]
+            age = (datetime.now(UTC) - datetime.fromisoformat(cached.received_at)).total_seconds()
+            if 0 <= age < 3600:
+                return cached
+            del _NEWS_CACHE[cache_key]
         budget = guard_allow("news", name, settings.API_GUARD_MAX_NEWS_ATTEMPTS_PER_PROVIDER)
         if not budget.allowed:
             failures.append(budget.reason)
@@ -270,8 +276,9 @@ async def get_news_result(query: str, limit: int = 5) -> NewsResult:
         try:
             titles = await _PROVIDERS[name].fetch(query, limit)
             if titles:
-                _NEWS_CACHE[cache_key] = titles
-                return NewsResult(titles=titles, provider=name)
+                result = NewsResult(titles=titles, provider=name)
+                _NEWS_CACHE[cache_key] = result
+                return result
             failures.append(f"{name}:empty")
         except Exception as exc:
             failures.append(_failure_marker(name, exc))

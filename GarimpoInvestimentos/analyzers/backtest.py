@@ -36,6 +36,7 @@ from GarimpoInvestimentos.core.history import migrate_csv_to_store
 from GarimpoInvestimentos.core.paths import FEATURE_STORE_DB, OUTPUT_DIR
 from GarimpoInvestimentos.dpl import FeatureStore
 from GarimpoInvestimentos.dpl.providers.coingecko import coingecko_auth_headers
+from GarimpoInvestimentos.dpl.snapshots import EVALUATION_CONTRACT
 from GarimpoInvestimentos.governance import load_scientific_state
 
 BACKTEST_CSV = OUTPUT_DIR / "garimpo_backtest.csv"
@@ -114,7 +115,7 @@ async def _realized_price(
     return price, ("coingecko" if price is not None else None)
 
 
-def _load_rows() -> list[dict]:
+def _load_rows(*, include_legacy: bool = False) -> list[dict]:
     """Lê o histórico OFICIAL (Feature Store, tabela predictions — passo 4),
     absorvendo antes o CSV legado se existir (idempotente; fonte vazia → 'direct').
     Descarta linhas de fallback de LLM e sem preço/data válidos. Dedup é estrutural
@@ -124,8 +125,16 @@ def _load_rows() -> list[dict]:
         if n:
             print(f"🗄️ Histórico legado absorvido na Feature Store: {n} linha(s) do CSV.")
         preds = store.read_predictions()
+        inputs = {
+            (r["ativo"], r["ts"]): store.read_prediction_input(r["ativo"], r["ts"]) for r in preds
+        }
     rows = []
     for r in preds:
+        context = inputs[(r["ativo"], r["ts"])]
+        if not include_legacy and (
+            not context or context.get("evaluation_contract") != EVALUATION_CONTRACT
+        ):
+            continue
         # Exclusão de fallback do LLM: carimbo estrutural (0009) para linhas novas;
         # marcador no resumo cobre o legado (llm_fallback NULL = pré-flag).
         if r.get("llm_fallback") == 1:
@@ -138,7 +147,12 @@ def _load_rows() -> list[dict]:
             score = float(r["score"])
         except (KeyError, ValueError, TypeError):
             continue
-        if price <= 0:
+        if (
+            not math.isfinite(price)
+            or price <= 0
+            or not math.isfinite(score)
+            or not 0 <= score <= 100
+        ):
             continue
         rows.append(
             {
@@ -160,6 +174,10 @@ def _load_rows() -> list[dict]:
                 # distintas. NULL do legado não pode fingir equivalência.
                 "news_provider": (r.get("news_provider") or "legacy:unknown").strip(),
                 "collection_policy": (r.get("collection_policy") or "legacy:unknown").strip(),
+                "evaluation_contract": context.get("evaluation_contract")
+                if context
+                else "legacy-unverified",
+                "market_source": context.get("market_source") if context else None,
             }
         )
     return rows
@@ -177,6 +195,44 @@ async def enrich_with_realized_prices(rows: list[dict]) -> list[dict]:
         with FeatureStore(FEATURE_STORE_DB) as store:
             for row in rows:
                 out = dict(row)
+                if row.get("evaluation_contract") == EVALUATION_CONTRACT:
+                    # Decision-day context is an OLD close. Start measurement at
+                    # the next UTC daily close strictly after the prediction.
+                    # Same named source at both ends; missing data stays missing.
+                    reference_at = row["pred_date"].replace(
+                        hour=0, minute=0, second=0, microsecond=0
+                    ) + timedelta(days=1)
+                    now_aware = today.replace(tzinfo=UTC)
+                    base = store.closed_daily_price(
+                        row["ativo"],
+                        row["market_source"],
+                        reference_at.replace(tzinfo=UTC),
+                        now_aware,
+                    )
+                    out["context_price"] = row["pred_price"]
+                    out["pred_price"] = base
+                    out["reference_at"] = reference_at
+                    for h in HORIZONS:
+                        target = reference_at + timedelta(days=h)
+                        price = store.closed_daily_price(
+                            row["ativo"],
+                            row["market_source"],
+                            target.replace(tzinfo=UTC),
+                            now_aware,
+                        )
+                        out[f"price_d{h}"] = price
+                        out[f"medida_d{h}"] = (
+                            f"store:{row['market_source']}:{EVALUATION_CONTRACT}"
+                            if price is not None
+                            else None
+                        )
+                        out[f"var_d{h}_pct"] = (
+                            round((price / base - 1) * 100, 2)
+                            if price is not None and base is not None
+                            else None
+                        )
+                    enriched.append(out)
+                    continue
                 for h in HORIZONS:
                     target = row["pred_date"] + timedelta(days=h)
                     if target > today:
@@ -225,6 +281,9 @@ def _write(enriched: list[dict]) -> None:
         "score",
         "pred_date",
         "pred_price",
+        "context_price",
+        "reference_at",
+        "evaluation_contract",
         "fonte",
         "juiz",
         "news_provider",
@@ -693,6 +752,7 @@ def close_h6_inverted_signal(
         for r in enriched
         if r.get(key) is not None
         and r.get("fonte", "direct") == H6_LIVE_FONTE
+        and r.get("evaluation_contract") != EVALUATION_CONTRACT
         and r["score"] <= inverted_thr
         and r.get("pred_date", datetime.min) > registered_at
     ]
@@ -764,6 +824,7 @@ def h6_spearman_verdict(enriched: list[dict], horizon: int, *, trials_path=None)
         for r in enriched
         if r.get(key) is not None
         and r.get("fonte", "direct") == H6_LIVE_FONTE
+        and r.get("evaluation_contract") != EVALUATION_CONTRACT
         and r.get("pred_date", datetime.min) > registered_at
     ]
     n = len(pairs)

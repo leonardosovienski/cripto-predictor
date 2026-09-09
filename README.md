@@ -1,5 +1,7 @@
 # cripto-predictor (GarimpoInvestimentos + DPL)
 
+**Publicação de continuidade de 09/09/2026:** comece por [CONTINUAR_AQUI.md](CONTINUAR_AQUI.md). Inclui o prompt final, o código capturado da revisão em andamento, relatórios e bases públicas recuperáveis. Confira o escopo e o CI desta branch antes de integrar; a revisão completa ainda não foi encerrada.
+
 Estado deste PC e verificações conectadas de 09/09/2026: [fechamento das pendências](docs/FECHAMENTO_PENDENCIAS_20260909.md). Código e armazenamento operacional ficam em `C:\Cripto`; configuração não é evidência de lucro.
 
 **Configuração atual deste PC — 09/09/2026:** o projeto trabalha somente dentro de **`C:\Cripto`**, conforme o [mapa de pastas e execução local](docs/CONFIGURACAO_LOCAL.md). Código atual em `C:\Cripto\pesquisa-20260909`, dados preservados em `C:\Cripto\restaurado-20260908`; configuração privada em `C:\Cripto\configuracao` e novos dados, saídas, cache, logs e temporários em `C:\Cripto\operacao`. Use `C:\Cripto\CRIPTO.cmd status` para conferir os caminhos. As notas datadas abaixo preservam o histórico; a rodada econômica mais recente está no [registro de 09/09](docs/evidence/economic_round_20260909/RESULTADOS.md).

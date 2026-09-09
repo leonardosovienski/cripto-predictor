@@ -12,7 +12,7 @@ fluxo), este teste acusa.
 import asyncio
 import sys
 import types
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from unittest import mock
 
 _OPENPYXL_MODS = (
@@ -42,7 +42,7 @@ def test_run_analisa_do_serving_e_persiste_carimbado(tmp_path, monkeypatch):
 
     # Feature Store semeada como a ingestão deixaria (candle bruto + features servíveis)
     db = tmp_path / "fs.db"
-    ts = datetime(2026, 7, 1, tzinfo=UTC)
+    ts = datetime.now(UTC).replace(hour=0, minute=0, second=0, microsecond=0) - timedelta(days=1)
     with FeatureStore(db) as fs:
         fs.write_raw(
             [
@@ -51,17 +51,22 @@ def test_run_analisa_do_serving_e_persiste_carimbado(tmp_path, monkeypatch):
                     symbol="bitcoin",
                     interval="1d",
                     timestamp=ts,
-                    open=1.0,
-                    high=2.0,
-                    low=0.5,
+                    open=60000.0,
+                    high=60001.0,
+                    low=59999.0,
                     close=60000.0,
                     volume=1e9,
-                    published_at=ts,
+                    published_at=ts + timedelta(days=1),
                 )
             ]
         )
         fs.write_features(
             "bitcoin", "1d", [{"ts": ts, "price_usd": 60000.0, "close": 60000.0, "rsi_14": 40.0}]
+        )
+        from GarimpoInvestimentos.dpl.snapshots import market_payload
+
+        fs.write_market_snapshot(
+            market_payload(fs.read_raw("bitcoin", "1d"), fs.read_features("bitcoin", "1d"), {})
         )
 
     monkeypatch.setattr(main, "FEATURE_STORE_DB", db)
@@ -91,6 +96,7 @@ def test_run_analisa_do_serving_e_persiste_carimbado(tmp_path, monkeypatch):
     # O QUE IMPORTA: a previsão persistiu no histórico oficial, carimbada.
     with FeatureStore(db) as fs:
         preds = fs.read_predictions()
+        context = fs.read_prediction_input(preds[0]["ativo"], preds[0]["ts"])
     assert len(preds) == 1, (
         "run() terminou sem persistir a previsão (regressão do close prematuro?)"
     )
@@ -99,3 +105,5 @@ def test_run_analisa_do_serving_e_persiste_carimbado(tmp_path, monkeypatch):
     assert p["score"] == 77.0
     assert p["fonte"] == "dpl:fallback"  # derivado do source do candle servido
     assert p["juiz"] == "stub:modelo:hash"
+    assert context["hard_data"]["price_usd"] == 60000
+    assert context["evaluation_contract"] == "future-daily-close-v1"

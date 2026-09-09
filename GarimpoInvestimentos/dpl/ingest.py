@@ -8,6 +8,7 @@ Store já materializada. Emite telemetria `data.ingested` / `data.materialized`.
 from __future__ import annotations
 
 import hashlib
+import math
 from datetime import UTC, datetime, timedelta
 from typing import Protocol
 
@@ -17,9 +18,10 @@ from predictor_core.data.quality import detect_jumps
 from predictor_core.obs import emit_event
 
 from GarimpoInvestimentos.dpl.alignment import AlignmentEngine
-from GarimpoInvestimentos.dpl.feature_engineering import derive_features
+from GarimpoInvestimentos.dpl.feature_engineering import DAILY_FEATURE_VERSION, derive_features
 from GarimpoInvestimentos.dpl.feature_store import FeatureStore
 from GarimpoInvestimentos.dpl.signals import SignalProvider
+from GarimpoInvestimentos.dpl.snapshots import market_payload
 from GarimpoInvestimentos.security.redaction import safe_redact_text
 
 
@@ -76,6 +78,24 @@ async def ingest_crypto(
     tolerado (segue sem aquele sinal) — falha de preço propaga (sem preço não há grade).
     """
     points = await facade.fetch_ohlcv(symbol, interval=interval, limit=limit)
+    if not points:
+        raise ValueError("provider returned no market observations")
+    if len({(p.symbol, p.source, p.interval) for p in points}) != 1:
+        raise ValueError("provider returned mixed market identities")
+    if any(p.symbol != symbol or p.interval != interval for p in points):
+        raise ValueError("provider returned a different symbol or interval")
+    for p in points:
+        prices = (p.open, p.high, p.low, p.close)
+        if (
+            any(not math.isfinite(v) or v <= 0 for v in prices)
+            or not math.isfinite(p.volume)
+            or p.volume < 0
+            or not p.low <= min(p.open, p.close) <= max(p.open, p.close) <= p.high
+        ):
+            raise ValueError("provider returned invalid OHLCV values")
+    # Reject a malformed batch before any persistent write. Gaps are retained
+    # as observations; daily derived indicators use the contiguous suffix.
+    derived = derive_features(points) if interval == "1d" else {}
     store.write_raw(points)
     # Proveniência (ADR-015): hash do CONTEÚDO ingerido + versão do core, em coluna
     # própria (migração 0012) — antes o hash ficava sobrecarregado dentro de `origin`,
@@ -153,10 +173,13 @@ async def ingest_crypto(
     aligned = AlignmentEngine().align(points, signals, max_staleness)
     # Features derivadas (change_*, indicadores) pertencem ao ÚLTIMO candle —
     # são calculadas da série inteira e materializadas na linha mais recente.
-    derived = derive_features(points)
     if aligned and derived:
         aligned[-1].update(derived)
-    n_features = store.write_features(symbol, interval, aligned)
+    crypto_daily = interval == "1d" and domain == _DEFAULT_DOMAIN
+    version = DAILY_FEATURE_VERSION if crypto_daily else "v1"
+    n_features = store.write_features(symbol, interval, aligned, feature_version=version)
+    if crypto_daily:
+        store.write_market_snapshot(market_payload(points, aligned, signals))
     emit_event(
         domain,
         "data.materialized",

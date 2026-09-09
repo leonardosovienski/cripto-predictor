@@ -164,7 +164,13 @@ async def _collect_symbol(
         spot = await collector.fetch_range(start_ms, end_ms)
         save_spot_csv(spot, spot_csv_path)
 
-    return funding, oi, spot
+    # A cache is a data source, not permission to ignore the requested window.
+    # Never silently refill it: unavailable coverage remains visible to callers.
+    return (
+        [r for r in funding if start_ms <= r.funding_time_ms < end_ms],
+        [r for r in oi if start_ms <= r.timestamp_ms < end_ms],
+        [r for r in spot if start_ms <= r.open_ms and r.open_ms + 3_600_000 <= end_ms],
+    )
 
 
 # ------------------------------------------------------------------ #

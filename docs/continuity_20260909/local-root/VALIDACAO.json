@@ -1,0 +1,141 @@
+{
+  "status": "PASS",
+  "verified_at_utc": "2026-09-08T19:37:30.429213+00:00",
+  "source_files": 63632,
+  "runtime_files": 2728,
+  "source_files_plus_runtime": 66360,
+  "logical_bytes": 4449143406,
+  "unique_payloads": 22817,
+  "git_head": "522de73de85ada9f3491cd4c7c7d666557381f98",
+  "git_status": "?? fred_test.csv",
+  "restoration_on_different_path": true,
+  "tested_on_other_physical_computer": false,
+  "runtime_and_observers": {
+    "status": "PASS",
+    "runtime": {
+      "status": "PASS",
+      "failed_packages": [],
+      "files_checked": 3785
+    },
+    "locations": {
+      "prefix": "C:\\Users\\Superleo13\\Documents\\Codex\\2026-09-07\\files-pasted-by-the-user-quero\\work\\migracao\\teste-restauracao\\sessoes\\20260907-altcoins\\work\\cripto-v1.2\\.venv",
+      "base_prefix": "C:\\Users\\Superleo13\\Documents\\Codex\\2026-09-07\\files-pasted-by-the-user-quero\\work\\migracao\\teste-restauracao\\runtime",
+      "project": "C:\\Users\\Superleo13\\Documents\\Codex\\2026-09-07\\files-pasted-by-the-user-quero\\work\\migracao\\teste-restauracao\\sessoes\\20260907-altcoins\\work\\cripto-v1.2\\GarimpoInvestimentos\\__init__.py",
+      "numpy": "C:\\Users\\Superleo13\\Documents\\Codex\\2026-09-07\\files-pasted-by-the-user-quero\\work\\migracao\\teste-restauracao\\sessoes\\20260907-altcoins\\work\\cripto-v1.2\\.venv\\Lib\\site-packages\\numpy\\__init__.py",
+      "scipy": "C:\\Users\\Superleo13\\Documents\\Codex\\2026-09-07\\files-pasted-by-the-user-quero\\work\\migracao\\teste-restauracao\\sessoes\\20260907-altcoins\\work\\cripto-v1.2\\.venv\\Lib\\site-packages\\scipy\\__init__.py",
+      "httpx": "C:\\Users\\Superleo13\\Documents\\Codex\\2026-09-07\\files-pasted-by-the-user-quero\\work\\migracao\\teste-restauracao\\sessoes\\20260907-altcoins\\work\\cripto-v1.2\\.venv\\Lib\\site-packages\\httpx\\__init__.py"
+    },
+    "altcoin": {
+      "freeze_sha256": "2bc8f67c704780acff78973404c7a8f5915d05d90f8b05bba72d16aa360a25f6",
+      "ledger_rows": 2,
+      "snapshots_verified": 1,
+      "raw_gzip_readable": 616
+    },
+    "carry": {
+      "freeze_sha256": "b2dae12cbed306b84f9e2e34027fe34c43b1343222915a1bd9962f8bcbe5548b",
+      "ledger_rows": 1,
+      "raw_sources_verified": 6
+    },
+    "network_requests": 0,
+    "ledgers_modified": false
+  },
+  "critical_files": [
+    {
+      "path": "projeto/fred_test.csv",
+      "sha256": "9d497df04e71631f5e205a9b5144dad62c7dcd2904c4d7139864574cc42e1798"
+    },
+    {
+      "path": "sessoes/20260907-pesquisa/work/carry-forward-data/ledger.jsonl",
+      "sha256": "ba505dc92ac32645294106342b6be93a3905a4c5ab89570db1a28c3f20896a18"
+    },
+    {
+      "path": "sessoes/20260907-pesquisa/work/corrections-package-check/preflight-snapshot/ledger.jsonl",
+      "sha256": "ba505dc92ac32645294106342b6be93a3905a4c5ab89570db1a28c3f20896a18"
+    },
+    {
+      "path": "sessoes/20260907-pesquisa/work/corrections-package-check-02/preflight-snapshot/ledger.jsonl",
+      "sha256": "ba505dc92ac32645294106342b6be93a3905a4c5ab89570db1a28c3f20896a18"
+    },
+    {
+      "path": "sessoes/20260907-pesquisa/work/immediate-audit-data/ledger.jsonl",
+      "sha256": "85c3b3f62a81ac0ed5b4b0ae09668c6534a08b8a141f8cf39680995abb30a3a5"
+    },
+    {
+      "path": "sessoes/20260907-pesquisa/work/immediate-package-check/data/ledger.jsonl",
+      "sha256": "85c3b3f62a81ac0ed5b4b0ae09668c6534a08b8a141f8cf39680995abb30a3a5"
+    },
+    {
+      "path": "sessoes/20260907-altcoins/work/altcoin-forward-data/ledger.jsonl",
+      "sha256": "458691117c4a280912b7002eea5c9d3ac4666d96995980c68e9dab5c75790963"
+    },
+    {
+      "path": "sessoes/20260907-altcoins/work/altcoin-profit-data/ledger.jsonl",
+      "sha256": "5abc73a766b3ad7f5f781ed517c1785f0c6c67967ac7234885d6f8f617032018"
+    },
+    {
+      "path": "sessoes/20260907-altcoins/work/altcoin-reviewed-data/ledger.jsonl",
+      "sha256": "42e96f95f1765784e12cbf9fed2d77d26cbd0f268bbbaf46bcdf3715ec6141a5"
+    },
+    {
+      "path": "sessoes/20260907-altcoins/work/forward-package-check/forward-data/ledger.jsonl",
+      "sha256": "458691117c4a280912b7002eea5c9d3ac4666d96995980c68e9dab5c75790963"
+    },
+    {
+      "path": "sessoes/20260907-altcoins/work/profit-package-check/profit-data/ledger.jsonl",
+      "sha256": "5abc73a766b3ad7f5f781ed517c1785f0c6c67967ac7234885d6f8f617032018"
+    },
+    {
+      "path": "sessoes/20260907-altcoins/work/project-review-package/data/forward-reviewed/ledger.jsonl",
+      "sha256": "42e96f95f1765784e12cbf9fed2d77d26cbd0f268bbbaf46bcdf3715ec6141a5"
+    },
+    {
+      "path": "sessoes/20260907-altcoins/work/project-review-package-check/data/forward-reviewed/ledger.jsonl",
+      "sha256": "42e96f95f1765784e12cbf9fed2d77d26cbd0f268bbbaf46bcdf3715ec6141a5"
+    },
+    {
+      "path": "sessoes/20260907-altcoins/work/session-data-restore-check/altcoin-forward-data/ledger.jsonl",
+      "sha256": "458691117c4a280912b7002eea5c9d3ac4666d96995980c68e9dab5c75790963"
+    },
+    {
+      "path": "sessoes/20260907-altcoins/work/session-data-restore-check/altcoin-profit-data/ledger.jsonl",
+      "sha256": "5abc73a766b3ad7f5f781ed517c1785f0c6c67967ac7234885d6f8f617032018"
+    },
+    {
+      "path": "sessoes/20260907-altcoins/work/session-data-restore-check/altcoin-reviewed-data/ledger.jsonl",
+      "sha256": "42e96f95f1765784e12cbf9fed2d77d26cbd0f268bbbaf46bcdf3715ec6141a5"
+    },
+    {
+      "path": "configuracao/automation-original.toml",
+      "sha256": "3b70e3f068c41ef3c964fed543ba388f8237b6f207ce49f5a4ff3c8caec95cfb"
+    }
+  ],
+  "automation_installed": false,
+  "note": "Source state unchanged at packaging. Snapshot cannot include later collections.",
+  "focused_tests": {
+    "passed": 55,
+    "output": ".......................................................                  [100%]\n55 passed in 2.42s\n"
+  },
+  "relocated_environment_files": [
+    {
+      "path": "sessoes/20260907-altcoins/work/cripto-v1.2/.venv/pyvenv.cfg",
+      "before": "3b49a7e40a542b16c36016f27ef0359a0a89beee7778879f4364bb2cd4f51b9b",
+      "after": "68492bcf87a17c5060546329a0156632662a4f2fc46b7f80f8fb9800c5a936d4"
+    },
+    {
+      "path": "sessoes/20260907-altcoins/work/cripto-v1.2/.venv/Lib/site-packages/_editable_impl_cripto_predictor.pth",
+      "before": "8b9511d6cbb9f45b5e8374793caafb8ed9d48119ff7c4860a48317508bf00a4f",
+      "after": "a32ce615643eb1fb4d16e2e675ff3657d81a7c9111797b8e3cba46c58fae9dc6"
+    },
+    {
+      "path": "sessoes/20260907-altcoins/work/cripto-v1.2/.venv/Scripts/python.exe",
+      "before": "ac09a31767f73208f7a5017bb8437e5e47c035c1486b4d86b01db3d72c0201de",
+      "after": "7a1ff8cf1949038bb97d55ae0bd7e0338796637eb9f305af7d16ee92872aaba6"
+    },
+    {
+      "path": "sessoes/20260907-altcoins/work/cripto-v1.2/.venv/Scripts/pythonw.exe",
+      "before": "ac09a31767f73208f7a5017bb8437e5e47c035c1486b4d86b01db3d72c0201de",
+      "after": "d3d666dfeaf5fafbcd49d5a24897f18cb267a8627c15fd1428e364f563583c35"
+    }
+  ],
+  "restoration_test_note": "Full extraction tested; embedded uv Python paths and Git newline settings corrected, then every restored file rehashed. Frozen sources, data and dependency files unchanged."
+}

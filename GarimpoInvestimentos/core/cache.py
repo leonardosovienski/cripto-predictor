@@ -51,7 +51,12 @@ def load_cache() -> dict[str, Any]:
 
     now = datetime.now(UTC)
     valid = {}
+    if not isinstance(raw, dict):
+        logger.warning("cache has invalid root type — treating as empty")
+        return {}
     for key, entry in raw.items():
+        if not isinstance(entry, dict):
+            continue
         cached_at_str = entry.get("cached_at")
         if not cached_at_str:
             continue
@@ -59,7 +64,7 @@ def load_cache() -> dict[str, Any]:
             cached_at = datetime.fromisoformat(cached_at_str)
             if cached_at.tzinfo is None:
                 cached_at = cached_at.replace(tzinfo=UTC)
-            if now - cached_at < timedelta(hours=TTL_HOURS):
+            if timedelta(0) <= now - cached_at < timedelta(hours=TTL_HOURS):
                 valid[key] = entry
         except (ValueError, TypeError) as exc:
             # timestamp malformado nesta entrada: descarta só ela, mas registra —

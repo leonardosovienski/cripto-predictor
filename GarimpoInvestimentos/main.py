@@ -14,7 +14,7 @@ if _known.output_dir:
     os.environ["OUTPUT_DIR"] = _known.output_dir
     os.environ["GARIMPO_OUTPUT_DIR"] = _known.output_dir
 
-from datetime import timedelta
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
 from GarimpoInvestimentos.core.paths import FEATURE_STORE_DB, OUTPUT_DIR
@@ -34,6 +34,7 @@ if _known.output_dir:
 from predictor_core.obs import emit_event
 
 from GarimpoInvestimentos.analyzers.ai_insights import (
+    _build_prompt,
     analyze_asset,
     judge_signature,
     provider_for_asset,
@@ -53,6 +54,7 @@ from GarimpoInvestimentos.dpl.feature_engineering import to_hard_data
 from GarimpoInvestimentos.dpl.feature_store import fonte_label
 from GarimpoInvestimentos.dpl.ingest import ingest_crypto
 from GarimpoInvestimentos.dpl.providers.fear_greed import FearAndGreedProvider
+from GarimpoInvestimentos.dpl.snapshots import prediction_payload, serving_context
 from GarimpoInvestimentos.output.reporter import export_results
 
 # A Feature Store (core.paths.FEATURE_STORE_DB) é o repositório offline do qual o
@@ -223,6 +225,7 @@ async def run():
         # Sem --assets: analisa tudo que a Feature Store tem (ADR merge D3).
         ativos = store.list_symbols("1d")
         if not ativos:
+            store.close()
             raise ValueError("Feature Store vazia — rode `--ingest` primeiro (ou use --assets).")
         print(f"🗃️ Universo da Feature Store: {', '.join(ativos)}")
 
@@ -238,11 +241,16 @@ async def run():
         log_start(ativo)
         print(f"\n🔎 Analisando {ativo.upper()}...")
 
-        flat = store.latest_features(ativo, "1d")
+        try:
+            snapshot = serving_context(store, ativo)
+        except ValueError as exc:
+            log_error(ativo, exc)
+            continue
+        flat = snapshot["features"]
         fingerprint = analysis_fingerprint(
-            flat,
+            {"features": flat, "snapshot_id": snapshot["snapshot_id"]},
             judge_signature(ativo),
-            store.latest_source(ativo, "1d"),
+            snapshot["source"],
             current_policy_json(),
         )
         if flat and cache.get(ativo, {}).get("input_fingerprint") == fingerprint:
@@ -319,6 +327,7 @@ async def run():
 
         # Análise e score
         try:
+            started_at = datetime.now(UTC)
             analysis = await analyze_asset(ativo, hard_data, news)
             score = calculate_final_score(analysis)
             resultado = {
@@ -338,7 +347,7 @@ async def run():
                 "divergencia": divergence_flag(score, hard_data.get("indicadores", {})),
                 # carimbo Fonte (ADR merge D2): política de dados desta previsão —
                 # o backtest estratifica por ele (trocar fonte = quebra de série).
-                "data_source": fonte_label(store.latest_source(ativo, "1d")),
+                "data_source": fonte_label(snapshot["source"]),
                 # 0008: persistido na previsão (antes só ia à telemetria) — o
                 # backtest estratifica previsões com input empobrecido.
                 "input_degradado": 1 if faltando else 0,
@@ -350,6 +359,18 @@ async def run():
                 # histórico mas o backtest a EXCLUI (não é análise real).
                 "llm_fallback": 1 if analysis.get("llm_fallback") else 0,
             }
+            resultado["input_snapshot"] = prediction_payload(
+                snapshot,
+                hard_data=hard_data,
+                news_result=news_result,
+                prompt=_build_prompt(ativo, hard_data, news),
+                analysis=analysis,
+                judge=resultado["judge"],
+                policy=resultado["collection_policy"],
+                started_at=started_at,
+                completed_at=datetime.now(UTC),
+            )
+            append_history([resultado], store)
             resultados.append(resultado)
             # Fallback NÃO entra no cache: erro transitório do LLM não pode
             # "valer por 6h" — a reexecução no mesmo dia deve tentar de novo
@@ -374,15 +395,12 @@ async def run():
             f"⚠️  {n_degraded}/{len(ativos)} ativo(s) com input degradado "
             f"(indicador/notícia faltando) — score do LLM saiu empobrecido; ver events.jsonl."
         )
+    # Every new prediction is durable before fallible cache/export I/O.
+    store.close()
     # Cache só é regravado quando habilitado (--no-cache não toca no cache.json)
     if cache_enabled:
         save_cache(cache)
     export_results(resultados)
-    # A store fecha DEPOIS do append: o histórico oficial vive nela (passo 4).
-    # (Um close prematuro aqui já engoliu previsões em silêncio — pego pela
-    # conferência de 2026-07-02; o teste de integração cobre a ordem agora.)
-    append_history(resultados, store)
-    store.close()
     print(
         f"📊 Histórico oficial atualizado na Feature Store ({FEATURE_STORE_DB.name}, tabela predictions)"
     )

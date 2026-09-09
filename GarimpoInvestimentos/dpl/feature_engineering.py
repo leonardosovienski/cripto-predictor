@@ -10,9 +10,12 @@ responsabilidades (ver docs/DOSSIE_PLATAFORMA.md, decisão sobre Variância Zero
 from __future__ import annotations
 
 import math
+from datetime import timedelta
 
 from GarimpoInvestimentos.analyzers.indicators import compute_indicators
 from GarimpoInvestimentos.dpl.contracts import MarketDataPoint
+
+DAILY_FEATURE_VERSION = "daily-v3-contiguous"
 
 # Chaves produzidas por compute_indicators — usadas no serving para separar os
 # indicadores (sub-dict "indicadores") das demais features de topo.
@@ -53,6 +56,16 @@ def derive_features(candles: list[MarketDataPoint]) -> dict:
     if not candles:
         return {}
     ordered = sorted(candles, key=lambda c: c.timestamp)
+    if any(c.interval != "1d" for c in ordered):
+        raise ValueError("daily features require 1d observations")
+    if len({c.timestamp for c in ordered}) != len(ordered):
+        raise ValueError("daily features reject duplicate timestamps")
+    # A period count only means days on a continuous daily grid. Keep the
+    # contiguous suffix; indicators may become unavailable, never mislabelled.
+    for i in range(len(ordered) - 1, 0, -1):
+        if ordered[i].timestamp - ordered[i - 1].timestamp != timedelta(days=1):
+            ordered = ordered[i:]
+            break
     closes = [c.close for c in ordered]
     last = ordered[-1]
 
@@ -90,7 +103,7 @@ def to_hard_data(flat: dict) -> dict:
     for k, v in flat.items():
         if k == "ts" or k in _SIGNAL_KEYS:
             continue
-        if isinstance(v, float) and math.isnan(v):
+        if v is None or (isinstance(v, float) and not math.isfinite(v)):
             continue
         if k in INDICATOR_KEYS:
             indicadores[k] = v

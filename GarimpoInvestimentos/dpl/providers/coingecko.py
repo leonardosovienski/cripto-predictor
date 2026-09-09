@@ -13,7 +13,7 @@ Para intervalos intradiários usa /ohlc (OHLC real, sem volume).
 from __future__ import annotations
 
 import os
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 
 from predictor_core.net import get_http_client, with_retry
 
@@ -21,7 +21,8 @@ from GarimpoInvestimentos.dpl.contracts import DataProvider, MarketDataPoint
 from GarimpoInvestimentos.dpl.providers._validation import require_finite
 
 # /ohlc (intradiário): days → granularidade automática (1=30min, 7-30=4h).
-_INTERVAL_TO_DAYS = {"1m": 1, "5m": 1, "15m": 1, "1h": 1, "4h": 7}
+_INTERVAL_TO_DAYS = {"30m": 1, "4h": 7}
+_DURATIONS = {"30m": timedelta(minutes=30), "4h": timedelta(hours=4)}
 
 
 def coingecko_auth_headers(api_key: str | None = None) -> dict[str, str]:
@@ -52,6 +53,10 @@ class CoinGeckoProvider(DataProvider):
     async def fetch_ohlcv(
         self, symbol: str, interval: str = "1d", limit: int = 1
     ) -> list[MarketDataPoint]:
+        if limit < 1:
+            raise ValueError("limit deve ser positivo")
+        if interval not in {"1d", *_INTERVAL_TO_DAYS}:
+            raise ValueError("coingecko: intervalo não oferecido pelo endpoint Demo OHLC")
         coin_id = self._native_symbol(symbol)
         if interval == "1d":
             return await self._fetch_daily(symbol, coin_id, limit)
@@ -73,8 +78,20 @@ class CoinGeckoProvider(DataProvider):
         if not prices:
             raise RuntimeError(f"coingecko: resposta vazia para {coin_id}")
         points = []
-        for ts_ms, price in prices[-limit:]:
-            ts = datetime.fromtimestamp(ts_ms / 1000, tz=UTC)
+        now = datetime.now(UTC)
+        seen = set()
+        for ts_ms, price in prices:
+            close_at = datetime.fromtimestamp(ts_ms / 1000, tz=UTC)
+            # market_chart appends a current partial point. Daily observations
+            # are midnight UTC; the Demo documentation states a 10 minute lag.
+            if close_at.time() != datetime.min.time() or close_at + timedelta(minutes=10) > now:
+                continue
+            if close_at in seen:
+                raise ValueError("coingecko: duplicate daily timestamp")
+            seen.add(close_at)
+            ts = close_at - timedelta(days=1)
+            if int(ts_ms) not in volumes:
+                raise ValueError("coingecko: daily volume missing at price timestamp")
             c = require_finite(float(price), field="close", provider=self.name, symbol=symbol)
             vol = require_finite(
                 float(volumes.get(int(ts_ms), 0.0)),
@@ -93,13 +110,17 @@ class CoinGeckoProvider(DataProvider):
                     volume=vol,
                     source=self.name,
                     interval="1d",
-                    published_at=ts,
+                    published_at=close_at + timedelta(minutes=10),
                 )
             )
-        return points
+        if not points:
+            raise RuntimeError("coingecko: no completed daily observations")
+        return sorted(points, key=lambda point: point.timestamp)[-limit:]
 
     async def _fetch_intraday(self, symbol, coin_id, interval, limit) -> list[MarketDataPoint]:
-        days = _INTERVAL_TO_DAYS.get(interval, 1)
+        if interval not in _INTERVAL_TO_DAYS:
+            raise ValueError("coingecko: intervalo não oferecido pelo endpoint Demo OHLC")
+        days = _INTERVAL_TO_DAYS[interval]
         url = f"https://api.coingecko.com/api/v3/coins/{coin_id}/ohlc"
         params = {"vs_currency": "usd", "days": str(days)}
         async with get_http_client() as client:
@@ -111,8 +132,17 @@ class CoinGeckoProvider(DataProvider):
         if not rows:
             raise RuntimeError(f"coingecko: resposta vazia para {coin_id}")
         points = []
-        for ts_ms, o, h, l, c in rows[-limit:]:
-            ts = datetime.fromtimestamp(ts_ms / 1000, tz=UTC)
+        now = datetime.now(UTC)
+        duration = _DURATIONS[interval]
+        seen = set()
+        for ts_ms, o, h, l, c in rows:
+            close_at = datetime.fromtimestamp(ts_ms / 1000, tz=UTC)
+            if close_at > now:
+                continue
+            if ts_ms % int(duration.total_seconds() * 1000) or close_at in seen:
+                raise ValueError("coingecko: invalid OHLC timestamp grid")
+            seen.add(close_at)
+            ts = close_at - duration
             kw = {"open": float(o), "high": float(h), "low": float(l), "close": float(c)}
             for field, val in kw.items():
                 require_finite(val, field=field, provider=self.name, symbol=symbol)
@@ -123,11 +153,13 @@ class CoinGeckoProvider(DataProvider):
                     volume=0.0,  # /ohlc não fornece volume
                     source=self.name,
                     interval=interval,
-                    published_at=ts,
+                    published_at=close_at,
                     **kw,
                 )
             )
-        return points
+        if not points:
+            raise RuntimeError("coingecko: no completed OHLC observations")
+        return sorted(points, key=lambda point: point.timestamp)[-limit:]
 
     async def health_check(self) -> bool:
         try:
