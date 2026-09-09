@@ -45,6 +45,8 @@ O perfil configura o armazenamento do projeto, não é uma sandbox do Windows pa
 
 **Atualização de 09/09/2026, 18:41 UTC:** foram importadas Gemini, SerpAPI (confirmada pelo dono), Groq, Cerebras e CoinGecko do arquivo local fornecido pelo usuário. O modo Gemini + SerpAPI carrega sem erro. Nenhuma API foi chamada para validar as credenciais. GNews e Binance permanecem somente no arquivo de origem, sem integração ou uso de conta. Os três limites de API continuam em zero, que significa sem teto; configure um orçamento finito antes do uso conectado. Veja o [comprovante local](C:/Cripto/operacao/relatorios/CONFIGURACAO_CHAVES_20260909T184135656844Z.json) e o [novo escopo de revisão](NEXT_CHAT_PROMPT.md).
 
+**Atualização posterior, 09/09/2026:** os limites antes zerados foram configurados para 28 unidades de ingestão, 8 tentativas de notícias por provedor e 6 chamadas lógicas de LLM por provedor, por dia UTC. Nenhuma API foi chamada. Isso não certifica cotas gratuitas nem limita diretamente gastos ou todos os retries internos. Consulte [PRONTIDAO_DADOS.md](PRONTIDAO_DADOS.md) para o catálogo, as verificações feitas e os critérios que ainda faltam.
+
 O comando `status` mostra os caminhos e se a configuração do pipeline carrega, sem imprimir credenciais nem fazer requisições. Enquanto faltarem as chaves exigidas pelos provedores selecionados, ele informa a falha de configuração e o pipeline mantém a recusa existente. Pesquisa local e diagnóstico AR2 não exigem essas APIs. Configurar pastas não comprova conectividade, disponibilidade de dados históricos ou lucro.
 
 Os observadores preservados ficam separados:

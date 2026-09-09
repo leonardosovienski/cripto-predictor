@@ -42,9 +42,13 @@ As chaves foram importadas do arquivo local `C:\Cripto\.env.txt`, que contém um
 
 As verificações feitas foram locais, sem chamadas de API. Não declare chaves, modelos, cotas ou endpoints como validados externamente. As credenciais opcionais restantes continuam vazias; não são todas necessárias para o modo atual. Prova atual: [configuração das chaves](C:/Cripto/operacao/relatorios/CONFIGURACAO_CHAVES_20260909T184135656844Z.json).
 
-A guarda de API está ligada, mas os três limites estão em zero, que significa **sem teto**, não bloqueio. Leia [API_GUARDS.md](API_GUARDS.md). Antes de verificações conectadas, estabeleça limites finitos compatíveis com recursos gratuitos já disponíveis, considere retries e contabilize tentativas; não gere novas despesas. Não apague o banco de orçamento para reiniciar cotas. Se a gratuidade não puder ser confirmada, prossiga com verificações locais e fontes públicas utilizáveis, registrando essa dependência.
+A guarda de API está ligada e recebeu limites finitos em 09/09: 28 unidades de ingestão, 8 tentativas de notícias por provedor e 6 chamadas lógicas de LLM por provedor, por dia UTC, conforme o exemplo documentado em [API_GUARDS.md](API_GUARDS.md). Veja o [comprovante](C:/Cripto/operacao/relatorios/LIMITES_API_20260909T192125822404Z.json). Antes de verificações conectadas, confira recursos gratuitos disponíveis e retries; esses limites não são teto monetário nem certificado das cotas do provedor. Não gere novas despesas nem apague o banco de orçamento para reiniciar cotas. Se a gratuidade não puder ser confirmada, prossiga com verificações locais e fontes públicas utilizáveis, registrando essa dependência.
 
 Não imprima valores, prefixos, hashes de chaves ou conteúdos privados em ferramentas, logs, documentos, commits ou relatórios. Exceções de configuração podem incluir entradas sensíveis: reporte tipos de erro e nomes de campos, não dumps. Não copie chaves para dentro do checkout Git.
+
+## Preparação de dados posterior ao repasse inicial
+
+Leia [PRONTIDAO_DADOS.md](PRONTIDAO_DADOS.md) antes da revisão. Uma nova conferência local passou em 68 fontes brutas e 10 arquivos de carry e na reconstrução de 532 fontes e 29 séries de futuros. O catálogo e os critérios de conclusão estão nesse documento. Foram explicitadas duas lacunas de 24 horas nas séries de marcação de futuros de 2026, a falta de certificação do banco operacional antigo e a ausência da primeira coleta nas novas pastas. A atualização dos limites de API está concluída; conexões externas, fluxo completo e avaliação futura permanecem pendentes. Essas verificações específicas não substituem o reteste geral pedido.
 
 ## Leitura e revisão do funcionamento
 
@@ -109,7 +113,7 @@ Mantenha um registro canônico enxuto da revisão, com mapa da arquitetura real,
 
 Entregue também uma explicação acessível ao dono e ao investidor: avanços comprovados, erros e perdas, custos conhecidos/desconhecidos, resultado econômico compatível com o capital e período, próximos marcos e condições de interrupção. Responda: qual descoberta mais mudou a decisão, qual hipótese perdeu prioridade e qual informação decidiria o próximo passo? Se não houve melhoria econômica demonstrada, diga isso.
 
-Comece conferindo Git, as instruções locais, o status abaixo e a estrutura de código/testes; faça a nova revisão e a linha de base solicitadas. Não inicie o pipeline conectado antes de resolver orçamento e exposição de segredos nas integrações.
+Comece conferindo Git, as instruções locais, o status abaixo e a estrutura de código/testes; faça a nova revisão e a linha de base solicitadas. Não inicie o pipeline conectado antes de conferir cotas gratuitas, aplicação dos limites e exposição de segredos nas integrações.
 
 ```powershell
 Set-Location -LiteralPath 'C:\Cripto\pesquisa-20260909'
