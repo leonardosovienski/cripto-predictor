@@ -1,0 +1,14 @@
+{
+  "endpoint": "https://arb1.arbitrum.io/rpc",
+  "request": {
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "eth_chainId",
+    "params": []
+  },
+  "started_at": "2026-09-09T15:32:13.285741+00:00",
+  "http_status": 200,
+  "received_at": "2026-09-09T15:32:14.419301+00:00",
+  "raw_sha256": "937de275b7fc223f33af3b5fdcef1c024e5cf8b2665ad8161096c7e6f9e1733d",
+  "raw_text": "{\"jsonrpc\":\"2.0\",\"id\":1,\"result\":\"0xa4b1\"}\n"
+}

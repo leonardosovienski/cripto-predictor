@@ -1,0 +1,20 @@
+{
+  "endpoint": "https://arb1.arbitrum.io/rpc",
+  "request": {
+    "jsonrpc": "2.0",
+    "id": 5,
+    "method": "eth_call",
+    "params": [
+      {
+        "to": "0x794a61358D6845594F94dc1DB02A252b5b4814aD",
+        "data": "0xd15e0053000000000000000000000000af88d065e77c8cc2239327c5edb3a432268e5831"
+      },
+      "0x1c467350"
+    ]
+  },
+  "started_at": "2026-09-09T15:32:15.553823+00:00",
+  "http_status": 200,
+  "received_at": "2026-09-09T15:32:15.833671+00:00",
+  "raw_sha256": "abc1dfdc98fe90e60a98a12ad4f3bdff347fa863525bee393862dc16777a77c4",
+  "raw_text": "{\"jsonrpc\":\"2.0\",\"id\":5,\"error\":{\"code\":-32000,\"message\":\"missing trie node 7944719e03b485711ddb547ff0ec82a2d9378c4ee7b99668b8882b2250cc0c41 (path ) state 0x7944719e03b485711ddb547ff0ec82a2d9378c4ee7b99668b8882b2250cc0c41 is not available, not found\"}}\n"
+}

@@ -1,0 +1,16 @@
+{
+  "endpoint": "https://arb1.arbitrum.io/rpc",
+  "request": {
+    "jsonrpc": "2.0",
+    "id": 3,
+    "method": "web3_sha3",
+    "params": [
+      "0x676574526573657276654e6f726d616c697a6564496e636f6d65286164647265737329"
+    ]
+  },
+  "started_at": "2026-09-09T15:32:14.907796+00:00",
+  "http_status": 200,
+  "received_at": "2026-09-09T15:32:15.230246+00:00",
+  "raw_sha256": "20233f01b3db01fd76ef442aba53389893900121dc0c8f2b87841760c637000b",
+  "raw_text": "{\"jsonrpc\":\"2.0\",\"id\":3,\"result\":\"0xd15e0053797174372416e35690d70786e00cba6314c9f2296fd557461d7df5bc\"}\n"
+}

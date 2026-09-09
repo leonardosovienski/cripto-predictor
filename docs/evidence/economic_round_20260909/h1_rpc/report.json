@@ -1,0 +1,20 @@
+{
+  "hypothesis": "H1",
+  "calls_including_failures": 6,
+  "attempts": [
+    {
+      "endpoint": "https://arb1.arbitrum.io/rpc",
+      "latest_block": 503409488,
+      "latest_timestamp": "2026-09-09T15:32:13+00:00",
+      "header_age_seconds": 1.9057660102844238,
+      "status": "DATA_ACCESS_BLOCKED",
+      "reason": "RPC error: {'jsonrpc': '2.0', 'id': 5, 'error': {'code': -32000, 'message': 'missing trie node 7944719e03b485711ddb547ff0ec82a2d9378c4ee7b99668b8882b2250cc0c41 (path ) state 0x7944719e03b485711ddb547ff0ec82a2d9378c4ee7b99668b8882b2250cc0c41 is not available, not found'}}"
+    },
+    {
+      "endpoint": "https://arbitrum-one-rpc.publicnode.com",
+      "status": "DATA_ACCESS_BLOCKED",
+      "reason": "URLError: <urlopen error [Errno 11001] getaddrinfo failed>"
+    }
+  ],
+  "capital_permission": false
+}

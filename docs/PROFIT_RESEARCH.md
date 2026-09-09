@@ -1,5 +1,7 @@
 # Pesquisa de lucro multiestratégia — entrega de engenharia de 08/09/2026
 
+A rodada econômica posterior está em [RESULTADOS — 09/09/2026](evidence/economic_round_20260909/RESULTADOS.md): acesso histórico ao Aave bloqueado e economia de renovação AR2 insuficiente para resolver as perdas dos cenários adversos registrados. Esta página preserva o contexto da entrega de engenharia anterior.
+
 ## Objetivo e estado
 
 O objetivo é lucro líquido absoluto em cripto, com quaisquer ativos e estratégias
