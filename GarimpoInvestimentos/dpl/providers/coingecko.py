@@ -24,24 +24,26 @@ from GarimpoInvestimentos.dpl.providers._validation import require_finite
 _INTERVAL_TO_DAYS = {"1m": 1, "5m": 1, "15m": 1, "1h": 1, "4h": 7}
 
 
-def coingecko_auth_headers() -> dict[str, str]:
-    """Header da chave Demo do CoinGecko, se COINGECKO_API_KEY estiver no ambiente.
+def coingecko_auth_headers(api_key: str | None = None) -> dict[str, str]:
+    """Header Demo: configuração injetada, ou ambiente para uso isolado da DPL.
 
     Sobe o rate limit do free tier (evita o 429 que estrangula a coleta diária).
     Vazio se ausente — o endpoint público continua funcionando, só com limite menor.
-    Lê do env direto (não do config do domínio) p/ a DPL seguir promovível ao core.
+    O domínio injeta o valor já resolvido do dotenv. None mantém o uso independente
+    via ambiente; string vazia explícita desabilita a credencial.
     """
-    key = os.getenv("COINGECKO_API_KEY", "").strip()
+    key = (os.getenv("COINGECKO_API_KEY", "") if api_key is None else api_key).strip()
     return {"x-cg-demo-api-key": key} if key else {}
 
 
 class CoinGeckoProvider(DataProvider):
     name = "coingecko"
 
-    def __init__(self, symbol_map: dict[str, str] | None = None):
+    def __init__(self, symbol_map: dict[str, str] | None = None, *, api_key: str | None = None):
         # CoinGecko já usa IDs canônicos ("bitcoin"); o mapa é opcional e só
         # cobre exceções. Default: identidade.
         self._symbol_map = symbol_map or {}
+        self._api_key = api_key
 
     def _native_symbol(self, symbol: str) -> str:
         return self._symbol_map.get(symbol, symbol)
@@ -61,7 +63,9 @@ class CoinGeckoProvider(DataProvider):
         url = f"https://api.coingecko.com/api/v3/coins/{coin_id}/market_chart"
         params = {"vs_currency": "usd", "days": str(days), "interval": "daily"}
         async with get_http_client() as client:
-            resp = await client.get(url, params=params, headers=coingecko_auth_headers())
+            resp = await client.get(
+                url, params=params, headers=coingecko_auth_headers(self._api_key)
+            )
             resp.raise_for_status()
             data = resp.json()
         prices = data.get("prices", [])
@@ -99,7 +103,9 @@ class CoinGeckoProvider(DataProvider):
         url = f"https://api.coingecko.com/api/v3/coins/{coin_id}/ohlc"
         params = {"vs_currency": "usd", "days": str(days)}
         async with get_http_client() as client:
-            resp = await client.get(url, params=params, headers=coingecko_auth_headers())
+            resp = await client.get(
+                url, params=params, headers=coingecko_auth_headers(self._api_key)
+            )
             resp.raise_for_status()
             rows = resp.json()
         if not rows:
@@ -127,7 +133,8 @@ class CoinGeckoProvider(DataProvider):
         try:
             async with get_http_client() as client:
                 resp = await client.get(
-                    "https://api.coingecko.com/api/v3/ping", headers=coingecko_auth_headers()
+                    "https://api.coingecko.com/api/v3/ping",
+                    headers=coingecko_auth_headers(self._api_key),
                 )
                 return resp.status_code == 200
         except Exception:

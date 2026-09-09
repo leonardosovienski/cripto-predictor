@@ -79,3 +79,15 @@ def test_derive_handles_zero_prices_without_division_by_zero():
     feats = derive_features(_series([0.0] * 60))
     assert "preco_vs_sma50_pct" not in feats
     assert "preco_vs_sma200_pct" not in feats
+
+
+def test_ccxt_base_volume_is_converted_but_coingecko_usd_is_not():
+    from dataclasses import replace
+
+    point = _series([50000.0])[0]
+    base = replace(point, source="binance", volume=2)
+    quoted = replace(point, source="coingecko", volume=100000)
+    assert derive_features([base])["volume_usd"] == 100000
+    assert derive_features([quoted])["volume_usd"] == 100000
+    assert derive_features([base])["volume_usd_is_estimate"] == 1
+    assert derive_features([quoted])["volume_usd_is_estimate"] == 0

@@ -8,6 +8,8 @@ from GarimpoInvestimentos.config import settings
 def current_policy() -> dict:
     """Somente escolhas que afetam a população ou o input do LLM."""
     return {
+        "feature_contract": "daily-v2-closed-bars-quote-volume-estimate",
+        "score_horizon_days": settings.SCORE_HORIZON_DAYS,
         "api_guard": {
             "enabled": settings.API_GUARD_ENABLED,
             "max_ingest_assets": settings.API_GUARD_MAX_INGEST_ASSETS,

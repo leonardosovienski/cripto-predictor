@@ -81,7 +81,9 @@ def overlap_block_length(
 async def _fetch_price(client, coin_id: str, day: datetime) -> float | None:
     url = f"https://api.coingecko.com/api/v3/coins/{coin_id}/history"
     params = {"date": day.strftime("%d-%m-%Y"), "localization": "false"}
-    resp = await client.get(url, params=params, headers=coingecko_auth_headers())
+    resp = await client.get(
+        url, params=params, headers=coingecko_auth_headers(settings.COINGECKO_API_KEY)
+    )
     resp.raise_for_status()
     data = resp.json()
     return data.get("market_data", {}).get("current_price", {}).get("usd")

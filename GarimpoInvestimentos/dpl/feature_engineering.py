@@ -60,6 +60,15 @@ def derive_features(candles: list[MarketDataPoint]) -> dict:
         "price_usd": last.close,
         "volume_usd": last.volume,
     }
+    if last.source in {"binance", "kraken", "consensus_mean", "consensus_median"}:
+        # CCXT OHLCV volume é quantidade do ativo-base (BTC, ETH...), não dólares.
+        # Os pares atuais da fachada são USD/USDT. Volume × fechamento é uma
+        # aproximação em moeda de cotação, não volume financeiro exato nem FX.
+        # CoinGecko já fornece total_volumes em USD e não deve ser multiplicado.
+        feats["volume_usd"] = last.volume * last.close
+        feats["volume_usd_is_estimate"] = 1.0
+    elif last.source == "coingecko":
+        feats["volume_usd_is_estimate"] = 0.0
     for label, n in (("change_24h", 1), ("change_7d", 7), ("change_30d", 30)):
         v = _change_pct(closes, n)
         if v is not None:

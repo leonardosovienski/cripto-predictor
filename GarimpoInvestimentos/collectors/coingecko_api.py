@@ -3,6 +3,7 @@ import logging
 from predictor_core.net import get_http_client, with_retry
 from pydantic import BaseModel
 
+from GarimpoInvestimentos.config import settings
 from GarimpoInvestimentos.dpl.providers.coingecko import coingecko_auth_headers
 
 _log = logging.getLogger("previsao_cripto.coingecko")
@@ -22,7 +23,7 @@ class CoinData(BaseModel):
 async def get_coin_data(coin_id: str) -> CoinData:
     url = f"https://api.coingecko.com/api/v3/coins/{coin_id}"
     async with get_http_client() as client:
-        resp = await client.get(url, headers=coingecko_auth_headers())
+        resp = await client.get(url, headers=coingecko_auth_headers(settings.COINGECKO_API_KEY))
         resp.raise_for_status()
         data = resp.json()
 
@@ -49,7 +50,9 @@ async def get_price_series(coin_id: str, days: int = 200) -> list[float]:
     url = f"https://api.coingecko.com/api/v3/coins/{coin_id}/market_chart"
     params = {"vs_currency": "usd", "days": str(days)}
     async with get_http_client() as client:
-        resp = await client.get(url, params=params, headers=coingecko_auth_headers())
+        resp = await client.get(
+            url, params=params, headers=coingecko_auth_headers(settings.COINGECKO_API_KEY)
+        )
         resp.raise_for_status()
         data = resp.json()
     closes = [point[1] for point in data.get("prices", [])]

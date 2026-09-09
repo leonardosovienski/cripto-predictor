@@ -58,10 +58,14 @@ class CCXTProvider(DataProvider):
     ) -> list[MarketDataPoint]:
         if interval not in _SUPPORTED_INTERVALS:
             raise ValueError(f"{self.exchange_id}: intervalo '{interval}' não suportado")
+        if limit < 1:
+            raise ValueError("limit deve ser positivo")
         pair = self._native_symbol(symbol)
         client = self._client()
         try:
-            rows = await client.fetch_ohlcv(pair, timeframe=interval, limit=limit)
+            # A exchange inclui o candle aberto. Reserve uma linha extra para
+            # que pedir 200 fechados não entregue 199 e elimine a SMA-200.
+            rows = await client.fetch_ohlcv(pair, timeframe=interval, limit=limit + 1)
         finally:
             try:
                 await client.close()
@@ -101,7 +105,7 @@ class CCXTProvider(DataProvider):
             )
         if not points:
             raise RuntimeError(f"{self.exchange_id}: resposta vazia para {pair}")
-        return points
+        return sorted(points, key=lambda point: point.timestamp)[-limit:]
 
     async def health_check(self) -> bool:
         client = self._client()

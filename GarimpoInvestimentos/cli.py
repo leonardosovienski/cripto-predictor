@@ -19,6 +19,18 @@ def main() -> None:
     if known.output_dir:
         os.environ["OUTPUT_DIR"] = known.output_dir
         os.environ["GARIMPO_OUTPUT_DIR"] = known.output_dir
-    from GarimpoInvestimentos.main import run
+    try:
+        from GarimpoInvestimentos.security.redaction import (
+            configured_secret_values,
+            install_log_redaction,
+        )
 
-    asyncio.run(run())
+        install_log_redaction(configured_secret_values())
+        from GarimpoInvestimentos.main import run
+
+        asyncio.run(run())
+    except Exception as error:
+        # A falha pode ocorrer durante Settings, antes de conhecermos os segredos.
+        # O tipo é seguro; traceback/ValidationError podem conter entradas privadas.
+        print(f"Pipeline interrompido ({type(error).__name__}).", file=sys.stderr)
+        raise SystemExit(1) from None
