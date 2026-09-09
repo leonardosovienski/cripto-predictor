@@ -2,6 +2,9 @@
 
 ## Estado vigente e continuidade
 
+- [Configuração deste PC em C:\Cripto](CONFIGURACAO_LOCAL.md): mapa operacional vigente; substitui caminhos de máquinas anteriores para qualquer nova execução.
+- [Rodada econômica de 09/09](evidence/economic_round_20260909/RESULTADOS.md): resultados, limitações e condições de retomada.
+
 - [Estado da pesquisa](CURRENT_RESEARCH_STATE_20260908.md): conclusão econômica, correções e pendências atuais.
 - [Continuidade de 08/09](SESSION_HANDOFF_20260908.md): Git, validação, observadores, dados e recuperação.
 - [Prompt de continuidade](NEXT_CHAT_PROMPT.md): contexto atualizado para retomar o trabalho.

@@ -3,6 +3,7 @@
   "typeCheckingMode": "basic",
   "include": [
     "GarimpoInvestimentos/config.py",
+    "GarimpoInvestimentos/local_runtime.py",
     "GarimpoInvestimentos/contracts.py",
     "GarimpoInvestimentos/feature_store_health.py",
     "GarimpoInvestimentos/governance.py",

@@ -9,6 +9,7 @@ set "DISCOVER_N=15"
 
 pushd "%PROJECT_DIR%"
 
+if exist "%PROJECT_DIR%.cripto-root" goto uv_ready
 where uv >nul 2>nul
 if errorlevel 1 (
     echo uv nao encontrado no PATH. Instale com: pip install uv
@@ -16,12 +17,14 @@ if errorlevel 1 (
     exit /b 1
 )
 
+:uv_ready
+
 rem O mesmo .venv e compartilhado por phase1, v3-daily e microstructure-live
 rem (GarimpoInvestimentos/jobs.py usa sys.executable para todos). Sincronizar
 rem so llm+excel DESINSTALA numpy/scipy/hmmlearn/ccxt (extra v3), quebrando a
 rem familia V3/HMM na proxima execucao dela (auditoria 2026-08-19).
 echo === Sync do ambiente (uv: llm + excel + v3) ===
-uv sync --extra llm --extra excel --extra v3
+call :run_uv sync --extra llm --extra excel --extra v3
 if errorlevel 1 (
     echo uv sync falhou.
     popd
@@ -29,22 +32,30 @@ if errorlevel 1 (
 )
 
 echo === Ingestao (rede): top cripto fixos -^> Feature Store ===
-uv run python -m GarimpoInvestimentos.main --ingest --assets %ATIVOS% --mode fallback
+call :run_uv run python -m GarimpoInvestimentos.main --ingest --assets %ATIVOS% --mode fallback
 if errorlevel 1 (
-    echo Ingestao dos ativos fixos falhou. Verifique as chaves GEMINI_API_KEY e SERP_API_KEY em GarimpoInvestimentos\.env, e a conexao de rede.
+    echo Ingestao dos ativos fixos falhou. Confira a configuracao privada indicada em docs\CONFIGURACAO_LOCAL.md e a conexao de rede.
     popd
     exit /b %errorlevel%
 )
 
 echo === Ingestao (rede): descoberta de candidatos (momentum + trending) -^> Feature Store ===
-uv run python -m GarimpoInvestimentos.main --ingest --discover %DISCOVER_N% --mode fallback
+call :run_uv run python -m GarimpoInvestimentos.main --ingest --discover %DISCOVER_N% --mode fallback
 if errorlevel 1 (
     echo Descoberta falhou ou nao retornou candidatos. Seguindo so com os ativos fixos.
 )
 
 echo === Analise (offline, le TODO o universo da Feature Store) ===
-uv run python -m GarimpoInvestimentos.main --summary
+call :run_uv run python -m GarimpoInvestimentos.main --summary
 set "RESULT=%errorlevel%"
 
 popd
 exit /b %RESULT%
+
+:run_uv
+if not exist "%PROJECT_DIR%.cripto-root" goto standard_uv
+call "%PROJECT_DIR%cripto.cmd" uv %*
+exit /b %errorlevel%
+:standard_uv
+uv %*
+exit /b %errorlevel%

@@ -1,5 +1,7 @@
 # Estado vigente da pesquisa — 08/09/2026
 
+**Continuidade em 09/09/2026:** a rodada econômica posterior está em [RESULTADOS](evidence/economic_round_20260909/RESULTADOS.md). Neste PC, todo o trabalho deve permanecer em `C:\Cripto`: veja [CONFIGURACAO_LOCAL.md](CONFIGURACAO_LOCAL.md) para código, dados, ambientes, saídas e credenciais locais. O restante desta página preserva as decisões de 08/09.
+
 Esta é a referência vigente após a revisão e as correções. Relatórios anteriores permanecem como evidência histórica; suas afirmações devem ser lidas com as retificações abaixo. Não existe projeção validada de lucro futuro nem resultado de execução real.
 
 **Situação técnica após a consolidação:** trabalho publicado na `main`, única branch local e remota. A suíte completa passou em **1.170 testes**; os quatro jobs do [CI da consolidação](https://github.com/leonardosovienski/cripto-predictor/actions/runs/34228309330) passaram, incluindo container. Os registros abaixo de 1.167 testes se referem à etapa anterior. [Continuidade, arquivos e caminhos](SESSION_HANDOFF_20260908.md).

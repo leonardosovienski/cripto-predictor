@@ -7,6 +7,10 @@ from pathlib import Path
 
 from platformdirs import user_cache_path, user_data_path, user_log_path
 
+from GarimpoInvestimentos.local_runtime import configure_local_runtime
+
+configure_local_runtime()
+
 
 def _configured(primary: str, legacy: str, default: Path) -> Path:
     raw = os.getenv(primary) or os.getenv(legacy)

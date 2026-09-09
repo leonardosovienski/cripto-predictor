@@ -1,5 +1,7 @@
 # Continuidade da pesquisa — 08/09/2026
 
+**Atualização de localização em 09/09/2026:** o checkout atual é `C:\Cripto\pesquisa-20260909`; os dados e snapshots estão em `C:\Cripto\restaurado-20260908`. Toda nova execução, configuração, cache, saída e entrega deve ficar em `C:\Cripto`, conforme [CONFIGURACAO_LOCAL.md](CONFIGURACAO_LOCAL.md). As referências ao computador antigo e ao Git abaixo são registros da consolidação de 08/09, não caminhos de execução neste PC.
+
 A consolidação foi concluída e publicada no commit `dd8dbe26f10be23340d9248764da1e485633f7b8`, na [main do GitHub](https://github.com/leonardosovienski/cripto-predictor/tree/main). Todas as branches anteriores foram integradas e removidas; restou somente `main`, local e remota. A revisão documental posterior não altera os resultados científicos.
 
 O checkout principal é `C:\Users\Superleo13\cripto-predictor`. Confira o HEAD atual antes de trabalhar. O arquivo sem commit `fred_test.csv` pertence ao usuário e foi preservado.
