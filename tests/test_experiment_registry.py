@@ -606,7 +606,7 @@ def test_load_rows_exclui_fallback_estrutural(tmp_path, monkeypatch):
     monkeypatch.setattr(backtest, "FEATURE_STORE_DB", db)
     # redoma: sem absorver o CSV legado REAL da máquina no banco do teste
     monkeypatch.setattr(backtest, "migrate_csv_to_store", lambda store: 0)
-    rows = backtest._load_rows()
+    rows = backtest._load_rows(include_legacy=True)
     assert [r["ativo"] for r in rows] == ["bitcoin"]
     assert rows[0]["juiz"] == "groq:m:h"
 

@@ -78,6 +78,7 @@ def to_prediction_rows(resultados: list[dict]) -> list[dict]:
                 "news_provider": r.get("news_provider"),
                 "news_degraded_reason": r.get("news_degraded_reason"),
                 "collection_policy": r.get("collection_policy"),
+                "input_snapshot": r.get("input_snapshot"),
             }
         )
     return rows

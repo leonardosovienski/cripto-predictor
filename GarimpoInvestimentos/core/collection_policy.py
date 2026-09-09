@@ -3,12 +3,15 @@
 import json
 
 from GarimpoInvestimentos.config import settings
+from GarimpoInvestimentos.dpl.feature_engineering import DAILY_FEATURE_VERSION
+from GarimpoInvestimentos.dpl.snapshots import EVALUATION_CONTRACT
 
 
 def current_policy() -> dict:
     """Somente escolhas que afetam a população ou o input do LLM."""
     return {
-        "feature_contract": "daily-v2-closed-bars-quote-volume-estimate",
+        "feature_contract": DAILY_FEATURE_VERSION,
+        "evaluation_contract": EVALUATION_CONTRACT,
         "score_horizon_days": settings.SCORE_HORIZON_DAYS,
         "api_guard": {
             "enabled": settings.API_GUARD_ENABLED,

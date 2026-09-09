@@ -153,7 +153,9 @@ def test_ingest_materializa_e_serve(tmp_path, monkeypatch):
                 signal_providers=[_FakeFG()],
             )
         )
-        served = fs.read_features("bitcoin", "1d")
+        from GarimpoInvestimentos.dpl.feature_engineering import DAILY_FEATURE_VERSION
+
+        served = fs.read_features("bitcoin", "1d", feature_version=DAILY_FEATURE_VERSION)
     assert len(aligned) == 2
     assert served[0]["fear_greed"] == 40.0
     assert served[1]["fear_greed"] == 40.0  # forward fill

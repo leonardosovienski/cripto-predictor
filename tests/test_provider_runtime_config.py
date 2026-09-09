@@ -27,7 +27,13 @@ def test_dotenv_key_reaches_facade_and_collectors(monkeypatch, tmp_path):
         seen.append(request)
         assert request.headers["x-cg-demo-api-key"] == secret
         if request.url.path.endswith("market_chart"):
-            return httpx.Response(200, json={"prices": [[1704067200000, 42000]]})
+            return httpx.Response(
+                200,
+                json={
+                    "prices": [[1704067200000, 42000]],
+                    "total_volumes": [[1704067200000, 1000000]],
+                },
+            )
         return httpx.Response(200, json=[])
 
     def client():

@@ -198,7 +198,10 @@ def test_ingest_stocks_materializa_e_registra_proveniencia(tmp_path, monkeypatch
     f = tmp_path / "COTAHIST.TXT"
     f.write_text(
         "\n".join(
-            [_cotahist_line(date="20260102", c=3050), _cotahist_line(date="20260103", c=3120)]
+            [
+                _cotahist_line(date="20260102", c=3050),
+                _cotahist_line(date="20260103", c=3120, h=3120),
+            ]
         ),
         encoding="latin-1",
     )

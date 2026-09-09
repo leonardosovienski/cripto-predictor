@@ -555,6 +555,48 @@ class FeatureStore:
         rows = self.read_features(symbol, interval)
         return rows[-1] if rows else None
 
+    def write_market_snapshot(self, payload: dict) -> str:
+        from GarimpoInvestimentos.dpl.snapshots import encode
+
+        digest, text = encode(payload)
+        self._conn.execute(
+            "INSERT OR IGNORE INTO market_snapshots VALUES (?,?,?,?,?,?)",
+            (
+                digest,
+                payload["symbol"],
+                payload["interval"],
+                payload["feature_version"],
+                payload["collected_at"],
+                text,
+            ),
+        )
+        self._conn.commit()
+        return digest
+
+    def latest_market_snapshot(
+        self, symbol: str, interval: str, feature_version: str
+    ) -> dict | None:
+        from GarimpoInvestimentos.dpl.snapshots import decode
+
+        row = self._conn.execute(
+            "SELECT snapshot_id,payload_json FROM market_snapshots "
+            "WHERE symbol=? AND interval=? AND feature_version=? "
+            "ORDER BY collected_at DESC, snapshot_id DESC LIMIT 1",
+            (symbol, interval, feature_version),
+        ).fetchone()
+        if row is None:
+            return None
+        return decode(row["snapshot_id"], row["payload_json"]) | {"snapshot_id": row["snapshot_id"]}
+
+    def read_prediction_input(self, ativo: str, ts: str) -> dict | None:
+        from GarimpoInvestimentos.dpl.snapshots import decode
+
+        row = self._conn.execute(
+            "SELECT input_hash,payload_json FROM prediction_inputs WHERE ativo=? AND ts=?",
+            (ativo, ts),
+        ).fetchone()
+        return decode(row["input_hash"], row["payload_json"]) if row else None
+
     # --- Histórico oficial de previsões (passo 4 — aposenta o CSV) -----------
 
     PREDICTION_FIELDS = (
@@ -575,6 +617,10 @@ class FeatureStore:
     )
 
     def write_predictions(self, rows: list[dict]) -> int:
+        with self._conn:
+            return self._write_predictions(rows)
+
+    def _write_predictions(self, rows: list[dict]) -> int:
         """Upsert de previsões. PK (ativo, ts): reexecução/cache hit não infla o n
         do backtest (mesma semântica do dedup do CSV legado).
         `input_degradado` (0008): 1 = LLM pontuou com input empobrecido; 0 =
@@ -582,6 +628,30 @@ class FeatureStore:
         `llm_fallback` (0009): 1 = o LLM falhou e a linha é o fallback neutro
         (score 50, sem análise real); NULL = pré-flag (o backtest cobre o legado
         pelo marcador no resumo)."""
+        from GarimpoInvestimentos.dpl.snapshots import encode
+
+        # Validate conflicts before changing either table. Snapshot and prediction
+        # share a transaction; an export/cache failure cannot erase this evidence.
+        input_rows = []
+        seen = {}
+        for r in rows:
+            key = (r["ativo"], r["ts"])
+            if key in seen and seen[key] != r:
+                raise ValueError("conflicting predictions in one batch")
+            seen[key] = r
+            payload = r.get("input_snapshot")
+            existing = self.read_prediction_input(r["ativo"], r["ts"])
+            if existing is not None and payload != existing:
+                raise ValueError("prediction input identity conflict")
+            if existing is not None:
+                prior = self._conn.execute(
+                    "SELECT * FROM predictions WHERE ativo=? AND ts=?", key
+                ).fetchone()
+                if prior and any(prior[f] != r.get(f) for f in self.PREDICTION_FIELDS):
+                    raise ValueError("prediction with preserved inputs cannot be replaced")
+            if payload is not None:
+                digest, text = encode(payload)
+                input_rows.append((r["ativo"], r["ts"], digest, text))
         data = [tuple(r.get(f) for f in self.PREDICTION_FIELDS) for r in rows]
         self._conn.executemany(
             """INSERT INTO predictions
@@ -600,7 +670,9 @@ class FeatureStore:
                  collection_policy=excluded.collection_policy""",
             data,
         )
-        self._conn.commit()
+        self._conn.executemany(
+            "INSERT OR IGNORE INTO prediction_inputs VALUES (?,?,?,?)", input_rows
+        )
         return len(data)
 
     def read_predictions(self) -> list[dict]:
@@ -688,6 +760,25 @@ class FeatureStore:
         )
         row = cur.fetchone()
         return row["source"] if row else None
+
+    def closed_daily_price(
+        self, symbol: str, source: str, boundary: datetime, as_of: datetime
+    ) -> float | None:
+        """Exact same-source close at a UTC boundary, only after publication."""
+        if boundary > as_of:
+            return None
+        row = self._conn.execute(
+            "SELECT close,published_at FROM raw_market_data "
+            "WHERE symbol=? AND source=? AND interval='1d' AND ts=?",
+            (symbol, source, _iso(boundary - timedelta(days=1))),
+        ).fetchone()
+        if row is None:
+            return None
+        published = _parse(row["published_at"])
+        price = row["close"]
+        if not boundary <= published <= as_of or not math.isfinite(price) or price <= 0:
+            return None
+        return price
 
 
 def fonte_label(source: str | None) -> str:

@@ -38,6 +38,7 @@ from predictor_core.kernel.timeindex import iso_z
 from predictor_core.obs import emit_event
 
 from GarimpoInvestimentos.analyzers.ai_insights import (
+    _build_prompt,
     analyze_asset,
     judge_signature,
     provider_for_asset,
@@ -55,6 +56,7 @@ from GarimpoInvestimentos.dpl.feature_engineering import to_hard_data
 from GarimpoInvestimentos.dpl.feature_store import fonte_label
 from GarimpoInvestimentos.dpl.ingest import ingest_crypto
 from GarimpoInvestimentos.dpl.providers.fear_greed import FearAndGreedProvider
+from GarimpoInvestimentos.dpl.snapshots import prediction_payload, serving_context
 from GarimpoInvestimentos.security.redaction import safe_redact_text
 
 INGEST_HISTORY_DAYS = 200  # mesmo valor do main.py (SMA-200 + change_30d)
@@ -202,7 +204,8 @@ async def analyze_pending(store: FeatureStore, pending: list[str]) -> tuple[int,
     for i, ativo in enumerate(pending):
         provider = provider_for_asset(ativo)
         try:
-            flat = store.latest_features(ativo, "1d")
+            snapshot = serving_context(store, ativo)
+            flat = snapshot["features"]
             if not flat:
                 raise RuntimeError("sem features na Feature Store (ingestão falhou?)")
             hard_data = to_hard_data(flat)
@@ -241,6 +244,7 @@ async def analyze_pending(store: FeatureStore, pending: list[str]) -> tuple[int,
                     news_result.degraded_reason,
                 )
 
+            started_at = datetime.now(UTC)
             analysis = await analyze_asset(ativo, hard_data, news)
             if analysis.get("llm_fallback"):
                 # Falha do juiz JÁ capturada dentro de analyze_asset — não persiste
@@ -260,13 +264,24 @@ async def analyze_pending(store: FeatureStore, pending: list[str]) -> tuple[int,
                     "price_usd": hard_data.get("price_usd", 0),
                     "judge": judge_signature(ativo),  # provider:modelo:hash
                     "divergencia": divergence_flag(score, hard_data.get("indicadores", {})),
-                    "data_source": fonte_label(store.latest_source(ativo, "1d")),
-                    "input_degradado": 0 if news else 1,
+                    "data_source": fonte_label(snapshot["source"]),
+                    "input_degradado": int(news_result.degraded or "indicadores" not in hard_data),
                     "news_provider": news_result.provider,
                     "news_degraded_reason": news_result.degraded_reason,
                     "collection_policy": current_policy_json(),
                     "llm_fallback": 0,
                 }
+                resultado["input_snapshot"] = prediction_payload(
+                    snapshot,
+                    hard_data=hard_data,
+                    news_result=news_result,
+                    prompt=_build_prompt(ativo, hard_data, news),
+                    analysis=analysis,
+                    judge=resultado["judge"],
+                    policy=resultado["collection_policy"],
+                    started_at=started_at,
+                    completed_at=datetime.now(UTC),
+                )
                 append_history([resultado], store)
                 n_ok += 1
                 log.info(
