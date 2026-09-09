@@ -1,0 +1,30 @@
+{
+  "status": "REGISTERED_EXECUTION_DIAGNOSTIC_NOT_DEPLOYMENT",
+  "round_protocol": "docs/evidence/economic_round_20260909/protocol.json",
+  "source_family": "funding_carry_past_cashflow_gate_v1",
+  "related_frozen_family_unchanged": "funding_oi_hmm_v3",
+  "material_question": "Whether avoidable adjacent full close/reopen turnover, rather than the funding signal, explains the negative AR2 BTC cost scenarios.",
+  "prior_result": "Published AR2 BTC totals (+17.79110437593954 base, -82.25798634520652 adverse, -117.41943116522634 compression) were encountered during the source-file search before this dossier. Published ETH summaries also appeared incidentally; ETH will not be evaluated. All these historical periods were already consulted and are not out-of-sample.",
+  "why_the_prior_result_does_not_answer_this_question": "The preserved simulator always closes before a new decision. It does not isolate costs of matched same-instrument inventory at contiguous renewal boundaries. A generous upper bound can determine whether a delta-execution rewrite could change the adverse conclusion without building another strategy.",
+  "activation_reason": "H1's primary public Arbitrum RPC cannot supply the probed historical state (missing trie node); the single fallback endpoint failed DNS. H1 is DATA_ACCESS_BLOCKED, not economically rejected.",
+  "fixed_design": {
+    "symbol": "BTCUSDT",
+    "signal": "Unchanged AR2 from the preserved absolute-research protocol",
+    "period": ["2024-01-01T00:00:00Z", "2026-09-07T00:00:00Z"],
+    "source_cost_scenarios": ["base", "adverse", "compression"],
+    "initial_capital_usdt": 5000,
+    "new_parameter_searches": 0,
+    "source_policy_variants": 1,
+    "execution_treatments_max": 2,
+    "first_measurement": "Verify raw and normalized source hashes, rerun BTC AR2 only for the three existing cost scenarios and reconcile the saved reference. Detect only adjacent exit_ms == next entry_ms with identical spot/perpetual reference prices and contract identity. Non-adjacent trades cannot save renewal turnover.",
+    "turnover_accounting": "For each leg, compare q_before + q_after with abs(q_after-q_before) at the same boundary reference price and declared fee/slippage. Savings equal 2*min(q_before,q_after)*price*bps/10000. No cross-venue or cross-instrument netting; unchanged quantity means hold, not two fills.",
+    "strict_cost_only_upper_bound": "Reference cash remainder plus all modeled execution cost at eligible adjacent closes/reopens, even waiving the necessary delta trade. Preserve original signed funding, basis cashflows, all non-renewal costs and fixed overhead. This is deliberately more generous than actual delta execution.",
+    "extended_optimistic_upper_bound": "Also waive the renewal entry's entire original unhedged-shock cost and add all positive entry-hour funding at max(old_quantity,new_quantity), with negative additional boundary funding set to zero only for this explicitly optimistic upper bound. Existing negative funding remains in the reference. This bound is not a signed-funding replay or expected profit.",
+    "boundary_funding_disclosure": "Separately report positive and negative missed boundary receipts and the signed min(old_quantity,new_quantity) continuity diagnostic. A full replay, if needed, must include negative funding and distinguish quantity changes from uninterrupted holdings.",
+    "decision_rule": "If even the extended optimistic bound remains non-positive in the adverse/compression scenarios, close the hypothesis that renewal execution alone fixes those losses. Preserve any base-case positivity and avoid extrapolating rejection to all possible regimes, capital sizes or redesigned policies. If the bound permits a changed decision, implement and reconcile the fixed reference quantity trajectory before claiming an improvement.",
+    "capital_sensitivity": "After the bound, show analytical 1000/5000/25000 USDT proportional-notional scenarios with the same fixed overhead. These are labeled scale-only sensitivities, not additional backtests; changed grid, capacity, actual fees and execution are unverified. No scenario authorizes capital."
+  },
+  "source_access": "Read preserved raw market data and canonical old evidence; write new results only in the separate research worktree.",
+  "no_reopening_or_mutation": ["H1-H9 directional gates", "Original AR2 code, signal or outcomes", "Operational observers and diaries", "Scientific hashes and trial registry", "Automations"],
+  "capital_permission": false
+}

@@ -1,0 +1,113 @@
+{
+  "round": "ECONOMIC-ROUND-20260909-R1",
+  "recorded_at_utc": "2026-09-09T16:15:47.086987+00:00",
+  "base_commit": "48fd271b06486866289f3e93cdc80504259b196f",
+  "environment": {
+    "os": "Windows-11-10.0.26100-SP0",
+    "python": "3.13.14",
+    "uv": "0.12.1",
+    "dependency_lock_sha256": "6879c2ae163acb7630c6bb37a40f11b1e62437b6bf74840cc93a4bdeb1514599"
+  },
+  "checks": {
+    "all_extras_suite": {
+      "status": "PASS",
+      "command": "uv sync --locked --all-extras; uv build; .venv/Scripts/python -B -u -m coverage run --rcfile=coverage-runtime.ini -m pytest -q",
+      "passed": 1261,
+      "failed": 0,
+      "skipped": 0,
+      "elapsed_seconds": 1171.86
+    },
+    "runtime_coverage": {
+      "status": "PASS",
+      "command": ".venv/Scripts/python -B -m coverage report --rcfile=coverage-runtime.ini",
+      "reported_percent": 85,
+      "required_percent": 80,
+      "scope": "Existing maintained runtime subset; not a claim about all research code"
+    },
+    "new_material_tests": {
+      "status": "PASS",
+      "passed": 25,
+      "command": ".venv/Scripts/python -B -m pytest -q tests/test_renewal_research.py"
+    },
+    "ruff": {
+      "status": "PASS",
+      "commands": [
+        ".venv/Scripts/ruff check .",
+        ".venv/Scripts/ruff format --check ."
+      ],
+      "formatted_files_checked": 422
+    },
+    "pyright": {
+      "status": "PASS",
+      "command": ".venv/Scripts/pyright",
+      "errors": 0,
+      "warnings": 0,
+      "environment": "PATH includes research .venv/Scripts and bundled Node"
+    },
+    "build": {
+      "status": "PASS",
+      "command": "uv build",
+      "wheel": {
+        "wheel_sha256": "0030c269ba5827e5daedebc4c75e5a098ee13073aef8ed1c77ebcdf4b1186504",
+        "new_module_bytes_match": true,
+        "work_not_in_wheel": true,
+        "installed_versions": {
+          "numpy": "2.5.1",
+          "scipy": "1.18.0",
+          "scikit-learn": "1.9.0",
+          "hmmlearn": "0.3.3",
+          "predictor-core": "3.2.0",
+          "predictor-ops": "4.1.0",
+          "pytest": "8.4.2",
+          "ruff": "0.16.1",
+          "pyright": "1.1.411",
+          "coverage": "7.15.2"
+        }
+      }
+    },
+    "installed_wheel_outside_checkout": {
+      "status": "PASS",
+      "command": "work/wheel-contract/Scripts/python -B scripts/verify_installed_wheels.py from the chat workspace outside the checkout",
+      "environment": "Separate fresh venv with released Core 3.2.0, Ops 4.1.0 and built project wheel",
+      "new_module_loaded_from_site_packages": true
+    },
+    "secret_scan": {
+      "status": "PASS",
+      "command": ".venv/Scripts/python -B scripts/scan_secrets.py work/ci-export-v1",
+      "scope": "All candidate versioned files exported with git checkout-index, matching a clean CI checkout; local downloaded runtimes are untracked. This subsequently added validation record is checked separately.",
+      "findings": 0
+    },
+    "evidence_integrity": {
+      "status": "PASS",
+      "working_staged_and_exported_hashes_each": 13,
+      "raw_market_sources": 68,
+      "normalized_market_files": 10,
+      "frozen_paths_unchanged_in_diff": true,
+      "restored_project_head": "522de73de85ada9f3491cd4c7c7d666557381f98",
+      "owner_untracked_file_preserved": "fred_test.csv"
+    },
+    "remote_required_ci": {
+      "status": "PENDING_AT_LOCAL_RECORD",
+      "jobs": [
+        "quality",
+        "all-extras",
+        "python-314-experimental",
+        "container"
+      ],
+      "reason": "Docker is unavailable locally; remote Python 3.14 and container checks must pass on the current base before merge. This local record does not attest later CI or integration."
+    }
+  },
+  "resolved_attempts": [
+    "An initial type annotation error in the new accumulator was corrected without changing economic calculations.",
+    "A later direct pyright invocation selected the Windows Store Python alias and reported missing dependencies; rerunning with the research venv on PATH passed, with no relaxed checks."
+  ],
+  "local_log_sha256": {
+    "work/pytest-all-extras.log": "8f30e8db88829359961eb4e62820356e6d96912e81bed4bf82f0774998283afd",
+    "work/coverage-runtime.log": "c863dc061affc37115c379596cf35e5f352eb21875e484e6d5dcfc5fa4a4a41b",
+    "work/pyright-final.log": "c584b21ee012de391dc2799d5455db619d3fefbb192ab07ea4ba83fb0d704c14",
+    "work/build-final.log": "2b7dcd530b23d3678831372a7aed401d13c45f17f3fa37216be52a5e86012dc2",
+    "work/secret-scan-v1.json": "03fdc05c0e89f05e125366a9b93cbc1a6d77284cc8c106f5c42c84234a8fc568",
+    "work/source-integrity.json": "d00d36c0ad9a0b8775dda1b1e272cb7aa25ac72389e251f3a52f27d0e175af26",
+    "work/wheel-evidence.json": "6b310a31a72e2363ee059fe4d5318e6cf6d18c018bee584d5f468b1bf790136a"
+  }
+}

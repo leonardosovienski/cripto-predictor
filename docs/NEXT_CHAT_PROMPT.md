@@ -2,6 +2,8 @@
 
 Retome o projeto a partir do estado abaixo e do meu pedido mais recente. Confira o repositório antes de agir; não repita pesquisas ou tarefas já encerradas apenas porque aparecem em documentos antigos.
 
+Atualização de pesquisa de 09/09/2026: leia primeiro o [registro canônico da rodada econômica](evidence/economic_round_20260909/RESULTADOS.md), com protocolo, decisões, fontes, contas e condições de retomada. A rodada terminou com H1 bloqueada por acesso histórico e H2 rejeitada como correção suficiente das perdas adversas modeladas; não existe autorização de capital nem nova rentabilidade final demonstrada. O trabalho Windows desta rodada está em `C:\Cripto\pesquisa-20260909`; os caminhos abaixo são históricos.
+
 ## Projeto e leitura inicial
 
 - Repositório principal: `C:\Users\Superleo13\cripto-predictor`, branch `main`.

@@ -1,0 +1,14 @@
+{
+  "endpoint": "https://arbitrum-one-rpc.publicnode.com",
+  "request": {
+    "jsonrpc": "2.0",
+    "id": 6,
+    "method": "eth_chainId",
+    "params": []
+  },
+  "started_at": "2026-09-09T15:32:15.839306+00:00",
+  "error": "URLError: <urlopen error [Errno 11001] getaddrinfo failed>",
+  "received_at": "2026-09-09T15:32:15.853620+00:00",
+  "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "raw_text": ""
+}

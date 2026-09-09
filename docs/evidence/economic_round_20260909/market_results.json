@@ -1,0 +1,499 @@
+{
+  "round": "ECONOMIC-ROUND-20260909-R1",
+  "recorded_at_utc": "2026-09-09T15:57:37.498271+00:00",
+  "base_commit": "48fd271b06486866289f3e93cdc80504259b196f",
+  "protocol_commit": "a88579c",
+  "alternative_dossier_commit": "98d9f5b",
+  "capital_permission": false,
+  "hypotheses": {
+    "H1": {
+      "status": "DATA_ACCESS_BLOCKED",
+      "economic_conclusion": "INCONCLUSIVE",
+      "probe": {
+        "hypothesis": "H1",
+        "calls_including_failures": 6,
+        "attempts": [
+          {
+            "endpoint": "https://arb1.arbitrum.io/rpc",
+            "latest_block": 503409488,
+            "latest_timestamp": "2026-09-09T15:32:13+00:00",
+            "header_age_seconds": 1.9057660102844238,
+            "status": "DATA_ACCESS_BLOCKED",
+            "reason": "RPC error: {'jsonrpc': '2.0', 'id': 5, 'error': {'code': -32000, 'message': 'missing trie node 7944719e03b485711ddb547ff0ec82a2d9378c4ee7b99668b8882b2250cc0c41 (path ) state 0x7944719e03b485711ddb547ff0ec82a2d9378c4ee7b99668b8882b2250cc0c41 is not available, not found'}}"
+          },
+          {
+            "endpoint": "https://arbitrum-one-rpc.publicnode.com",
+            "status": "DATA_ACCESS_BLOCKED",
+            "reason": "URLError: <urlopen error [Errno 11001] getaddrinfo failed>"
+          }
+        ],
+        "capital_permission": false
+      },
+      "scope": "One fixed native-USDC Aave V3 Arbitrum reserve. No income or APY estimate; no window or pool substitution."
+    },
+    "H2": {
+      "status": "REJECTED_RENEWAL_OPTIMIZATION_AS_SUFFICIENT_FIX_IN_REGISTERED_ADVERSE_SCENARIOS",
+      "scope": "Fixed BTC AR2 reference quantities, 5000 USDT and 980 elapsed days. Base positivity preserved; no claim about all AR2 policies/regimes.",
+      "results": {
+        "id": "AR2-BTC-RENEWAL-BOUND-20260909",
+        "capital_permission": false,
+        "source_manifest_sha256": "2270ffb579b7fce1d933bca5dfd17bb9c081ea79538b2a7cab0253d40b40e4c2",
+        "source_protocol_sha256": "078f130eba63dfdae35fc6cc6a7da65b368731faaa3a5ab14522456a5e440d0f",
+        "raw_sources_verified": 68,
+        "normalized_files_verified": 10,
+        "signal_policy_variants": 1,
+        "symbol": "BTCUSDT",
+        "scenarios": {
+          "base": {
+            "bound": {
+              "currency": "USDT",
+              "evidence_ref": "docs/evidence/absolute_research_20260908/absolute-results-v3/carry/AR2_BTCUSDT_base_ledger.json",
+              "capital": "5000",
+              "duration_days": "980",
+              "holding_spells": 3,
+              "adjacent_renewals": 1,
+              "accounting": {
+                "funding": "33.370259105942938",
+                "basis": "2.71298000000011964",
+                "execution": "18.2921347300000010",
+                "shock": "0.0",
+                "residual": "0.0"
+              },
+              "reference_partial_remainder": "17.79110437594305664",
+              "delta_turnover_savings_only": "5.843679300",
+              "partial_remainder_with_delta_costs_only": "23.63478367594305664",
+              "zero_renewal_execution_cost_upper_bound": "23.79710810094305664",
+              "extended_optimistic_upper_bound_not_profit": "23.8514860350890566400",
+              "upper_bound_still_nonpositive": false,
+              "renewals": [
+                {
+                  "at_ms": 1713744000000,
+                  "old_quantity": "0.018",
+                  "target_quantity": "0.019",
+                  "legs": [
+                    {
+                      "purpose": "HYPOTHETICAL_TURNOVER_ONLY_NOT_HISTORICAL_PROFIT",
+                      "capital_permission": false,
+                      "signed_quantity_delta": "0.001",
+                      "close_reopen_quantity": "0.037",
+                      "adjust_only_quantity": "0.001",
+                      "close_reopen_cost": "3.604233825",
+                      "adjust_only_cost": "0.097411725",
+                      "modelled_cost_difference": "3.506822100",
+                      "action": "REVIEW_DELTA"
+                    },
+                    {
+                      "purpose": "HYPOTHETICAL_TURNOVER_ONLY_NOT_HISTORICAL_PROFIT",
+                      "capital_permission": false,
+                      "signed_quantity_delta": "-0.001",
+                      "close_reopen_quantity": "0.037",
+                      "adjust_only_quantity": "0.001",
+                      "close_reopen_cost": "2.4017699",
+                      "adjust_only_cost": "0.0649127",
+                      "modelled_cost_difference": "2.3368572",
+                      "action": "REVIEW_DELTA"
+                    }
+                  ],
+                  "close_reopen_cost": "6.006003725",
+                  "delta_only_cost": "0.162324425",
+                  "delta_only_savings": "5.843679300",
+                  "renewal_shock_waiver": "0.0",
+                  "optimistic_extra_positive_boundary_funding": "0.0543779341460000000",
+                  "signed_continuity_boundary_diagnostic": "0.0515159376120000000",
+                  "additional_negative_boundary_diagnostic": "0.000"
+                }
+              ],
+              "capital_sensitivities": [
+                {
+                  "capital_usdt": "1000",
+                  "optimistic_scale_only_remainder_usdt": "4.77029720701781132800",
+                  "status": "ANALYTICAL_SCENARIO_NOT_A_BACKTEST_OR_CAPACITY_PROOF"
+                },
+                {
+                  "capital_usdt": "5000",
+                  "optimistic_scale_only_remainder_usdt": "23.8514860350890566400",
+                  "status": "ANALYTICAL_SCENARIO_NOT_A_BACKTEST_OR_CAPACITY_PROOF"
+                },
+                {
+                  "capital_usdt": "25000",
+                  "optimistic_scale_only_remainder_usdt": "119.2574301754452832000",
+                  "status": "ANALYTICAL_SCENARIO_NOT_A_BACKTEST_OR_CAPACITY_PROOF"
+                }
+              ],
+              "net": null,
+              "capital_permission": false,
+              "unknown_costs": [
+                "personal_fees",
+                "tax",
+                "conversion_and_transfers",
+                "custody_and_operational_losses"
+              ],
+              "limitations": [
+                "Fixed reference quantities; savings are not reinvested or fed into later sizing.",
+                "Upper bounds deliberately waive necessary delta trades, renewal shock and additional negative boundary funding; they are not executable return estimates.",
+                "Historical open-price proxies, grid and actual fills/margin remain uncertified.",
+                "Source hash/completeness validation is the responsibility of the acquisition runner; declared references alone are not evidence certification."
+              ]
+            },
+            "baseline_max_numeric_error": 0.0,
+            "original_ledger_sha256": "be75cecdd629c5d458f91b7570eeb5c6263b3cfe7c3ade523d565c214180162a",
+            "reference_risk": {
+              "active_days": 84,
+              "cash_weeks": 128,
+              "maximum_drawdown_daily_close_and_final_unwind": -0.0012147027523408127,
+              "minimum_hourly_collateral_surplus_usdt": 3562.942381601646,
+              "minimum_30pct_mark_jump_surplus_usdt": 3130.5684604099597,
+              "first_conservative_margin_breach": null,
+              "first_jump_breach": null,
+              "by_year": {
+                "2024": {
+                  "pnl_usdt": 17.79110437593954,
+                  "return_on_year_start_equity": 0.0035582208751878674,
+                  "active_days": 84
+                },
+                "2025": {
+                  "pnl_usdt": 0.0,
+                  "return_on_year_start_equity": 0.0,
+                  "active_days": 0
+                },
+                "2026": {
+                  "pnl_usdt": 0.0,
+                  "return_on_year_start_equity": 0.0,
+                  "active_days": 0
+                }
+              },
+              "concentration": {
+                "net_profit_usdt": 17.79110437593954,
+                "positive_increment_sum_usdt": 29.197571159749714,
+                "top_five_positive_sum_usdt": 19.483386620232523,
+                "top_five_share_of_positive_increments": 0.6672947730354821,
+                "profit_less_top_five_increments_usdt": -1.6922822442929828,
+                "exclusion_meaning": "Arithmetic contribution diagnostic, not a rerun with those trades removed or a new strategy."
+              },
+              "bootstrap": {
+                "mean_weekly_pnl_usdt": 0.12707931697099673,
+                "interval_95_usdt": [
+                  -0.02519911359187875,
+                  0.3560371282119869
+                ],
+                "meaning": "Descriptive four-week circular bootstrap, conditional on adaptive history; neither independent nor search-adjusted."
+              }
+            }
+          },
+          "adverse": {
+            "bound": {
+              "currency": "USDT",
+              "evidence_ref": "docs/evidence/absolute_research_20260908/absolute-results-v3/carry/AR2_BTCUSDT_adverse_ledger.json",
+              "capital": "5000",
+              "duration_days": "980",
+              "holding_spells": 3,
+              "adjacent_renewals": 1,
+              "accounting": {
+                "funding": "33.370259105942938",
+                "basis": "2.71298000000011964",
+                "execution": "51.217937779999998",
+                "shock": "0.0",
+                "residual": "67.12328767123222"
+              },
+              "reference_partial_remainder": "-82.25798634528916036",
+              "delta_turnover_savings_only": "16.3620972",
+              "partial_remainder_with_delta_costs_only": "-65.89588914528916036",
+              "zero_renewal_execution_cost_upper_bound": "-65.44138644528916036",
+              "extended_optimistic_upper_bound_not_profit": "-65.3870085111431603600",
+              "upper_bound_still_nonpositive": true,
+              "renewals": [
+                {
+                  "at_ms": 1713744000000,
+                  "old_quantity": "0.018",
+                  "target_quantity": "0.019",
+                  "legs": [
+                    {
+                      "purpose": "HYPOTHETICAL_TURNOVER_ONLY_NOT_HISTORICAL_PROFIT",
+                      "capital_permission": false,
+                      "signed_quantity_delta": "0.001",
+                      "close_reopen_quantity": "0.037",
+                      "adjust_only_quantity": "0.001",
+                      "close_reopen_cost": "9.6112902",
+                      "adjust_only_cost": "0.2597646",
+                      "modelled_cost_difference": "9.3515256",
+                      "action": "REVIEW_DELTA"
+                    },
+                    {
+                      "purpose": "HYPOTHETICAL_TURNOVER_ONLY_NOT_HISTORICAL_PROFIT",
+                      "capital_permission": false,
+                      "signed_quantity_delta": "-0.001",
+                      "close_reopen_quantity": "0.037",
+                      "adjust_only_quantity": "0.001",
+                      "close_reopen_cost": "7.2053097",
+                      "adjust_only_cost": "0.1947381",
+                      "modelled_cost_difference": "7.0105716",
+                      "action": "REVIEW_DELTA"
+                    }
+                  ],
+                  "close_reopen_cost": "16.8165999",
+                  "delta_only_cost": "0.4545027",
+                  "delta_only_savings": "16.3620972",
+                  "renewal_shock_waiver": "0.0",
+                  "optimistic_extra_positive_boundary_funding": "0.0543779341460000000",
+                  "signed_continuity_boundary_diagnostic": "0.0515159376120000000",
+                  "additional_negative_boundary_diagnostic": "0.000"
+                }
+              ],
+              "capital_sensitivities": [
+                {
+                  "capital_usdt": "1000",
+                  "optimistic_scale_only_remainder_usdt": "-66.77603183921440807200",
+                  "status": "ANALYTICAL_SCENARIO_NOT_A_BACKTEST_OR_CAPACITY_PROOF"
+                },
+                {
+                  "capital_usdt": "5000",
+                  "optimistic_scale_only_remainder_usdt": "-65.3870085111431603600",
+                  "status": "ANALYTICAL_SCENARIO_NOT_A_BACKTEST_OR_CAPACITY_PROOF"
+                },
+                {
+                  "capital_usdt": "25000",
+                  "optimistic_scale_only_remainder_usdt": "-58.4418918707869218000",
+                  "status": "ANALYTICAL_SCENARIO_NOT_A_BACKTEST_OR_CAPACITY_PROOF"
+                }
+              ],
+              "net": null,
+              "capital_permission": false,
+              "unknown_costs": [
+                "personal_fees",
+                "tax",
+                "conversion_and_transfers",
+                "custody_and_operational_losses"
+              ],
+              "limitations": [
+                "Fixed reference quantities; savings are not reinvested or fed into later sizing.",
+                "Upper bounds deliberately waive necessary delta trades, renewal shock and additional negative boundary funding; they are not executable return estimates.",
+                "Historical open-price proxies, grid and actual fills/margin remain uncertified.",
+                "Source hash/completeness validation is the responsibility of the acquisition runner; declared references alone are not evidence certification."
+              ]
+            },
+            "baseline_max_numeric_error": 0.0,
+            "original_ledger_sha256": "cde9bd3de8085d8800f915152defaf2bcf72f00c9383ca2bf13b3aff1aa31c66",
+            "reference_risk": {
+              "active_days": 84,
+              "cash_weeks": 128,
+              "maximum_drawdown_daily_close_and_final_unwind": -0.017096586108991785,
+              "minimum_hourly_collateral_surplus_usdt": 3556.6691853941124,
+              "minimum_30pct_mark_jump_surplus_usdt": 3124.295264202426,
+              "first_conservative_margin_breach": null,
+              "first_jump_breach": null,
+              "by_year": {
+                "2024": {
+                  "pnl_usdt": -40.20319182471212,
+                  "return_on_year_start_equity": -0.008040638364942398,
+                  "active_days": 84
+                },
+                "2025": {
+                  "pnl_usdt": -24.999999999968168,
+                  "return_on_year_start_equity": -0.005040529071424937,
+                  "active_days": 0
+                },
+                "2026": {
+                  "pnl_usdt": -17.05479452052623,
+                  "return_on_year_start_equity": -0.003456027711672416,
+                  "active_days": 0
+                }
+              },
+              "concentration": {
+                "net_profit_usdt": -82.25798634520652,
+                "positive_increment_sum_usdt": 18.22804205396187,
+                "top_five_positive_sum_usdt": 15.398021698077173,
+                "top_five_share_of_positive_increments": 0.8447435908087785,
+                "profit_less_top_five_increments_usdt": -97.65600804328369,
+                "exclusion_meaning": "Arithmetic contribution diagnostic, not a rerun with those trades removed or a new strategy."
+              },
+              "bootstrap": {
+                "mean_weekly_pnl_usdt": -0.5875570453229036,
+                "interval_95_usdt": [
+                  -0.814536573163002,
+                  -0.3898646407165959
+                ],
+                "meaning": "Descriptive four-week circular bootstrap, conditional on adaptive history; neither independent nor search-adjusted."
+              }
+            }
+          },
+          "compression": {
+            "bound": {
+              "currency": "USDT",
+              "evidence_ref": "docs/evidence/absolute_research_20260908/absolute-results-v3/carry/AR2_BTCUSDT_compression_ledger.json",
+              "capital": "5000",
+              "duration_days": "980",
+              "holding_spells": 3,
+              "adjacent_renewals": 1,
+              "accounting": {
+                "funding": "16.558242635918566",
+                "basis": "2.71298000000011964",
+                "execution": "51.217937779999998",
+                "shock": "18.349428350000001",
+                "residual": "67.12328767123222"
+              },
+              "reference_partial_remainder": "-117.41943116531353336",
+              "delta_turnover_savings_only": "16.3620972",
+              "partial_remainder_with_delta_costs_only": "-101.05733396531353336",
+              "zero_renewal_execution_cost_upper_bound": "-100.60283126531353336",
+              "extended_optimistic_upper_bound_not_profit": "-94.40623304824053336000",
+              "upper_bound_still_nonpositive": true,
+              "renewals": [
+                {
+                  "at_ms": 1713744000000,
+                  "old_quantity": "0.018",
+                  "target_quantity": "0.019",
+                  "legs": [
+                    {
+                      "purpose": "HYPOTHETICAL_TURNOVER_ONLY_NOT_HISTORICAL_PROFIT",
+                      "capital_permission": false,
+                      "signed_quantity_delta": "0.001",
+                      "close_reopen_quantity": "0.037",
+                      "adjust_only_quantity": "0.001",
+                      "close_reopen_cost": "9.6112902",
+                      "adjust_only_cost": "0.2597646",
+                      "modelled_cost_difference": "9.3515256",
+                      "action": "REVIEW_DELTA"
+                    },
+                    {
+                      "purpose": "HYPOTHETICAL_TURNOVER_ONLY_NOT_HISTORICAL_PROFIT",
+                      "capital_permission": false,
+                      "signed_quantity_delta": "-0.001",
+                      "close_reopen_quantity": "0.037",
+                      "adjust_only_quantity": "0.001",
+                      "close_reopen_cost": "7.2053097",
+                      "adjust_only_cost": "0.1947381",
+                      "modelled_cost_difference": "7.0105716",
+                      "action": "REVIEW_DELTA"
+                    }
+                  ],
+                  "close_reopen_cost": "16.8165999",
+                  "delta_only_cost": "0.4545027",
+                  "delta_only_savings": "16.3620972",
+                  "renewal_shock_waiver": "6.16940925",
+                  "optimistic_extra_positive_boundary_funding": "0.02718896707300000000",
+                  "signed_continuity_boundary_diagnostic": "0.02575796880600000000",
+                  "additional_negative_boundary_diagnostic": "0.000"
+                }
+              ],
+              "capital_sensitivities": [
+                {
+                  "capital_usdt": "1000",
+                  "optimistic_scale_only_remainder_usdt": "-72.579876746633882672000",
+                  "status": "ANALYTICAL_SCENARIO_NOT_A_BACKTEST_OR_CAPACITY_PROOF"
+                },
+                {
+                  "capital_usdt": "5000",
+                  "optimistic_scale_only_remainder_usdt": "-94.40623304824053336000",
+                  "status": "ANALYTICAL_SCENARIO_NOT_A_BACKTEST_OR_CAPACITY_PROOF"
+                },
+                {
+                  "capital_usdt": "25000",
+                  "optimistic_scale_only_remainder_usdt": "-203.53801455627378680000",
+                  "status": "ANALYTICAL_SCENARIO_NOT_A_BACKTEST_OR_CAPACITY_PROOF"
+                }
+              ],
+              "net": null,
+              "capital_permission": false,
+              "unknown_costs": [
+                "personal_fees",
+                "tax",
+                "conversion_and_transfers",
+                "custody_and_operational_losses"
+              ],
+              "limitations": [
+                "Fixed reference quantities; savings are not reinvested or fed into later sizing.",
+                "Upper bounds deliberately waive necessary delta trades, renewal shock and additional negative boundary funding; they are not executable return estimates.",
+                "Historical open-price proxies, grid and actual fills/margin remain uncertified.",
+                "Source hash/completeness validation is the responsibility of the acquisition runner; declared references alone are not evidence certification."
+              ]
+            },
+            "baseline_max_numeric_error": 0.0,
+            "original_ledger_sha256": "38424b99c2054301376cb4281d0990772ef8b824113f5f4775939efe2c70c62d",
+            "reference_risk": {
+              "active_days": 84,
+              "cash_weeks": 128,
+              "maximum_drawdown_daily_close_and_final_unwind": -0.023483886233045315,
+              "minimum_hourly_collateral_surplus_usdt": 3547.3515426421477,
+              "minimum_30pct_mark_jump_surplus_usdt": 3114.9776214504614,
+              "first_conservative_margin_breach": null,
+              "first_jump_breach": null,
+              "by_year": {
+                "2024": {
+                  "pnl_usdt": -75.36463664473195,
+                  "return_on_year_start_equity": -0.015072927328946384,
+                  "active_days": 84
+                },
+                "2025": {
+                  "pnl_usdt": -24.999999999968168,
+                  "return_on_year_start_equity": -0.005076517986691065,
+                  "active_days": 0
+                },
+                "2026": {
+                  "pnl_usdt": -17.05479452052623,
+                  "return_on_year_start_equity": -0.0034808293384606115,
+                  "active_days": 0
+                }
+              },
+              "concentration": {
+                "net_profit_usdt": -117.41943116522634,
+                "positive_increment_sum_usdt": 8.147596352848268,
+                "top_five_positive_sum_usdt": 7.627980712053613,
+                "top_five_share_of_positive_increments": 0.9362246706523446,
+                "profit_less_top_five_increments_usdt": -125.04741187727996,
+                "exclusion_meaning": "Arithmetic contribution diagnostic, not a rerun with those trades removed or a new strategy."
+              },
+              "bootstrap": {
+                "mean_weekly_pnl_usdt": -0.8387102226087596,
+                "interval_95_usdt": [
+                  -1.2157607779040436,
+                  -0.5495564824240123
+                ],
+                "meaning": "Descriptive four-week circular bootstrap, conditional on adaptive history; neither independent nor search-adjusted."
+              }
+            }
+          }
+        },
+        "historical_data_directory": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\carry-research-data"
+      },
+      "adverse_delta_remainder_before_fixed_overhead_usdt": "1.22739852594305964",
+      "adverse_annual_fixed_overhead_break_even_usdt": "0.4571433285400171108163265306"
+    }
+  },
+  "trial_accounting": {
+    "public_rpc_calls_including_failures": 6,
+    "rpc_endpoints": 2,
+    "new_h2_market_downloads": 0,
+    "h2_signal_variants": 1,
+    "h2_execution_treatments": 2,
+    "h2_historical_replays": 2,
+    "replay_reason": "First numerical run; second run after type annotation and portable evidence-path corrections. All financial outputs identical. No new signal parameters.",
+    "cost_scenarios_not_selection_variants": [
+      "base",
+      "adverse",
+      "compression"
+    ],
+    "capital_sensitivity_not_backtests": [
+      1000,
+      5000,
+      25000
+    ]
+  },
+  "next_decisive_information": {
+    "H1": "An accessible public archive endpoint for the preregistered blocks, allowing income-index and withdrawal-liquidity verification; no APY snapshot substituted for this evidence.",
+    "H2": "A materially changed cost/overhead structure or separately specified future signal opportunity. Renewal-code changes alone do not solve the modeled adverse losses; no 2025/2026 positions were generated."
+  },
+  "round_completion": "Primary blocked by available data access; alternative tested with a decisive upper bound. No further strategy search or full execution rewrite in this round.",
+  "sources": [
+    "https://aave.com/docs/aave-v3/smart-contracts/pool",
+    "https://aave.com/help/supplying/withdraw-tokens",
+    "https://github.com/aave-dao/aave-address-book/blob/main/src/AaveV3Arbitrum.sol",
+    "https://docs.arbitrum.io/for-devs/dev-tools-and-resources/chain-info",
+    "https://arbitrum-one.publicnode.com/",
+    "docs/evidence/absolute_research_20260908/protocol.json"
+  ],
+  "evidence_notes": [
+    "Public chain responses and previously preserved public Binance facts; no financial account credentials used.",
+    "Unknown personal fees, taxation, conversion, custody and real margin/fills prevent a personal all-in net-profit claim.",
+    "Bootstrap and risk fields are reproduced reference diagnostics, not updated risk/uncertainty estimates for hypothetical delta execution."
+  ]
+}

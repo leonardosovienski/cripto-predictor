@@ -1,0 +1,21 @@
+{
+  "sha256": {
+    "docs/evidence/economic_round_20260909/h1_probe_implementation.source": "b1920c705116d416c2580c6d7c2ad61c89f3f9c6c300b9e6af654d3e82ec8f84",
+    "docs/evidence/economic_round_20260909/h1_rpc/001.json": "b71d3926e1379e4f4fbf745b07744759069b26b4fc564736dd765d7bb604160a",
+    "docs/evidence/economic_round_20260909/h1_rpc/002.json": "bb46c6be688770486fd8282649d94b53df7d3f447d2d61695c1cc37b9eb365f6",
+    "docs/evidence/economic_round_20260909/h1_rpc/003.json": "62debc2a8e252b0cfd1cf2dbfa12d8b801553557ce847dbcb914a0ffd719868a",
+    "docs/evidence/economic_round_20260909/h1_rpc/004.json": "f5710915b2ca4f1cc829a6bb61d9c14a1dd9ede4fc4eade468614a964c2e412f",
+    "docs/evidence/economic_round_20260909/h1_rpc/005.json": "5f4d7e783e84a141463bc404913a5e374e31a5fc81ad7cbfd69d3256c984416d",
+    "docs/evidence/economic_round_20260909/h1_rpc/006.json": "68e4cd38365c7c27cd0adfd79052c85e358330d610873e5dfa95c6663eb1e8ef",
+    "docs/evidence/economic_round_20260909/h1_rpc/report.json": "c746da77067cae5a5d1bfefeabffb268ce045f68eab7f9e89dd7b7071a2c4fec",
+    "docs/evidence/economic_round_20260909/market_results.json": "0e05ca51dee6385f386b6164c7d48228c788e4e1686147e10fb6337817e94108",
+    "docs/evidence/economic_round_20260909/protocol.json": "5e4c645cdbd558e3912fd5c46f2cb2963786d43673a086b6d595d1c2d51f7b0d",
+    "docs/reopen_dossiers/ar2_renewal_turnover_20260909.json": "6f6815f6b3c666283d4e20ca6be979fb0b55d34f03bf5d177696d2562ab2e3ac",
+    "GarimpoInvestimentos/renewal_research.py": "e7ebd19a8aed07019be0755f744842cf25b1ad02fb6d62ecd513bbd33e1888d0",
+    "scripts/diagnose_ar2_renewals.py": "1a73e775515a40db34c0d7b85d1ef92481028e4d1e5f561f38a5ee71f9966549"
+  },
+  "source_market_manifest_sha256": "2270ffb579b7fce1d933bca5dfd17bb9c081ea79538b2a7cab0253d40b40e4c2",
+  "source_acquisition_protocol_sha256": "078f130eba63dfdae35fc6cc6a7da65b368731faaa3a5ab14522456a5e440d0f",
+  "raw_sources_verified": 68,
+  "normalized_files_verified": 10
+}

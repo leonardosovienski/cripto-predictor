@@ -1,0 +1,92 @@
+"""Bounded public, read-only RPC feasibility probe; preserves every response."""
+import hashlib
+import json
+from datetime import datetime, timezone
+from pathlib import Path
+import urllib.error
+import urllib.request
+
+ROOT = Path(__file__).resolve().parent / 'h1-rpc-probe-v1'
+ENDPOINTS = ('https://arb1.arbitrum.io/rpc', 'https://arbitrum-one-rpc.publicnode.com')
+POOL = '0x794a61358D6845594F94dc1DB02A252b5b4814aD'
+USDC = '0xaf88d065e77c8cC2239327C5EDb3A432268e5831'
+ALLOWED = {'eth_chainId', 'eth_getBlockByNumber', 'web3_sha3', 'eth_call'}
+
+
+class NoRedirect(urllib.request.HTTPRedirectHandler):
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        return None
+
+
+def main():
+    ROOT.mkdir()
+    opener = urllib.request.build_opener(urllib.request.ProxyHandler({}), NoRedirect())
+    calls = 0
+    attempts = []
+
+    def rpc(endpoint, method, params):
+        nonlocal calls
+        assert endpoint in ENDPOINTS and method in ALLOWED
+        calls += 1
+        if calls > 16:
+            raise ValueError('Probe budget exceeded')
+        payload = {'jsonrpc': '2.0', 'id': calls, 'method': method, 'params': params}
+        record = {'endpoint': endpoint, 'request': payload, 'started_at': datetime.now(timezone.utc).isoformat()}
+        request = urllib.request.Request(endpoint, data=json.dumps(payload).encode(), headers={'Content-Type': 'application/json', 'User-Agent': 'cripto-predictor-public-research/1.0'}, method='POST')
+        raw = b''
+        try:
+            with opener.open(request, timeout=15) as response:
+                record['http_status'] = response.status
+                raw = response.read(1_000_001)
+                if len(raw) > 1_000_000:
+                    raise ValueError('Response too large')
+        except urllib.error.HTTPError as exc:
+            record['http_status'] = exc.code
+            raw = exc.read(1_000_000)
+            record['error'] = f'HTTP {exc.code}'
+        except (OSError, ValueError) as exc:
+            record['error'] = f'{type(exc).__name__}: {exc}'
+        record.update(received_at=datetime.now(timezone.utc).isoformat(), raw_sha256=hashlib.sha256(raw).hexdigest(), raw_text=raw.decode('utf-8', errors='replace'))
+        (ROOT / f'{calls:03d}.json').write_text(json.dumps(record, indent=2) + '\n', encoding='utf-8')
+        if 'error' in record:
+            raise RuntimeError(record['error'])
+        body = json.loads(raw)
+        if body.get('id') != calls or 'error' in body or body.get('result') is None:
+            raise RuntimeError(f'RPC error: {body}')
+        return body['result']
+
+    for endpoint in ENDPOINTS:
+        result = {'endpoint': endpoint}
+        try:
+            chain = int(rpc(endpoint, 'eth_chainId', []), 16)
+            if chain != 42161:
+                raise ValueError('Wrong chain')
+            latest = rpc(endpoint, 'eth_getBlockByNumber', ['latest', False])
+            block, timestamp = int(latest['number'], 16), int(latest['timestamp'], 16)
+            result.update(latest_block=block, latest_timestamp=datetime.fromtimestamp(timestamp, timezone.utc).isoformat())
+            lag = datetime.now(timezone.utc).timestamp() - timestamp
+            result['header_age_seconds'] = lag
+            if not -60 <= lag <= 300:
+                raise ValueError('Freshness gate failed; no historical-window substitution')
+            signature = '0x' + 'getReserveNormalizedIncome(address)'.encode().hex()
+            selector = rpc(endpoint, 'web3_sha3', [signature])[:10]
+            old_number = max(1, block - 84 * 86400 * 4)
+            old = rpc(endpoint, 'eth_getBlockByNumber', [hex(old_number), False])
+            call = {'to': POOL, 'data': selector + USDC[2:].lower().rjust(64, '0')}
+            income = rpc(endpoint, 'eth_call', [call, hex(old_number)])
+            if len(income) != 66 or int(income, 16) <= 0:
+                raise ValueError('Invalid historical income index')
+            result.update(status='ARCHIVE_ACCESS_AVAILABLE', selector=selector, probe_block=old_number,
+                          probe_timestamp=datetime.fromtimestamp(int(old['timestamp'], 16), timezone.utc).isoformat())
+        except (RuntimeError, ValueError, KeyError, TypeError) as exc:
+            result.update(status='DATA_ACCESS_BLOCKED', reason=str(exc))
+        attempts.append(result)
+        print(json.dumps(result), flush=True)
+        if result['status'] == 'ARCHIVE_ACCESS_AVAILABLE':
+            break
+    report = {'hypothesis': 'H1', 'calls_including_failures': calls, 'attempts': attempts, 'capital_permission': False}
+    (ROOT / 'report.json').write_text(json.dumps(report, indent=2) + '\n', encoding='utf-8')
+
+
+if __name__ == '__main__':
+    main()

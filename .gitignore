@@ -15,3 +15,6 @@ logs/
 *.db-wal
 *.db-shm
 *.jsonl
+
+# Local research runtimes and regenerated outputs; maintained sources live in scripts/.
+/work/
