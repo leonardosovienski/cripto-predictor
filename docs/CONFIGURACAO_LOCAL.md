@@ -43,6 +43,8 @@ O perfil configura o armazenamento do projeto, não é uma sandbox do Windows pa
 
 `pipeline.env` parte do exemplo público com as chaves vazias. Configure valores reais somente nesse arquivo local ou em um ambiente de processo privado. Não cole segredos no chat, documentação, commits ou relatórios. O perfil não importa credenciais do computador antigo nem inventa chaves.
 
+**Atualização de 09/09/2026, 18:41 UTC:** foram importadas Gemini, SerpAPI (confirmada pelo dono), Groq, Cerebras e CoinGecko do arquivo local fornecido pelo usuário. O modo Gemini + SerpAPI carrega sem erro. Nenhuma API foi chamada para validar as credenciais. GNews e Binance permanecem somente no arquivo de origem, sem integração ou uso de conta. Os três limites de API continuam em zero, que significa sem teto; configure um orçamento finito antes do uso conectado. Veja o [comprovante local](C:/Cripto/operacao/relatorios/CONFIGURACAO_CHAVES_20260909T184135656844Z.json) e o [novo escopo de revisão](NEXT_CHAT_PROMPT.md).
+
 O comando `status` mostra os caminhos e se a configuração do pipeline carrega, sem imprimir credenciais nem fazer requisições. Enquanto faltarem as chaves exigidas pelos provedores selecionados, ele informa a falha de configuração e o pipeline mantém a recusa existente. Pesquisa local e diagnóstico AR2 não exigem essas APIs. Configurar pastas não comprova conectividade, disponibilidade de dados históricos ou lucro.
 
 Os observadores preservados ficam separados:
