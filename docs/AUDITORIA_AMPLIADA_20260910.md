@@ -71,6 +71,10 @@ Evidências e estado antes/depois: `C:\Cripto\operacao\relatorios\REVISAO_COMPLE
 | Arquivos restaurados, notebooks, diários e snapshots | Integridade/preservação e amostragem conforme seções anteriores do registro vivo | Não se afirma auditoria manual universal nem completude histórica |
 | Fontes sem consumidor, pilotos de outros domínios e propostas antigas | Inventariados; não usados para concluir sobre cripto | Não recebem validação operacional por disponibilidade de código |
 
+## Registros futuros conferidos após a correção
+
+O status offline do carry confirmou `WAITING`, zero linhas e nenhuma entrada. O registro LLM v2 recusou corretamente as mudanças em configuração e guarda de API. Foi preparado `C:\Cripto\operacao\dados\llm-paired-manual-20260912-v3`, preservando v2 sem observações. Protocolo, datas e ambiente são iguais. Mudam os hashes dos dois arquivos corrigidos, a data de registro e o hash de `local_runtime.py` por LF/CRLF, sem mudança lógica nesse último. O executor está vinculado aos bytes de `C:\Cripto\auditoria-ampliada-20260910`; preserve essa área e use o lançador explícito documentado, não o checkout operacional diretamente. O status v3 confirmou 84 horários futuros, sem diário, rede ou ativação. O [registro público novo](manual_dependencies_20260910/llm_audit_registration_v3.json) e os [comandos atualizados](manual_dependencies_20260910/EXECUCAO.md) são a referência de retomada.
+
 ## Dependências restantes e critério de encerramento
 
 | Dependência concreta | O que já foi resolvido | O que falta e qual conclusão impede |
