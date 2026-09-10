@@ -111,11 +111,11 @@ def test_no_events_produces_no_points():
     assert macro_event_signal_points([], [date(2026, 8, 10)], ingested_at=T0) == []
 
 
-def test_published_at_equals_timestamp_conservatively():
+def test_published_at_equals_observed_vintage():
     events = [MacroEvent("FOMC", date(2026, 8, 10))]
     ingested_at = datetime(2026, 8, 14, tzinfo=UTC)
     points = macro_event_signal_points(events, [date(2026, 8, 10)], ingested_at=ingested_at)
-    assert all(p.published_at == p.timestamp for p in points)
+    assert all(p.published_at == ingested_at for p in points)
 
 
 def test_negative_window_days_rejected():

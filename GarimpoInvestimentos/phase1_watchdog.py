@@ -18,13 +18,16 @@ from __future__ import annotations
 
 import json
 import os
+import sqlite3
+from contextlib import closing
 from datetime import UTC, datetime
 from pathlib import Path
 
 from predictor_core.obs import emit_event
 
 from GarimpoInvestimentos.core.paths import FEATURE_STORE_DB
-from GarimpoInvestimentos.dpl.feature_store import FeatureStore
+from GarimpoInvestimentos.health_io import age_seconds, read_heartbeat
+from GarimpoInvestimentos.trading.contracts import ensure_utc
 
 # Cadência esperada: garimpo_fase1.py roda uma vez por dia UTC (run_daily.ps1 via
 # Windows Task Scheduler, tarefa GarimpoFase1). Uma folga de 2x a cadência absorve
@@ -40,17 +43,14 @@ def _heartbeat(root: Path, job: str) -> dict | None:
     path = root / f"cripto-{job}" / "heartbeat.json"
     if not path.exists():
         return None
-    try:
-        return json.loads(path.read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError):
-        return None
+    return read_heartbeat(path)
 
 
 def check_phase1_health(
     *, db_path: Path = FEATURE_STORE_DB, state_root: Path | None = None, now: datetime | None = None
 ) -> dict:
     """Retorna {'status': HEALTHY|DEGRADED|FAILED, 'violations': [...], ...}."""
-    stamp = now or datetime.now(UTC)
+    stamp = ensure_utc(now or datetime.now(UTC), "now")
     violations: list[str] = []
     degraded: list[str] = []
 
@@ -67,8 +67,11 @@ def check_phase1_health(
             violations.append(f"phase1_run_status={heartbeat.get('run_status')}")
         finished = heartbeat.get("finished_at")
         if finished:
-            age_hours = (stamp - datetime.fromisoformat(finished)).total_seconds() / 3600
-            if age_hours > STALE_AFTER_HOURS:
+            elapsed = age_seconds(finished, stamp)
+            age_hours = elapsed / 3600 if elapsed is not None else -1
+            if age_hours < 0:
+                violations.append("phase1_heartbeat_invalid_time")
+            elif age_hours > STALE_AFTER_HOURS:
                 violations.append(f"phase1_heartbeat_stale_{age_hours:.0f}h")
             elif age_hours > DEGRADED_AFTER_HOURS:
                 degraded.append(f"phase1_heartbeat_aging_{age_hours:.0f}h")
@@ -81,33 +84,40 @@ def check_phase1_health(
     if not db_path.exists():
         violations.append("feature_store_missing")
     else:
-        with FeatureStore(db_path) as store:
-            row = store._conn.execute(
-                "SELECT MAX(ts) FROM predictions WHERE COALESCE(llm_fallback, 0) = 0"
-            ).fetchone()
-            last_real_ts = row[0] if row else None
+        try:
+            with closing(
+                sqlite3.connect(db_path.resolve().as_uri() + "?mode=ro", uri=True)
+            ) as connection:
+                row = connection.execute(
+                    "SELECT MAX(ts) FROM predictions WHERE COALESCE(llm_fallback, 0) = 0"
+                ).fetchone()
+                last_real_ts = row[0] if row else None
 
-            recent = store._conn.execute(
-                "SELECT llm_fallback FROM predictions ORDER BY ts DESC LIMIT ?",
-                (FALLBACK_RATE_WINDOW,),
-            ).fetchall()
-            n_recent = len(recent)
-            if n_recent:
-                n_fallback = sum(1 for r in recent if r[0] == 1)
-                fallback_rate = n_fallback / n_recent
-                if fallback_rate > FALLBACK_RATE_DEGRADED:
-                    degraded.append(f"fallback_rate_{fallback_rate:.0%}_over_last_{n_recent}")
+                recent = connection.execute(
+                    "SELECT llm_fallback FROM predictions ORDER BY ts DESC LIMIT ?",
+                    (FALLBACK_RATE_WINDOW,),
+                ).fetchall()
+                n_recent = len(recent)
+                if n_recent:
+                    n_fallback = sum(1 for r in recent if r[0] == 1)
+                    fallback_rate = n_fallback / n_recent
+                    if fallback_rate > FALLBACK_RATE_DEGRADED:
+                        degraded.append(f"fallback_rate_{fallback_rate:.0%}_over_last_{n_recent}")
 
-        if last_real_ts is None:
-            violations.append("no_real_prediction_ever_recorded")
-        else:
-            age_hours = (
-                stamp - datetime.strptime(last_real_ts, "%Y-%m-%d %H:%M:%S").replace(tzinfo=UTC)
-            ).total_seconds() / 3600
-            if age_hours > STALE_AFTER_HOURS:
-                violations.append(f"no_real_prediction_in_{age_hours:.0f}h")
-            elif age_hours > DEGRADED_AFTER_HOURS:
-                degraded.append(f"last_real_prediction_{age_hours:.0f}h_ago")
+            if last_real_ts is None:
+                violations.append("no_real_prediction_ever_recorded")
+            else:
+                age_hours = (
+                    stamp - datetime.strptime(last_real_ts, "%Y-%m-%d %H:%M:%S").replace(tzinfo=UTC)
+                ).total_seconds() / 3600
+                if age_hours < 0:
+                    violations.append("real_prediction_in_future")
+                elif age_hours > STALE_AFTER_HOURS:
+                    violations.append(f"no_real_prediction_in_{age_hours:.0f}h")
+                elif age_hours > DEGRADED_AFTER_HOURS:
+                    degraded.append(f"last_real_prediction_{age_hours:.0f}h_ago")
+        except (sqlite3.DatabaseError, ValueError, TypeError):
+            violations.append("feature_store_unreadable_or_invalid_timestamp")
 
     if violations:
         status = "FAILED"

@@ -47,13 +47,14 @@ def _write_paper(path, trades):
 
 def test_equity_curve_compounds():
     eq = pr._equity_curve([0.1, -0.05, 0.2])
-    assert eq[0] == 1.1
-    assert abs(eq[1] - 1.1 * 0.95) < 1e-9
-    assert abs(eq[2] - 1.1 * 0.95 * 1.2) < 1e-9
+    assert eq[0] == 1.0
+    assert eq[1] == 1.1
+    assert abs(eq[2] - 1.1 * 0.95) < 1e-9
+    assert abs(eq[3] - 1.1 * 0.95 * 1.2) < 1e-9
 
 
 def test_equity_curve_empty():
-    assert pr._equity_curve([]) == []
+    assert pr._equity_curve([]) == [1.0]
 
 
 # ------------------------------------------------------------------ #
@@ -88,7 +89,7 @@ def test_build_report_empty():
         with patch.object(pr, "_PAPER_DIR", Path(tmp)):
             s = pr.build_report("BTCUSDT")
     assert s["n_total"] == 0
-    assert s["cum_pnl"] == 0.0
+    assert s["cum_pnl"] is None
 
 
 def test_build_report_counts_active_vs_flat():
@@ -143,5 +144,7 @@ def test_build_report_computes_pnl_with_spot():
 
     assert s["n_mature"] == 1
     # position=1.0, ln(110/100) ≈ 0.0953
-    assert abs(s["cum_pnl"] - 0.09531) < 1e-3
+    assert abs(s["cum_pnl"] - 0.1) < 1e-9
+    assert s["max_dd"] is None
+    assert s["retrospective_records"] == 1
     assert s["hit_rate"] == 1.0

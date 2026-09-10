@@ -15,7 +15,7 @@ from datetime import timedelta
 from GarimpoInvestimentos.analyzers.indicators import compute_indicators
 from GarimpoInvestimentos.dpl.contracts import MarketDataPoint
 
-DAILY_FEATURE_VERSION = "daily-v3-contiguous"
+DAILY_FEATURE_VERSION = "daily-v4-audited"
 
 # Chaves produzidas por compute_indicators — usadas no serving para separar os
 # indicadores (sub-dict "indicadores") das demais features de topo.

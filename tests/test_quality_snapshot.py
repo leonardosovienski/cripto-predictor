@@ -407,21 +407,25 @@ def test_escrita_e_idempotente_e_preserva_o_primeiro_observed_at(tmp_path):
     assert depois["observed_at"] == "2026-08-23T00:00:00+00:00"
 
 
-def test_arquivo_corrompido_e_reescrito_em_vez_de_explodir(tmp_path):
+def test_arquivo_corrompido_preservado_com_erro(tmp_path):
     destino = tmp_path / "h6_status.json"
     destino.write_text("{lixo", encoding="utf-8")
-    assert quality_snapshot.write_h6_status(_snap(6), destino) == quality_snapshot.H6_WRITTEN
-    assert json.loads(destino.read_text(encoding="utf-8"))["n"] == 6
+    before = destino.read_bytes()
+    with __import__("pytest").raises(ValueError):
+        quality_snapshot.write_h6_status(_snap(6), destino)
+    assert destino.read_bytes() == before
 
 
-def test_arquivo_com_bytes_nao_utf8_tambem_e_reescrito(tmp_path):
+def test_arquivo_com_bytes_nao_utf8_preservado_com_erro(tmp_path):
     """read_text(encoding='utf-8') levanta UnicodeDecodeError, que NÃO é
     OSError nem JSONDecodeError. A primeira versão do guard só pegava essas
     duas e o painel inteiro morria por causa de um byte solto no arquivo."""
     destino = tmp_path / "h6_status.json"
     destino.write_bytes(b'{"n": 6, "x": "\xff\xfe"}')
-    assert quality_snapshot.write_h6_status(_snap(6), destino) == quality_snapshot.H6_WRITTEN
-    assert json.loads(destino.read_text(encoding="utf-8"))["n"] == 6
+    before = destino.read_bytes()
+    with __import__("pytest").raises(ValueError):
+        quality_snapshot.write_h6_status(_snap(6), destino)
+    assert destino.read_bytes() == before
 
 
 def test_artefato_nao_e_capturado_por_nenhuma_regra_do_gitignore():

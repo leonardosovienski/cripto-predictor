@@ -3,8 +3,9 @@
 Parte do backlog B1 (docs/HYPOTHESES.md, H7): calendário de eventos macro como
 contexto exógeno, ortogonal a tudo que já foi testado no projeto (nenhum sinal
 atual olha agenda macro). Fonte: um JSON local versionado, sem rede — datas de
-reunião do FOMC e de divulgação de CPI/PPI são anunciadas pelo Fed/BLS com meses
-de antecedência, então conhecê-las hoje para um evento futuro NÃO é look-ahead.
+reunião do FOMC e de divulgação de CPI/PPI podem ser anunciadas antecipadamente.
+Isso não comprova a disponibilidade histórica da versão deste arquivo. Os sinais
+carimbam a versão recebida; replay causal exige procedência por versão.
 
 O arquivo padrão (macro_calendar.json) traz os calendários FOMC, CPI e PPI de
 2026, verificados nas fontes primárias em 2026-08-31. Ver `source_note` dentro do
@@ -68,10 +69,8 @@ def macro_event_signal_points(
     calendário, senão 0.0. Um sinal por tipo de evento presente — não inventa
     tipos sem nenhuma data no calendário.
 
-    published_at = timestamp: conservador de propósito. A data do evento já é
-    pública com meses de antecedência (o piso real seria bem mais cedo), então
-    usar o próprio dia como published_at nunca introduz look-ahead — só é mais
-    cauteloso do que precisaria ser."""
+    A versao atual e datada pelo recebimento. A disponibilidade historica das
+    datas exige uma copia arquivada: o dia do evento nao prova publicacao."""
     if window_days < 0:
         raise ValueError("window_days não pode ser negativo")
     event_types = sorted({e.event_type for e in events})
@@ -87,7 +86,12 @@ def macro_event_signal_points(
                     timestamp=ts,
                     value=1.0 if in_window else 0.0,
                     source=SOURCE,
-                    published_at=ts,
+                    published_at=ingested_at,
+                    vintage=ingested_at,
+                    collector_version="macro_calendar_observed_vintage_v2",
+                    quality_flags=frozenset(
+                        {"available_at_receipt", "calendar_publication_history_unverified"}
+                    ),
                     ingested_at=ingested_at,
                     metric=f"{event_type.lower()}_window_dummy",
                     unit="dummy",

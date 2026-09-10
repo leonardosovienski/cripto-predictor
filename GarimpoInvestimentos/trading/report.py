@@ -40,7 +40,8 @@ def build_portfolio_report(
         mark = mark_prices.get(position.instrument.key)
         if mark is None:
             raise ValueError(f"falta mark price para {position.instrument.key}")
-        notionals[position.instrument.key] = position.notional(mark)
+        key = position.instrument.key
+        notionals[key] = notionals.get(key, 0.0) + position.notional(mark)
     gross = sum(abs(v) for v in notionals.values())
     leverage = aggregate_leverage(positions, mark_prices, equity)
     hhi = concentration_hhi(notionals) if notionals else 0.0

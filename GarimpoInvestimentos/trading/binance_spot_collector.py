@@ -21,7 +21,8 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
-from GarimpoInvestimentos.trading.contracts import Instrument, ensure_utc
+from GarimpoInvestimentos.core.paths import DATA_DIR
+from GarimpoInvestimentos.trading.contracts import Instrument, ensure_utc, require_finite
 from GarimpoInvestimentos.trading.microstructure import (
     BinanceOrderBookCollector,
     CollectedOrderBook,
@@ -39,6 +40,7 @@ LOG = logging.getLogger(__name__)
 
 
 def _utc_ms(value: Any, label: str) -> datetime:
+    require_finite(value, label)
     if isinstance(value, bool) or not isinstance(value, (int, float)) or value < 0:
         raise ValueError(f"{label} inválido")
     return datetime.fromtimestamp(value / 1000, tz=UTC)
@@ -66,6 +68,15 @@ class TradeObservation:
     session_id: str
     quality_flags: frozenset[str] = frozenset()
 
+    def __post_init__(self) -> None:
+        require_finite(self.price, "price")
+        require_finite(self.quantity, "quantity")
+        if self.price <= 0 or self.quantity <= 0 or not isinstance(self.buyer_maker, bool):
+            raise ValueError("trade invalido")
+        _identifier(self.trade_id, "trade_id")
+        for name in ("exchange_trade_at", "event_at", "received_at"):
+            object.__setattr__(self, name, ensure_utc(getattr(self, name), name))
+
 
 @dataclass(frozen=True)
 class BboObservation:
@@ -80,6 +91,11 @@ class BboObservation:
     quality_flags: frozenset[str] = frozenset({"no_exchange_event_time"})
 
     def __post_init__(self) -> None:
+        for name in ("bid_price", "ask_price", "bid_quantity", "ask_quantity"):
+            require_finite(getattr(self, name), name)
+        if self.update_id is not None:
+            _identifier(self.update_id, "update_id")
+        object.__setattr__(self, "received_at", ensure_utc(self.received_at, "received_at"))
         if (
             min(self.bid_price, self.ask_price) <= 0
             or min(self.bid_quantity, self.ask_quantity) < 0
@@ -96,6 +112,15 @@ class DepthObservation:
     session_id: str
     quality_flags: frozenset[str] = frozenset()
 
+    def __post_init__(self) -> None:
+        object.__setattr__(self, "received_at", ensure_utc(self.received_at, "received_at"))
+
+
+def _identifier(value: Any, label: str) -> int:
+    if isinstance(value, bool) or not isinstance(value, int) or value < 0:
+        raise ValueError(f"{label} deve ser inteiro nao negativo")
+    return value
+
 
 def parse_stream_message(
     message: str | bytes | dict[str, Any], *, received_at: datetime, session_id: str
@@ -103,6 +128,8 @@ def parse_stream_message(
     """Parse documented Binance combined-stream payloads without defaults."""
     ensure_utc(received_at, "received_at")
     payload = json.loads(message) if isinstance(message, (str, bytes)) else message
+    if not isinstance(payload, dict):
+        raise ValueError("payload Binance deve ser objeto")
     data = payload.get("data", payload)
     if not isinstance(data, dict):
         raise ValueError("payload Binance inválido")
@@ -117,7 +144,7 @@ def parse_stream_message(
             raise ValueError("trade inválido")
         return TradeObservation(
             instrument,
-            int(data["t"]),
+            _identifier(data["t"], "t"),
             price,
             qty,
             data["m"],
@@ -129,19 +156,19 @@ def parse_stream_message(
     if event == "depthUpdate":
         update = DepthUpdate(
             instrument=instrument,
-            first_update_id=int(data["U"]),
-            final_update_id=int(data["u"]),
+            first_update_id=_identifier(data["U"], "U"),
+            final_update_id=_identifier(data["u"], "u"),
             event_at=_utc_ms(data["E"], "E"),
             bids=_levels(data["b"], "bids"),
             asks=_levels(data["a"], "asks"),
-            previous_final_update_id=int(data["pu"]) if "pu" in data else None,
+            previous_final_update_id=_identifier(data["pu"], "pu") if "pu" in data else None,
         )
         return DepthObservation(update, received_at, session_id)
     # bookTicker payloads may omit e/E on the Spot stream.
     if event == "bookTicker" or {"u", "b", "B", "a", "A"} <= data.keys():
         return BboObservation(
             instrument,
-            int(data["u"]) if data.get("u") is not None else None,
+            _identifier(data["u"], "u") if data.get("u") is not None else None,
             float(data["b"]),
             float(data["B"]),
             float(data["a"]),
@@ -189,8 +216,12 @@ class DepthSynchronizer:
             if not (first.first_update_id <= expected <= first.final_update_id):
                 self.invalidate()
                 raise DepthSequenceGap("primeiro evento aplicável não cobre lastUpdateId + 1")
-            for item in pending:
-                candidate.apply(item.update)
+            try:
+                for item in pending:
+                    candidate.apply(item.update)
+            except (DepthSequenceGap, ValueError):
+                self.invalidate()
+                raise
         self.book = candidate
         self._buffer.clear()
         return candidate
@@ -260,6 +291,7 @@ class BinanceSpotCollector:
         observation = await self.snapshot_fetcher(symbol)
         self.store.append_collected_snapshot(observation, session_id=self.store.session_id)
         self.synchronizers[symbol].install_snapshot(observation)
+        self.store.record_health("resnapshot", symbol)
 
     async def handle(self, raw: str | bytes, *, received_at: datetime | None = None) -> None:
         received = received_at or datetime.now(UTC)
@@ -287,6 +319,8 @@ class BinanceSpotCollector:
         backoff = 1.0
         while not shutdown.is_set():
             self.store.new_session()
+            for sync in self.synchronizers.values():
+                sync.invalidate()
             try:
                 async with websockets.connect(
                     self.stream_url,
@@ -295,21 +329,35 @@ class BinanceSpotCollector:
                     max_queue=20_000,
                     open_timeout=20,
                 ) as ws:
-                    # Start consuming before snapshots so depth is buffered.
-                    snapshots = asyncio.gather(*(self.resnapshot(s) for s in self.symbols))
 
                     async def consume() -> None:
                         async for message in ws:
                             await self.handle(message)
                             self.store.heartbeat()
-                            if shutdown.is_set():
-                                break
 
                     consumer = asyncio.create_task(consume())
-                    await snapshots
-                    backoff = 1.0
-                    async with asyncio.timeout(23 * 60 * 60):
-                        await consumer
+                    snapshots = [asyncio.create_task(self.resnapshot(s)) for s in self.symbols]
+                    stopped = asyncio.create_task(shutdown.wait())
+                    tasks = [consumer, stopped, *snapshots]
+                    pending = set(tasks)
+                    try:
+                        async with asyncio.timeout(23 * 60 * 60):
+                            while pending:
+                                done, pending = await asyncio.wait(
+                                    pending, return_when=asyncio.FIRST_COMPLETED
+                                )
+                                if stopped in done:
+                                    return
+                                for task in done:
+                                    task.result()
+                                if consumer in done:
+                                    raise ConnectionError("stream encerrou sem shutdown")
+                                if all(task.done() for task in snapshots):
+                                    backoff = 1.0
+                    finally:
+                        for task in tasks:
+                            task.cancel()
+                        await asyncio.gather(*tasks, return_exceptions=True)
             except asyncio.CancelledError:
                 raise
             except Exception as exc:
@@ -319,12 +367,17 @@ class BinanceSpotCollector:
                     raise RuntimeError("limite de reconnects excedido; coleta falhou") from exc
                 if shutdown.is_set():
                     break
-                await asyncio.sleep(min(60.0, backoff) * random.uniform(0.8, 1.2))
+                try:
+                    await asyncio.wait_for(
+                        shutdown.wait(), timeout=min(60.0, backoff) * random.uniform(0.8, 1.2)
+                    )
+                except TimeoutError:
+                    pass
                 backoff = min(60.0, backoff * 2)
 
 
 def _default_db() -> Path:
-    return Path("data") / "binance_spot_microstructure.sqlite3"
+    return DATA_DIR / "binance_spot_microstructure.sqlite3"
 
 
 async def _async_main(args: argparse.Namespace) -> int:

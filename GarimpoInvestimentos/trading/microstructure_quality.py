@@ -8,6 +8,7 @@ from dataclasses import dataclass
 from datetime import UTC, date, datetime, timedelta
 from typing import Any
 
+from GarimpoInvestimentos.trading.contracts import ensure_utc, require_finite
 from GarimpoInvestimentos.trading.store import SCIENTIFIC_STATE, TradingStore
 
 
@@ -22,7 +23,10 @@ class WatchdogFinding:
 def watchdog(
     store: TradingStore, *, now: datetime | None = None, stale_seconds: float = 30.0
 ) -> list[WatchdogFinding]:
-    now = (now or datetime.now(UTC)).astimezone(UTC)
+    now = ensure_utc(now or datetime.now(UTC), "now")
+    require_finite(stale_seconds, "stale_seconds")
+    if stale_seconds <= 0:
+        raise ValueError("stale_seconds deve ser positivo")
     latest = {(row["symbol"], row["kind"]): row for row in store.latest_microstructure()}
     findings: list[WatchdogFinding] = []
     for symbol in ("BTCUSDT", "ETHUSDT"):
@@ -32,8 +36,16 @@ def watchdog(
                 findings.append(WatchdogFinding("critical", symbol, kind, "missing"))
                 continue
             age = (now - datetime.fromisoformat(row["received_at"]).astimezone(UTC)).total_seconds()
-            if age > stale_seconds:
+            if age < 0:
+                findings.append(WatchdogFinding("critical", symbol, kind, "received_in_future"))
+            if kind != "snapshot" and age > stale_seconds:
                 findings.append(WatchdogFinding("critical", symbol, kind, f"stale:{age:.3f}s"))
+            if kind == "snapshot":
+                depth = latest.get((symbol, "depth"))
+                if depth and depth["session_id"] != row["session_id"]:
+                    findings.append(
+                        WatchdogFinding("critical", symbol, kind, "snapshot_session_mismatch")
+                    )
             if row["scientific_state"] != SCIENTIFIC_STATE:
                 findings.append(WatchdogFinding("critical", symbol, kind, "scientific_state"))
             payload = json.loads(row["payload_json"])
@@ -57,6 +69,11 @@ def _percentile(values: list[float], quantile: float) -> float | None:
 def daily_scorecards(store: TradingStore, day: date) -> list[dict[str, Any]]:
     start = datetime.combine(day, datetime.min.time(), tzinfo=UTC)
     rows = store.quality_rows(start, start + timedelta(days=1))
+    health = store._conn.execute(
+        "SELECT symbol,COUNT(*) AS n FROM collector_health WHERE metric='resnapshot' AND recorded_at>=? AND recorded_at<? GROUP BY symbol",
+        (start.isoformat(), (start + timedelta(days=1)).isoformat()),
+    ).fetchall()
+    resync_counts = {row["symbol"]: row["n"] for row in health}
     result: list[dict[str, Any]] = []
     for symbol in ("BTCUSDT", "ETHUSDT"):
         for kind in ("trade", "bbo", "depth", "snapshot"):
@@ -65,10 +82,13 @@ def daily_scorecards(store: TradingStore, day: date) -> list[dict[str, Any]]:
             ingest_latencies = []
             hashes: dict[str, str] = {}
             duplicates = conflicts = temporal = crossed = gaps = 0
-            previous_sequence: int | None = None
+            previous_sequences: dict[str, int] = {}
+            observed_minutes: set[int] = set()
             for row in selected:
                 received = datetime.fromisoformat(row["received_at"])
                 ingested = datetime.fromisoformat(row["ingested_at"])
+                observed_minutes.add(int((received - start).total_seconds() // 60))
+                temporal += int(ingested < received)
                 ingest_latencies.append((ingested - received).total_seconds() * 1000)
                 if row["event_at"]:
                     event = datetime.fromisoformat(row["event_at"])
@@ -80,14 +100,20 @@ def daily_scorecards(store: TradingStore, day: date) -> list[dict[str, Any]]:
                     conflicts += int(hashes[key] != row["payload_hash"])
                 hashes[key] = row["payload_hash"]
                 sequence = row["sequence_id"]
-                if (
-                    kind == "depth"
-                    and previous_sequence is not None
-                    and sequence <= previous_sequence
-                ):
-                    gaps += 1
-                previous_sequence = sequence
                 payload = json.loads(row["payload_json"])
+                if kind == "depth":
+                    previous = previous_sequences.get(row["session_id"])
+                    if previous is not None and not (
+                        payload["first_update_id"] <= previous + 1 <= payload["final_update_id"]
+                    ):
+                        gaps += 1
+                    previous_sequences[row["session_id"]] = sequence
+                if kind == "snapshot":
+                    crossed += int(
+                        not payload["bids"]
+                        or not payload["asks"]
+                        or payload["bids"][0][0] >= payload["asks"][0][0]
+                    )
                 if kind == "bbo":
                     crossed += int(payload["bid_price"] >= payload["ask_price"])
             degraded = not selected or gaps > 0 or conflicts > 0 or temporal > 0 or crossed > 0
@@ -100,7 +126,8 @@ def daily_scorecards(store: TradingStore, day: date) -> list[dict[str, Any]]:
                     "scientific_state": SCIENTIFIC_STATE,
                     "status": "DEGRADED" if degraded else "OBSERVED_NOT_PROMOTED",
                     "observations": len(selected),
-                    "coverage": int(bool(selected)),
+                    "coverage": len(observed_minutes) / 1440 if kind != "snapshot" else None,
+                    "coverage_definition": "fraction of UTC minute bins containing an observation; not continuous uptime",
                     "availability": int(bool(selected)),
                     "gaps": gaps,
                     "duplicates": duplicates,
@@ -117,7 +144,9 @@ def daily_scorecards(store: TradingStore, day: date) -> list[dict[str, Any]]:
                         "p95": _percentile(ingest_latencies, 0.95),
                         "p99": _percentile(ingest_latencies, 0.99),
                     },
-                    "resynchronizations": 0,
+                    "resynchronizations": resync_counts.get(symbol, 0)
+                    if kind in {"depth", "snapshot"}
+                    else None,
                     "degraded_periods": int(degraded),
                 }
             )

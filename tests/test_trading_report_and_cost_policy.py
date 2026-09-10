@@ -116,10 +116,12 @@ def test_spot_nao_pode_sustentar_veredito_porque_nao_esta_calibrado():
         assert_verdict_grade(spot)
 
 
-def test_perp_sustenta_veredito_porque_foi_o_que_julgou_H1_H2_H3():
+def test_uso_historico_de_perp_nao_prova_calibracao_para_veredito():
     perp = Instrument(symbol="BTCUSDT", venue="binance", asset_class=PERP)
-    assert_verdict_grade(perp)  # não levanta
-    assert isinstance(cost_model_for(perp, for_verdict=True), CostModel)
+    with pytest.raises(UncalibratedCostModel):
+        assert_verdict_grade(perp)
+    with pytest.raises(UncalibratedCostModel):
+        cost_model_for(perp, for_verdict=True)
 
 
 def test_default_do_Instrument_e_perp_entao_o_caminho_padrao_e_o_calibrado():

@@ -41,6 +41,8 @@ def test_run_kelly_sweep_accepts_and_forwards_taker_fee_bps():
     with (
         mock.patch.object(backtest_v3, "run_wfa", side_effect=stub_run_wfa),
         mock.patch.object(backtest_v3, "emit_event"),
+        mock.patch.object(backtest_v3, "_require_open_sweep", return_value="synthetic"),
+        mock.patch.object(backtest_v3, "register_trial"),
     ):
         sweep = backtest_v3.run_kelly_sweep(
             symbol="STUBUSDT",

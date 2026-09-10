@@ -41,6 +41,7 @@ from GarimpoInvestimentos.analyzers.backtest import (
     overlap_block_length,
 )
 from GarimpoInvestimentos.core.paths import OUTPUT_DIR
+from GarimpoInvestimentos.durable_io import atomic_write, file_lock, strict_json_loads
 from GarimpoInvestimentos.governance import SCIENTIFIC_STATE_CHARTER
 from GarimpoInvestimentos.phase1_watchdog import check_phase1_health
 
@@ -455,13 +456,19 @@ def _history_record(snap: dict) -> dict:
 
 
 def append_history(snap: dict, path=HISTORY_PATH) -> None:
-    """Append-only: nunca lê nem reescreve linhas existentes. Uma linha JSON
+    """Histórico cumulativo validado e substituído atomicamente. Uma linha JSON
     por execução — igual em espírito ao predictions_archive (migração 0016),
     mas em arquivo, porque isso é observação de processo, não dado científico
     que precise de trigger SQL."""
-    path.parent.mkdir(parents=True, exist_ok=True)
-    with open(path, "a", encoding="utf-8") as f:
-        f.write(json.dumps(_history_record(snap), sort_keys=True) + "\n")
+    with file_lock(path):
+        original = path.read_text(encoding="utf-8") if path.exists() else ""
+        for line in original.splitlines():
+            if not isinstance(strict_json_loads(line), dict):
+                raise ValueError("invalid snapshot history")
+        encoded = json.dumps(_history_record(snap), sort_keys=True, allow_nan=False) + "\n"
+        atomic_write(
+            path, (original.rstrip("\n") + ("\n" if original else "") + encoded).encode("utf-8")
+        )
 
 
 def h6_status_payload(snap: dict, *, observed_at: str | None = None) -> dict:
@@ -543,25 +550,25 @@ def write_h6_status(
 
     Falha de ESCRITA propaga de propósito: não conseguir publicar é exatamente o
     tipo de coisa que precisa ser barulhenta (mesma postura fail-fast do resto do
-    projeto). Só a LEITURA do arquivo antigo é tolerante — arquivo corrompido é
-    reescrito em vez de travar o painel.
+    projeto). Estado anterior corrompido é preservado e interrompe a publicação.
     """
-    novo = h6_status_payload(snap)
-    if path.exists():
-        try:
-            atual = json.loads(path.read_text(encoding="utf-8"))
-        except (OSError, ValueError):
-            # ValueError cobre json.JSONDecodeError E UnicodeDecodeError (bytes
-            # não-UTF-8): ambos significam "não dá pra confiar no que está lá".
-            atual = None
-        if isinstance(atual, dict):
-            comparavel = {k: v for k, v in novo.items() if k != "observed_at"}
-            if {k: v for k, v in atual.items() if k != "observed_at"} == comparavel:
-                return H6_UNCHANGED
-            if not allow_regression and _h6_regride(atual, novo):
-                return H6_REFUSED_REGRESSION
-    path.write_text(json.dumps(novo, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-    return H6_WRITTEN
+    with file_lock(path):
+        novo = h6_status_payload(snap)
+        if path.exists():
+            atual = strict_json_loads(path.read_text(encoding="utf-8"))
+            if not isinstance(atual, dict):
+                raise ValueError("invalid public H6 status; preserve before recovery")
+            if isinstance(atual, dict):
+                comparavel = {k: v for k, v in novo.items() if k != "observed_at"}
+                if {k: v for k, v in atual.items() if k != "observed_at"} == comparavel:
+                    return H6_UNCHANGED
+                if not allow_regression and _h6_regride(atual, novo):
+                    return H6_REFUSED_REGRESSION
+        atomic_write(
+            path,
+            (json.dumps(novo, indent=2, sort_keys=True, allow_nan=False) + "\n").encode("utf-8"),
+        )
+        return H6_WRITTEN
 
 
 def main(*, chain_manifest_path: Path | None = None, feature_store_db: Path | None = None) -> int:
@@ -584,29 +591,50 @@ def main(*, chain_manifest_path: Path | None = None, feature_store_db: Path | No
 
         ledger_db = feature_store_db or FEATURE_STORE_DB
         with FeatureStore(ledger_db) as _store:
-            sealed = seal_chain(_store._conn)
+            seal_chain(_store._conn)
             report = verify_chain(_store._conn)
             manifest = chain_manifest(_store._conn)
+            if not report.ok:
+                raise ValueError("ledger verification failed before manifest publication")
+            with file_lock(manifest_path):
+                had_manifest = manifest_path.exists()
+                anterior = (
+                    strict_json_loads(manifest_path.read_text(encoding="utf-8"))
+                    if had_manifest
+                    else None
+                )
+                if had_manifest:
+                    if not isinstance(anterior, dict) or anterior.get("schema") != 1:
+                        raise ValueError("invalid prior manifest; preserve before recovery")
+                    aid, head = anterior.get("head_archive_id"), anterior.get("head")
+                    if aid is not None:
+                        prefix = _store._conn.execute(
+                            "SELECT chain_hash FROM predictions_archive_chain WHERE archive_id=?",
+                            (aid,),
+                        ).fetchone()
+                        count = _store._conn.execute(
+                            "SELECT COUNT(*) FROM predictions_archive_chain WHERE archive_id<=?",
+                            (aid,),
+                        ).fetchone()[0]
+                        if prefix is None or prefix[0] != head or count != anterior.get("entries"):
+                            raise ValueError(
+                                "prior public manifest is not a verified prefix of this ledger"
+                            )
+                    elif head is not None or anterior.get("entries") != 0:
+                        raise ValueError("invalid empty prior manifest")
+                if anterior is None or anterior.get("head") != manifest.get("head"):
+                    atomic_write(
+                        manifest_path,
+                        (
+                            json.dumps(manifest, indent=2, sort_keys=True, allow_nan=False) + "\n"
+                        ).encode("utf-8"),
+                    )
         if not report.ok:
             ledger_integrity_ok = False
             print(
                 f"\n*** CADEIA DE HASH DO LEDGER QUEBRADA: {report.detail}\n"
                 "    O histórico de previsões pode ter sido adulterado — "
                 "NÃO confie em backtests até investigar."
-            )
-        anterior = None
-        if manifest_path.exists():
-            try:
-                anterior = json.loads(manifest_path.read_text(encoding="utf-8"))
-            except ValueError:
-                anterior = None
-        if not anterior or anterior.get("head") != manifest.get("head"):
-            manifest_path.write_text(
-                json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8"
-            )
-            print(
-                f"(ledger: {sealed} nova(s) linha(s) selada(s) -> "
-                f"{manifest_path.name} atualizado; commite-o junto com o h6_status.json)"
             )
     except Exception as _chain_exc:  # noqa: BLE001 — painel não pode cair por causa do selo
         ledger_integrity_ok = False

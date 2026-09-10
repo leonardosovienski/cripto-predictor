@@ -37,7 +37,12 @@ def _intent(sinal=None, **kw):
     kw.setdefault("pipeline_fingerprint", "sha256:test")
     kw.setdefault("instrument", INSTRUMENTO)
     kw.setdefault("holding_period_hours", 24.0)
-    return to_trade_intent(sinal or FakeSignal(), **kw)
+    # Synthetic calibration only for testing the adapter's contract wiring.
+    # The real default is covered separately and must refuse uncalibrated costs.
+    from unittest.mock import patch
+
+    with patch("GarimpoInvestimentos.trading.cost_policy.CALIBRATED_FOR_VERDICT", {"crypto_perp"}):
+        return to_trade_intent(sinal or FakeSignal(), **kw)
 
 
 # --- a trava científica -----------------------------------------------------
@@ -157,3 +162,17 @@ def test_stop_loss_fora_de_zero_um_e_rejeitado_pelo_contrato():
     """Trava contra a leitura errada do sufixo _pct: 2.0 seria 200%."""
     with pytest.raises(ValueError, match=r"\(0, 1\)"):
         _intent(exit_rule=ExitRule.PRICE_STOP, stop_loss_pct=2.0)
+
+
+def test_real_adapter_default_rejects_uncalibrated_execution():
+    from GarimpoInvestimentos.trading.cost_policy import UncalibratedCostModel
+
+    with pytest.raises(UncalibratedCostModel):
+        to_trade_intent(
+            FakeSignal(),
+            family="synthetic-open-family",
+            trial_id="synthetic",
+            pipeline_fingerprint="synthetic",
+            instrument=INSTRUMENTO,
+            holding_period_hours=24,
+        )

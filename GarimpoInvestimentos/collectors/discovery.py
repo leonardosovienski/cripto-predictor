@@ -10,6 +10,8 @@ entram) — o backtest da Fase 2 mede o edge CONDICIONAL a essa pré-seleção, 
 exatamente o processo que rodaria em produção.
 """
 
+import math
+
 from predictor_core.net import get_http_client, with_retry
 
 from GarimpoInvestimentos.config import settings
@@ -93,12 +95,39 @@ def rank_candidates(
     de mercado que o momentum puro ainda não capturou). Pesos são heurísticos de
     triagem — calibrá-los "no olho" contra retorno futuro seria overfitting manual.
     """
+    if (
+        isinstance(top_n, bool)
+        or not isinstance(top_n, int)
+        or top_n < 0
+        or not math.isfinite(min_volume_usd)
+        or min_volume_usd < 0
+    ):
+        raise ValueError("invalid candidate count or minimum volume")
     trending = set(trending_ids)
+    seen = set()
     scored: list[tuple[float, str]] = []
     for row in markets:
         coin_id = row.get("id")
-        if not coin_id:
+        if not isinstance(coin_id, str) or not coin_id or coin_id in seen:
             continue
+        values = [
+            row.get(k)
+            for k in (
+                "current_price",
+                "total_volume",
+                "price_change_percentage_7d_in_currency",
+                "price_change_percentage_24h_in_currency",
+            )
+        ]
+        if any(
+            v is not None
+            and (isinstance(v, bool) or not isinstance(v, (float, int)) or not math.isfinite(v))
+            for v in values
+        ):
+            continue
+        if values[0] is not None and values[0] <= 0:
+            continue
+        seen.add(coin_id)
         if (row.get("total_volume") or 0.0) < min_volume_usd:
             continue
         if _is_stablecoin(row) or (row.get("symbol") or "").lower() in WRAPPED_SYMBOLS:

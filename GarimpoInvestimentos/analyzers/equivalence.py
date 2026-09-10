@@ -19,6 +19,7 @@ Uso: python -m GarimpoInvestimentos.analyzers.equivalence --assets bitcoin,ether
 
 import argparse
 import asyncio
+import math
 
 from GarimpoInvestimentos.analyzers.indicators import compute_indicators
 from GarimpoInvestimentos.collectors.coingecko_api import get_coin_data, get_price_series
@@ -35,6 +36,8 @@ _CHANGE_KEYS = ("change_24h", "change_7d", "change_30d")
 
 
 def _rel_diff(a: float, b: float) -> float:
+    if not math.isfinite(a) or not math.isfinite(b):
+        return float("inf")
     if a == b:
         return 0.0
     denom = max(abs(a), abs(b), 1e-12)
@@ -63,6 +66,7 @@ def compare_asset(
         a, b = changes_direct.get(k), changes_dpl.get(k)
         if a is not None and b is not None:
             out["changes"][k] = (a, b, abs(a - b))  # pontos percentuais
+    out["ok"] = out["ok"] and any(value is not None for value in out["indicadores"].values())
     return out
 
 
@@ -95,6 +99,10 @@ async def run(assets: list[str], pause_s: float = 8.0) -> dict:
                 {k: getattr(coin, k) for k in _CHANGE_KEYS},
                 changes_dpl=feats,
             )
+            results[ativo]["ok"] = False
+            results[ativo]["alignment"] = (
+                "unverified: direct series lacks timestamps/source identity"
+            )
         except Exception as e:
             results[ativo] = {"skipped": f"{type(e).__name__}: {e}"}
         if i < len(assets) - 1:
@@ -103,10 +111,11 @@ async def run(assets: list[str], pause_s: float = 8.0) -> dict:
 
 
 def report(results: dict) -> bool:
-    all_ok = True
+    all_ok = bool(results)
     for ativo, r in results.items():
         if "skipped" in r:
-            print(f"\n{ativo.upper()}: PULADO ({r['skipped'][:90]}) — não conta no veredito")
+            all_ok = False
+            print(f"\n{ativo.upper()}: PULADO ({r['skipped'][:90]}) — comparacao incompleta")
             continue
         worst = max((d for d in r["indicadores"].values() if d is not None), default=0.0)
         status = "EQUIVALENTE" if r["ok"] else "DIVERGENTE"

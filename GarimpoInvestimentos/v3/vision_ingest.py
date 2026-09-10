@@ -3,7 +3,7 @@ Vision Ingest — popula o Data Lake local a partir do arquivo público da Binan
 
 Baixa funding + OI (metrics) + klines 1h históricos de data.binance.vision e grava
 nos MESMOS CSVs que o caminho REST produz (data/v3/<symbol>/funding.csv, oi.csv,
-spot_1h.csv). Depois disso, pipeline.py e backtest_v3.py rodam sem qualquer alteração
+spot_binance_1h.csv). Depois disso, pipeline.py e backtest_v3.py rodam sem qualquer alteração
 — eles só leem os CSVs.
 
 Esta é a ponte que destrava o Go/No-Go histórico (anos de OI, não os ~30 dias do REST).
@@ -58,7 +58,7 @@ def ingest_symbol(symbol: str, start_date: str, end_date: str) -> dict:
     n_o = save_oi_csv(oi, sym_dir / "oi.csv")
 
     klines = load_klines_vision(symbol, start_ms, end_ms, interval="1h")
-    n_k = save_spot_csv(klines, sym_dir / "spot_1h.csv")
+    n_k = save_spot_csv(klines, sym_dir / "spot_binance_1h.csv")
 
     summary = {
         "funding_total": len(funding),

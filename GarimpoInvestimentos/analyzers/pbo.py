@@ -107,7 +107,7 @@ def probability_of_backtest_overfitting(
             "PBO exige >= 2 configuracoes: ele mede a escolha ENTRE alternativas. "
             f"Recebidas: {len(returns_by_config)}."
         )
-    if n_splits % 2 or n_splits < 2:
+    if isinstance(n_splits, bool) or not isinstance(n_splits, int) or n_splits % 2 or n_splits < 2:
         raise PBOError(f"n_splits deve ser PAR e >= 2 (CSCV divide ao meio); recebido {n_splits}.")
 
     tamanhos = {len(v) for v in returns_by_config.values()}
@@ -125,6 +125,8 @@ def probability_of_backtest_overfitting(
 
     nomes = sorted(returns_by_config)
     series = [list(returns_by_config[nome]) for nome in nomes]
+    if any(not math.isfinite(value) for series_values in series for value in series_values):
+        raise PBOError("observacoes devem ser finitas")
     blocos = _blocos(n_obs, n_splits)
     n_config = len(nomes)
 
@@ -135,9 +137,13 @@ def probability_of_backtest_overfitting(
         oos_pos = [p for i in oos_idx for p in blocos[i]]
 
         perf_is = [performance([s[p] for p in is_pos]) for s in series]
+        if any(math.isnan(value) for value in perf_is):
+            raise PBOError("performance IS indefinida")
         melhor = max(range(n_config), key=lambda c: perf_is[c])
 
         perf_oos = [performance([s[p] for p in oos_pos]) for s in series]
+        if any(math.isnan(value) for value in perf_oos):
+            raise PBOError("performance OOS indefinida")
         # rank 1 = PIOR, n_config = MELHOR. Empates contam como "não superado",
         # o que é a leitura conservadora: empatar com a melhor não é evidência
         # de que a seleção funcionou.

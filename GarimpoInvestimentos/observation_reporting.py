@@ -12,6 +12,7 @@ from statistics import fmean
 from GarimpoInvestimentos.core.paths import FEATURE_STORE_DB
 from GarimpoInvestimentos.dpl.derivatives import SOURCE
 from GarimpoInvestimentos.dpl.feature_store import FeatureStore
+from GarimpoInvestimentos.durable_io import atomic_write, file_lock
 from GarimpoInvestimentos.governance import (
     ObservationPlan,
     load_acquisition_charter,
@@ -20,11 +21,16 @@ from GarimpoInvestimentos.governance import (
 
 
 def _write_once(path: Path, payload: dict) -> None:
-    encoded = json.dumps(payload, indent=2, sort_keys=True, ensure_ascii=False) + "\n"
+    encoded = (
+        json.dumps(payload, indent=2, sort_keys=True, ensure_ascii=False, allow_nan=False) + "\n"
+    )
     path.parent.mkdir(parents=True, exist_ok=True)
-    if path.exists() and path.read_text(encoding="utf-8") != encoded:
-        raise ValueError(f"immutable report already exists with other content: {path}")
-    path.write_text(encoded, encoding="utf-8")
+    with file_lock(path):
+        if path.exists():
+            if path.read_text(encoding="utf-8") != encoded:
+                raise ValueError(f"immutable report already exists with other content: {path}")
+            return
+        atomic_write(path, encoded.encode("utf-8"))
 
 
 def _coverages(cards: list[dict]) -> list[float]:
@@ -48,6 +54,9 @@ def weekly_report(
             window_end=end,
         )
         coverage = _coverages(cards)
+        expected_dates = {(start + timedelta(days=i)).date() for i in range(7)}
+        observed_dates = {datetime.fromisoformat(card["window_start"]).date() for card in cards}
+        complete = expected_dates == observed_dates and len(cards) == 7
         metrics[config.metric] = {
             "daily_scorecards": len(cards),
             "coverage_mean": fmean(coverage) if coverage else None,
@@ -55,7 +64,9 @@ def weekly_report(
             "coverage_max": max(coverage) if coverage else None,
             "degraded_events": sum(card["state"] == "DEGRADED" for card in cards),
             "quarantined_events": sum(card["state"] == "QUARANTINED" for card in cards),
-            "weekly_coverage_passed": bool(coverage)
+            "complete_daily_scorecards": complete,
+            "weekly_coverage_passed": complete
+            and bool(coverage)
             and fmean(coverage) >= config.min_weekly_coverage,
         }
     payload = {
@@ -99,6 +110,10 @@ def maturity_report(
         )
         criteria = {
             "duration": duration_days >= required_days,
+            "complete_daily_scorecards": len(
+                {datetime.fromisoformat(card["window_start"]).date() for card in cards}
+            )
+            >= int(duration_days),
             "minimum_points": logical_points >= config.min_points,
             "daily_coverage": bool(coverages) and min(coverages) >= config.min_daily_coverage,
             "degraded_limit": sum(card["state"] == "DEGRADED" for card in cards)

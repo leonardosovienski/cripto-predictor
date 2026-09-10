@@ -1,3 +1,6 @@
+import math
+
+
 def calculate_final_score(analysis: dict) -> float:
     """Score final = o `opportunity_score` do modelo (0-100), apenas validado/limitado.
 
@@ -10,6 +13,8 @@ def calculate_final_score(analysis: dict) -> float:
         score = float(score)
     except (TypeError, ValueError):
         score = 50.0
+    if not math.isfinite(score):
+        raise ValueError("score deve ser finito")
     return round(min(max(score, 0), 100), 2)
 
 
@@ -26,15 +31,21 @@ def technical_direction(indicadores: dict) -> str | None:
     sobrecompra/sobrevenda (RSI). None se não há indicador suficiente para opinar."""
     if not indicadores:
         return None
+    if any(
+        isinstance(v, bool) or not isinstance(v, (int, float)) or not math.isfinite(v)
+        for k, v in indicadores.items()
+        if k in {"preco_vs_sma200_pct", "macd_histogram", "rsi_14"}
+    ):
+        return None
     has_trend = "preco_vs_sma200_pct" in indicadores
     has_mom = "macd_histogram" in indicadores
     if not (has_trend or has_mom):
         return None
     votes = 0
     if has_trend:
-        votes += 1 if indicadores["preco_vs_sma200_pct"] > 0 else -1
+        votes += (indicadores["preco_vs_sma200_pct"] > 0) - (indicadores["preco_vs_sma200_pct"] < 0)
     if has_mom:
-        votes += 1 if indicadores["macd_histogram"] > 0 else -1
+        votes += (indicadores["macd_histogram"] > 0) - (indicadores["macd_histogram"] < 0)
     rsi = indicadores.get("rsi_14")
     if rsi is not None:
         if rsi > 70:

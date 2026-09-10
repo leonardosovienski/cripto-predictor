@@ -48,7 +48,7 @@ def test_stop_loss_corta_a_cauda_de_perda_em_posicao_long():
     ret, reason = r
     assert reason == "stop_loss"
     # retorno truncado no stop, não no fim do caminho (muito mais negativo)
-    assert math.isclose(ret, -0.01, rel_tol=1e-6)
+    assert math.isclose(ret, math.log(97.0 / 100.0), rel_tol=1e-6)
 
 
 def test_take_profit_corta_o_upside_em_posicao_short():
@@ -68,7 +68,7 @@ def test_take_profit_corta_o_upside_em_posicao_short():
     ret, reason = r
     assert reason == "take_profit"
     # ret é o retorno no frame de position*ret (já ajustado por direção no gross)
-    assert math.isclose(ret, -0.01, rel_tol=1e-6)
+    assert math.isclose(ret, math.log(97.0 / 100.0), rel_tol=1e-6)
 
 
 def test_stop_loss_nao_dispara_se_dentro_da_margem():

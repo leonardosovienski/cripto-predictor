@@ -1,16 +1,7 @@
-"""Aritmética de dias úteis — FONTE ÚNICA da semântica de defasagem de publicação.
+"""Weekend-only calendar arithmetic; does not establish publication availability.
 
-Existe porque a duplicação dessa regra já custou um look-ahead real: o PR #83
-corrigiu `publish_lag_days` para contar dias ÚTEIS no `DXYProvider`, mas a
-segunda cópia da mesma semântica — a que de fato alimenta o backtest do H7 em
-`v3/macro_features.build_dxy_return` — ficou em dias corridos e passou a
-declarar o close de sexta disponível no sábado, quando o release H.10 só sai na
-segunda (auditoria 2026-09-05). Duas cópias da mesma regra divergem; uma só,
-não. Qualquer novo consumidor da defasagem de publicação DEVE importar daqui em
-vez de reimplementar.
-
-Não trata feriados (só sábado/domingo) — mais um motivo para as defasagens
-que dependem disto continuarem conservadoras.
+A fixed business-day lag ignores holidays, release hours and revised vintages.
+Use documented publication timestamps for causal historical research.
 """
 
 from __future__ import annotations
@@ -27,7 +18,7 @@ def add_business_days[D: date](day: D, n: int) -> D:
     `datetime` (carimba `published_at`) e as features do V3 trabalham com
     `date`. Uma implementação, os dois usos — `timedelta` preserva o tipo.
     """
-    if n < 0:
+    if isinstance(n, bool) or not isinstance(n, int) or n < 0:
         raise ValueError("n não pode ser negativo")
     d = day
     added = 0

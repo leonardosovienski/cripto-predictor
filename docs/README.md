@@ -1,5 +1,7 @@
 # Índice da documentação
 
+A [auditoria ampliada de 10/09](AUDITORIA_AMPLIADA_20260910.md) registra as correções posteriores de fontes, temporalidade, execução simulada, persistência e estatística. Consulte-a antes de reutilizar dados, modelos ou conclusões de documentos anteriores.
+
 A rodada de 10/09 está em [Aave: validação histórica, custos e execução](AAVE_VALIDACAO_20260910.md). Ela apresenta resultados positivos condicionais com o capital integralmente reconciliado, sem declarar lucro pessoal ou futuro comprovado.
 
 ## Estado vigente e continuidade

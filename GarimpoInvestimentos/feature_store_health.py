@@ -24,10 +24,12 @@ class StoreHealth:
 def inspect_feature_store(path: Path, *, now: datetime, max_age: timedelta) -> StoreHealth:
     if now.tzinfo is None or now.utcoffset() is None:
         raise ValueError("now must be timezone-aware")
+    if max_age < timedelta(0):
+        raise ValueError("max_age must not be negative")
     if not path.exists():
         return StoreHealth(StoreState.MISSING)
     try:
-        connection = sqlite3.connect(f"file:{path}?mode=ro", uri=True)
+        connection = sqlite3.connect(path.resolve().as_uri() + "?mode=ro", uri=True)
         try:
             integrity = connection.execute("PRAGMA integrity_check").fetchone()
             if integrity is None or integrity[0] != "ok":
@@ -39,9 +41,14 @@ def inspect_feature_store(path: Path, *, now: datetime, max_age: timedelta) -> S
         return StoreHealth(StoreState.CORRUPT)
     if row is None or row[0] is None:
         return StoreHealth(StoreState.EMPTY)
-    latest = datetime.fromisoformat(str(row[0]).replace("Z", "+00:00"))
+    try:
+        latest = datetime.fromisoformat(str(row[0]).replace("Z", "+00:00"))
+    except ValueError:
+        return StoreHealth(StoreState.CORRUPT)
     if latest.tzinfo is None:
         return StoreHealth(StoreState.CORRUPT)
     latest = latest.astimezone(UTC)
+    if latest > now.astimezone(UTC):
+        return StoreHealth(StoreState.CORRUPT, latest)
     state = StoreState.STALE if now.astimezone(UTC) - latest > max_age else StoreState.READY
     return StoreHealth(state, latest)

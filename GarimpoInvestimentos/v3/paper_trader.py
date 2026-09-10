@@ -1,41 +1,26 @@
-"""
-Paper Trader — V3 Crypto-Predictor (produção shadow, sem capital real).
+"""Theoretical paper ledger, subject to the scientific family freeze.
 
-Roda o pipeline V3 (dados em cache), pega o SINAL MAIS RECENTE de cada símbolo,
-aplica a fração de Kelly homologada (DEFAULT_KELLY_FRACTION = 0.50, ver HANDOFF.md)
-e registra um trade teórico:
-
-  - emite evento `paper_trade` via predictor_core.obs (domain="v3_paper")
-  - persiste a posição teórica em data/v3/paper/{symbol}_paper.jsonl
-
-NÃO move capital. NÃO envia ordens. É o registro shadow que valida o edge em
-tempo real, alimentado pelo MESMO pipeline causal do backtest (paridade total).
-
-CONTRATO DO EVENTO paper_trade:
-    metrics  : direction, strength, kelly_fraction, position, ref_price,
-               regime_confidence
-    metadata : symbol, timestamp_exchange_ms, signal_ts_utc, regime_state,
-               reason, horizon_hours, engine_id, active
-
-USO (CLI):
-    python -m GarimpoInvestimentos.v3.paper_trader --symbol BTCUSDT --start-date 2021-01-01
-    python -m GarimpoInvestimentos.v3.paper_trader --symbol BTCUSDT ETHUSDT --start-date 2024-01-01
-
-    # Roda 1×/dia (após o pipeline diário) — cada execução registra o sinal corrente.
+Historical cached signals are not prospective observations. New records require
+an open family and a current decision timestamp. No orders or capital are enabled.
 """
 
 import argparse
 import asyncio
 import json
 import logging
+import math
 import sys
 from datetime import UTC, datetime
 from pathlib import Path
 
 from predictor_core.obs import emit_event
 
+from GarimpoInvestimentos.analyzers.trials import FrozenFamilyError
 from GarimpoInvestimentos.core.paths import DATA_DIR
+from GarimpoInvestimentos.durable_io import atomic_write, file_lock
+from GarimpoInvestimentos.governance import load_scientific_state
 from GarimpoInvestimentos.v3.backtest_v3 import DEFAULT_KELLY_FRACTION
+from GarimpoInvestimentos.v3.collectors.record_io import validate_observation
 from GarimpoInvestimentos.v3.collectors.spot_collector import load_spot_csv
 from GarimpoInvestimentos.v3.feature_builder import build_spot_index
 from GarimpoInvestimentos.v3.pipeline import run_symbol, spot_path
@@ -52,6 +37,7 @@ _SPOT_CANDLE_MS = 3_600_000
 
 
 def _paper_path(symbol: str) -> Path:
+    validate_observation(symbol, 0, {})
     return _PAPER_DIR / f"{symbol}_paper.jsonl"
 
 
@@ -73,15 +59,16 @@ def _already_recorded(symbol: str, timestamp_exchange_ms: int) -> bool:
     path = _paper_path(symbol)
     if not path.exists():
         return False
+    found = False
     for line in path.read_text(encoding="utf-8").splitlines():
         if not line:
             continue
-        try:
-            if json.loads(line).get("timestamp_exchange_ms") == timestamp_exchange_ms:
-                return True
-        except ValueError:
-            continue
-    return False
+        row = json.loads(line)
+        if not isinstance(row, dict):
+            raise ValueError("historico paper invalido")
+        if row.get("timestamp_exchange_ms") == timestamp_exchange_ms:
+            found = True
+    return found
 
 
 def _latest_signal(signals: list[SignalRecord]) -> SignalRecord | None:
@@ -91,6 +78,13 @@ def _latest_signal(signals: list[SignalRecord]) -> SignalRecord | None:
     return max(signals, key=lambda s: s.timestamp_exchange_ms)
 
 
+def _require_open_family() -> None:
+    if "funding_oi_hmm_v3" in load_scientific_state().frozen_families:
+        raise FrozenFamilyError(
+            "Paper V3 bloqueado: funding_oi_hmm_v3 esta congelada; preservar livro existente"
+        )
+
+
 def _record_paper_trade(
     symbol: str,
     signal: SignalRecord,
@@ -98,11 +92,29 @@ def _record_paper_trade(
     kelly_fraction: float,
 ) -> dict:
     """Monta, persiste e emite o trade teórico. Retorna o dict gravado."""
+    _require_open_family()
+    if (
+        not math.isfinite(kelly_fraction)
+        or not 0 < kelly_fraction <= 1
+        or ref_price is None
+        or not math.isfinite(ref_price)
+        or ref_price <= 0
+    ):
+        raise ValueError("paper exige preco valido e fracao em (0,1]")
+    now_ms = int(datetime.now(UTC).timestamp() * 1000)
+    if (
+        not 0 <= now_ms - signal.timestamp_signal_ms <= 300_000
+        or not 0 <= now_ms - signal.timestamp_exchange_ms <= 8 * _SPOT_CANDLE_MS
+    ):
+        raise ValueError("sinal desatualizado nao pode ser registrado como prospectivo")
     position = signal.direction * signal.strength * kelly_fraction
     signal_ts_utc = datetime.now(UTC).isoformat(timespec="seconds")
 
     paper = {
         "symbol": symbol,
+        "recording_mode": "SHADOW_REFERENCE_CLOSE_ONLY",
+        "capital_enabled": False,
+        "timestamp_entry_ms": now_ms,
         "timestamp_exchange_ms": signal.timestamp_exchange_ms,
         "signal_ts_utc": signal_ts_utc,
         "direction": signal.direction,
@@ -121,9 +133,17 @@ def _record_paper_trade(
 
     # Persistência local (append-only)
     path = _paper_path(symbol)
-    path.parent.mkdir(parents=True, exist_ok=True)
-    with open(path, "a", encoding="utf-8") as f:
-        f.write(json.dumps(paper, ensure_ascii=False) + "\n")
+    with file_lock(path):
+        if _already_recorded(symbol, signal.timestamp_exchange_ms):
+            raise ValueError("sinal paper ja registrado")
+        original = path.read_bytes() if path.exists() else b""
+        separator = b"\n" if original and not original.endswith(b"\n") else b""
+        atomic_write(
+            path,
+            original
+            + separator
+            + (json.dumps(paper, ensure_ascii=False, allow_nan=False) + "\n").encode("utf-8"),
+        )
 
     # Telemetria estruturada
     emit_event(
@@ -162,6 +182,8 @@ async def run_paper(
     Roda o pipeline V3 para um símbolo, pega o sinal mais recente e registra
     o trade teórico. Retorna o dict do paper trade, ou None se não houver sinal.
     """
+    _require_open_family()
+    validate_observation(symbol, 0, {})
     signals = await run_symbol(
         symbol=symbol,
         start_date=start_date,
@@ -187,7 +209,7 @@ async def run_paper(
     ref_price = None
     if spot_csv_path.exists():
         spot_index = build_spot_index(load_spot_csv(spot_csv_path))
-        ref_price = _ref_price(latest.timestamp_exchange_ms, spot_index)
+        ref_price = _ref_price(int(datetime.now(UTC).timestamp() * 1000), spot_index)
 
     paper = _record_paper_trade(symbol, latest, ref_price, kelly_fraction)
 
@@ -216,7 +238,7 @@ async def _main() -> None:
         "--kelly-fraction",
         type=float,
         default=DEFAULT_KELLY_FRACTION,
-        help=f"Fração de Kelly (default homologado: {DEFAULT_KELLY_FRACTION})",
+        help=f"Fração de Kelly (default historico de pesquisa: {DEFAULT_KELLY_FRACTION})",
     )
     parser.add_argument("--horizon-hours", type=int, default=24)
     parser.add_argument(

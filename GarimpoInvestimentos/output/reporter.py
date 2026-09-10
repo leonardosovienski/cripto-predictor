@@ -1,5 +1,7 @@
 import csv
 import logging
+import io
+import uuid
 from datetime import datetime, timezone
 
 from openpyxl import Workbook
@@ -11,33 +13,43 @@ from openpyxl.utils import get_column_letter
 from openpyxl.worksheet.worksheet import Worksheet
 
 from GarimpoInvestimentos.core.paths import OUTPUT_DIR
+from GarimpoInvestimentos.durable_io import atomic_write
 
 _log = logging.getLogger("previsao_cripto.reporter")
+
+
+def _literal(value: str) -> str:
+    # CSV/XLSX viewers must treat provider/LLM text as text, never a formula.
+    value = str(value)
+    return "'" + value if value.lstrip().startswith(("=","+","-","@")) or value.startswith(("\t","\r","\n")) else value
 
 
 def export_results(resultados: list[dict]):
     # UTC como o resto do projeto (C7; previsões são carimbadas em UTC desde
     # 2026-07-07 — nome de arquivo em hora local criava skew de até 3h no par)
-    timestamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
+    timestamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S_%f") + "_" + uuid.uuid4().hex[:8]
+    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     csv_filename = str(OUTPUT_DIR / f"garimpo_resultados_{timestamp}.csv")
     xlsx_filename = str(OUTPUT_DIR / f"garimpo_resultados_{timestamp}.xlsx")
 
     # CSV
     fieldnames = ["Ativo", "Sentimento", "Score", "Resumo", "Data", "Preço USD"]
-    with open(csv_filename, mode="w", newline="", encoding="utf-8-sig") as csvfile:
+    with io.StringIO(newline="") as csvfile:
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
         writer.writeheader()
         for r in resultados:
             writer.writerow(
                 {
-                    "Ativo": r.get("ativo", "").upper(),
-                    "Sentimento": r.get("sentimento", ""),
+                    "Ativo": _literal(r.get("ativo", "").upper()),
+                    "Sentimento": _literal(r.get("sentimento", "")),
                     "Score": round(r.get("score", 0), 2),
-                    "Resumo": r.get("resumo", ""),
-                    "Data": r.get("data", ""),
+                    "Resumo": _literal(r.get("resumo", "")),
+                    "Data": _literal(r.get("data", "")),
                     "Preço USD": round(r.get("price_usd", 0), 2),
                 }
             )
+
+        csv_bytes = csvfile.getvalue().encode("utf-8-sig")
 
     # XLSX
     wb = Workbook()
@@ -59,11 +71,11 @@ def export_results(resultados: list[dict]):
     for r in resultados:
         ws.append(
             [
-                r.get("ativo", "").upper(),
-                r.get("sentimento", ""),
+                _literal(r.get("ativo", "").upper()),
+                _literal(r.get("sentimento", "")),
                 round(r.get("score", 0), 2),
-                r.get("resumo", ""),
-                r.get("data", ""),
+                _literal(r.get("resumo", "")),
+                _literal(r.get("data", "")),
                 round(r.get("price_usd", 0), 2),
             ]
         )
@@ -117,7 +129,11 @@ def export_results(resultados: list[dict]):
         chart_anchor_row = end_row + 3
         ws.add_chart(chart, f"A{chart_anchor_row}")  # pyright: ignore[reportCallIssue] — stub do openpyxl confunde Worksheet/Chartsheet.add_chart
 
-    wb.save(xlsx_filename)
+    stream = io.BytesIO()
+    wb.save(stream)
+    from pathlib import Path
+    atomic_write(Path(xlsx_filename), stream.getvalue())
+    atomic_write(Path(csv_filename), csv_bytes)
 
     _log.info("Resultados exportados: CSV -> %s", csv_filename)
     _log.info(

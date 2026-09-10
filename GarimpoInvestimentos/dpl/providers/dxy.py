@@ -1,48 +1,16 @@
-"""DXYProvider — Nominal Broad U.S. Dollar Index (Federal Reserve, série DTWEXBGS)
-via FRED (fredgraph.csv, público, sem chave).
+"""FRED DTWEXBGS observed vintage, not an invented historical publication date.
 
-Parte do backlog B1 (docs/HYPOTHESES.md, H7): força do dólar como contexto exógeno
-de regime, ortogonal a tudo que já foi testado. Fonte trocada de stooq.com (que
-passou a exigir um desafio anti-bot em JavaScript no endpoint de CSV — confirmado
-ao vivo em 2026-08-14, não é mais acessível por um cliente HTTP simples, e
-contorná-lo não é algo que este projeto deveria fazer) para o FRED — dado oficial
-do Federal Reserve, mesma instituição do calendário FOMC em macro_calendar.json.
-
-`DTWEXBGS` é publicada pelo Fed com defasagem: o release H.10 (foreign exchange
-rates) de um dia útil sai no dia útil seguinte. `publish_lag_days=1` é a
-estimativa conservadora (assume o dado mais tarde disponível, nunca mais cedo).
-
-CORREÇÃO 2026-09-04 (pesquisa via WebSearch — leitura direta de
-federalreserve.gov/fred.stlouisfed.org segue bloqueada neste ambiente, então
-isto NÃO é fonte primária lida diretamente, é achado de busca a confirmar se
-algum dia a rede abrir): a tabela semanal oficial do H.10 sai toda
-segunda-feira às 16h15 (semana anterior inteira), mas a série `DTWEXBGS`
-específica no FRED é "daily" e um exemplo concreto mostrou dado de
-sexta-feira publicado na segunda-feira seguinte — ou seja, o lag é em DIAS
-ÚTEIS, não em dias corridos. `publish_lag_days` agora conta dias úteis
-(pula sábado/domingo): para um ponto de sexta-feira, `publish_lag_days=1`
-aponta para a segunda-feira seguinte, não para sábado (que nunca teria dado).
-CORREÇÃO DE RISCO, não só de precisão: a versão anterior (dias corridos)
-para o mesmo N sempre dava um `published_at` IGUAL OU MAIS CEDO que a versão
-em dias úteis — ou seja, o código antigo podia declarar um dado disponível
-antes da hora real (sexta + 1 dia corrido = sábado, quando o dado real só
-sai na segunda), o que É risco de look-ahead, não só desperdício de dado.
-A versão em dias úteis está do lado seguro por construção.
-
-Endpoint revalidado ao vivo em 2026-08-31 pelo próprio `DXYProvider`: retornou
-observações válidas de 2026-08-24 a 2026-08-28, com `source=fred`, sem interpolar
-feriados. O CSV usa o cabeçalho `observation_date,DTWEXBGS` (o FRED
-usa `observation_date`, não `DATE`, como nome da primeira coluna — só isso
-tinha ficado errado na primeira versão). `Invoke-WebRequest` do PowerShell
-travou/deu timeout contra o mesmo endpoint que o `curl` respondeu rápido —
-suspeita de inspeção de TLS no proxy corporativo interferindo com um cliente
-especificamente; o `httpx` usado aqui respondeu no smoke de 2026-08-31.
+The H.10 release is weekly and historical FRED values can be revised.
+This current CSV provides no publication history. Values become usable at receipt.
+Historical tests require archived releases or a separately verified vintage table.
+https://www.federalreserve.gov/releases/h10/about.htm
 """
 
 from __future__ import annotations
 
 import csv
 import io
+import math
 from datetime import UTC, datetime
 
 from predictor_core.net import get_http_client, with_retry
@@ -67,6 +35,12 @@ class DXYProvider(SignalProvider):
     name = "dxy"
 
     def __init__(self, series: str = _DEFAULT_SERIES, publish_lag_days: int = 1):
+        if (
+            isinstance(publish_lag_days, bool)
+            or not isinstance(publish_lag_days, int)
+            or publish_lag_days < 0
+        ):
+            raise ValueError("publish_lag_days nao pode ser negativo ou fracionario")
         self._series = series
         self._lag_business_days = publish_lag_days
 
@@ -78,7 +52,10 @@ class DXYProvider(SignalProvider):
             return resp.text
 
     async def fetch(self, limit: int = 90) -> list[SignalPoint]:
+        if isinstance(limit, bool) or not isinstance(limit, int) or limit < 1:
+            raise ValueError("limit deve ser inteiro positivo")
         raw = await self._get_csv()
+        received_at = datetime.now(UTC)
         rows = list(csv.DictReader(io.StringIO(raw)))
         if not rows or self._series not in rows[0]:
             raise RuntimeError(
@@ -87,21 +64,36 @@ class DXYProvider(SignalProvider):
             )
 
         points: list[SignalPoint] = []
-        for row in rows[-limit:]:
+        seen: dict[datetime, float] = {}
+        for row in rows:
+            if row.get(self._series) == ".":
+                continue
             try:
                 day = datetime.strptime(row["observation_date"], "%Y-%m-%d").replace(tzinfo=UTC)
                 value = float(row[self._series])
-            except (KeyError, ValueError):
-                continue  # "." = feriado/sem dado publicado — pula, não interpola
+            except (KeyError, ValueError) as exc:
+                raise ValueError("Linha FRED invalida") from exc
+            if not math.isfinite(value) or value <= 0 or day > received_at:
+                raise ValueError("Valor/data FRED invalido")
+            if day in seen:
+                if seen[day] != value:
+                    raise ValueError("FRED tem observacoes conflitantes")
+                continue
+            seen[day] = value
             points.append(
                 SignalPoint(
                     name=self.name,
                     timestamp=day,
                     value=value,
                     source="fred",
-                    published_at=_add_business_days(day, self._lag_business_days),
+                    published_at=received_at,
+                    vintage=received_at,
+                    collector_version="fred_observed_vintage_v2",
+                    quality_flags=frozenset(
+                        {"publication_history_unverified", "available_at_receipt"}
+                    ),
                 )
             )
         if not points:
             raise RuntimeError(f"dxy[{self._series}]: nenhuma linha válida no CSV recebido")
-        return points
+        return sorted(points, key=lambda point: point.timestamp)[-limit:]

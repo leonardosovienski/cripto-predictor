@@ -1,9 +1,8 @@
 """H8 (docs/HYPOTHESES.md): entrypoint que faltava em `hypothesis_loop.py` —
 o motor (propõe→valida→registra) já existia e era testado isoladamente, mas
-nada chamava `evaluate_proposal` sobre as propostas aceitas, e nada agendava
-isso pra rodar. Sem isso, o checklist de ativação do H8 nunca sai do item 4
-("coletar dado GENUINAMENTE NOVO") — é exatamente essa lacuna que este módulo
-fecha.
+este modulo liga `evaluate_proposal` as propostas aceitas. Reutiliza historia
+existente: NAO coleta dados prospectivos nem satisfaz o requisito de dados novos.
+Nenhum agendamento e ativado.
 
 O QUE ESTE MÓDULO FAZ (e só isso):
     1. Carrega os FeatureVector já coletados pela V3 (mesmo dado de H1-H3/H9 —
@@ -48,6 +47,7 @@ from GarimpoInvestimentos.analyzers.hypothesis_loop import (
     run_round,
 )
 from GarimpoInvestimentos.core.paths import DATA_DIR
+from GarimpoInvestimentos.durable_io import append_json_history, load_json_history
 from GarimpoInvestimentos.v3.collectors.funding_collector import load_funding_csv
 from GarimpoInvestimentos.v3.collectors.oi_collector import load_oi_csv
 from GarimpoInvestimentos.v3.collectors.spot_collector import load_spot_csv
@@ -61,7 +61,8 @@ from GarimpoInvestimentos.v3.feature_builder import (
 _DATA_ROOT = DATA_DIR / "v3"
 
 # Append-only, mesmo princípio de PROPOSALS_PATH (hypothesis_loop.py).
-EVALUATIONS_PATH = Path(__file__).resolve().parent.parent / "hypothesis_evaluations.json"
+EVALUATIONS_PATH = DATA_DIR / "research" / "hypothesis_evaluations.json"
+_LEGACY_EVALUATIONS_PATH = Path(__file__).resolve().parent.parent / "hypothesis_evaluations.json"
 
 # Campos de FeatureVector expostos ao DSL como "feature(nome)" — os mesmos que
 # H1-H3/H9 já usam, nada novo é calculado aqui. `feature_zscore` renomeado só
@@ -87,18 +88,32 @@ def _build_dados_e_retornos(
     contínua. `retornos`: forward log return de `spot_close` no horizonte
     pedido — None nos últimos `passos` pontos (sem retorno futuro observável
     ainda), nunca um valor inventado."""
-    passos = horizon_days * _PERIODS_PER_DAY
+    if isinstance(horizon_days, bool) or not isinstance(horizon_days, int) or horizon_days < 1:
+        raise ValueError("horizon_days deve ser inteiro positivo")
+    times = [fv.timestamp_exchange_ms for fv in feature_vectors]
+    if (
+        any(a >= b for a, b in zip(times, times[1:]))
+        or len({fv.asset for fv in feature_vectors}) > 1
+    ):
+        raise ValueError("serie deve ter um ativo e timestamps unicos crescentes")
+    by_time = {fv.timestamp_exchange_ms: fv.spot_close for fv in feature_vectors}
     dados: dict[str, list[float | None]] = {
         nome: [getattr(fv, nome) for fv in feature_vectors] for nome in _EXPOSED_FEATURES
     }
     closes = [fv.spot_close for fv in feature_vectors]
     retornos: list[float | None] = []
-    for i in range(len(closes)):
-        j = i + passos
-        if j >= len(closes) or closes[i] <= 0.0 or closes[j] <= 0.0:
+    for i, ts in enumerate(times):
+        target = by_time.get(ts + horizon_days * 86_400_000)
+        if (
+            target is None
+            or not math.isfinite(target)
+            or not math.isfinite(closes[i])
+            or closes[i] <= 0
+            or target <= 0
+        ):
             retornos.append(None)
             continue
-        retornos.append(math.log(closes[j] / closes[i]))
+        retornos.append(math.log(target) - math.log(closes[i]))
     return dados, retornos
 
 
@@ -106,7 +121,7 @@ def _load_feature_vectors(symbol: str) -> list[FeatureVector]:
     sym_dir = _DATA_ROOT / symbol
     funding_records = load_funding_csv(sym_dir / "funding.csv")
     oi_records = load_oi_csv(sym_dir / "oi.csv")
-    kline_records = load_spot_csv(sym_dir / "spot_1h.csv")
+    kline_records = load_spot_csv(sym_dir / "spot_binance_1h.csv")
     if not funding_records:
         raise FileNotFoundError(
             f"Nenhum dado de funding para {symbol}. "
@@ -120,20 +135,12 @@ def _load_feature_vectors(symbol: str) -> list[FeatureVector]:
 
 
 def load_evaluations(path: Path = EVALUATIONS_PATH) -> list[dict]:
-    if not path.exists():
-        return []
-    try:
-        dados = json.loads(path.read_text(encoding="utf-8"))
-    except (OSError, ValueError):
-        return []
-    return dados if isinstance(dados, list) else []
+    historical = load_json_history(_LEGACY_EVALUATIONS_PATH) if path == EVALUATIONS_PATH else []
+    return historical + load_json_history(path)
 
 
 def append_evaluations(evaluations: list[Evaluation], path: Path = EVALUATIONS_PATH) -> int:
-    atuais = load_evaluations(path)
-    atuais.extend(asdict(e) for e in evaluations)
-    path.write_text(json.dumps(atuais, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-    return len(evaluations)
+    return append_json_history(path, [asdict(e) for e in evaluations])
 
 
 async def run_h8_round(
@@ -158,6 +165,7 @@ async def run_h8_round(
     `run_round` já vincula seu próprio default na assinatura no momento da
     importação; testes DEVEM passar um `tmp_path` aqui para não escrever no
     traço real."""
+    load_evaluations(evaluations_path)
     feature_vectors = _load_feature_vectors(symbol)
     dados, retornos = _build_dados_e_retornos(feature_vectors, horizon_days)
 
@@ -171,7 +179,11 @@ async def run_h8_round(
         now=now,
     )
 
-    avaliacoes = [evaluate_proposal(p, dados, retornos) for p in propostas if p.status == ACCEPTED]
+    avaliacoes = [
+        evaluate_proposal(p, dados, retornos, observations_per_day=_PERIODS_PER_DAY)
+        for p in propostas
+        if p.status == ACCEPTED
+    ]
     if avaliacoes:
         append_evaluations(avaliacoes, path=evaluations_path)
     return propostas, avaliacoes

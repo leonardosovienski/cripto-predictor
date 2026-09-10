@@ -130,6 +130,12 @@ def judge_signature(asset_name: str | None = None) -> str:
 _DAILY_QUOTA_MARKERS = ("perday", "per day", "requestsperday", "generaterequestsperday")
 
 
+def _bounded_retry_delay(value: float) -> float | None:
+    # A malformed or very long server delay must not hang a bounded API call.
+    # Decline the retry rather than ignore a long Retry-After and call too soon.
+    return max(0.0, value) if math.isfinite(value) and value <= 300 else None
+
+
 def _retry_delay_for_error(exc: Exception, attempt: int) -> float | None:
     """Segundos de espera antes de re-tentar um erro de LLM; None = desiste (não retry).
 
@@ -171,7 +177,7 @@ def _retry_delay_for_error(exc: Exception, attempt: int) -> float | None:
         retry_after = headers.get("retry-after") or headers.get("Retry-After")
         if retry_after is not None:
             try:
-                return float(retry_after)
+                return _bounded_retry_delay(float(retry_after))
             except (TypeError, ValueError):
                 pass
 
@@ -190,17 +196,17 @@ def _retry_delay_for_error(exc: Exception, attempt: int) -> float | None:
                 # sem backoff" — sobretudo com LLM_PACING_SECONDS=0 (tier pago), onde o
                 # max(base_delay, delay) em _run_with_llm_retry deixaria de mascarar isso.
                 if isinstance(retry_delay, (int, float)):
-                    return max(0.0, float(retry_delay))
+                    return _bounded_retry_delay(float(retry_delay))
                 if isinstance(retry_delay, str):
                     value = retry_delay.strip().lower()
                     if value.endswith("s"):
                         try:
-                            return max(0.0, float(value[:-1]))
+                            return _bounded_retry_delay(float(value[:-1]))
                         except ValueError:
                             pass
                     elif value.endswith("m"):
                         try:
-                            return max(0.0, float(value[:-1]) * 60.0)
+                            return _bounded_retry_delay(float(value[:-1]) * 60.0)
                         except ValueError:
                             pass
                 break

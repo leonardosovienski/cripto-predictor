@@ -81,6 +81,18 @@ def seal_chain(conn: sqlite3.Connection) -> int:
     """Sela as linhas do archive ainda sem hash. Idempotente; retorna quantas
     linhas novas foram seladas. Recusa selar se a ponta existente não
     verifica (selar sobre cadeia quebrada lavaria a adulteração)."""
+    conn.execute("SAVEPOINT seal_archive_chain")
+    try:
+        sealed = _seal_verified_chain(conn)
+        conn.execute("RELEASE SAVEPOINT seal_archive_chain")
+        return sealed
+    except BaseException:
+        conn.execute("ROLLBACK TO SAVEPOINT seal_archive_chain")
+        conn.execute("RELEASE SAVEPOINT seal_archive_chain")
+        raise
+
+
+def _seal_verified_chain(conn: sqlite3.Connection) -> int:
     report = verify_chain(conn)
     if not report.ok:
         raise RuntimeError(
@@ -105,8 +117,6 @@ def seal_chain(conn: sqlite3.Connection) -> int:
             (row["archive_id"], prev),
         )
         sealed += 1
-    if sealed:
-        conn.commit()
     return sealed
 
 
@@ -120,6 +130,21 @@ def verify_chain(conn: sqlite3.Connection) -> ChainReport:
     if not chain:
         unsealed = conn.execute("SELECT COUNT(*) FROM predictions_archive").fetchone()[0]
         return ChainReport(ok=True, checked=0, unsealed=unsealed, detail="cadeia vazia")
+    retroactive = conn.execute(
+        """SELECT a.archive_id FROM predictions_archive a
+           LEFT JOIN predictions_archive_chain c ON c.archive_id=a.archive_id
+           WHERE c.archive_id IS NULL AND a.archive_id < ?
+           ORDER BY a.archive_id LIMIT 1""",
+        (chain[-1][0],),
+    ).fetchone()
+    if retroactive is not None:
+        return ChainReport(
+            ok=False,
+            checked=0,
+            unsealed=1,
+            first_bad_archive_id=retroactive[0],
+            detail="linha não selada inserida antes da ponta publicada",
+        )
     prev = GENESIS
     checked = 0
     for aid, expected in chain:

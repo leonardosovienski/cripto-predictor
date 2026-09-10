@@ -17,18 +17,19 @@ from predictor_core.data.source_quality import (
     SourceQualityScorecard,
     SourceQualityState,
     SourceQualityThresholds,
-    source_quality_scorecard,
 )
 from predictor_core.obs import emit_event
 
 from GarimpoInvestimentos.core.paths import FEATURE_STORE_DB
 from GarimpoInvestimentos.dpl.derivatives import SOURCE
 from GarimpoInvestimentos.dpl.feature_store import FeatureStore
+from GarimpoInvestimentos.durable_io import atomic_write, file_lock
 from GarimpoInvestimentos.governance import (
     ObservationMetric,
     ObservationPlan,
     load_observation_plan,
 )
+from GarimpoInvestimentos.quality_scorecard import audited_source_quality_scorecard
 
 LOG = logging.getLogger(__name__)
 DEFAULT_AUDIT_LOG = FEATURE_STORE_DB.parent / "observation_scorecards.jsonl"
@@ -59,16 +60,34 @@ def _append_audit(path: Path, payload: dict) -> bool:
     encoded = json.dumps(payload, ensure_ascii=False, sort_keys=True, allow_nan=False)
     digest = hashlib.sha256(encoded.encode("utf-8")).hexdigest()
     path.parent.mkdir(parents=True, exist_ok=True)
-    if path.exists():
-        for line in path.read_text(encoding="utf-8").splitlines():
+    with file_lock(path):
+        history = path.read_text(encoding="utf-8") if path.exists() else ""
+        found = False
+        for line in history.splitlines():
             existing = json.loads(line)
+            actual = hashlib.sha256(
+                json.dumps(
+                    existing["payload"], ensure_ascii=False, sort_keys=True, allow_nan=False
+                ).encode("utf-8")
+            ).hexdigest()
+            if existing["payload_hash"] != actual:
+                raise ValueError("corrupt JSONL scorecard hash")
             if existing["audit_key"] == payload["audit_key"]:
                 if existing["payload_hash"] != digest:
                     raise ValueError("immutable JSONL scorecard exists with other content")
-                return False
-    record = {"audit_key": payload["audit_key"], "payload_hash": digest, "payload": payload}
-    with path.open("a", encoding="utf-8", newline="\n") as stream:
-        stream.write(json.dumps(record, ensure_ascii=False, sort_keys=True) + "\n")
+                found = True
+        if found:
+            return False
+        record = {"audit_key": payload["audit_key"], "payload_hash": digest, "payload": payload}
+        atomic_write(
+            path,
+            (
+                history.rstrip("\n")
+                + ("\n" if history else "")
+                + json.dumps(record, ensure_ascii=False, sort_keys=True, allow_nan=False)
+                + "\n"
+            ).encode("utf-8"),
+        )
     return True
 
 
@@ -94,7 +113,7 @@ def _instrument_scorecards(
 ) -> dict[str, SourceQualityScorecard]:
     limits = _thresholds(metric)
     return {
-        instrument: source_quality_scorecard(
+        instrument: audited_source_quality_scorecard(
             [point for point in points if point.instrument == instrument],
             source=SOURCE,
             window_start=window_start,
@@ -139,9 +158,17 @@ def evaluate_daily_metric(
         total_requests=total_requests,
     )
     latencies = [
-        (point.ingested_at - point.published_at).total_seconds() * 1000
+        (
+            point.ingested_at
+            - (
+                point.event_at
+                if "available_at_receipt" in point.quality_flags
+                else point.published_at
+            )
+        ).total_seconds()
+        * 1000
         for point in logical_points
-        if point.ingested_at is not None
+        if point.ingested_at is not None and point.event_at is not None
     ]
     states = {card.state for card in cards.values()}
     state = (
@@ -175,7 +202,7 @@ def evaluate_daily_metric(
             "p95": p95 if latencies else None,
             "p99": _quantile(latencies, 0.99) if latencies else None,
         },
-        "divergence": 0.0,
+        "divergence": None,  # No independent reference observations were supplied.
         "per_instrument": _json_safe({name: card.to_dict() for name, card in cards.items()}),
     }
     payload["audit_key"] = f"{plan.plan_id}:{SOURCE}:{metric.metric}:{day.isoformat()}"

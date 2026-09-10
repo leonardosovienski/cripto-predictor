@@ -14,7 +14,7 @@ import time
 import uuid
 import zlib
 from dataclasses import asdict, dataclass
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from typing import Any
 
@@ -156,11 +156,21 @@ _MIGRATIONS = [
             ON microstructure_events_v3(symbol_code, kind_code, sequence_id);
         """,
     ),
+    (
+        "0006_dense_provenance",
+        """
+        ALTER TABLE microstructure_events_v3 ADD COLUMN session_text TEXT;
+        ALTER TABLE microstructure_events_v3 ADD COLUMN collector_version TEXT NOT NULL
+            DEFAULT 'binance_spot_microstructure_v1';
+    """,
+    ),
 ]
 
 
 def _canonical(payload: dict[str, Any]) -> tuple[str, str]:
-    encoded = json.dumps(payload, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+    encoded = json.dumps(
+        payload, ensure_ascii=False, sort_keys=True, separators=(",", ":"), allow_nan=False
+    )
     return encoded, hashlib.sha256(encoded.encode("utf-8")).hexdigest()
 
 
@@ -169,12 +179,15 @@ def _dt(value: datetime, label: str) -> str:
 
 
 def _micros(value: datetime) -> int:
-    return int(ensure_utc(value, "timestamp").timestamp() * 1_000_000)
+    delta = ensure_utc(value, "timestamp") - datetime(1970, 1, 1, tzinfo=UTC)
+    return (delta.days * 86400 + delta.seconds) * 1_000_000 + delta.microseconds
 
 
 def _from_micros(value: int | None) -> str | None:
     return (
-        datetime.fromtimestamp(value / 1_000_000, tz=UTC).isoformat() if value is not None else None
+        (datetime(1970, 1, 1, tzinfo=UTC) + timedelta(microseconds=value)).isoformat()
+        if value is not None
+        else None
     )
 
 
@@ -244,10 +257,10 @@ class TradingStore:
         ]
         encoded, digest = _canonical(payload)
         existing = self._conn.execute(
-            "SELECT payload_hash FROM trading_events WHERE event_id=?", (event_id,)
+            "SELECT payload_hash,event_at FROM trading_events WHERE event_id=?", (event_id,)
         ).fetchone()
         if existing:
-            if existing["payload_hash"] != digest:
+            if existing["payload_hash"] != digest or existing["event_at"] != event_iso:
                 raise ValueError("event_id já existe com conteúdo diferente")
             return False
         self._conn.execute(
@@ -358,6 +371,10 @@ class TradingStore:
         payload: dict[str, Any],
         quality_flags: frozenset[str],
     ) -> bool:
+        if venue != "binance_spot" or symbol not in _SYMBOL_CODES or kind not in _KIND_CODES:
+            raise ValueError("dense store suporta apenas BTC/ETH Binance Spot")
+        if not session_id:
+            raise ValueError("session_id vazio")
         received = ensure_utc(received_at, "received_at")
         event = ensure_utc(event_at, "event_at") if event_at else None
         if event is not None and event > received:
@@ -375,18 +392,18 @@ class TradingStore:
                    WHERE venue=? AND symbol=? AND kind=? AND observation_id=?
                    UNION ALL
                    SELECT payload_hash FROM microstructure_events
-                   WHERE venue=? AND symbol=? AND kind=? AND observation_id=? LIMIT 1""",
+                   WHERE venue=? AND symbol=? AND kind=? AND observation_id=?""",
                 (*dense_key, *key, *key),
-            ).fetchone()
+            ).fetchall()
             if existing:
-                if existing["payload_hash"].lower() != digest:
+                if any(row["payload_hash"].lower() != digest for row in existing):
                     raise ValueError("observation ID já existe com hash conflitante")
                 return False
             self._conn.execute(
                 """INSERT INTO microstructure_events_v3
                 (kind_code,symbol_code,observation_id,sequence_id,event_us,received_us,
-                 ingested_us,session_blob,payload_hash_blob,payload_zlib,quality_flags)
-                VALUES (?,?,?,?,?,?,?,?,?,?,?)""",
+                 ingested_us,session_blob,payload_hash_blob,payload_zlib,quality_flags,session_text)
+                VALUES (?,?,?,?,?,?,?,?,?,?,?,?)""",
                 (
                     _KIND_CODES[kind],
                     _SYMBOL_CODES[symbol],
@@ -395,10 +412,11 @@ class TradingStore:
                     _micros(event) if event else None,
                     _micros(received),
                     _micros(ingested),
-                    bytes.fromhex(session_id) if len(session_id) == 32 else session_id.encode(),
+                    session_id.encode("utf-8"),
                     bytes.fromhex(digest),
                     zlib.compress(encoded.encode("utf-8"), level=6),
                     json.dumps(sorted(quality_flags)),
+                    session_id,
                 ),
             )
         return True
@@ -507,7 +525,7 @@ class TradingStore:
                 (
                     metric,
                     symbol,
-                    datetime.now().astimezone().isoformat(),
+                    datetime.now(UTC).isoformat(),
                     self.session_id,
                     detail,
                     SCIENTIFIC_STATE,
@@ -528,10 +546,10 @@ class TradingStore:
         return True
 
     def latest_microstructure(self) -> list[Any]:
-        rows = self._decoded_rows()
-        latest: dict[tuple[str, str], dict[str, Any]] = {}
+        rows = self._decoded_rows(latest_only=True)
+        latest: dict[tuple[str, str, str], dict[str, Any]] = {}
         for row in rows:
-            key = (row["symbol"], row["kind"])
+            key = (row["venue"], row["symbol"], row["kind"])
             if key not in latest or row["received_at"] > latest[key]["received_at"]:
                 latest[key] = row
         return list(latest.values())
@@ -542,19 +560,23 @@ class TradingStore:
             (_dt(start, "start"), _dt(end, "end")),
         )
 
-    def _decoded_rows(self, where: str = "", params: tuple[Any, ...] = ()) -> list[dict[str, Any]]:
+    def _decoded_rows(
+        self, where: str = "", params: tuple[Any, ...] = (), *, latest_only: bool = False
+    ) -> list[dict[str, Any]]:
         columns = (
             "kind,observation_id,venue,symbol,sequence_id,event_at,received_at,ingested_at,"
             "session_id,collector_version,payload_hash,quality_flags,scientific_state"
         )
+        if latest_only:
+            where = "WHERE (venue,symbol,kind,observation_id) IN (SELECT venue,symbol,kind,observation_id FROM (SELECT venue,symbol,kind,observation_id,ROW_NUMBER() OVER (PARTITION BY venue,symbol,kind ORDER BY received_at DESC,observation_id DESC) AS rn FROM {table}) WHERE rn=1)"
         result: list[dict[str, Any]] = []
         for row in self._conn.execute(
-            f"SELECT {columns},payload_json,NULL payload_zlib FROM microstructure_events {where}",
+            f"SELECT {columns},payload_json,NULL payload_zlib FROM microstructure_events {where.format(table='microstructure_events')}",
             params,
         ):
             result.append(dict(row))
         for row in self._conn.execute(
-            f"SELECT {columns},NULL payload_json,payload_zlib FROM microstructure_events_v2 {where}",
+            f"SELECT {columns},NULL payload_json,payload_zlib FROM microstructure_events_v2 {where.format(table='microstructure_events_v2')}",
             params,
         ):
             item = dict(row)
@@ -562,7 +584,9 @@ class TradingStore:
             result.append(item)
         dense_where = ""
         dense_params: tuple[Any, ...] = ()
-        if where:
+        if latest_only:
+            dense_where = "WHERE (symbol_code,kind_code,observation_id) IN (SELECT symbol_code,kind_code,observation_id FROM (SELECT symbol_code,kind_code,observation_id,ROW_NUMBER() OVER (PARTITION BY symbol_code,kind_code ORDER BY received_us DESC,observation_id DESC) AS rn FROM microstructure_events_v3) WHERE rn=1)"
+        elif where:
             start, end = params
             dense_where = "WHERE received_us>=? AND received_us<?"
             dense_params = (
@@ -583,8 +607,14 @@ class TradingStore:
                     "event_at": _from_micros(item["event_us"]),
                     "received_at": _from_micros(item["received_us"]),
                     "ingested_at": _from_micros(item["ingested_us"]),
-                    "session_id": item["session_blob"].hex(),
-                    "collector_version": "binance_spot_microstructure_v1",
+                    "session_id": item["session_text"]
+                    if item["session_text"] is not None
+                    else (
+                        item["session_blob"].hex()
+                        if len(item["session_blob"]) == 16
+                        else item["session_blob"].decode("utf-8")
+                    ),
+                    "collector_version": item["collector_version"],
                     "payload_hash": item["payload_hash_blob"].hex(),
                     "quality_flags": item["quality_flags"],
                     "scientific_state": SCIENTIFIC_STATE,
@@ -595,112 +625,100 @@ class TradingStore:
         return result
 
     def compact_microstructure_v1(self, *, batch_size: int = 10_000) -> dict[str, int]:
-        """Copy v1 rows losslessly to compressed v2, verify, then remove redundancy.
+        """Verify every field and payload before deleting each copied row.
 
-        Call only while the collector is stopped. A filesystem backup must be made by
-        the operator before this maintenance operation.
+        Offline maintenance only; preserve a backup before calling.
         """
-        if batch_size <= 0:
-            raise ValueError("batch_size precisa ser positivo")
-        before = self._conn.execute("SELECT COUNT(*) FROM microstructure_events").fetchone()[0]
-        copied = 0
-        while True:
-            rows = self._conn.execute(
-                "SELECT * FROM microstructure_events ORDER BY rowid LIMIT ?", (batch_size,)
-            ).fetchall()
-            if not rows:
-                break
-            with self._conn:
-                for row in rows:
-                    self._conn.execute(
-                        """INSERT INTO microstructure_events_v2
-                        (kind,observation_id,venue,symbol,sequence_id,event_at,received_at,
-                         ingested_at,session_id,collector_version,payload_hash,payload_zlib,
-                         quality_flags,scientific_state) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)
-                        ON CONFLICT(venue,symbol,kind,observation_id) DO NOTHING""",
-                        (
-                            row["kind"],
-                            row["observation_id"],
-                            row["venue"],
-                            row["symbol"],
-                            row["sequence_id"],
-                            row["event_at"],
-                            row["received_at"],
-                            row["ingested_at"],
-                            row["session_id"],
-                            row["collector_version"],
-                            row["payload_hash"],
-                            zlib.compress(row["payload_json"].encode("utf-8"), 6),
-                            row["quality_flags"],
-                            row["scientific_state"],
-                        ),
-                    )
-                    copied += 1
-                # Delete only rows proven present in v2 with the same content hash.
-                self._conn.execute(
-                    """DELETE FROM microstructure_events AS old WHERE EXISTS (
-                       SELECT 1 FROM microstructure_events_v2 AS new
-                       WHERE new.venue=old.venue AND new.symbol=old.symbol
-                         AND new.kind=old.kind AND new.observation_id=old.observation_id
-                         AND new.payload_hash=old.payload_hash)"""
-                )
-            # DELETE removes the entire verified batch (and any previously verified rows).
-        remaining = self._conn.execute("SELECT COUNT(*) FROM microstructure_events").fetchone()[0]
-        if remaining:
-            raise RuntimeError(f"compactação incompleta: {remaining} linhas v1 restantes")
-        return {"v1_before": before, "processed": copied, "v1_after": remaining}
+        return self._compact(1, batch_size)
 
     def compact_microstructure_v2(self, *, batch_size: int = 10_000) -> dict[str, int]:
-        """Move verified compressed v2 rows into the dense WITHOUT ROWID layout."""
+        """Copy v2 to dense storage without losing session/version provenance."""
+        return self._compact(2, batch_size)
+
+    def _compact(self, version: int, batch_size: int) -> dict[str, int]:
         if batch_size <= 0:
             raise ValueError("batch_size precisa ser positivo")
-        before = self._conn.execute("SELECT COUNT(*) FROM microstructure_events_v2").fetchone()[0]
+        source = "microstructure_events" if version == 1 else "microstructure_events_v2"
+        target = "microstructure_events_v2" if version == 1 else "microstructure_events_v3"
+        before = self._conn.execute(f"SELECT COUNT(*) FROM {source}").fetchone()[0]
         processed = 0
         while True:
             rows = self._conn.execute(
-                "SELECT * FROM microstructure_events_v2 ORDER BY rowid LIMIT ?", (batch_size,)
+                f"SELECT * FROM {source} ORDER BY rowid LIMIT ?", (batch_size,)
             ).fetchall()
             if not rows:
                 break
             with self._conn:
-                for row in rows:
-                    self._conn.execute(
-                        """INSERT INTO microstructure_events_v3
-                        (kind_code,symbol_code,observation_id,sequence_id,event_us,received_us,
-                         ingested_us,session_blob,payload_hash_blob,payload_zlib,quality_flags)
-                        VALUES (?,?,?,?,?,?,?,?,?,?,?)
-                        ON CONFLICT(symbol_code,kind_code,observation_id) DO NOTHING""",
-                        (
-                            _KIND_CODES[row["kind"]],
-                            _SYMBOL_CODES[row["symbol"]],
-                            row["observation_id"],
-                            row["sequence_id"],
-                            _micros(datetime.fromisoformat(row["event_at"]))
+                for raw in rows:
+                    row = dict(raw)
+                    content = (
+                        row["payload_json"].encode("utf-8")
+                        if version == 1
+                        else zlib.decompress(row["payload_zlib"])
+                    )
+                    if hashlib.sha256(content).hexdigest() != row["payload_hash"]:
+                        raise ValueError("compactacao: hash original nao corresponde ao payload")
+                    source_key = (row["venue"], row["symbol"], row["kind"], row["observation_id"])
+                    if version == 1:
+                        copied = {key: value for key, value in row.items() if key != "payload_json"}
+                        copied["payload_zlib"] = zlib.compress(content, 6)
+                        predicate = "venue=? AND symbol=? AND kind=? AND observation_id=?"
+                        key = source_key
+                    else:
+                        if (
+                            row["venue"] != "binance_spot"
+                            or row["symbol"] not in _SYMBOL_CODES
+                            or row["kind"] not in _KIND_CODES
+                            or row["scientific_state"] != SCIENTIFIC_STATE
+                        ):
+                            raise ValueError(
+                                "compactacao: proveniencia nao representavel no layout denso"
+                            )
+                        copied = {
+                            "kind_code": _KIND_CODES[row["kind"]],
+                            "symbol_code": _SYMBOL_CODES[row["symbol"]],
+                            "observation_id": row["observation_id"],
+                            "sequence_id": row["sequence_id"],
+                            "event_us": _micros(datetime.fromisoformat(row["event_at"]))
                             if row["event_at"]
                             else None,
-                            _micros(datetime.fromisoformat(row["received_at"])),
-                            _micros(datetime.fromisoformat(row["ingested_at"])),
-                            bytes.fromhex(row["session_id"])
-                            if len(row["session_id"]) == 32
-                            else row["session_id"].encode(),
-                            bytes.fromhex(row["payload_hash"]),
-                            row["payload_zlib"],
-                            row["quality_flags"],
-                        ),
+                            "received_us": _micros(datetime.fromisoformat(row["received_at"])),
+                            "ingested_us": _micros(datetime.fromisoformat(row["ingested_at"])),
+                            "session_blob": row["session_id"].encode("utf-8"),
+                            "session_text": row["session_id"],
+                            "collector_version": row["collector_version"],
+                            "payload_hash_blob": bytes.fromhex(row["payload_hash"]),
+                            "payload_zlib": row["payload_zlib"],
+                            "quality_flags": row["quality_flags"],
+                        }
+                        predicate = "symbol_code=? AND kind_code=? AND observation_id=?"
+                        key = (copied["symbol_code"], copied["kind_code"], copied["observation_id"])
+                    existing = self._conn.execute(
+                        f"SELECT * FROM {target} WHERE {predicate}", key
+                    ).fetchone()
+                    if existing is not None:
+                        target_row = dict(existing)
+                        if zlib.decompress(target_row["payload_zlib"]) != content:
+                            raise ValueError("compactacao: payload conflitante no destino")
+                        if version == 2 and target_row["session_text"] is None:
+                            blob = target_row["session_blob"]
+                            target_row["session_text"] = (
+                                blob.hex() if len(blob) == 16 else blob.decode("utf-8")
+                            )
+                        if any(
+                            target_row[k] != v
+                            for k, v in copied.items()
+                            if k not in {"payload_zlib", "session_blob"}
+                        ):
+                            raise ValueError("compactacao: metadados conflitantes no destino")
+                    else:
+                        self._conn.execute(
+                            f"INSERT INTO {target} ({','.join(copied)}) VALUES ({','.join('?' for _ in copied)})",
+                            tuple(copied.values()),
+                        )
+                    self._conn.execute(
+                        f"DELETE FROM {source} WHERE venue=? AND symbol=? AND kind=? AND observation_id=?",
+                        source_key,
                     )
-                    processed += 1
-                self._conn.execute(
-                    """DELETE FROM microstructure_events_v2 AS old WHERE EXISTS (
-                       SELECT 1 FROM microstructure_events_v3 AS new
-                       WHERE new.symbol_code=CASE old.symbol WHEN 'BTCUSDT' THEN 1 ELSE 2 END
-                         AND new.kind_code=CASE old.kind WHEN 'trade' THEN 1 WHEN 'bbo' THEN 2
-                           WHEN 'depth' THEN 3 ELSE 4 END
-                         AND new.observation_id=old.observation_id
-                         AND lower(hex(new.payload_hash_blob))=old.payload_hash)"""
-                )
-        remaining = self._conn.execute("SELECT COUNT(*) FROM microstructure_events_v2").fetchone()[
-            0
-        ]
-        if remaining:
-            raise RuntimeError(f"compactação v2 incompleta: {remaining} linhas restantes")
-        return {"v2_before": before, "processed": processed, "v2_after": remaining}
+            processed += len(rows)
+        return {f"v{version}_before": before, "processed": processed, f"v{version}_after": 0}

@@ -5,7 +5,7 @@ Orquestrador de ponta a ponta:
     1. Coleta histórica: funding + OI + spot (com circuit breakers)
     2. Constrói FeatureVectors (alinhamento temporal, sem interpolação)
     3. Treina RegimeEngine sobre série in-sample completa
-    4. Gera sinais causais para toda a série
+    4. Gera sinais retrospectivos descritivos; o ajuste completo nao e OOS
     5. Persiste dados brutos (CSV) e sinais (JSONL) em data/v3/
     6. Emite evento wfa_ready via predictor_core.obs
 
@@ -25,6 +25,8 @@ DEPENDÊNCIAS:
 
 import argparse
 import asyncio
+import hashlib
+import json
 import logging
 import sys
 from datetime import UTC, datetime, timedelta
@@ -48,6 +50,7 @@ from GarimpoInvestimentos.v3.collectors.oi_collector import (
     load_oi_csv,
     save_oi_csv,
 )
+from GarimpoInvestimentos.v3.collectors.record_io import validate_observation
 from GarimpoInvestimentos.v3.collectors.spot_collector import (
     SpotCollector,
     load_spot_csv,
@@ -58,7 +61,11 @@ from GarimpoInvestimentos.v3.feature_builder import (
     build_oi_index,
     build_spot_index,
 )
-from GarimpoInvestimentos.v3.regime_engine import RegimeEngine, StaleRegimeModelError
+from GarimpoInvestimentos.v3.regime_engine import (
+    MODEL_SCHEMA_VERSION,
+    RegimeEngine,
+    StaleRegimeModelError,
+)
 from GarimpoInvestimentos.v3.signal_engine import (
     SignalRecord,
     emit_signal,
@@ -76,6 +83,7 @@ _DATA_ROOT = DATA_DIR / "v3"
 
 
 def _symbol_dir(symbol: str) -> Path:
+    validate_observation(symbol, 0, {})
     return _DATA_ROOT / symbol
 
 
@@ -88,11 +96,11 @@ def _oi_path(symbol: str) -> Path:
 
 
 def spot_path(symbol: str) -> Path:
-    return _symbol_dir(symbol) / "spot_1h.csv"
+    return _symbol_dir(symbol) / "spot_binance_1h.csv"
 
 
 def _signals_path(symbol: str) -> Path:
-    return _symbol_dir(symbol) / "signals.jsonl"
+    return _symbol_dir(symbol) / "signals.replay.v3_2.jsonl"
 
 
 def _model_path(symbol: str) -> Path:
@@ -208,11 +216,9 @@ async def run_symbol(
 
     # DPL oficial: o CSV permanece como ponte de rollback, mas a Feature Store
     # bitemporal passa a ser o registro canônico para funding/OI novos.
-    cache_paths = [path for path in (_funding_path(symbol), _oi_path(symbol)) if path.exists()]
-    cache_mtime = max(
-        (path.stat().st_mtime for path in cache_paths), default=datetime.now(UTC).timestamp()
-    )
-    ingested_at = datetime.fromtimestamp(cache_mtime, tz=UTC)
+    # A CSV mtime is not an authenticated acquisition/publication timestamp.
+    # This read establishes availability of this version now, not in the past.
+    ingested_at = datetime.now(UTC)
     quality_states = {}
     with FeatureStore(FEATURE_STORE_DB) as store:
         persisted = persist_v3_derivatives(
@@ -314,17 +320,24 @@ async def run_symbol(
 
     logger.info("pipeline [%s]: %d feature vectors construídos", symbol, len(feature_vectors))
 
-    # 4. Treinar HMM sobre série completa (in-sample para o pipeline de sinal)
-    #    O backtest_v3 fará o WFA com janelas rolantes — este fit é para produção.
+    # 4. Descriptive in-sample fit; historical rows are replay, not OOS forecasts.
     model_path = _model_path(symbol)
     engine = RegimeEngine()
 
     log_returns = [fv.log_return_8h for fv in feature_vectors]
     realized_vols = [fv.realized_vol_24h for fv in feature_vectors]
 
+    data_hash = hashlib.sha256(
+        json.dumps([log_returns, realized_vols], allow_nan=False).encode()
+    ).hexdigest()
+    model_path = model_path.with_name(
+        f"{model_path.stem}.schema{MODEL_SCHEMA_VERSION}.{data_hash}{model_path.suffix}"
+    )
     if model_path.exists() and not force_refresh:
         try:
             engine.load(model_path)
+            if engine.training_data_hash != data_hash:
+                raise StaleRegimeModelError("cache pertence a outra amostra de treino")
             logger.info("pipeline [%s]: modelo RegimeEngine carregado de %s", symbol, model_path)
         except StaleRegimeModelError as exc:
             # Contrato de features/HMM mudou: o .pkl em cache é incoerente. Auto-cura
@@ -341,7 +354,7 @@ async def run_symbol(
         engine.fit(log_returns, realized_vols)
         engine.save(model_path)
 
-    # 5. Inferência causal — um regime por feature vector
+    # 5. Forward filtering on an IS fit. Whole-history outputs remain retrospective.
     regime_series = engine.predict_series(log_returns, realized_vols)
 
     # 6. Geração de sinais
@@ -378,6 +391,8 @@ async def run_symbol(
             "symbol": symbol,
             "start_date": start_date,
             "end_date": end_date or "now",
+            "scientific_state": "DESCRIPTIVE_REPLAY",
+            "training_data_hash": data_hash,
             "model_path": str(model_path),
             "signals_path": str(sig_path),
         },

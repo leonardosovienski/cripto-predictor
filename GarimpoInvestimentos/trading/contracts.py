@@ -15,14 +15,20 @@ antes do instante em que a intenção foi gerada.
 
 from __future__ import annotations
 
+import math
 import uuid
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from enum import Enum
 
 
+def require_finite(value: float, label: str) -> None:
+    if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value):
+        raise ValueError(f"{label} deve ser um número finito")
+
+
 def ensure_utc(value: datetime, label: str) -> datetime:
-    if value.tzinfo is None:
+    if value.tzinfo is None or value.utcoffset() is None:
         raise ValueError(f"{label} precisa ser timezone-aware (UTC)")
     return value.astimezone(UTC)
 
@@ -131,6 +137,17 @@ class TradeIntent:
             )
         if entry_end < entry_start:
             raise ValueError("TradeIntent: entry_window_end anterior a entry_window_start")
+        for name in (
+            "holding_period_hours",
+            "target_position_fraction",
+            "slippage_limit_bps",
+            "estimated_round_trip_friction",
+            "stop_loss_pct",
+            "take_profit_pct",
+        ):
+            value = getattr(self, name)
+            if value is not None:
+                require_finite(value, f"TradeIntent.{name}")
         if self.holding_period_hours <= 0:
             raise ValueError("TradeIntent.holding_period_hours deve ser > 0")
         if not (0 <= self.target_position_fraction <= 1):
@@ -171,10 +188,13 @@ class Fill:
     filled_at: datetime
 
     def __post_init__(self) -> None:
+        require_finite(self.qty, f"{type(self).__name__}.qty")
         if self.qty <= 0:
             raise ValueError("Fill.qty deve ser > 0")
+        require_finite(self.price, "Fill.price")
         if self.price <= 0:
             raise ValueError("Fill.price deve ser > 0")
+        require_finite(self.fee, "Fill.fee")
         if self.fee < 0:
             raise ValueError("Fill.fee não pode ser negativo")
         object.__setattr__(self, "filled_at", ensure_utc(self.filled_at, "Fill.filled_at"))
@@ -202,18 +222,34 @@ class Order:
     status_reason: str | None = None
 
     def __post_init__(self) -> None:
+        require_finite(self.qty, f"{type(self).__name__}.qty")
         if self.qty <= 0:
             raise ValueError("Order.qty deve ser > 0")
         if self.order_type is OrderType.LIMIT and self.limit_price is None:
             raise ValueError("Order: order_type=LIMIT exige limit_price")
+        if self.limit_price is not None:
+            require_finite(self.limit_price, "Order.limit_price")
         if self.limit_price is not None and self.limit_price <= 0:
             raise ValueError("Order.limit_price deve ser > 0")
         filled_qty = sum(f.qty for f in self.fills)
-        if filled_qty > self.qty + 1e-9:
+        if filled_qty > self.qty and not math.isclose(
+            filled_qty, self.qty, rel_tol=1e-12, abs_tol=0
+        ):
             raise ValueError(
                 f"Order {self.order_id}: soma dos fills ({filled_qty}) excede qty ({self.qty})"
             )
         created = ensure_utc(self.created_at, "Order.created_at")
+        fill_ids = set()
+        for fill in self.fills:
+            if fill.order_id != self.order_id or fill.fill_id in fill_ids:
+                raise ValueError("Order: fill de outra ordem ou fill_id duplicado")
+            fill_ids.add(fill.fill_id)
+            if fill.filled_at < created:
+                raise ValueError("Order: fill anterior a created_at")
+            if self.accepted_at is not None and fill.filled_at < ensure_utc(
+                self.accepted_at, "accepted_at"
+            ):
+                raise ValueError("Order: fill anterior a accepted_at")
         object.__setattr__(self, "created_at", created)
         for name in ("submitted_at", "accepted_at", "terminal_at", "last_reconciled_at"):
             value = getattr(self, name)
@@ -223,6 +259,19 @@ class Order:
             if normalized < created:
                 raise ValueError(f"Order.{name} anterior a created_at")
             object.__setattr__(self, name, normalized)
+        if self.terminal_at is not None:
+            previous = [created, *(fill.filled_at for fill in self.fills)]
+            previous.extend(
+                value for value in (self.submitted_at, self.accepted_at) if value is not None
+            )
+            if self.terminal_at < max(previous):
+                raise ValueError("Order.terminal_at anterior ao ultimo evento")
+        if (
+            self.last_reconciled_at is not None
+            and self.terminal_at is not None
+            and self.last_reconciled_at < self.terminal_at
+        ):
+            raise ValueError("Order.last_reconciled_at anterior ao terminal")
         if self.accepted_at is not None and self.submitted_at is not None:
             if self.accepted_at < self.submitted_at:
                 raise ValueError("Order.accepted_at anterior a submitted_at")
@@ -233,7 +282,7 @@ class Order:
 
     @property
     def remaining_qty(self) -> float:
-        return round(self.qty - self.filled_qty, 12)
+        return max(0.0, self.qty - self.filled_qty)
 
     @property
     def avg_fill_price(self) -> float | None:
@@ -253,16 +302,22 @@ class Position:
     intent_id: str = ""
 
     def __post_init__(self) -> None:
+        require_finite(self.qty, f"{type(self).__name__}.qty")
         if self.qty <= 0:
             raise ValueError("Position.qty deve ser > 0")
+        require_finite(self.avg_entry_price, "Position.avg_entry_price")
         if self.avg_entry_price <= 0:
             raise ValueError("Position.avg_entry_price deve ser > 0")
         object.__setattr__(self, "opened_at", ensure_utc(self.opened_at, "Position.opened_at"))
 
     def notional(self, mark_price: float) -> float:
+        require_finite(mark_price, "mark_price")
+        if mark_price <= 0:
+            raise ValueError("mark_price deve ser > 0")
         return self.qty * mark_price
 
     def unrealized_pnl(self, mark_price: float) -> float:
+        self.notional(mark_price)
         sign = 1.0 if self.direction is Direction.LONG else -1.0
         return sign * self.qty * (mark_price - self.avg_entry_price)
 
@@ -288,8 +343,12 @@ class SettlementRecord:
         closed = ensure_utc(self.closed_at, "SettlementRecord.closed_at")
         if closed < opened:
             raise ValueError("SettlementRecord: closed_at anterior a opened_at")
+        require_finite(self.qty, f"{type(self).__name__}.qty")
         if self.qty <= 0:
             raise ValueError("SettlementRecord.qty deve ser > 0")
+        require_finite(self.entry_price, "SettlementRecord.entry_price")
+        require_finite(self.exit_price, "SettlementRecord.exit_price")
+        require_finite(self.fees_paid, "SettlementRecord.fees_paid")
         if self.entry_price <= 0 or self.exit_price <= 0:
             raise ValueError("SettlementRecord: entry_price/exit_price devem ser > 0")
         if self.fees_paid < 0:

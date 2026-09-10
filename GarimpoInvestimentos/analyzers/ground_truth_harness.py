@@ -214,14 +214,22 @@ def compare_to_truth(enriched: list[dict], world: PlantedWorld) -> HarnessResult
     vistas: set[tuple[str, datetime]] = set()
 
     for r in enriched:
+        pred_date = r["pred_date"]
+        timestamp = (
+            pred_date.replace(tzinfo=UTC) if pred_date.tzinfo is None else pred_date.astimezone(UTC)
+        )
+        k = (r["ativo"], timestamp)
+        if k in vistas:
+            raise ValueError(f"Previsao duplicada: {k}")
+        vistas.add(k)
         medido = r.get(chave)
         if medido is None:
             continue
-        k = (r["ativo"], r["pred_date"].replace(tzinfo=None))
-        esperado = world.truth.get((k[0], k[1].replace(tzinfo=UTC)))
+        esperado = world.truth.get(k)
         if esperado is None:
             continue
-        vistas.add(k)
+        if not math.isfinite(float(medido)):
+            raise ValueError("Medicao nao finita")
         recuperadas += 1
         erros.append(abs(float(medido) - esperado))
 
@@ -251,6 +259,8 @@ def spearman_of(enriched: list[dict], horizon: int) -> float | None:
         for r in enriched
         if r.get(f"var_d{horizon}_pct") is not None
     ]
+    if any(not math.isfinite(value) for pair in pares for value in pair):
+        raise ValueError("Spearman exige valores finitos")
     n = len(pares)
     if n < 3:
         return None
@@ -258,8 +268,14 @@ def spearman_of(enriched: list[dict], horizon: int) -> float | None:
     def _postos(vals):
         ordem = sorted(range(n), key=lambda i: vals[i])
         r = [0.0] * n
-        for pos, i in enumerate(ordem):
-            r[i] = float(pos)
+        pos = 0
+        while pos < n:
+            end = pos + 1
+            while end < n and vals[ordem[end]] == vals[ordem[pos]]:
+                end += 1
+            for i in ordem[pos:end]:
+                r[i] = (pos + end - 1) / 2.0
+            pos = end
         return r
 
     rx, ry = _postos([p[0] for p in pares]), _postos([p[1] for p in pares])

@@ -7,6 +7,7 @@ não CSV) — ver histórico no dpl/providers/dxy.py.
 """
 
 import asyncio
+from datetime import UTC, datetime
 
 import pytest
 
@@ -47,14 +48,11 @@ def test_dxy_parses_csv_into_signal_points(monkeypatch):
     assert all(p.source == "fred" and p.name == "dxy" for p in points)
 
 
-def test_dxy_publish_lag_is_applied_conservatively(monkeypatch):
-    """Default publish_lag_days=1: published_at fica 1 dia DEPOIS do timestamp —
-    nunca antes, pra não arriscar look-ahead num dado que pode sair defasado."""
+def test_dxy_availability_is_the_observed_vintage(monkeypatch):
     monkeypatch.setattr(dxy, "get_http_client", lambda *a, **k: _Client(_CSV))
-    provider = dxy.DXYProvider()
-    points = asyncio.run(provider.fetch(limit=90))
-    for p in points:
-        assert (p.published_at - p.timestamp).days == 1
+    before = datetime.now(UTC)
+    points = asyncio.run(dxy.DXYProvider().fetch())
+    assert all(p.published_at >= before and p.vintage == p.published_at for p in points)
 
 
 def test_dxy_respects_limit(monkeypatch):
@@ -108,7 +106,9 @@ def test_dxy_custom_publish_lag(monkeypatch):
     monkeypatch.setattr(dxy, "get_http_client", lambda *a, **k: _Client(_CSV))
     provider = dxy.DXYProvider(publish_lag_days=0)
     points = asyncio.run(provider.fetch())
-    assert all(p.published_at == p.timestamp for p in points)
+    assert all(
+        p.published_at > p.timestamp and "available_at_receipt" in p.quality_flags for p in points
+    )
 
 
 def test_dxy_parses_real_fred_response_snippet(monkeypatch):
@@ -129,22 +129,13 @@ def test_dxy_parses_real_fred_response_snippet(monkeypatch):
     assert points[0].value == 101.4155
 
 
-def test_dxy_publish_lag_skips_weekend(monkeypatch):
-    """CORREÇÃO 2026-09-04: publish_lag_days conta dias ÚTEIS. Um ponto de
-    sexta-feira com lag=1 tem que apontar pra segunda-feira seguinte — nunca
-    pra sábado, que nunca teria dado publicado (isso seria look-ahead: o
-    dado real só existe na segunda, não pode ficar marcado como disponível
-    já no sábado)."""
-    friday_csv = "observation_date,DTWEXBGS\n2026-08-14,103.10\n"  # sexta-feira
+def test_dxy_does_not_invent_monday_publication_for_friday(monkeypatch):
+    friday_csv = "observation_date,DTWEXBGS\n2026-08-14,103.10\n"
     monkeypatch.setattr(dxy, "get_http_client", lambda *a, **k: _Client(friday_csv))
-    provider = dxy.DXYProvider(publish_lag_days=1)
-    points = asyncio.run(provider.fetch())
-
+    before = datetime.now(UTC)
+    points = asyncio.run(dxy.DXYProvider(publish_lag_days=1).fetch())
     assert len(points) == 1
-    p = points[0]
-    assert p.timestamp.strftime("%A") == "Friday"
-    assert p.published_at.strftime("%A") == "Monday"
-    assert (p.published_at - p.timestamp).days == 3  # sex -> seg = 3 dias corridos
+    assert points[0].published_at >= before
 
 
 def test_dxy_publish_lag_two_business_days_from_friday():

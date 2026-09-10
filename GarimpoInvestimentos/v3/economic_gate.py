@@ -42,15 +42,35 @@ def estimate_edge(
     *,
     minimum_sample: int = 20,
     z_score: float = 1.96,
+    max_lag: int = 0,
 ) -> EdgeEstimate | None:
-    """Estimate mean signed return without looking at the evaluation period."""
-    values = [float(value) for value in signed_returns if math.isfinite(float(value))]
-    if minimum_sample < 2 or z_score <= 0:
+    """Descriptive IS mean with Bartlett HAC error for declared overlap lag.
+
+    This is an in-sample screen, not a post-selection confidence guarantee.
+    """
+    values = [float(value) for value in signed_returns]
+    if any(not math.isfinite(value) for value in values):
+        raise ValueError("edge sample must be finite")
+    if (
+        minimum_sample < 2
+        or not math.isfinite(z_score)
+        or z_score <= 0
+        or isinstance(max_lag, bool)
+        or not isinstance(max_lag, int)
+        or max_lag < 0
+    ):
         raise ValueError("invalid edge-estimation policy")
     if len(values) < minimum_sample:
         return None
     mean = st.mean(values)
-    standard_error = st.stdev(values) / math.sqrt(len(values))
+    n = len(values)
+    centered = [value - mean for value in values]
+    variance = sum(value * value for value in centered) / n
+    lag_limit = min(max_lag, n - 1)
+    for lag in range(1, lag_limit + 1):
+        covariance = sum(centered[i] * centered[i - lag] for i in range(lag, n)) / n
+        variance += 2 * (1 - lag / (lag_limit + 1)) * covariance
+    standard_error = math.sqrt(max(0, variance) / (n - 1))
     return EdgeEstimate(
         expected_signed_return=mean,
         lower_signed_return=mean - z_score * standard_error,
@@ -72,6 +92,8 @@ def decide_cost_aware(
     """Return TRADE only if conservative post-cost return clears the hurdle."""
     if (
         direction not in {-1, 1}
+        or not math.isfinite(horizon_hours)
+        or not math.isfinite(minimum_net_edge)
         or horizon_hours <= 0
         or minimum_net_edge < 0
         or not math.isfinite(float(funding_rate))
