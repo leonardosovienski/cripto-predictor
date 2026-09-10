@@ -81,10 +81,10 @@ def allow(stage: str, key: str, limit: int) -> GuardDecision:
 
 
 def reset_for_test() -> None:
-    path = Path(_BUDGET_DB)
-    if path.exists():
-        with sqlite3.connect(path) as conn:
-            conn.execute("DELETE FROM api_budget")
-            conn.commit()
+    """Reset only process-local notification state; budgets are never erased.
+
+    Tests that need a fresh budget must point _BUDGET_DB at a fresh temporary
+    database. Importing this helper must not provide an operational quota reset.
+    """
     global _disabled_notice_emitted
     _disabled_notice_emitted = False

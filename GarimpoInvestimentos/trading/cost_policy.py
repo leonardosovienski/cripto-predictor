@@ -1,38 +1,8 @@
-"""Política de custo canônica — resolve o gap dos "dois modelos não reconciliados".
+"""Route simulation costs by instrument; historical use is not execution calibration.
 
-O handoff de 2026-08-14 registrou: "dois modelos de custo não reconciliados —
-`v3/costs.py` (bps fixo) e `trading/microstructure.py` (anda o book) coexistem
-sem nenhum ter sido escolhido como 'o' modelo canônico".
-
-=== POR QUE "RECONCILIAR" NAO E FUNDIR OS DOIS ===
-
-Ao ler os dois, a premissa da pergunta se desfaz: eles nao sao duas respostas
-concorrentes para a mesma pergunta — sao respostas para instrumentos
-DIFERENTES.
-
-  v3/costs.py (CostModel)        -> PERPETUO. Fee taker + slippage em bps fixos
-                                    + funding signed por janela de 8h. Funding
-                                    so existe em perpetuo.
-  trading/costs.py (spot)        -> SPOT. Walk-the-book: spread e profundidade
-                                    entram no VWAP, sem funding porque spot nao
-                                    tem. Marcado como NAO CALIBRADO.
-
-Fundir seria pior que deixar separado: produziria um modelo que cobra funding de
-spot ou ignora profundidade em perp. O que faltava nao era um modelo unico — era
-um PONTO DE ENTRADA unico que escolhe o certo pelo instrumento e RECUSA o errado.
-
-=== A REGRA CANONICA, declarada ===
-
-1. `asset_class` do `Instrument` decide. `crypto_perp` -> CostModel;
-   `crypto_spot` -> walk-the-book. Classe desconhecida => erro, nunca um default
-   silencioso: aplicar custo errado por omissao e como nao aplicar custo.
-2. Para VEREDITO CIENTIFICO, o canonico e o `v3/costs.py` — foi ele que sustentou
-   os NO-GO de H1/H2/H3, esta calibrado em bps observaveis e nao depende de book.
-   O walk-the-book permanece explicitamente NAO CALIBRADO (docs/HYPOTHESES.md,
-   override 2026-08-14) e por isso NAO pode ser usado para emitir veredito
-   enquanto nao passar por calibracao contra execucao real.
-3. Esta politica NAO altera nenhum veredito ja emitido. H1/H2/H3 foram julgadas
-   com o CostModel e continuam como estao.
+Neither the fixed-bps perpetual scenario nor the spot order-book simulation has
+account/tier/size-specific calibration sufficient to certify realized profitability.
+Historical frozen NO-GO results remain preserved; they are not recalibrated here.
 """
 
 from __future__ import annotations
@@ -44,7 +14,7 @@ PERP = "crypto_perp"
 SPOT = "crypto_spot"
 
 #: Classes cujo custo pode sustentar veredito cientifico hoje.
-CALIBRATED_FOR_VERDICT = frozenset({PERP})
+CALIBRATED_FOR_VERDICT = frozenset()
 
 
 class CostModelMismatch(ValueError):
@@ -70,8 +40,8 @@ def cost_model_for(instrument: Instrument, *, for_verdict: bool = False):
         )
     if for_verdict and classe not in CALIBRATED_FOR_VERDICT:
         raise UncalibratedCostModel(
-            f"o modelo de custo de {classe!r} (walk-the-book, trading/costs.py) e "
-            "explicitamente NAO CALIBRADO contra execucao real (override 2026-08-14). "
+            f"o modelo de custo de {classe!r} e "
+            "NAO CALIBRADO contra execucao real para conta/tamanho/tier. "
             "Nao pode sustentar veredito cientifico. Use-o para simulacao/auditoria, "
             "ou calibre-o antes."
         )

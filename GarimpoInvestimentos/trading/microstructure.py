@@ -21,7 +21,7 @@ from datetime import UTC, datetime
 
 from predictor_core.net import get_http_client, with_retry
 
-from GarimpoInvestimentos.trading.contracts import Instrument, OrderSide, ensure_utc
+from GarimpoInvestimentos.trading.contracts import Instrument, OrderSide, ensure_utc, require_finite
 
 _BINANCE_DEPTH_URL = "https://api.binance.com/api/v3/depth"
 
@@ -32,6 +32,8 @@ class OrderBookLevel:
     qty: float
 
     def __post_init__(self) -> None:
+        require_finite(self.price, "OrderBookLevel.price")
+        require_finite(self.qty, "OrderBookLevel.qty")
         if self.price <= 0:
             raise ValueError("OrderBookLevel.price deve ser > 0")
         if self.qty <= 0:
@@ -53,9 +55,13 @@ class OrderBookSnapshot:
         if not self.bids or not self.asks:
             raise ValueError("OrderBookSnapshot precisa de ao menos 1 nível de bid e de ask")
         bid_prices = [level.price for level in self.bids]
+        if len(set(bid_prices)) != len(bid_prices):
+            raise ValueError("OrderBookSnapshot.bids contêm preços duplicados")
         if bid_prices != sorted(bid_prices, reverse=True):
             raise ValueError("OrderBookSnapshot.bids devem estar ordenados por preço decrescente")
         ask_prices = [level.price for level in self.asks]
+        if len(set(ask_prices)) != len(ask_prices):
+            raise ValueError("OrderBookSnapshot.asks contêm preços duplicados")
         if ask_prices != sorted(ask_prices):
             raise ValueError("OrderBookSnapshot.asks devem estar ordenados por preço crescente")
         if self.bids[0].price >= self.asks[0].price:
@@ -98,7 +104,9 @@ class SimulatedFill:
 
     @property
     def fully_filled(self) -> bool:
-        return self.filled_qty >= self.requested_qty - 1e-12
+        return self.filled_qty > 0 and math.isclose(
+            self.filled_qty, self.requested_qty, rel_tol=1e-12, abs_tol=0.0
+        )
 
 
 @dataclass(frozen=True)
@@ -149,6 +157,8 @@ class DepthUpdate:
         if self.previous_final_update_id is not None and self.previous_final_update_id < 0:
             raise ValueError("DepthUpdate.previous_final_update_id inválido")
         for price, qty in (*self.bids, *self.asks):
+            require_finite(price, "DepthUpdate.price")
+            require_finite(qty, "DepthUpdate.qty")
             if price <= 0 or qty < 0:
                 raise ValueError("DepthUpdate exige price > 0 e qty >= 0")
         object.__setattr__(self, "event_at", event_at)
@@ -193,14 +203,18 @@ class LocalOrderBook:
                 f"gap de sequence: esperado {expected}, recebido "
                 f"[{update.first_update_id},{update.final_update_id}]"
             )
-        for book, changes in ((self._bids, update.bids), (self._asks, update.asks)):
+        bids, asks = self._bids.copy(), self._asks.copy()
+        for book, changes in ((bids, update.bids), (asks, update.asks)):
             for price, qty in changes:
                 if qty == 0:
                     book.pop(price, None)
                 else:
                     book[price] = qty
-        if not self._bids or not self._asks:
+        if not bids or not asks:
             raise DepthSequenceGap("update esvaziou um lado do book; resnapshot obrigatório")
+        if max(bids) >= min(asks):
+            raise DepthSequenceGap("update cruzou o book; resnapshot obrigatório")
+        self._bids, self._asks = bids, asks
         self._last_update_id = update.final_update_id
         self._timestamp = update.event_at
         return True
@@ -217,23 +231,30 @@ def simulate_market_fill(snapshot: OrderBookSnapshot, side: OrderSide, qty: floa
     """Anda o book nível a nível ("walk the book") consumindo liquidez até
     preencher `qty` ou esgotar os níveis disponíveis — nunca preenche além do
     que o book realmente oferece, nunca interpola profundidade que não existe."""
+    require_finite(qty, "qty")
+    if not isinstance(side, OrderSide):
+        raise ValueError("side inválido")
     if qty <= 0:
         raise ValueError("simulate_market_fill: qty deve ser > 0")
     levels = snapshot.asks if side is OrderSide.BUY else snapshot.bids
 
     remaining = qty
-    notional = 0.0
+    notionals = []
+    quantities = []
     levels_consumed = 0
     for level in levels:
-        if remaining <= 1e-12:
+        if remaining <= 0:
             break
         take = min(remaining, level.qty)
-        notional += take * level.price
-        remaining -= take
+        notionals.append(take * level.price)
+        quantities.append(take)
+        remaining = max(0.0, qty - math.fsum(quantities))
         levels_consumed += 1
 
-    filled_qty = qty - remaining
-    vwap_price = (notional / filled_qty) if filled_qty > 1e-12 else None
+    filled_qty = math.fsum(quantities)
+    notional = math.fsum(notionals)
+    require_finite(notional, "fill notional")
+    vwap_price = (notional / filled_qty) if filled_qty > 0 else None
     slippage_bps = None
     if vwap_price is not None:
         sign = 1.0 if side is OrderSide.BUY else -1.0
@@ -264,6 +285,12 @@ def sqrt_impact_bps(participation_rate: float, volatility_bps: float, kappa: flo
     representa, em [0, 1]. `volatility_bps`: volatilidade do ativo no mesmo
     horizonte, em bps.
     """
+    for label, value in (
+        ("participation_rate", participation_rate),
+        ("volatility_bps", volatility_bps),
+        ("kappa", kappa),
+    ):
+        require_finite(value, label)
     if not (0 <= participation_rate <= 1):
         raise ValueError("sqrt_impact_bps: participation_rate deve estar em [0, 1]")
     if volatility_bps < 0:

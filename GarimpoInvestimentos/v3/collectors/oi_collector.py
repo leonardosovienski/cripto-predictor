@@ -15,7 +15,7 @@ LIMITAÇÃO CRÍTICA DA BINANCE:
 
 Contrato de saída (OIRecord):
     symbol              str
-    timestamp_ms        int   ← timestamp_exchange_ms (início do período 8h)
+    timestamp_ms        int   ← timestamp_exchange_ms (instante da observacao horaria)
     oi_contracts        float ← soma dos contratos abertos (sumOpenInterest)
     oi_notional_usd     float ← valor nocional em USD (sumOpenInterestValue)
 
@@ -24,7 +24,6 @@ O feature_builder usa oi_notional_usd (invariante à flutuação de preço unit�
 """
 
 import asyncio
-import csv
 import logging
 
 # Garantia de importação explícita no workspace para Pylance/Pyright.
@@ -36,6 +35,12 @@ from predictor_core.net import get_http_client, with_retry
 from predictor_core.obs import emit_event
 
 from GarimpoInvestimentos.v3.circuit_breaker import CircuitBreaker
+from GarimpoInvestimentos.v3.collectors.record_io import (
+    load_records,
+    save_records,
+    validate_observation,
+    validate_page,
+)
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -61,6 +66,15 @@ class OIRecord:
     oi_contracts: float
     oi_notional_usd: float
 
+    def __post_init__(self) -> None:
+        validate_observation(
+            self.symbol,
+            self.timestamp_ms,
+            {"oi_contracts": self.oi_contracts, "oi_notional_usd": self.oi_notional_usd},
+        )
+        if self.oi_contracts < 0 or self.oi_notional_usd < 0:
+            raise ValueError("OI nao pode ser negativo")
+
 
 # ------------------------------------------------------------------ #
 # Coletor                                                              #
@@ -69,7 +83,7 @@ class OIRecord:
 
 class OICollector:
     """
-    Coleta histórico de Open Interest em granularidade 8h.
+    Coleta histórico de Open Interest em granularidade 1h.
 
     Uso:
         cb = CircuitBreaker("oi_BTCUSDT")
@@ -86,6 +100,8 @@ class OICollector:
         start_ms: int,
         end_ms: int,
     ) -> list[OIRecord]:
+        if start_ms > end_ms or start_ms < 0:
+            raise ValueError("intervalo invalido")
         records: list[OIRecord] = []
 
         # Clamp ao limite de ~30 dias: pedir mais antigo retorna HTTP 400 (-1130).
@@ -104,7 +120,7 @@ class OICollector:
             )
             logger.warning(
                 "oi_collector [%s]: start ajustado para -%dd (limite Binance OI). "
-                "Histórico de OI mais antigo exige feed pago.",
+                "Histórico mais antigo exige outra fonte, como arquivos publicos Binance Vision.",
                 self.symbol,
                 _MAX_OI_HISTORY_DAYS,
             )
@@ -112,7 +128,7 @@ class OICollector:
         cursor = start_ms
 
         async with get_http_client() as client:
-            while cursor < end_ms:
+            while cursor <= end_ms:
                 if not self._cb.can_attempt():
                     emit_event(
                         "v3_cripto",
@@ -124,6 +140,7 @@ class OICollector:
 
                 try:
                     page = await self._fetch_page(client, cursor, end_ms)
+                    validate_page(page, self.symbol, "timestamp_ms", cursor, end_ms)
                 except Exception as exc:
                     self._cb.record_failure()
                     emit_event(
@@ -198,49 +215,19 @@ _FIELDNAMES = ["symbol", "timestamp_ms", "oi_contracts", "oi_notional_usd"]
 
 
 def save_oi_csv(records: list[OIRecord], path: Path) -> int:
-    path.parent.mkdir(parents=True, exist_ok=True)
-
-    existing_keys: set[int] = set()
-    if path.exists():
-        with open(path, newline="", encoding="utf-8-sig") as f:
-            for row in csv.DictReader(f):
-                existing_keys.add(int(row["timestamp_ms"]))
-
-    new_records = [r for r in records if r.timestamp_ms not in existing_keys]
-    if not new_records:
-        return 0
-
-    write_header = not path.exists() or path.stat().st_size == 0
-    with open(path, "a", newline="", encoding="utf-8-sig") as f:
-        writer = csv.DictWriter(f, fieldnames=_FIELDNAMES)
-        if write_header:
-            writer.writeheader()
-        for r in new_records:
-            writer.writerow(
-                {
-                    "symbol": r.symbol,
-                    "timestamp_ms": r.timestamp_ms,
-                    "oi_contracts": r.oi_contracts,
-                    "oi_notional_usd": r.oi_notional_usd,
-                }
-            )
-
-    logger.info("oi_collector: %d novos registros → %s", len(new_records), path)
-    return len(new_records)
+    """Add unique observations atomically; reject changed values for existing keys."""
+    return save_records(records, path, _FIELDNAMES, load_oi_csv, "timestamp_ms")
 
 
 def load_oi_csv(path: Path) -> list[OIRecord]:
-    if not path.exists():
-        return []
-    rows = []
-    with open(path, newline="", encoding="utf-8-sig") as f:
-        for row in csv.DictReader(f):
-            rows.append(
-                OIRecord(
-                    symbol=row["symbol"],
-                    timestamp_ms=int(row["timestamp_ms"]),
-                    oi_contracts=float(row["oi_contracts"]),
-                    oi_notional_usd=float(row["oi_notional_usd"]),
-                )
-            )
-    return sorted(rows, key=lambda r: r.timestamp_ms)
+    return load_records(
+        path,
+        _FIELDNAMES,
+        lambda row: OIRecord(
+            row["symbol"],
+            int(row["timestamp_ms"]),
+            float(row["oi_contracts"]),
+            float(row["oi_notional_usd"]),
+        ),
+        "timestamp_ms",
+    )

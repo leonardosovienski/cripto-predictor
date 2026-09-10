@@ -18,11 +18,12 @@ idempotência do predictor_ops (nunca reprocessa em silêncio).
 
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass, replace
 from datetime import datetime
 from typing import Protocol
 
-from GarimpoInvestimentos.trading.contracts import Fill, Order, OrderStatus
+from GarimpoInvestimentos.trading.contracts import Fill, Order, OrderStatus, require_finite
 
 _TERMINAL_STATES = frozenset(
     {
@@ -56,6 +57,11 @@ def accept(order: Order, *, accepted_at: datetime | None = None) -> Order:
 
 
 def apply_fill(order: Order, fill: Fill) -> Order:
+    for existing in order.fills:
+        if existing.fill_id == fill.fill_id:
+            if existing != fill:
+                raise OrderLifecycleError("fill_id já existe com conteúdo diferente")
+            return order
     if order.status not in (OrderStatus.ACCEPTED, OrderStatus.PARTIALLY_FILLED):
         raise OrderLifecycleError(
             f"Order {order.order_id}: apply_fill() exige ACCEPTED/PARTIALLY_FILLED, "
@@ -67,13 +73,19 @@ def apply_fill(order: Order, fill: Fill) -> Order:
         )
     new_fills = (*order.fills, fill)
     filled_qty = sum(f.qty for f in new_fills)
-    if filled_qty > order.qty + 1e-9:
+    complete = math.isclose(filled_qty, order.qty, rel_tol=1e-12, abs_tol=0)
+    if filled_qty > order.qty and not complete:
         raise OrderLifecycleError(
             f"Order {order.order_id}: fill levaria a quantidade preenchida ({filled_qty}) "
             f"acima de qty ({order.qty})"
         )
-    status = OrderStatus.FILLED if filled_qty >= order.qty - 1e-9 else OrderStatus.PARTIALLY_FILLED
-    return replace(order, status=status, fills=new_fills)
+    status = OrderStatus.FILLED if complete else OrderStatus.PARTIALLY_FILLED
+    return replace(
+        order,
+        status=status,
+        fills=new_fills,
+        terminal_at=max(f.filled_at for f in new_fills) if complete else None,
+    )
 
 
 def cancel(
@@ -157,6 +169,11 @@ class SimulatedExchangeAdapter:
 
     def record_fill(self, fill: Fill) -> None:
         existing = self._fills_by_order.get(fill.order_id, ())
+        for previous in existing:
+            if previous.fill_id == fill.fill_id:
+                if previous != fill:
+                    raise OrderLifecycleError("fill_id já existe com conteúdo diferente")
+                return
         self._fills_by_order[fill.order_id] = (*existing, fill)
 
     def reported_fills(self, order_id: str) -> tuple[Fill, ...]:
@@ -168,6 +185,7 @@ class ReconciliationBreak:
     order_id: str
     local_filled_qty: float
     exchange_filled_qty: float
+    reasons: tuple[str, ...] = ()
 
     @property
     def delta(self) -> float:
@@ -180,12 +198,40 @@ def reconcile(
     """Compara o estado local (`order.fills`) contra o que o venue reporta. `None`
     se bater dentro da tolerância; `ReconciliationBreak` se divergir — NUNCA
     silencia uma divergência ajustando o estado local sozinho."""
+    require_finite(tolerance, "tolerance")
+    if tolerance < 0:
+        raise ValueError("tolerance não pode ser negativa")
     exchange_fills = adapter.reported_fills(order.order_id)
     exchange_qty = sum(f.qty for f in exchange_fills)
     local_qty = order.filled_qty
-    if abs(local_qty - exchange_qty) <= tolerance:
-        return None
-    return ReconciliationBreak(order.order_id, local_qty, exchange_qty)
+    reasons = []
+    if abs(local_qty - exchange_qty) > tolerance:
+        reasons.append("quantity")
+    local = {f.fill_id: f for f in order.fills}
+    remote = {f.fill_id: f for f in exchange_fills}
+    if len(remote) != len(exchange_fills) or any(
+        f.order_id != order.order_id for f in exchange_fills
+    ):
+        reasons.append("invalid_exchange_receipts")
+    if local.keys() != remote.keys():
+        reasons.append("fill_identity")
+    for key in local.keys() & remote.keys():
+        a, b = local[key], remote[key]
+        if (
+            any(
+                abs(getattr(a, field) - getattr(b, field)) > tolerance
+                for field in ("qty", "price", "fee")
+            )
+            or a.filled_at != b.filled_at
+            or a.liquidity != b.liquidity
+        ):
+            reasons.append("fill_content")
+            break
+    return (
+        ReconciliationBreak(order.order_id, local_qty, exchange_qty, tuple(reasons))
+        if reasons
+        else None
+    )
 
 
 class OrderBookLedger:
@@ -196,9 +242,17 @@ class OrderBookLedger:
         self._client_order_ids: dict[str, str] = {}
 
     def submit(self, order: Order, *, client_order_id: str) -> Order:
+        if not client_order_id.strip():
+            raise OrderLifecycleError("client_order_id não pode ser vazio")
         existing_order_id = self._client_order_ids.get(client_order_id)
         if existing_order_id is not None:
-            return self._orders[existing_order_id]
+            existing = self._orders[existing_order_id]
+            fields = ("instrument", "side", "order_type", "qty", "limit_price")
+            if any(getattr(existing, f) != getattr(order, f) for f in fields):
+                raise OrderLifecycleError("client_order_id já existe com condições diferentes")
+            return existing
+        if order.order_id in self._orders:
+            raise OrderLifecycleError("order_id já pertence a outro client_order_id")
         self._orders[order.order_id] = order
         self._client_order_ids[client_order_id] = order.order_id
         return order
@@ -209,6 +263,24 @@ class OrderBookLedger:
     def update(self, order: Order) -> None:
         if order.order_id not in self._orders:
             raise OrderLifecycleError(f"Order {order.order_id}: não está no ledger")
+        previous = self._orders[order.order_id]
+        if any(
+            getattr(previous, f) != getattr(order, f)
+            for f in (
+                "intent_id",
+                "instrument",
+                "side",
+                "order_type",
+                "qty",
+                "limit_price",
+                "created_at",
+            )
+        ):
+            raise OrderLifecycleError("update não pode alterar identidade ou condições da ordem")
+        if not set(previous.fills).issubset(order.fills):
+            raise OrderLifecycleError("update não pode remover ou alterar fills")
+        if previous.status in _TERMINAL_STATES and order != previous:
+            raise OrderLifecycleError("update não pode reabrir estado terminal")
         self._orders[order.order_id] = order
 
     def open_orders(self) -> tuple[Order, ...]:

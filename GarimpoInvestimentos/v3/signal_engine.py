@@ -34,15 +34,19 @@ CONTRATO DE SAÍDA (SignalRecord):
     O campo features_used garante rastreabilidade completa ("Por que abriu às 14:32?").
 """
 
+import hashlib
 import json
 import logging
+import math
 import uuid
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, replace
 from datetime import UTC, datetime
 from pathlib import Path
 
 from predictor_core.obs import emit_event
 
+from GarimpoInvestimentos.durable_io import atomic_write, file_lock
+from GarimpoInvestimentos.trading.contracts import require_finite
 from GarimpoInvestimentos.v3.feature_builder import FeatureVector
 from GarimpoInvestimentos.v3.regime_engine import RegimeOutput
 
@@ -63,7 +67,7 @@ _MIN_REGIME_CONFIDENCE = 0.60  # P(estado) < 0.60 → não gera sinal
 # ------------------------------------------------------------------ #
 
 
-@dataclass
+@dataclass(frozen=True)
 class SignalRecord:
     """
     Contrato canônico de sinal — imutável e auditável.
@@ -99,10 +103,12 @@ class SignalRecord:
 
     # Auditoria completa
     features_used: dict
+    scientific_state: str = "DESCRIPTIVE_SIGNAL"
+    capital_enabled: bool = False
 
 
 _ENGINE_ID = "funding_oi_hmm_v1:phase1"
-_SCHEMA_VERSION = "v3.1.0"
+_SCHEMA_VERSION = "v3.2.0"
 
 
 # ------------------------------------------------------------------ #
@@ -111,6 +117,66 @@ _SCHEMA_VERSION = "v3.1.0"
 
 
 def generate_signal(
+    fv: FeatureVector,
+    regime: RegimeOutput,
+    horizon_hours: int = 24,
+    fr_zscore_threshold: float = _FR_ZSCORE_THRESHOLD,
+    min_regime_confidence: float = _MIN_REGIME_CONFIDENCE,
+) -> SignalRecord:
+    if isinstance(horizon_hours, bool) or not isinstance(horizon_hours, int) or horizon_hours <= 0:
+        raise ValueError("horizon_hours deve ser inteiro positivo")
+    for name, value in (
+        ("fr_zscore_threshold", fr_zscore_threshold),
+        ("min_regime_confidence", min_regime_confidence),
+        ("quality", fv.data_quality_score),
+        ("funding_zscore", fv.funding_zscore),
+        ("oi_log_delta", fv.oi_log_delta),
+        ("entropy", regime.hmm_entropy),
+    ):
+        require_finite(value, name)
+    if (
+        fr_zscore_threshold <= 0
+        or not 0 <= min_regime_confidence <= 1
+        or not 0 <= fv.data_quality_score <= 1
+        or not 0 <= regime.hmm_entropy <= 1
+    ):
+        raise ValueError("parametros de sinal fora do dominio")
+    if (
+        not isinstance(regime.hmm_state, int)
+        or not 0 <= regime.hmm_state < len(regime.hmm_posterior)
+        or any(not math.isfinite(value) or not 0 <= value <= 1 for value in regime.hmm_posterior)
+    ):
+        raise ValueError("posterior de regime invalido")
+    if len(regime.hmm_posterior) != 3 or not math.isclose(
+        sum(regime.hmm_posterior), 1, abs_tol=1e-5
+    ):
+        raise ValueError("posterior de regime deve somar um")
+    if fv.timestamp_exchange_ms > int(datetime.now(UTC).timestamp() * 1000):
+        raise ValueError("timestamp de mercado no futuro")
+    policy = {
+        "schema": _SCHEMA_VERSION,
+        "horizon_hours": horizon_hours,
+        "fr_zscore_threshold": fr_zscore_threshold,
+        "min_regime_confidence": min_regime_confidence,
+        "fr_zscore_max": _FR_ZSCORE_MAX,
+        "min_data_quality": _MIN_DATA_QUALITY,
+    }
+    result = _generate_signal(fv, regime, horizon_hours, fr_zscore_threshold, min_regime_confidence)
+    fingerprint = hashlib.sha256(
+        json.dumps(policy, sort_keys=True, allow_nan=False).encode()
+    ).hexdigest()[:16]
+    return replace(
+        result,
+        engine_id=f"{_ENGINE_ID}:{fingerprint}",
+        features_used={
+            **result.features_used,
+            "signal_policy": policy,
+            "replay_scope": "signal decision given posterior; HMM replay also requires model and input history",
+        },
+    )
+
+
+def _generate_signal(
     fv: FeatureVector,
     regime: RegimeOutput,
     horizon_hours: int = 24,
@@ -321,8 +387,25 @@ def emit_signal(record: SignalRecord) -> None:
 
 def save_signals_jsonl(records: list[SignalRecord], path: Path) -> None:
     """Persiste lista de SignalRecord como JSONL (append-only)."""
-    path.parent.mkdir(parents=True, exist_ok=True)
-    with open(path, "a", encoding="utf-8") as f:
-        for r in records:
-            f.write(json.dumps(asdict(r), ensure_ascii=False) + "\n")
-    logger.info("signal_engine: %d sinais gravados em %s", len(records), path)
+    with file_lock(path):
+        original = path.read_text(encoding="utf-8") if path.exists() else ""
+        seen = {}
+        for line in original.splitlines():
+            if line.strip():
+                row = json.loads(line)
+                if row["event_id"] in seen and seen[row["event_id"]] != row:
+                    raise ValueError("event_id conflitante no historico de sinais")
+                seen[row["event_id"]] = row
+        added = []
+        for record in records:
+            row = asdict(record)
+            if record.event_id in seen:
+                if seen[record.event_id] != row:
+                    raise ValueError("event_id de sinal reutilizado com conteudo diferente")
+                continue
+            seen[record.event_id] = row
+            added.append(json.dumps(row, ensure_ascii=False, allow_nan=False))
+        if added:
+            separator = "\n" if original and not original.endswith("\n") else ""
+            atomic_write(path, (original + separator + "\n".join(added) + "\n").encode("utf-8"))
+    logger.info("signal_engine: %d novos sinais gravados em %s", len(added), path)

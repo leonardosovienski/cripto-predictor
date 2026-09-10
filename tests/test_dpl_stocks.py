@@ -186,7 +186,9 @@ def test_bcb_provider_parse_e_published_at(monkeypatch):
     pts = asyncio.run(prov.fetch(limit=1, collected_at=datetime(2026, 4, 12, tzinfo=UTC)))
     assert pts[0].value == 0.40
     assert pts[0].reference_date == datetime(2026, 3, 31, tzinfo=UTC)
-    assert pts[0].published_at == datetime(2026, 4, 11, tzinfo=UTC)  # ref + 11 dias
+    assert pts[0].published_at == datetime(
+        2026, 4, 12, tzinfo=UTC
+    )  # observed vintage, not assumed lag
     assert pts[0].vintage == datetime(2026, 4, 12, tzinfo=UTC)
 
 

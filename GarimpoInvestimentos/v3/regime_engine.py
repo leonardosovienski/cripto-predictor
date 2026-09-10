@@ -29,12 +29,16 @@ OUTPUT (RegimeOutput):
     is_uncertain    bool   — True se entropia > ENTROPY_THRESHOLD
 """
 
+import hashlib
+import json
 import logging
 import math
 import pickle
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import cast
+
+from GarimpoInvestimentos.durable_io import atomic_write
 
 logger = logging.getLogger(__name__)
 
@@ -56,7 +60,7 @@ _MAX_FIT_RETRIES = (
 # MODEL_SCHEMA_VERSION é a alavanca MANUAL: incremente quando a SEMÂNTICA das
 # features de emissão mudar (ex.: realized_vol passa de 24h p/ 12h) — é o que um
 # hash de estrutura não pega sozinho.
-MODEL_SCHEMA_VERSION = 1
+MODEL_SCHEMA_VERSION = 2
 _EMISSION_FEATURES = ("log_return_8h", "realized_vol_24h")  # ordem = colunas de X no fit
 
 # H7 (macro/DXY, docs/HYPOTHESES.md): covariáveis extras OPCIONAIS na emissão do
@@ -183,31 +187,27 @@ _REGIME_WEIGHTS = {
 # ------------------------------------------------------------------ #
 
 
-def _emission_probs(x: "np.ndarray", means: "np.ndarray", covars: "np.ndarray") -> "np.ndarray":
-    """
-    P(x | state=i) para cada estado i — log-space para estabilidade numérica.
-    Gaussiana multivariada implementada manualmente (sem scipy) para manter
-    a dependência apenas em numpy.
-    """
+def _emission_matrix(X: "np.ndarray", means: "np.ndarray", covars: "np.ndarray") -> "np.ndarray":
+    """Compute each covariance inverse once per series, retaining per-row normalization."""
     n_states, n_features = means.shape
-    log_probs = np.zeros(n_states)
+    log_probs = np.full((len(X), n_states), -1e300)
     for i in range(n_states):
-        diff = x - means[i]
-        cov = covars[i]  # full covariance
         try:
-            sign, log_det = np.linalg.slogdet(cov)
+            sign, log_det = np.linalg.slogdet(covars[i])
             if sign <= 0:
-                log_probs[i] = -1e300
                 continue
-            inv_cov = np.linalg.inv(cov)
-            mahal = float(diff @ inv_cov @ diff)
-            log_probs[i] = -0.5 * (n_features * math.log(2 * math.pi) + log_det + mahal)
+            inverse = np.linalg.inv(covars[i])
+            diff = X - means[i]
+            mahal = np.einsum("ti,ij,tj->t", diff, inverse, diff)
+            log_probs[:, i] = -0.5 * (n_features * math.log(2 * math.pi) + log_det + mahal)
         except np.linalg.LinAlgError:
-            log_probs[i] = -1e300
-    # Normalizar para escala linear (soft-max estável)
-    log_probs -= log_probs.max()
-    probs = np.exp(log_probs)
-    return probs
+            continue
+    log_probs -= log_probs.max(axis=1, keepdims=True)
+    return np.exp(log_probs)
+
+
+def _emission_probs(x: "np.ndarray", means: "np.ndarray", covars: "np.ndarray") -> "np.ndarray":
+    return _emission_matrix(x[None, :], means, covars)[0]
 
 
 def _forward_causal(
@@ -232,15 +232,18 @@ def _forward_causal(
     K = len(startprob)
     alpha = np.zeros((T, K))
 
+    if T == 0:
+        return alpha
+    emissions = _emission_matrix(X_scaled, means, covars)
     # Inicialização
-    B0 = _emission_probs(X_scaled[0], means, covars)
+    B0 = emissions[0]
     alpha[0] = startprob * B0
     total = alpha[0].sum()
     alpha[0] = alpha[0] / total if total > 1e-300 else np.ones(K) / K
 
     # Recursão
     for t in range(1, T):
-        Bt = _emission_probs(X_scaled[t], means, covars)
+        Bt = emissions[t]
         predicted = transmat.T @ alpha[t - 1]  # shape (K,)
         alpha[t] = predicted * Bt
         total = alpha[t].sum()
@@ -280,7 +283,10 @@ class RegimeEngine:
                 f"extra_features desconhecidas: {sorted(unknown)}. "
                 f"Suportadas: {_SUPPORTED_EXTRA_FEATURES}"
             )
+        if len(set(extra_features)) != len(extra_features):
+            raise ValueError("extra_features duplicadas")
         self._extra_features = tuple(extra_features)
+        self.training_data_hash: str | None = None
         self._model = None
         self._scaler: StandardScaler | None = None
         self._state_map: dict[int, str] = {}  # HMM state idx → label
@@ -322,8 +328,10 @@ class RegimeEngine:
         columns.extend(self._validate_extra_covariates(extra_covariates, len(log_returns)))
 
         X = np.column_stack(columns)
-        self._scaler = StandardScaler()
-        X_scaled = self._scaler.fit_transform(X)
+        if not np.isfinite(X).all():
+            raise ValueError("HMM exige valores finitos")
+        scaler = StandardScaler()
+        X_scaled = scaler.fit_transform(X)
 
         # covariance_type varia por instância: "full" (H1-H3, congelado, NUNCA
         # muda) vs "diag" quando há extra_features — ver _covariance_type_for()
@@ -378,8 +386,6 @@ class RegimeEngine:
                 f"{_MAX_FIT_RETRIES} tentativas de seed (42..{42 + _MAX_FIT_RETRIES - 1}). "
                 f"Ultimo erro: {last_err}"
             ) from last_err
-        self._model = model
-
         # Rotular estados pelo retorno médio (bull > sideways > bear)
         mean_ret_by_state = {
             i: float(np.array(log_returns)[all_states == i].mean())
@@ -388,7 +394,11 @@ class RegimeEngine:
         }
         sorted_states = sorted(mean_ret_by_state, key=mean_ret_by_state.__getitem__, reverse=True)
         label_order = ["bull", "sideways", "bear"]
-        self._state_map = {s: label_order[rank] for rank, s in enumerate(sorted_states)}
+        state_map = {s: label_order[rank] for rank, s in enumerate(sorted_states)}
+        self._model, self._scaler, self._state_map = model, scaler, state_map
+        self.training_data_hash = hashlib.sha256(
+            json.dumps(columns, allow_nan=False).encode()
+        ).hexdigest()
 
         logger.info("RegimeEngine treinado com %d observações.", len(log_returns))
         logger.info("Mapa de estados: %s", self._state_map)
@@ -446,9 +456,15 @@ class RegimeEngine:
         if self._model is None or self._scaler is None:
             raise RuntimeError("RegimeEngine não foi treinado. Chame fit() primeiro.")
 
+        if len(log_returns) != len(realized_vols):
+            raise ValueError("log_returns e realized_vols devem ter o mesmo tamanho")
         columns = [log_returns, realized_vols]
         columns.extend(self._validate_extra_covariates(extra_covariates, len(log_returns)))
+        if not log_returns:
+            return []
         X = np.column_stack(columns)
+        if not np.isfinite(X).all():
+            raise ValueError("HMM exige valores finitos")
         # cast: o stub do sklearn infere um tipo de retorno espúrio p/ transform()
         X_scaled = cast("np.ndarray", self._scaler.transform(X))
         covars = self._model.covars_
@@ -475,7 +491,7 @@ class RegimeEngine:
                     hmm_posterior=[round(p, 6) for p in posterior],
                     hmm_entropy=round(entropy, 4),
                     is_uncertain=entropy > ENTROPY_THRESHOLD,
-                    signal_weights=_REGIME_WEIGHTS.get(label, {}),
+                    signal_weights=dict(_REGIME_WEIGHTS.get(label, {})),
                 )
             )
         return results
@@ -506,24 +522,25 @@ class RegimeEngine:
     def save(self, path: Path) -> None:
         if self._model is None:
             raise RuntimeError("Nada para salvar — modelo não foi treinado.")
-        path.parent.mkdir(parents=True, exist_ok=True)
-        with open(path, "wb") as f:
-            pickle.dump(
+        atomic_write(
+            path,
+            pickle.dumps(
                 {
                     "model": self._model,
                     "scaler": self._scaler,
                     "state_map": self._state_map,
                     "fingerprint": _model_fingerprint(self._extra_features),
-                },
-                f,
-            )
+                    "training_data_hash": self.training_data_hash,
+                }
+            ),
+        )
         logger.info("RegimeEngine salvo em %s", path)
 
     def load(self, path: Path) -> None:
         """Carrega um modelo treinado, validando a provenância do contrato.
 
-        - fingerprint ausente  → modelo legado (salvo antes do guard): avisa e segue
-          (compatibilidade de migração; o próximo save carimba).
+        - fingerprint ausente → recusa; preserve o arquivo e retreine.
+        Carregue apenas pickles locais confiaveis: fingerprint nao torna pickle seguro.
         - fingerprint diferente → StaleRegimeModelError: o contrato de features/HMM
           mudou, o modelo em cache é incoerente — retreine."""
         with open(path, "rb") as f:
@@ -531,18 +548,15 @@ class RegimeEngine:
         saved_fp = data.get("fingerprint")
         current_fp = _model_fingerprint(self._extra_features)
         if saved_fp is None:
-            logger.warning(
-                "RegimeEngine: modelo legado em %s sem fingerprint de provenância — "
-                "compatibilidade de features não verificável; recomendado retreinar.",
-                path,
-            )
-        elif saved_fp != current_fp:
+            raise StaleRegimeModelError("Modelo sem fingerprint: preservar arquivo e retreinar")
+        if saved_fp != current_fp:
             raise StaleRegimeModelError(
                 f"Modelo em {path} incompatível com o código atual.\n"
                 f"  salvo: {saved_fp}\n  atual: {current_fp}\n"
                 "Retreine: python -m GarimpoInvestimentos.v3.pipeline --symbol <SYM> "
                 "--start-date <YYYY-MM-DD> --force-refresh"
             )
+        self.training_data_hash = data.get("training_data_hash")
         self._model = data["model"]
         self._scaler = data["scaler"]
         self._state_map = data["state_map"]

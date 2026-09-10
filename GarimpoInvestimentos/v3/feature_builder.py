@@ -42,21 +42,23 @@ ALINHAMENTO TEMPORAL:
    OI 8h       : timestamps nativamente alinhados
    Spot closes : 1h → selecionamos o close do mesmo open_ms do funding
 
-O join é feito por timestamp_ms com tolerância de ±5min para diferenças de
+O join e feito somente para tras por timestamp_ms com tolerancia de 5min para diferenças de
 relógio entre feeds. Registros sem par (funding sem OI ou sem spot) são descartados
 com quality_score = 0.0 (NUNCA interpolados).
 """
 
-import bisect
 import logging
 import math
 from dataclasses import dataclass
+
+from GarimpoInvestimentos.v3.collectors.record_io import unique_records, validate_observation
+from GarimpoInvestimentos.v3.timeindex import SortedTimeIndex
 
 logger = logging.getLogger(__name__)
 
 # Janelas padrão — parametrizáveis pelo pipeline
 _DEFAULT_FR_WINDOW = 90  # 90 períodos × 8h = 30 dias
-_DEFAULT_VOL_WINDOW_HOURS = 24  # 24 closes 1h para vol realizada
+_DEFAULT_VOL_WINDOW_HOURS = 24  # 24 retornos 1h (25 closes) para vol realizada
 _JOIN_TOLERANCE_MS = 5 * 60 * 1000  # 5 minutos
 
 
@@ -93,6 +95,25 @@ class FeatureVector:
     # Qualidade
     data_quality_score: float  # 1.0 = todos os dados presentes; 0.0 = inválido
 
+    def __post_init__(self) -> None:
+        values = {
+            name: getattr(self, name)
+            for name in (
+                "funding_rate_raw",
+                "oi_notional_usd",
+                "spot_close",
+                "funding_zscore",
+                "oi_log_delta",
+                "leverage_pressure",
+                "log_return_8h",
+                "realized_vol_24h",
+                "data_quality_score",
+            )
+        }
+        validate_observation(self.asset, self.timestamp_exchange_ms, values)
+        if not 0 <= self.data_quality_score <= 1 or self.realized_vol_24h < 0:
+            raise ValueError("qualidade/volatilidade invalida")
+
 
 # ------------------------------------------------------------------ #
 # Funções de cálculo (puras, sem side effects)                        #
@@ -113,9 +134,9 @@ def _zscore(series: list[float]) -> float:
 
 def _log_delta(prev: float, curr: float) -> float | None:
     """Δ log(curr/prev). Retorna None se algum valor for ≤ 0."""
-    if prev <= 0.0 or curr <= 0.0:
+    if not math.isfinite(prev) or not math.isfinite(curr) or prev <= 0.0 or curr <= 0.0:
         return None
-    return math.log(curr / prev)
+    return math.log(curr) - math.log(prev)
 
 
 def _realized_vol(log_returns: list[float]) -> float:
@@ -191,31 +212,56 @@ def build_feature_vectors(
     if len(funding_times_ms) != len(funding_rates):
         raise ValueError("funding_times_ms e funding_rates devem ter o mesmo tamanho")
 
+    if isinstance(fr_window, bool) or not isinstance(fr_window, int) or fr_window < 2:
+        raise ValueError("fr_window deve ser inteiro >= 2")
+    if (
+        isinstance(vol_window_hours, bool)
+        or not isinstance(vol_window_hours, int)
+        or vol_window_hours < 2
+        or join_tolerance_ms < 0
+    ):
+        raise ValueError("janela/tolerancia invalida")
+    if any(a >= b for a, b in zip(funding_times_ms, funding_times_ms[1:])):
+        raise ValueError("funding timestamps devem ser unicos crescentes")
+    if any(
+        not math.isfinite(value)
+        for value in [*funding_rates, *oi_index.values(), *spot_index.values()]
+    ):
+        raise ValueError("dados de entrada devem ser finitos")
     n = len(funding_times_ms)
     vectors: list[FeatureVector] = []
     skipped = 0
 
-    # Pré-ordena os closes do spot UMA vez (antes era re-ordenado a cada funding ts:
-    # O(n²) — inviável para anos de klines 1h vindos do data lake). bisect → O(log n)/ts.
-    sorted_spot_ts = sorted(spot_index.keys())
-    sorted_spot_closes = [spot_index[t] for t in sorted_spot_ts]
+    oi_ti = SortedTimeIndex(oi_index)
+    spot_ti = SortedTimeIndex(spot_index)
     ms_per_hour = 3_600_000
 
     for i in range(n):
         ts = funding_times_ms[i]
 
         # --- 1. Janela de z-score atingida? ---
-        if i < fr_window:
+        if i < fr_window - 1:
             continue  # sem janela suficiente para z-score
 
+        # Require the declared 8h cadence across the funding window.
+        if funding_times_ms[i] - funding_times_ms[i - fr_window + 1] != (
+            fr_window - 1
+        ) * 8 * ms_per_hour or any(
+            b - a != 8 * ms_per_hour
+            for a, b in zip(
+                funding_times_ms[i - fr_window + 1 : i], funding_times_ms[i - fr_window + 2 : i + 1]
+            )
+        ):
+            skipped += 1
+            continue
         fr_window_slice = funding_rates[i - fr_window + 1 : i + 1]
         funding_zscore = _zscore(fr_window_slice)
 
         # --- 2. Δ log OI ---
-        oi_curr = _find_asof(ts, oi_index, join_tolerance_ms)
+        oi_curr = oi_ti.as_of(ts, join_tolerance_ms)
         # OI anterior: timestamp do funding anterior
         oi_prev_ts = funding_times_ms[i - 1] if i > 0 else None
-        oi_prev = _find_asof(oi_prev_ts, oi_index, join_tolerance_ms) if oi_prev_ts else None
+        oi_prev = oi_ti.as_of(oi_prev_ts, join_tolerance_ms) if oi_prev_ts is not None else None
 
         if oi_curr is None or oi_prev is None:
             skipped += 1
@@ -234,9 +280,9 @@ def build_feature_vectors(
         # Timestamp 8h atrás = funding_times_ms[i-1] (período anterior)
         # spot_index is keyed by candle OPEN while its value is the final close.
         # At ts, only the candle opened one hour earlier is closed/available.
-        spot_curr = _find_asof(ts - ms_per_hour, spot_index, join_tolerance_ms)
-        spot_prev_ts = funding_times_ms[i - 1]
-        spot_prev = _find_asof(spot_prev_ts - ms_per_hour, spot_index, join_tolerance_ms)
+        spot_curr = spot_ti.as_of(ts - ms_per_hour, join_tolerance_ms)
+        spot_prev_ts = ts - 8 * ms_per_hour
+        spot_prev = spot_ti.as_of(spot_prev_ts - ms_per_hour, join_tolerance_ms)
 
         if spot_curr is None or spot_prev is None:
             skipped += 1
@@ -249,20 +295,17 @@ def build_feature_vectors(
             continue
 
         # --- 5. Realized vol 24h (klines 1h) ---
-        # Janela [ts - 24h, ts] localizada por bisect na série pré-ordenada.
-        lo_ts = ts - vol_window_hours * ms_per_hour
-        lo_idx = bisect.bisect_left(sorted_spot_ts, lo_ts)
-        hi_idx = bisect.bisect_right(sorted_spot_ts, ts - ms_per_hour)
-        vol_closes = sorted_spot_closes[lo_idx:hi_idx]
-
-        if len(vol_closes) < 2:
+        # 24 hourly returns need 25 consecutive closed candles, with no gap bridging.
+        vol_closes = [
+            spot_index.get(ts - (offset + 1) * ms_per_hour)
+            for offset in range(vol_window_hours, -1, -1)
+        ]
+        if any(value is None or value <= 0 for value in vol_closes):
             skipped += 1
             continue
-
         vol_log_returns = [
-            math.log(vol_closes[j] / vol_closes[j - 1])
-            for j in range(1, len(vol_closes))
-            if vol_closes[j - 1] > 0 and vol_closes[j] > 0
+            math.log(current) - math.log(previous)
+            for previous, current in zip(vol_closes, vol_closes[1:])
         ]
         realized_vol_24h = _realized_vol(vol_log_returns)
 
@@ -301,12 +344,14 @@ def build_feature_vectors(
 
 def build_oi_index(oi_records) -> dict[int, float]:
     """Constrói índice {timestamp_ms: oi_notional_usd} de OIRecord[]."""
-    return {r.timestamp_ms: r.oi_notional_usd for r in oi_records}
+    return {
+        r.timestamp_ms: r.oi_notional_usd for r in unique_records(list(oi_records), "timestamp_ms")
+    }
 
 
 def build_spot_index(kline_records) -> dict[int, float]:
     """Constrói índice {open_ms: close} de KlineRecord[]."""
-    return {r.open_ms: r.close for r in kline_records}
+    return {r.open_ms: r.close for r in unique_records(list(kline_records), "open_ms")}
 
 
 def build_volume_index(kline_records) -> dict[int, float]:
@@ -316,4 +361,4 @@ def build_volume_index(kline_records) -> dict[int, float]:
     byte-idênticos. Usado por H9 (docs/HYPOTHESES.md): a razão OI/volume
     precisa do campo `volume` de KlineRecord, que já é coletado
     (spot_collector.py) mas nunca tinha sido consumido."""
-    return {r.open_ms: r.volume for r in kline_records}
+    return {r.open_ms: r.volume for r in unique_records(list(kline_records), "open_ms")}

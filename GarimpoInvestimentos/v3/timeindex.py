@@ -22,13 +22,15 @@ class SortedTimeIndex:
 
     def __init__(self, index: dict[int, float]) -> None:
         self._keys = sorted(index)
-        self._index = index
+        self._index = dict(index)
 
     def nearest(self, ts: int, tolerance_ms: int = _DEFAULT_TOLERANCE_MS) -> float | None:
         """Valor no timestamp mais próximo de `ts` dentro de ±tolerance_ms;
         None se nenhum candidato na janela. Empate exato de distância: fica o
         anterior (determinístico; as 3 cópias antigas dependiam da ordem do
         dict e eram, na prática, também 'o primeiro visto')."""
+        if tolerance_ms < 0:
+            raise ValueError("tolerance_ms nao pode ser negativo")
         if not self._keys:
             return None
         v = self._index.get(ts)
@@ -46,6 +48,8 @@ class SortedTimeIndex:
 
     def as_of(self, ts: int, tolerance_ms: int = _DEFAULT_TOLERANCE_MS) -> float | None:
         """Latest value at or before ``ts``; future observations are ineligible."""
+        if tolerance_ms < 0:
+            raise ValueError("tolerance_ms nao pode ser negativo")
         if not self._keys:
             return None
         i = bisect_left(self._keys, ts)

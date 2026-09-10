@@ -1,5 +1,9 @@
 # Dependências implementadas e recuperadas em 10/09/2026
 
+**Errata da auditoria ampliada de 10/09:** o registro LLM atual é `llm-paired-manual-20260912-v3`. A versão v2 ficou preservada, sem observações, e recusa corretamente as mudanças em `config.py` e `core/api_guard.py`. O novo registro mantém protocolo, datas e ambiente, vincula o código corrigido antes da coleta e passou no status offline com 84 horários futuros. Os registros antigos não tiveram hashes alterados. Carry permanece no registro v2.
+
+**Executor vinculado ao registro:** os comandos LLM abaixo usam explicitamente `C:\Cripto\auditoria-ampliada-20260910` por meio do lançador `work\isolated_python.py` do relatório. Preserve essa área e seus bytes. `local_runtime.py` também difere no hash por LF/CRLF, embora seu conteúdo lógico seja igual; usar o checkout operacional diretamente não satisfaz esse congelamento. O ambiente Python continua em `C:\Cripto\pesquisa-20260909\.venv`. O carregador verifica código e ambiente antes de qualquer coleta.
+
 Esta etapa fecha o trabalho de implementação que havia sido deixado como preparação. O registro vivo completo continua em `C:\Cripto\operacao\relatorios\REVISAO_COMPLETA_20260909\REVISAO.md`. O mandato, os estudos e os diários anteriores permanecem preservados. As proteções administrativas da branch continuam excluídas pelo dono.
 
 ## Aave: histórico recuperado e cálculo disponível
@@ -40,27 +44,27 @@ O executor grava início, entradas, prompts, respostas, falhas e par em diário 
 
 As duas respostas precisam estar duráveis dentro da janela. A âncora comum é o **fechamento da primeira barra UTC inteira cujo início seja posterior às duas respostas**; o alvo termina sete dias depois. O avaliador exige oito fechamentos consecutivos da mesma fonte, exclui candle aberto, rejeita fonte ou preço alterado e calcula Spearman com empates. Score constante produz correlação indefinida. Relata dias sobrepostos e a seleção fixa dos offsets 0, 7, …, 77, sem substituir ausências; mostra momentum, contraste primário com/sem notícias, contagens e contribuição zero de mercado do braço sem posição. Custo de infraestrutura desconhecido permanece separado. Nenhuma política de trade é inferida do score.
 
-Registro final: `C:\Cripto\operacao\dados\llm-paired-manual-20260912-v2`. [Protocolo](../evidence/dependency_execution_20260910/llm_protocol.json) e [congelamento](../evidence/dependency_execution_20260910/llm_registration.json) são cópias exatas. O registro inicial sem sufixo ficou preservado e foi substituído antes de observações para finalizar os contratos de tipos; seus hashes não foram atualizados.
+Registro final: `C:\Cripto\operacao\dados\llm-paired-manual-20260912-v3`. [Protocolo](../evidence/dependency_execution_20260910/llm_protocol.json) e [congelamento atual](llm_audit_registration_v3.json) são cópias exatas. O registro inicial sem sufixo ficou preservado e foi substituído antes de observações para finalizar os contratos de tipos; seus hashes não foram atualizados.
 
 São **84 horários diários, de 12/09 a 04/12/2026, 12:00–13:00 UTC** (09:00–10:00 Brasília), e no máximo 12 blocos semanais. O último alvo pode amadurecer em 13/12/2026, 00:00 UTC. O status inicial contém 84 horários futuros e não cria diário. Não há scheduler, operação financeira, reabertura de H6 ou comprovação de poder estatístico. A implementação está pronta; as observações futuras ainda não existem.
 
 Consultar agora, offline:
 
 ```powershell
-C:\Cripto\CRIPTO.cmd python -m scripts.paired_llm --directory C:\Cripto\operacao\dados\llm-paired-manual-20260912-v2
+C:\Cripto\CRIPTO.cmd python C:\Cripto\operacao\relatorios\REVISAO_COMPLETA_20260909\work\isolated_python.py -m scripts.paired_llm --directory C:\Cripto\operacao\dados\llm-paired-manual-20260912-v3
 ```
 
 Executar manualmente dentro de um horário registrado:
 
 ```powershell
-C:\Cripto\CRIPTO.cmd python -m scripts.paired_llm --directory C:\Cripto\operacao\dados\llm-paired-manual-20260912-v2 --mode tick
+C:\Cripto\CRIPTO.cmd python C:\Cripto\operacao\relatorios\REVISAO_COMPLETA_20260909\work\isolated_python.py -m scripts.paired_llm --directory C:\Cripto\operacao\dados\llm-paired-manual-20260912-v3 --mode tick
 ```
 
 Após existirem alvos maduros, coletar preços e avaliar usando destinos ainda inexistentes:
 
 ```powershell
-C:\Cripto\CRIPTO.cmd python -m scripts.paired_llm --directory C:\Cripto\operacao\dados\llm-paired-manual-20260912-v2 --mode collect-outcomes --output C:\Cripto\operacao\relatorios\llm-precos-avaliacao-01.json
-C:\Cripto\CRIPTO.cmd python -m scripts.paired_llm --directory C:\Cripto\operacao\dados\llm-paired-manual-20260912-v2 --mode evaluate --prices C:\Cripto\operacao\relatorios\llm-precos-avaliacao-01.json --output C:\Cripto\operacao\relatorios\llm-avaliacao-01.json
+C:\Cripto\CRIPTO.cmd python C:\Cripto\operacao\relatorios\REVISAO_COMPLETA_20260909\work\isolated_python.py -m scripts.paired_llm --directory C:\Cripto\operacao\dados\llm-paired-manual-20260912-v3 --mode collect-outcomes --output C:\Cripto\operacao\relatorios\llm-precos-avaliacao-01.json
+C:\Cripto\CRIPTO.cmd python C:\Cripto\operacao\relatorios\REVISAO_COMPLETA_20260909\work\isolated_python.py -m scripts.paired_llm --directory C:\Cripto\operacao\dados\llm-paired-manual-20260912-v3 --mode evaluate --prices C:\Cripto\operacao\relatorios\llm-precos-avaliacao-01.json --output C:\Cripto\operacao\relatorios\llm-avaliacao-01.json
 ```
 
 Guardas compartilhadas: 28 unidades de ingestão, oito tentativas de notícias e seis chamadas lógicas de LLM por provedor/dia UTC. O par usa uma unidade de ingestão, uma tentativa de notícias e duas de LLM; as cinco requisições físicas ficam registradas. Uma aquisição de preços para avaliação usa outra unidade de ingestão. Nenhum comando reseta orçamento.

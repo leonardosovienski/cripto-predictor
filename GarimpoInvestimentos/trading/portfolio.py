@@ -22,10 +22,12 @@ from statistics import correlation as _correlation
 from statistics import covariance as _covariance
 from statistics import variance as _variance
 
-from GarimpoInvestimentos.trading.contracts import Direction, Position
+from GarimpoInvestimentos.trading.contracts import Direction, Position, require_finite
 
 
 def _require_paired_series(a: list[float], b: list[float], label: str) -> None:
+    for value in (*a, *b):
+        require_finite(value, label)
     if len(a) != len(b):
         raise ValueError(f"{label}: séries precisam ter o mesmo tamanho")
     if len(a) < 2:
@@ -52,6 +54,10 @@ def correlation(series_a: list[float], series_b: list[float]) -> float:
 
 def correlation_matrix(returns_by_asset: dict[str, list[float]]) -> dict[tuple[str, str], float]:
     """Matriz completa (simétrica, diagonal=1.0) como dict {(ativo_a, ativo_b): rho}."""
+    for asset, values in returns_by_asset.items():
+        _require_paired_series(values, values, f"correlation_matrix:{asset}")
+        if _variance(values) == 0:
+            raise ValueError(f"correlation_matrix:{asset}: variancia zero")
     assets = sorted(returns_by_asset)
     out: dict[tuple[str, str], float] = {}
     for i, a in enumerate(assets):
@@ -65,6 +71,8 @@ def correlation_matrix(returns_by_asset: dict[str, list[float]]) -> dict[tuple[s
 def concentration_hhi(notionals_by_key: dict[str, float]) -> float:
     """Índice Herfindahl-Hirschman: soma dos quadrados das participações.
     1/N = perfeitamente diversificado entre N chaves iguais; 1.0 = tudo numa só."""
+    for value in notionals_by_key.values():
+        require_finite(value, "notional")
     total = sum(abs(v) for v in notionals_by_key.values())
     if total <= 0:
         raise ValueError("concentration_hhi: soma dos notionais deve ser > 0")
@@ -101,6 +109,7 @@ def aggregate_leverage(
     """Leverage bruta agregada: soma dos notionais absolutos / equity. Não
     distingue direção (um LONG e um SHORT do mesmo tamanho ainda somam leverage
     bruta — é o risco operacional/de margem, não o risco direcional líquido)."""
+    require_finite(equity, "equity")
     if equity <= 0:
         raise ValueError("aggregate_leverage: equity deve ser > 0")
     gross_notional = 0.0
@@ -117,6 +126,12 @@ def volatility_target_size(target_vol: float, asset_vol: float, capital: float) 
     vol realizada do ativo — fração = min(target_vol/asset_vol, 1.0), capada em
     1x o capital (alavancagem explícita acima disso é decisão separada, fora
     deste cálculo)."""
+    for label, value in (
+        ("target_vol", target_vol),
+        ("asset_vol", asset_vol),
+        ("capital", capital),
+    ):
+        require_finite(value, label)
     if target_vol < 0 or asset_vol < 0:
         raise ValueError("volatility_target_size: vols não podem ser negativas")
     if asset_vol == 0:
@@ -138,6 +153,7 @@ class DrawdownTracker:
     _max_drawdown: float = field(default=0.0, repr=False)
 
     def update(self, equity: float) -> float:
+        require_finite(equity, "equity")
         if equity <= 0:
             raise ValueError("DrawdownTracker.update: equity deve ser > 0")
         if self._peak is None or equity > self._peak:
@@ -165,6 +181,8 @@ def liquidation_distance_pct(
     se move). Aproximação didática: ignora funding acumulado, fees de
     liquidação e o modelo exato varia por exchange — NUNCA substitui o cálculo
     oficial do venue antes de operar de verdade."""
+    require_finite(leverage, "leverage")
+    require_finite(maintenance_margin_rate, "maintenance_margin_rate")
     if leverage <= 0:
         raise ValueError("liquidation_distance_pct: leverage deve ser > 0")
     if not (0 <= maintenance_margin_rate < 1):
@@ -196,6 +214,14 @@ def reconcile_balance(
     """`None` se bater dentro da tolerância; `BalanceReconciliationBreak` se
     divergir — NUNCA ajusta o saldo local sozinho pra "resolver" a divergência,
     mesmo princípio de `trading.execution.reconcile`."""
+    for label, value in (
+        ("local_balance", local_balance),
+        ("reported_balance", reported_balance),
+        ("tolerance", tolerance),
+    ):
+        require_finite(value, label)
+    if tolerance < 0:
+        raise ValueError("tolerance não pode ser negativa")
     if abs(local_balance - reported_balance) <= tolerance:
         return None
     return BalanceReconciliationBreak(venue, local_balance, reported_balance)

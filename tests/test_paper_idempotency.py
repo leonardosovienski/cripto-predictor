@@ -7,6 +7,8 @@ dos 30 dias de produção assistida. A guarda _already_recorded fecha isso.
 import json
 from unittest import mock
 
+import pytest
+
 from GarimpoInvestimentos.v3 import paper_trader
 
 
@@ -31,10 +33,12 @@ def test_already_recorded_without_file(tmp_path):
         assert paper_trader._already_recorded("BTCUSDT", 1000) is False
 
 
-def test_already_recorded_ignores_corrupt_lines(tmp_path):
+def test_already_recorded_refuses_corrupt_history(tmp_path):
     p = tmp_path / "BTCUSDT_paper.jsonl"
     p.parent.mkdir(parents=True, exist_ok=True)
     p.write_text('{"timestamp_exchange_ms": 500}\nnão-é-json\n\n', encoding="utf-8")
     with mock.patch.object(paper_trader, "_paper_path", return_value=p):
-        assert paper_trader._already_recorded("BTCUSDT", 500) is True
-        assert paper_trader._already_recorded("BTCUSDT", 999) is False
+        with pytest.raises(ValueError):
+            paper_trader._already_recorded("BTCUSDT", 500)
+        with pytest.raises(ValueError):
+            paper_trader._already_recorded("BTCUSDT", 999)

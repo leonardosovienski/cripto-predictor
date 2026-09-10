@@ -5,6 +5,7 @@ LLM. Ele usa somente features já presentes na Feature Store, portanto não intr
 rede nem look-ahead. Ainda assim muda a população do experimento e é opt-in.
 """
 
+import math
 from dataclasses import dataclass
 
 from GarimpoInvestimentos.analyzers.score_engine import technical_direction
@@ -27,10 +28,19 @@ def decide(hard_data: dict) -> PrefilterDecision:
     if not settings.LLM_PREFILTER_ENABLED:
         return PrefilterDecision(True, "disabled")
     volume = hard_data.get("volume_usd")
-    if not isinstance(volume, (int, float)) or volume < settings.LLM_PREFILTER_MIN_VOLUME_USD:
+    if (
+        isinstance(volume, bool)
+        or not isinstance(volume, (int, float))
+        or not math.isfinite(volume)
+        or volume < settings.LLM_PREFILTER_MIN_VOLUME_USD
+    ):
         return PrefilterDecision(False, "low_or_missing_volume")
     change_7d = hard_data.get("change_7d")
-    if not isinstance(change_7d, (int, float)):
+    if (
+        isinstance(change_7d, bool)
+        or not isinstance(change_7d, (int, float))
+        or not math.isfinite(change_7d)
+    ):
         return PrefilterDecision(False, "missing_change_7d")
     if abs(change_7d) < settings.LLM_PREFILTER_MIN_ABS_CHANGE_7D:
         return PrefilterDecision(False, "weak_7d_momentum")

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from GarimpoInvestimentos.trading.contracts import OrderSide
+from GarimpoInvestimentos.trading.contracts import OrderSide, require_finite
 from GarimpoInvestimentos.trading.microstructure import (
     OrderBookSnapshot,
     SimulatedFill,
@@ -40,10 +40,18 @@ def simulate_spot_long_round_trip(
     perna não preencher integralmente na profundidade observada, o trade é
     classificado como não executável; liquidez ausente nunca é inventada.
     """
+    for label, value in (
+        ("qty", qty),
+        ("taker_fee_bps", taker_fee_bps),
+        ("latency_penalty_bps_per_leg", latency_penalty_bps_per_leg),
+    ):
+        require_finite(value, label)
     if qty <= 0:
         raise ValueError("qty deve ser > 0")
     if taker_fee_bps < 0 or latency_penalty_bps_per_leg < 0:
         raise ValueError("fees e penalidade de latência não podem ser negativas")
+    if entry_book.instrument.asset_class != "crypto_spot":
+        raise ValueError("spot round trip exige instrumento crypto_spot")
     if entry_book.instrument != exit_book.instrument:
         raise ValueError("entry e exit books devem ser do mesmo instrumento/venue")
     if exit_book.timestamp <= entry_book.timestamp:

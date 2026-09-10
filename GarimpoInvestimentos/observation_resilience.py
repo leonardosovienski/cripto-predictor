@@ -82,6 +82,7 @@ def run_drills(output_dir: Path) -> dict:
                 original,
                 value=original.value + 0.00001,
                 vintage=original.vintage + timedelta(minutes=5),
+                published_at=original.vintage + timedelta(minutes=5),
                 ingested_at=original.ingested_at + timedelta(minutes=5),
                 content_hash="e" * 64,
             )

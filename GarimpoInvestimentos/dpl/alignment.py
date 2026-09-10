@@ -69,12 +69,26 @@ class AlignmentEngine:
         """
         signals = signals or {}
         max_staleness = max_staleness or {}
+        if any(lag < timedelta(0) for lag in max_staleness.values()):
+            raise ValueError("max_staleness must not be negative")
 
         # Use effective knowledge time, not only nominal publication time.
         prepared: dict[str, tuple[list[SignalPoint], list]] = {}
         for name, series in signals.items():
-            s = sorted(series, key=_available_at)
-            prepared[name] = (s, [_available_at(x) for x in s])
+            # Prefix winners by observation time, then newest usable vintage.
+            # A newly received revision of an OLD observation must not displace
+            # a more recent observation from the as-of feature.
+            ordered = sorted(series, key=lambda point: (_available_at(point), point.timestamp))
+            s = []
+            winner = None
+            for point in ordered:
+                if winner is None or (point.timestamp, _available_at(point)) >= (
+                    winner.timestamp,
+                    _available_at(winner),
+                ):
+                    winner = point
+                s.append(winner)
+            prepared[name] = (s, [_available_at(x) for x in ordered])
 
         rows = []
         for candle in sorted(candles, key=lambda c: c.timestamp):

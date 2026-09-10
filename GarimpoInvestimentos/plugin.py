@@ -4,6 +4,7 @@ from pathlib import Path
 from GarimpoInvestimentos.contracts import HealthStatus, OperationalStatus
 from GarimpoInvestimentos.core.paths import FEATURE_STORE_DB
 from GarimpoInvestimentos.feature_store_health import StoreState, inspect_feature_store
+from GarimpoInvestimentos.governance import load_scientific_state
 
 
 class CryptoPredictorPlugin:
@@ -32,22 +33,29 @@ class CryptoPredictorPlugin:
 
     def capabilities(self) -> dict[str, object]:
         """Expose the current research boundary without promoting capital."""
+        state = load_scientific_state()
+        active = sorted(
+            name
+            for name, status in state.hypotheses.items()
+            if str(status) == "COLLECTION_ONLY_IMMATURE"
+        )
         return {
             "domain": self.domain,
             "supports_prediction": False,
             "supports_settlement": False,
             "supports_collection": False,
-            "scientific_status": "ACTIVE_HYPOTHESIS",
+            "scientific_status": "ACTIVE_HYPOTHESIS" if active else "NO_ACTIVE_HYPOTHESIS",
             "predictive_status": "INCONCLUSIVE",
             "economic_status": "HISTORICAL_NO_GO",
             "capital_permission": "FORBIDDEN",
             "extra": {
-                "mode": "PROSPECTIVE_OBSERVATION",
-                "active_hypothesis": "H6",
+                "mode": "RESEARCH_ONLY",
+                "active_hypothesis": active[0] if len(active) == 1 else None,
+                "hypotheses": {name: str(status) for name, status in state.hypotheses.items()},
                 "security_status": "ROTATED_CONFIRMED_BY_OWNER_2026-08-19",
                 "old_key_revocation_external_check_pending": True,
                 "trading": False,
-                "source_of_scientific_truth": "README.md",
+                "source_of_scientific_truth": "charters/scientific_state.json",
             },
         }
 

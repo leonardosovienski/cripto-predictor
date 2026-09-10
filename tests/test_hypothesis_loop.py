@@ -152,10 +152,12 @@ def test_append_nunca_remove_o_que_ja_estava(tmp_path):
     assert ids == ["a", "b"]
 
 
-def test_arquivo_corrompido_nao_derruba_a_leitura(tmp_path):
+def test_arquivo_corrompido_e_erro_sem_alterar_o_historico(tmp_path):
     destino = tmp_path / "props.json"
     destino.write_text("{lixo", encoding="utf-8")
-    assert load_proposals(destino) == []
+    with pytest.raises(ValueError):
+        load_proposals(destino)
+    assert destino.read_text(encoding="utf-8") == "{lixo"
 
 
 def test_traco_usa_json_e_nao_jsonl_que_e_gitignored():

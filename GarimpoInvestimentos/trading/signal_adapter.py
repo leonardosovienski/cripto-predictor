@@ -101,10 +101,6 @@ def to_trade_intent(
             "intencao de trade. O adapter executavel nao possui bypass."
         )
 
-    # Uma intenção executável só nasce de modelo calibrado para veredito. Isso
-    # torna impossível esquecer o guard e carregar custo apenas "por convenção".
-    cost_model = cost_model_for(instrument, for_verdict=True)
-
     if not getattr(signal, "active", False):
         return None
     direcao = _direction(int(getattr(signal, "direction", 0)))
@@ -119,6 +115,10 @@ def to_trade_intent(
     fracao = forca * max_position_fraction
     if fracao <= 0:
         return None
+
+    # Uma intenção executável só nasce de modelo calibrado para veredito. Isso
+    # torna impossível esquecer o guard e carregar custo apenas "por convenção".
+    cost_model = cost_model_for(instrument, for_verdict=True)
 
     gerado_em = datetime.fromtimestamp(int(signal.timestamp_signal_ms) / 1000, tz=UTC)
     return TradeIntent(

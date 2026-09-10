@@ -63,12 +63,13 @@ def test_load_rejects_stale_fingerprint(tmp_path):
         RegimeEngine().load(p)
 
 
-def test_load_warns_on_legacy_without_fingerprint(tmp_path, caplog):
+def test_load_rejects_legacy_without_fingerprint_and_preserves_it(tmp_path):
     p = tmp_path / "legacy.pkl"
     legacy = {"model": _DummyModel(), "scaler": _DummyModel(), "state_map": {0: "bull"}}
     p.write_bytes(pickle.dumps(legacy))
     eng = RegimeEngine()
-    with caplog.at_level("WARNING"):
-        eng.load(p)  # legado: avisa mas carrega (migração não-destrutiva)
-    assert eng._state_map == {0: "bull"}
-    assert any("sem fingerprint" in r.message for r in caplog.records)
+    before = p.read_bytes()
+    with pytest.raises(StaleRegimeModelError, match="sem fingerprint"):
+        eng.load(p)
+    assert not eng.is_trained
+    assert p.read_bytes() == before

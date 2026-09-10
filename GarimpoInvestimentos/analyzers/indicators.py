@@ -9,13 +9,25 @@ cronológica, mais antigo → mais recente).
 import math
 
 
+def _validate(prices: list[float], *periods: int) -> None:
+    if any(isinstance(p, bool) or not isinstance(p, int) or p < 1 for p in periods):
+        raise ValueError("period must be a positive integer")
+    if any(
+        isinstance(p, bool) or not isinstance(p, (int, float)) or not math.isfinite(p)
+        for p in prices
+    ):
+        raise ValueError("prices must be finite")
+
+
 def sma(prices: list[float], period: int) -> float | None:
+    _validate(prices, period)
     if len(prices) < period:
         return None
     return sum(prices[-period:]) / period
 
 
 def _ema_series(prices: list[float], period: int) -> list[float]:
+    _validate(prices, period)
     if len(prices) < period:
         return []
     k = 2 / (period + 1)
@@ -28,6 +40,7 @@ def _ema_series(prices: list[float], period: int) -> list[float]:
 
 
 def rsi(prices: list[float], period: int = 14) -> float | None:
+    _validate(prices, period)
     if len(prices) < period + 1:
         return None
     deltas = [prices[i] - prices[i - 1] for i in range(1, len(prices))]
@@ -39,13 +52,16 @@ def rsi(prices: list[float], period: int = 14) -> float | None:
         avg_gain = (avg_gain * (period - 1) + gains[i]) / period
         avg_loss = (avg_loss * (period - 1) + losses[i]) / period
     if avg_loss == 0:
-        return 100.0
+        return 50.0 if avg_gain == 0 else 100.0
     rs = avg_gain / avg_loss
     return 100 - 100 / (1 + rs)
 
 
 def macd(prices: list[float], fast: int = 12, slow: int = 26, signal: int = 9):
     """Retorna (macd_line, signal_line, histogram) ou (None, None, None)."""
+    _validate(prices, fast, slow, signal)
+    if fast >= slow:
+        raise ValueError("MACD requires fast < slow")
     e_fast = _ema_series(prices, fast)
     e_slow = _ema_series(prices, slow)
     if not e_fast or not e_slow:
@@ -61,8 +77,11 @@ def macd(prices: list[float], fast: int = 12, slow: int = 26, signal: int = 9):
 
 def bollinger(prices: list[float], period: int = 20, mult: float = 2.0):
     """Retorna (upper, mid, lower, pct_b) — pct_b: 0=banda inf, 1=banda sup."""
+    _validate(prices, period)
     if len(prices) < period:
         return None
+    if not math.isfinite(mult) or mult <= 0:
+        raise ValueError("bollinger mult must be positive and finite")
     window = prices[-period:]
     mid = sum(window) / period
     std = (sum((p - mid) ** 2 for p in window) / period) ** 0.5

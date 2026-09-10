@@ -10,6 +10,9 @@ def test_grid_registers_every_combination_before_execution(tmp_path, monkeypatch
     trials.with_name("trials.harness_attestation.json").write_text(
         json.dumps({"pipeline_fingerprint": "fingerprint"}), encoding="utf-8"
     )
+    monkeypatch.setattr(
+        backtest_v3, "load_scientific_state", lambda: SimpleNamespace(frozen_families=())
+    )
     calls = []
     executed_after = []
 
@@ -37,7 +40,7 @@ def test_grid_registers_every_combination_before_execution(tmp_path, monkeypatch
     assert len(result.results) == 4
     assert executed_after[0] == 4
     assert len(calls) == 8  # quatro pré-registros + quatro atualizações
-    assert {call[0] for call in calls[:4]} == {
+    assert {"-".join(call[0].split("-")[:-1]) for call in calls[:4]} == {
         "v3-grid-btcusdt-fr0.5-conf0.6",
         "v3-grid-btcusdt-fr0.5-conf0.8",
         "v3-grid-btcusdt-fr1-conf0.6",

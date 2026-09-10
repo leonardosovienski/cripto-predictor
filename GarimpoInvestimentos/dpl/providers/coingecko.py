@@ -50,7 +50,7 @@ class CoinGeckoProvider(DataProvider):
     async def fetch_ohlcv(
         self, symbol: str, interval: str = "1d", limit: int = 1
     ) -> list[MarketDataPoint]:
-        if limit < 1:
+        if isinstance(limit, bool) or not isinstance(limit, int) or limit < 1:
             raise ValueError("limit deve ser positivo")
         if interval != "1d":
             raise ValueError("coingecko: intervalo com volume disponível apenas para 1d")
@@ -69,7 +69,11 @@ class CoinGeckoProvider(DataProvider):
             resp.raise_for_status()
             data = resp.json()
         prices = data.get("prices", [])
-        volumes = {int(ts): v for ts, v in data.get("total_volumes", [])}
+        volumes = {}
+        for ts, value in data.get("total_volumes", []):
+            if ts in volumes and volumes[ts] != value:
+                raise ValueError("coingecko: conflicting duplicate volume")
+            volumes[ts] = value
         if not prices:
             raise RuntimeError(f"coingecko: resposta vazia para {coin_id}")
         points = []

@@ -89,7 +89,7 @@ def test_resilience_drills_pass_and_write_report(tmp_path):
     assert set(result["tests"]) == {"disconnection", "duplicate_response", "revision"}
 
 
-def test_conflicting_duplicates_inside_one_batch_are_first_valid_wins(tmp_path):
+def test_conflicting_duplicates_inside_one_batch_are_rejected_atomically(tmp_path):
     start = datetime(2026, 8, 1, tzinfo=UTC)
     original = funding_signal_points(
         [FundingRecord("BTCUSDT", int(start.timestamp() * 1000), 0.0001, 1)],
@@ -97,8 +97,11 @@ def test_conflicting_duplicates_inside_one_batch_are_first_valid_wins(tmp_path):
     )[0]
     conflicting = replace(original, value=0.0002, content_hash="f" * 64)
     with FeatureStore(tmp_path / "features.db") as store:
-        assert store.write_signals([original, conflicting], require_enriched=True) == 1
-        assert store.write_signals([original, conflicting], require_enriched=True) == 0
+        with __import__("pytest").raises(ValueError, match="conflicting duplicate"):
+            store.write_signals([original, conflicting], require_enriched=True)
+        assert store.read_signals(original.source, original.name) == []
+        assert store.write_signals([original], require_enriched=True) == 1
+        assert store.write_signals([original], require_enriched=True) == 0
         persisted = store.read_signals(original.source, original.name)
     assert len(persisted) == 1
     assert persisted[0].content_hash == original.content_hash

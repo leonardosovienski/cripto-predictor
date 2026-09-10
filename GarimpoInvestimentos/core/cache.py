@@ -3,12 +3,14 @@ import json
 import logging
 import os
 from datetime import UTC, datetime, timedelta
+from pathlib import Path
 from typing import Any
 
 from predictor_core.obs import emit_event
 
 from GarimpoInvestimentos.config import settings
 from GarimpoInvestimentos.core.paths import OUTPUT_DIR
+from GarimpoInvestimentos.durable_io import atomic_write, file_lock, strict_json_loads
 
 logger = logging.getLogger(__name__)
 
@@ -85,10 +87,22 @@ def load_cache() -> dict[str, Any]:
 
 
 def save_cache(cache: dict[str, Any]) -> None:
-    now_utc = datetime.now(UTC).isoformat()
-    for entry in cache.values():
-        # setdefault preserva o timestamp da análise original; só carimba entradas novas.
-        # Sem isso, reexecuções renovavam o TTL para sempre e serviam análise velha.
-        entry.setdefault("cached_at", now_utc)
-    with open(CACHE_PATH, "w", encoding="utf-8") as f:
-        json.dump(cache, f, ensure_ascii=False, indent=2)
+    path = Path(CACHE_PATH)
+    with file_lock(path):
+        if path.exists():
+            original = strict_json_loads(path.read_text(encoding="utf-8"))
+            if not isinstance(original, dict):
+                raise ValueError("invalid cache root; preserve before recovery")
+        # Merge concurrent writes under the lock. Expired entries are ephemeral.
+        merged = load_cache()
+        now_utc = datetime.now(UTC).isoformat()
+        for key, entry in cache.items():
+            if not isinstance(entry, dict):
+                raise ValueError("invalid cache entry")
+            merged[key] = {"cached_at": now_utc, **entry}
+        atomic_write(
+            path,
+            (json.dumps(merged, ensure_ascii=False, indent=2, allow_nan=False) + "\n").encode(
+                "utf-8"
+            ),
+        )

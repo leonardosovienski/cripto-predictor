@@ -40,6 +40,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import math
 from collections.abc import Callable, Sequence
 from dataclasses import asdict, dataclass, field
 from datetime import UTC, datetime
@@ -56,11 +57,19 @@ from GarimpoInvestimentos.analyzers.factor_dsl import (
     from_recipe,
     warmup,
 )
+from GarimpoInvestimentos.core.paths import DATA_DIR
+from GarimpoInvestimentos.durable_io import (
+    append_json_history,
+    atomic_write,
+    file_lock,
+    load_json_history,
+)
 
 # Traço append-only das propostas. `.json` e NÃO `.jsonl` de propósito: o
 # .gitignore do projeto captura `*.jsonl` (linha 20), e um traço científico
 # invisível ao git seria o mesmo buraco que o h6_status.json veio tapar.
-PROPOSALS_PATH = Path(__file__).resolve().parent.parent / "hypothesis_proposals.json"
+PROPOSALS_PATH = DATA_DIR / "research" / "hypothesis_proposals.json"
+_LEGACY_PROPOSALS_PATH = Path(__file__).resolve().parent.parent / "hypothesis_proposals.json"
 
 ACCEPTED = "ACCEPTED_FOR_EVALUATION"
 REJECTED_INVALID = "REJECTED_INVALID_RECIPE"
@@ -151,8 +160,13 @@ def parse_proposals(
         limpo = limpo.split("```")[1] if "```" in limpo[3:] else limpo[3:]
         limpo = limpo.removeprefix("json").strip()
     try:
-        bruto = json.loads(limpo)
-    except (json.JSONDecodeError, ValueError) as exc:
+        bruto = json.loads(
+            limpo,
+            parse_constant=lambda value: (_ for _ in ()).throw(
+                ValueError(f"JSON nao finito: {value}")
+            ),
+        )
+    except (json.JSONDecodeError, ValueError, RecursionError) as exc:
         return [
             Proposal(
                 proposal_id=hashlib.sha256(texto.encode("utf-8")).hexdigest()[:16],
@@ -200,42 +214,44 @@ def parse_proposals(
 
 
 def evaluate_proposal(
-    proposal: Proposal, dados: dict[str, list[float | None]], retornos: Sequence[float | None]
+    proposal: Proposal,
+    dados: dict[str, list[float | None]],
+    retornos: Sequence[float | None],
+    *,
+    observations_per_day: int = 1,
 ) -> Evaluation:
     """Avaliacao determinista com as funcoes canonicas do backtest oficial.
     O warmup do fator e descartado: contar `None` de aquecimento como observacao
     inflaria o n."""
+    if proposal.horizon_days < 1 or observations_per_day < 1:
+        raise ValueError("horizonte e frequencia devem ser positivos")
     fator: Factor = from_recipe(proposal.recipe)
     valores = evaluate(fator, dados)
+    if len(valores) != len(retornos):
+        raise ValueError("feature e alvo devem ter o mesmo comprimento")
     aquecimento = warmup(fator)
     pares = [
         (v, r)
-        for v, r in zip(valores[aquecimento:], retornos[aquecimento:], strict=False)
-        if v is not None and r is not None
+        for v, r in zip(valores[aquecimento:], retornos[aquecimento:], strict=True)
+        if v is not None and r is not None and math.isfinite(v) and math.isfinite(r)
     ]
     if len(pares) < 3:
         return Evaluation(proposal.proposal_id, len(pares), None, None, None, aquecimento)
-    rho, lo, hi = spearman_block_ci(pares, block_length=overlap_block_length(proposal.horizon_days))
+    rho, lo, hi = spearman_block_ci(
+        pares, block_length=overlap_block_length(proposal.horizon_days * observations_per_day)
+    )
     return Evaluation(proposal.proposal_id, len(pares), rho, lo, hi, aquecimento)
 
 
 def load_proposals(path: Path = PROPOSALS_PATH) -> list[dict]:
-    if not path.exists():
-        return []
-    try:
-        dados = json.loads(path.read_text(encoding="utf-8"))
-    except (OSError, ValueError):
-        return []
-    return dados if isinstance(dados, list) else []
+    historical = load_json_history(_LEGACY_PROPOSALS_PATH) if path == PROPOSALS_PATH else []
+    return historical + load_json_history(path)
 
 
 def append_proposals(proposals: Sequence[Proposal], path: Path = PROPOSALS_PATH) -> int:
     """Append-only: le, concatena, reescreve. NUNCA remove nem reescreve linha
     existente — mesmo principio do predictions_archive (migracao 0016)."""
-    atuais = load_proposals(path)
-    atuais.extend(asdict(p) for p in proposals)
-    path.write_text(json.dumps(atuais, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-    return len(proposals)
+    return append_json_history(path, [asdict(p) for p in proposals])
 
 
 async def _default_proposer(prompt: str) -> str:
@@ -257,18 +273,29 @@ async def run_round(
     now: datetime | None = None,
 ) -> list[Proposal]:
     """Uma rodada: monta prompt, coleta propostas, valida, registra TODAS."""
+    if isinstance(horizon_days, bool) or not isinstance(horizon_days, int) or horizon_days < 1:
+        raise ValueError("horizon_days deve ser inteiro positivo")
+    load_proposals(path)  # Validate history before consuming a provider call.
     prompt = build_prompt(features=features, horizon_days=horizon_days, historico=historico)
     chamar = proposer or _default_proposer
     texto = await chamar(prompt)
-    vistos = {p.get("proposal_id") for p in load_proposals(path)}
-    propostas = parse_proposals(
-        texto,
-        proposed_at=(now or datetime.now(UTC)).isoformat(),
-        proposer=proposer_name,
-        horizon_days=horizon_days,
-        vistos={v for v in vistos if v},
-    )
-    append_proposals(propostas, path)
+    with file_lock(path):
+        vistos = {p.get("proposal_id") for p in load_proposals(path)}
+        propostas = parse_proposals(
+            texto,
+            proposed_at=(now or datetime.now(UTC)).isoformat(),
+            proposer=proposer_name,
+            horizon_days=horizon_days,
+            vistos={v for v in vistos if v},
+        )
+        current = load_json_history(path)
+        payload = json.dumps(
+            current + [asdict(row) for row in propostas],
+            ensure_ascii=False,
+            indent=2,
+            allow_nan=False,
+        )
+        atomic_write(path, (payload + "\n").encode("utf-8"))
     return propostas
 
 

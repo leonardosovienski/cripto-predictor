@@ -17,8 +17,8 @@ Contrato de saída (KlineRecord):
 """
 
 import asyncio
-import csv
 import logging
+import time
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -26,6 +26,12 @@ from predictor_core.net import get_http_client, with_retry
 from predictor_core.obs import emit_event
 
 from GarimpoInvestimentos.v3.circuit_breaker import CircuitBreaker
+from GarimpoInvestimentos.v3.collectors.record_io import (
+    load_records,
+    save_records,
+    validate_observation,
+    validate_page,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -47,6 +53,13 @@ class KlineRecord:
     open_ms: int  # open_time — chave canônica
     close: float
     volume: float
+
+    def __post_init__(self) -> None:
+        validate_observation(
+            self.symbol, self.open_ms, {"close": self.close, "volume": self.volume}
+        )
+        if self.close <= 0 or self.volume < 0:
+            raise ValueError("close deve ser positivo e volume nao negativo")
 
 
 # ------------------------------------------------------------------ #
@@ -73,11 +86,15 @@ class SpotCollector:
         start_ms: int,
         end_ms: int,
     ) -> list[KlineRecord]:
+        if start_ms > end_ms or start_ms < 0:
+            raise ValueError("intervalo invalido")
         records: list[KlineRecord] = []
+        # Freeze availability at request start. Never cache an unfinished candle.
+        available_at_ms = min(end_ms, int(time.time() * 1000))
         cursor = start_ms
 
         async with get_http_client() as client:
-            while cursor < end_ms:
+            while cursor <= end_ms:
                 if not self._cb.can_attempt():
                     emit_event(
                         "v3_cripto",
@@ -89,6 +106,7 @@ class SpotCollector:
 
                 try:
                     page = await self._fetch_page(client, cursor, end_ms)
+                    validate_page(page, self.symbol, "open_ms", cursor, end_ms)
                 except Exception as exc:
                     self._cb.record_failure()
                     emit_event(
@@ -126,7 +144,7 @@ class SpotCollector:
             metadata={"symbol": self.symbol, "start_ms": start_ms, "end_ms": end_ms},
         )
         logger.info("spot_collector [%s]: %d registros coletados", self.symbol, len(records))
-        return records
+        return [r for r in records if r.open_ms + 3_600_000 <= available_at_ms]
 
     @with_retry(attempts=4, base_delay=2.0, max_delay=30.0)
     async def _fetch_page(
@@ -165,49 +183,16 @@ _FIELDNAMES = ["symbol", "open_ms", "close", "volume"]
 
 
 def save_spot_csv(records: list[KlineRecord], path: Path) -> int:
-    path.parent.mkdir(parents=True, exist_ok=True)
-
-    existing_keys: set[int] = set()
-    if path.exists():
-        with open(path, newline="", encoding="utf-8-sig") as f:
-            for row in csv.DictReader(f):
-                existing_keys.add(int(row["open_ms"]))
-
-    new_records = [r for r in records if r.open_ms not in existing_keys]
-    if not new_records:
-        return 0
-
-    write_header = not path.exists() or path.stat().st_size == 0
-    with open(path, "a", newline="", encoding="utf-8-sig") as f:
-        writer = csv.DictWriter(f, fieldnames=_FIELDNAMES)
-        if write_header:
-            writer.writeheader()
-        for r in new_records:
-            writer.writerow(
-                {
-                    "symbol": r.symbol,
-                    "open_ms": r.open_ms,
-                    "close": r.close,
-                    "volume": r.volume,
-                }
-            )
-
-    logger.info("spot_collector: %d novos registros → %s", len(new_records), path)
-    return len(new_records)
+    """Add unique observations atomically; reject changed values for existing keys."""
+    return save_records(records, path, _FIELDNAMES, load_spot_csv, "open_ms")
 
 
 def load_spot_csv(path: Path) -> list[KlineRecord]:
-    if not path.exists():
-        return []
-    rows = []
-    with open(path, newline="", encoding="utf-8-sig") as f:
-        for row in csv.DictReader(f):
-            rows.append(
-                KlineRecord(
-                    symbol=row["symbol"],
-                    open_ms=int(row["open_ms"]),
-                    close=float(row["close"]),
-                    volume=float(row["volume"]),
-                )
-            )
-    return sorted(rows, key=lambda r: r.open_ms)
+    return load_records(
+        path,
+        _FIELDNAMES,
+        lambda row: KlineRecord(
+            row["symbol"], int(row["open_ms"]), float(row["close"]), float(row["volume"])
+        ),
+        "open_ms",
+    )

@@ -72,7 +72,7 @@ def contagem_previsoes_reais(db_path: Path, dia_iso: str) -> tuple[int, int]:
 
 def _log_mais_recente() -> Path | None:
     candidatos = sorted(
-        (ROOT / "logs").glob("garimpo_fase1_*.log"), key=lambda p: p.stat().st_mtime, reverse=True
+        LOG.parent.glob("garimpo_fase1_*.log"), key=lambda p: p.stat().st_mtime, reverse=True
     )
     return candidatos[0] if candidatos else None
 
@@ -143,7 +143,7 @@ def _check_h6_bridge(problemas: list[str]) -> None:
     try:
         observed_at = datetime.fromisoformat(observed_raw.replace("Z", "+00:00"))
         idade_dias = (datetime.now(UTC) - observed_at).total_seconds() / 86400
-    except ValueError:
+    except (ValueError, TypeError):
         idade_dias = None
 
     if n_local > n_publicado and idade_dias is not None and idade_dias > H6_BRIDGE_STALE_DIAS:
@@ -207,11 +207,11 @@ def _notify_webhook(texto: str) -> None:
         urllib.request.urlopen(req, timeout=10).close()
         log("alerta enviado ao webhook configurado")
     except Exception as e:
-        log(f"AVISO: webhook de alerta falhou ({e}) — alerta segue no arquivo")
+        log(f"AVISO: webhook de alerta falhou ({type(e).__name__}) — alerta segue no arquivo")
 
 
 def main() -> int:
-    hoje_iso = datetime.now().strftime("%Y-%m-%d")
+    hoje_iso = datetime.now(UTC).strftime("%Y-%m-%d")
     problemas = []
 
     coleta_concluida = False
@@ -268,6 +268,7 @@ def main() -> int:
             "perder o dia da janela H5 (decisao 28/07); investigar o "
             "agendador (schtasks /Query /TN GarimpoFase1).\n"
         )
+        ALERTA.parent.mkdir(parents=True, exist_ok=True)
         ALERTA.write_text(texto, encoding="utf-8")
         _notify_webhook(texto)
         return 1

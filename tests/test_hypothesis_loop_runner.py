@@ -24,7 +24,7 @@ from GarimpoInvestimentos.v3.feature_builder import FeatureVector
 
 def _fv(ts_ms: int, spot_close: float, **overrides) -> FeatureVector:
     base = dict(
-        timestamp_exchange_ms=ts_ms,
+        timestamp_exchange_ms=ts_ms * 28_800_000,
         asset="BTCUSDT",
         funding_rate_raw=0.0001,
         oi_notional_usd=1_000_000.0,
@@ -70,9 +70,8 @@ def test_retorno_forward_usa_apenas_close_futuro_dentro_da_serie():
 
 def test_retorno_com_close_nao_positivo_vira_none_nao_erro():
     fvs = [_fv(0, 100.0), _fv(1, 0.0), _fv(2, 100.0), _fv(3, 100.0)]
-    _, retornos = _build_dados_e_retornos(fvs, horizon_days=0)
-    # horizon_days=0 -> passos=0 -> j==i sempre; close[1]<=0 deve dar None no índice 1
-    assert retornos[1] is None
+    with pytest.raises(ValueError, match="horizon_days"):
+        _build_dados_e_retornos(fvs, horizon_days=0)
 
 
 def test_evaluations_trace_e_append_only(tmp_path):

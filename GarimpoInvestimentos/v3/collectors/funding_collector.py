@@ -19,7 +19,6 @@ Contrato de saída (FundingRecord):
 """
 
 import asyncio
-import csv
 import logging
 from dataclasses import dataclass
 from pathlib import Path
@@ -28,6 +27,12 @@ from predictor_core.net import get_http_client, with_retry
 from predictor_core.obs import emit_event
 
 from GarimpoInvestimentos.v3.circuit_breaker import CircuitBreaker
+from GarimpoInvestimentos.v3.collectors.record_io import (
+    load_records,
+    save_records,
+    validate_observation,
+    validate_page,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -48,6 +53,17 @@ class FundingRecord:
     funding_time_ms: int
     funding_rate: float
     mark_price: float
+
+    def __post_init__(self) -> None:
+        validate_observation(
+            self.symbol,
+            self.funding_time_ms,
+            {"funding_rate": self.funding_rate, "mark_price": self.mark_price},
+        )
+        if self.mark_price < 0:
+            raise ValueError(
+                "mark_price nao pode ser negativo; zero significa ausente no arquivo Vision"
+            )
 
 
 # ------------------------------------------------------------------ #
@@ -79,11 +95,13 @@ class FundingCollector:
         Levanta RuntimeError se o Circuit Breaker estiver OPEN.
         Levanta a exceção original da API em caso de falha não-transitória.
         """
+        if start_ms > end_ms or start_ms < 0:
+            raise ValueError("intervalo invalido")
         records: list[FundingRecord] = []
         cursor = start_ms
 
         async with get_http_client() as client:
-            while cursor < end_ms:
+            while cursor <= end_ms:
                 if not self._cb.can_attempt():
                     emit_event(
                         "v3_cripto",
@@ -102,6 +120,7 @@ class FundingCollector:
 
                 try:
                     page = await self._fetch_page(client, cursor, end_ms)
+                    validate_page(page, self.symbol, "funding_time_ms", cursor, end_ms)
                 except Exception as exc:
                     self._cb.record_failure()
                     emit_event(
@@ -183,56 +202,19 @@ _FIELDNAMES = ["symbol", "funding_time_ms", "funding_rate", "mark_price"]
 
 
 def save_funding_csv(records: list[FundingRecord], path: Path) -> int:
-    """
-    Grava registros no CSV em modo append, deduplicando por funding_time_ms.
-    Retorna o número de registros novos efetivamente gravados.
-    Idempotente: executar duas vezes com os mesmos registros não duplica linhas.
-    """
-    path.parent.mkdir(parents=True, exist_ok=True)
-
-    existing_keys: set[int] = set()
-    if path.exists():
-        with open(path, newline="", encoding="utf-8-sig") as f:
-            for row in csv.DictReader(f):
-                existing_keys.add(int(row["funding_time_ms"]))
-
-    new_records = [r for r in records if r.funding_time_ms not in existing_keys]
-    if not new_records:
-        logger.debug("funding_collector: nenhum registro novo para %s", path)
-        return 0
-
-    write_header = not path.exists() or path.stat().st_size == 0
-    with open(path, "a", newline="", encoding="utf-8-sig") as f:
-        writer = csv.DictWriter(f, fieldnames=_FIELDNAMES)
-        if write_header:
-            writer.writeheader()
-        for r in new_records:
-            writer.writerow(
-                {
-                    "symbol": r.symbol,
-                    "funding_time_ms": r.funding_time_ms,
-                    "funding_rate": r.funding_rate,
-                    "mark_price": r.mark_price,
-                }
-            )
-
-    logger.info("funding_collector: %d novos registros → %s", len(new_records), path)
-    return len(new_records)
+    """Add unique observations atomically; reject changed values for existing keys."""
+    return save_records(records, path, _FIELDNAMES, load_funding_csv, "funding_time_ms")
 
 
 def load_funding_csv(path: Path) -> list[FundingRecord]:
-    """Carrega CSV e retorna lista ordenada por funding_time_ms."""
-    if not path.exists():
-        return []
-    rows = []
-    with open(path, newline="", encoding="utf-8-sig") as f:
-        for row in csv.DictReader(f):
-            rows.append(
-                FundingRecord(
-                    symbol=row["symbol"],
-                    funding_time_ms=int(row["funding_time_ms"]),
-                    funding_rate=float(row["funding_rate"]),
-                    mark_price=float(row["mark_price"]),
-                )
-            )
-    return sorted(rows, key=lambda r: r.funding_time_ms)
+    return load_records(
+        path,
+        _FIELDNAMES,
+        lambda row: FundingRecord(
+            row["symbol"],
+            int(row["funding_time_ms"]),
+            float(row["funding_rate"]),
+            float(row["mark_price"]),
+        ),
+        "funding_time_ms",
+    )

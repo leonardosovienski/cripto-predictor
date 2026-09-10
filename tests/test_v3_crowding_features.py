@@ -11,7 +11,7 @@ from GarimpoInvestimentos.v3.feature_builder import FeatureVector
 
 def _fv(ts_ms: int, oi_notional_usd: float, spot_close: float) -> FeatureVector:
     return FeatureVector(
-        timestamp_exchange_ms=ts_ms,
+        timestamp_exchange_ms=ts_ms + 3_600_000,
         asset="BTCUSDT",
         funding_rate_raw=0.0001,
         oi_notional_usd=oi_notional_usd,

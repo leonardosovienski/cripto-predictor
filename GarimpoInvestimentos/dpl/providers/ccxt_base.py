@@ -32,7 +32,7 @@ class CCXTProvider(DataProvider):
     exchange_id: str = "abstract"
 
     def __init__(self, symbol_map: dict[str, str]):
-        self._symbol_map = symbol_map
+        self._symbol_map = dict(symbol_map)
 
     @property
     def name(self) -> str:
@@ -58,7 +58,7 @@ class CCXTProvider(DataProvider):
     ) -> list[MarketDataPoint]:
         if interval not in _SUPPORTED_INTERVALS:
             raise ValueError(f"{self.exchange_id}: intervalo '{interval}' não suportado")
-        if limit < 1:
+        if isinstance(limit, bool) or not isinstance(limit, int) or limit < 1:
             raise ValueError("limit deve ser positivo")
         pair = self._native_symbol(symbol)
         client = self._client()
@@ -75,8 +75,14 @@ class CCXTProvider(DataProvider):
                 # não há ação corretiva possível aqui além de registrar.
                 logger.debug("%s: falha ao fechar client ccxt (ignorada)", self.exchange_id)
         points = []
+        seen = set()
         collected_at = datetime.now(UTC)
         for ts_ms, o, h, l, c, v in rows:
+            if isinstance(ts_ms, bool) or not isinstance(ts_ms, int) or ts_ms < 0:
+                raise ValueError("ccxt: invalid timestamp")
+            if ts_ms in seen:
+                raise ValueError("ccxt: duplicate timestamp")
+            seen.add(ts_ms)
             ts = datetime.fromtimestamp(ts_ms / 1000, tz=UTC)
             available_at = ts + _INTERVAL_DURATION[interval]
             # CCXT timestamps identify candle OPEN. OHLCV final values are not
@@ -93,6 +99,15 @@ class CCXTProvider(DataProvider):
             }
             for field, val in kw.items():
                 require_finite(val, field=field, provider=self.exchange_id, symbol=symbol)
+            if (
+                min(kw["open"], kw["high"], kw["low"], kw["close"]) <= 0
+                or kw["volume"] < 0
+                or not kw["low"]
+                <= min(kw["open"], kw["close"])
+                <= max(kw["open"], kw["close"])
+                <= kw["high"]
+            ):
+                raise ValueError("ccxt: invalid OHLCV range")
             points.append(
                 MarketDataPoint(
                     symbol=symbol,

@@ -1,22 +1,19 @@
-"""BCBProvider — séries macro do Banco Central (SGS) → SignalPoint.
+"""BCB SGS current observations, stamped at the receipt of this vintage.
 
-Ex.: Selic (cód. 11/432), IPCA (433), câmbio (1). Reusa predictor_core.net (httpx +
-retry/backoff) e, opcionalmente, um CircuitBreaker. Modela point-in-time:
-  - reference_date : data de referência (vem da API).
-  - published_at   : reference_date + lag de divulgação (macro não é público no dia
-                     da referência — IPCA do mês M sai em ~M+1). Configurável por série.
-  - vintage        : instante da coleta — distingue revisões (mesmo reference_date,
-                     valor diferente coletado depois).
+Reference dates identify periods, not releases. A fixed lag cannot date revisions.
+Historical as-of use requires an independently documented release/vintage archive.
 """
 
 from __future__ import annotations
 
-from datetime import UTC, datetime, timedelta
+import math
+from datetime import UTC, datetime
 
 from predictor_core.net import get_http_client, with_retry
 
 from GarimpoInvestimentos.dpl.circuit_breaker import CircuitBreaker, CircuitOpenError
 from GarimpoInvestimentos.dpl.signals import SignalPoint, SignalProvider
+from GarimpoInvestimentos.trading.contracts import ensure_utc
 
 _BASE = "https://api.bcb.gov.br/dados/serie/bcdata.sgs.{code}/dados/ultimos/{n}"
 
@@ -32,9 +29,22 @@ class BCBProvider(SignalProvider):
         publish_lag_days: int = 1,
         breaker: CircuitBreaker | None = None,
     ):
+        if (
+            isinstance(series_code, bool)
+            or not isinstance(series_code, int)
+            or series_code <= 0
+            or not name
+        ):
+            raise ValueError("series_code/name invalido")
+        if (
+            isinstance(publish_lag_days, bool)
+            or not isinstance(publish_lag_days, int)
+            or publish_lag_days < 0
+        ):
+            raise ValueError("lag invalido")
         self.series_code = series_code
         self.name = name
-        self._lag = timedelta(days=publish_lag_days)
+        # Legacy parameter accepted for compatibility; never used to backdate publication.
         self._breaker = breaker
 
     @with_retry()
@@ -50,9 +60,13 @@ class BCBProvider(SignalProvider):
     ) -> list[SignalPoint]:
         if self._breaker is not None and not self._breaker.allow():
             raise CircuitOpenError(f"bcb[{self.name}]: circuito aberto")
-        vintage = collected_at or datetime.now(UTC)
+        if isinstance(limit, bool) or not isinstance(limit, int) or limit <= 0:
+            raise ValueError("limit deve ser inteiro positivo")
+        if collected_at is not None:
+            ensure_utc(collected_at, "collected_at")
         try:
             rows = await self._get(limit)
+            vintage = ensure_utc(collected_at or datetime.now(UTC), "collected_at")
         except Exception:
             if self._breaker is not None:
                 self._breaker.record_failure()
@@ -61,19 +75,32 @@ class BCBProvider(SignalProvider):
             self._breaker.record_success()
 
         points = []
+        seen = {}
         for item in rows:
             ref = datetime.strptime(item["data"], "%d/%m/%Y").replace(tzinfo=UTC)
+            value = float(item["valor"])
+            if not math.isfinite(value) or ref > vintage:
+                raise ValueError("valor/data SGS invalido")
+            if ref in seen:
+                if seen[ref] != value:
+                    raise ValueError("observacoes SGS conflitantes")
+                continue
+            seen[ref] = value
             points.append(
                 SignalPoint(
                     name=self.name,
                     timestamp=ref,
-                    value=float(item["valor"]),
+                    value=value,
                     source="bcb_sgs",
-                    published_at=ref + self._lag,
+                    published_at=vintage,
+                    collector_version="bcb_observed_vintage_v2",
+                    quality_flags=frozenset(
+                        {"publication_history_unverified", "available_at_receipt"}
+                    ),
                     reference_date=ref,
                     vintage=vintage,
                 )
             )
         if not points:
             raise RuntimeError(f"bcb[{self.name}]: resposta vazia")
-        return points
+        return sorted(points, key=lambda point: point.timestamp)

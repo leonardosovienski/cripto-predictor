@@ -19,6 +19,7 @@ class Settings(BaseSettings):
         env_file=environment_file(),
         env_file_encoding="utf-8",
         extra="ignore",
+        allow_inf_nan=False,
         case_sensitive=True,
     )
 
@@ -112,6 +113,8 @@ class Settings(BaseSettings):
             raise ValueError("limite de API não pode ser negativo")
         if self.LLM_PREFILTER_MIN_VOLUME_USD < 0 or self.LLM_PREFILTER_MIN_ABS_CHANGE_7D < 0:
             raise ValueError("limites do LLM prefilter não podem ser negativos")
+        if self.LLM_PACING_SECONDS < 0 or self.CACHE_TTL_HOURS <= 0 or self.SCORE_HORIZON_DAYS <= 0:
+            raise ValueError("pacing must be nonnegative; TTL/horizon must be positive")
         if self.LLM_ENSEMBLE_N < 1:
             raise ValueError("LLM_ENSEMBLE_N deve ser >= 1")
         provider_keys = {

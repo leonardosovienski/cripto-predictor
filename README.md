@@ -1,5 +1,7 @@
 # cripto-predictor (GarimpoInvestimentos + DPL)
 
+**Auditoria ampliada de 10/09/2026:** [correções, contratos de dados, validação e dependências](docs/AUDITORIA_AMPLIADA_20260910.md). Esta errata prevalece sobre as descrições operacionais anteriores abaixo: a V3 produz diagnóstico `UNVALIDATED`, os custos não têm calibração de execução comprovada e as versões históricas de fontes exigem evidência de disponibilidade.
+
 **Revisão geral de 09/09/2026:** [contratos corrigidos, limites e registro canônico](docs/REVISAO_COMPLETA_20260909.md). Novos diagnósticos exigem ingestão no contrato atual, preservam inputs e medem somente fechamentos posteriores à previsão. Isso corrige avaliação e procedência; não comprova lucro nem reabre famílias encerradas.
 
 Estado deste PC e verificações conectadas de 09/09/2026: [fechamento das pendências](docs/FECHAMENTO_PENDENCIAS_20260909.md). Código e armazenamento operacional ficam em `C:\Cripto`; configuração não é evidência de lucro.

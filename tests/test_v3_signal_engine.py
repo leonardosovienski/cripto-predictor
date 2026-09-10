@@ -35,7 +35,7 @@ def _fv(*, quality=1.0, fr_z=0.0, oi_d=0.0, exch_ms=1_700_000_000_000) -> "Featu
 
 def _regime(*, label="bull", conf=0.9, uncertain=False, state=0, entropy=0.2) -> "RegimeOutput":
     """Stub do RegimeOutput. hmm_posterior[state] = conf (confiança do estado)."""
-    posterior = [0.0, 0.0, 0.0]
+    posterior = [(1 - conf) / 2] * 3
     posterior[state] = conf
     return cast(
         "RegimeOutput",

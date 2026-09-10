@@ -9,6 +9,7 @@ sintético (escrito no tmp_path do teste, sem rede).
 
 import csv
 from datetime import UTC, datetime
+from pathlib import Path
 
 import pytest
 
@@ -59,7 +60,7 @@ def _write_synthetic_data(data_root, symbol="BTCUSDT"):
             notional = 1_000_000.0 + 50_000.0 * math.sin(i / 11.0)
             w.writerow([symbol, ts, f"{notional / 30000.0:.4f}", f"{notional:.2f}"])
 
-    with (sym_dir / "spot_1h.csv").open("w", newline="", encoding="utf-8") as f:
+    with (sym_dir / "spot_binance_1h.csv").open("w", newline="", encoding="utf-8") as f:
         w = csv.writer(f)
         w.writerow(["symbol", "open_ms", "close", "volume"])
         n_hours = _TOTAL_DAYS * 24
@@ -75,14 +76,22 @@ def _write_dxy_csv(path, start_ms):
     """DXY sintético diário cobrindo toda a janela + folga pro publish_lag."""
     with path.open("w", newline="", encoding="utf-8") as f:
         w = csv.writer(f)
-        w.writerow(["date", "close"])
+        w.writerow(["date", "close", "published_at"])
         start_date = datetime.fromtimestamp(start_ms / 1000, tz=UTC).date()
         import datetime as dt
 
         for i in range(_TOTAL_DAYS + 5):
             d = start_date + dt.timedelta(days=i)
             close = 100.0 + 0.3 * (i % 17)
-            w.writerow([d.isoformat(), f"{close:.4f}"])
+            w.writerow(
+                [
+                    d.isoformat(),
+                    f"{close:.4f}",
+                    datetime.combine(
+                        d + dt.timedelta(days=1), datetime.min.time(), tzinfo=UTC
+                    ).isoformat(),
+                ]
+            )
 
 
 @pytest.fixture
@@ -121,12 +130,15 @@ def test_use_macro_dxy_true_roda_ponta_a_ponta(synthetic_data_root, tmp_path):
     result = backtest_v3.run_wfa(
         symbol="BTCUSDT",
         use_macro_dxy=True,
+        macro_calendar_available_at=datetime.fromtimestamp(start_ms / 1000, tz=UTC),
         dxy_closes_path=dxy_path,
         fr_zscore_threshold=_LOW_FR_THRESHOLD,
         min_regime_confidence=_LOW_REGIME_CONFIDENCE,
     )
     assert result.n_folds >= 1
-    assert result.final_verdict in ("GO", "NO-GO")
+    assert result.final_verdict == "UNVALIDATED"
+    assert result.diagnostic_verdict in ("GO", "NO-GO")
+    assert Path(result.returns_artifact).is_file()
 
 
 def test_use_macro_dxy_sem_dxy_closes_path_e_erro(synthetic_data_root):

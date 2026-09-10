@@ -3,10 +3,25 @@
 import asyncio
 from datetime import UTC, datetime
 
+import pytest
+
 from GarimpoInvestimentos.collectors import news
 from GarimpoInvestimentos.core import api_guard
 from GarimpoInvestimentos.dpl.providers.fear_greed import FearAndGreedProvider
 from GarimpoInvestimentos.dpl.signals import SignalPoint
+
+
+@pytest.fixture(autouse=True)
+def isolated_budget(tmp_path, monkeypatch):
+    monkeypatch.setattr(api_guard, "_BUDGET_DB", tmp_path / "isolated_budget.db")
+    monkeypatch.setenv("PREDICTOR_EVENTS_PATH", str(tmp_path / "events.jsonl"))
+
+
+def test_reset_notice_never_erases_durable_usage(monkeypatch):
+    monkeypatch.setattr(api_guard.settings, "API_GUARD_ENABLED", True)
+    assert api_guard.allow("ingest", "assets", 1).allowed
+    api_guard.reset_for_test()
+    assert not api_guard.allow("ingest", "assets", 1).allowed
 
 
 def test_guarda_desligada_nao_muda_comportamento(monkeypatch):
@@ -82,5 +97,5 @@ def test_fear_greed_cache_nao_toca_rede_uma_segunda_vez():
             published_at=datetime.now(UTC),
         )
     ]
-    provider._cache[30] = points
+    provider._cache[30] = (__import__("time").monotonic(), tuple(points))
     assert asyncio.run(provider.fetch(30)) == points

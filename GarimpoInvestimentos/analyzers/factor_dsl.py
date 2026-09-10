@@ -45,19 +45,65 @@ class Factor:
     op: str
     args: tuple[Any, ...]
 
+    def __post_init__(self) -> None:
+        arities = {
+            "feature": 1,
+            "const": 1,
+            "lag": 2,
+            "rolling_mean": 2,
+            "rolling_std": 2,
+            "zscore": 2,
+            "sign": 1,
+            "add": 2,
+            "sub": 2,
+            "mul": 2,
+            "div": 2,
+        }
+        if not isinstance(self.op, str) or self.op not in arities:
+            raise RecipeError(f"operacao desconhecida: {self.op!r}")
+        if not isinstance(self.args, tuple) or len(self.args) != arities[self.op]:
+            raise RecipeError(f"{self.op!r} espera {arities[self.op]} argumento(s)")
+        if self.op == "feature":
+            if not isinstance(self.args[0], str) or not self.args[0]:
+                raise RecipeError("feature exige nome nao vazio")
+        elif self.op == "const":
+            value = self.args[0]
+            if (
+                isinstance(value, bool)
+                or not isinstance(value, (int, float))
+                or not math.isfinite(value)
+            ):
+                raise RecipeError("const exige numero finito")
+        else:
+            children = (
+                self.args[:1]
+                if self.op in {"lag", "rolling_mean", "rolling_std", "zscore", "sign"}
+                else self.args
+            )
+            if any(not isinstance(child, Factor) for child in children):
+                raise RecipeError(f"{self.op} exige expressoes Factor")
+            if self.op == "lag":
+                _lag_offset(self.args[1])
+            elif self.op in {"rolling_mean", "rolling_std", "zscore"}:
+                _janela(self.args[1])
+
 
 def feature(nome: str) -> Factor:
     return Factor("feature", (nome,))
 
 
 def const(valor: float) -> Factor:
-    return Factor("const", (float(valor),))
+    return Factor("const", (valor,))
 
 
 def lag(expr: Factor, k: int) -> Factor:
-    if k < 1:
+    return Factor("lag", (expr, _lag_offset(k)))
+
+
+def _lag_offset(k: int) -> int:
+    if isinstance(k, bool) or not isinstance(k, int) or k < 1:
         raise RecipeError(f"lag exige k >= 1 (k=0 seria o proprio instante); recebido {k}")
-    return Factor("lag", (expr, int(k)))
+    return k
 
 
 def rolling_mean(expr: Factor, janela: int) -> Factor:
@@ -93,7 +139,7 @@ def div(a: Factor, b: Factor) -> Factor:
 
 
 def _janela(janela: int) -> int:
-    if janela < 2:
+    if isinstance(janela, bool) or not isinstance(janela, int) or janela < 2:
         raise RecipeError(f"janela deve ser >= 2; recebido {janela}")
     return int(janela)
 
@@ -120,7 +166,7 @@ def from_recipe(recipe: dict) -> Factor:
     if not isinstance(recipe, dict):
         raise RecipeError(f"recipe deve ser um objeto JSON; recebido {type(recipe).__name__}")
     op = recipe.get("op")
-    if op not in _BUILDERS:
+    if not isinstance(op, str) or op not in _BUILDERS:
         raise RecipeError(f"operacao desconhecida: {op!r}. Permitidas: {sorted(_BUILDERS)}")
     args = recipe.get("args", [])
     if not isinstance(args, list):
@@ -152,11 +198,23 @@ def evaluate(f: Factor, dados: dict[str, Serie]) -> Serie:
     usa NULL == NaN para stale/ausente, e converter para zero aqui inventaria
     observação que não existe.
     """
+    if len({len(values) for values in dados.values()}) > 1:
+        raise RecipeError("series devem ter o mesmo comprimento temporal")
+    try:
+        values = _evaluate(f, dados)
+    except OverflowError as exc:
+        raise RecipeError("overflow no calculo do fator") from exc
+    if any(value is not None and not math.isfinite(value) for value in values):
+        raise RecipeError("resultado nao finito do fator")
+    return values
+
+
+def _evaluate(f: Factor, dados: dict[str, Serie]) -> Serie:
     if f.op == "feature":
         nome = f.args[0]
         if nome not in dados:
             raise RecipeError(f"feature ausente nos dados: {nome!r}. Disponiveis: {sorted(dados)}")
-        return list(dados[nome])
+        return [value if _finito(value) else None for value in dados[nome]]
 
     if f.op == "const":
         n = len(next(iter(dados.values()))) if dados else 0
@@ -164,7 +222,7 @@ def evaluate(f: Factor, dados: dict[str, Serie]) -> Serie:
 
     if f.op == "lag":
         base = evaluate(f.args[0], dados)
-        k = f.args[1]
+        k = min(f.args[1], len(base))
         # Só olha para TRÁS. Os k primeiros não têm passado suficiente -> None.
         return [None] * k + base[: len(base) - k]
 

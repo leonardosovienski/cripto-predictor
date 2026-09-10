@@ -13,7 +13,7 @@ from GarimpoInvestimentos.v3.collectors.funding_collector import FundingRecord
 from GarimpoInvestimentos.v3.collectors.oi_collector import OIRecord
 
 SOURCE = "binance-futures"
-COLLECTOR_VERSION = "funding-oi-v3/1"
+COLLECTOR_VERSION = "funding-oi-v3/2"
 SIGNAL_SCHEMA_VERSION = "crypto-signal/2"
 
 
@@ -22,7 +22,9 @@ def _time(milliseconds: int) -> datetime:
 
 
 def _content_hash(payload: dict) -> str:
-    encoded = json.dumps(payload, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    encoded = json.dumps(payload, sort_keys=True, separators=(",", ":"), allow_nan=False).encode(
+        "utf-8"
+    )
     return hashlib.sha256(encoded).hexdigest()
 
 
@@ -45,7 +47,7 @@ def funding_signal_points(
                 name=f"{record.symbol}:funding_rate",
                 timestamp=event_at,
                 event_at=event_at,
-                published_at=event_at,
+                published_at=ingested_at,
                 ingested_at=ingested_at,
                 vintage=ingested_at,
                 value=record.funding_rate,
@@ -56,7 +58,7 @@ def funding_signal_points(
                 content_hash=digest,
                 collector_version=COLLECTOR_VERSION,
                 schema_version=SIGNAL_SCHEMA_VERSION,
-                quality_flags=frozenset({"published_at_exchange"}),
+                quality_flags=frozenset({"available_at_receipt", "publication_history_unverified"}),
             ).require_enriched()
         )
     return points
@@ -66,7 +68,7 @@ def oi_signal_points(records: list[OIRecord], *, ingested_at: datetime) -> list[
     points = []
     for record in records:
         event_at = _time(record.timestamp_ms)
-        published_at = event_at
+        published_at = ingested_at
         digest = _content_hash(
             {
                 "symbol": record.symbol,
@@ -95,7 +97,9 @@ def oi_signal_points(records: list[OIRecord], *, ingested_at: datetime) -> list[
                     content_hash=digest,
                     collector_version=COLLECTOR_VERSION,
                     schema_version=SIGNAL_SCHEMA_VERSION,
-                    quality_flags=frozenset({"published_at_exchange_timestamp"}),
+                    quality_flags=frozenset(
+                        {"available_at_receipt", "publication_history_unverified"}
+                    ),
                 ).require_enriched()
             )
     return points

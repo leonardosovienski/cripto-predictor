@@ -144,7 +144,7 @@ def test_trade_intent_rejects_nonpositive_take_profit_pct():
 
 def test_order_avg_fill_price_and_remaining_qty():
     order = Order(
-        order_id=new_id("order"),
+        order_id="o1",
         intent_id=new_id("intent"),
         instrument=BTC_PERP,
         side=OrderSide.BUY,

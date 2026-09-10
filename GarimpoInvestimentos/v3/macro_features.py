@@ -1,30 +1,21 @@
-"""H7 (macro/DXY): covariáveis extras para o RegimeEngine — docs/HYPOTHESES.md.
+"""Macro covariates with explicit observed publication timestamps.
 
-Duas funções puras, alinhadas por timestamp a uma lista de FeatureVector:
-
-  1. `build_macro_event_dummy` — 1.0/0.0 por ponto: está a até `window_days` de
-     QUALQUER evento (FOMC/CPI/PPI) do calendário? Reusa o parser puro de
-     `dpl.macro_calendar` (sem tocar em `persist_macro_signals`/FeatureStore —
-     este módulo não grava nada, só deriva a covariável em memória).
-  2. `build_dxy_return` — retorno 1d do DXY, ponto-a-ponto, respeitando
-     `publish_lag_days` (mesma semântica de `dpl.providers.dxy.DXYProvider`):
-     usa o candle mais recente cujo `date + lag <= data do ponto`, nunca um
-     valor "do futuro" relativo ao momento em que o dado estaria realmente
-     publicado.
-
-Ambas recebem dado JÁ COLETADO (calendário local; série de closes do DXY) — não
-buscam nada na rede. A coleta ao vivo do DXY é responsabilidade do
-`DXYProvider`, chamado fora deste módulo.
+Daily observations are not daily releases. A business-day lag is available only
+as an explicitly named historical assumption and cannot prove causal availability.
+Missing values require a measured coverage check before any model fit.
 """
 
 from __future__ import annotations
 
 import csv
+import math
+from bisect import insort
 from datetime import UTC, date, datetime
 from pathlib import Path
 
 from GarimpoInvestimentos.dpl.business_days import published_at
 from GarimpoInvestimentos.dpl.macro_calendar import MacroEvent, load_macro_calendar
+from GarimpoInvestimentos.trading.contracts import ensure_utc
 from GarimpoInvestimentos.v3.feature_builder import FeatureVector
 
 
@@ -38,6 +29,8 @@ def build_macro_event_dummy(
     calendar_path: Path | None = None,
     window_days: int = 1,
     events: list[MacroEvent] | None = None,
+    calendar_available_at: datetime | None = None,
+    assume_calendar_known: bool = False,
 ) -> list[float]:
     """1.0 se o dia do ponto está a até `window_days` dias (antes OU depois,
     inclusive) de QUALQUER evento macro no calendário; 0.0 caso contrário.
@@ -47,9 +40,21 @@ def build_macro_event_dummy(
     `events`: injeção direta para teste (evita reler o JSON); se omitido, carrega
     de `calendar_path` (ou do arquivo padrão do projeto).
     """
-    if window_days < 0:
+    if isinstance(window_days, bool) or not isinstance(window_days, int) or window_days < 0:
         raise ValueError("window_days não pode ser negativo")
+    if not assume_calendar_known:
+        if calendar_available_at is None:
+            raise ValueError("Calendario exige calendar_available_at documentado para sua versao")
+        known = ensure_utc(calendar_available_at, "calendar_available_at")
+        if any(fv.timestamp_exchange_ms < int(known.timestamp() * 1000) for fv in feature_vectors):
+            raise ValueError("Calendario nao estava documentado no instante de todas as features")
     ev = events if events is not None else load_macro_calendar(calendar_path)
+    if not assume_calendar_known:
+        years = {event.event_date.year for event in ev}
+        if not ev or any(
+            _ts_to_date(fv.timestamp_exchange_ms).year not in years for fv in feature_vectors
+        ):
+            raise ValueError("Calendario sem cobertura para os anos das features")
     event_dates = [e.event_date for e in ev]
     out = []
     for fv in feature_vectors:
@@ -59,99 +64,148 @@ def build_macro_event_dummy(
     return out
 
 
+def _aligned_dxy(
+    feature_vectors: list[FeatureVector],
+    closes: dict[date, float],
+    *,
+    available_at: dict[date, datetime] | None,
+    publish_lag_days: int,
+    assume_business_day_lag: bool,
+) -> list[float | None]:
+    if (
+        isinstance(publish_lag_days, bool)
+        or not isinstance(publish_lag_days, int)
+        or publish_lag_days < 0
+    ):
+        raise ValueError("publish_lag_days nao pode ser negativo ou fracionario")
+    if any(not math.isfinite(value) or value <= 0 for value in closes.values()):
+        raise ValueError("DXY exige valores positivos finitos")
+    if available_at is None:
+        if not assume_business_day_lag:
+            raise ValueError(
+                "DXY exige available_at documentado por vintage; lag presumido nao prova publicacao"
+            )
+        available_at = {
+            day: datetime.combine(
+                published_at(day, publish_lag_days), datetime.min.time(), tzinfo=UTC
+            )
+            for day in closes
+        }
+    if set(closes) - set(available_at):
+        raise ValueError("DXY sem data de disponibilidade para todas as observacoes")
+    events = []
+    for day in closes:
+        stamp = ensure_utc(available_at[day], "available_at")
+        if stamp.date() < day:
+            raise ValueError("DXY publicado antes da referencia")
+        events.append((int(stamp.timestamp() * 1000), day))
+    events.sort()
+    usable: list[date] = []
+    cursor = 0
+    out: list[float | None] = [None] * len(feature_vectors)
+    for index, fv in sorted(
+        enumerate(feature_vectors), key=lambda pair: pair[1].timestamp_exchange_ms
+    ):
+        while cursor < len(events) and events[cursor][0] <= fv.timestamp_exchange_ms:
+            insort(usable, events[cursor][1])
+            cursor += 1
+        if len(usable) >= 2:
+            out[index] = (closes[usable[-1]] / closes[usable[-2]] - 1) * 100.0
+    return out
+
+
 def build_dxy_return(
     feature_vectors: list[FeatureVector],
     dxy_daily_closes: dict[date, float],
     *,
+    available_at: dict[date, datetime] | None = None,
     publish_lag_days: int = 1,
+    assume_business_day_lag: bool = False,
 ) -> list[float]:
-    """Retorno percentual 1d do DXY, alinhado a `feature_vectors`, respeitando
-    `publish_lag_days` EM DIAS ÚTEIS (o release H.10 do Fed sai com defasagem —
-    mesma convenção conservadora de `DXYProvider`, não
-    recalibrada aqui, agora consistente entre os dois módulos).
+    """As-of DXY return. Zero imputation is exposed separately by dxy_coverage.
 
-    Para o ponto no dia D, usa a observação `o` mais recente cuja data de
-    publicação real (`o` + `publish_lag_days` dias úteis) já ocorreu em D ou
-    antes, contra a observação anterior a essa — NUNCA uma cujo `date`
-    publicado seja posterior a D. Cripto negocia fim de semana; usar dias corridos aqui subestimaria o lag
-    real perto de sábado/domingo (bug real encontrado por auditoria em
-    2026-09-05 — ver `dpl/business_days.py` para o porquê de usar o predicado
-    direto `published_at(obs) <= D` em vez de um cutoff subtraído).
-    Pontos sem dado DXY suficiente (início da série, ou lacuna na coleta)
-    recebem 0.0 — é uma decisão CONSERVADORA (covariável neutra), não um erro
-    silencioso: quem chama deve conferir a cobertura de `dxy_daily_closes`
-    antes de treinar.
+    A supplied timestamp must describe the availability of that exact value/vintage.
+    Explicit lag assumptions are for reproduction, not a historical availability claim.
     """
-    if publish_lag_days < 0:
-        raise ValueError("publish_lag_days não pode ser negativo")
-    available_dates = sorted(dxy_daily_closes)
-    published = [(published_at(d, publish_lag_days), d) for d in available_dates]
-    out = []
-    for fv in feature_vectors:
-        day = _ts_to_date(fv.timestamp_exchange_ms)
-        usable = [d for pub, d in published if pub <= day]
-        if len(usable) < 2:
-            out.append(0.0)
-            continue
-        latest, prev = usable[-1], usable[-2]
-        c_latest, c_prev = dxy_daily_closes[latest], dxy_daily_closes[prev]
-        out.append(0.0 if c_prev == 0 else (c_latest - c_prev) / c_prev * 100.0)
-    return out
+    values = _aligned_dxy(
+        feature_vectors,
+        dxy_daily_closes,
+        available_at=available_at,
+        publish_lag_days=publish_lag_days,
+        assume_business_day_lag=assume_business_day_lag,
+    )
+    return [0.0 if value is None else value for value in values]
 
 
 def dxy_coverage(
     feature_vectors: list[FeatureVector],
     dxy_daily_closes: dict[date, float],
     *,
+    available_at: dict[date, datetime] | None = None,
     publish_lag_days: int = 1,
+    assume_business_day_lag: bool = False,
 ) -> tuple[int, int]:
-    """`(n_pontos_imputados, n_pontos_total)` para a mesma entrada que
-    `build_dxy_return` receberia.
-
-    O 0.0 que `build_dxy_return` devolve em lacuna NÃO é neutro: entra no
-    `StandardScaler` ajustado no IS e vira uma posição concreta da distribuição,
-    então uma cobertura ruim ensina o HMM um "estado de dado faltante"
-    disfarçado de regime. Esta função existe para que essa fração seja MEDIDA
-    antes do treino em vez de permanecer invisível — deliberadamente separada,
-    para não alterar o valor numérico que `build_dxy_return` já produz (o
-    veredito fechado do H9 e o pré-registro do H7 dependem dele estável).
-    """
-    if publish_lag_days < 0:
-        raise ValueError("publish_lag_days não pode ser negativo")
-    published = [published_at(d, publish_lag_days) for d in sorted(dxy_daily_closes)]
-    imputados = sum(
-        1
-        for fv in feature_vectors
-        if sum(1 for pub in published if pub <= _ts_to_date(fv.timestamp_exchange_ms)) < 2
+    values = _aligned_dxy(
+        feature_vectors,
+        dxy_daily_closes,
+        available_at=available_at,
+        publish_lag_days=publish_lag_days,
+        assume_business_day_lag=assume_business_day_lag,
     )
-    return imputados, len(feature_vectors)
+    return sum(value is None for value in values), len(values)
+
+
+def _load_dxy_csv(path: Path) -> tuple[dict[date, float], dict[date, datetime]]:
+    closes: dict[date, float] = {}
+    available: dict[date, datetime] = {}
+    with path.open(encoding="utf-8-sig", newline="") as handle:
+        reader = csv.DictReader(handle)
+        fields = reader.fieldnames
+        if fields not in (
+            ["date", "close"],
+            ["date", "close", "published_at"],
+            ["observation_date", "DTWEXBGS"],
+        ):
+            raise ValueError(f"{path}: cabecalho invalido")
+        for row in reader:
+            if None in row or any(value is None for value in row.values()):
+                raise ValueError(f"{path}: linha malformada")
+            raw_close = row[fields[1]]
+            if fields[0] == "observation_date" and raw_close == ".":
+                continue
+            try:
+                day = date.fromisoformat(row[fields[0]])
+                close = float(raw_close)
+                if not math.isfinite(close) or close <= 0:
+                    raise ValueError("close nao positivo/finito")
+                stamp = (
+                    ensure_utc(datetime.fromisoformat(row["published_at"]), "published_at")
+                    if "published_at" in row
+                    else None
+                )
+            except ValueError as exc:
+                raise ValueError(f"{path}: linha inválida") from exc
+            if day in closes and (closes[day] != close or available.get(day) != stamp):
+                raise ValueError(f"{path}: observacoes conflitantes; use uma tabela por vintage")
+            closes[day] = close
+            if stamp is not None:
+                if stamp.date() < day:
+                    raise ValueError("publicacao anterior a referencia")
+                available[day] = stamp
+    if not closes:
+        raise ValueError(f"{path}: nenhum dado valido")
+    return closes, available
 
 
 def load_dxy_daily_closes(path: Path) -> dict[date, float]:
-    """Lê um CSV local de 2 colunas (`date,close`) com o histórico do DXY, coletado
-    offline via `DXYProvider` (ou o `fredgraph.csv` bruto do FRED). Não busca nada
-    na rede — só materializa um cache local em `dict[date, float]` pra
-    `build_dxy_return` consumir. Levanta ValueError em linha malformada (falha
-    alto: um preço mal-parseado silenciosamente vira uma covariável errada)."""
-    out: dict[date, float] = {}
-    with path.open(encoding="utf-8") as f:
-        reader = csv.reader(f)
-        header = next(reader, None)
-        for row in reader:
-            if not row:
-                continue
-            if len(row) != 2:
-                raise ValueError(f"{path}: linha malformada {row!r} (esperado date,close)")
-            raw_date, raw_close = row
-            try:
-                d = datetime.strptime(raw_date.strip(), "%Y-%m-%d").date()
-                c = float(raw_close)
-            except ValueError as exc:
-                raise ValueError(f"{path}: linha inválida {row!r}") from exc
-            out[d] = c
-    if not out:
-        raise ValueError(f"{path}: nenhum dado válido lido (header={header!r})")
-    return out
+    return _load_dxy_csv(path)[0]
+
+
+def load_dxy_availability(path: Path) -> dict[date, datetime]:
+    closes, available = _load_dxy_csv(path)
+    if closes.keys() != available.keys():
+        raise ValueError("Historico DXY exige coluna published_at documentada para cada vintage")
+    return available
 
 
 __all__ = [
@@ -159,4 +213,5 @@ __all__ = [
     "dxy_coverage",
     "build_macro_event_dummy",
     "load_dxy_daily_closes",
+    "load_dxy_availability",
 ]

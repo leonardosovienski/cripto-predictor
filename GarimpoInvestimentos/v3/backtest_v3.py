@@ -53,11 +53,14 @@ USO (CLI):
 """
 
 import argparse
+import hashlib
 import json
 import logging
 import math
 import sys
-from dataclasses import dataclass
+import uuid
+from dataclasses import asdict, dataclass
+from datetime import UTC, datetime
 from pathlib import Path
 
 from predictor_core.measurement.bootstrap import bootstrap_ci
@@ -68,10 +71,14 @@ from predictor_core.stats import (
     spearman_block_ci,
 )
 
-from GarimpoInvestimentos.analyzers.trials import TRIALS_PATH, register_trial
+from GarimpoInvestimentos.analyzers.trials import TRIALS_PATH, FrozenFamilyError, register_trial
 from GarimpoInvestimentos.core.paths import DATA_DIR
+from GarimpoInvestimentos.dpl.macro_calendar import DEFAULT_CALENDAR_PATH
+from GarimpoInvestimentos.durable_io import atomic_write
+from GarimpoInvestimentos.governance import load_scientific_state
 from GarimpoInvestimentos.v3.collectors.funding_collector import load_funding_csv
 from GarimpoInvestimentos.v3.collectors.oi_collector import load_oi_csv
+from GarimpoInvestimentos.v3.collectors.record_io import validate_observation
 from GarimpoInvestimentos.v3.collectors.spot_collector import load_spot_csv
 from GarimpoInvestimentos.v3.costs import CostModel
 from GarimpoInvestimentos.v3.crowding_features import build_oi_volume_ratio
@@ -85,6 +92,8 @@ from GarimpoInvestimentos.v3.feature_builder import (
 from GarimpoInvestimentos.v3.macro_features import (
     build_dxy_return,
     build_macro_event_dummy,
+    dxy_coverage,
+    load_dxy_availability,
     load_dxy_daily_closes,
 )
 from GarimpoInvestimentos.v3.regime_engine import RegimeEngine
@@ -125,10 +134,7 @@ _GO_MAX_DD_THRESHOLD = 0.20  # 20%
 _DEFAULT_STOP_LOSS_BPS = 0.0
 _DEFAULT_TAKE_PROFIT_BPS = 0.0
 
-# Fração de Kelly homologada para produção (Kelly sweep BTCUSDT, 2026-06-27).
-# Maior fração com veredicto GO: PSR 0.909, IC_lower +0.0205, MaxDD 10.45% (< 20%).
-# Maximiza retorno absoluto dentro do orçamento de risco; PSR/IC são invariantes
-# sob fracionamento (o Kelly escala exposição, não o sinal). Ver HANDOFF.md.
+# Historical research setting only. No production or capital approval.
 DEFAULT_KELLY_FRACTION = 0.50
 
 _DATA_ROOT = DATA_DIR / "v3"
@@ -185,7 +191,7 @@ class WFAResult:
     taker_fee_bps: float = _DEFAULT_TAKER_FEE_BPS
     stop_loss_bps: float = _DEFAULT_STOP_LOSS_BPS
     take_profit_bps: float = _DEFAULT_TAKE_PROFIT_BPS
-    # Sortino/Calmar sobre a curva de portfólio (V-01 revisão 2): só fazem
+    # Sortino sobre retornos por sinal; Calmar sobre equity de trades fechados: só fazem
     # sentido agora que a equity curve faz netting real de posições
     # concorrentes — sobre a série ingênua anterior, ambos herdariam o
     # mesmo viés de MaxDD subestimado.
@@ -194,6 +200,15 @@ class WFAResult:
     cost_aware_filter: bool = False
     minimum_edge_calibration_sample: int = _DEFAULT_EDGE_CALIBRATION_SAMPLE
     minimum_net_edge: float = _DEFAULT_MINIMUM_NET_EDGE
+    scientific_state: str = "DESCRIPTIVE_REPLAY"
+    capital_enabled: bool = False
+    returns_artifact: str | None = None
+    diagnostic_verdict: str = "UNCOMPUTED"
+    sharpe_basis: str = "per_signal_unannualized_sample_std"
+    psr_assumption: str = "IID diagnostic; overlapping trades and selection invalidate confidence"
+    execution_assumption: str = (
+        "spot price proxy for perpetual; hourly-close exits; no fill validation"
+    )
 
 
 @dataclass
@@ -230,9 +245,63 @@ def _find_spot_return(
         tolerance_ms,
     )
 
-    if close_start is None or close_end is None or close_start <= 0:
+    if (
+        close_start is None
+        or close_end is None
+        or not math.isfinite(close_start)
+        or not math.isfinite(close_end)
+        or close_start <= 0
+        or close_end <= 0
+    ):
         return None
-    return math.log(close_end / close_start)
+    return math.log(close_end) - math.log(close_start)
+
+
+@dataclass(frozen=True)
+class BarrierExit:
+    log_return: float
+    reason: str
+    elapsed_hours: int
+
+
+def _barrier_exit(
+    ts_ms: int,
+    horizon_hours: int,
+    direction: int,
+    spot_index: "dict[int, float] | SortedTimeIndex",
+    stop_loss_bps: float = 0.0,
+    take_profit_bps: float = 0.0,
+    tolerance_ms: int = 300_000,
+) -> BarrierExit | None:
+    """Hourly-close simulation. Barriers trigger at the observed price, never at an invented fill."""
+    if (
+        isinstance(horizon_hours, bool)
+        or not isinstance(horizon_hours, int)
+        or horizon_hours < 1
+        or direction not in {-1, 1}
+    ):
+        raise ValueError("horizonte/direcao invalido")
+    if any(not math.isfinite(value) or value < 0 for value in (stop_loss_bps, take_profit_bps)):
+        raise ValueError("barreiras devem ser finitas nao negativas")
+    index = spot_index if isinstance(spot_index, SortedTimeIndex) else SortedTimeIndex(spot_index)
+    entry = index.as_of(ts_ms - _SPOT_CANDLE_MS, tolerance_ms)
+    if entry is None or not math.isfinite(entry) or entry <= 0:
+        return None
+    for hour in range(1, horizon_hours + 1):
+        price = index.as_of(ts_ms + (hour - 1) * _SPOT_CANDLE_MS, tolerance_ms)
+        if price is None or not math.isfinite(price) or price <= 0:
+            if stop_loss_bps or take_profit_bps or hour == horizon_hours:
+                return None  # Exit path or maturity is unobservable.
+            continue
+        log_return = math.log(price) - math.log(entry)
+        signed_return = direction * (price / entry - 1)
+        if stop_loss_bps and signed_return <= -stop_loss_bps / 10000:
+            return BarrierExit(log_return, "stop_loss", hour)
+        if take_profit_bps and signed_return >= take_profit_bps / 10000:
+            return BarrierExit(log_return, "take_profit", hour)
+        if hour == horizon_hours:
+            return BarrierExit(log_return, "horizon", hour)
+    return None
 
 
 def _find_barrier_return(
@@ -244,51 +313,33 @@ def _find_barrier_return(
     take_profit_bps: float = 0.0,
     tolerance_ms: int = 300_000,
 ) -> tuple[float, str] | None:
+    result = _barrier_exit(
+        ts_ms, horizon_hours, direction, spot_index, stop_loss_bps, take_profit_bps, tolerance_ms
+    )
+    return (result.log_return, result.reason) if result else None
+
+
+def _realized_funding_pnl(
+    position: float, entry_ms: int, exit_ms: int, entry_price: float, records: list
+) -> float | None:
+    """Fixed-quantity linear-perpetual funding at observed settlement marks.
+
+    Prices used by the existing strategy are still a spot proxy, so this does not
+    establish executable perpetual P&L. Missing marks or settlement coverage fail closed.
     """
-    Retorno de P&L intrabar com saída antecipada por stop-loss/take-profit.
-
-    Caminha hora a hora a partir de ``ts_ms`` (mesma base de close_start de
-    ``_find_spot_return``, sem lookahead — cada candle só é observável no seu
-    próprio close) e sai assim que o retorno log acumulado, projetado na
-    direção do sinal, cruza a barreira de perda ou de ganho. Sem barreira
-    atingida, cai no comportamento antigo: retorno do horizonte cheio.
-
-    stop_loss_bps / take_profit_bps == 0.0 desabilita a respectiva barreira
-    (mantém compatibilidade com o backtest original quando ambos são 0).
-
-    Retorna (retorno_log, motivo) onde motivo ∈ {"stop_loss", "take_profit",
-    "horizon"}, ou None se não houver preço de entrada válido.
-    """
-    if not isinstance(spot_index, SortedTimeIndex):
-        spot_index = SortedTimeIndex(spot_index)
-
-    entry_ts = ts_ms - _SPOT_CANDLE_MS
-    entry_price = spot_index.as_of(entry_ts, tolerance_ms)
-    if entry_price is None or entry_price <= 0:
+    if not math.isfinite(entry_price) or entry_price <= 0:
+        raise ValueError("preco de entrada invalido")
+    expected = set(range((entry_ms // _MS_PER_8H + 1) * _MS_PER_8H, exit_ms + 1, _MS_PER_8H))
+    observed = {
+        record.funding_time_ms: record
+        for record in records
+        if entry_ms < record.funding_time_ms <= exit_ms
+    }
+    if set(observed) != expected or any(record.mark_price <= 0 for record in observed.values()):
         return None
-
-    sl = stop_loss_bps / 10_000.0 if stop_loss_bps > 0 else None
-    tp = take_profit_bps / 10_000.0 if take_profit_bps > 0 else None
-
-    last_return = None
-    n_candles = horizon_hours
-    for h in range(1, n_candles + 1):
-        check_ts = ts_ms + h * _SPOT_CANDLE_MS - _SPOT_CANDLE_MS
-        price = spot_index.as_of(check_ts, tolerance_ms)
-        if price is None or price <= 0:
-            continue
-        r = math.log(price / entry_price)
-        last_return = r
-        directional_r = r * direction
-
-        if sl is not None and directional_r <= -sl:
-            return -sl * direction, "stop_loss"
-        if tp is not None and directional_r >= tp:
-            return tp * direction, "take_profit"
-
-    if last_return is None:
-        return None
-    return last_return, "horizon"
+    return -position * sum(
+        record.funding_rate * record.mark_price / entry_price for record in observed.values()
+    )
 
 
 def _ms_to_day_offset(ts_ms: int, origin_ms: int) -> int:
@@ -309,7 +360,7 @@ def _equity_curve(returns: list[float]) -> list[float]:
     ``_portfolio_equity_curve``, que faz o netting correto por
     contabilidade de eventos de abertura/fechamento (V-01).
     """
-    equity: list[float] = []
+    equity: list[float] = [1.0]
     acc = 1.0
     for r in returns:
         acc *= 1.0 + r
@@ -355,7 +406,15 @@ def _portfolio_equity_curve(trades: list["_Trade"], num_slots: int) -> list[floa
     """
     if not trades:
         return []
-    num_slots = max(1, num_slots)
+    if isinstance(num_slots, bool) or not isinstance(num_slots, int) or num_slots < 1:
+        raise ValueError("num_slots deve ser inteiro positivo")
+    if len({id(trade) for trade in trades}) != len(trades):
+        raise ValueError("trade duplicado")
+    if any(
+        not math.isfinite(trade.net_return) or trade.net_return <= -1 or trade.horizon_hours <= 0
+        for trade in trades
+    ):
+        raise ValueError("trade invalido ou insolvencia sem modelo de liquidacao")
 
     # Eventos: (timestamp, prioridade, trade). Fechamentos (0) processados
     # antes de aberturas (1) no mesmo instante — libera capital antes de
@@ -390,8 +449,8 @@ def _portfolio_equity_curve(trades: list["_Trade"], num_slots: int) -> list[floa
 def _sortino_ratio(returns: list[float]) -> float:
     """
     Sortino não-anualizado, na mesma escala do "Sharpe simples" já usado
-    neste módulo (mean/desvio × sqrt(N) sobre a própria amostra de trades,
-    não sobre um período calendário fixo — ``predictor_core.stats.sortino``
+    neste módulo (mean/downside_deviation sobre a amostra de sinais,
+    sem anualizacao; a serie nao tem periodo calendario fixo — ``predictor_core.stats.sortino``
     assume 252 períodos/ano, o que não bate com a cadência de 8h do WFA;
     reimplementado aqui para consistência com ``fold_sharpe``/``agg_sharpe``).
 
@@ -407,7 +466,7 @@ def _sortino_ratio(returns: list[float]) -> float:
     downside_std = math.sqrt(downside_sq / len(returns))
     if downside_std <= 1e-12:
         return 0.0
-    return (mean_r / downside_std) * math.sqrt(len(returns))
+    return mean_r / downside_std
 
 
 def _calmar_ratio(equity_curve: list[float], max_dd: float) -> float:
@@ -469,6 +528,7 @@ def run_wfa(
     macro_window_days: int = 1,
     dxy_closes_path: Path | None = None,
     use_oi_volume_ratio: bool = False,
+    macro_calendar_available_at: datetime | None = None,
 ) -> WFAResult:
     """
     Executa Walk Forward Analysis sobre os dados locais coletados pelo pipeline.
@@ -499,16 +559,69 @@ def run_wfa(
         reparametrização de H1-H3. Default False preserva o comportamento
         anterior. True adiciona oi_volume_ratio (razão OI/volume notional,
         log-escala — crowding especulativo) como covariável extra do
-        RegimeEngine. Dado 100% já coletado (spot_1h.csv já tem volume) —
+        RegimeEngine. Dado 100% já coletado (spot_binance_1h.csv já tem volume) —
         não exige nenhum CSV novo, ao contrário de use_macro_dxy.
     """
+    if isinstance(horizon_hours, bool) or not isinstance(horizon_hours, int) or horizon_hours < 1:
+        raise ValueError("horizon_hours deve ser inteiro positivo")
+    validate_observation(symbol, 0, {})
+    CostModel(taker_fee_bps=taker_fee_bps, slippage_bps=slippage_bps)
+    for value, label in (
+        (stop_loss_bps, "stop_loss_bps"),
+        (take_profit_bps, "take_profit_bps"),
+        (fr_zscore_threshold, "fr_zscore_threshold"),
+        (minimum_net_edge, "minimum_net_edge"),
+    ):
+        if not math.isfinite(value) or value < 0:
+            raise ValueError(f"{label} deve ser finito e nao negativo")
+    if not math.isfinite(min_regime_confidence) or not 0 <= min_regime_confidence <= 1:
+        raise ValueError("min_regime_confidence deve estar em [0,1]")
+    if not math.isfinite(kelly_fraction) or not 0 < kelly_fraction <= 1:
+        raise ValueError("kelly_fraction deve estar em (0,1]")
     if use_macro_dxy and dxy_closes_path is None:
         raise ValueError("use_macro_dxy=True exige dxy_closes_path (CSV date,close)")
     sym_dir = _DATA_ROOT / symbol
+    input_paths = [sym_dir / name for name in ("funding.csv", "oi.csv", "spot_binance_1h.csv")]
+    if use_macro_dxy:
+        input_paths.extend([dxy_closes_path, DEFAULT_CALENDAR_PATH])
+    input_hashes = {
+        str(path): hashlib.sha256(path.read_bytes()).hexdigest()
+        for path in input_paths
+        if path is not None and path.exists()
+    }
+    parameters = {
+        "symbol": symbol,
+        "slippage_bps": slippage_bps,
+        "taker_fee_bps": taker_fee_bps,
+        "horizon_hours": horizon_hours,
+        "fr_window": fr_window,
+        "kelly_fraction": kelly_fraction,
+        "stop_loss_bps": stop_loss_bps,
+        "take_profit_bps": take_profit_bps,
+        "fr_zscore_threshold": fr_zscore_threshold,
+        "min_regime_confidence": min_regime_confidence,
+        "cost_aware_filter": cost_aware_filter,
+        "minimum_edge_calibration_sample": minimum_edge_calibration_sample,
+        "minimum_net_edge": minimum_net_edge,
+        "use_macro_dxy": use_macro_dxy,
+        "macro_window_days": macro_window_days,
+        "dxy_closes_path": str(dxy_closes_path) if dxy_closes_path else None,
+        "macro_calendar_available_at": macro_calendar_available_at.isoformat()
+        if macro_calendar_available_at
+        else None,
+        "use_oi_volume_ratio": use_oi_volume_ratio,
+        "is_days": _IS_DAYS,
+        "oos_days": _OOS_DAYS,
+        "purge_days": _PURGE_DAYS,
+        "step_days": _STEP_DAYS,
+        "hmm_random_state": 42,
+        "family": "funding_oi_hmm_v3",
+        "sharpe_basis": "per_signal_unannualized_sample_std",
+    }
 
     funding_records = load_funding_csv(sym_dir / "funding.csv")
     oi_records = load_oi_csv(sym_dir / "oi.csv")
-    kline_records = load_spot_csv(sym_dir / "spot_1h.csv")
+    kline_records = load_spot_csv(sym_dir / "spot_binance_1h.csv")
 
     if not funding_records:
         raise FileNotFoundError(
@@ -575,9 +688,19 @@ def run_wfa(
     _oiv_by_ts: dict[int, float] = {}
     if use_macro_dxy:
         regime_extra_features += ("macro_event_dummy", "dxy_return_1d")
-        macro_all = build_macro_event_dummy(all_features, window_days=macro_window_days)
+        macro_all = build_macro_event_dummy(
+            all_features,
+            window_days=macro_window_days,
+            calendar_available_at=macro_calendar_available_at,
+        )
         dxy_closes = load_dxy_daily_closes(dxy_closes_path)
-        dxy_all = build_dxy_return(all_features, dxy_closes)
+        dxy_available = load_dxy_availability(dxy_closes_path)
+        missing, _ = dxy_coverage(all_features, dxy_closes, available_at=dxy_available)
+        if missing:
+            raise ValueError(
+                f"DXY indisponivel em {missing} pontos; completar vintages antes do treino"
+            )
+        dxy_all = build_dxy_return(all_features, dxy_closes, available_at=dxy_available)
         _macro_by_ts = {fv.timestamp_exchange_ms: v for fv, v in zip(all_features, macro_all)}
         _dxy_by_ts = {fv.timestamp_exchange_ms: v for fv, v in zip(all_features, dxy_all)}
         logger.info(
@@ -710,10 +833,14 @@ def run_wfa(
                 )
                 if calibration_fwd is not None:
                     calibration_returns[calibration_signal.direction].append(
-                        calibration_signal.direction * calibration_fwd
+                        calibration_signal.direction * math.expm1(calibration_fwd)
                     )
         edge_estimates = {
-            direction: estimate_edge(values, minimum_sample=minimum_edge_calibration_sample)
+            direction: estimate_edge(
+                values,
+                minimum_sample=minimum_edge_calibration_sample,
+                max_lag=max(0, math.ceil(horizon_hours / 8) - 1),
+            )
             for direction, values in calibration_returns.items()
         }
 
@@ -746,13 +873,12 @@ def run_wfa(
                         fold_pnl.append(0.0)
                         fold_ic_pairs.append((signal.strength * signal.direction, fwd))
                         continue
-                n_executed += 1
                 position = signal.direction * signal.strength * kelly_fraction
 
                 # P&L usa o retorno com barreiras (SL/TP corta a cauda quando
                 # configurado); o IC abaixo continua usando `fwd` (retorno
                 # cheio do horizonte) para medir o sinal cru, não a saída.
-                barrier = _find_barrier_return(
+                barrier = _barrier_exit(
                     fv.timestamp_exchange_ms,
                     horizon_hours,
                     signal.direction,
@@ -760,19 +886,34 @@ def run_wfa(
                     stop_loss_bps=stop_loss_bps,
                     take_profit_bps=take_profit_bps,
                 )
-                pnl_return = barrier[0] if barrier is not None else fwd
-
-                gross = position * pnl_return
-                # Risco 4: liquido de fricção round-trip (taker+slippage × 2 pernas)
-                # e do funding REAL vigente na abertura (long paga f>0; short recebe).
-                net = costs.net_return(gross, position, fv.funding_rate_raw, horizon_hours)
+                if barrier is None:
+                    continue
+                entry_price = spot_ti.as_of(fv.timestamp_exchange_ms - _SPOT_CANDLE_MS)
+                if entry_price is None:
+                    continue
+                funding = _realized_funding_pnl(
+                    position,
+                    fv.timestamp_exchange_ms,
+                    fv.timestamp_exchange_ms + barrier.elapsed_hours * _SPOT_CANDLE_MS,
+                    entry_price,
+                    funding_records,
+                )
+                if funding is None:
+                    continue
+                gross = position * math.expm1(barrier.log_return)
+                net = (
+                    gross
+                    + funding
+                    - costs.friction(position, exit_price_ratio=math.exp(barrier.log_return))
+                )
+                n_executed += 1
                 fold_gross.append(gross)
                 fold_pnl.append(net)
                 fold_trades.append(
                     _Trade(
                         entry_ms=fv.timestamp_exchange_ms,
                         net_return=net,
-                        horizon_hours=horizon_hours,
+                        horizon_hours=barrier.elapsed_hours,
                     )
                 )
                 fold_ic_pairs.append((signal.strength * signal.direction, fwd))
@@ -798,8 +939,8 @@ def run_wfa(
         # Sharpe simples
         if len(fold_pnl) >= 2:
             mean_r = sum(fold_pnl) / len(fold_pnl)
-            std_r = math.sqrt(sum((r - mean_r) ** 2 for r in fold_pnl) / len(fold_pnl))
-            fold_sharpe = (mean_r / std_r) * math.sqrt(len(fold_pnl)) if std_r > 1e-12 else 0.0
+            std_r = math.sqrt(sum((r - mean_r) ** 2 for r in fold_pnl) / (len(fold_pnl) - 1))
+            fold_sharpe = mean_r / std_r if std_r > 1e-12 else 0.0
         else:
             fold_sharpe = 0.0
         fold_sortino = _sortino_ratio(fold_pnl)
@@ -892,10 +1033,10 @@ def run_wfa(
     # Sharpe agregado (série OOS completa)
     if len(all_oos_returns) >= 2:
         mean_r = sum(all_oos_returns) / len(all_oos_returns)
-        std_r = math.sqrt(sum((r - mean_r) ** 2 for r in all_oos_returns) / len(all_oos_returns))
-        agg_sharpe = _finite(
-            (mean_r / std_r) * math.sqrt(len(all_oos_returns)) if std_r > 1e-12 else 0.0
+        std_r = math.sqrt(
+            sum((r - mean_r) ** 2 for r in all_oos_returns) / (len(all_oos_returns) - 1)
         )
+        agg_sharpe = _finite(mean_r / std_r if std_r > 1e-12 else 0.0)
     else:
         agg_sharpe = 0.0
     agg_sortino = _sortino_ratio(all_oos_returns)
@@ -928,8 +1069,10 @@ def run_wfa(
         aggregate_sharpe=agg_sharpe,
         aggregate_sortino=agg_sortino,
         aggregate_calmar=agg_calmar,
-        final_verdict=final_verdict,
-        verdict_reason=verdict_reason,
+        final_verdict="UNVALIDATED",
+        diagnostic_verdict=final_verdict,
+        verdict_reason="Economic validation unavailable: spot proxy, uncalibrated fills/costs, overlapping-return IID PSR. Diagnostic: "
+        + verdict_reason,
         fr_window=fr_window,
         kelly_fraction=kelly_fraction,
         aggregate_gross_return=agg_gross_mean,
@@ -944,29 +1087,38 @@ def run_wfa(
         minimum_net_edge=minimum_net_edge,
     )
 
+    # Never overwrite the legacy wfa_returns.json or another run's evidence.
+    for source, digest in input_hashes.items():
+        if hashlib.sha256(Path(source).read_bytes()).hexdigest() != digest:
+            raise RuntimeError(f"Input changed during WFA: {source}")
+    run_id = datetime.now(UTC).strftime("%Y%m%dT%H%M%S%fZ") + "-" + uuid.uuid4().hex[:12]
+    artifact = sym_dir / "research_runs" / run_id / "returns.json"
+    result.returns_artifact = str(artifact)
+    atomic_write(
+        artifact,
+        (
+            json.dumps(
+                {
+                    "schema_version": "wfa-descriptive/2",
+                    "run_id": run_id,
+                    "created_at_utc": datetime.now(UTC).isoformat(),
+                    "parameters": parameters,
+                    "input_sha256": input_hashes,
+                    "result": asdict(result),
+                    "net": all_oos_returns,
+                    "gross": all_gross_returns,
+                    "closed_trade_equity": agg_equity,
+                    "net_interval_assumption": "descriptive moving block bootstrap; not post-selection confidence",
+                },
+                ensure_ascii=False,
+                allow_nan=False,
+                indent=2,
+            )
+            + "\n"
+        ).encode("utf-8"),
+    )
     _log_summary(result)
     _emit_result(result)
-    # Persiste a serie de retornos OOS (bruto/liquido) — insumo do DSR (Risco 2):
-    # o Deflated Sharpe precisa da SERIE, nao dos agregados. Deterministico
-    # (random_state=42 + dados estaticos) => re-execucao reproduz a serie.
-    import json as _json
-
-    (sym_dir / "wfa_returns.json").write_text(
-        _json.dumps(
-            {
-                "symbol": symbol,
-                "kelly_fraction": kelly_fraction,
-                "taker_fee_bps": taker_fee_bps,
-                "slippage_bps": slippage_bps,
-                "cost_aware_filter": cost_aware_filter,
-                "minimum_edge_calibration_sample": minimum_edge_calibration_sample,
-                "minimum_net_edge": minimum_net_edge,
-                "net": all_oos_returns,
-                "gross": all_gross_returns,
-            }
-        ),
-        encoding="utf-8",
-    )
     return result
 
 
@@ -993,18 +1145,18 @@ def _log_summary(r: WFAResult) -> None:
     logger.info("PSR agregado   : %.4f (threshold: %.2f)", r.aggregate_psr, _GO_PSR_THRESHOLD)
     logger.info("IC Spearman    : %.4f  CI_lower: %.4f", r.aggregate_ic, r.aggregate_ic_ci_lower)
     logger.info(
-        "Max Drawdown   : %.2f%%  (threshold: %.0f%%)",
+        "MaxDD em fechamentos: %.2f%% (nao mede perdas intratrade; threshold %.0f%%)",
         r.aggregate_max_dd * 100,
         _GO_MAX_DD_THRESHOLD * 100,
     )
     logger.info("Sharpe agregado: %.4f", r.aggregate_sharpe)
     logger.info(
-        "Sortino/Calmar : %.4f / %.4f (sobre a curva de equity com netting)",
+        "Sortino/Calmar : %.4f / %.4f (sinais / equity de trades fechados)",
         r.aggregate_sortino,
         r.aggregate_calmar,
     )
     logger.info(
-        "Retorno medio  : bruto %.6f -> LIQUIDO %.6f por sinal (fee %sbps + slip + funding real)",
+        "Retorno medio  : bruto %.6f -> liquido simulado %.6f por sinal (fee %sbps + slip + funding observado)",
         r.aggregate_gross_return,
         r.aggregate_net_return,
         r.taker_fee_bps,
@@ -1025,10 +1177,16 @@ def _log_summary(r: WFAResult) -> None:
     logger.info("VEREDICTO: %s", r.final_verdict)
     logger.info("RAZÃO    : %s", r.verdict_reason)
     logger.info("=" * 60)
-    if r.final_verdict == "GO":
-        logger.info("→ Critérios da Fase 1 atendidos. Fase 2 AUTORIZADA.")
-    else:
-        logger.info("→ Critérios não atendidos. Fase 2 BLOQUEADA. Pivot de pesquisa necessário.")
+    logger.info(
+        "Replay descritivo. Critérios numericos nao autorizam capital nem reabrem familia congelada."
+    )
+
+
+def _require_open_sweep() -> str:
+    if "funding_oi_hmm_v3" in load_scientific_state().frozen_families:
+        raise FrozenFamilyError("Varredura V3 bloqueada: familia funding_oi_hmm_v3 congelada")
+    attestation = TRIALS_PATH.with_name(f"{TRIALS_PATH.stem}.harness_attestation.json")
+    return json.loads(attestation.read_text(encoding="utf-8"))["pipeline_fingerprint"]
 
 
 def run_kelly_sweep(
@@ -1050,6 +1208,40 @@ def run_kelly_sweep(
         frações  [1.0, 0.5, 0.25, 0.10]
         expected : MaxDD cai monotonicamente; Sharpe cai mais lentamente.
     """
+    fingerprint = _require_open_sweep()
+    if (
+        not kelly_fractions
+        or len(set(kelly_fractions)) != len(kelly_fractions)
+        or any(not math.isfinite(k) or not 0 < k <= 1 for k in kelly_fractions)
+    ):
+        raise ValueError("Kelly sweep exige fracoes unicas em (0,1]")
+    attempts = []
+    for kf in kelly_fractions:
+        params = {
+            "symbol": symbol,
+            "kelly_fraction": kf,
+            "slippage_bps": slippage_bps,
+            "taker_fee_bps": taker_fee_bps,
+            "horizon_hours": horizon_hours,
+            "fr_window": fr_window,
+            "family": "funding_oi_hmm_v3",
+            "selection_family": "kelly_sweep",
+            "sharpe_basis": "per_signal_unannualized_sample_std",
+        }
+        name = (
+            "v3-kelly-"
+            + symbol.lower()
+            + "-"
+            + hashlib.sha256(json.dumps(params, sort_keys=True).encode()).hexdigest()[:16]
+        )
+        register_trial(
+            name,
+            params=params,
+            metric="psr",
+            pipeline_fingerprint=fingerprint,
+            notes="registered before all results; descriptive only",
+        )
+        attempts.append((name, params))
     results: list[WFAResult] = []
     for kf in kelly_fractions:
         logger.info("kelly_sweep [%s]: testando kelly_fraction=%.2f", symbol, kf)
@@ -1062,6 +1254,10 @@ def run_kelly_sweep(
             kelly_fraction=kf,
         )
         results.append(r)
+        name, params = attempts[len(results) - 1]
+        register_trial(
+            name, params=params, sharpe=r.aggregate_sharpe, notes="completed; descriptive only"
+        )
 
     # Tabela comparativa
     header = (
@@ -1154,9 +1350,18 @@ def run_threshold_grid(
     vencedor for tratado como veredicto em vez de nova hipótese a pré-registrar
     e testar em dado fresco (mesma disciplina de docs/HYPOTHESES.md).
     """
-    attestation_path = TRIALS_PATH.with_name(f"{TRIALS_PATH.stem}.harness_attestation.json")
-    attestation = json.loads(attestation_path.read_text(encoding="utf-8"))
-    fingerprint = attestation["pipeline_fingerprint"]
+    fingerprint = _require_open_sweep()
+    if (
+        not fr_thresholds
+        or not confidence_thresholds
+        or len(set(fr_thresholds)) != len(fr_thresholds)
+        or len(set(confidence_thresholds)) != len(confidence_thresholds)
+    ):
+        raise ValueError("Threshold grid exige listas nao vazias e unicas")
+    if any(not math.isfinite(v) or v < 0 for v in fr_thresholds) or any(
+        not math.isfinite(v) or not 0 <= v <= 1 for v in confidence_thresholds
+    ):
+        raise ValueError("threshold invalido")
     attempts: list[tuple[str, dict]] = []
     for fr_t in fr_thresholds:
         for conf_t in confidence_thresholds:
@@ -1173,7 +1378,12 @@ def run_threshold_grid(
                 "stop_loss_bps": stop_loss_bps,
                 "take_profit_bps": take_profit_bps,
                 "selection_family": "threshold_grid",
+                "sharpe_basis": "per_signal_unannualized_sample_std",
+                "family": "funding_oi_hmm_v3",
             }
+            name += (
+                "-" + hashlib.sha256(json.dumps(params, sort_keys=True).encode()).hexdigest()[:16]
+            )
             # Registra TODAS as combinações antes de olhar qualquer resultado.
             # Atestado expirado ou incompatível bloqueia a grade inteira.
             register_trial(
@@ -1403,11 +1613,17 @@ def _main() -> None:
         help="Janela ± dias em torno de evento macro para macro_event_dummy=1.0 (default: 1).",
     )
     parser.add_argument(
+        "--macro-calendar-available-at",
+        type=datetime.fromisoformat,
+        default=None,
+        help="UTC documented availability of this exact calendar version; required for H7.",
+    )
+    parser.add_argument(
         "--dxy-closes",
         type=Path,
         default=None,
         help=(
-            "CSV local (colunas: date,close) com o histórico do DXY, coletado "
+            "CSV local (colunas: date,close,published_at) com o histórico do DXY, coletado "
             "offline via DXYProvider. Obrigatório com --use-macro-dxy."
         ),
     )
@@ -1418,7 +1634,7 @@ def _main() -> None:
             "H9 (docs/HYPOTHESES.md): TRIAL NOVA, não reparametrização de H1-H3. "
             "Adiciona oi_volume_ratio (razão OI/volume notional, log-escala — "
             "crowding especulativo) como covariável extra do HMM. Dado já "
-            "coletado (spot_1h.csv já tem volume) — não exige CSV novo. "
+            "coletado (spot_binance_1h.csv já tem volume) — não exige CSV novo. "
             "Desligado por padrão — comportamento idêntico ao backtest V3 congelado."
         ),
     )
@@ -1490,6 +1706,7 @@ def _main() -> None:
                     use_macro_dxy=args.use_macro_dxy,
                     macro_window_days=args.macro_window_days,
                     dxy_closes_path=args.dxy_closes,
+                    macro_calendar_available_at=args.macro_calendar_available_at,
                     use_oi_volume_ratio=args.use_oi_volume_ratio,
                 )
         except Exception as exc:

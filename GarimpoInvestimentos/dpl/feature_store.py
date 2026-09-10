@@ -197,12 +197,37 @@ class FeatureStore:
         require_enriched: bool = False,
         scientific_state: str = "COLLECTION_ONLY",
     ) -> int:
+        # Serialize identity checks with insertion, including other processes.
+        with self._conn:
+            if not self._conn.in_transaction:
+                self._conn.execute("BEGIN IMMEDIATE")
+            return self._write_signals(
+                signals, require_enriched=require_enriched, scientific_state=scientific_state
+            )
+
+    def _write_signals(
+        self,
+        signals: list[SignalPoint],
+        *,
+        require_enriched: bool = False,
+        scientific_state: str = "COLLECTION_ONLY",
+    ) -> int:
         """Upsert de sinais. A PK inclui `vintage`, então revisões (mesmo ts, vintage
         distinto) COEXISTEM — base do point-in-time. Sem vintage → '' (ex.: Fear&Greed).
         """
         unique: dict[tuple[str, str, str, str], SignalPoint] = {}
         for s in signals:
-            self._check_temporal(f"{s.source}/{s.name}", s.timestamp, s.published_at)
+            if not math.isfinite(s.value):
+                raise ValueError("signal value must be finite")
+            if "available_at_receipt" in s.quality_flags:
+                if (
+                    s.vintage != s.published_at
+                    or s.published_at < s.timestamp
+                    or (s.ingested_at is not None and s.ingested_at < s.published_at)
+                ):
+                    raise ValueError("invalid observed-vintage timestamp")
+            else:
+                self._check_temporal(f"{s.source}/{s.name}", s.timestamp, s.published_at)
             if require_enriched:
                 s.require_enriched()
             key = (
@@ -211,32 +236,51 @@ class FeatureStore:
                 _iso(s.timestamp),
                 _iso(s.vintage) if s.vintage else "",
             )
-            # Provider batches can repeat an observation. First-valid-wins makes
-            # retries deterministic and matches the resilience contract.
             if key in unique:
+                if unique[key] != s:
+                    raise ValueError("conflicting duplicate observation in batch")
                 continue
             unique[key] = s
         pending: list[SignalPoint] = []
         for key, s in unique.items():
             existing = self._conn.execute(
-                """SELECT content_hash FROM raw_signals
+                """SELECT * FROM raw_signals
                    WHERE source=? AND name=? AND ts=? AND vintage=?""",
                 key,
             ).fetchone()
-            if (
-                existing
-                and existing["content_hash"]
-                and s.content_hash
-                and existing["content_hash"] != s.content_hash
-            ):
-                raise ValueError(
-                    "duplicate observation key has a different content_hash; "
-                    "use a later vintage for a genuine revision"
-                )
+            if existing:
+                expected = {
+                    "value": s.value,
+                    "published_at": _iso(s.published_at),
+                    "reference_date": _iso(s.reference_date) if s.reference_date else None,
+                    "instrument": s.instrument,
+                    "metric": s.metric,
+                    "unit": s.unit,
+                    "event_at": _iso(s.event_at) if s.event_at else None,
+                    "ingested_at": _iso(s.ingested_at) if s.ingested_at else None,
+                    "content_hash": s.content_hash,
+                    "collector_version": s.collector_version,
+                    "schema_version": s.schema_version,
+                    "quality_flags": json.dumps(sorted(s.quality_flags)),
+                    "scientific_state": scientific_state,
+                }
+                if any(existing[k] != v for k, v in expected.items()):
+                    raise ValueError(
+                        "duplicate observation key has conflicting content_hash or metadata; use a later vintage"
+                    )
+                continue
             identical = self._conn.execute(
                 """SELECT 1 FROM raw_signals
-                   WHERE source=? AND name=? AND ts=? AND content_hash=? LIMIT 1""",
-                (s.source, s.name, _iso(s.timestamp), s.content_hash),
+                   WHERE source=? AND name=? AND ts=? AND content_hash=? AND collector_version=? AND quality_flags=? AND value=? LIMIT 1""",
+                (
+                    s.source,
+                    s.name,
+                    _iso(s.timestamp),
+                    s.content_hash,
+                    s.collector_version,
+                    json.dumps(sorted(s.quality_flags)),
+                    s.value,
+                ),
             ).fetchone()
             if identical:
                 continue
