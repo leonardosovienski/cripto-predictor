@@ -12,13 +12,13 @@ def test_collection_isolates_credentials_config_and_durable_state(tmp_path):
     operator = tmp_path / "operator"
     operator.mkdir()
     private = operator / "private.env"
-    private.write_text("COINGECKO_API_KEY=sentinel-private-config-unused\n", encoding="utf-8")
+    private.write_text("COINGECKO_API_KEY=test-private-config-unused\n", encoding="utf-8")
     env = os.environ.copy()
     env.update(
         CRIPTO_ROOT=str(tmp_path),
         CRIPTO_ENV_FILE=str(private),
-        GEMINI_API_KEY="sentinel-inherited-credential-unused",
-        COINGECKO_API_KEY="sentinel-inherited-optional-unused",
+        GEMINI_API_KEY="test-inherited-credential-unused",
+        COINGECKO_API_KEY="test-inherited-optional-unused",
         PYTHONPATH=str(project),
     )
     for key in ("DATA_DIR", "OUTPUT_DIR", "CACHE_DIR", "LOGS_DIR", "PREDICTOR_OPS_STATE_DIR"):
