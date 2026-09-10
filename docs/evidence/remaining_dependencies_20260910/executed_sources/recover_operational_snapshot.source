@@ -1,0 +1,185 @@
+"""One-time offline derivation from an authenticated local receipt; no network."""
+import argparse
+import hashlib
+import json
+import math
+import socket
+import sqlite3
+import subprocess
+from datetime import UTC, datetime, timedelta
+from decimal import Decimal
+from pathlib import Path
+
+R = Path(r'C:\Cripto\operacao\relatorios\REVISAO_COMPLETA_20260909')
+P = Path(r'C:\Cripto\pesquisa-20260909')
+OUT = R / 'remaining_six_20260910' / 'snapshot'
+DB = Path(r'C:\Cripto\operacao\saidas\feature_store.db')
+BUDGET = Path(r'C:\Cripto\operacao\dados\api_guard_budget.db')
+ORIGINAL = R / 'executor_preflight02'
+
+
+def no_network(*args, **kwargs):
+    raise RuntimeError('Offline recovery forbids network')
+
+
+socket.create_connection = no_network
+socket.socket.connect = no_network
+
+from GarimpoInvestimentos.dpl.alignment import AlignmentEngine
+from GarimpoInvestimentos.dpl.contracts import MarketDataPoint
+from GarimpoInvestimentos.dpl.feature_engineering import derive_features, to_hard_data
+from GarimpoInvestimentos.dpl.feature_store import FeatureStore
+from GarimpoInvestimentos.dpl.snapshots import encode, market_payload, serving_context
+from scripts.paired_llm import market_context
+from scripts.paired_llm_source import bars_from_binance
+
+
+def sha(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def write(path, value):
+    with path.open('x', encoding='utf-8') as f:
+        json.dump(value, f, indent=2, ensure_ascii=False, allow_nan=False)
+
+
+def state(path, excluding=None):
+    with sqlite3.connect(path.as_uri() + '?mode=ro', uri=True) as conn:
+        assert conn.execute('PRAGMA quick_check').fetchone()[0] == 'ok'
+        result = {}
+        for (name,) in conn.execute("SELECT name FROM sqlite_master WHERE type='table' ORDER BY name"):
+            quoted = '"' + name.replace('"', '""') + '"'
+            sql, args = 'SELECT * FROM ' + quoted, ()
+            if name == 'market_snapshots' and excluding:
+                sql += ' WHERE snapshot_id != ?'
+                args = (excluding,)
+            rows = sorted(json.dumps(tuple(row), ensure_ascii=False) for row in conn.execute(sql, args))
+            result[name] = {'rows': len(rows), 'sha256': hashlib.sha256('\n'.join(rows).encode()).hexdigest()}
+        return result
+
+
+def backup(source, target):
+    assert not target.exists()
+    with sqlite3.connect(source.as_uri() + '?mode=ro', uri=True) as src:
+        with sqlite3.connect(target) as dst:
+            src.backup(dst)
+
+
+def evidence():
+    manifest = json.loads((ORIGINAL / 'result.json').read_bytes())
+    receipts = {}
+    for rec in manifest['sources']:
+        if rec['name'] in {'binance_time', 'binance_market'}:
+            path = ORIGINAL / 'sources' / rec['file']
+            assert sha(path) == rec['sha256']
+            obj = json.loads(path.read_bytes())
+            assert obj['http_status'] == 200
+            assert obj['received_utc'] == rec['received_utc']
+            receipts[rec['name']] = (path, obj, rec['sha256'])
+    path, obj, digest = receipts['binance_market']
+    assert obj['url'] == 'https://api.binance.com/api/v3/klines'
+    assert obj['public_params'] == {'interval': '1d', 'limit': 201, 'symbol': 'BTCUSDT'}
+    received = datetime.fromisoformat(obj['received_utc'])
+    clock = receipts['binance_time'][1]
+    server = datetime.fromtimestamp(clock['response_json']['serverTime'] / 1000, UTC)
+    assert abs((datetime.fromisoformat(clock['received_utc']) - server).total_seconds()) <= 5
+    assert len(obj['response_json']) == 201
+    bars = bars_from_binance(obj['response_json'], received)
+    assert len(bars) == 200
+    context = market_context(bars, received)
+    assert context == json.loads((ORIGINAL / 'inputs.json').read_bytes())['market']
+    now = datetime.now(UTC)
+    market_context(bars, now)
+    points = [MarketDataPoint(symbol='bitcoin', timestamp=datetime.fromisoformat(b['close_utc']) - timedelta(days=1),
+        open=b['open'], high=b['high'], low=b['low'], close=b['close'], volume=b['volume_btc'],
+        source='binance', interval='1d', published_at=datetime.fromisoformat(b['close_utc'])) for b in bars]
+    aligned = AlignmentEngine().align(points, {})
+    features = derive_features(points)
+    prices = [Decimal(row[4]) for row in obj['response_json'][:200]]
+    refs = {f'sma_{n}': float(round(sum(prices[-n:]) / n, 4)) for n in (50, 200)}
+    refs.update({label: float(round((prices[-1] / prices[-n-1] - 1) * 100, 2))
+                 for label, n in [('change_24h', 1), ('change_7d', 7), ('change_30d', 30)]})
+    for key, value in refs.items():
+        assert math.isclose(features[key], value, abs_tol=1e-8), key
+    assert features['price_usd'] == float(prices[-1])
+    assert math.isclose(features['volume_usd'], float(Decimal(obj['response_json'][199][5]) * prices[-1]), rel_tol=1e-12)
+    aligned[-1].update(features)
+    payload = market_payload(points, aligned, {}, collected_at=received)
+    payload['offline_derivation'] = {
+        'derived_at': now.isoformat(), 'source_file': str(path), 'source_sha256': digest,
+        'manifest_file': str(ORIGINAL / 'result.json'), 'manifest_sha256': sha(ORIGINAL / 'result.json'),
+        'source_format': 'preserved parsed JSON response; not original HTTP wire bytes',
+        'code_head': subprocess.check_output(['git', '-C', str(P), 'rev-parse', 'HEAD'], text=True).strip(),
+        'purpose': 'current operational market input, not original H5 or prospective sample',
+        'optional_signals': 'not supplied; no substitute or zero imputation',
+        'quote_currency': 'USDT; legacy USD-labelled fields do not establish USDT/USD parity',
+        'write_scope': 'one immutable snapshot with embedded candles/features; raw and aligned tables unchanged',
+    }
+    return payload, refs
+
+
+def main():
+    args = argparse.ArgumentParser()
+    args.add_argument('--apply', action='store_true')
+    options = args.parse_args()
+    OUT.mkdir(parents=True, exist_ok=True)
+    if not options.apply:
+        assert not (OUT / 'prepared.json').exists(), 'Preparation already preserved'
+        before, budget_before = state(DB), state(BUDGET)
+        payload, refs = evidence()
+        digest, _ = encode(payload)
+        backup(DB, OUT / 'before.sqlite')
+        backup(OUT / 'before.sqlite', OUT / 'validation.sqlite')
+        assert state(OUT / 'before.sqlite') == before
+        with FeatureStore(OUT / 'validation.sqlite') as store:
+            assert store.write_market_snapshot(payload) == digest
+            assert serving_context(store, 'bitcoin')['snapshot_id'] == digest
+            assert store.write_market_snapshot(payload) == digest
+            assert to_hard_data(serving_context(store, 'bitcoin')['features'])['indicadores']['sma_200'] == refs['sma_200']
+            try:
+                serving_context(store, 'bitcoin', now=datetime.fromisoformat(payload['available_at']) + timedelta(hours=26, seconds=1))
+            except ValueError as exc:
+                assert 'stale' in str(exc)
+            else:
+                raise AssertionError('Expired snapshot was accepted')
+        assert state(OUT / 'validation.sqlite', digest) == before
+        assert state(OUT / 'validation.sqlite')['market_snapshots']['rows'] == before['market_snapshots']['rows'] + 1
+        assert state(DB) == before and state(BUDGET) == budget_before
+        write(OUT / 'payload.json', payload)
+        write(OUT / 'prepared.json', {'snapshot_id': digest, 'payload_sha256': sha(OUT / 'payload.json'),
+            'before': before, 'budget_before': budget_before, 'independent_decimal_checks': refs,
+            'validation': 'PASS: serving, SMA/changes/volume, original receipt, idempotency, expiry, all prior table rows unchanged',
+            'network_calls': 0, 'original_receipt_time': payload['collected_at'],
+            'last_closed_bar': payload['available_at'], 'fresh_through_utc': (datetime.fromisoformat(payload['available_at']) + timedelta(hours=26)).isoformat()})
+        print('PREPARED: offline snapshot validated on isolated SQLite copy; operational database unchanged')
+    else:
+        prepared = json.loads((OUT / 'prepared.json').read_bytes())
+        assert sha(OUT / 'payload.json') == prepared['payload_sha256']
+        payload = json.loads((OUT / 'payload.json').read_bytes())
+        digest = prepared['snapshot_id']
+        assert encode(payload)[0] == digest
+        assert not (OUT / 'applied.json').exists(), 'Application already preserved'
+        assert state(DB) == prepared['before'] and state(BUDGET) == prepared['budget_before']
+        assert payload['offline_derivation']['code_head'] == subprocess.check_output(['git', '-C', str(P), 'rev-parse', 'HEAD'], text=True).strip()
+        assert sha(Path(payload['offline_derivation']['source_file'])) == payload['offline_derivation']['source_sha256']
+        with FeatureStore(OUT / 'validation.sqlite') as store:
+            serving_context(store, 'bitcoin')  # Freshness must still hold before live insertion.
+        with FeatureStore(DB) as store:
+            assert store.write_market_snapshot(payload) == digest
+            observed = serving_context(store, 'bitcoin')
+            assert observed['snapshot_id'] == digest
+        after = state(DB)
+        assert state(DB, digest) == prepared['before']
+        assert after['market_snapshots']['rows'] == prepared['before']['market_snapshots']['rows'] + 1
+        assert state(BUDGET) == prepared['budget_before']
+        write(OUT / 'applied.json', {'status': 'PASS', 'applied_at': datetime.now(UTC).isoformat(), 'snapshot_id': digest,
+            'feature_version': observed['feature_version'], 'collected_at': observed['collected_at'],
+            'available_at': observed['available_at'], 'fresh_through_utc': prepared['fresh_through_utc'],
+            'normalized_candles': len(observed['normalized_candles']), 'after': after,
+            'original_rows_preserved': True, 'budget_unchanged': True, 'network_calls': 0,
+            'code_changes': False, 'financial_orders': 0})
+        print('APPLIED: daily-v4-audited, 200 closed bars; prior rows and API budget unchanged')
+
+
+if __name__ == '__main__':
+    main()

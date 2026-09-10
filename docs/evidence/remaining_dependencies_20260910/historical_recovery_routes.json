@@ -1,0 +1,46 @@
+{
+  "at": "2026-09-10T19:51:48.972230+00:00",
+  "acquisition_this_round": false,
+  "h5": {
+    "state": "ORIGINAL_INPUTS_NOT_RECOVERED",
+    "required": [
+      "Original prediction/response",
+      "Exact prompt/model/settings",
+      "Market input and source identity",
+      "News input and then-available publication version",
+      "Prediction timestamps and integrity evidence"
+    ],
+    "scope": "Previous local/Git/artifact searches preserved; Sep10 preflight is not old H5",
+    "new_independent_action": "No identical full-disk rescan; no additional backup or authenticated source identified"
+  },
+  "macro": {
+    "state": "DOCUMENTED_ROUTE_NOT_DOWNLOADED_OR_VALIDATED",
+    "series": "DTWEXBGS; nominal broad USD index, not ICE DXY",
+    "official_series": "https://alfred.stlouisfed.org/series?seid=DTWEXBGS",
+    "official_download_contract": "https://alfred.stlouisfed.org/help/downloaddata",
+    "scope_for_next_acquisition": "One series, observation interval 2024-01-01 to 2026-09-09; real-time periods with original README and vintage list; at most 200 selected vintages, two downloads, 20MB total, zero retries, one shared ingestion unit",
+    "temporal_acceptance": "Preserve observation_date, value, realtime_start_date, realtime_end_date and receipt time separately. Prove release timezone/hour or conservatively delay past the full possible release day. Original intraday availability remains unknown without stronger evidence.",
+    "method_acceptance": "No initial-release or current-value substitution under an unchanged feature version; no economic claim until downstream temporal contract and exact intended vintage are validated",
+    "bcb_route": "https://www.bcb.gov.br/controleinflacao/comunicadoscopom",
+    "bcb_limit": "Copom communications can support policy-target decisions. They do not replace realized Selic/IPCA/FX series or certify their vintages.",
+    "news_limit": "An article date alone does not recover original H5 article text, historical revision, ingestion or LLM answer"
+  },
+  "aave": {
+    "state": "IMPLEMENTED_OFFLINE_VERIFIED_WAITING_QUOTA",
+    "source_docs": "https://blockreq.com/docs/build/public-endpoints/",
+    "public_endpoint": "https://arbitrum-one-rpc.blockreq.com/v1/rpc/public",
+    "prepared_protocol": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\remaining_six_20260910\\aave_second_source\\protocol.json",
+    "independence_limit": "Separate operator/endpoint is not proof of different upstream archive nodes; upstream provenance remains to be established"
+  },
+  "costs": {
+    "state": "PERSONAL_EVIDENCE_NOT_PROVIDED_OR_IDENTIFIED",
+    "available": "Funded-capital, execution-cost, additional-cost, conversion and break-even scenarios already computed in section 15",
+    "required_for_personal_claim": [
+      "Account-specific fee schedule and pair/network",
+      "Time, side, size, average fill, commissions and currency",
+      "Cash/margin reconciliation and funding/borrow/gas/bridge/conversion records",
+      "Infrastructure/development allocation and applicable tax assumptions"
+    ],
+    "no_substitution": "Third-party transaction receipts and public fee tables do not prove personal fills or cost; no execution authorized"
+  }
+}

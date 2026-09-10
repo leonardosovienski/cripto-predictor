@@ -1,0 +1,83 @@
+import hashlib
+import json
+import re
+import socket
+import subprocess
+from datetime import UTC, datetime
+from pathlib import Path
+
+
+def no_network(*args, **kwargs):
+    raise RuntimeError('Offline validation forbids network')
+
+
+socket.create_connection = no_network
+socket.socket.connect = no_network
+
+import compare_aave_second_source as aave
+import recover_operational_snapshot as snap
+from GarimpoInvestimentos.dpl.feature_store import FeatureStore
+from GarimpoInvestimentos.dpl.snapshots import serving_context
+
+R = snap.R
+S = R/'remaining_six_20260910'
+report = R/'REVISAO.md'
+text = report.read_text(encoding='utf-8')
+links = re.findall(r'\[[^\]]+\]\(([^)]+)\)', text)
+local = [p for p in links if not p.startswith(('https://', 'http://', '#'))]
+missing = [p for p in local if not (Path(p) if Path(p).is_absolute() else R/p).exists()]
+assert not missing and not re.findall(r'@[A-Z_]+@', text)
+assert len(re.findall(r'^## \d+\.', text, re.MULTILINE)) == 18
+prepared = json.loads((S/'snapshot/prepared.json').read_bytes())
+applied = json.loads((S/'snapshot/applied.json').read_bytes())
+assert snap.state(snap.DB, applied['snapshot_id']) == prepared['before']
+assert snap.state(snap.BUDGET) == prepared['budget_before']
+with FeatureStore(snap.DB) as store:
+    current = serving_context(store, 'bitcoin')
+    assert current['snapshot_id'] == applied['snapshot_id']
+    assert current['feature_version'] == 'daily-v4-audited'
+    assert current['collected_at'] == '2026-09-10T02:12:15.630507+00:00'
+    assert len(current['normalized_candles']) == 200
+assert hashlib.sha256((snap.P/'docs/NEXT_CHAT_PROMPT.md').read_bytes()).hexdigest() == '8969db38ef9a3ec29ee16a780b9572ec9f7d7808cabc9bac17a319616b47fe20'
+assert not subprocess.check_output(['git', '-C', r'C:\Cripto\auditoria-ampliada-20260910', 'status', '--porcelain'], text=True).strip()
+assert json.loads((S/'llm_status.json').read_bytes())['counts'] == {'FUTURE': 84}
+assert json.loads((S/'carry_status.json').read_bytes())['ledger_rows'] == 0
+assert not list((S/'aave_second_source/raw').iterdir())
+
+
+class WrongBlock(aave.Replay):
+    def header(self, number):
+        result = super().header(number)
+        return result | {'hash': '0x' + '00' * 32}
+
+
+class WrongIncome(aave.Replay):
+    def contract(self, to, signature, args, block):
+        result = super().contract(to, signature, args, block)
+        if signature == 'getReserveNormalizedIncome(address)':
+            return '0x' + format(int(result, 16) + 10, '064x')
+        return result
+
+
+rejected = []
+for cls in (WrongBlock, WrongIncome):
+    try:
+        aave.compare(cls())
+    except (AssertionError, ValueError):
+        rejected.append(cls.__name__)
+    else:
+        raise AssertionError('Corrupt second-source response accepted')
+record = {'checked_at': datetime.now(UTC).isoformat(), 'status': 'PASS',
+          'report_sha256': hashlib.sha256(report.read_bytes()).hexdigest(),
+          'sections': 18, 'local_links_checked': len(local), 'missing_links': missing,
+          'snapshot_current': current['feature_version'], 'snapshot_id': current['snapshot_id'],
+          'original_database_rows_unchanged': True, 'budget_unchanged': True,
+          'wrong_second_source_responses_rejected': rejected, 'network_calls': 0,
+          'llm_future_slots': 84, 'carry_observations': 0,
+          'validation_scope': 'Operational recovery and local helper checks; no repeat of full PR116 suite or live second-source validation'}
+with (S/'verification.json').open('x', encoding='utf-8') as stream:
+    json.dump(record, stream, ensure_ascii=False, indent=2)
+if not (S/'report_verification_before.json').exists():
+    (S/'report_verification_before.json').write_bytes((R/'report_verification.json').read_bytes())
+(R/'report_verification.json').write_text(json.dumps(record, ensure_ascii=False, indent=2), encoding='utf-8')
+print(json.dumps(record, ensure_ascii=False))

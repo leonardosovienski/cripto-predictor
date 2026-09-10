@@ -6,6 +6,8 @@ A rodada de 10/09 está em [Aave: validação histórica, custos e execução](A
 
 ## Estado vigente e continuidade
 
+- [Conferência do chat e publicação de 10/09](CONFERENCIA_CHAT_20260910.md): correções documentais, snapshot recuperado e estado dos seis itens após #116.
+
 - [Revisão geral de 09/09: contratos e erratas](REVISAO_COMPLETA_20260909.md): ponto de acesso ao registro vivo, auditorias e dependências restantes.
 - [Dependências executadas em 10/09](manual_dependencies_20260910/EXECUCAO.md): histórico Aave recuperado, custos calculáveis e executor/avaliador LLM implementado e congelado. [Retomada anterior](manual_dependencies_20260910/RETOMADA.md): calendário dos 12 gaps, volume intradiário e registro separado do carry. Segurança da branch excluída pelo dono.
 

@@ -1,0 +1,142 @@
+"""Fixed 38-boundary second-endpoint comparison. Default is strictly offline."""
+import argparse
+import hashlib
+import json
+import sqlite3
+from datetime import UTC, datetime
+from pathlib import Path
+
+from scripts import recover_aave_history as aave
+
+ROOT = Path(r'C:\Cripto\operacao\relatorios\REVISAO_COMPLETA_20260909\remaining_six_20260910\aave_second_source')
+P = Path(r'C:\Cripto\pesquisa-20260909')
+HISTORIES = [Path(r'C:\Cripto\operacao\dados') / name / 'history.json' for name in
+             ('aave-recovered-20260910', 'aave-validation-20260910-r1')]
+ENDPOINT = 'https://arbitrum-one-rpc.blockreq.com/v1/rpc/public'
+BUDGET = Path(r'C:\Cripto\operacao\dados\api_guard_budget.db')
+
+
+def sha(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def reference():
+    rows = [row for path in HISTORIES for row in json.loads(path.read_bytes())]
+    assert len(rows) == 38 and len({r['number'] for r in rows}) == 38
+    return sorted(rows, key=lambda r: r['number'])
+
+
+def fingerprints():
+    files = HISTORIES + [Path(__file__), P/'scripts/recover_aave_history.py', P/'scripts/research_io.py']
+    return {str(path): sha(path) for path in files}
+
+
+def available():
+    with sqlite3.connect(BUDGET.as_uri() + '?mode=ro', uri=True) as conn:
+        used = conn.execute("SELECT used FROM api_budget WHERE bucket=? AND stage='ingest' AND guard_key='assets'",
+                            (datetime.now(UTC).strftime('%Y-%m-%d'),)).fetchone()
+    return max(0, 28 - (used[0] if used else 0))
+
+
+def compare(rpc):
+    if int(rpc.call('eth_chainId', []), 16) != 42161:
+        raise ValueError('Wrong chain')
+    records = []
+    for expected in reference():
+        header = rpc.header(expected['number'])
+        successor = rpc.header(expected['successor']['number'])
+        assert successor == expected['successor'], 'Successor identity mismatch'
+        assert successor['number'] == header['number'] + 1 and successor['parent_hash'] == header['hash']
+        observed = aave.reserve(rpc, header)
+        assert observed == {k: v for k, v in expected.items() if k not in {'boundary_utc', 'successor'}}, 'Historical reserve differs'
+        records.append({'number': observed['number'], 'boundary_utc': expected['boundary_utc'], 'all_fields_match': True})
+    return records
+
+
+class Replay(aave.RPC):
+    def __init__(self):
+        self.headers, self.selectors, self.lookup, self.calls = {}, {}, {}, 0
+        for history in HISTORIES:
+            for path in history.parent.rglob('*.json'):
+                obj = json.loads(path.read_bytes())
+                if not isinstance(obj, dict) or not isinstance(obj.get('request'), dict):
+                    continue
+                if not isinstance(obj.get('response'), dict) or 'result' not in obj['response']:
+                    continue
+                request = obj['request']
+                # Dynamic finalized headers are unused. Historical params are exact.
+                key = json.dumps([request['method'], request.get('params', [])], sort_keys=True)
+                value = obj['response']['result']
+                if key in self.lookup and self.lookup[key] != value:
+                    if request.get('params', [None])[0] == 'finalized':
+                        continue
+                    raise ValueError('Conflicting historical RPC receipts')
+                self.lookup[key] = value
+
+    def call(self, method, params):
+        self.calls += 1
+        assert self.calls <= 350
+        return self.lookup[json.dumps([method, params], sort_keys=True)]
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--mode', choices=['prepare', 'status', 'collect'], default='status')
+    args = parser.parse_args()
+    if args.mode == 'prepare':
+        ROOT.mkdir(parents=True, exist_ok=False)
+        (ROOT/'raw').mkdir()
+        rows = reference()
+        aave.save(ROOT/'protocol.json', {
+            'registered_at': datetime.now(UTC).isoformat(), 'endpoint': ENDPOINT,
+            'free_endpoint_documentation': 'https://blockreq.com/docs/build/public-endpoints/',
+            'archive_claim_documentation': 'https://blockreq.com/',
+            'purpose': 'Validate existing 13 weekly and 25 monthly boundaries; no new strategy, period selection, yield search or economic result',
+            'boundaries': [{'number': r['number'], 'boundary_utc': r['boundary_utc']} for r in rows],
+            'fingerprints': fingerprints(), 'ingest_units': 1, 'max_rpc_calls': 350,
+            'max_response_bytes': 20000000, 'retries': 0, 'capital_permission': False, 'scheduled': False,
+            'acceptance': 'All block/successor hashes and reserve identity/index/rate/liquidity/config fields equal existing history; fail on first error or difference',
+            'independence_limit': 'Different public operator, underlying backend not disclosed. Equality is separate-endpoint corroboration, not proof of independent node operation.',
+        })
+        replay = Replay()
+        checked = compare(replay)
+        aave.save(ROOT/'offline_validation.json', {'status': 'PASS', 'boundaries': len(checked),
+            'replayed_calls': replay.calls, 'physical_network_calls': 0,
+            'interpretation': 'Existing first-source receipts validate the comparison machinery, not the second source'})
+        print('Prepared; 38 original boundaries replayed offline; second-source data not yet obtained')
+        return
+    protocol = json.loads((ROOT/'protocol.json').read_bytes())
+    assert protocol['fingerprints'] == fingerprints(), 'Registered code or inputs changed'
+    if args.mode == 'status':
+        print(json.dumps({'mode': 'offline', 'boundaries': 38, 'ingest_units_available': available(),
+            'second_source_calls': len(list((ROOT/'raw').glob('*.json'))),
+            'state': 'ATTEMPTED' if (ROOT/'started.json').exists() else 'PREPARED_WAITING_QUOTA',
+            'result': json.loads((ROOT/'result.json').read_bytes()) if (ROOT/'result.json').exists() else None}))
+        return
+    assert not (ROOT/'started.json').exists() and not list((ROOT/'raw').iterdir()), 'Attempt already exists; preserve partial evidence'
+    from GarimpoInvestimentos.config import settings
+    from GarimpoInvestimentos.core.api_guard import allow
+    assert settings.API_GUARD_ENABLED and settings.API_GUARD_MAX_INGEST_ASSETS == 28
+    if not allow('ingest', 'assets', 28).allowed:
+        print('BLOCKED: normal daily ingestion budget exhausted; zero network calls; no attempt started')
+        return
+    aave.save(ROOT/'started.json', {'started_at': datetime.now(UTC).isoformat(), 'protocol_sha256': sha(ROOT/'protocol.json')})
+    aave.ENDPOINT = ENDPOINT  # Process-local only; original module file is unchanged.
+    rpc = aave.RPC(ROOT/'raw')
+    result = {'status': 'INCOMPLETE', 'endpoint': ENDPOINT, 'independence_limit': protocol['independence_limit']}
+    try:
+        records = compare(rpc)
+        assert rpc.calls <= protocol['max_rpc_calls']
+        aave.save(ROOT/'comparisons.json', records)
+        result.update(status='ALL_FIELDS_MATCH', boundaries=len(records))
+    except Exception as exc:
+        result['error_type'] = type(exc).__name__  # No endpoint/body/credential leakage in console.
+    finally:
+        rpc.client.close()
+        result.update(calls=rpc.calls, bytes=rpc.bytes, completed_at=datetime.now(UTC).isoformat())
+        aave.save(ROOT/'result.json', result)
+    print(json.dumps(result))
+
+
+if __name__ == '__main__':
+    main()

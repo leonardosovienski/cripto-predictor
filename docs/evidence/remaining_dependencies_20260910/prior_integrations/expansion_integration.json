@@ -1,0 +1,19 @@
+{
+  "summary": "PR #115 integrado em a917927 e conferido no main: quatro jobs aprovados antes e depois do merge; 1.504 testes locais aprovados, um skip Windows e zero falhas antes e após integração. Prompt do dono e evidências congeladas preservados. Código integrado e validação de engenharia concluídos; dependências de evidência e renovação normal da quota permanecem explícitas.",
+  "pr": 115,
+  "base": "ffd6c327e2d323758f6ab6abac4ab15ef5ca0881",
+  "implementation_head": "9d89871d8c6a4e626e89023b44134f9a6ddbb69a",
+  "head": "595f1203475d04b01966ac3471bbafd6770dbb4d",
+  "merge": "a9179270a55a31caa0f9bfc251d373c53034ebb1",
+  "tree": "2f203f7938b49b6a9a5fb64d7295958051918c80",
+  "pr_run": 34511800012,
+  "main_run": 34512528458,
+  "premerge_local": "1504 passed, 1 Windows symlink skip, 0 failures",
+  "premerge_source_files_matched": 1566,
+  "pr_four_jobs_passed": true,
+  "main_four_jobs_passed": true,
+  "postmerge_local": "1504 passed, 1 skipped, 0 failed",
+  "owner_prompt_preserved": true,
+  "frozen_tracked_artifacts_unchanged": true,
+  "completed_at_utc": "2026-09-10T18:15:53.282577+00:00"
+}

@@ -1,0 +1,24 @@
+{
+  "at_utc": "2026-09-10T19:31:00.375036+00:00",
+  "summary": "PR #116 integrado em ac4184e. Suíte Windows do commit final e pós-merge: 1.505 aprovados, zero falhas e um skip. Quatro jobs aprovados no PR e no main. Correção adicional de isolamento e erratas documentais concluídas; dependências de dados/evidência/tempo permanecem abertas.",
+  "pr": 116,
+  "head": "19da2534baec32028f330d217c32588df35ce19b",
+  "merge": "ac4184e7d3377a8f14aeebac5016c3e18f82cfcf",
+  "tree": "a709af2022b05a67bb5618628a9e3d7a45f0d9ca",
+  "pr_run": 34518776001,
+  "main_run": 34520193415,
+  "pr_four_jobs_passed": true,
+  "main_four_jobs_passed": true,
+  "postmerge_passed": 1505,
+  "postmerge_skipped": 1,
+  "postmerge_failed": 0,
+  "editable_installation": "file:///C:/Cripto/pesquisa-20260909",
+  "owner_prompt_preserved": true,
+  "frozen_llm_checkout_preserved": true,
+  "operational_budget_preserved": true,
+  "llm_counts": {
+    "FUTURE": 84
+  },
+  "carry_phase": "WAITING",
+  "readiness": "engineering corrected in reviewed scope; current snapshot pending; historical and future evidence incomplete; no personal/prospective profit validated"
+}

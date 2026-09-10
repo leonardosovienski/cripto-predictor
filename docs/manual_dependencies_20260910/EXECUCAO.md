@@ -1,5 +1,7 @@
 # Dependências implementadas e recuperadas em 10/09/2026
 
+**Atualização após #116:** [conferência do chat e seis itens](../CONFERENCIA_CHAT_20260910.md). Snapshot v4 recuperado offline; segunda fonte Aave preparada, ainda sem consulta por quota. Chaves atuais mantidas; fatos históricos de uso/revogação não bloqueiam a pesquisa. As seções abaixo preservam as datas e resultados de cada etapa.
+
 **Errata da auditoria ampliada de 10/09:** o registro LLM atual é `llm-paired-manual-20260912-v3`. A versão v2 ficou preservada, sem observações, e recusa corretamente as mudanças em `config.py` e `core/api_guard.py`. O novo registro mantém protocolo, datas e ambiente, vincula o código corrigido antes da coleta e passou no status offline com 84 horários futuros. Os registros antigos não tiveram hashes alterados. Carry permanece no registro v2.
 
 **Executor vinculado ao registro:** os comandos LLM abaixo usam explicitamente `C:\Cripto\auditoria-ampliada-20260910` por meio do lançador `work\isolated_python.py` do relatório. Preserve essa área e seus bytes. `local_runtime.py` também difere no hash por LF/CRLF, embora seu conteúdo lógico seja igual; usar o checkout operacional diretamente não satisfaz esse congelamento. O ambiente Python continua em `C:\Cripto\pesquisa-20260909\.venv`. O carregador verifica código e ambiente antes de qualquer coleta.

@@ -1,0 +1,76 @@
+{
+  "snapshot_id": "f97b412a7940d8be9b7f046f376d26312ffca07782be5d0a600d781195eb030e",
+  "payload_sha256": "b1e00d921114a200d61e3bf703ec7f1bba06c827be895e5edb403e1d5d4565cc",
+  "before": {
+    "_migrations": {
+      "rows": 19,
+      "sha256": "27176c8c749f8bedf6fb6eb56a409ab7d59f0b8fadc1827a143e4b5d27acc4c8"
+    },
+    "features_aligned": {
+      "rows": 1230,
+      "sha256": "e3064417e8a53f07e8975705cecb2f74c85b198c3f45e3673d9852825b614ffb"
+    },
+    "ingestion_provenance": {
+      "rows": 3,
+      "sha256": "09697ab41cd7d5cbeb025dafe78afbeaf2928bd6e7b15879c221f131de47b0d9"
+    },
+    "market_snapshots": {
+      "rows": 1,
+      "sha256": "e58d19dfc1f52e1cd1147c3a5d8df51bb2dea34bdf74cc0db49fc59bdbb8494d"
+    },
+    "observation_scorecards": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "prediction_inputs": {
+      "rows": 1,
+      "sha256": "406ff6d7e589966e67a80b33c68497a1d5a6cd8e3176850b681fea88808d4411"
+    },
+    "predictions": {
+      "rows": 3,
+      "sha256": "522fc7e061630ed408fa94de224e3231b15379542755487b6c7e522d4c9ed69d"
+    },
+    "predictions_archive": {
+      "rows": 5,
+      "sha256": "2e5858069ac3e9145481f4f708fcc8897387cf3bb68bf742185a21dab08f8920"
+    },
+    "predictions_archive_chain": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "raw_market_data": {
+      "rows": 200,
+      "sha256": "79617f2de3edb8e089ee16ac0052b91039c0018e2522485ad1581fc7693a03ad"
+    },
+    "raw_signals": {
+      "rows": 200,
+      "sha256": "67b742f3bc1c54335ba1af9c2c4164c34865cf8d74add4abcf88c0ea93b39706"
+    },
+    "source_quality_scorecards": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "sqlite_sequence": {
+      "rows": 1,
+      "sha256": "75fd1a5a64ef50814daebc6506c4022ac667b66eadc403dc48468c57a86becb2"
+    }
+  },
+  "budget_before": {
+    "api_budget": {
+      "rows": 8,
+      "sha256": "c90f82a63b9eb7205450678e95eef32961ac2edb0e4d1835c798379f7c95bb30"
+    }
+  },
+  "independent_decimal_checks": {
+    "sma_50": 70229.702,
+    "sma_200": 69953.0462,
+    "change_24h": -0.19,
+    "change_7d": 1.25,
+    "change_30d": 22.41
+  },
+  "validation": "PASS: serving, SMA/changes/volume, original receipt, idempotency, expiry, all prior table rows unchanged",
+  "network_calls": 0,
+  "original_receipt_time": "2026-09-10T02:12:15.630507+00:00",
+  "last_closed_bar": "2026-09-10T00:00:00+00:00",
+  "fresh_through_utc": "2026-09-11T02:00:00+00:00"
+}

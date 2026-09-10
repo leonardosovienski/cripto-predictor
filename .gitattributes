@@ -124,3 +124,6 @@
 /docs/reopen_dossiers/ar2_renewal_turnover_20260909.json -text
 /GarimpoInvestimentos/renewal_research.py -text
 /scripts/diagnose_ar2_renewals.py -text
+
+# Exact receipts, executed local sources and dated reconciliation evidence.
+/docs/evidence/remaining_dependencies_20260910/** -text

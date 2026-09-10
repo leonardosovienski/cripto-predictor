@@ -1,0 +1,32 @@
+{
+  "status": "INTEGRADO_VALIDACAO_TECNICA_APROVADA",
+  "pr_number": 114,
+  "pr_url": "https://github.com/leonardosovienski/cripto-predictor/pull/114",
+  "head_sha": "3e602118a61e294d46a6f81ab51bb29d980cc81f",
+  "base_sha": "4fd61cd6fac6e80f06b65496d945f43a4ee91497",
+  "ci_pr_run": 34487780698,
+  "ci_state": "PR_AND_MAIN_SUCCESS",
+  "runtime_changed": false,
+  "capital_permission": false,
+  "historical_accounting_verified": true,
+  "public_withdrawal_observed": true,
+  "personal_roundtrip_verified": false,
+  "prospective_validation_completed": false,
+  "personal_net_profit_validated": false,
+  "main_question_remaining": "Ciclo prospectivo do mesmo mecanismo com custos aplicáveis e entrada/saída completas",
+  "source_calls": {
+    "historical_rpc": 364,
+    "receipts_attempt01": 6,
+    "receipts_attempt02": 109,
+    "conversion_get": 4,
+    "total": 483,
+    "shared_ingestion_units": 4,
+    "retries": 0
+  },
+  "merge_sha": "ffd6c327e2d323758f6ab6abac4ab15ef5ca0881",
+  "tested_and_merged_tree": "03593696ccbc4fa28e8d3321ef2dd8da1fbae25a",
+  "main_publication_tests_passed": 3,
+  "ci_main_run": 34488502493,
+  "all_extras_tests_passed": 1395,
+  "research_decision": "Lucro histórico condicional sustentado; validação prospectiva e pessoal não concluída."
+}

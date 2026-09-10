@@ -1,0 +1,57 @@
+import json
+import re
+from datetime import UTC, datetime
+from pathlib import Path
+
+R = Path(r'C:\Cripto\operacao\relatorios\REVISAO_COMPLETA_20260909')
+S = R/'remaining_six_20260910'
+report = R/'REVISAO.md'
+old = report.read_text(encoding='utf-8')
+if not (S/'report_before.md').exists():
+    (S/'report_before.md').write_text(old, encoding='utf-8')
+base = old.split('\n## 18.')[0]
+now = datetime.now(UTC).isoformat()
+section = r'''
+## 18. Execução dos seis itens restantes — 10/09/2026
+
+**Resultado desta retomada:** snapshot operacional recuperado e aceito pelo consumidor atual; comparação Aave por novo endpoint implementada e validada offline; condições dos demais itens conferidas. Nenhuma revogação de chave atual foi realizada ou exigida. Os seis itens não estão todos concluídos: arquivos originais, dados de outra fonte, observações futuras e fatos pessoais continuam necessários para as respectivas alegações. Esta seção atualiza os estados datados da seção 17, preservados antes da recuperação.
+
+| Item solicitado | Ação executada e evidência | Estado e dependência concreta |
+|---|---|---|
+| 1. Snapshot diário compatível | Recalculado a partir do recibo Binance autêntico de 10/09 02:12:15 UTC. 201 linhas recebidas → 200 fechadas; hashes, relógio público, OHLCV, sequência e coincidência com os inputs originais do diagnóstico conferidos. Backup, teste em cópia e escrita operacional concluídos | **Resolvido para o diagnóstico corrente.** Novo `daily-v4-audited`, mantendo o v3. Última barra fecha 10/09 00UTC; contrato aceita esse snapshot até 11/09 02UTC, equivalente a 10/09 23h Brasília. Depois exige renovação normal |
+| 2. H5 e disponibilidade histórica macro/notícias | Recibo novo não foi promovido a H5. Encontrada rota oficial ALFRED para vintages de DTWEXBGS; escopo finito e campos de disponibilidade definidos. Limite entre comunicado Copom e séries efetivas discriminado | **Parcial.** Inputs H5 originais continuam não localizados nas buscas preservadas. Download e validação temporal macro ainda não executados; quota corrente reservada. Notícias originais e revisões não se recriam a partir de preço ou data atual |
+| 3. Segunda fonte Aave | Executor preparado para os mesmos 13 pontos semanais + 25 mensais, com comparação integral de cabeçalhos/sucessores/identidade/índice/taxa/liquidez/configuração. Replay dos recibos anteriores validou 38 pontos em 350 chamadas locais | **Implementação preparada; aquisição pendente.** Guarda recusou antes de qualquer RPC externo. Próxima quota normal: 11/09 00UTC, hoje 21h Brasília. Endpoint gratuito documentado não comprova acesso ao arquivo; a origem dos nós usados pelo agregador também precisa ser verificada para alegar independência |
+| 4. Observações futuras carry/LLM | Executores congelados reconferidos offline: carry WAITING/zero linhas; LLM 84 horários FUTURE. Protocolos, código e ambiente preservados | **Preparação concluída; amostra ainda futura.** Carry entra 12/09 00–01UTC e termina 05/12; LLM começa 12/09 12–13UTC, com último alvo até 13/12 00UTC. Nenhum horário antecipado ou preenchimento retroativo |
+| 5. Custos e execução pessoais | Modelos com capital financiando custos, sensibilidades e equilíbrio já disponíveis na seção 15; dependência de dados especificada por campos, sem inserir custo desconhecido como zero | **Não comprovado.** Faltam extratos/fills/taxas/conversão/caixa/margem e custos pessoais aplicáveis. Não foi informada outra localização desses registros. Recibos de terceiros não demonstram operações do dono; não há autorização para produzi-los operando |
+| 6. Uso antigo e chaves | Decisão do dono aplicada: manter as chaves atuais. Conector Opera exige reautenticação; inventário acessível tinha somente navegador interno com documentação GitHub. Não havia painel de provedor acessível nessa sessão | **Revogar chaves atuais não é tarefa pendente.** Consumo exato anterior e revogação antiga continuam sem comprovante, como informação histórica P2; não bloqueiam a pesquisa. Não afirmar acesso universal aos painéis nem inferir contagem de uso a partir da reserva |
+
+**Correção da afirmação anterior sobre o item 1.** Era excessivo dizer que a única saída era aguardar nova quota: já existia uma resposta válida e recente em `executor_preflight02`. A derivação usou esse recibo com a data original de recebimento; a data de processamento foi registrada separadamente. Nenhum relógio foi adiantado, arquivo antigo renomeado ou quota apagada. O campo de HTTP bruto permanece falso: o recibo conserva JSON analisado, não todos os bytes/cabeçalhos originais do transporte.
+
+No banco operacional foi acrescentada **uma linha imutável de snapshot**, contendo candles e features. Não houve reingestão das tabelas brutas/alinhadas nem alteração das três previsões e do input preservado. Isso satisfaz `main → serving_context → snapshot.features`, que é o consumidor atual. Não significa atualizar toda base para todos os consumidores. Sinais opcionais ausentes não receberam zero nem valores antigos. O preço é BTC/USDT e o volume financeiro continua aproximação por volume-base × fechamento; nomes legados com USD não provam paridade cambial.
+
+Validação do snapshot: médias de 50/200 dias e variações de 1/7/30 dias calculadas também por Decimal diretamente sobre o recibo; volume e preço conferidos. Inserção repetida na cópia não duplica; timestamp após 26 horas é recusado. Antes/depois, todas as tabelas e linhas anteriores tiveram conteúdo lógico idêntico; a guarda de API permaneceu intacta. [Preparação e controles](remaining_six_20260910/snapshot/prepared.json), [aplicação e resultado](remaining_six_20260910/snapshot/applied.json), [payload com procedência](remaining_six_20260910/snapshot/payload.json), [executor de recuperação](work/recover_operational_snapshot.py).
+
+**Aave: próximo comando concreto.** A [documentação oficial dos endpoints públicos](https://blockreq.com/docs/build/public-endpoints/) identifica a rota Arbitrum como gratuita e limitada por IP. O [site do fornecedor](https://blockreq.com/) anuncia rotas de arquivo; essa alegação ainda será testada no bloco exato. O programa usa uma unidade da guarda compartilhada, no máximo 350 RPCs/20MB, zero retries e os mesmos 38 pontos. Para no primeiro erro ou divergência e preserva respostas parciais. Um endpoint diferente pode usar infraestrutura compartilhada; igualdade entre respostas não comprova, sozinha, nó independente.
+
+Executar manualmente quando a quota normal estiver disponível; o comando recusa antes da rede se estiver esgotada:
+
+```powershell
+C:\Cripto\CRIPTO.cmd python C:\Cripto\operacao\relatorios\REVISAO_COMPLETA_20260909\work\compare_aave_second_source.py --mode collect
+```
+
+O modo padrão apenas consulta estado offline. [Protocolo fixado antes da consulta](remaining_six_20260910/aave_second_source/protocol.json), [replay local](remaining_six_20260910/aave_second_source/offline_validation.json), [status da quota e zero chamadas](remaining_six_20260910/aave_status.json). Reproduzir a fonte original valida o procedimento de comparação, não fornece a segunda fonte. O comando não fica ativo nem será executado automaticamente.
+
+**Macro: recuperação delimitada, ainda sem aprovação dos dados.** A [ajuda ALFRED](https://alfred.stlouisfed.org/help/downloaddata) descreve os campos de observação, início/fim da versão e versões disponíveis em datas passadas. A série oficial [DTWEXBGS](https://alfred.stlouisfed.org/series?seid=DTWEXBGS) corresponde ao índice amplo nominal do dólar usado pelo wrapper; não é ICE DXY. Próximo recorte: 01/01/2024–09/09/2026, uma série, até 200 vintages selecionados, duas transferências/20MB/uma unidade de ingestão. Preservar ZIP, README, parâmetros e recebimento; comparar identidade/unidades/valores e produzir uma versão derivada com disponibilidade causal. Data de vintage não garante hora intradiária; comprovar fuso/horário ou atrasar conservadoramente para depois do dia completo de publicação. Essa margem será premissa explícita, não horário observado. Notícias e BCB exigem suas próprias evidências; [comunicados Copom](https://www.bcb.gov.br/controleinflacao/comunicadoscopom) não substituem séries de juros efetivos, inflação ou câmbio. Não houve download de série nem mudança de provider nesta etapa. [Rotas, campos e critérios completos](remaining_six_20260910/historical_recovery_routes.json).
+
+**Operação e preservação.** [Estado Git, banco, quota e prompt](closure_audit/remaining_six_after.json): checkout `ac4184e`, somente o diff documental preexistente do dono; área LLM `595f120` limpa; prompt original preservado. [Carry](remaining_six_20260910/carry_status.json), [LLM](remaining_six_20260910/llm_status.json), [limites do acesso aos painéis e instrução sobre chaves](remaining_six_20260910/access_check.json). Não houve alteração do runtime/lockfile, PR novo, operação financeira, revogação ou agendamento. Os 1.505 testes e quatro jobs de #116 continuam evidência daquela integração; a presente etapa tem controles operacionais próprios, não uma suíte completa novamente executada.
+
+O dado de mercado está disponível para o consumidor atual durante sua janela de frescor. Notícias, LLM e outras aquisições continuam sujeitos à quota normal; a recuperação do snapshot não libera chamadas bloqueadas. Lucro pessoal ou futuro validado continua não demonstrado. Não faltam pacotes Python demonstrados; faltam as evidências específicas acima.
+'''
+base = re.sub(r'Atualização: [^\n]*?\. \*\*Integração atual:.*?\*\*',
+              'Atualização: '+now+'. **Integração atual: #116/ac4184e, seção 17; recuperação operacional e seis dependências na seção 18.**', base, count=1)
+base = re.sub(r'\*\*Etapa atual: conferência de encerramento[^\n]*',
+              '**Etapa atual: execução dos seis itens na seção 18. Snapshot diário recuperado; comparação Aave preparada e bloqueada pela quota. Chaves atuais mantidas. Dependências históricas, pessoais e futuras discriminadas.**', base, count=1)
+base = base.replace('## 17. Conferência do pedido inteiro e encerramento verificável\n',
+                    '## 17. Conferência do pedido inteiro e encerramento verificável\n\nEstado datado anterior à recuperação operacional da seção 18; os estados atuais dos seis itens estão nessa seção posterior.\n', 1)
+report.write_text(base.rstrip()+'\n'+section+'\nRegistro desta retomada atualizado em '+now+'.\n', encoding='utf-8')
+print(json.dumps({'section': 18, 'report': str(report), 'snapshot_recovered': True}))

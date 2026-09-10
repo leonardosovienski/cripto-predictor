@@ -1,0 +1,60 @@
+{
+  "checked_at": "2026-09-10T20:04:26.608039+00:00",
+  "conversation_start": "2026-09-09T21:45:24.442Z",
+  "conversation_cutoff": "2026-09-10T19:57:05.076Z",
+  "messages_read": 179,
+  "roles": {
+    "user": 16,
+    "assistant": 163
+  },
+  "scope": "All natural-language requests, replies, final answers and progress messages recovered in this conversation through the cutoff; claims checked against versioned code, source receipts, test/CI records and operational state. Does not mean every historic file or external service audited.",
+  "private_transcript_published": false,
+  "owner_prompt": "Byte-identical to Git HEAD before this publication; no uncommitted content delta",
+  "decisions": [
+    {
+      "claim": "Engineering fixes PR110-116",
+      "decision": "Keep within tested scope; integration receipts included",
+      "evidence": "prior_integrations/"
+    },
+    {
+      "claim": "Snapshot must wait for next API day",
+      "decision": "Corrected: existing Sep10 receipt supported offline recovery",
+      "evidence": "snapshot/applied.json"
+    },
+    {
+      "claim": "All history, architecture and profit validated",
+      "decision": "Not supported; retain bounded coverage and explicit missing evidence",
+      "evidence": "review_snapshot.md"
+    },
+    {
+      "claim": "Aave original history unavailable",
+      "decision": "Superseded by 13 weekly and 25 monthly recovered boundaries; different-source confirmation still absent",
+      "evidence": "../../AAVE_VALIDACAO_20260910.md"
+    },
+    {
+      "claim": "Annual Aave result with total 5000 USDC",
+      "decision": "Use funded-cost results 232.413985 and 110.170571; earlier 235.61/112.01 used different principal/cost allocation",
+      "evidence": "../../AAVE_VALIDACAO_20260910.md"
+    },
+    {
+      "claim": "LLM executor unimplemented or PR113 still draft",
+      "decision": "Historical states superseded; executor merged and v3 registration prepared; sample not collected",
+      "evidence": "../../manual_dependencies_20260910/EXECUCAO.md"
+    },
+    {
+      "claim": "542 missing trading days",
+      "decision": "Explained in 12 instrument episodes; no candles fabricated or universal history certification",
+      "evidence": "../../manual_dependencies_20260910/RETOMADA.md"
+    },
+    {
+      "claim": "Revocation of current working keys required",
+      "decision": "Not required by this task; current keys retained, historical logs unverified and nonblocking",
+      "evidence": "access_check.json"
+    },
+    {
+      "claim": "Main branch administrative protection",
+      "decision": "Excluded by owner; no administrative change",
+      "evidence": "review_snapshot.md"
+    }
+  ]
+}

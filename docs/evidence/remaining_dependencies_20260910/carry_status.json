@@ -1,0 +1,28 @@
+{
+  "due_quote_slots": [],
+  "entry_observed": false,
+  "error": null,
+  "exit_observed": false,
+  "final_value": null,
+  "independent_profit_confirmation": false,
+  "known_quote_slots": [],
+  "latest_value": null,
+  "ledger_head": null,
+  "ledger_rows": 0,
+  "meaning": "One fixed prospective shadow holding; missing observations are not zero and quotes are not fills.",
+  "missing_quote_slots": [],
+  "notification_signature": "bdc410275017b1c260bac4857f484e98be6171288c9c0d7b28c42b486656f0e0",
+  "observation_finished": false,
+  "observed_margin_breach": false,
+  "orders_sent": 0,
+  "phase": "WAITING",
+  "protocol_id": "carry-btc-manual-20260912-v1",
+  "real_profit_usdt": null,
+  "sampled_quote_drawdown_fraction": {
+    "adverse": null,
+    "base": null,
+    "stress": null
+  },
+  "updated_utc": "2026-09-10T19:51:45.472225+00:00",
+  "validated_expected_profit_usdt": null
+}
