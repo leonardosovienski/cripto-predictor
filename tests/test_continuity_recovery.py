@@ -52,9 +52,15 @@ def test_transient_state_and_credentials_rejected_before_recovery(tmp_path, path
     ["../escape", "a/../escape", "a\\escape", "C:/escape", "CON", "a/../b", "a//b", "a./b", "a/ "],
 )
 def test_unsafe_and_windows_ambiguous_paths_rejected(tmp_path, path):
-    item = archive(tmp_path, "data.zip", {path: b"public"})
+    output = tmp_path / "out"
     with pytest.raises(ValueError, match="unsafe path"):
-        restore.verify_archives(tmp_path, [item], tmp_path / "out")
+        restore.safe_target(output, path)
+    item = archive(tmp_path, "data.zip", {path: b"public"})
+    # On Windows zipfile normalizes backslashes, so the manifest mismatch can
+    # reject the archive before the path guard. Both checks must prevent writes.
+    with pytest.raises(ValueError):
+        restore.verify_archives(tmp_path, [item], output)
+    assert not output.exists()
 
 
 @pytest.mark.parametrize("other_path", ["same.txt", "SAME.txt"])
