@@ -4,7 +4,7 @@
   "base_commit": "276d6db224f266e9ec889b6de4ab5ba0328cc321",
   "source_branch": "fix/full-review-20260909",
   "publication_branch": "backup/chat-20260909",
-  "scope": "Point-in-time copy; the active review may continue changing its checkout",
+  "scope": "Versioned continuity package: original historical captures plus completed review evidence; corrected runtime inherited from PR111.",
   "source_changes": [
     {
       "path": "GarimpoInvestimentos/analyzers/ai_insights.py",
@@ -1269,10 +1269,10 @@
       "root_files_only": true
     },
     {
-      "file": "data-operacao.zip",
-      "sha256": "a1f56617cfccd04399f5a255e25d6f5e67b1035e0a5d4d2926504ff980c15599",
-      "bytes": 13883351,
-      "files": 1124,
+      "file": "data-operacao-v2.zip",
+      "sha256": "3ad4639305d3fcdb195c197fbb78f1a034182f88c18e46e6f463e8d4005d87a6",
+      "bytes": 13882960,
+      "files": 1122,
       "original_directory": "C:\\Cripto\\operacao\\dados",
       "entries": [
         {
@@ -1417,18 +1417,6 @@
           "path": "operacao/dados/altcoin-gap-probes-20260909/VIDTUSDT.response.gz",
           "bytes": 22,
           "sha256": "64406e753d82e11c6bd63d1d04bb6aa083eefa0a46949bbfce994d556b989f0f",
-          "redacted": false
-        },
-        {
-          "path": "operacao/dados/api_guard_budget.db-shm",
-          "bytes": 32768,
-          "sha256": "fd4c9fda9cd3f9ae7c962b0ddf37232294d55580e1aa165aa06129b8549389eb",
-          "redacted": false
-        },
-        {
-          "path": "operacao/dados/api_guard_budget.db-wal",
-          "bytes": 0,
-          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
           "redacted": false
         },
         {
@@ -8019,7 +8007,12 @@
           "sha256": "ef568a268fc550326a74abe04f28535b6249077405a24dfb68a05046a4e70bad",
           "redacted": false
         }
-      ]
+      ],
+      "derived_from": {
+        "file": "data-operacao.zip",
+        "commit": "4ae9e3d19d4dc7c761d353a8eab851d70f0230e3",
+        "reason": "Remove transient API-budget sidecars; all retained payloads unchanged"
+      }
     },
     {
       "file": "data-20260907-pesquisa-basis-research-data.zip",
@@ -58613,6 +58606,671 @@
           "redacted": false
         }
       ]
+    },
+    {
+      "file": "reports-final-review-20260910.zip",
+      "sha256": "4418ebd371380058180797c1cc6ad24702ef3a8589074ad89059616df693c44c",
+      "bytes": 1079490,
+      "files": 105,
+      "original_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+      "entries": [
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/aave_1rpc/01.json",
+          "bytes": 351,
+          "sha256": "ef34bfb378ac92fb466b8c340c84a27687297f56b39e7cf176d0e1e68185682f",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/aave_1rpc/01.response",
+          "bytes": 42,
+          "sha256": "1a1cb857d58b3bdb9a247bdbf531120b544415b141c121a5673ccc2a4d7128e9",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/aave_1rpc/02.json",
+          "bytes": 782,
+          "sha256": "ca1c7926a33baa7df688f07e678aae59d8494d3db8fd282f0957eb83fc84ac0f",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/aave_1rpc/02.response",
+          "bytes": 253,
+          "sha256": "e811a6da0f3b3ec5d361c14fde0abcacb5d570beccb860952386814a1b9992eb",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/aave_1rpc/result.json",
+          "bytes": 169,
+          "sha256": "89a11762b338df62d29205066830144b1b642aa22b28f2b405c0ee822a12be7f",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/aave_1rpc/scope.json",
+          "bytes": 742,
+          "sha256": "4a39e494dacde63b3b11148ff178cb47d5702019fb993208b466c6e986a74901",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/absolute_decimal_audit.json",
+          "bytes": 1020,
+          "sha256": "7e609217172423b740aa6da9ebbc9e208f43f50f3d0dc1dac57695b1bff2207c",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/altcoin_full_reconstruction.json",
+          "bytes": 384146,
+          "sha256": "0d83f34bdb7ac0e4aef7741b7da230bece950aa4e4474b2e4126cb56b5d8e3b7",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/altcoin_selector_audit/audit.json",
+          "bytes": 1040,
+          "sha256": "01137a908e9c337ca45450e0c7401d8e674348bdffc49da318f676b7aee20578",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/altcoin_selector_audit/decisions.json",
+          "bytes": 27503,
+          "sha256": "fc68054d7dd3cbb390d994068daa38433f85f1f9462b0684da4d832eb11981f2",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/altcoin_selector_audit/results.json",
+          "bytes": 9790,
+          "sha256": "9f70b6aa9a43d9541638d5f96a7b91c9383a3d0af5a265bce8be9bc75333dad0",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/altcoin_selector_audit/weekly_results.json",
+          "bytes": 81683,
+          "sha256": "033c80a0d8fa1c9dc27670e49b5658e6e894fdd5fb4097f545b9fb5cb4f05132",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/ar2_renewals/adverse_bound.json",
+          "bytes": 5506,
+          "sha256": "4b0b0f3f0fc241ae9b92a93e3d0d94996442e5f234446e3693c84e15fd570d90",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/ar2_renewals/adverse_reference.json",
+          "bytes": 367869,
+          "sha256": "cde9bd3de8085d8800f915152defaf2bcf72f00c9383ca2bf13b3aff1aa31c66",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/ar2_renewals/base_bound.json",
+          "bytes": 5430,
+          "sha256": "62389f774821781806f12c60d68c7da424efea0cd4eff540af85825fcc916153",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/ar2_renewals/base_reference.json",
+          "bytes": 352755,
+          "sha256": "be75cecdd629c5d458f91b7570eeb5c6263b3cfe7c3ade523d565c214180162a",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/ar2_renewals/compression_bound.json",
+          "bytes": 5546,
+          "sha256": "9c319030dde8926a29acc4e8b2b122c528e953e31cb3d0992577d73f0b8a4587",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/ar2_renewals/compression_reference.json",
+          "bytes": 367918,
+          "sha256": "38424b99c2054301376cb4281d0990772ef8b824113f5f4775939efe2c70c62d",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/ar2_renewals/decisions.json",
+          "bytes": 13281,
+          "sha256": "2b5eae9cabb7e6d93ea7447c294a09377071ed2102744b7c085992948ea0e51c",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/ar2_renewals/results.json",
+          "bytes": 18693,
+          "sha256": "6ea1762ec9ba5ea3b8de1f6fbb491ed32b250f9347d7a508123a8b6e4dd9e80c",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/baseline_defect_witnesses.json",
+          "bytes": 781,
+          "sha256": "2fd375f50455f76f98d2587e9ef15d52b1ad101a09a9d7f87c3ea0151e6335f9",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/basis_decimal_audit.json",
+          "bytes": 381,
+          "sha256": "56a839bfea030d8a15f88c0b90eedf19cb9457bb816d7bf2215b15d32e39fe35",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/basis_recovered_source_audit.json",
+          "bytes": 1254,
+          "sha256": "001774216bba40672337b8391317cbcd5afbddec85331b557f350eab66637a36",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/br2_plan_review.json",
+          "bytes": 10670971,
+          "sha256": "6329fb4ff7db77df5e7c26e350c91314fb51e2525fd7b0b77712152b8c99fe7e",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/ci_main.json",
+          "bytes": 9913,
+          "sha256": "2bbad660e6905a6a10dbdb7fef07cad045f2d75c933d3453070adbfc11da4691",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/ci_pr.json",
+          "bytes": 9705,
+          "sha256": "02562f94b02fe4fd4e2fadd867ca1fc0a042776bf0bb97b672bdc350a817269a",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/closure110/aave_drpc/01.json",
+          "bytes": 351,
+          "sha256": "f65c7d557e51fe544a4a31bb3e46d55ccc79f2c2819404e132b2674482483fa3",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/closure110/aave_drpc/01.response",
+          "bytes": 42,
+          "sha256": "ec494f8de954cc9864080bb069a791f49ae9256fbce4951d968044bfd8c26f57",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/closure110/aave_drpc/02.json",
+          "bytes": 628,
+          "sha256": "9d0fd87d89376c7e5d12f822dc1b2ff0b32a1f0098bc852af9405996daa1d74e",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/closure110/aave_drpc/02.response",
+          "bytes": 98,
+          "sha256": "c45a8ec68c85ce3d0d3770dc75ad4b939f05e21c8615eab5ea1e22d587733d77",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/closure110/aave_drpc/result.json",
+          "bytes": 169,
+          "sha256": "f0f92b1a7638242db6010ef87ab31da2408bb8288ce252f7527c6836ffa7017f",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/closure110/aave_drpc/scope.json",
+          "bytes": 762,
+          "sha256": "3a4c0cbf3bb8d2f7164598c2617ce0dd2f653ed0243898d68c1190ab72f327fa",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/economic_reconciliation.json",
+          "bytes": 79173,
+          "sha256": "b1b22b13e9fc50501e78ec9c33bcc73f4beda3624b0ee2bb9a02dc0287ec224b",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/final02/build.log",
+          "bytes": 449,
+          "sha256": "3a322ef893ed1dd85ebad48a0aea2f86969e3620f2e5214c4838bc1a7664e7af",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/final02/coverage.json",
+          "bytes": 291390,
+          "sha256": "768017a49a0a863fdbe270118afbb914fc84392af3b20d47f34c37ba91485139",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/final02/coverage.log",
+          "bytes": 8744,
+          "sha256": "5f1b27cea8b3fe18eaefa827457287e3d506038da0d1c20e626aa2a608cbf250",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/final02/coverage_json.log",
+          "bytes": 100,
+          "sha256": "c09706c3268bbf1397bd83a615e259b0c056c50de3e8b63bafec94e5bcad8200",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/final02/format.log",
+          "bytes": 29,
+          "sha256": "50f76518ec5ed1555d17f7f5ff79aa666e5a90246f4bc85ece2a963b40595f46",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/final02/initial_next_chat_prompt.md",
+          "bytes": 36030,
+          "sha256": "8969db38ef9a3ec29ee16a780b9572ec9f7d7808cabc9bac17a319616b47fe20",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/final02/pyright.log",
+          "bytes": 195,
+          "sha256": "d7d72763e20a215d2c91954b3024f2b923f07864bdbdfcb483007aa094db69ac",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/final02/ruff.log",
+          "bytes": 20,
+          "sha256": "a4443afdcfb6d7363adb285762515ccf7cf50473b1a05c20c1a50f6bed4d26b0",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/final02/secrets.log",
+          "bytes": 47,
+          "sha256": "03fdc05c0e89f05e125366a9b93cbc1a6d77284cc8c106f5c42c84234a8fc568",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/final02/sync_all_extras.log",
+          "bytes": 60,
+          "sha256": "d48529fa70b1e7aa2fdda1ccaab4837e2b9b32d05648ee05b7bfde0b84c76657",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/final02/tests.log",
+          "bytes": 1855,
+          "sha256": "74fe5c5bfa483fd17aeac5717276937a73baee1e46c1ae6be2d2a15735e00eb2",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/final02/tests.xml",
+          "bytes": 162497,
+          "sha256": "92f7bad7b11e3939332ffce592d7ae57dcb89b4b8a32402a9bab05b4eadd391e",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/final02/validation.json",
+          "bytes": 265758,
+          "sha256": "6bc438b4732410364c928ddfe5034f1a4697e73124659c659ecca801a43ed739",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/final02/wheel_contract.json",
+          "bytes": 1870,
+          "sha256": "b23bf1157ac215865563a4adb0a48548bb6638309abd608404041474bba6170d",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/final02/wheel_contract.log",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/final02/wheel_create.log",
+          "bytes": 245,
+          "sha256": "ca8ae3cba51516d704c534470b19d165976ffb2a7db4c823c448f92031ab37db",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/final02/wheel_install.log",
+          "bytes": 996,
+          "sha256": "67b9ea769205af44b0c931b5411a41c05da708b8a03489a70d25226b4dd04a17",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/final02/windows_help.log",
+          "bytes": 172,
+          "sha256": "e8ef6bc59e3c801938690d415aff2505e06e0e5cccf5979e0d375e9ab5f9138e",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/final02/windows_status.log",
+          "bytes": 2242,
+          "sha256": "e9791c5d0a66f64d178a4788efc5533f7a121b72fe3f1811344ee49d2002da7e",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/immediate_decimal_audit.json",
+          "bytes": 318,
+          "sha256": "718b35db4547968af875e28426b6f8a40dca7114d3446f9998fa62a8bf3ce8df",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/integration.json",
+          "bytes": 1904,
+          "sha256": "e1dd3c832aa5a1020ba87b2622031b4c5d0d4a148689e6ff4ab229d3ce0bb414",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/inventory.json",
+          "bytes": 196973,
+          "sha256": "40a4c6e5c6b596d9f5667d8c150c3cb18238aac5c7005f3967d1bb915b8867b0",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/live/analysis.log",
+          "bytes": 506,
+          "sha256": "ca341f2c71c7922cfeee01f14b5244b5f91edf9ac77a27d7f83a8c65f29db61b",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/live/ingest.log",
+          "bytes": 213,
+          "sha256": "5fe967d3c83cede0f8b09c4756dd93b0d4149117c7f4987cef4668bb91754dd3",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/live/result.json",
+          "bytes": 1822,
+          "sha256": "3cf03992182e2b774135644438be5d23a8d42a7fb8fb73c439c88f12085a0719",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/live/scope.json",
+          "bytes": 1818,
+          "sha256": "7edc5343ea186b08f22be35687374335385936d440b4d6bf1537b1ef06926f8a",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/observer_state_review.json",
+          "bytes": 5174,
+          "sha256": "a855ac40f567ad9a0459169f6a35495281e677794d4d6ea947bed79dc936c54a",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/operational_store_inventory.json",
+          "bytes": 19433,
+          "sha256": "0a66d32e13135e39ba1630cfeba701ce438db3b901954325da9990c90ac78edc",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/postmerge01/initial_next_chat_prompt.md",
+          "bytes": 36030,
+          "sha256": "8969db38ef9a3ec29ee16a780b9572ec9f7d7808cabc9bac17a319616b47fe20",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/postmerge01/sync_all_extras.log",
+          "bytes": 29,
+          "sha256": "9db56298fd0c0864b4e0a5740af22ef77a1c1246749d2386711880a1a3fc47f8",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/postmerge01/tests.log",
+          "bytes": 1859,
+          "sha256": "9c0e80639e0698e9ab5a0e1c5d508ccc74ba34271e6a3d97eef5cdc0a501c4ca",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/postmerge01/tests.xml",
+          "bytes": 162488,
+          "sha256": "d83233fe69cb82d4b83cbc2e6bbc02051ce3e9daa6ce926f4b372d04f5ead6bf",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/postmerge01/validation.json",
+          "bytes": 260061,
+          "sha256": "1a7b6fbf16d9d51c63257f9efcf4e83b7b940409cb89b6efcb789dd36ff51445",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/pr110/combined_h6_check.json",
+          "bytes": 510,
+          "sha256": "692c6affb0cdc32937d1d5dfd005037774d4733d35c336695621b466f74da6b7",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/pr110/diff_from_main.patch",
+          "bytes": 11934,
+          "sha256": "21092ccd20f24237ac96cc80c4dc39e235be464b66c49538f548d6eb0d355a1e",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/pr110/github_review_evidence.json",
+          "bytes": 10577,
+          "sha256": "1651983a335ed1bb752d3b875497d13f2128d65fa47472ca712df94a7b1c944d",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/pr110/merge_simulation.txt",
+          "bytes": 1112,
+          "sha256": "bbc5600705585dc7ffce936565d1ed79fb1d9d8cab847bb45d7d5a7046bdf81c",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/pr110/package_audit.json",
+          "bytes": 6523,
+          "sha256": "9afea916867633390d005a82ba1a3ee844abb6145fcc053ad52bcfb68a42b54f",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/pr110/recovery_conflict.log",
+          "bytes": 486,
+          "sha256": "35a5d623a85ac72f88635eb025ab7da2ffe9e31730c8b85f170c7966de9c522d",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/pr110/recovery_first.log",
+          "bytes": 164,
+          "sha256": "dc82d43062dca1fd6be09c33364395c3d69034b5a08546664685c877c861c4c1",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/pr110/recovery_idempotent.log",
+          "bytes": 164,
+          "sha256": "dc82d43062dca1fd6be09c33364395c3d69034b5a08546664685c877c861c4c1",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/pr110/recovery_probes.json",
+          "bytes": 534,
+          "sha256": "01a2946e32a602ab24243b78594a3f7f3fd13efeeb5716ac622dcf3fb5fd0298",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/pr110/recovery_traversal.log",
+          "bytes": 605,
+          "sha256": "3f239c538c4c7806442dfb0af24606557ee966296f13b8b5c441532d9bdc58fb",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/pr110/state.json",
+          "bytes": 2949,
+          "sha256": "a08b110d47b13b44cdf76e43c55e47fbd00d7317a32c58ef871b35520fb25fc9",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/pr110/targeted.xml",
+          "bytes": 16244,
+          "sha256": "9f4f42565112d8be79ad939087901a370ce04ec5733c341a9898ebf8be7eaaed",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/pr110/targeted_head_tests.json",
+          "bytes": 805,
+          "sha256": "f82f29783455f1aef79e5e1a4291e0e1ba2733546dea07f4b59b4955fc96dc93",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/pr110/targeted_head_tests.log",
+          "bytes": 8275,
+          "sha256": "0acc0c2d2fabeb66910d8cc05b159152c2e8cd7e9be5b1786dc1720150cb3072",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/pr110/verify_published_archives.json",
+          "bytes": 425,
+          "sha256": "139d7679da90bfd4a9f91981cffd285b48f67cfcc1476499c2f08067125d10aa",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/pr110/verify_published_archives.log",
+          "bytes": 87,
+          "sha256": "4329382aab1a05253a31779444cf15b536a7ad0cae2e0b163fffc9de4a9b3bfe",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/release_validation.json",
+          "bytes": 891,
+          "sha256": "9d78fd8ae69b9e93ecb2742026e94edf239053dbc92888b6fee7a69a5c60b969",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/release_validation_premerge.json",
+          "bytes": 891,
+          "sha256": "2d530df250d1aaacec423638403bc25562d73a3ded65a2d72ecb7e675bf071d4",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/report_verification.json",
+          "bytes": 850,
+          "sha256": "190a061196c08a06b916dca39ab4b0324f200d6e52dad403da099de0d99b1351",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/REVISAO.md",
+          "bytes": 49943,
+          "sha256": "58787eb54d217f804484a8cb21290dae9a3d0d09c9b9ae3905f286197ecaa6e4",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/work/audit_pr110_package.py",
+          "bytes": 5115,
+          "sha256": "070adb7a30da6dacd24d5905fd0e9b66bbc571260b0557fd94b6ecdf2424f5e1",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/work/check_pr110_merge_h6.py",
+          "bytes": 1625,
+          "sha256": "85b9dac050190e91a9a627e0f191f3be3ffd79b71a31359ceac66b077fcce64f",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/work/economic_inventory.py",
+          "bytes": 1215,
+          "sha256": "810444da8910301c7c2595228ed4d800c2df35070ccb41afdb15ab4cd0757acd",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/work/economic_reconciliation.py",
+          "bytes": 3097,
+          "sha256": "a489c79286042bcd806ee0a4f3f595b26c23f6d391129e7cb01c81a3261c600a",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/work/inspect_state.py",
+          "bytes": 6137,
+          "sha256": "668657930adea27c9d60ea8cfd230efbb89a081f494e600d7eeaa013a0a0039a",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/work/live_check.py",
+          "bytes": 4274,
+          "sha256": "a0829d7f7cac5ce72628c94ed9e83963c00aeb607e3f3e2da142aed4e4994e40",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/work/observer_state.py",
+          "bytes": 1862,
+          "sha256": "373a106f4cb45b4b93a9a2104994ceffa34ce26362a1ae8adecd871fac3e5f9a",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/work/prepare_continuity_release.py",
+          "bytes": 6150,
+          "sha256": "c60cac0a7e9294c8b689bbcdac16f981e2c0053f2dbc710b7cdd8d8a3cac26ca",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/work/probe_aave_1rpc.py",
+          "bytes": 2714,
+          "sha256": "b764d21e440fdf5624511558b9f362b10dfec6a683d4f372b232ea5f58df8486",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/work/probe_aave_drpc.py",
+          "bytes": 2758,
+          "sha256": "27446b076b189017a1115e75d4d1439225a1893de679446cf1520a19731c8471",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/work/probe_pr110_recovery.py",
+          "bytes": 2542,
+          "sha256": "18057ac0f24e7087e8a2561be692827fcf14208b0de67dc5fe12ce48b115367b",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/work/rebuild_altcoins.py",
+          "bytes": 4330,
+          "sha256": "751472b603d022a6d1f0c962282dd3bb1ea9eb9015a81cfd4afb2be935d1b875",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/work/release_check.py",
+          "bytes": 1532,
+          "sha256": "e253a0edf089a6d9ece914ff1362013549649f383a21b158b98eb77f36fc4623",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/work/review_pr110.py",
+          "bytes": 3860,
+          "sha256": "70afef4ac23a2f3ee475d82a38f1580797bb9f6c3b5640843ab32954ff652942",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/work/run_checks.py",
+          "bytes": 5998,
+          "sha256": "95c7c1248b7ec11b171e02bbaec41d4967e9e18e0389940fc25e009b0dc63132",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/work/targeted.py",
+          "bytes": 1757,
+          "sha256": "13567548812a70eb9ef3ebde64503f51acca0493f91976f61ca9a0661ba7c274",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/work/verify_report.py",
+          "bytes": 1206,
+          "sha256": "865fd38745ec4e6072af58efa7ef64235743c944993bcb2e87fddb266bcb0a51",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/work/wheel_check.py",
+          "bytes": 2439,
+          "sha256": "915e2d9d4aecb8656f650e63d9bade95d9770d4f42e8cc7cb80df8a0a44c3644",
+          "redacted": false
+        },
+        {
+          "path": "operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/work/write_report.py",
+          "bytes": 50164,
+          "sha256": "58822b47f36aeb49b753a927039b6cbc4421225d657bec452b5a5c3e9031da14",
+          "redacted": false
+        }
+      ],
+      "purpose": "Completed PR111 validation, full review, PR110 findings and latest bounded dependency probe; capture before current PR integration"
+    },
+    {
+      "file": "operational-diagnostic-final-20260910.zip",
+      "sha256": "03398fdcaad7bdb2e262d248507ed99a9ed27d85be98f7245a254f84e38f8cf0",
+      "bytes": 68850,
+      "files": 1,
+      "original_directory": "C:\\Cripto\\operacao\\saidas",
+      "entries": [
+        {
+          "path": "operacao/diagnosticos-preservados/20260910/feature_store.db",
+          "bytes": 495616,
+          "sha256": "2877786b7265a4f8fb16279c52da52d2b92cf17a65d0334607e2a2139373f542",
+          "redacted": false
+        }
+      ],
+      "sqlite_backup": {
+        "consistent": true,
+        "integrity": "ok",
+        "counts": {
+          "predictions": 3,
+          "market_snapshots": 1,
+          "prediction_inputs": 1
+        }
+      },
+      "purpose": "Isolated final diagnostic copy; never overlaid on the operational database"
     }
   ],
   "excluded": [
@@ -58683,6 +59341,14 @@
     {
       "path": "operacao/dados/api_guard_budget.db",
       "reason": "credential/runtime/binary operational artifact"
+    },
+    {
+      "path": "operacao/dados/api_guard_budget.db-shm",
+      "reason": "Transient SQLite sidecar; never publish or restore API budgets"
+    },
+    {
+      "path": "operacao/dados/api_guard_budget.db-wal",
+      "reason": "Transient SQLite sidecar; never publish or restore API budgets"
     }
   ],
   "operational_credentials_published": false,
@@ -58696,5 +59362,8 @@
   ],
   "compressed_public_source_bytes_checked": true,
   "archives_completed_at_utc": "2026-09-09T19:36:13.619744-03:00",
-  "captured_source_hash_note": "Source hashes describe the captured working-tree bytes before formatting and Git line-ending normalization; the Git commit identifies published source content."
+  "captured_source_hash_note": "Source hashes describe the captured working-tree bytes before formatting and Git line-ending normalization; the Git commit identifies published source content.",
+  "updated_at_utc": "2026-09-09T23:55:16.601316+00:00",
+  "validated_engineering_base": "909724e36d23b1683268c9e43d533f553c7dfe5f",
+  "original_capture_preserved_in_commit": "4ae9e3d19d4dc7c761d353a8eab851d70f0230e3"
 }

@@ -1,5 +1,7 @@
 # Prontidão dos dados — após as correções de 09/09/2026
 
+**Atualização posterior à preparação:** consulte [a revisão geral](REVISAO_COMPLETA_20260909.md). Ela substitui a interpretação de prontidão abaixo para novos diagnósticos: contrato diário contínuo, snapshots de inputs e avaliação posterior à resposta. A tabela seguinte descreve a preparação anterior, preservada como referência datada.
+
 O fluxo principal já foi executado neste PC e gravou dados e análises em `C:\Cripto`. O registro canônico é [FECHAMENTO_PENDENCIAS_20260909.md](FECHAMENTO_PENDENCIAS_20260909.md), com arquitetura, correções, testes, fontes e limitações. Consulte [a validação final por commit](C:/Cripto/operacao/relatorios/FECHAMENTO_PENDENCIAS_20260909/VALIDACAO_FINAL.json).
 
 | Item | Resultado verificável |

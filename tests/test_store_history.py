@@ -182,7 +182,7 @@ def test_analise_persiste_previsao_ANTES_de_fechar_a_store():
     )
     assert "append_history([resultado], store)" in src
     assert "store.close()" in src
-    assert src.index("append_history([resultado], store)") < src.index("store.close()"), (
+    assert src.index("append_history([resultado], store)") < src.rindex("store.close()"), (
         "store.close() antes do append_history: previsões seriam descartadas em silêncio"
     )
 

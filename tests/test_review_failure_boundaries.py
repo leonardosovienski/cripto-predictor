@@ -135,3 +135,22 @@ def test_v3_cache_respects_window_and_excludes_open_candle(monkeypatch, tmp_path
     assert [r.funding_time_ms for r in funding] == [3600000, 7200000]
     assert [r.timestamp_ms for r in oi] == [3600000, 7200000]
     assert [r.open_ms for r in spot] == [3600000]
+
+
+def test_new_diagnostics_cannot_acquire_legacy_verdict_or_mutate_trials(monkeypatch, capsys):
+    from GarimpoInvestimentos import quality_snapshot
+    from GarimpoInvestimentos.analyzers import backtest
+    from GarimpoInvestimentos.dpl.snapshots import EVALUATION_CONTRACT
+
+    def forbidden(*args, **kwargs):
+        raise AssertionError("diagnostic cannot request an inferential verdict or registry")
+
+    monkeypatch.setattr(backtest, "spearman_block_ci", forbidden)
+    monkeypatch.setattr(backtest, "load_trials", forbidden)
+    rows = [
+        {"score": i, "var_d7_pct": i, "evaluation_contract": EVALUATION_CONTRACT} for i in range(10)
+    ]
+    backtest._report(rows)
+    assert "sem veredito" in capsys.readouterr().out
+    assert backtest.close_trial_sharpes(rows, 7) == {}
+    assert quality_snapshot._spearman_stats(rows, 7) is None

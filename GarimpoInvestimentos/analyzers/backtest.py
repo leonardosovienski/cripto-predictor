@@ -267,6 +267,10 @@ async def run():
 
     _write(enriched)
     _report(enriched)
+    if any(r.get("evaluation_contract") == EVALUATION_CONTRACT for r in enriched):
+        # No registered inferential/trading trial exists for the new diagnostic
+        # contract. Do not pool it into legacy Sharpe/DSR or mutate their registry.
+        return
     _metrics(enriched, PRIMARY_HORIZON)
     close_trial_sharpes(enriched, PRIMARY_HORIZON)
     close_h6_inverted_signal(enriched, PRIMARY_HORIZON)
@@ -371,6 +375,17 @@ def rolling_flip_check(enriched: list[dict], horizon: int) -> tuple[float, float
 
 
 def _report(enriched: list[dict]) -> None:
+    if any(r.get("evaluation_contract") == EVALUATION_CONTRACT for r in enriched):
+        print("Diagnóstico descritivo de fechamentos futuros; sem veredito ou teste de lucro.")
+        for h in HORIZONS:
+            pairs = [
+                (r["score"], r[f"var_d{h}_pct"])
+                for r in enriched
+                if r.get(f"var_d{h}_pct") is not None
+            ]
+            rho = _spearman_rho([x for x, _ in pairs], [y for _, y in pairs])
+            print(f"D+{h}: n={len(pairs)}, Spearman descritivo={rho}; retornos brutos, sem fills.")
+        return
     for h in HORIZONS:
         # pairs em ORDEM TEMPORAL (enriched preserva a ordem do histórico) — o block
         # bootstrap depende disso para capturar a dependência serial dos horizontes.
@@ -579,6 +594,9 @@ def close_trial_sharpes(
     não pode tentar "amadurecê-las" novamente. Mecanismos prospectivos, como H6,
     possuem fechamento separado e continuam sendo executados.
     Retorna {name: sharpe} do que foi atualizado."""
+    enriched = [r for r in enriched if r.get("evaluation_contract") != EVALUATION_CONTRACT]
+    if not enriched:
+        return {}
     thr = settings.LIMIAR_SCORE_MINIMO if threshold is None else threshold
     key = f"var_d{horizon}_pct"
     trials = load_trials(trials_path)
@@ -752,7 +770,6 @@ def close_h6_inverted_signal(
         for r in enriched
         if r.get(key) is not None
         and r.get("fonte", "direct") == H6_LIVE_FONTE
-        and r.get("evaluation_contract") != EVALUATION_CONTRACT
         and r["score"] <= inverted_thr
         and r.get("pred_date", datetime.min) > registered_at
     ]
@@ -824,7 +841,6 @@ def h6_spearman_verdict(enriched: list[dict], horizon: int, *, trials_path=None)
         for r in enriched
         if r.get(key) is not None
         and r.get("fonte", "direct") == H6_LIVE_FONTE
-        and r.get("evaluation_contract") != EVALUATION_CONTRACT
         and r.get("pred_date", datetime.min) > registered_at
     ]
     n = len(pairs)

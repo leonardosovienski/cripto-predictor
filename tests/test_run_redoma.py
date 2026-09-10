@@ -15,6 +15,8 @@ import types
 from datetime import UTC, datetime, timedelta
 from unittest import mock
 
+import pytest
+
 _OPENPYXL_MODS = (
     "openpyxl",
     "openpyxl.styles",
@@ -27,7 +29,8 @@ _OPENPYXL_MODS = (
 )
 
 
-def test_run_analisa_do_serving_e_persiste_carimbado(tmp_path, monkeypatch):
+@pytest.mark.parametrize("export_fails", [False, True])
+def test_run_analisa_do_serving_e_persiste_carimbado(tmp_path, monkeypatch, export_fails):
     monkeypatch.setenv("GEMINI_API_KEY", "GEMINIKEY-0123456789-abcdef")
     monkeypatch.setenv("SERP_API_KEY", "SERPKEY-0123456789-abcdef")
     monkeypatch.setenv("LLM_PROVIDER", "gemini")
@@ -88,10 +91,19 @@ def test_run_analisa_do_serving_e_persiste_carimbado(tmp_path, monkeypatch):
     monkeypatch.setattr(main, "analyze_asset", fake_analyze)
     monkeypatch.setattr(main, "get_news_result", fake_news)
     monkeypatch.setattr(main, "judge_signature", lambda asset_name=None: "stub:modelo:hash")
-    monkeypatch.setattr(main, "export_results", lambda resultados: None)
+
+    def export(resultados):
+        if export_fails:
+            raise OSError("injected export failure")
+
+    monkeypatch.setattr(main, "export_results", export)
     monkeypatch.setattr(sys, "argv", ["main", "--assets", "bitcoin", "--no-cache"])
 
-    asyncio.run(main.run())
+    if export_fails:
+        with pytest.raises(OSError, match="injected export failure"):
+            asyncio.run(main.run())
+    else:
+        asyncio.run(main.run())
 
     # O QUE IMPORTA: a previsão persistiu no histórico oficial, carimbada.
     with FeatureStore(db) as fs:

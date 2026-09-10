@@ -2,6 +2,8 @@
 
 ## Estado vigente e continuidade
 
+- [Revisão geral de 09/09: contratos e erratas](REVISAO_COMPLETA_20260909.md): ponto de acesso ao registro vivo, auditorias e dependências restantes.
+
 - [Prontidão de dados](PRONTIDAO_DADOS.md): bases disponíveis, lacunas verificadas, limites de API e critérios para concluir a preparação.
 - [Configuração deste PC em C:\Cripto](CONFIGURACAO_LOCAL.md): mapa operacional vigente; substitui caminhos de máquinas anteriores para qualquer nova execução.
 - [Rodada econômica de 09/09](evidence/economic_round_20260909/RESULTADOS.md): resultados, limitações e condições de retomada.

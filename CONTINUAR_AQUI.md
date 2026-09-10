@@ -1,26 +1,15 @@
-# Continuar o projeto sem o chat
+# Continuar o projeto Cripto
 
-Este repositório contém o ponto de preservação solicitado pelo dono em 09/09/2026, na branch `backup/chat-20260909`.
+Comece pelo estado Git real e por [RESOLUCAO_PR110.md](docs/continuity_20260909/RESOLUCAO_PR110.md). O código incorpora o PR #111 (909724e), que concluiu a revisão de engenharia. O #110 foi corrigido para preservar essa implementação e completar a continuidade. A captura intermediária de 22:31 UTC permanece no histórico 4ae9e3d.
 
-## Entrada principal
+1. Leia [NEXT_CHAT_PROMPT.md](docs/NEXT_CHAT_PROMPT.md), preservado como mandato, e [a revisão de 09/09](docs/REVISAO_COMPLETA_20260909.md).
+2. Confira os [pacotes e comandos de recuperação](docs/continuity_20260909/README.md), o [manifesto](docs/continuity_20260909/MANIFEST.json) e as [dependências restantes](docs/continuity_20260909/DEPENDENCIAS.md).
+3. Confira o SHA atual e os quatro jobs de CI no GitHub. Uma conclusão de outro commit não valida este checkout.
 
-Leia o [prompt final da revisão completa](docs/NEXT_CHAT_PROMPT.md). Ele registra o objetivo, limites autorizados, estado das fontes, dados existentes e ausentes, resultados econômicos e critérios de conclusão.
+Nesta máquina, código e operação ficam em C:\Cripto; C:\Cripto\CRIPTO.cmd é a entrada configurada. Não extraia arquivos sobre o banco operacional ou os snapshots históricos. O backup final de diagnóstico é separado e contém três previsões, um snapshot de mercado e um registro de inputs. Os dois bancos publicados representam instantes diferentes e não devem ser mesclados automaticamente.
 
-Leia também o [pacote de continuidade](docs/continuity_20260909/README.md), que contém relatórios, dados públicos e uma cópia consistente do banco de diagnóstico. O [manifesto](docs/continuity_20260909/MANIFEST.json) descreve arquivos, caminhos de origem, hashes e exclusões.
+O pacote reports-final-review-20260910.zip inclui a revisão completa, comprovantes finais e pós-merge do #111, scripts e a revisão do #110 anterior à correção. O estado corretivo posterior está em RESOLUCAO_PR110.md e no histórico/checks do próprio PR. Os horários de captura são explícitos no manifesto.
 
-## Estado desta publicação
+O piloto carry original perdeu sua janela de entrada. Um novo piloto depende de protocolo e janela futura próprios. Nenhum observador, agendamento ou capital foi ativado.
 
-- A base integrada anterior é o PR #109, commit `276d6db224f266e9ec889b6de4ab5ba0328cc321`.
-- O prompt final foi incluído, junto de todas as 32 alterações de código/documentação encontradas na captura.
-- O código adicional veio da revisão em andamento na tarefa CRIPTO. Esta publicação é uma cópia para continuidade, não a conclusão da auditoria nem autorização para operar dinheiro.
-- A captura do código ocorreu em 09/09/2026 às 22:31 UTC; as bases e relatórios têm horários de captura próprios. Alterações posteriores feitas pela revisão ativa não pertencem automaticamente a esta cópia.
-- Checks de versões anteriores não validam estas alterações. Confira o resultado de CI do commit publicado e os achados da revisão antes de integrar à main.
-- Nenhuma chave ou credencial financeira foi publicada. Não há lucro real comprovado.
-
-Nesta máquina, a revisão continua em `C:\Cripto\pesquisa-20260909`. Preserve suas alterações atuais. A cópia de publicação fica em `C:\Cripto\publicacao-chat-20260909`; o comando `C:\Cripto\CRIPTO.cmd` continua apontando para o checkout de pesquisa, e não foi alterado por esta publicação.
-
-## Pedido para a próxima tarefa
-
-> Leia CONTINUAR_AQUI.md e docs/NEXT_CHAT_PROMPT.md. Confira o estado Git real e o trabalho de revisão já existente em C:\Cripto. Retome a revisão completa a partir das evidências e pendências, preservando alterações posteriores a esta captura. Não reinicie a restauração, não repita perguntas já respondidas e não trate este ponto de preservação como auditoria concluída.
-
-Apagar o chat não apaga os arquivos de `C:\Cripto`. O GitHub permite recuperar o conteúdo publicado; ele não substitui a guarda local das chaves, do pacote original de migração e dos ambientes completos.
+Pedido de retomada: leia estes documentos, confirme o estado real, preserve dados e definições congeladas, execute apenas pendências compatíveis com os limites autorizados e atualize o registro de evidências. Não repita coletas idênticas já malsucedidas nem substitua dados ausentes por estimativas.

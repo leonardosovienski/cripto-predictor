@@ -1,6 +1,6 @@
 # cripto-predictor (GarimpoInvestimentos + DPL)
 
-**Publicação de continuidade de 09/09/2026:** comece por [CONTINUAR_AQUI.md](CONTINUAR_AQUI.md). Inclui o prompt final, o código capturado da revisão em andamento, relatórios e bases públicas recuperáveis. Confira o escopo e o CI desta branch antes de integrar; a revisão completa ainda não foi encerrada.
+**Revisão geral de 09/09/2026:** [contratos corrigidos, limites e registro canônico](docs/REVISAO_COMPLETA_20260909.md). Novos diagnósticos exigem ingestão no contrato atual, preservam inputs e medem somente fechamentos posteriores à previsão. Isso corrige avaliação e procedência; não comprova lucro nem reabre famílias encerradas.
 
 Estado deste PC e verificações conectadas de 09/09/2026: [fechamento das pendências](docs/FECHAMENTO_PENDENCIAS_20260909.md). Código e armazenamento operacional ficam em `C:\Cripto`; configuração não é evidência de lucro.
 
@@ -52,14 +52,14 @@ Sistema de **pesquisa** em previsão de criptoativos, em duas camadas:
   LLM (Gemini/OpenAI/Groq/Cerebras/Mistral) + indicadores técnicos, grava previsões
   carimbadas e valida com backtest estatístico (Spearman + IC95% + Deflated Sharpe).
 - **DPL — Data Provider Layer** (`GarimpoInvestimentos/dpl/`): camada de dados
-  bitemporal com fallback multi-fonte, agregação por consenso, Circuit Breaker e
+  com controles temporais, fallback multi-fonte, agregação por consenso, Circuit Breaker e
   **Feature Store** (SQLite) que é o repositório oficial de dados E de previsões.
 
 ```
 --discover (momentum+trending) ─┐
 --assets ───────────────────────┼→ INGESTÃO (DPL: Binance→CoinGecko | consenso c/ Kraken)
-                                └→ Feature Store (bitemporal, anti-lookahead)
-                                        ↓ serving offline
+                                └→ Feature Store + snapshots versionados de inputs
+                                        ↓ mercado local; notícias e LLM conectados
                      ANÁLISE (LLM + indicadores + notícias) → score 0-100
                                         ↓ carimbos: Juiz + Fonte
                      predictions (histórico oficial) → BACKTEST (Spearman IC95% + DSR)

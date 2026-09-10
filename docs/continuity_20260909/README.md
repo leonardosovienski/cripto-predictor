@@ -1,42 +1,29 @@
-# Pacote de continuidade — 09/09/2026
+# Pacote de continuidade corrigido
 
-O dono pediu que código, prompt, contexto e dados necessários à continuidade fossem publicados antes de apagar o chat. Este pacote preserva **22 arquivos ZIP, contendo 9.713 arquivos**, aproximadamente 128 MB, além dos documentos legíveis no repositório. Há sobreposição entre aquisições; essas quantidades não representam ativos distintos.
+Esta versão reúne **24 ZIPs e 9.817 arquivos internos**. O [manifesto](MANIFEST.json) registra cada tamanho, hash, origem, transformação e horário. Há sobreposição entre aquisições; a contagem não representa ativos distintos. Veja [resolução das falhas](RESOLUCAO_PR110.md) e [dependências](DEPENDENCIAS.md).
 
-## Conteúdo
+- Os pacotes históricos preservam seus bytes e datas. data-operacao-v2.zip exclui exclusivamente os dois sidecars transitórios do orçamento; todos os demais conteúdos são iguais. O original permanece no commit 4ae9e3d e na cópia local preservada.
+- reports-final-review-20260910.zip acrescenta 105 arquivos: validações finais e pós-merge do #111, auditorias, diagnóstico real, scripts e revisão do #110. Recupera para operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910, separado da captura anterior. A revisão do #110 contida nele antecede as correções descritas em RESOLUCAO_PR110.md.
+- operational-diagnostic-final-20260910.zip contém um backup SQLite consistente com três previsões, um snapshot e um input. Recupera para operacao/diagnosticos-preservados/20260910/feature_store.db. Não restaura sobre o banco operacional.
+- operational-diagnostics.zip é a captura anterior, com duas previsões. As diferenças temporais são esperadas; as versões não são combinadas nem retrodatadas.
+- Os demais data-* e reports-* contêm aquisições públicas e referências históricas. local-root guarda cópias de referência dos atalhos e instruções anteriores.
 
-- Código e testes: na árvore normal do repositório, com alterações da revisão capturadas sem modificar o checkout onde ela continua.
-- [Prompt final](../NEXT_CHAT_PROMPT.md): mandato de revisão, estado anterior e instruções de continuidade.
-- [Arquivos locais de entrada](local-root/LEIA_PRIMEIRO.md), [instruções da raiz](local-root/AGENTS.md) e [atalho original](local-root/CRIPTO.cmd): cópias de referência, sem alteração da instalação.
-- `reports-root.zip`: relatórios gerais, mandato econômico original, resultados, configuração documentada sem valores secretos e textos ao investidor.
-- `reports-fechamento_pendencias_20260909.zip`: validação anterior, scripts de recuperação/verificação e evidências.
-- `reports-revisao_completa_20260909.zip`: registro vivo, testes e evidências da revisão em andamento na data da captura. O estado ainda é de revisão.
-- Demais `reports-*.zip`: preparação dos dados e versões anteriores do repasse.
-- `data-operacao.zip`: aquisições novas, incluindo futuros recuperados e tentativas de recuperar altcoins.
-- `data-20260907-*.zip`: bases públicas preservadas de carry, futuros, altcoins e suas fontes, incluindo arquivos brutos comprimidos.
-- `operational-diagnostics.zip`: saídas do pipeline, marcador de diagnóstico e cópia consistente de `feature_store.db` criada pela API de backup SQLite em leitura. WAL/SHM não foram copiados como se fossem bancos independentes.
+## Verificação e recuperação
 
-O [MANIFEST.json](MANIFEST.json) lista cada arquivo interno, tamanho e SHA-256, o arquivo ZIP correspondente e seu hash. As fontes de dados foram preservadas byte a byte. Relatórios com dados de autenticação conhecidos ou endereços de email receberam remoção desses valores na cópia exportada, identificada no manifesto; originais locais não foram modificados. Os bytes descomprimidos das fontes gzip também foram examinados para correspondências com as credenciais configuradas. Isso não substitui uma auditoria universal de segredos desconhecidos.
+Na instalação atual, depois de atualizar o checkout, execute no PowerShell:
 
-## Verificar ou recuperar
+    C:\Cripto\CRIPTO.cmd python C:\Cripto\pesquisa-20260909\docs\continuity_20260909\restore_archives.py
 
-Com o Python do projeto, para verificar todos os hashes sem extrair:
+Esse comando verifica todos os arquivos sem extrair. Para recuperar em um diretório novo:
 
-```powershell
-C:\Cripto\CRIPTO.cmd python C:\Cripto\publicacao-chat-20260909\docs\continuity_20260909\restore_archives.py
-```
+    C:\Cripto\CRIPTO.cmd python C:\Cripto\pesquisa-20260909\docs\continuity_20260909\restore_archives.py --output C:\Cripto\recuperacao-continuidade-20260910
 
-Se o checkout estiver em outro caminho, ajuste apenas o caminho do script. Para recuperar em uma pasta nova dentro de C:\Cripto:
+Pode selecionar pacotes com --archive nome.zip, repetindo a opção. Os caminhos recuperados são relativos à pasta de recuperação; use-os como referências isoladas. Scripts históricos com caminhos absolutos exigem ajustar o destino operacional antes de executar.
 
-```powershell
-C:\Cripto\CRIPTO.cmd python C:\Cripto\publicacao-chat-20260909\docs\continuity_20260909\restore_archives.py --output C:\Cripto\recuperacao-github-20260909
-```
+O recuperador verifica a seleção inteira antes de criar arquivos, recusa configurações privadas, bancos de orçamento, WAL/SHM/journals, caminhos externos ou ambíguos, arquivos conflitantes entre ZIPs e destinos existentes diferentes. Arquivos existentes idênticos permitem repetir uma recuperação concluída. Hashes e extração usam blocos de memória limitados. Não há escrita em credenciais, quotas ou diários ativos.
 
-O script verifica os arquivos antes de escrever, recusa caminhos que escapem da pasta e não sobrescreve arquivos diferentes. Pode selecionar um ZIP com `--archive nome.zip`. A recuperação não configura provedores, restaura credenciais, ativa observadores ou envia ordens. Confira os caminhos e as instruções antes de usar qualquer script histórico extraído.
+Em outra instalação, reconstrua Python/uv e as dependências fixadas pelo uv.lock conforme [MIGRACAO_WINDOWS.md](../MIGRACAO_WINDOWS.md) e [CONFIGURACAO_LOCAL.md](../CONFIGURACAO_LOCAL.md); os ambientes instalados não estão no pacote. Apagar o chat nesta máquina não exige reinstalar nada.
 
-Na máquina atual, os originais continuam em seus caminhos de C:\Cripto. Não é necessário extrair ou substituir esses originais para continuar a tarefa.
+## Limites da publicação
 
-## O que permanece apenas local
-
-Chaves/API keys e configurações privadas, o ZIP original de migração de aproximadamente 1,57 GB, ambientes/dependências instalados, pastas duplicadas de verificação, estado transitório e banco de cotas não foram publicados. Alguns binários de build/cobertura e saídas anteriores estão excluídos e enumerados no manifesto; os respectivos logs e comprovantes textuais estão incluídos.
-
-Esta é uma publicação de continuidade do projeto, não uma imagem completa do computador. O banco antigo de previsões que não foi encontrado não passou a existir nesta cópia; permanecem as lacunas históricas e econômicas descritas no repasse. Mudanças da revisão ativa após a captura precisam de publicação própria.
+Credenciais, configurações privadas, o pacote original completo de migração, ambientes instalados e orçamento de APIs permanecem locais. O scanner de segredos conhecidos não certifica ausência de toda credencial desconhecida. A publicação é uma continuidade versionada, não uma imagem completa da máquina, uma prova de lucro ou uma recuperação dos inputs H5 ausentes. Os resultados do CI final ficam no GitHub; não são presumidos por um relatório capturado antes desse CI.

@@ -1,0 +1,18 @@
+# Dependências reais e condições de retomada
+
+Falhas executáveis de engenharia têm correção e testes nesta atualização. Os itens abaixo não podem ser encerrados por alterar código ou repetir uma coleta sem informação nova. Nenhum deles permite concluir lucro validado.
+
+| Frente | Estado e evidência | O que falta exatamente | Retomada e critério de aceite |
+|---|---|---|---|
+| Aave USDC/Arbitrum | Sem estado histórico nas fontes examinadas. A nova sonda dRPC confirmou a rede, mas eth_call retornou HTTP 400, erro 27, estado desconhecido | Índice normalizado e liquidez da mesma reserva nas 13 fronteiras do protocolo | Fonte pública gratuita que responda aos blocos registrados; conferir identidade, horários e liquidez, preservar brutos e só então executar a conta. Prova em closure110/aave_drpc no suplemento |
+| H5 e previsões antigas | Backups anteriores não continham os inputs originais | Previsões, prompts, juiz, notícias e mercado realmente usados, com timestamps | Encontrar uma fonte original ainda não examinada. Não produzir LLM retroativo nem substituir inputs por preços públicos |
+| Completude altcoins | Normalizados reconstruídos, mas 542 dias somados de gaps em 12 pares continuam; observações parciais são excluídas | Dados oficiais ausentes e identidade histórica investível | Nova fonte materialmente diferente, compatível com cada par/calendário; derivada versionada e auditoria dos brutos. Pesquisas com exclusões explícitas continuam reproduzíveis |
+| Piloto carry original | Janela de 09/09/2026, 00:00–01:00 UTC perdida; diário tem somente PREFLIGHT | Uma oportunidade futura, que não pode substituir a janela perdida | Registrar outro protocolo, diretório e janela antes da entrada, mantendo custos, quantidades e critérios previamente fixados. Não executar tick no diário original para fabricar continuidade |
+| Benefício incremental de LLM/notícias | Diagnóstico operacional com inputs preservados; nenhuma amostra independente madura | Observações posteriores à escolha do método e controles adequados | Protocolo novo com universo fixo, baseline simples, ablação de notícias/LLM, agrupamento temporal, sobreposição, multiplicidade e poder. O diagnóstico atual não entra como prova retrospectivamente |
+| Lucro líquido executável | Contas históricas reconciliadas; fills não observados | Estrutura do operador, tamanho, fees reais, margem, latência, custos próprios, impostos e conversão | Especificação e evidência de execução sob autorização separada. Custos de equilíbrio e cenários já publicados permitem avaliar a margem sem inventar dados privados |
+| V3 e AR3 atuais | Promoção abandonada sob as definições preservadas; AR3 fortemente negativo | Evidência nova que justifique outra hipótese | Não retunar as regras congeladas para salvar o resultado. Qualquer hipótese distinta precisa de protocolo próprio e avaliação futura |
+| Segurança histórica | Rotação declarada pelo dono; scanner atual sem correspondências com os segredos configurados | Evidência de revogação e uso antigo disponível apenas nos provedores | Conferência do painel pelo titular, sem divulgar novamente as chaves. Não há novo incidente confirmado |
+
+Não há agendamento a ativar nem credencial financeira a fornecer para encerrar a correção técnica. Os limites persistentes continuam 28 unidades de ingestão, oito tentativas de notícias e seis chamadas lógicas de LLM por provedor/dia UTC. Retomar uma dependência não autoriza resetar esse orçamento, criar conta ou contratar serviço.
+
+Fonte oficial da sonda adicional: [Arbitrum API dRPC](https://drpc.org/docs/arbitrum-api). A disponibilidade de arquivo anunciada para algumas redes não comprova a disponibilidade do bloco específico solicitado; a resposta preservada é a evidência desta rodada.
