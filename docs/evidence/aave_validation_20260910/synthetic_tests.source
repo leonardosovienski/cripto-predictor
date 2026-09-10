@@ -1,0 +1,94 @@
+"""Synthetic invariants run before acquisition; no market outcomes."""
+import copy
+import random
+import sys
+from pathlib import Path
+
+import pytest
+
+sys.path.insert(0, str(Path(__file__).parent))
+import research_aave_extended as m
+
+
+def rows(growing=True):
+    answer = []
+    for i, date in enumerate(m.DATES):
+        index = m.source.RAY + (i * m.source.RAY // 100 if growing else 0)
+        answer.append({"boundary_utc": date.isoformat(), "timestamp": int(date.timestamp()),
+            "number": i * 100 + 1, "hash": "0x" + "ab" * 32,
+            "successor": {"timestamp": int(date.timestamp()) + 1, "number": i * 100 + 2, "parent_hash": "0x" + "ab" * 32},
+            "native_usdc": m.source.ASSET, "a_token": m.source.ATOKEN, "pool": m.source.POOL,
+            "decimals": 6, "normalized_income_ray": str(index), "reconstructed_income_ray": str(index),
+            "scaled_supply_units": str(100_000 * 10**6), "supply_cap_tokens": "1000000",
+            "active": True, "paused": False, "frozen": False, "unborrowed_liquidity_units": str(1_000_000 * 10**6)})
+    return answer
+
+
+def test_random_rational_rounding_and_exact_no_interest():
+    rng = random.Random(210910)
+    for _ in range(10000):
+        p = rng.randrange(1, 10**13)
+        entry = rng.randrange(m.source.RAY, 2*m.source.RAY)
+        exit_index = entry + rng.randrange(0, m.source.RAY)
+        balance = m.integer_balance(p, entry, exit_index)
+        assert balance == m.fraction_balance(p, entry, exit_index)
+        assert balance <= p * exit_index // entry
+        assert p * exit_index // entry - balance <= 3
+    assert m.integer_balance(5000*10**6, m.source.RAY, m.source.RAY) == 5000*10**6
+
+
+def test_flat_interest_loses_costs_and_cannot_qualify():
+    result = m.calculate(rows(False))
+    assert not result["historical_candidate_gate_passed"]
+    c = result["cases"][1]
+    assert c["capital_usdc"] == 5000
+    assert c["gross_interest_usdc"] == "0"
+    assert m.Decimal(c["scenarios"][2]["net_before_personal_usdc"]) == -55
+    assert result["personal_net_profit"] is None
+    assert result["future_profit_validated"] is False
+
+
+def test_economic_gate_does_not_assert_future_or_execution():
+    result = m.calculate(rows())
+    assert result["historical_candidate_gate_passed"]
+    assert len(result["cases"]) == 144
+    assert result["actual_fills_observed"] is False
+    assert result["statistical_power_certified"] is False
+    for case in result["cases"]:
+        gross = m.Decimal(case["gross_interest_usdc"])
+        for scenario in case["scenarios"]:
+            net = m.Decimal(scenario["net_before_personal_usdc"])
+            exact_net = m.Fraction(gross) - scenario["execution_usdc"] - m.Fraction(25*case["days"],365)
+            assert abs(m.Fraction(net) - exact_net) < m.Fraction(1,10**50)
+            assert abs(m.Fraction(scenario["additional_cost_sensitivity"][-1]["net_usdc"]) - (exact_net-250)) < m.Fraction(1,10**50)
+            assert m.Decimal(scenario["exit_value_loss_sensitivity"][-1]["net_usdc_equivalent_scenario"]) < -case["capital_usdc"]
+
+
+@pytest.mark.parametrize("field,value", [("paused", True), ("frozen", True), ("active", False), ("supply_cap_tokens", "100001")])
+def test_invalid_entry_stops_historical_gate(field, value):
+    data = rows()
+    data[0][field] = value
+    assert not m.calculate(data)["historical_candidate_gate_passed"]
+
+
+def test_exit_cash_shortfall_stops_gate():
+    data = rows()
+    data[12]["unborrowed_liquidity_units"] = "1"
+    assert not m.calculate(data)["historical_candidate_gate_passed"]
+
+
+@pytest.mark.parametrize("field,value", [("native_usdc", "0xwrong"), ("decimals", 18), ("boundary_utc", "wrong"), ("reconstructed_income_ray", "0")])
+def test_identity_or_calendar_or_index_corruption_rejected(field, value):
+    data = copy.deepcopy(rows())
+    data[3][field] = value
+    with pytest.raises(ValueError):
+        m.calculate(data)
+
+
+def test_missing_or_reordered_points_rejected():
+    data = rows()
+    with pytest.raises(ValueError):
+        m.calculate(data[:-1])
+    data[1], data[2] = data[2], data[1]
+    with pytest.raises(ValueError):
+        m.calculate(data)

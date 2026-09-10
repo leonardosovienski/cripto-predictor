@@ -1,0 +1,1 @@
+{"endpoint":"https://arb-mainnet.g.alchemy.com/public","http_status":200,"raw_sha256":"23e9cca77da2be31f5f1fc71f3835800fd97670297ce5dd362f1732a98e7b0fe","received_at":"2026-09-10T13:53:50.187050+00:00","request":{"id":1,"jsonrpc":"2.0","method":"eth_chainId","params":[]},"response":{"id":1,"jsonrpc":"2.0","result":"0xa4b1"},"started_at":"2026-09-10T13:53:49.323252+00:00"}

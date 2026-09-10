@@ -1,0 +1,259 @@
+"""Read public execution receipts; never send transactions or select profits."""
+
+import sys
+from datetime import UTC, datetime
+from decimal import Decimal
+from pathlib import Path
+
+import httpx
+
+sys.path.insert(0, r"C:\Cripto\pesquisa-20260909")
+from scripts.recover_aave_history import ASSET, ATOKEN, ENDPOINT, POOL, address, save, words
+from scripts.research_io import encoded, sha, strict_json
+
+ROOT = Path(r"C:\Cripto\operacao\dados\aave-execution-receipts-20260910-r2")
+HISTORY = Path(r"C:\Cripto\operacao\dados\aave-validation-20260910-r1")
+ALLOWED = {
+    "eth_chainId",
+    "eth_getBlockByNumber",
+    "eth_getLogs",
+    "eth_getTransactionReceipt",
+    "web3_sha3",
+}
+
+
+class Reader:
+    def __init__(self):
+        self.calls, self.bytes = 0, 0
+        self.client = httpx.Client(timeout=20, follow_redirects=False, trust_env=False)
+
+    def call(self, method, params, allow_rpc_error=False):
+        if method not in ALLOWED or self.calls >= 122 or self.bytes >= 5000000:
+            raise ValueError("Read-only scope exhausted")
+        self.calls += 1
+        request = {"jsonrpc": "2.0", "id": self.calls, "method": method, "params": params}
+        record = {
+            "request": request,
+            "started_at": datetime.now(UTC).isoformat(),
+            "endpoint": ENDPOINT,
+        }
+        body = bytearray()
+        try:
+            with self.client.stream("POST", ENDPOINT, json=request) as response:
+                record["http_status"] = response.status_code
+                for chunk in response.iter_bytes(chunk_size=65536):
+                    body.extend(chunk)
+                    self.bytes += len(chunk)
+                    if len(body) > 1000000 or self.bytes > 5000000:
+                        raise ValueError("Byte budget exhausted")
+                record["response"] = strict_json(bytes(body))
+                response.raise_for_status()
+        except Exception as exc:
+            record["error_type"] = type(exc).__name__
+            raise
+        finally:
+            record.update(raw_sha256=sha(bytes(body)), received_at=datetime.now(UTC).isoformat())
+            save(ROOT / "raw" / f"{self.calls:03}.json", record)
+        result = record["response"]
+        if result.get("id") != self.calls:
+            raise ValueError("Wrong response ID")
+        if "error" in result:
+            if allow_rpc_error:
+                return result
+            raise ValueError("RPC error preserved; no retries")
+        if result.get("result") is None:
+            raise ValueError("Missing response result")
+        return result["result"]
+
+    def topic(self, signature):
+        value = self.call("web3_sha3", ["0x" + signature.encode().hex()])
+        if len(value) != 66:
+            raise ValueError("Bad event signature")
+        return value.lower()
+
+
+def main():
+    ROOT.mkdir(parents=True, exist_ok=False)
+    (ROOT / "raw").mkdir()
+    fixed = strict_json((HISTORY / "current-finalized.json").read_bytes())
+    end, start = fixed["number"], fixed["number"] - 9999
+    scope = {
+        "id": "AAVE-EXECUTION-RECEIPTS-20260910-R2",
+        "registered_at": datetime.now(UTC).isoformat(),
+        "question": "Do public supply and withdrawal transactions actually transfer native USDC for this reserve, and what gas was paid?",
+        "known": "The two fixed annual index calculations were positive after registered cost scenarios. These receipt checks do not change that test or establish personal profit.",
+        "fixed_start_block": start,
+        "fixed_end_block": end,
+        "expected_end_hash": fixed["hash"],
+        "selection": "Read every matching supply/withdraw event in the fixed 10000-block interval. Select the earliest event at least 5000 USDC of each type; if none, earliest event of that type, explicitly below target. These events need not belong to one address or one position.",
+        "budget": {"max_rpc_calls": 122, "max_bytes": 5000000, "ingest_units": 1, "retries": 0},
+        "range_fallback": "No fallback or retry. The preserved first attempt exposed a documented 100-block RPC limit and stopped after six calls, before any event outcomes. Same original fixed 10000-block interval; now request 100 disjoint chunks of 100. Total budget both attempts at most 128 RPC calls and two ingestion units. This extends acquisition for execution validation only; no strategy/return/period selection.",
+        "allowed_methods": sorted(ALLOWED),
+        "collector_sha256": sha(Path(__file__).read_bytes()),
+        "event_abi": "https://raw.githubusercontent.com/aave/aave-v3-core/master/contracts/interfaces/IPool.sol",
+        "gas_reference": "https://docs.arbitrum.io/how-arbitrum-works/deep-dives/gas-and-fees",
+        "capital_permission": False,
+        "actual_user_execution": False,
+    }
+    save(ROOT / "scope.json", scope)
+    (ROOT / "executed.source").write_bytes(Path(__file__).read_bytes())
+    from GarimpoInvestimentos.config import settings
+    from GarimpoInvestimentos.core.api_guard import allow
+
+    if (
+        not settings.API_GUARD_ENABLED
+        or settings.API_GUARD_MAX_INGEST_ASSETS != 28
+        or not allow("ingest", "assets", 28).allowed
+    ):
+        raise ValueError("Shared ingestion guard unavailable")
+    reader, logs, selected = Reader(), [], []
+    coverage = {"start": start, "end": end, "range_fallback": False}
+    try:
+        if int(reader.call("eth_chainId", []), 16) != 42161:
+            raise ValueError("Wrong chain")
+        header = reader.call("eth_getBlockByNumber", [hex(end), False])
+        if header["hash"] != fixed["hash"]:
+            raise ValueError("Fixed finalized block identity changed")
+        topics = {
+            "supply": reader.topic("Supply(address,address,address,uint256,uint16)"),
+            "withdraw": reader.topic("Withdraw(address,address,address,uint256)"),
+        }
+        transfer = reader.topic("Transfer(address,address,uint256)")
+
+        def get_logs(left, right, optional_error=False):
+            return reader.call(
+                "eth_getLogs",
+                [
+                    {
+                        "address": POOL,
+                        "fromBlock": hex(left),
+                        "toBlock": hex(right),
+                        "topics": [list(topics.values()), "0x" + ASSET[2:].rjust(64, "0")],
+                    }
+                ],
+                optional_error,
+            )
+
+        ranges = [(i, min(i + 99, end)) for i in range(start, end + 1, 100)]
+        for left, right in ranges:
+            result = get_logs(left, right)
+            if not isinstance(result, list):
+                raise ValueError("Invalid logs response")
+            logs.extend(result)
+        seen = set()
+        for log in logs:
+            identity = (log["transactionHash"], log["logIndex"])
+            if (
+                identity in seen
+                or log.get("removed")
+                or log["address"].lower() != POOL
+                or log["topics"][1].lower() != "0x" + ASSET[2:].rjust(64, "0")
+            ):
+                raise ValueError("Invalid or duplicate reserve log")
+            if not coverage["start"] <= int(log["blockNumber"], 16) <= end:
+                raise ValueError("Out-of-scope log")
+            seen.add(identity)
+        logs.sort(
+            key=lambda row: (
+                int(row["blockNumber"], 16),
+                int(row["transactionIndex"], 16),
+                int(row["logIndex"], 16),
+            )
+        )
+        save(ROOT / "events.json", logs)
+        for kind, topic in topics.items():
+            candidates = [row for row in logs if row["topics"][0].lower() == topic]
+            if not candidates:
+                continue
+            amount = lambda row: words(row["data"])[1 if kind == "supply" else 0]
+            eligible = [row for row in candidates if amount(row) >= 5000 * 10**6]
+            event = (eligible or candidates)[0]
+            receipt = reader.call("eth_getTransactionReceipt", [event["transactionHash"]])
+            block = reader.call("eth_getBlockByNumber", [event["blockNumber"], False])
+            if (
+                int(receipt["status"], 16) != 1
+                or receipt["blockHash"] != event["blockHash"]
+                or block["hash"] != event["blockHash"]
+            ):
+                raise ValueError("Receipt or block execution identity failed")
+            if not any(
+                r["logIndex"] == event["logIndex"]
+                and r["data"] == event["data"]
+                and r["topics"] == event["topics"]
+                for r in receipt["logs"]
+            ):
+                raise ValueError("Event absent from transaction receipt")
+            quantity = amount(event)
+            payer = address(words(event["data"])[0]) if kind == "supply" else ATOKEN
+            recipient = ATOKEN if kind == "supply" else address(int(event["topics"][3], 16))
+            matches = [
+                r
+                for r in receipt["logs"]
+                if r["address"].lower() == ASSET
+                and len(r["topics"]) == 3
+                and r["topics"][0].lower() == transfer
+                and address(int(r["topics"][1], 16)) == payer
+                and address(int(r["topics"][2], 16)) == recipient
+                and words(r["data"]) == [quantity]
+            ]
+            if not matches:
+                raise ValueError("No matching native USDC transfer in successful receipt")
+            fee = int(receipt["gasUsed"], 16) * int(receipt["effectiveGasPrice"], 16)
+            selected.append(
+                {
+                    "kind": kind,
+                    "transaction_hash": event["transactionHash"],
+                    "block": int(event["blockNumber"], 16),
+                    "timestamp_utc": datetime.fromtimestamp(
+                        int(block["timestamp"], 16), UTC
+                    ).isoformat(),
+                    "amount_usdc": str(Decimal(quantity) / 10**6),
+                    "at_least_5000_usdc": bool(eligible),
+                    "successful_execution_and_transfer_verified": True,
+                    "transaction_gas_fee_eth": str(Decimal(fee) / 10**18),
+                    "gas_used_for_l1": receipt.get("gasUsedForL1"),
+                    "fee_limit": "Entire receipt transaction fee, potentially multiple actions; not standalone approval+roundtrip or USDC conversion quote.",
+                }
+            )
+        save(
+            ROOT / "result.json",
+            {
+                "status": "COMPLETE",
+                "coverage": coverage,
+                "events": len(logs),
+                "calls": reader.calls,
+                "bytes": reader.bytes,
+                "selected": selected,
+                "actual_user_profit_validated": False,
+                "same_position_roundtrip_verified": False,
+            },
+        )
+        print(encoded({"events": len(logs), "calls": reader.calls, "selected": selected}).decode())
+    except Exception as exc:
+        save(
+            ROOT / "result.json",
+            {
+                "status": "INCOMPLETE",
+                "coverage": coverage,
+                "events": len(logs),
+                "calls": reader.calls,
+                "bytes": reader.bytes,
+                "error_type": type(exc).__name__,
+                "selected": selected,
+            },
+        )
+        raise
+    finally:
+        reader.client.close()
+        save(
+            ROOT / "manifest.json",
+            {
+                p.relative_to(ROOT).as_posix(): sha(p.read_bytes())
+                for p in sorted(ROOT.rglob("*"))
+                if p.is_file()
+            },
+        )
+
+
+if __name__ == "__main__":
+    main()
