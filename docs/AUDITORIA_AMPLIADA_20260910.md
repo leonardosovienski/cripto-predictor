@@ -77,6 +77,14 @@ O status offline do carry confirmou `WAITING`, zero linhas e nenhuma entrada. O 
 
 ## Dependências restantes e critério de encerramento
 
+### Conferência adicional do pedido e da conversa
+
+A releitura integral do pedido e das mensagens encontrou uma lacuna adicional de engenharia: o isolamento de credenciais e caminhos dependia do lançador de validação. O `tests/conftest.py` preservava variáveis herdadas e podia carregar a configuração privada em uma chamada direta de pytest. A correção cria uma área exclusiva por processo de testes, escolhe um dotenv sintético, substitui as credenciais exigidas e remove as opcionais herdadas antes dos imports de configuração/armazenamento. Não altera contadores operacionais nem os bytes do executor LLM registrado.
+
+Uma regressão em subprocesso usa credenciais e diretórios fictícios de operador e realiza uma escrita de orçamento. Ela demonstra a falha na versão anterior e exige configuração isolada, credenciais sintéticas, orçamento em outro diretório e preservação do diretório original. Os resultados completos desta conferência, os SHAs e os checks de integração ficam na seção 17 do registro vivo. A validação da seção 16 continua sendo evidência do PR #115, sem atribuição retroativa ao código novo.
+
+O objetivo completo ainda não está certificado: há cobertura manual delimitada, versões históricas ausentes e observação futura pendente. O pipeline operacional conserva um snapshot `daily-v3-contiguous`; o contrato atual exige `daily-v4-audited`, além de frescor. A ingestão do próximo dia UTC é uma pendência operacional executável quando a quota normal permitir, e não foi tratada como coleta já realizada. Uma dependência de evidência não é pacote ausente; uma futura ingestão tampouco é validação prospectiva de lucro.
+
 | Dependência concreta | O que já foi resolvido | O que falta e qual conclusão impede |
 |---|---|---|
 | Inputs originais H5 | Busca local/Git/arquivos e lacuna documentadas; novos inputs preservados | Backup autêntico de prompts, notícias, respostas e dados originais. Sem ele não há reprodução exata da H5; preços atuais não o substituem |

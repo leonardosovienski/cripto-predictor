@@ -2,8 +2,32 @@
 
 import os
 import pathlib
+import tempfile
+
+from GarimpoInvestimentos.local_runtime import local_root, within_root
 
 ROOT = pathlib.Path(__file__).parent.parent
+
+# Isolate before importing config/core paths, including direct pytest runs.
+# Caller-provided paths and credentials may belong to the actual operator.
+_local_root = local_root()
+_scratch = within_root(_local_root, "operacao/temporarios") if _local_root else None
+if _scratch is not None:
+    _scratch.mkdir(parents=True, exist_ok=True)
+_test_run = pathlib.Path(tempfile.mkdtemp(prefix="cripto-pytest-", dir=_scratch))
+os.environ["CRIPTO_ROOT"] = str(_local_root or _test_run)
+_dotenv = _test_run / "synthetic.env"
+_dotenv.write_text("# Isolated offline tests; no private dotenv.\n", encoding="utf-8")
+os.environ["CRIPTO_ENV_FILE"] = str(_dotenv)
+for _name in ("DATA", "OUTPUT", "CACHE", "LOGS"):
+    os.environ[_name + "_DIR"] = os.environ["GARIMPO_" + _name + "_DIR"] = str(
+        _test_run / _name.lower()
+    )
+os.environ["PREDICTOR_OPS_STATE_DIR"] = str(_test_run / "state")
+os.environ["PREDICTOR_EVENTS_PATH"] = str(_test_run / "events.jsonl")
+for _name in list(os.environ):
+    if any(part in _name.upper() for part in ("API_KEY", "AUTH_TOKEN", "API_SECRET", "SECRET_KEY")):
+        os.environ.pop(_name)
 
 # Injetar credenciais mínimas ANTES que qualquer módulo que importe config.py
 # seja coletado. A trava P0 exige ≥ 16 chars e não-placeholder. Estes valores
@@ -22,11 +46,7 @@ _TEST_CREDS = {
     "SCORE_HORIZON_DAYS": "7",
 }
 for _k, _v in _TEST_CREDS.items():
-    os.environ.setdefault(_k, _v)
-
-# emit_event agora é chamado por cache.py/logger.py durante os testes — redireciona
-# o JSONL para a pasta de build dos testes para não poluir o cwd do projeto.
-os.environ.setdefault("PREDICTOR_EVENTS_PATH", str(ROOT / "tests" / "_events_test.jsonl"))
+    os.environ[_k] = _v
 
 
 import pytest
