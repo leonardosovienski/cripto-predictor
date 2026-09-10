@@ -6,6 +6,7 @@ Sistema de pesquisa em criptoativos: ingestão e procedência de dados, análise
 
 - [Continuidade atual](CONTINUAR_AQUI.md): ordem de leitura e limites de execução.
 - [Conferência de arquivos e documentação de 10/09/2026](docs/CONFERENCIA_ARQUIVOS_20260910.md): conteúdo preservado, limpeza, backups e referências históricas.
+- [Dados, fontes e resultados recentes preservados](docs/continuity_20260910/README.md): 2.685 arquivos em cinco pacotes verificáveis, incluindo o diagnóstico atual.
 - [Configuração deste PC](docs/CONFIGURACAO_LOCAL.md): caminhos em `C:\Cripto`, ambiente e configuração privada.
 - [Conferência do chat de 10/09](docs/CONFERENCIA_CHAT_20260910.md) e [auditoria ampliada](docs/AUDITORIA_AMPLIADA_20260910.md): correções, evidências e dependências.
 - [Índice da documentação](docs/README.md): pesquisa, dados, recuperação e histórico.

@@ -43,6 +43,8 @@ O Feature Store tem **3 previsões, 2 snapshots, 1 registro de inputs e 200 barr
 
 Esse backup cobre os dois bancos, não toda a pasta `C:\Cripto`. Código, evidências selecionadas e pacotes históricos estão no Git; dados operacionais completos, ambientes e configuração privada continuam nos locais do mapa. Os backups locais compartilham o mesmo disco e não comprovam recuperação após perda física dele. Não existe sincronização automática externa ativada.
 
+O pedido posterior de preservar a versão final acrescentou o [pacote dos dados, fontes e resultados recentes](continuity_20260910/README.md): **2.685 arquivos em cinco ZIPs**, com corte de 10/09/2026 22:47 UTC, hashes individuais e cópia consistente do diagnóstico com dois snapshots. Inclui os registros manuais, recibos, análises e scripts da revisão. Configuração privada, chat, quotas e ambientes instalados permanecem locais. Um log foi publicado com três valores no formato de credencial ocultados; o original ficou preservado. Identificadores públicos de notícias foram conferidos e mantidos; a sentinela de teste de conflito não foi tratada como dado de mercado faltante.
+
 ## Correções dos guias
 
 O README foi reduzido a uma entrada atual: removidas instruções repetidas, contagens antigas apresentadas como atuais, comandos de configuração incompatíveis com este PC e afirmações excessivas de imutabilidade/ausência de lookahead. A tabela H1–H9 permanece conforme o charter.

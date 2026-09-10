@@ -128,3 +128,4 @@
 # Exact receipts, executed local sources and dated reconciliation evidence.
 /docs/evidence/remaining_dependencies_20260910/** -text
 /docs/evidence/file_document_audit_20260910/** -text
+/docs/continuity_20260910/** -text

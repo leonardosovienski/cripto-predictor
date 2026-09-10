@@ -2,6 +2,8 @@
 
 Comece pela [conferência dos arquivos de 10/09/2026](docs/CONFERENCIA_ARQUIVOS_20260910.md) e pela [conferência do chat](docs/CONFERENCIA_CHAT_20260910.md). Elas complementam os registros anteriores com o mapa de preservação, backup e dependências.
 
+Os [dados, fontes, resultados e scripts recentes](docs/continuity_20260910/README.md) também estão preservados em cinco ZIPs, com manifesto individual e recuperação em pasta nova. O pacote registra 2.685 arquivos e complementa os cortes anteriores.
+
 1. Leia `C:\Cripto\AGENTS.md`, [CONFIGURACAO_LOCAL.md](docs/CONFIGURACAO_LOCAL.md) e [NEXT_CHAT_PROMPT.md](docs/NEXT_CHAT_PROMPT.md), preservado como mandato.
 2. Leia o registro vivo `C:\Cripto\operacao\relatorios\REVISAO_COMPLETA_20260909\REVISAO.md` e confira o estado real do Git e dos quatro jobs do commit atual. O [índice da revisão](docs/REVISAO_COMPLETA_20260909.md) explica sua localização.
 3. Para recuperar dados, confira o [mapa de arquivos e backups](docs/CONFERENCIA_ARQUIVOS_20260910.md), os [pacotes anteriores](docs/continuity_20260909/README.md) e o [manifesto do corte de 09/09](docs/continuity_20260909/MANIFEST.json). Não extraia arquivos sobre bancos ou snapshots existentes.

@@ -25,6 +25,8 @@ A rodada de 10/09 está em [Aave: validação histórica, custos e execução](A
 
 ## Evidências e reprodução
 
+- [Dados e fontes recentes: complemento final de 10/09](continuity_20260910/README.md), [manifesto](continuity_20260910/MANIFEST.json) e [teste de recuperação](continuity_20260910/VALIDACAO.json): cinco ZIPs com 2.685 arquivos.
+
 - [Coleta imediata e auditoria](evidence/immediate_audit_20260908/RESULTADOS.md).
 - [Pacotes da pesquisa de 08/09](session_archive_20260908/deliverables/) e [manifesto](session_archive_20260908/DELIVERABLES_SHA256.json).
 - [Sessão histórica de 07/09](SESSION_HANDOFF_20260907.md) e [arquivos preservados](session_archive_20260907/).

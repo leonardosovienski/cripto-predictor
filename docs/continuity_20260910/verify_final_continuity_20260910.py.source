@@ -1,0 +1,40 @@
+import hashlib
+import json
+import sqlite3
+import subprocess
+from datetime import UTC, datetime
+from pathlib import Path
+
+ROOT = Path(r'C:\Cripto')
+P = ROOT / 'revisao-arquivos-20260910'
+R = ROOT / 'operacao/relatorios/REVISAO_COMPLETA_20260909'
+F = R / 'organization_20260910'
+E = P / 'docs/continuity_20260910'
+D = ROOT / 'recuperacao-final-verificada-20260910'
+assert not D.exists()
+checks = []
+for name, args in [('verify', []), ('restore', ['--output', str(D)])]:
+    proc = subprocess.run([str(ROOT / 'CRIPTO.cmd'), 'python', str(E / 'restore_archives.py'), *args], capture_output=True, text=True, encoding='utf-8')
+    (F / f'final_continuity_{name}.log').write_text(proc.stdout + proc.stderr, encoding='utf-8')
+    assert proc.returncode == 0, name
+    result = json.loads(proc.stdout)
+    assert result['verified_files'] == 2685 and result['verified_archives'] == 5
+    checks.append({'name': name, 'exit_code': proc.returncode, 'result': result})
+    print(json.dumps(checks[-1]), flush=True)
+manifest = json.loads((E / 'MANIFEST.json').read_bytes())
+for archive in manifest['archives']:
+    for entry in archive['entries']:
+        with (D / entry['path']).open('rb') as stream:
+            assert hashlib.file_digest(stream, 'sha256').hexdigest() == entry['sha256']
+db = D / 'diagnostico-operacional-20260910/feature_store.db'
+with sqlite3.connect(db.as_uri() + '?mode=ro&immutable=1', uri=True) as conn:
+    assert conn.execute('PRAGMA integrity_check').fetchone()[0] == 'ok'
+    counts = {table: conn.execute('SELECT COUNT(*) FROM ' + table).fetchone()[0] for table in ('predictions', 'market_snapshots', 'prediction_inputs', 'raw_market_data')}
+assert counts == {'predictions': 3, 'market_snapshots': 2, 'prediction_inputs': 1, 'raw_market_data': 200}
+result = {'status': 'PASS', 'at_utc': datetime.now(UTC).isoformat(), 'archives': 5, 'files': 2685, 'zip_bytes': sum(x['bytes'] for x in manifest['archives']),
+          'checks': checks, 'every_restored_file_hash_matches': True, 'diagnostic_integrity': 'ok', 'diagnostic_counts': counts,
+          'recovery_directory': str(D), 'production_overwritten': False, 'network_calls': 0,
+          'scope': 'Verification and actual recovery of all public archive members; private configuration/chat/quota state remain outside this package.'}
+(F / 'final_continuity_validation.json').write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding='utf-8')
+(E / 'VALIDACAO.json').write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding='utf-8')
+print(json.dumps(result, ensure_ascii=False), flush=True)
