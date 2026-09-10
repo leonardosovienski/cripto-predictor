@@ -18,7 +18,10 @@
     "GarimpoInvestimentos/renewal_research.py",
     "GarimpoInvestimentos/providers",
     "GarimpoInvestimentos/security",
-    "GarimpoInvestimentos/services/inference.py"
+    "GarimpoInvestimentos/services/inference.py",
+    "scripts/paired_llm.py",
+    "scripts/paired_llm_source.py",
+    "scripts/recover_aave_history.py"
   ],
   "exclude": ["**/__pycache__"],
   "stubPath": "typings"

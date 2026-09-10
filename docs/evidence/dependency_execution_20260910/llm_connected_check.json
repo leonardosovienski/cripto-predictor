@@ -1,0 +1,19 @@
+{
+  "counts_as_pilot_observation": false,
+  "dated_news": 5,
+  "market_bars": 200,
+  "physical_calls": 5,
+  "state": "COMPLETE",
+  "arms": {
+    "llm_news": {
+      "received_at": "2026-09-10T02:12:19.580844+00:00",
+      "state": "VALID"
+    },
+    "llm_no_news": {
+      "received_at": "2026-09-10T02:12:22.165734+00:00",
+      "state": "VALID"
+    }
+  },
+  "scope": "Technical integration only; raw prompts, news and model output remain local; zero pilot observations",
+  "initial_failure": "First attempt: redaction of serialized JSON broke news parsing; fixed by redacting parsed JSON string values before serialization. Both original attempts preserved."
+}
