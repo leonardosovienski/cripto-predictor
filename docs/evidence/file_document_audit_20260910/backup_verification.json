@@ -1,0 +1,55 @@
+{
+  "status": "PASS",
+  "at_utc": "2026-09-10T21:36:32.547254+00:00",
+  "backup": "C:\\Cripto\\backups\\operational-20260910-files-audit",
+  "restore_test": "C:\\Cripto\\operacao\\temporarios\\restore-feature-store-20260910-files-audit",
+  "checks": [
+    {
+      "command": [
+        "create",
+        "--database",
+        "C:\\Cripto\\operacao\\saidas\\feature_store.db",
+        "--output",
+        "C:\\Cripto\\backups\\operational-20260910-files-audit\\feature_store"
+      ],
+      "exit_code": 0
+    },
+    {
+      "command": [
+        "verify",
+        "--backup",
+        "C:\\Cripto\\backups\\operational-20260910-files-audit\\feature_store"
+      ],
+      "exit_code": 0
+    },
+    {
+      "command": [
+        "restore",
+        "--backup",
+        "C:\\Cripto\\backups\\operational-20260910-files-audit\\feature_store",
+        "--destination",
+        "C:\\Cripto\\operacao\\temporarios\\restore-feature-store-20260910-files-audit"
+      ],
+      "exit_code": 0
+    }
+  ],
+  "all_table_contents_and_schema_match": true,
+  "live_databases_unchanged": true,
+  "network_calls": 0,
+  "counts": {
+    "_migrations": 19,
+    "features_aligned": 1230,
+    "ingestion_provenance": 3,
+    "market_snapshots": 2,
+    "observation_scorecards": 0,
+    "prediction_inputs": 1,
+    "predictions": 3,
+    "predictions_archive": 5,
+    "predictions_archive_chain": 0,
+    "raw_market_data": 200,
+    "raw_signals": 200,
+    "source_quality_scorecards": 0,
+    "sqlite_sequence": 1
+  },
+  "manifest_sha256": "ba374a51863ecf8b345b7e4178bc7249d9310646eb6c91d70811e9348f3c6d0e"
+}

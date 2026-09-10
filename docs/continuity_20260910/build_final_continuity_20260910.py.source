@@ -1,0 +1,78 @@
+import hashlib
+import json
+import shutil
+import subprocess
+import zipfile
+from datetime import UTC, datetime
+from pathlib import Path
+
+ROOT = Path(r'C:\Cripto')
+P = ROOT / 'revisao-arquivos-20260910'
+R = ROOT / 'operacao/relatorios/REVISAO_COMPLETA_20260909'
+F = R / 'organization_20260910'
+S = ROOT / 'captura-final-20260910'
+E = P / 'docs/continuity_20260910'
+E.mkdir(exist_ok=False)
+selection = json.loads((F / 'final_capture_selection.private.json').read_bytes())
+archives = []
+for group in sorted({x['group'] for x in selection['records']}):
+    rows = [x for x in selection['records'] if x['group'] == group]
+    archive = E / (group + '-20260910.zip')
+    entries = []
+    with zipfile.ZipFile(archive, 'x', compression=zipfile.ZIP_DEFLATED) as z:
+        for row in rows:
+            src = S / group / row['member']
+            data = src.read_bytes()
+            digest = hashlib.sha256(data).hexdigest()
+            assert data == Path(row['source']).read_bytes(), 'Source changed after capture: ' + row['source']
+            z.write(src, row['member'])
+            entries.append({'path': row['member'], 'bytes': len(data), 'sha256': digest, 'source': row['source']})
+    assert archive.stat().st_size < 90_000_000
+    archives.append({'file': archive.name, 'bytes': archive.stat().st_size, 'sha256': hashlib.sha256(archive.read_bytes()).hexdigest(), 'entries': entries})
+    print(json.dumps({'archive': archive.name, 'files': len(entries), 'bytes': archive.stat().st_size}), flush=True)
+manifest = {'schema': 'cripto-continuity/1', 'captured_at_utc': selection['captured_at_utc'],
+            'source_commit': subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=P, text=True).strip(),
+            'scope': 'Dated recent datasets, receipts, analysis outputs, review evidence and scripts, local profile references and consistent diagnostic backup. Earlier captures remain in continuity_20260909. No private configuration, transcripts, installed environment, live quota state or automatic restore over production.',
+            'archives': archives, 'total_files': sum(len(x['entries']) for x in archives),
+            'omitted_by_reason': {reason: sum(x['reason'] == reason for x in selection['omitted']) for reason in sorted({x['reason'] for x in selection['omitted']})},
+            'credential_candidates_kept_local': selection['credential_candidates'],
+            'prior_archive_package': '../continuity_20260909/MANIFEST.json',
+            'final_validation': 'Check the final head, required CI checks and merge result of PR118; this capture precedes integration.'}
+(E / 'MANIFEST.json').write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding='utf-8')
+shutil.copyfile(P / 'docs/continuity_20260909/restore_archives.py', E / 'restore_archives.py')
+for name in ('prepare_final_continuity_20260910.py', 'build_final_continuity_20260910.py'):
+    shutil.copyfile(R / 'work' / name, E / (name + '.source'))
+text = f'''# Continuidade final dos dados e fontes — 10/09/2026
+
+Este complemento reúne **{manifest['total_files']} arquivos em {len(archives)} ZIPs**, com corte em **{selection['captured_at_utc']}**. O [manifesto](MANIFEST.json) vincula cada arquivo e cada ZIP por SHA-256. Leia a [conferência de arquivos](../CONFERENCIA_ARQUIVOS_20260910.md) e a [conferência do chat](../CONFERENCIA_CHAT_20260910.md).
+
+Inclui dados operacionais recentes e recibos de fontes (Aave, futuros, spot e registros manuais), saídas de análises, evidências/scripts da revisão, referências do perfil local e um backup consistente do diagnóstico com três previsões, dois snapshots e um input. As versões e tentativas anteriores preservam seus nomes e resultados; não são promovidas a dados válidos apenas por estarem guardadas. Os [24 pacotes anteriores](../continuity_20260909/README.md) continuam necessários para as capturas mais antigas.
+
+## Verificar e recuperar
+
+Use o ambiente atual do projeto:
+
+```powershell
+C:\\Cripto\\CRIPTO.cmd python C:\\Cripto\\pesquisa-20260909\\docs\\continuity_20260910\\restore_archives.py
+C:\\Cripto\\CRIPTO.cmd python C:\\Cripto\\pesquisa-20260909\\docs\\continuity_20260910\\restore_archives.py --output C:\\Cripto\\recuperacao-final-20260910
+```
+
+O primeiro comando verifica sem extrair. O segundo exige uma subpasta de recuperação e verifica toda a seleção antes de escrever. Recusa caminhos inseguros, credenciais/quotas, sidecars SQLite, colisões e conteúdo existente diferente. Pode selecionar um ZIP com `--archive nome.zip`.
+
+Arquivos extraídos são cópias de referência. Não execute scripts históricos com caminhos absolutos sem conferir seu protocolo e seus destinos. Não copie a recuperação sobre o banco ativo, quotas, diários ou executores congelados. O banco do diagnóstico fica em `diagnostico-operacional-20260910`, separado da operação.
+
+## O que permanece local e o que ainda falta
+
+Configuração privada, cópia do chat, quotas e ambientes instalados permanecem em `C:\\Cripto`; seus locais e backups são indicados no guia local. Candidatos a credencial e arquivos de captura incompleta foram mantidos localmente e identificados no manifesto. Distribuições e ZIPs antigos redundantes continuam nos pacotes anteriores ou nos arquivos locais de auditoria. Nenhum original foi alterado para produzir este complemento.
+
+Esse corte registra o que existe; não cria originais H5 perdidos, versões macro sem comprovação, comparação Aave ainda não executada ou observações futuras. O snapshot v4 vence em 11/09/2026 às 02:00 UTC. Atualizar arquivos no Git não renova dados de mercado nem comprova lucro.
+
+O resultado final da integração e do CI está no [PR #118](https://github.com/leonardosovienski/cripto-predictor/pull/118). O relatório vivo local inclui as etapas posteriores a este corte. Para continuar sem o chat, leia `C:\\Cripto\\LEIA_PRIMEIRO.md` e os índices acima.
+'''
+(E / 'README.md').write_text(text, encoding='utf-8')
+attributes = P / '.gitattributes'
+body = attributes.read_text(encoding='utf-8')
+line = '/docs/continuity_20260910/** -text'
+if line not in body:
+    attributes.write_text(body.rstrip() + '\n' + line + '\n', encoding='utf-8')
+print(json.dumps({'archives': len(archives), 'files': manifest['total_files'], 'zip_bytes': sum(x['bytes'] for x in archives), 'credential_candidates': len(selection['credential_candidates'])}), flush=True)

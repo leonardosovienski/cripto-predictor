@@ -1,0 +1,26 @@
+{
+  "at_utc": "2026-09-10T21:36:33.305356+00:00",
+  "removed_roots": [
+    "C:\\Cripto\\.pytest_cache",
+    "C:\\Cripto\\pesquisa-20260909\\.pytest_cache",
+    "C:\\Cripto\\pesquisa-20260909\\.ruff_cache"
+  ],
+  "bytes_removed": 195848,
+  "archive": "C:\\Cripto\\backups\\operational-20260910-files-audit\\removed-caches.zip",
+  "archive_sha256": "f103234604978d6ef70aa4a55e50f3e657c4aee382fe982fe95d91657f050ff9",
+  "archive_bytes": 51981,
+  "restorable": true,
+  "preserved": [
+    "all unique source code",
+    "original migration package",
+    "restaurado-20260908",
+    "frozen LLM executor and environments",
+    "raw data and ledgers",
+    "private configuration",
+    "chat backup",
+    "reports"
+  ],
+  "note": "Only transient tool caches were removed. Later tools may recreate empty/new caches.",
+  "files_removed": 38,
+  "scope": "Cache removal only; the subsequent redundant worktree removal is recorded separately."
+}

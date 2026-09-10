@@ -1,0 +1,55 @@
+import hashlib
+import json
+import zipfile
+from pathlib import Path
+
+from GarimpoInvestimentos.security.redaction import configured_secret_values
+from scripts.scan_secrets import ALLOWLIST, PATTERNS
+
+ROOT = Path(r'C:\Cripto')
+R = ROOT / 'operacao/relatorios/REVISAO_COMPLETA_20260909'
+P = ROOT / 'revisao-arquivos-20260910'
+E = P / 'docs/continuity_20260910'
+manifest = json.loads((E / 'MANIFEST.json').read_bytes())
+archive = next(x for x in manifest['archives'] if x['file'] == 'revisao-20260910.zip')
+secrets = [x.encode() for x in configured_secret_values() if len(x) >= 8]
+news_name = 'executor_preflight02/sources/7539a8fbed2a45eb92773cb20c334565.json'
+news = (R / news_name).read_bytes()
+assert not any(x in news for x in secrets)
+matches = [m for m in PATTERNS['credential_assignment'].finditer(news.decode()) if not any(x in m.group('value').lower() for x in ALLOWLIST)]
+assert matches and all(m.group('name') in ('topic_token', 'publication_token') for m in matches)
+assert 'google_news' in news.decode()
+log_name = 'closure_before01/tests.log'
+log = (R / log_name).read_text(encoding='utf-8')
+count = 0
+def redact(match):
+    global count
+    count += 1
+    value_start, value_end = match.span('value')
+    return match.group(0)[:value_start-match.start()] + '[REDACTED_CREDENTIAL_VALUE]' + match.group(0)[value_end-match.start():]
+redacted = PATTERNS['credential_assignment'].sub(redact, log).encode()
+assert count == 3 and not any(x in redacted for x in secrets)
+updates = [(news_name, news, 'none; Google News public topic/publication identifiers verified against provider documentation'),
+           (log_name, redacted, 'three credential-assignment values redacted from the public copy; original log remains local')]
+with zipfile.ZipFile(E / archive['file'], 'a', compression=zipfile.ZIP_DEFLATED) as z:
+    for name, data, transformation in updates:
+        member = 'revisao-completa-20260909/' + name
+        assert member not in z.namelist()
+        z.writestr(member, data)
+        archive['entries'].append({'path': member, 'bytes': len(data), 'sha256': hashlib.sha256(data).hexdigest(), 'source': str(R / name), 'transformation': transformation})
+archive['bytes'] = (E / archive['file']).stat().st_size
+archive['sha256'] = hashlib.sha256((E / archive['file']).read_bytes()).hexdigest()
+manifest['total_files'] += 2
+manifest['credential_candidates_kept_local'] = []
+manifest['reviewed_initial_scanner_findings'] = {
+    'google_news_identifiers': {'source': news_name, 'fields': ['topic_token', 'publication_token'], 'decision': 'public identifiers, original source included', 'reference': 'https://serpapi.com/google-news-api'},
+    'test_log': {'source': log_name, 'decision': 'public copy contains three redactions; original preserved locally'},
+    'recovery_conflict_fixture': {'source': 'pr110/recovery_conflict/operacao/saidas/garimpo_resultados_20260909_201608.xlsx', 'decision': 'deliberately different existing file used by probe_pr110_recovery.py; retained locally, not a missing source dataset'},
+}
+manifest['omitted_by_reason']['credential_candidate_preserved_locally_pending_review'] = 0
+manifest['omitted_by_reason']['deliberate_conflict_fixture_preserved_locally'] = 1
+(E / 'MANIFEST.json').write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding='utf-8')
+readme = (E / 'README.md').read_text(encoding='utf-8').replace('2683 arquivos', '2685 arquivos')
+readme = readme.replace('Candidatos a credencial e arquivos de captura incompleta foram mantidos localmente e identificados no manifesto.', 'Um log foi publicado com três valores no formato de credencial ocultados, mantendo o original local. O arquivo propositalmente diferente usado no teste de conflito de restauração ficou local; não é um dado de mercado faltante. Os identificadores públicos de assuntos/publicações das notícias foram mantidos, conforme a [documentação do provedor](https://serpapi.com/google-news-api). Os tratamentos constam no manifesto.')
+(E / 'README.md').write_text(readme, encoding='utf-8')
+print(json.dumps({'files': manifest['total_files'], 'public_log_redactions': count, 'unresolved_credential_candidates': 0, 'intentional_fixture_omitted': 1}))

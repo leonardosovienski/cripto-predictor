@@ -25,10 +25,11 @@ protocolo.
 ## Configuracao
 
 O arquivo [`.env.example`](../GarimpoInvestimentos/.env.example) lista todas as
-variaveis de credencial e configuracao do projeto. Copie-o para `.env` no mesmo
-diretorio e preencha os valores localmente; o `.env` e ignorado pelo Git.
+variaveis de credencial e configuracao do projeto. Neste PC, preencha somente
+`C:\Cripto\configuracao\pipeline.env`, seguindo [CONFIGURACAO_LOCAL.md](CONFIGURACAO_LOCAL.md),
+e execute pelo atalho `C:\Cripto\CRIPTO.cmd`. Nunca publique os valores.
 
-O padrao preserva a H5:
+O perfil atual usa SerpAPI. Esta escolha de provedor nao reativa a H5, que permanece encerrada:
 
 ```dotenv
 NEWS_PROVIDERS=serpapi
@@ -70,10 +71,13 @@ A migracao `0010_predictions_news_provenance` adiciona `news_provider` e
 reinterpretadas como tendo usado uma fonte nova. A ausencia completa de noticia
 continua marcada por `input_degradado=1`.
 
+Os contratos atuais tambem preservam inputs e carimbos de recebimento para novas
+previsoes, conforme [a auditoria ampliada](AUDITORIA_AMPLIADA_20260910.md). Isso nao
+recupera noticias originais de previsoes historicas nem comprova retroativamente
+a disponibilidade de uma versao da fonte.
+
 ## Regra cientifica
 
 Mudar `NEWS_PROVIDERS`, URLs curadas, roteamento ou forma de busca muda o input
 do LLM. Logo, nao se ativa essa configuracao dentro da H5: registrar uma nova
 trial e coletar uma amostra forward separada e obrigatorio.
-
-

@@ -1,0 +1,28 @@
+import hashlib
+import json
+import zipfile
+from datetime import UTC, datetime
+from pathlib import Path
+
+root = Path(r'C:\Cripto')
+F = root / 'operacao/relatorios/REVISAO_COMPLETA_20260909/organization_20260910'
+manifest = json.loads((root / 'MANIFESTO.json').read_bytes())
+expected = {x['sha256'] for x in manifest['files']}
+result = {'started_at_utc': datetime.now(UTC).isoformat(), 'expected_unique_objects': len(expected), 'objects_verified': 0, 'guide_copies_identical': [], 'files_written_to_restored': 0}
+with zipfile.ZipFile(root / 'dados.zip') as archive:
+    assert len(archive.namelist()) == len(set(archive.namelist()))
+    assert set(archive.namelist()) == {'objetos/' + digest for digest in expected}
+    for count, digest in enumerate(sorted(expected), 1):
+        with archive.open('objetos/' + digest) as source:
+            actual = hashlib.file_digest(source, 'sha256').hexdigest()
+        assert actual == digest, 'Archive object differs from original manifest'
+        if count % 5000 == 0:
+            print(json.dumps({'objects_verified': count, 'expected': len(expected)}), flush=True)
+    result['objects_verified'] = len(expected)
+for name in ('MANIFESTO.json', 'LEIA-ME.md', 'validar.py', 'RETOMAR_NO_CODEX.md'):
+    assert (root / name).read_bytes() == (root / 'restaurado-20260908' / name).read_bytes(), name
+    result['guide_copies_identical'].append(name)
+result.update({'status': 'PASS', 'finished_at_utc': datetime.now(UTC).isoformat(), 'archive_bytes': (root / 'dados.zip').stat().st_size,
+               'scope': 'Every ZIP object matches its original manifest SHA-256; no extraction, execution or restoration was performed.'})
+(F / 'migration_archive_verification.json').write_text(json.dumps(result, indent=2), encoding='utf-8')
+print(json.dumps(result), flush=True)

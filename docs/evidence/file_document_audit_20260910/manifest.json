@@ -1,0 +1,20 @@
+{
+  "format_version": 1,
+  "scope": "Selected public audit evidence; full filesystem inventory, data and private chat remain local.",
+  "files": {
+    "backup_verification.json": "7d1ef8d60c2c8ac98b045953bac7e07bcb4d86e10daf6f8864fb8bbbf91d949c",
+    "cleanup.json": "647cf99171b477f437e30597c669abffb6a5e2f2ded743063e865b36d6cf9caf",
+    "finish_original_verification_20260910.py.source": "c325f7ce3f402f4c119c4bbb32e62a6c58c97ba4977099833da8f6c6eecf31c2",
+    "frozen_runtime_validation.json": "72aac17ced951f99c66b8bfd142bf9e729408683ad7d9d2c303598d6e03d7797",
+    "historical_links.json": "0e9bea6fdcd316e2e8c2111fc5311c79122922f5cc8a72d4e7cff3229aed7ae5",
+    "markdown_baseline.json": "9430a86303630e9d4268608fe59970d0e5303e3fa2c98f89fd559b99797964ee",
+    "migration_archive_verification.json": "b810f60ed4b32f40a24450a756bcc4644d0e2af3d8cb533a5d71527c5514a938",
+    "original_files_verification.json": "a5b047f40c47463c716eca2db82a2862a7c1970e328441dd910007eeb5c5b6b4",
+    "original_serial_prefix.json": "37490b525ee8dc765f911e79f5e85b1244b3fe25abf3d064b8209b2a5950ba23",
+    "README.md": "c2790da08e6937e41024c59a58a1e5c4b7ee8f88810651533656b5f98f983dbb",
+    "redundant_worktree.json": "fec0a8cd97692868a6b57f9133771e84797ce258295d3b23b6fc731d410b6fcd",
+    "root_inventory.json": "a59c8ff7d1731d7f5ede8b23ec27f33e514ae3e841e6182ca1b3e69fa476b5ca",
+    "verify_migration_archive_20260910.py.source": "32a7e7c9e6516ee676120f3aafbc16ed505c8b890848d5430721cfb27004d824",
+    "verify_original_files_20260910.py.source": "08748163dddea36bd0d3360d4ed59e003c741287ff08d9545c56377e1baa4285"
+  }
+}

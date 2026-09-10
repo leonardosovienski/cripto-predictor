@@ -1,0 +1,41 @@
+{
+  "status": "PASS",
+  "at_utc": "2026-09-10T22:55:43.512674+00:00",
+  "archives": 5,
+  "files": 2685,
+  "zip_bytes": 22636634,
+  "checks": [
+    {
+      "name": "verify",
+      "exit_code": 0,
+      "result": {
+        "verified_archives": 5,
+        "verified_files": 2685,
+        "extracted": false,
+        "output": null
+      }
+    },
+    {
+      "name": "restore",
+      "exit_code": 0,
+      "result": {
+        "verified_archives": 5,
+        "verified_files": 2685,
+        "extracted": true,
+        "output": "C:\\Cripto\\recuperacao-final-verificada-20260910"
+      }
+    }
+  ],
+  "every_restored_file_hash_matches": true,
+  "diagnostic_integrity": "ok",
+  "diagnostic_counts": {
+    "predictions": 3,
+    "market_snapshots": 2,
+    "prediction_inputs": 1,
+    "raw_market_data": 200
+  },
+  "recovery_directory": "C:\\Cripto\\recuperacao-final-verificada-20260910",
+  "production_overwritten": false,
+  "network_calls": 0,
+  "scope": "Verification and actual recovery of all public archive members; private configuration/chat/quota state remain outside this package."
+}

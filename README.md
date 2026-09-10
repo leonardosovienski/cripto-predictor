@@ -1,86 +1,52 @@
 # cripto-predictor (GarimpoInvestimentos + DPL)
 
-**Auditoria ampliada de 10/09/2026:** [correções, contratos de dados, validação e dependências](docs/AUDITORIA_AMPLIADA_20260910.md). Esta errata prevalece sobre as descrições operacionais anteriores abaixo: a V3 produz diagnóstico `UNVALIDATED`, os custos não têm calibração de execução comprovada e as versões históricas de fontes exigem evidência de disponibilidade.
+Sistema de pesquisa em criptoativos: ingestão e procedência de dados, análises com LLM, diagnósticos quantitativos e avaliação estatística. Nenhuma linha tem lucro pessoal ou futuro comprovado; os resultados históricos positivos de Aave são condicionais aos cenários de custo. A V3 emite diagnóstico `UNVALIDATED`.
 
-**Revisão geral de 09/09/2026:** [contratos corrigidos, limites e registro canônico](docs/REVISAO_COMPLETA_20260909.md). Novos diagnósticos exigem ingestão no contrato atual, preservam inputs e medem somente fechamentos posteriores à previsão. Isso corrige avaliação e procedência; não comprova lucro nem reabre famílias encerradas.
+## Comece aqui
 
-Estado deste PC e verificações conectadas de 09/09/2026: [fechamento das pendências](docs/FECHAMENTO_PENDENCIAS_20260909.md). Código e armazenamento operacional ficam em `C:\Cripto`; configuração não é evidência de lucro.
+- [Continuidade atual](CONTINUAR_AQUI.md): ordem de leitura e limites de execução.
+- [Conferência de arquivos e documentação de 10/09/2026](docs/CONFERENCIA_ARQUIVOS_20260910.md): conteúdo preservado, limpeza, backups e referências históricas.
+- [Dados, fontes e resultados recentes preservados](docs/continuity_20260910/README.md): 2.685 arquivos em cinco pacotes verificáveis, incluindo o diagnóstico atual.
+- [Configuração deste PC](docs/CONFIGURACAO_LOCAL.md): caminhos em `C:\Cripto`, ambiente e configuração privada.
+- [Conferência do chat de 10/09](docs/CONFERENCIA_CHAT_20260910.md) e [auditoria ampliada](docs/AUDITORIA_AMPLIADA_20260910.md): correções, evidências e dependências.
+- [Índice da documentação](docs/README.md): pesquisa, dados, recuperação e histórico.
 
-**Configuração atual deste PC — 09/09/2026:** o projeto trabalha somente dentro de **`C:\Cripto`**, conforme o [mapa de pastas e execução local](docs/CONFIGURACAO_LOCAL.md). Código atual em `C:\Cripto\pesquisa-20260909`, dados preservados em `C:\Cripto\restaurado-20260908`; configuração privada em `C:\Cripto\configuracao` e novos dados, saídas, cache, logs e temporários em `C:\Cripto\operacao`. Use `C:\Cripto\CRIPTO.cmd status` para conferir os caminhos. As notas datadas abaixo preservam o histórico; a rodada econômica mais recente está no [registro de 09/09](docs/evidence/economic_round_20260909/RESULTADOS.md).
+Referência técnica anterior a esta conferência: `main` em `94fc9e7` (PR #117), validado no Windows com **1.505 testes aprovados e um skip de symlink**, e quatro jobs de CI aprovados no [commit integrado](https://github.com/leonardosovienski/cripto-predictor/actions/runs/34525972190). Essa contagem é datada; confira o SHA e os checks do commit que pretende usar.
 
-**Estado verificado em 08/09/2026:** pesquisa consolidada na `main`, única branch local e remota. A validação da consolidação passou em **1.170 testes** e nos quatro jobs do [CI](https://github.com/leonardosovienski/cripto-predictor/actions/runs/34228309330), incluindo container. Core **3.2.0** e Ops **4.1.0** estão fixados nas dependências.
+## Execução neste Windows
 
-Não há lucro real nem projeção validada de lucro futuro. No diagnóstico histórico mais recente, o carry de 84 dias ficou em **+10,56 USDT** no cenário base, **−6,97 USDT** no adverso e **−21,65 USDT** no estresse, com referência de 5.000 USDT por cenário. As contas históricas não demonstram rentabilidade futura.
+Código operacional: `C:\Cripto\pesquisa-20260909`. Use o atalho que aplica os caminhos e o ambiente do projeto:
 
-## Por onde começar
-
-- [Configuração local em C:\Cripto](docs/CONFIGURACAO_LOCAL.md): caminhos vigentes, atalhos e configuração privada neste Windows.
-
-- [Estado vigente da pesquisa](docs/CURRENT_RESEARCH_STATE_20260908.md): resultados, correções e pendências reais.
-- [Continuidade e recuperação](docs/SESSION_HANDOFF_20260908.md): código, pacotes de dados, caminhos dos observadores e situação do Git.
-- [Prompt de continuidade](docs/NEXT_CHAT_PROMPT.md): referência para retomar o trabalho sem depender do chat.
-- [Migração para outro Windows](docs/MIGRACAO_WINDOWS.md): código pelo Git e pacote separado somente com dados.
-- [Auditoria da consolidação](docs/evidence/git_consolidation_20260908/README.md): branches integradas, validações e preservação.
-
-As famílias científicas anteriores continuam sujeitas ao [índice de congelamento](CR_FREEZE_INDEX.md), ao [manifesto](CR_RESEARCH_FREEZE.md) e ao [charter](charters/scientific_state.json). A pesquisa posterior possui protocolos separados; não reabre silenciosamente hipóteses encerradas.
-
-> **Atualização econômica — 2026-09-01.** A V3 possui uma trava experimental
-> fee+slippage+funding calibrada apenas em sinais in-sample já maturados. Ela é
-> deliberadamente opt-in (`--cost-aware-filter`) para não reescrever os backtests
-> congelados. Uma aprovação produz somente `SHADOW_TRADE`; capital continua
-> bloqueado. Detalhes em `HANDOFF.md` e `GarimpoInvestimentos/v3/economic_gate.py`.
-
-> ## Estado do incidente de segurança — `ROTATED_CONFIRMED_BY_OWNER_2026-08-19`
->
-> Uma credencial SerpAPI apareceu em texto claro em 5 logs históricos de
-> `logs/garimpo_fase1_*.log` (gitignored, nunca entraram no Git). A **causa** — o
-> wrapper de execução preservava stdout/stderr do processo filho sem redação — foi
-> corrigida e verificada (`GarimpoInvestimentos/security/redaction.py`, delegando a
-> `predictor_ops.redaction`). As 5 chaves expostas foram **rotacionadas**, confirmado
-> diretamente pelo dono do repositório em 2026-08-19.
->
-> Continua pendente como ação externa (não observável a partir deste repositório):
-> confirmar no painel de cada provedor que as chaves **antigas foram revogadas** (não
-> apenas que novas foram geradas) e verificar uso indevido antes da rotação. Por isso
-> o estado é `ROTATED_CONFIRMED_BY_OWNER`, não `RESOLVED`. Nada disso bloqueia o
-> pipeline, que já opera com as chaves novas.
->
-> Registro canônico: [docs/SECURITY_INCIDENT_SERPAPI.md](docs/SECURITY_INCIDENT_SERPAPI.md).
-> Nunca abra os 5 logs históricos em texto bruto.
-
-Sistema de **pesquisa** em previsão de criptoativos, em duas camadas:
-
-- **GarimpoInvestimentos** (previsão): descobre candidatos no mercado, analisa com
-  LLM (Gemini/OpenAI/Groq/Cerebras/Mistral) + indicadores técnicos, grava previsões
-  carimbadas e valida com backtest estatístico (Spearman + IC95% + Deflated Sharpe).
-- **DPL — Data Provider Layer** (`GarimpoInvestimentos/dpl/`): camada de dados
-  com controles temporais, fallback multi-fonte, agregação por consenso, Circuit Breaker e
-  **Feature Store** (SQLite) que é o repositório oficial de dados E de previsões.
-
-```
---discover (momentum+trending) ─┐
---assets ───────────────────────┼→ INGESTÃO (DPL: Binance→CoinGecko | consenso c/ Kraken)
-                                └→ Feature Store + snapshots versionados de inputs
-                                        ↓ mercado local; notícias e LLM conectados
-                     ANÁLISE (LLM + indicadores + notícias) → score 0-100
-                                        ↓ carimbos: Juiz + Fonte
-                     predictions (histórico oficial) → BACKTEST (Spearman IC95% + DSR)
+```powershell
+C:\Cripto\CRIPTO.cmd status
+C:\Cripto\CRIPTO.cmd pipeline --help
+C:\Cripto\CRIPTO.cmd uv --version
 ```
 
-A **V3 quantitativa** (HMM de regimes + funding/OI + walk-forward com custos) vive em
-`GarimpoInvestimentos/v3/`, já integrada nesta linha — a reconciliação planejada em
-[docs/RECONCILIACAO_V3.md](docs/RECONCILIACAO_V3.md) foi executada, e a branch
-`claude/v3-quant-wip` citada naquele plano não existe mais.
+O `status` verifica a configuração sem consultar APIs. Credenciais ficam somente em `C:\Cripto\configuracao\pipeline.env`, conforme o [mapa local](docs/CONFIGURACAO_LOCAL.md). O [exemplo público](GarimpoInvestimentos/.env.example) documenta os nomes das variáveis; ele não substitui o perfil deste PC.
 
-## Estado científico e histórico das hipóteses
+O ambiente aceita Python 3.13 ou 3.14. As dependências e suas fontes estão fixadas em [pyproject.toml](pyproject.toml) e [uv.lock](uv.lock); Core 3.2.0 e Ops 4.1.0 são distribuições externas, sem cópias vendorizadas. Para manutenção, a sincronização completa é `C:\Cripto\CRIPTO.cmd uv sync --frozen --all-extras`. Os extras `llm`, `v3`, `excel`, `science` e `test` são necessários para exercitar toda a suíte.
 
-**Pesquisa. Nenhuma autorização de capital real.** A nota 6,0/10 e o modo
-`PROSPECTIVE_OBSERVATION` descritos na [auditoria de 21/08](docs/ARQUITETURA_CONSOLIDADA.md)
-são registros daquela etapa. As linhas de pesquisa de setembro e suas pendências
-estão no [estado vigente](docs/CURRENT_RESEARCH_STATE_20260908.md).
+As verificações locais usam ambiente sintético e diretórios isolados, sem carregar as chaves privadas. O executor de validação e os resultados por commit ficam no [registro da revisão](docs/REVISAO_COMPLETA_20260909.md). Não apresente testes executados com extras faltantes como validação completa. No Windows, a falta de privilégio para symlink pode causar o único skip documentado.
 
-Estado das hipóteses pré-registradas ([docs/HYPOTHESES.md](docs/HYPOTHESES.md);
-travado em código por `charters/scientific_state.json`):
+Coletas conectadas exigem janela, fontes e orçamento disponíveis. Os limites atuais são 28 unidades de ingestão, 8 tentativas de notícias por provedor e 6 chamadas lógicas de LLM por provedor, por dia UTC. Consulte [guardas de API](docs/API_GUARDS.md) e os protocolos antes de executar; nenhum agendamento está ativado por esta configuração.
+
+## Dados e componentes
+
+| Componente | Contrato e limite |
+|---|---|
+| DPL | Ingestão com contratos de instrumento, moeda, temporalidade e procedência; cobertura depende da fonte e da versão histórica disponível. |
+| Feature Store | Banco oficial em `C:\Cripto\operacao\saidas\feature_store.db`; snapshots e inputs versionados preservam o contexto das novas previsões. Atualizações de dados brutos e de resultados não equivalem a um banco inteiro imutável. |
+| LLM | Mercado armazenado, notícias e juiz identificado; carimbos de recebimento e conteúdo preservado não recuperam fontes históricas perdidas. |
+| Backtest | Retornos medidos após a previsão; bootstrap e DSR sujeitos aos contratos de amostra, unidades e comparabilidade das tentativas. |
+| V3 | HMM, funding/OI e walk-forward; causalidade da filtragem depende do ajuste e dos dados de cada avaliação. Custos não têm calibração de execução pessoal comprovada. |
+| Operação | Ferramentas de lock, heartbeat e diagnóstico disponíveis; executores manuais obedecem aos protocolos próprios. |
+
+Em 10/09/2026, o banco operacional contém três previsões, dois snapshots de mercado e um registro de inputs. O snapshot v4 usa 200 barras BTCUSDT fechadas, recuperadas de um recibo já existente, e vence em **11/09/2026 às 02:00 UTC**. Ele não ficará atualizado pela existência deste README. Use [backup e restauração](docs/BACKUP_RESTORE.md) para preservar o estado real antes de manutenção.
+
+## Estado científico
+
+As famílias antigas seguem o [charter](charters/scientific_state.json), o [índice de congelamento](CR_FREEZE_INDEX.md) e o [manifesto científico](CR_RESEARCH_FREEZE.md). Novas linhas possuem registros separados; a infraestrutura não reabre hipóteses encerradas.
 
 | # | Hipótese | Trial (`trials.json`) | Status |
 |---|---|---|---|
@@ -94,252 +60,19 @@ travado em código por `charters/scientific_state.json`):
 | H8 | LLM como GERADOR de hipóteses (não preditor) | `h8-llm-hypothesis-generator` | **REGISTERED_NOT_ACTIVATED** — loop propor→avaliar→traçar implementado; coleta não iniciada |
 | H9 | Razão OI/volume (crowding especulativo) | `h9-oi-volume-ratio-hmm-v1` | **CLOSED_INSUFFICIENT_SAMPLE** — PSR 0,162; IC cruza zero. Ressalva registrada: 44 dos 45 folds saíram `INSUFFICIENT_DATA`, então o agregado repousa sobre UMA janela |
 
-Os veredictos negativos anteriores da V3 permanecem registrados. A reconciliação
-de 05/09 levou o registro a **26 tentativas**, incluindo 16 avaliações de threshold
-que existiam apenas na máquina de produção. O DSR atual recusa uma conclusão quando
-as unidades dos Sharpes históricos não são comprovadamente comparáveis; preserva
-as tentativas no registro sem fabricar uma normalização. A aprovação dos controles
-sintéticos é evidência sobre o software, não sobre lucro de mercado.
+A H5 continua com reprodutibilidade histórica limitada: faltam seus dados brutos originais. Os resultados e intervalos históricos são preservados com as ressalvas registradas em [HYPOTHESES.md](docs/HYPOTHESES.md). Controles sintéticos validam propriedades do software, sem demonstrar lucro de mercado.
 
-**Limitação registrada:** `HISTORICAL_REPRODUCIBILITY = LIMITED` — os dados brutos da
-H5 foram perdidos, então a reanálise retrospectiva não é reproduzível. O IC histórico
-dela foi *qualificado* (bootstrap sem `block_length` overlap-aware na época), nunca
-reescrito.
+## Dependências de pesquisa
 
-**Ação de governança pendente:** o `main` foi corrompido silenciosamente três vezes
-em 2026-09-04/05 — duas por hunks perdidos no squash-merge, uma por dois PRs
-sobrepostos mergeados com o CI ainda rodando. O CI **já** roda no `main`; o que falta
-é *esperar por ele*. Ver [docs/POLITICA_DE_MERGE.md](docs/POLITICA_DE_MERGE.md) para a
-linha do tempo, o diagnóstico e as duas caixas de branch protection que fecham o buraco.
+- **Aave:** comparação com uma segunda fonte preparada, ainda sem execução conectada concluída; acesso a histórico, independência da fonte e orçamento precisam ser verificados. Veja [validação e custos](docs/AAVE_VALIDACAO_20260910.md).
+- **Carry manual v2:** entrada prevista para 12/09/2026, das 00:00 às 01:00 UTC; encerramento em 05/12. O protocolo continua sem observações nesta conferência.
+- **LLM pareado manual v3:** 84 janelas diárias de 12/09 a 04/12, das 12:00 às 13:00 UTC; o último alvo matura em 13/12. O executor está congelado em `C:\Cripto\auditoria-ampliada-20260910`, commit `595f120`.
+- **Históricos e custos:** originais H5, versões macro com disponibilidade temporal comprovada e extratos pessoais de execução/custos continuam sem evidência suficiente. Ausência não significa custo zero.
 
-O [histórico de hipóteses](docs/HYPOTHESES.md) preserva as lacunas identificadas em
-cada etapa. Para distinguir correções concluídas de pendências atuais, consulte o
-[estado vigente](docs/CURRENT_RESEARCH_STATE_20260908.md).
+Os caminhos, protocolos e condições de retomada estão na [conferência do chat](docs/CONFERENCIA_CHAT_20260910.md). As chaves atuais foram mantidas por decisão do dono; administração de segurança da branch ficou fora do escopo. Nenhuma ordem, agendamento, capital ou pagamento foi ativado.
 
-**Onde as coisas estão na máquina de coleta** — caminhos dos bancos, tarefas
-agendadas, logs de resultado, snapshots pré-limpeza e o que só roda lá:
-[docs/MAQUINA_DE_PRODUCAO.md](docs/MAQUINA_DE_PRODUCAO.md). O Feature Store é
-gitignored, então esse mapa é a única forma de essa informação existir fora da
-máquina.
+## Preservação e histórico
 
-## Funcionalidades
+Git contém código, documentação e evidências selecionadas. Configuração privada, banco operacional, dados completos e cópia privada do chat ficam em `C:\Cripto`; clonar o repositório sozinho não restaura toda a operação. O pacote original e `restaurado-20260908` permanecem preservados.
 
-| Camada | O que faz |
-|---|---|
-| Discovery | Varre o top 100 (CoinGecko) + trending; filtra stablecoin/wrapped/volume<US$10M; ranqueia por momentum 7d/24h |
-| Coleta (DPL) | Fallback Binance→CoinGecko ou consenso (mediana Binance+Kraken); Circuit Breaker; telemetria (`events.jsonl`) |
-| Feature Store | OHLCV + sinais (Fear&Greed) alinhados por `published_at` (zero lookahead); features materializadas; tabela `predictions` append-only (migração 0016) |
-| Análise | LLM sobre mercado offline + notícias live; carimbo do **Juiz** (provider:modelo:hash-do-prompt) e da **Fonte** (`direct`\|`dpl:fallback`\|`dpl:consensus`); ensemble multi-sample opcional (`LLM_ENSEMBLE_N`) |
-| Backtest | Spearman(score, retorno D+1/7/30) com IC95% (block bootstrap pareado, `block_length` overlap-aware), estratificado por divergência e por Fonte; **DSR** contra o máximo-por-sorte das tentativas |
-| Integridade do ledger | Cadeia de hash SHA-256 sobre `predictions_archive` (migração 0017 + `dpl/hash_chain.py`): tamper-evidence do histórico; anchor público em `chain_manifest.json`, selado pelo `quality_snapshot` diário e commitado à mão quando muda (mesma convenção do `h6_status.json`) |
-| Estabilidade do sinal | Rolling-Spearman com alarme de **flip de sinal** no backtest — a literatura (réplica de Baker-Wurgler) documenta proxies de sentimento invertendo de direção entre regimes |
-| Governança | Controle positivo (edge sintético → "validado"; ruído → "RUÍDO"); `trials.json` versionado; charters com checksum; migrações aditivas (ADR-017); **PBO/CSCV** ao lado do DSR (perguntas complementares: o DSR desconta por N tentativas, o PBO mede se a SELEÇÃO entre configurações é frágil) |
-| V3 | GaussianHMM 3 estados com decodificação **causal** (auditada), sinais de funding/OI, WFA com custos (taker+slippage+funding real) |
-| Operação | Jobs via `predictor_ops` (lock, heartbeat, artefato esperado), watchdogs, painel diário `quality_snapshot` com histórico append-only |
-
-## Estrutura
-
-```
-GarimpoInvestimentos/
-├── main.py / cli.py       ← CLI: --ingest, --discover N, --assets, --mode, --summary
-├── phase1.py              ← orquestrador da coleta diária automatizada (H5 multi-juiz)
-├── jobs.py                ← jobs operacionais via predictor_ops.run_job
-├── governance.py          ← charters, planos de observação, validação por checksum
-├── contracts.py           ← contratos do plugin (predição, coleta, settlement, health)
-├── plugin.py              ← entry-point `predictor.plugins` (expõe a fronteira research-only)
-├── config.py              ← Settings tipado (pydantic-settings) + fail-fast de segredos
-├── collectors/            ← discovery.py (candidatos), news.py, serpapi_news.py
-├── dpl/                   ← contratos, providers, routers, feature_store, migrações,
-│                             macro_calendar.py (calendários FOMC/CPI/PPI — H7)
-├── analyzers/             ← ai_insights (LLM), indicators, prefilter, score_engine,
-│                             backtest (inclui os gates da H6), trials (DSR), equivalence,
-│                             pbo (Probabilidade de Overfitting via CSCV — B10),
-│                             judge_calibration (régua por juiz — B11a),
-│                             factor_dsl (fatores point-in-time, causal por
-│                             construção — pré-requisito do B9),
-│                             hypothesis_loop (LLM propõe hipótese, motor
-│                             determinístico avalia — B9; NÃO registra trial,
-│                             NÃO emite veredito, NÃO promove nada),
-│                             gate_power (poder do gate — 'RUÍDO' com poder
-│                             baixo é ausência de evidência, não evidência
-│                             de ausência; NÃO altera gate nenhum),
-│                             ground_truth_harness (afere o pipeline INTEIRO
-│                             contra verdade plantada: erro de medição, perda
-│                             de amostra, sensibilidade e especificidade)
-├── services/              ← ingestion, features, inference, backtest, reporting
-├── providers/             ← contratos de provider da camada de aplicação
-├── v3/                    ← HMM de regimes, funding/OI, walk-forward com custos
-├── trading/               ← contrato econômico, execução, microestrutura, portfólio, store,
-│                             signal_adapter (SignalRecord→TradeIntent, recusa família
-│                             congelada), report (visão única), cost_policy (escolhe o
-│                             modelo de custo pelo instrumento e recusa o errado) —
-│                             infraestrutura construída por OVERRIDE de governança
-│                             2026-08-14 (docs/HYPOTHESES.md), ANTES de qualquer edge
-│                             validado; não autoriza capital, não muda nenhum gate
-├── observation_*.py       ← coleta, qualidade, resiliência e watchdog da observação
-├── quality_snapshot.py    ← painel diário (engenharia × amostra científica)
-├── security/redaction.py  ← redação de segredos em log (delega a predictor_ops)
-├── core/                  ← paths, cache, history (store-first), logger, api_guard
-├── output/reporter.py     ← exportação CSV/XLSX
-├── macro_calendar.json    ← 33 eventos FOMC/CPI/PPI de 2026; fontes em source_note
-├── trials.json            ← registro VERSIONADO de tentativas (denominador do DSR)
-└── h6_status.json         ← estado publicado da H6 (n, gate, veredito quando abrir).
-                              Ponte produção→git: o n real vem do feature_store.db,
-                              que é gitignored — sem este arquivo, nada fora da
-                              máquina de coleta enxerga o n. Gerado pelo
-                              quality_snapshot; commitado à mão quando muda.
-charters/                  ← estado científico, definição congelada da H6, charters de coleta
-observation_plans/         ← planos e ativações COLLECTION_ONLY (imutáveis, com checksum)
-scripts/                   ← atestado do harness, backup, scan de segredos, CI check
-tests/                     ← 1.170 aprovados na consolidação de 08/09, com todos os extras.
-                              Ambientes sem extras opcionais não exercitam toda a suíte;
-                              ver docs/POLITICA_DE_MERGE.md.
-docs/                      ← ADRs e auditorias (ver HANDOFF)
-```
-
-predictor-core/predictor-ops não são vendorizados: são wheels externas resolvidas via
-`[tool.uv.sources]` a partir das GitHub Releases de core-predictor/predictor-ops, com
-hash fixado em `uv.lock`. Boa parte da DPL (contratos, routers, circuit breaker,
-trials/DSR, stats) já foi promovida ao core — os módulos locais correspondentes são
-compat shims finos.
-
-## Coleta exploratória `COLLECTION_ONLY`
-
-Funding e open interest da V3 entram na DPL como `SignalPoint` bitemporal
-enriquecido, com instrumento, métrica, unidade, `event_at`, `published_at`,
-`ingested_at`, hash de conteúdo, versões de coletor/schema e flags de qualidade.
-O charter versionado em `charters/funding_oi_v3.json` fixa SLA, retenção,
-orçamentos e thresholds antes da coleta.
-
-Esses dados permanecem em `scientific_state=COLLECTION_ONLY`: uma execução pode
-terminar com `run_status=SUCCEEDED`, mas isso não constitui validação de hipótese
-nem autorização de capital. O core exige registro de hipótese e `DatasetFreeze`
-selado antes de qualquer promoção científica. Scorecards persistidos classificam
-fontes separadamente como `HEALTHY`, `DEGRADED` ou `QUARANTINED`.
-
-O Feature Store é ignorado pelo Git e possui backup online verificável e restore não
-destrutivo. Procedimento: [docs/BACKUP_RESTORE.md](docs/BACKUP_RESTORE.md).
-
-## Instalação e configuração
-
-Pré-requisitos: Python **3.13 ou 3.14** (`requires-python = ">=3.13,<3.15"`; ambos
-exercitados no CI). O gerenciador canônico é o **uv** — Linux/container é o runtime
-principal, e `DATA_DIR`, `OUTPUT_DIR` e `CACHE_DIR` são configuráveis.
-
-```bash
-# suíte offline, sem chaves:
-uv sync --locked --extra test --extra science
-uv build                          # necessário: test_distribution_security.py inspeciona dist/
-uv run pytest -q
-
-# suíte completa, sem skips:
-uv sync --locked --all-extras
-uv build
-uv run pytest -q                   # 1.170 aprovados na validação de 08/09
-```
-
-Extras disponíveis: `llm`, `v3`, `excel`, `science` e `test`.
-
-Para o **caminho ao vivo**, sincronize os extras que o pipeline usa e coloque as chaves
-reais (>=16 chars) em `GarimpoInvestimentos/.env` — veja `.env.example`:
-
-```bash
-uv sync --extra llm --extra excel --extra v3
-```
-
-⚠️ Por design (fail-fast): `.env` sem as chaves exigidas pelo provedor configurado
-**crasha no segundo zero**, na carga de `GarimpoInvestimentos.config`.
-
-## Como rodar
-
-```bash
-# 1) DESCOBERTA + INGESTÃO (rede): acha candidatos e materializa na Feature Store
-uv run python -m GarimpoInvestimentos.main --ingest --discover 10   # N máx: 20 (cota free tier)
-#    ou lista fixa / consenso multi-exchange:
-uv run python -m GarimpoInvestimentos.main --ingest --assets bitcoin,ethereum --mode consensus
-
-# 2) ANÁLISE (mercado offline; só notícias/LLM tocam a rede)
-#    sem --assets analisa tudo que está na Feature Store; previsões saem carimbadas
-uv run python -m GarimpoInvestimentos.main --summary
-
-# 3) BACKTEST (absorve CSV legado automaticamente; estratifica por Fonte; imprime DSR)
-uv run python -m GarimpoInvestimentos.analyzers.backtest
-
-# validações avulsas:
-uv run python -m GarimpoInvestimentos.analyzers.equivalence --assets bitcoin,solana  # DPL vs direto
-uv run python -m GarimpoInvestimentos.quality_snapshot                               # painel diário
-uv run python -m scripts.diagnose_h6_mechanism                    # mecanismo da H6: score × passado × reversal ingênuo (exploratório)
-```
-
-O `quality_snapshot` também grava `GarimpoInvestimentos/h6_status.json` — **só quando o
-estado da H6 muda**, para não gerar commit de ruído diário. Esse arquivo é a única via
-pela qual o `n` da H6 sai da máquina de coleta: o `feature_store.db` que o produz é
-gitignored. Commite-o quando ele mudar; é o que qualquer acompanhamento externo lê.
-
-Em produção (Windows Task Scheduler), `run_sinal_diario.bat` e `run_garimpo_fase1.bat`
-encapsulam esse fluxo — inclusive o `uv sync` com os três extras juntos, porque
-sincronizar só `llm+excel` desinstalaria numpy/hmmlearn/ccxt e quebraria a família V3.
-
-Jobs operacionais (lock, heartbeat, artefato esperado e `scientific_state` declarado):
-
-```bash
-uv run cripto-predictor-job phase1 | backtest | watchdog | v3-daily
-                                   | observation-daily | observation-live | microstructure-live
-```
-
-Container (read-only, usuário não-root, sem capabilities):
-
-```bash
-docker build -t cripto-predictor . && docker run --rm --read-only --tmpfs /tmp --cap-drop ALL cripto-predictor
-# ou: docker compose up
-```
-
-O histórico oficial é a tabela `predictions` de `output/feature_store.db`; o
-`garimpo_historico.csv`, se existir, é absorvido uma vez (backfill `Fonte=direct`)
-e fica congelado.
-
-## Pendências vigentes
-
-1. **Altcoins:** preservar o observador semanal `altcoin_reviewed_20260907`, seu
-   diretório original e seu diário. A programação começa em 13/09/2026; a existência
-   da configuração não garante uma execução futura. Consulte os caminhos e a
-   situação registrada na [continuidade](docs/SESSION_HANDOFF_20260908.md).
-2. **Carry BTC:** o código e o protocolo do observador de 84 dias estão prontos,
-   mas o agendamento permanece pendente. O pré-teste não abriu posição.
-   [Runbook](docs/evidence/carry_forward_20260908/RUNBOOK.md) e
-   [registro do agendamento](docs/evidence/carry_forward_20260908/scheduling.json).
-3. **Evidência econômica:** execução real, taxas da conta, tributação e margem
-   efetiva continuam sem certificação. As coletas públicas e os cenários de custo
-   não substituem essas evidências.
-4. **Famílias antigas:** H6 e H9 estão encerradas por insuficiência de amostra;
-   não retomar sua coleta como se estivessem ativas. H7 e H8 continuam registradas
-   sem ativação, conforme o [charter](charters/scientific_state.json).
-5. **Governança do Git e incidente antigo:** a consolidação esperou o CI completo;
-   a configuração de branch protection não foi alterada. Os registros de
-   [merge](docs/POLITICA_DE_MERGE.md) e do
-   [incidente SerpAPI](docs/SECURITY_INCIDENT_SERPAPI.md) distinguem o que foi
-   conferido do que depende de verificação externa.
-
-As instruções de pesquisa posteriores autorizam linhas separadas com registro
-prévio, sem reabrir silenciosamente famílias congeladas. Nenhuma validação de
-software ou de hipótese autoriza ordens ou capital real.
-
-## Histórico e decisões
-
-[HANDOFF-2026-08-14.md](HANDOFF-2026-08-14.md) (ensemble, H7, camada `trading/`) ·
-[HANDOFF-2026-07-02.md](HANDOFF-2026-07-02.md) (linha do tempo da era DPL) ·
-[HANDOFF.md](HANDOFF.md) (era pré-DPL) ·
-[docs/CONFERENCIA_GERAL.md](docs/CONFERENCIA_GERAL.md) ·
-[docs/RELATORIO_FINAL.md](docs/RELATORIO_FINAL.md) (fechamento canônico).
-
-**Para retomar hoje:** [índice da documentação](docs/README.md) e
-[continuidade de 08/09](docs/SESSION_HANDOFF_20260908.md).
-
-O [roadmap de 21/08](docs/OVERVIEW_E_ROADMAP_2026-08-21.md) e o
-[panorama daquela data](docs/PANORAMA_2026-08-21.md) documentam a etapa anterior;
-suas pendências não substituem o estado vigente.
-
-Os documentos datados são **registros históricos** e não são reescritos: correções
-entram como errata ou adendo, preservando o texto original. O índice consolidado do
-que neles já não vale está em
-[docs/ERRATA_2026-08-21.md](docs/ERRATA_2026-08-21.md).
+Documentos datados registram o estado de suas respectivas etapas. Para interpretar caminhos e instruções antigos, consulte a [conferência de arquivos](docs/CONFERENCIA_ARQUIVOS_20260910.md) e o [índice documental](docs/README.md). O [prompt original](docs/NEXT_CHAT_PROMPT.md) permanece intacto como mandato.

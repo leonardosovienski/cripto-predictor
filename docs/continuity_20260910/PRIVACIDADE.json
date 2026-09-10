@@ -1,0 +1,10 @@
+{
+  "status": "PASS",
+  "at_utc": "2026-09-10T22:56:51.229187+00:00",
+  "archive_members_verified": 2685,
+  "configured_secret_matches": 0,
+  "raw_codex_session_records": 0,
+  "private_config_chat_and_quota_files": 0,
+  "source_capture_scan": "All selected source bytes, including decoded gzip/xlsx payloads, were screened before packing; reviewed exceptions and public-copy log redaction are in MANIFEST.json.",
+  "limitations": "Known-secret matching and pattern screening do not certify absence of every unknown credential."
+}

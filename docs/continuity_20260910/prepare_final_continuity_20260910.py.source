@@ -1,0 +1,107 @@
+import gzip
+import io
+import json
+import os
+import shutil
+import zipfile
+from datetime import UTC, datetime
+from pathlib import Path
+from urllib.parse import quote, quote_plus
+
+from GarimpoInvestimentos.security.redaction import configured_secret_values
+from scripts.scan_secrets import ALLOWLIST, PATTERNS
+
+ROOT = Path(r'C:\Cripto')
+P = ROOT / 'revisao-arquivos-20260910'
+R = ROOT / 'operacao/relatorios/REVISAO_COMPLETA_20260909'
+F = R / 'organization_20260910'
+S = ROOT / 'captura-final-20260910'
+S.mkdir(exist_ok=False)
+secrets = set()
+for value in configured_secret_values():
+    if len(value) >= 8:
+        secrets.update(x.encode() for x in (value, quote(value, safe=''), quote_plus(value)))
+assert secrets
+records, omitted, findings = [], [], []
+
+def inspect(name, data, depth=0):
+    if any(value in data for value in secrets):
+        return [{'path': name, 'kind': 'configured_secret'}]
+    found = []
+    if depth < 2 and (name.endswith('.gz') or data[:2] == b'\x1f\x8b'):
+        return inspect(name[:-3], gzip.decompress(data), depth + 1)
+    if depth < 2 and (name.endswith('.xlsx') or data[:4] == b'PK\x03\x04'):
+        try:
+            with zipfile.ZipFile(io.BytesIO(data)) as archive:
+                for item in archive.infolist():
+                    if not item.is_dir():
+                        found.extend(inspect(name + '/' + item.filename, archive.read(item), depth + 1))
+        except zipfile.BadZipFile:
+            return [{'path': name, 'kind': 'incomplete_archive_kept_local'}]
+        return found
+    text = data.decode('utf-8', errors='replace')
+    for number, line in enumerate(text.splitlines(), 1):
+        for kind, pattern in PATTERNS.items():
+            for match in pattern.finditer(line):
+                value = match.group(match.lastindex or 0)
+                if kind == 'credential_assignment' and match.group('name').lower() == 'a_token' and len(value) == 42 and value.startswith('0x'):
+                    continue
+                if '(' in value or (name.endswith('.py') and ('.' in value or value.endswith(')'))) or any(marker in value.lower() for marker in ALLOWLIST):
+                    continue
+                found.append({'path': name, 'line': number, 'kind': kind})
+    return found
+
+def copy(src, group, member):
+    data = src.read_bytes()
+    flags = inspect(member, data)
+    if flags:
+        findings.extend(flags)
+        omitted.append({'source': str(src), 'reason': 'credential_candidate_preserved_locally_pending_review'})
+        return
+    target = S / group / member
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_bytes(data)
+    records.append({'source': str(src), 'group': group, 'member': member, 'bytes': len(data)})
+    if len(records) % 200 == 0:
+        print(json.dumps({'selected_files': len(records), 'credential_candidates': len(findings)}), flush=True)
+        (F / 'final_capture_progress.private.json').write_text(json.dumps({'records': records, 'omitted': omitted, 'findings': findings}), encoding='utf-8')
+
+def candidates(directory):
+    for folder, dirs, names in os.walk(directory, followlinks=False):
+        dirs[:] = [name for name in dirs if name not in {'.git', '.venv', '__pycache__', '.pytest_cache', '.ruff_cache', 'xdg'} and not (Path(folder) == R and name in {'organization_20260910', 'chat_closure_20260910'}) and not (Path(folder) == R / 'pr110' and name == 'checkout')]
+        for name in names:
+            yield Path(folder) / name
+
+for directory, group, prefix in [(ROOT / 'operacao/dados', 'dados', 'dados-operacionais'), (ROOT / 'operacao/saidas', 'saidas', 'saidas-preservadas'), (R, 'revisao', 'revisao-completa-20260909')]:
+    for src in candidates(directory):
+        if not src.is_file():
+            continue
+        rel = src.relative_to(directory)
+        parts = set(rel.parts)
+        name = src.name.casefold()
+        private_chat = any(word in name for word in ('conversation', 'messages', 'transcript', 'chat_history', 'session_history')) and src.suffix != '.py'
+        if group == 'revisao' and rel.parts[0] in ('organization_20260910', 'chat_closure_20260910'):
+            continue
+        if src.is_symlink() or src.is_junction() or parts & {'.git', '.venv', '__pycache__', '.pytest_cache', '.ruff_cache', 'xdg'}:
+            omitted.append({'source': str(src), 'reason': 'environment_cache_or_link'})
+            continue
+        if 'private' in name or name.startswith('.env') or src.suffix == '.env' or name.startswith('api_guard_budget') or name.endswith(('-wal', '-shm', '-journal')) or private_chat:
+            omitted.append({'source': str(src), 'reason': 'private_transcript_configuration_or_live_state'})
+            continue
+        if src.suffix.casefold() in ('.db', '.sqlite', '.sqlite3', '.pyc', '.whl', '.zip', '.001', '.002') or name.endswith(('.tar.gz', '.coverage')) or src.name == 'runtime.coverage':
+            omitted.append({'source': str(src), 'reason': 'older_archive_distribution_or_database_preserved_in_prior_package_or_local_backup'})
+            continue
+        copy(src, group, prefix + '/' + rel.as_posix())
+
+for name in ('AGENTS.md', 'CRIPTO.cmd', 'LEIA_PRIMEIRO.md', 'RETOMADA_APOS_CHAT_20260910.md'):
+    copy(ROOT / name, 'perfil', 'referencias-locais/' + name)
+copy(ROOT / 'pesquisa-20260909/.cripto-root', 'perfil', 'referencias-locais/.cripto-root')
+backup = ROOT / 'backups/operational-20260910-files-audit/feature_store'
+for name in ('feature_store.db', 'BACKUP_MANIFEST.json'):
+    copy(backup / name, 'diagnostico', 'diagnostico-operacional-20260910/' + name)
+result = {'captured_at_utc': datetime.now(UTC).isoformat(), 'selected_files': len(records), 'selected_bytes': sum(x['bytes'] for x in records),
+          'groups': {g: sum(x['group'] == g for x in records) for g in sorted({x['group'] for x in records})},
+          'credential_candidates': findings, 'omitted': omitted, 'records': records,
+          'scope': 'Dated recent operation/research source capture plus consistent diagnostic backup; private configuration, chat, quotas, installed environments and prior archive/distribution duplicates stay local or in earlier packages.'}
+(F / 'final_capture_selection.private.json').write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding='utf-8')
+print(json.dumps({k: v for k, v in result.items() if k not in ('omitted', 'records')}, ensure_ascii=False), flush=True)

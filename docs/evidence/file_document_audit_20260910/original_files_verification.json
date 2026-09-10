@@ -1,0 +1,35 @@
+{
+  "started_at_utc": "2026-09-10T21:29:44Z",
+  "parallel_resume_at_utc": "2026-09-10T21:59:25.406752+00:00",
+  "serial_prefix_files": 50000,
+  "parallel_remaining_files": 19088,
+  "workers": 4,
+  "groups": [
+    {
+      "name": "restored_files",
+      "expected": 63632,
+      "read": 63632
+    },
+    {
+      "name": "restored_runtime",
+      "expected": 2728,
+      "read": 2728
+    },
+    {
+      "name": "package_runtime",
+      "expected": 2728,
+      "read": 2728
+    }
+  ],
+  "failures": [],
+  "relocation_exceptions": [
+    "sessoes/20260907-altcoins/work/cripto-v1.2/.venv/pyvenv.cfg",
+    "sessoes/20260907-altcoins/work/cripto-v1.2/.venv/Lib/site-packages/_editable_impl_cripto_predictor.pth",
+    "sessoes/20260907-altcoins/work/cripto-v1.2/.venv/Scripts/python.exe",
+    "sessoes/20260907-altcoins/work/cripto-v1.2/.venv/Scripts/pythonw.exe"
+  ],
+  "modified_files": 0,
+  "method": "First 50000 files verified serially with zero failures in recorded stdout; remaining files and both runtime copies individually hashed by four read-only workers. No file was inferred from a duplicate.",
+  "finished_at_utc": "2026-09-10T21:59:58.555992+00:00",
+  "status": "PASS"
+}
