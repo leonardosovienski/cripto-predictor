@@ -4,6 +4,7 @@ from datetime import UTC, datetime, timedelta
 
 import pytest
 
+from GarimpoInvestimentos.dpl import DataUnavailableError, FallbackRouter
 from GarimpoInvestimentos.dpl.contracts import MarketDataPoint
 from GarimpoInvestimentos.dpl.feature_engineering import derive_features
 from GarimpoInvestimentos.dpl.providers import coingecko
@@ -67,14 +68,14 @@ def fake_http(monkeypatch, payload):
     monkeypatch.setattr(coingecko, "get_http_client", Client)
 
 
-@pytest.mark.parametrize("interval", ["1m", "5m", "15m", "1h", "nonsense"])
-def test_coingecko_does_not_relabel_30m_as_requested_interval(interval):
+@pytest.mark.parametrize("interval", ["1m", "5m", "15m", "30m", "1h", "4h", "nonsense"])
+def test_coingecko_refuses_unavailable_volume_before_network(interval, monkeypatch):
+    def forbidden_network():
+        pytest.fail("unsupported OHLCV must not request data or retry")
+
+    monkeypatch.setattr(coingecko, "get_http_client", forbidden_network)
     with pytest.raises(ValueError, match="intervalo"):
-        asyncio.run(
-            coingecko.CoinGeckoProvider(api_key="")._fetch_intraday(
-                "bitcoin", "bitcoin", interval, 2
-            )
-        )
+        asyncio.run(coingecko.CoinGeckoProvider(api_key="").fetch_ohlcv("bitcoin", interval, 2))
 
 
 def test_coingecko_daily_discards_partial_before_limit_and_normalizes_close(monkeypatch):
@@ -102,11 +103,20 @@ def test_coingecko_daily_missing_volume_is_not_zero(monkeypatch):
         asyncio.run(coingecko.CoinGeckoProvider(api_key="")._fetch_daily("bitcoin", "bitcoin", 1))
 
 
-def test_coingecko_ohlc_timestamp_means_close(monkeypatch):
-    close_at = datetime(2026, 1, 2, tzinfo=UTC)
-    fake_http(monkeypatch, [[int(close_at.timestamp() * 1000), 100, 110, 90, 105]])
-    row = asyncio.run(
-        coingecko.CoinGeckoProvider(api_key="")._fetch_intraday("bitcoin", "bitcoin", "4h", 1)
-    )[0]
-    assert row.timestamp == close_at - timedelta(hours=4)
-    assert row.published_at == close_at
+def test_intraday_fallback_cannot_deliver_fabricated_zero_volume(monkeypatch, tmp_path):
+    monkeypatch.setenv("PREDICTOR_EVENTS_PATH", str(tmp_path / "events.jsonl"))
+    fake_http(monkeypatch, [[1767312000000, 100, 110, 90, 105]])
+    router = FallbackRouter([coingecko.CoinGeckoProvider(api_key="")])
+    with pytest.raises(DataUnavailableError):
+        asyncio.run(router.fetch_ohlcv("bitcoin", "4h", 1))
+
+    expected = replace(point(0), interval="4h", source="available", volume=42)
+
+    class AvailableProvider:
+        name = "available"
+
+        async def fetch_ohlcv(self, symbol, interval, limit):
+            return [expected]
+
+    router = FallbackRouter([coingecko.CoinGeckoProvider(api_key=""), AvailableProvider()])
+    assert asyncio.run(router.fetch_ohlcv("bitcoin", "4h", 1)) == [expected]

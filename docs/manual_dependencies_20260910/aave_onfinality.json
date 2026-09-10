@@ -1,0 +1,51 @@
+{
+  "at_utc": "2026-09-10T00:49:48.679633+00:00",
+  "calls": 2,
+  "budget_units_consumed": 1,
+  "records": [
+    {
+      "at_utc": "2026-09-10T00:49:47.795825+00:00",
+      "request": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "method": "eth_chainId",
+        "params": []
+      },
+      "http_status": 200,
+      "raw_sha256": "937de275b7fc223f33af3b5fdcef1c024e5cf8b2665ad8161096c7e6f9e1733d",
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": "0xa4b1"
+      }
+    },
+    {
+      "at_utc": "2026-09-10T00:49:48.517014+00:00",
+      "request": {
+        "jsonrpc": "2.0",
+        "id": 2,
+        "method": "eth_call",
+        "params": [
+          {
+            "to": "0x794a61358D6845594F94dc1DB02A252b5b4814aD",
+            "data": "0xd15e0053000000000000000000000000af88d065e77c8cc2239327c5edb3a432268e5831"
+          },
+          "0x1c467350"
+        ]
+      },
+      "http_status": 429,
+      "raw_sha256": "80f0b3ca0afb14560f349ec121fa3eb6ac46e4d8fda612567f4c0f8f2b6218e9",
+      "response": {
+        "jsonrpc": "2.0",
+        "error": {
+          "code": -32029,
+          "message": "Too Many Requests, Please apply an OnFinality API key or contact us to receive a higher rate limit"
+        },
+        "id": 2
+      }
+    }
+  ],
+  "archive_index_available": false,
+  "historical_liquidity_verified": false,
+  "economic_result": null
+}

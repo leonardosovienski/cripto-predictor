@@ -1,0 +1,16 @@
+{
+  "at_utc": "2026-09-10T00:49:45.848427+00:00",
+  "all_local_git_refs_examined": true,
+  "matched_paths": [
+    "GarimpoInvestimentos/dpl/feature_store.py",
+    "GarimpoInvestimentos/feature_store_health.py",
+    "scripts/feature_store_backup.py",
+    "tests/test_dpl_feature_store.py",
+    "tests/test_feature_store_backup.py",
+    "tests/test_feature_store_backup_agendado.py",
+    "tests/test_feature_store_guards.py",
+    "tests/test_feature_store_health.py"
+  ],
+  "database_or_prediction_export_found": false,
+  "limit": "Search covers locally available Git refs and specified database/prediction/cache path patterns; not provider accounts or deleted unreachable Git objects."
+}

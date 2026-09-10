@@ -1,0 +1,20 @@
+{
+  "state": "WAITING_FOR_OPERATOR_EVIDENCE",
+  "capital_permission": false,
+  "hypothetical_reference_usdt": 5000,
+  "meaning_of_null": "Unknown, not zero; do not calculate personal final net profit until applicable missing inputs have evidence.",
+  "fields": [
+    {"name": "usable_capital", "value": null, "unit": "USDT", "evidence": "Operator declaration; hypothetical 5000 is not an account balance"},
+    {"name": "spot_fee_per_side", "value": null, "unit": "basis points of filled notional", "evidence": "Actual account tier, maker/taker rule, discounts and fee currency"},
+    {"name": "perpetual_fee_per_side", "value": null, "unit": "basis points of filled notional", "evidence": "Actual account tier and fee schedule"},
+    {"name": "margin_rules", "value": null, "unit": "collateral currency, tier, maintenance fraction and liquidation fee", "evidence": "Applicable venue/account rules at evaluation time"},
+    {"name": "fill_and_latency", "value": null, "unit": "UTC timestamps, quantity, price, milliseconds", "evidence": "Authorized execution records; public book quotes are not fills"},
+    {"name": "infrastructure_and_development", "value": null, "unit": "currency and amount per month, plus one-time development", "evidence": "Operator costs with allocation period; avoid double counting sunk development"},
+    {"name": "entry_exit_transfers_and_gas", "value": null, "unit": "currency and amount per transfer", "evidence": "Actual route and fee assumptions; no transfers authorized"},
+    {"name": "fiat_conversion", "value": null, "unit": "BRL per USDT/USDC with spread and timestamp", "evidence": "Executable route and separate stablecoin risks; never assume parity"},
+    {"name": "tax_and_reporting_cost", "value": null, "unit": "applicable jurisdiction, basis, currency and period", "evidence": "Operator-specific information and current qualified guidance"},
+    {"name": "maximum_acceptable_loss", "value": null, "unit": "USDT and fraction of capital", "evidence": "Operator decision, not inferred from hypothetical research"}
+  ],
+  "not_requested": ["API keys", "financial account passwords", "permission to send orders", "payment or account creation"],
+  "available_now": "Historical hypothetical cost scenarios and break-even sensitivities remain valid within their declared assumptions. Do not sum scenarios sharing the same capital."
+}
