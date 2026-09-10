@@ -1,0 +1,29 @@
+{
+  "status": "PASS",
+  "runtime": {
+    "status": "PASS",
+    "failed_packages": [],
+    "files_checked": 3785
+  },
+  "locations": {
+    "prefix": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-altcoins\\work\\cripto-v1.2\\.venv",
+    "base_prefix": "C:\\Cripto\\restaurado-20260908\\runtime",
+    "project": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-altcoins\\work\\cripto-v1.2\\GarimpoInvestimentos\\__init__.py",
+    "numpy": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-altcoins\\work\\cripto-v1.2\\.venv\\Lib\\site-packages\\numpy\\__init__.py",
+    "scipy": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-altcoins\\work\\cripto-v1.2\\.venv\\Lib\\site-packages\\scipy\\__init__.py",
+    "httpx": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-altcoins\\work\\cripto-v1.2\\.venv\\Lib\\site-packages\\httpx\\__init__.py"
+  },
+  "altcoin": {
+    "freeze_sha256": "2bc8f67c704780acff78973404c7a8f5915d05d90f8b05bba72d16aa360a25f6",
+    "ledger_rows": 2,
+    "snapshots_verified": 1,
+    "raw_gzip_readable": 616
+  },
+  "carry": {
+    "freeze_sha256": "b2dae12cbed306b84f9e2e34027fe34c43b1343222915a1bd9962f8bcbe5548b",
+    "ledger_rows": 1,
+    "raw_sources_verified": 6
+  },
+  "network_requests": 0,
+  "ledgers_modified": false
+}

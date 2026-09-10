@@ -1,0 +1,15 @@
+{
+  "at_utc": "2026-09-10T21:44:40.822946+00:00",
+  "path": "C:\\Cripto\\publicacao-conferencia-20260910",
+  "head": "08dc4f7548d082d528047ed430087607388cc253",
+  "tree": "b08d2cf79d3148525435ab69ba2cc130691c8a65",
+  "branch_preserved": "docs/reconcile-chat-20260910",
+  "tracked_files": 2920,
+  "untracked_or_ignored_files": 0,
+  "clean": true,
+  "identical_to_operational_tree": true,
+  "inventory_bytes": 625000474,
+  "restore_command": "git -C C:\\Cripto\\pesquisa-20260909 worktree add C:\\Cripto\\publicacao-conferencia-20260910 docs/reconcile-chat-20260910",
+  "reason": "Clean publication copy is identical to the integrated operational tree; commit and branch remain in the shared Git repository and on GitHub.",
+  "removed": true
+}

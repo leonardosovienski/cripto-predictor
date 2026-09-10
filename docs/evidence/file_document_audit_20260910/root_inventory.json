@@ -1,0 +1,134 @@
+{
+  "groups": {
+    ".env.txt": {
+      "files": 1,
+      "bytes": 608,
+      "directories": 0
+    },
+    ".pytest_cache": {
+      "files": 5,
+      "bytes": 26528,
+      "directories": 3
+    },
+    "AGENTS.md": {
+      "files": 1,
+      "bytes": 1342,
+      "directories": 0
+    },
+    "auditoria-ampliada-20260910": {
+      "files": 3216,
+      "bytes": 627708637,
+      "directories": 104
+    },
+    "backups": {
+      "files": 1,
+      "bytes": 77,
+      "directories": 3
+    },
+    "configuracao": {
+      "files": 6,
+      "bytes": 11250,
+      "directories": 1
+    },
+    "correcao-pr110-20260910": {
+      "files": 17354,
+      "bytes": 957064239,
+      "directories": 1974
+    },
+    "CRIPTO.cmd": {
+      "files": 1,
+      "bytes": 113,
+      "directories": 0
+    },
+    "dados.zip": {
+      "files": 1,
+      "bytes": 1573493127,
+      "directories": 0
+    },
+    "fechamento-revisao-20260910": {
+      "files": 2923,
+      "bytes": 625515631,
+      "directories": 89
+    },
+    "ferramentas": {
+      "files": 2,
+      "bytes": 1,
+      "directories": 3
+    },
+    "LEIA-ME.md": {
+      "files": 1,
+      "bytes": 7451,
+      "directories": 0
+    },
+    "LEIA_PRIMEIRO.md": {
+      "files": 1,
+      "bytes": 3102,
+      "directories": 0
+    },
+    "MANIFESTO.json": {
+      "files": 1,
+      "bytes": 32426629,
+      "directories": 0
+    },
+    "operacao": {
+      "files": 42042,
+      "bytes": 3134113525,
+      "directories": 20188
+    },
+    "pesquisa-20260909": {
+      "files": 44986,
+      "bytes": 2450956194,
+      "directories": 5537
+    },
+    "publicacao-chat-20260909": {
+      "files": 2121,
+      "bytes": 620335412,
+      "directories": 73
+    },
+    "publicacao-conferencia-20260910": {
+      "files": 2921,
+      "bytes": 625000474,
+      "directories": 95
+    },
+    "restaurado-20260908": {
+      "files": 67803,
+      "bytes": 5012262929,
+      "directories": 3225
+    },
+    "restaurar.py": {
+      "files": 1,
+      "bytes": 7034,
+      "directories": 0
+    },
+    "RETOMADA_APOS_CHAT_20260910.md": {
+      "files": 1,
+      "bytes": 2859,
+      "directories": 0
+    },
+    "RETOMAR_NO_CODEX.md": {
+      "files": 1,
+      "bytes": 2432,
+      "directories": 0
+    },
+    "runtime": {
+      "files": 2728,
+      "bytes": 53301136,
+      "directories": 185
+    },
+    "VALIDACAO.json": {
+      "files": 1,
+      "bytes": 7234,
+      "directories": 0
+    },
+    "validar.py": {
+      "files": 1,
+      "bytes": 3291,
+      "directories": 0
+    }
+  },
+  "unreadable": [],
+  "links_not_followed": [
+    "pesquisa-20260909/work/managed-python/cpython-3.13-windows-x86_64-none"
+  ],
+  "excluded_current_evidence": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\organization_20260910"
+}

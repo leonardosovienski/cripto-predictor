@@ -58,6 +58,6 @@ Seus códigos e runtimes congelados permanecem preservados. Esta configuração 
 
 ## Continuidade e recuperação
 
-Leia este arquivo, [NEXT_CHAT_PROMPT.md](NEXT_CHAT_PROMPT.md) e o [resultado econômico de 09/09](evidence/economic_round_20260909/RESULTADOS.md). Não use `C:\Users\Superleo13`, `USERPROFILE`, `AppData` ou as antigas pastas de tarefas do Codex como destinos para novos arquivos do projeto. Entregue novos relatórios em `C:\Cripto\operacao\relatorios`.
+Leia este arquivo, [a conferência atual dos arquivos](CONFERENCIA_ARQUIVOS_20260910.md), [CONFERENCIA_CHAT_20260910.md](CONFERENCIA_CHAT_20260910.md) e [NEXT_CHAT_PROMPT.md](NEXT_CHAT_PROMPT.md), preservado como mandato. O [resultado econômico de 09/09](evidence/economic_round_20260909/RESULTADOS.md) é histórico; a avaliação Aave posterior está em [AAVE_VALIDACAO_20260910.md](AAVE_VALIDACAO_20260910.md). Não use `C:\Users\Superleo13`, `USERPROFILE`, `AppData` ou as antigas pastas de tarefas do Codex como destinos para novos arquivos do projeto. Entregue novos relatórios em `C:\Cripto\operacao\relatorios`.
 
 O pacote original na raiz e seus guias preservam os hashes da migração. O arquivo local `C:\Cripto\LEIA_PRIMEIRO.md` aponta para este mapa atual. Não reescreva evidências, manifestos ou documentos congelados para trocar seus caminhos históricos. Para outra máquina, consulte [MIGRACAO_WINDOWS.md](MIGRACAO_WINDOWS.md); não restaure novamente sobre as pastas já existentes neste PC.

@@ -1,0 +1,1032 @@
+[
+  {
+    "file": "docs/continuity_20260909/local-root/LEIA_PRIMEIRO.md",
+    "line": 3,
+    "target": "pesquisa-20260909/docs/CONFIGURACAO_LOCAL.md",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto",
+    "local_target": "C:\\Cripto\\pesquisa-20260909\\docs\\CONFIGURACAO_LOCAL.md",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/continuity_20260909/local-root/LEIA_PRIMEIRO.md",
+    "line": 27,
+    "target": "pesquisa-20260909/docs/FECHAMENTO_PENDENCIAS_20260909.md",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto",
+    "local_target": "C:\\Cripto\\pesquisa-20260909\\docs\\FECHAMENTO_PENDENCIAS_20260909.md",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/continuity_20260909/local-root/LEIA_PRIMEIRO.md",
+    "line": 29,
+    "target": "pesquisa-20260909/docs/NEXT_CHAT_PROMPT.md",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto",
+    "local_target": "C:\\Cripto\\pesquisa-20260909\\docs\\NEXT_CHAT_PROMPT.md",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/continuity_20260909/local-root/LEIA_PRIMEIRO.md",
+    "line": 35,
+    "target": "pesquisa-20260909/docs/PRONTIDAO_DADOS.md",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto",
+    "local_target": "C:\\Cripto\\pesquisa-20260909\\docs\\PRONTIDAO_DADOS.md",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/continuity_20260909/local-root/LEIA_PRIMEIRO.md",
+    "line": 37,
+    "target": "operacao/relatorios/FECHAMENTO_PENDENCIAS_20260909/VALIDACAO_FINAL.json",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\FECHAMENTO_PENDENCIAS_20260909\\VALIDACAO_FINAL.json",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/continuity_20260909/local-root/LEIA_PRIMEIRO.md",
+    "line": 39,
+    "target": "operacao/relatorios/ATUALIZACAO_INVESTIDOR_20260909_FINAL.md",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\ATUALIZACAO_INVESTIDOR_20260909_FINAL.md",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 218,
+    "target": "baseline_defect_witnesses.json",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\baseline_defect_witnesses.json",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 219,
+    "target": "live/result.json",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\live\\result.json",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 221,
+    "target": "release_validation.json",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\release_validation.json",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 222,
+    "target": "work/run_checks.py",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\work\\run_checks.py",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 222,
+    "target": "work/wheel_check.py",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\work\\wheel_check.py",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 222,
+    "target": "baseline/validation.json",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\baseline\\validation.json",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 222,
+    "target": "final02/validation.json",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\final02\\validation.json",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 222,
+    "target": "postmerge01/validation.json",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\postmerge01\\validation.json",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 222,
+    "target": "integration.json",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\integration.json",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 223,
+    "target": "work/rebuild_altcoins.py",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\work\\rebuild_altcoins.py",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 223,
+    "target": "altcoin_full_reconstruction.json",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\altcoin_full_reconstruction.json",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 223,
+    "target": "altcoin_selector_audit/audit.json",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\altcoin_selector_audit\\audit.json",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 224,
+    "target": "work/economic_reconciliation.py",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\work\\economic_reconciliation.py",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 224,
+    "target": "absolute_decimal_audit.json",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\absolute_decimal_audit.json",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 224,
+    "target": "basis_decimal_audit.json",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\basis_decimal_audit.json",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 224,
+    "target": "basis_recovered_source_audit.json",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\basis_recovered_source_audit.json",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 224,
+    "target": "immediate_decimal_audit.json",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\immediate_decimal_audit.json",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 224,
+    "target": "economic_reconciliation.json",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\economic_reconciliation.json",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 225,
+    "target": "aave_1rpc/scope.json",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\aave_1rpc\\scope.json",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 225,
+    "target": "work/observer_state.py",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\work\\observer_state.py",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 225,
+    "target": "aave_1rpc/02.json",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\aave_1rpc\\02.json",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 225,
+    "target": "observer_state_review.json",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\observer_state_review.json",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 252,
+    "target": "pr110/combined_h6_check.json",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\pr110\\combined_h6_check.json",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 256,
+    "target": "pr110/targeted_head_tests.log",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\pr110\\targeted_head_tests.log",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 256,
+    "target": "pr110/github_review_evidence.json",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\pr110\\github_review_evidence.json",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 256,
+    "target": "pr110/diff_from_main.patch",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\pr110\\diff_from_main.patch",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 260,
+    "target": "pr110/package_audit.json",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\pr110\\package_audit.json",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 260,
+    "target": "pr110/recovery_probes.json",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\pr110\\recovery_probes.json",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 272,
+    "target": "closure110/ci_pr.json",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\closure110\\ci_pr.json",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 272,
+    "target": "closure110/ci_main.json",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\closure110\\ci_main.json",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 272,
+    "target": "postmerge02/validation.json",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\postmerge02\\validation.json",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 272,
+    "target": "closure110/operational_update.json",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\closure110\\operational_update.json",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 272,
+    "target": "closure110/publication_verification.json",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\closure110\\publication_verification.json",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 272,
+    "target": "closure110/final01/wheel_contract.json",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\closure110\\final01\\wheel_contract.json",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 284,
+    "target": "closure110/branch_protection.json",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\closure110\\branch_protection.json",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 286,
+    "target": "closure110/final02/validation.json",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\closure110\\final02\\validation.json",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 295,
+    "target": "manual_dependencies/result.json",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\manual_dependencies\\result.json",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 295,
+    "target": "manual_dependencies/market_calendar_audit.json",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\manual_dependencies\\market_calendar_audit.json",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 295,
+    "target": "manual_dependencies/aave_onfinality.json",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\manual_dependencies\\aave_onfinality.json",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 295,
+    "target": "manual_dependencies/h5_git_history.json",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\manual_dependencies\\h5_git_history.json",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 295,
+    "target": "manual_dependencies/carry_status.json",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\manual_dependencies\\carry_status.json",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 301,
+    "target": "manual_dependencies/coingecko_before.json",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\manual_dependencies\\coingecko_before.json",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 309,
+    "target": "manual_final02/validation.json",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\manual_final02\\validation.json",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 309,
+    "target": "postmerge_manual03/validation.json",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\postmerge_manual03\\validation.json",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 309,
+    "target": "manual_dependencies/ci_pr.json",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\manual_dependencies\\ci_pr.json",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 309,
+    "target": "manual_dependencies/ci_main.json",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\manual_dependencies\\ci_main.json",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 309,
+    "target": "manual_final02/wheel_contract.json",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\manual_final02\\wheel_contract.json",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 315,
+    "target": "executors_baseline01/validation.json",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\executors_baseline01\\validation.json",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 315,
+    "target": "executors_target03/targeted.log",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\executors_target03\\targeted.log",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 315,
+    "target": "executor_dependencies/scope.json",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\executor_dependencies\\scope.json",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 315,
+    "target": "executor_dependencies/llm-preparation-v2.json",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\executor_dependencies\\llm-preparation-v2.json",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 315,
+    "target": "executor_dependencies/llm-status-v2.json",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\executor_dependencies\\llm-status-v2.json",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 323,
+    "target": "executor_preflight01/result.json",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\executor_preflight01\\result.json",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 323,
+    "target": "executor_preflight02/result.json",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\executor_preflight02\\result.json",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 327,
+    "target": "executor_dependencies/artifact-inventory.json",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\executor_dependencies\\artifact-inventory.json",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 331,
+    "target": "executor_dependencies/provider_access.json",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\executor_dependencies\\provider_access.json",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 333,
+    "target": "executors_final03/validation.json",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\executors_final03\\validation.json",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 333,
+    "target": "postmerge_executors01/validation.json",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\postmerge_executors01\\validation.json",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 333,
+    "target": "executor_dependencies/ci_pr.json",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\executor_dependencies\\ci_pr.json",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 333,
+    "target": "executor_dependencies/ci_main.json",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\executor_dependencies\\ci_main.json",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 351,
+    "target": "executor_dependencies/aave-publication-tests.xml",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\executor_dependencies\\aave-publication-tests.xml",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 361,
+    "target": "expansion_baseline01/validation.json",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\expansion_baseline01\\validation.json",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 363,
+    "target": "expansion_full03/validation.json",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\expansion_full03\\validation.json",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 373,
+    "target": "expansion_budget_incident/result.json",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\expansion_budget_incident\\result.json",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 379,
+    "target": "expansion_llm_status_v3.json",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\expansion_llm_status_v3.json",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 379,
+    "target": "expansion_carry_status.json",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\expansion_carry_status.json",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 381,
+    "target": "expansion_ci_pr_final.json",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\expansion_ci_pr_final.json",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 383,
+    "target": "expansion_ci_main.json",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\expansion_ci_main.json",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 385,
+    "target": "expansion_operational.json",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\expansion_operational.json",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 387,
+    "target": "postmerge_expansion01/validation.json",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\postmerge_expansion01\\validation.json",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 389,
+    "target": "expansion_full03/wheel_contract.json",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\expansion_full03\\wheel_contract.json",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 389,
+    "target": "expansion_full03/dependency_consistency.log",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\expansion_full03\\dependency_consistency.log",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 403,
+    "target": "closure_before01/status.json",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\closure_before01\\status.json",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 403,
+    "target": "closure_before01/tests.log",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\closure_before01\\tests.log",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 403,
+    "target": "closure_after01/status.json",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\closure_after01\\status.json",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 451,
+    "target": "closure_audit/during_validation.json",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\closure_audit\\during_validation.json",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 451,
+    "target": "closure_full01/validation.json",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\closure_full01\\validation.json",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 451,
+    "target": "closure_audit/ci_pr_final.json",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\closure_audit\\ci_pr_final.json",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 451,
+    "target": "closure_audit/ci_main.json",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\closure_audit\\ci_main.json",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 451,
+    "target": "closure_final02/status.json",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\closure_final02\\status.json",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 451,
+    "target": "postmerge_closure01/validation.json",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\postmerge_closure01\\validation.json",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 451,
+    "target": "closure_audit/premerge.json",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\closure_audit\\premerge.json",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 451,
+    "target": "closure_full01/wheel_contract.json",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\closure_full01\\wheel_contract.json",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 453,
+    "target": "closure_audit/integration.json",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\closure_audit\\integration.json",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 453,
+    "target": "closure_audit/after_validation.json",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\closure_audit\\after_validation.json",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 472,
+    "target": "remaining_six_20260910/snapshot/prepared.json",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\remaining_six_20260910\\snapshot\\prepared.json",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 472,
+    "target": "remaining_six_20260910/snapshot/applied.json",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\remaining_six_20260910\\snapshot\\applied.json",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 472,
+    "target": "remaining_six_20260910/snapshot/payload.json",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\remaining_six_20260910\\snapshot\\payload.json",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 472,
+    "target": "work/recover_operational_snapshot.py",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\work\\recover_operational_snapshot.py",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 482,
+    "target": "remaining_six_20260910/aave_second_source/protocol.json",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\remaining_six_20260910\\aave_second_source\\protocol.json",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 482,
+    "target": "remaining_six_20260910/aave_second_source/offline_validation.json",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\remaining_six_20260910\\aave_second_source\\offline_validation.json",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 482,
+    "target": "remaining_six_20260910/aave_status.json",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\remaining_six_20260910\\aave_status.json",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 484,
+    "target": "remaining_six_20260910/historical_recovery_routes.json",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\remaining_six_20260910\\historical_recovery_routes.json",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 486,
+    "target": "closure_audit/remaining_six_after.json",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\closure_audit\\remaining_six_after.json",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 486,
+    "target": "remaining_six_20260910/carry_status.json",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\remaining_six_20260910\\carry_status.json",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 486,
+    "target": "remaining_six_20260910/llm_status.json",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\remaining_six_20260910\\llm_status.json",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  },
+  {
+    "file": "docs/evidence/remaining_dependencies_20260910/review_snapshot.md",
+    "line": 486,
+    "target": "remaining_six_20260910/access_check.json",
+    "kind": "missing_local_target",
+    "origin_directory": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909",
+    "local_target": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\remaining_six_20260910\\access_check.json",
+    "local_target_exists": true,
+    "disposition": "preserved_historical_bytes_use_original_base"
+  }
+]

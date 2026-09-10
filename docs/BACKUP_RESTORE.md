@@ -1,45 +1,31 @@
-# Backup e restore do Feature Store
+# Backup e restauração do Feature Store
 
-O banco `output/feature_store.db` e um artefato operacional ignorado pelo Git.
-O utilitario `scripts/feature_store_backup.py` cria snapshots consistentes pela
-API de backup online do SQLite, inclusive quando o banco usa WAL.
+Neste PC, o banco ativo é `C:\Cripto\operacao\saidas\feature_store.db`. Ele é ignorado pelo Git. O utilitário [feature_store_backup.py](../scripts/feature_store_backup.py) usa a API de backup online do SQLite, inclusive em WAL, e publica a cópia somente após verificar sua integridade.
 
-## Criar e verificar
+## Criar, verificar e testar a restauração
 
-Use um destino fora do repositorio, idealmente em outro volume com politica de
-retencao definida pelo operador:
+Execute pelo perfil local. Os destinos precisam ser novos e permanecer em `C:\Cripto`:
 
 ```powershell
-py -3.14 scripts/feature_store_backup.py create --output E:\backups\cripto\2026-07-20
-py -3.14 scripts/feature_store_backup.py verify --backup E:\backups\cripto\2026-07-20
+$backupStamp = Get-Date -Format 'yyyyMMdd-HHmmss-fff'
+$backupPath = "C:\Cripto\backups\feature-store-$backupStamp"
+$restorePath = "C:\Cripto\operacao\temporarios\restore-feature-store-$backupStamp"
+C:\Cripto\CRIPTO.cmd python -m scripts.feature_store_backup create --database C:\Cripto\operacao\saidas\feature_store.db --output $backupPath
+if ($LASTEXITCODE -ne 0) { throw 'Falha ao criar backup' }
+C:\Cripto\CRIPTO.cmd python -m scripts.feature_store_backup verify --backup $backupPath
+if ($LASTEXITCODE -ne 0) { throw 'Falha ao verificar backup' }
+C:\Cripto\CRIPTO.cmd python -m scripts.feature_store_backup restore --backup $backupPath --destination $restorePath
+if ($LASTEXITCODE -ne 0) { throw 'Falha ao testar restauração' }
 ```
 
-O comando recusa um destino existente. O diretorio so e publicado depois de
-`PRAGMA integrity_check=ok` e contem:
+O backup contém `feature_store.db` independente de WAL/SHM e `BACKUP_MANIFEST.json` com versão, instante UTC, tamanho e SHA-256. A verificação compara o manifesto e executa `PRAGMA integrity_check`. A restauração recusa destino existente e produz `DESTINO\output\feature_store.db`; ela não substitui o banco ativo.
 
-- `feature_store.db`, sem arquivos WAL/SHM dependentes;
-- `BACKUP_MANIFEST.json`, com versao do formato, timestamp UTC, tamanho e
-  SHA-256 do banco.
+Depois, consulte a cópia restaurada em modo somente leitura e compare o conteúdo com o backup. O banco ativo pode ter avançado após a captura; compare com o instante registrado, não apenas com uma contagem antiga da documentação. A conferência de 10/09 inclui um teste de restauração no [registro de arquivos](CONFERENCIA_ARQUIVOS_20260910.md).
 
-## Restaurar sem tocar producao
+## O que este backup cobre
 
-O restore aceita somente uma raiz que ainda nao exista:
+Esta ferramenta cobre somente o Feature Store. A recuperação completa também depende do código Git, runtimes congelados, dados brutos, protocolos, diários, relatórios, configuração privada e banco `C:\Cripto\operacao\dados\api_guard_budget.db`. Preserve o estado das quotas; não apague, zere ou restaure uma versão antiga desse banco para contornar o orçamento.
 
-```powershell
-py -3.14 scripts/feature_store_backup.py restore `
-  --backup E:\backups\cripto\2026-07-20 `
-  --destination C:\restore-tests\previsao-cripto-20260720
-```
+O [mapa local](CONFIGURACAO_LOCAL.md), a [conferência de arquivos](CONFERENCIA_ARQUIVOS_20260910.md) e o [pacote histórico](continuity_20260909/README.md) identificam esses componentes e seus cortes. O pacote original e os arquivos restaurados são preservados integralmente. Não restaure sobre a instalação existente.
 
-O banco restaurado fica em `DESTINO\output\feature_store.db`. A copia e feita
-em diretorio temporario, passa novamente por `integrity_check` e so entao e
-renomeada para o destino final. O utilitario nunca sobrescreve o banco ativo.
-
-## Retencao e teste periodico
-
-A ferramenta resolve criacao, integridade e recuperacao local. Frequencia,
-retencao, criptografia e volume externo continuam sendo decisoes operacionais
-humanas. Um teste periodico deve criar o backup, verifica-lo, restaura-lo para
-uma raiz descartavel e consultar o banco restaurado em modo read-only.
-
-
+Backups nesta raiz compartilham o mesmo disco; eles não protegem contra sua perda física. O mandato atual mantém todo o armazenamento do projeto em `C:\Cripto` e não ativa rotina automática de backup. Retenção ou uma cópia externa exigem uma decisão específica; isso não impede o uso das cópias locais verificadas.

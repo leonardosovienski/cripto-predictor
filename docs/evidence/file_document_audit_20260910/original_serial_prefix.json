@@ -1,0 +1,16 @@
+{
+  "started_at_utc": "2026-09-10T21:29:44Z",
+  "first_files_verified": 50000,
+  "failures": 0,
+  "manifest_order": "C:\\Cripto\\MANIFESTO.json files, indices 0 through 49999",
+  "validator": "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\work\\verify_original_files_20260910.py",
+  "observed_stdout_checkpoints": [
+    10000,
+    20000,
+    30000,
+    40000,
+    50000
+  ],
+  "evidence": "Each serial validator stdout checkpoint returned failures=0 in exec session 62705. The process was paused by termination after these completed read-only checks; no restoration or edit occurred. The remaining manifest entries and runtimes are verified independently by finish_original_verification_20260910.py.",
+  "reason_for_resume": "Serial Windows file opening became slow; py-spy sample shows pathlib open. Preserve the completed prefix and check the tail using bounded read concurrency."
+}

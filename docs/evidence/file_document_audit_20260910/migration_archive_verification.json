@@ -1,0 +1,16 @@
+{
+  "started_at_utc": "2026-09-10T21:41:01.048069+00:00",
+  "expected_unique_objects": 22817,
+  "objects_verified": 22817,
+  "guide_copies_identical": [
+    "MANIFESTO.json",
+    "LEIA-ME.md",
+    "validar.py",
+    "RETOMAR_NO_CODEX.md"
+  ],
+  "files_written_to_restored": 0,
+  "status": "PASS",
+  "finished_at_utc": "2026-09-10T21:41:24.475813+00:00",
+  "archive_bytes": 1573493127,
+  "scope": "Every ZIP object matches its original manifest SHA-256; no extraction, execution or restoration was performed."
+}

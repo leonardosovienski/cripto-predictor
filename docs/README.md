@@ -1,5 +1,7 @@
 # Índice da documentação
 
+Comece pela [conferência de arquivos de 10/09](CONFERENCIA_ARQUIVOS_20260910.md) e por [CONTINUAR_AQUI.md](../CONTINUAR_AQUI.md). Esses índices distinguem operação atual, backups e registros históricos.
+
 A [auditoria ampliada de 10/09](AUDITORIA_AMPLIADA_20260910.md) registra as correções posteriores de fontes, temporalidade, execução simulada, persistência e estatística. Consulte-a antes de reutilizar dados, modelos ou conclusões de documentos anteriores.
 
 A rodada de 10/09 está em [Aave: validação histórica, custos e execução](AAVE_VALIDACAO_20260910.md). Ela apresenta resultados positivos condicionais com o capital integralmente reconciliado, sem declarar lucro pessoal ou futuro comprovado.
@@ -15,7 +17,7 @@ A rodada de 10/09 está em [Aave: validação histórica, custos e execução](A
 - [Configuração deste PC em C:\Cripto](CONFIGURACAO_LOCAL.md): mapa operacional vigente; substitui caminhos de máquinas anteriores para qualquer nova execução.
 - [Rodada econômica de 09/09](evidence/economic_round_20260909/RESULTADOS.md): resultados, limitações e condições de retomada.
 
-- [Estado da pesquisa](CURRENT_RESEARCH_STATE_20260908.md): conclusão econômica, correções e pendências atuais.
+- [Estado da pesquisa em 08/09](CURRENT_RESEARCH_STATE_20260908.md): registro histórico; suas pendências não substituem os adendos de 10/09.
 - [Continuidade de 08/09](SESSION_HANDOFF_20260908.md): Git, validação, observadores, dados e recuperação.
 - [Prompt de continuidade](NEXT_CHAT_PROMPT.md): novo pedido de revisão geral de arquitetura, lógica, testes e resultado econômico, com o estado atualizado das chaves.
 - [Migração para Windows](MIGRACAO_WINDOWS.md): código versionado no Git e dados em pacote externo.
@@ -26,7 +28,7 @@ A rodada de 10/09 está em [Aave: validação histórica, custos e execução](A
 - [Coleta imediata e auditoria](evidence/immediate_audit_20260908/RESULTADOS.md).
 - [Pacotes da pesquisa de 08/09](session_archive_20260908/deliverables/) e [manifesto](session_archive_20260908/DELIVERABLES_SHA256.json).
 - [Sessão histórica de 07/09](SESSION_HANDOFF_20260907.md) e [arquivos preservados](session_archive_20260907/).
-- [Runbook do carry](evidence/carry_forward_20260908/RUNBOOK.md) e [agendamento pendente](evidence/carry_forward_20260908/scheduling.json).
+- [Runbook do carry](evidence/carry_forward_20260908/RUNBOOK.md) e [registro histórico do agendamento](evidence/carry_forward_20260908/scheduling.json).
 
 Os diretórios `evidence/` e `session_archive_*/` preservam decisões e entregas das respectivas etapas. Seus resultados e instruções de execução devem ser interpretados conforme a data e a versão. Não altere arquivos congelados para corrigir uma apresentação histórica; use os documentos de continuidade para a situação atual.
 
@@ -34,7 +36,7 @@ Os diretórios `evidence/` e `session_archive_*/` preservam decisões e entregas
 
 - [Histórico das hipóteses](HYPOTHESES.md) e [estado científico canônico](../charters/scientific_state.json).
 - [Índice do congelamento](../CR_FREEZE_INDEX.md) e [manifesto das famílias anteriores](../CR_RESEARCH_FREEZE.md).
-- [Política de merge](POLITICA_DE_MERGE.md), [backup e restauração](BACKUP_RESTORE.md) e [incidente SerpAPI](SECURITY_INCIDENT_SERPAPI.md).
+- [Política de merge e histórico de incidentes](POLITICA_DE_MERGE.md), [backup e restauração](BACKUP_RESTORE.md) e [registro histórico do incidente SerpAPI](SECURITY_INCIDENT_SERPAPI.md). A segurança da branch está excluída do escopo atual; o dono decidiu manter as chaves atuais. As ações antigas não são requisitos novos de revogação.
 - [Handoff com notas históricas](../HANDOFF.md), [roadmap de agosto](OVERVIEW_E_ROADMAP_2026-08-21.md) e [panorama de agosto](PANORAMA_2026-08-21.md).
 
 H6 e H9 permanecem encerradas por insuficiência de amostra. Os runbooks e prompts antigos de acompanhamento da H6 documentam sua operação passada; não autorizam reiniciar essa coleta. As novas pesquisas têm protocolos separados.

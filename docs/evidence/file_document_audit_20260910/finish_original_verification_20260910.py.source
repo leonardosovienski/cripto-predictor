@@ -1,0 +1,49 @@
+import gc
+import hashlib
+import json
+from concurrent.futures import ThreadPoolExecutor
+from datetime import UTC, datetime
+from pathlib import Path
+
+root = Path(r'C:\Cripto')
+F = root / 'operacao/relatorios/REVISAO_COMPLETA_20260909/organization_20260910'
+manifest = json.loads((root / 'MANIFESTO.json').read_bytes())
+relocations = {x['path']: x['after'] for x in json.loads((root / 'restaurado-20260908/RESTAURACAO.json').read_bytes())['relocated_environment_files']}
+prefix = json.loads((F / 'original_serial_prefix.json').read_bytes())
+assert prefix['first_files_verified'] == 50000 and prefix['failures'] == 0
+assert not (F / 'original_files_verification.private.json').exists()
+entries = [('restored_files', root / 'restaurado-20260908' / x['path'], relocations.get(x['path'], x['sha256'])) for x in manifest['files'][50000:]]
+entries += [('restored_runtime', root / 'restaurado-20260908/runtime' / x['path'], x['sha256']) for x in manifest['runtime_files']]
+entries += [('package_runtime', root / 'runtime' / x['path'], x['sha256']) for x in manifest['runtime_files']]
+del manifest
+gc.collect()
+result = {'started_at_utc': prefix['started_at_utc'], 'parallel_resume_at_utc': datetime.now(UTC).isoformat(),
+          'serial_prefix_files': 50000, 'parallel_remaining_files': len(entries), 'workers': 4,
+          'groups': [{'name': 'restored_files', 'expected': 63632, 'read': 50000}, {'name': 'restored_runtime', 'expected': 2728, 'read': 0}, {'name': 'package_runtime', 'expected': 2728, 'read': 0}],
+          'failures': [], 'relocation_exceptions': list(relocations), 'modified_files': 0,
+          'method': 'First 50000 files verified serially with zero failures in recorded stdout; remaining files and both runtime copies individually hashed by four read-only workers. No file was inferred from a duplicate.'}
+groups = {x['name']: x for x in result['groups']}
+
+def check(entry):
+    label, path, expected = entry
+    try:
+        with path.open('rb') as stream:
+            actual = hashlib.file_digest(stream, 'sha256').hexdigest()
+        return label, str(path.relative_to(root)), None if actual == expected else 'sha256_mismatch'
+    except OSError as exc:
+        return label, str(path.relative_to(root)), type(exc).__name__
+
+with ThreadPoolExecutor(max_workers=4) as pool:
+    for offset in range(0, len(entries), 64):
+        for label, path, error in pool.map(check, entries[offset:offset+64]):
+            if error:
+                result['failures'].append({'group': label, 'path': path, 'error': error})
+            else:
+                groups[label]['read'] += 1
+        (F / 'original_verification_progress.json').write_text(json.dumps(result, indent=2), encoding='utf-8')
+        if offset % 1024 == 0:
+            print(json.dumps({'remaining_checked': min(offset + 64, len(entries)), 'remaining_total': len(entries), 'failures': len(result['failures'])}), flush=True)
+result['finished_at_utc'] = datetime.now(UTC).isoformat()
+result['status'] = 'PASS' if not result['failures'] and all(x['read'] == x['expected'] for x in result['groups']) else 'FAIL'
+(F / 'original_files_verification.private.json').write_text(json.dumps(result, indent=2), encoding='utf-8')
+print(json.dumps(result), flush=True)
