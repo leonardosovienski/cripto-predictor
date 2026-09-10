@@ -6,6 +6,7 @@
 /scripts/paired_llm_source.py -text
 /scripts/recover_aave_history.py -text
 /docs/evidence/dependency_execution_20260910/** -text
+/docs/evidence/aave_validation_20260910/** -text
 /docs/manual_dependencies_20260910/*.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
 /docs/evidence/** whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
 /docs/evidence/absolute_research_20260908/absolute-results-v2/FILES_SHA256.json -text

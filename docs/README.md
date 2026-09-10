@@ -1,5 +1,7 @@
 # Índice da documentação
 
+A rodada de 10/09 está em [Aave: validação histórica, custos e execução](AAVE_VALIDACAO_20260910.md). Ela apresenta resultados positivos condicionais com o capital integralmente reconciliado, sem declarar lucro pessoal ou futuro comprovado.
+
 ## Estado vigente e continuidade
 
 - [Revisão geral de 09/09: contratos e erratas](REVISAO_COMPLETA_20260909.md): ponto de acesso ao registro vivo, auditorias e dependências restantes.

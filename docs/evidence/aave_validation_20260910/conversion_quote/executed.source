@@ -1,0 +1,176 @@
+"""One bounded public order-book capture; no orders or financial credentials."""
+
+import sys
+from datetime import UTC, datetime
+from decimal import Decimal
+from pathlib import Path
+
+import httpx
+
+sys.path.insert(0, r"C:\Cripto\pesquisa-20260909")
+from scripts.recover_aave_history import save
+from scripts.research_io import encoded, sha, strict_json
+
+ROOT = Path(r"C:\Cripto\operacao\dados\aave-conversion-quote-20260910")
+BASE = "https://data-api.binance.vision/api/v3/"
+
+
+def levels(book, side):
+    rows = [(Decimal(p), Decimal(q)) for p, q in book[side]]
+    if not rows or any(not p.is_finite() or not q.is_finite() or min(p, q) <= 0 for p, q in rows):
+        raise ValueError("Invalid order book")
+    prices = [p for p, q in rows]
+    if prices != sorted(set(prices), reverse=side == "bids"):
+        raise ValueError("Book not strictly ordered")
+    return rows
+
+
+def main():
+    ROOT.mkdir(parents=True, exist_ok=False)
+    save(
+        ROOT / "scope.json",
+        {
+            "registered_at": datetime.now(UTC).isoformat(),
+            "max_calls": 4,
+            "max_response_bytes": 2000000,
+            "ingest_units": 1,
+            "retries": 0,
+            "symbols": ["USDCUSDT", "ETHUSDC"],
+            "order_book_limit": 20,
+            "question": "Measure current spread/depth for a hypothetical 5000-USDT conversion and express observed receipt gas in USDC at a current ask; no historical fee substitution.",
+            "fee_scenarios_per_side": ["0.001", "0.002"],
+            "fee_note": "Explicit scenarios; account/pair-specific fee, deposit/withdrawal/bridge/tax remain unknown.",
+            "source_reference": "https://github.com/binance/binance-spot-api-docs/blob/master/faqs/market_data_only.md",
+            "collector_sha256": sha(Path(__file__).read_bytes()),
+            "capital_permission": False,
+        },
+    )
+    (ROOT / "executed.source").write_bytes(Path(__file__).read_bytes())
+    from GarimpoInvestimentos.config import settings
+    from GarimpoInvestimentos.core.api_guard import allow
+
+    if (
+        not settings.API_GUARD_ENABLED
+        or settings.API_GUARD_MAX_INGEST_ASSETS != 28
+        or not allow("ingest", "assets", 28).allowed
+    ):
+        raise ValueError("Shared ingestion guard unavailable")
+    client = httpx.Client(timeout=15, trust_env=False, follow_redirects=False)
+    calls = 0
+    bytecount = 0
+
+    def get(path, params=None):
+        nonlocal calls, bytecount
+        if calls >= 4:
+            raise ValueError("Call budget")
+        calls += 1
+        start = datetime.now(UTC)
+        record = {"url": BASE + path, "params": params, "started_at": start.isoformat()}
+        body = bytearray()
+        try:
+            with client.stream("GET", BASE + path, params=params) as response:
+                record["status"] = response.status_code
+                for chunk in response.iter_bytes(chunk_size=65536):
+                    body.extend(chunk)
+                    bytecount += len(chunk)
+                    if bytecount > 2000000:
+                        raise ValueError("Byte budget")
+                record["response"] = strict_json(bytes(body))
+                response.raise_for_status()
+        finally:
+            record.update(received_at=datetime.now(UTC).isoformat(), raw_sha256=sha(bytes(body)))
+            save(ROOT / f"{calls:02}.json", record)
+        return record["response"]
+
+    try:
+        first = get("time")
+        stable = get("depth", {"symbol": "USDCUSDT", "limit": 20})
+        ether = get("depth", {"symbol": "ETHUSDC", "limit": 20})
+        last = get("time")
+        if not 0 <= last["serverTime"] - first["serverTime"] <= 60000:
+            raise ValueError("Quote acquisition too wide")
+        if abs(datetime.now(UTC).timestamp() * 1000 - last["serverTime"]) > 60000:
+            raise ValueError("Server freshness")
+        bids, asks = levels(stable, "bids"), levels(stable, "asks")
+        ebids, easks = levels(ether, "bids"), levels(ether, "asks")
+        if bids[0][0] >= asks[0][0] or ebids[0][0] >= easks[0][0]:
+            raise ValueError("Crossed book")
+        cases = []
+        for fee in (Decimal(".001"), Decimal(".002")):
+            remaining = Decimal(5000)
+            acquired = Decimal(0)
+            for price, quantity in asks:
+                spend = min(remaining, price * quantity)
+                acquired += spend / price
+                remaining -= spend
+            if remaining:
+                raise ValueError("Insufficient ask depth")
+            acquired *= 1 - fee
+            qty = acquired
+            proceeds = Decimal(0)
+            for price, quantity in bids:
+                trade = min(qty, quantity)
+                proceeds += trade * price
+                qty -= trade
+            if qty:
+                raise ValueError("Insufficient bid depth")
+            proceeds *= 1 - fee
+            cases.append(
+                {
+                    "per_side_fee_scenario": str(fee),
+                    "initial_usdt": "5000",
+                    "acquired_usdc": str(acquired),
+                    "immediate_roundtrip_usdt": str(proceeds),
+                    "roundtrip_loss_usdt": str(5000 - proceeds),
+                    "limit": "Visible depth arithmetic with same snapshot; not fills, queue priority, historical conversion or future exit rate; ignores account min-order/grid and withdrawal/bridge/tax costs.",
+                }
+            )
+        receipts = strict_json(
+            (
+                Path(r"C:\Cripto\operacao\dados\aave-execution-receipts-20260910-r2")
+                / "result.json"
+            ).read_bytes()
+        )
+        gas = [
+            {
+                "kind": r["kind"],
+                "fee_eth": r["transaction_gas_fee_eth"],
+                "fee_usdc_at_current_ask": str(Decimal(r["transaction_gas_fee_eth"]) * easks[0][0]),
+                "limit": "Current ETHUSDC valuation of earlier receipt fee; not timestamp-matched historical valuation or full supply roundtrip fee.",
+            }
+            for r in receipts["selected"]
+        ]
+        result = {
+            "status": "COMPLETE",
+            "calls": calls,
+            "bytes": bytecount,
+            "stable_best_bid": str(bids[0][0]),
+            "stable_best_ask": str(asks[0][0]),
+            "eth_usdc_best_ask": str(easks[0][0]),
+            "cases": cases,
+            "gas_valuations": gas,
+            "future_profit_validated": False,
+        }
+        save(ROOT / "result.json", result)
+        print(encoded(result).decode())
+    except Exception as exc:
+        save(
+            ROOT / "result.json",
+            {
+                "status": "INCOMPLETE",
+                "calls": calls,
+                "bytes": bytecount,
+                "error_type": type(exc).__name__,
+            },
+        )
+        raise
+    finally:
+        client.close()
+        save(
+            ROOT / "manifest.json",
+            {p.name: sha(p.read_bytes()) for p in ROOT.iterdir() if p.is_file()},
+        )
+
+
+if __name__ == "__main__":
+    main()

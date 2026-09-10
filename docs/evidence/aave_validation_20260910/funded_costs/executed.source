@@ -1,0 +1,112 @@
+"""Conservative correction: all registered costs funded inside total capital."""
+
+import sys
+from datetime import UTC, datetime
+from decimal import Decimal
+from fractions import Fraction
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).parent))
+import research_aave_extended as prior
+
+ROOT = Path(r"C:\Cripto\operacao\dados\aave-validation-20260910-funded-costs")
+
+
+def fmt(units):
+    return str(Decimal(units) / 10**6)
+
+
+def main():
+    ROOT.mkdir(parents=True, exist_ok=False)
+    prior.save(
+        ROOT / "accounting-amendment.json",
+        {
+            "registered_at": datetime.now(UTC).isoformat(),
+            "parent": str(prior.ROOT),
+            "reason": "Prior calculations accrued interest on the entire 5000-USDC principal and subtracted costs afterward, without funding their timing. To keep total committed capital at 5000, reserve all costs at entry and lend only the remainder. This reduces gains; original evidence is preserved.",
+            "new_data": False,
+            "new_strategy": False,
+            "accounting_variants": 1,
+            "same_windows_and_cost_grid": True,
+            "cost_cash_timing": "All execution, infrastructure and each extra-cost scenario reserved at entry, no interest on reserve; all spent by exit. Round reserves upward to micro-USDC.",
+            "unknown_personal_costs": "Still unknown; extra-cost grid is conditional sensitivity, not actual costs or assumed zero.",
+            "source_sha256": prior.sha(Path(__file__).read_bytes()),
+            "parent_protocol_sha256": prior.sha((prior.ROOT / "protocol.json").read_bytes()),
+            "parent_results_sha256": prior.sha((prior.ROOT / "economic-results.json").read_bytes()),
+        },
+    )
+    (ROOT / "executed.source").write_bytes(Path(__file__).read_bytes())
+    history = prior.strict_json((prior.ROOT / "history.json").read_bytes())
+    indexes = {r["boundary_utc"]: int(r["normalized_income_ray"]) for r in history}
+    original = prior.strict_json((prior.ROOT / "economic-results.json").read_bytes())
+    result = []
+    for case in original["cases"]:
+        for scenario in case["scenarios"]:
+            for extra in prior.EXTRA_COSTS:
+                cost = Fraction(scenario["execution_usdc"] + extra) + Fraction(
+                    25 * case["days"], 365
+                )
+                microcost = cost * 10**6
+                reserve = -(-microcost.numerator // microcost.denominator)
+                initial = case["capital_usdc"] * 10**6
+                principal = initial - reserve
+                if principal <= 0:
+                    raise ValueError("Cost grid exceeds total capital")
+                i, j = indexes[case["start"]], indexes[case["end"]]
+                end_balance = prior.integer_balance(principal, i, j)
+                assert end_balance == prior.fraction_balance(principal, i, j)
+                gross, net = end_balance - principal, end_balance - initial
+                assert initial == reserve + principal
+                assert net == gross - reserve
+                assert Fraction(gross, 10**6) <= Fraction(case["gross_interest_usdc"])
+                result.append(
+                    {
+                        "kind": case["kind"],
+                        "start": case["start"],
+                        "end": case["end"],
+                        "days": case["days"],
+                        "total_capital_usdc": case["capital_usdc"],
+                        "execution_cost_usdc": scenario["execution_usdc"],
+                        "additional_cost_scenario_usdc": extra,
+                        "reserved_costs_usdc": fmt(reserve),
+                        "lent_principal_usdc": fmt(principal),
+                        "gross_interest_usdc": fmt(gross),
+                        "final_equity_usdc": fmt(end_balance),
+                        "net_after_registered_costs_usdc": fmt(net),
+                        "entry_exit_snapshot_gate": case["entry_snapshot_permits_supply"]
+                        and case["exit_snapshot_permits_redemption"],
+                        "loss_5pct_exit_equivalent_usdc": str(
+                            Fraction(end_balance * 95, 100 * 10**6) - Fraction(initial, 10**6)
+                        ),
+                        "personal_profit_validated": False,
+                    }
+                )
+    primary = [
+        r
+        for r in result
+        if r["kind"] == "primary_annual"
+        and r["total_capital_usdc"] == 5000
+        and r["execution_cost_usdc"] == 30
+        and r["additional_cost_scenario_usdc"] == 0
+    ]
+    summary = {
+        "funded_historical_gate_passed": all(
+            Decimal(r["net_after_registered_costs_usdc"]) > 0 and r["entry_exit_snapshot_gate"]
+            for r in primary
+        ),
+        "primary": primary,
+        "cashflow_reconciliations": len(result),
+        "cases": result,
+        "future_profit_validated": False,
+        "personal_profit_validated": False,
+    }
+    prior.save(ROOT / "results.json", summary)
+    prior.save(
+        ROOT / "manifest.json",
+        {p.name: prior.sha(p.read_bytes()) for p in ROOT.iterdir() if p.is_file()},
+    )
+    print(prior.encoded({k: v for k, v in summary.items() if k != "cases"}).decode())
+
+
+if __name__ == "__main__":
+    main()

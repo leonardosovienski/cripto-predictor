@@ -1,0 +1,333 @@
+"""Pre-registered read-only acquisition and offline economic validation."""
+
+from __future__ import annotations
+
+import argparse
+import sys
+from datetime import UTC, datetime
+from decimal import Decimal, localcontext
+from fractions import Fraction
+from pathlib import Path
+
+PROJECT = Path(r"C:\Cripto\pesquisa-20260909")
+sys.path.insert(0, str(PROJECT))
+from scripts import recover_aave_history as source
+from scripts.research_io import encoded, sha, strict_json
+
+ROOT = Path(r"C:\Cripto\operacao\dados\aave-validation-20260910-r1")
+DATES = [datetime(2024 + (5 + i) // 12, (5 + i) % 12 + 1, 1, tzinfo=UTC) for i in range(25)]
+CAPITALS = (1000, 5000, 25000)
+EXECUTION_COSTS = (2, 10, 30)
+EXTRA_COSTS = (0, 25, 100, 250)
+SHOCKS = ("0", "0.005", "0.01", "0.05", "1")
+
+
+def save(path, value):
+    source.save(path, value)
+
+
+def fingerprints():
+    return {
+        str(p.relative_to(PROJECT)) if p.is_relative_to(PROJECT) else p.name: sha(p.read_bytes())
+        for p in (
+            Path(__file__),
+            PROJECT / "scripts/recover_aave_history.py",
+            PROJECT / "scripts/research_io.py",
+            PROJECT / "uv.lock",
+        )
+    }
+
+
+def prepare():
+    ROOT.mkdir(parents=True, exist_ok=False)
+    (ROOT / "raw").mkdir()
+    protocol = {
+        "id": "AAVE-EXTENDED-20260910-R1",
+        "registered_at_utc": datetime.now(UTC).isoformat(),
+        "mechanism": "Borrowers pay variable interest; native USDC supplied without borrowing, leverage or reward valuation.",
+        "reason_for_extension": "Original 84-day history became accessible and showed positive modeled interest; assess duration, other regimes, costs and exit capacity.",
+        "known_before_registration": "Original 2026-06-17 to 2026-09-09 Aave results and previous AR1/AR2/BR1/V3/AR3 findings were read. Earlier Aave state in this fixed new interval was not queried in this round. Selection is adaptive across project research; this is not prospective confirmation.",
+        "universe": {
+            "chain_id": 42161,
+            "pool": source.POOL,
+            "native_usdc": source.ASSET,
+            "a_token": source.ATOKEN,
+        },
+        "boundaries_utc": [d.isoformat() for d in DATES],
+        "primary_horizon_months": 12,
+        "primary_windows": [[0, 12], [12, 24]],
+        "diagnostics": "Entire 24 months, eight fixed nonoverlapping quarters, 24 single months, 13 overlapping rolling years; no best start or duration selection.",
+        "capital_usdc": list(CAPITALS),
+        "execution_cost_usdc_per_roundtrip": list(EXECUTION_COSTS),
+        "infrastructure_usdc_per_365_days": 25,
+        "additional_total_cost_usdc": list(EXTRA_COSTS),
+        "cost_semantics": "Execution totals cover supply approval/supply/withdraw gas and protocol access scenario; infrastructure is separate. Extra totals cover bridge/conversion/personal/tax sensitivities, not known actual costs. Principal already native USDC on Arbitrum. No USDT/USD/BRL parity assumed.",
+        "exit_value_loss_fraction_stresses": list(SHOCKS),
+        "historical_candidate_gate": "At 5000 USDC, both fixed annual windows positive after execution 30 plus 25 per 365 days infrastructure; entry identity/config/cap and observed exit cash/config valid. This gate is not future-profit validation or a statistical significance claim.",
+        "budget": {
+            "hypotheses_active": 1,
+            "alternative": "AR1 parked; no new experiment",
+            "rpc_calls_max": 500,
+            "response_bytes_max": 20000000,
+            "retries": 0,
+            "ingest_units": 1,
+            "market_get_calls_max": 0,
+            "sources_max": 1,
+            "recalibration_variants": 0,
+        },
+        "source_url": source.ENDPOINT,
+        "free_access_evidence": "https://www.alchemy.com/rpc/arbitrum",
+        "withdrawal_reference": "https://aave.com/help/supplying/withdraw-tokens",
+        "code_hashes": fingerprints(),
+        "capital_permission": False,
+        "scheduled": False,
+        "remaining_validation": "Monthly liquidity is not a fill simulation or proof of uninterrupted exits. Independent future observation and actual applicable costs are needed for personal executable profit. Two disjoint years do not establish statistical power.",
+    }
+    save(ROOT / "protocol.json", protocol)
+    (ROOT / "executed.source").write_bytes(Path(__file__).read_bytes())
+    print(
+        encoded(
+            {
+                "registered": protocol["id"],
+                "hash": sha((ROOT / "protocol.json").read_bytes()),
+                "boundaries": len(DATES),
+            }
+        ).decode()
+    )
+
+
+def collect():
+    protocol = strict_json((ROOT / "protocol.json").read_bytes())
+    if protocol["code_hashes"] != fingerprints() or list((ROOT / "raw").iterdir()):
+        raise ValueError("Frozen code changed or attempt already exists")
+    from GarimpoInvestimentos.config import settings
+    from GarimpoInvestimentos.core.api_guard import allow
+
+    if not settings.API_GUARD_ENABLED or settings.API_GUARD_MAX_INGEST_ASSETS != 28:
+        raise ValueError("Shared ingestion guard unavailable")
+    if not allow("ingest", "assets", 28).allowed:
+        raise ValueError("Shared ingestion budget exhausted")
+    rpc, rows = source.RPC(ROOT / "raw"), []
+    save(
+        ROOT / "acquisition-start.json",
+        {
+            "time": datetime.now(UTC).isoformat(),
+            "protocol_sha256": sha((ROOT / "protocol.json").read_bytes()),
+        },
+    )
+    try:
+        if int(rpc.call("eth_chainId", []), 16) != 42161:
+            raise ValueError("Wrong chain")
+        latest = rpc.header("finalized")
+        if not 0 <= datetime.now(UTC).timestamp() - latest["timestamp"] <= 86400:
+            raise ValueError("Finalized block not fresh")
+        lo, hi = 1, latest["number"]
+        for i, target in enumerate(DATES):
+            header, successor = source.boundary(rpc, int(target.timestamp()), lo, hi)
+            row = source.reserve(rpc, header)
+            row.update(boundary_utc=target.isoformat(), successor=successor)
+            save(ROOT / f"month-{i:02}.json", row)
+            rows.append(row)
+            lo = header["number"]
+            print(f"Validated boundary {i + 1}/25; calls={rpc.calls}", flush=True)
+        save(ROOT / "current-finalized.json", source.reserve(rpc, latest))
+        save(ROOT / "history.json", rows)
+        save(
+            ROOT / "acquisition-result.json",
+            {
+                "status": "COMPLETE",
+                "calls": rpc.calls,
+                "bytes": rpc.bytes,
+                "boundaries": len(rows),
+                "finished_at": datetime.now(UTC).isoformat(),
+            },
+        )
+    except Exception as exc:
+        save(
+            ROOT / "acquisition-result.json",
+            {
+                "status": "INCOMPLETE",
+                "calls": rpc.calls,
+                "bytes": rpc.bytes,
+                "boundaries": len(rows),
+                "error_type": type(exc).__name__,
+            },
+        )
+        raise
+    finally:
+        rpc.client.close()
+
+
+def integer_balance(principal_units, entry_index, exit_index):
+    if min(principal_units, entry_index, exit_index) <= 0 or exit_index < entry_index:
+        raise ValueError("Invalid balance inputs")
+    return ((principal_units * source.RAY) // entry_index) * exit_index // source.RAY
+
+
+def fraction_balance(principal_units, entry_index, exit_index):
+    # Separately evaluate each rational operation and its floor.
+    scaled = Fraction(principal_units * source.RAY, entry_index)
+    redeem = Fraction(scaled.numerator // scaled.denominator, source.RAY) * exit_index
+    return redeem.numerator // redeem.denominator
+
+
+def calculate(rows):
+    if len(rows) != 25 or [r["boundary_utc"] for r in rows] != [d.isoformat() for d in DATES]:
+        raise ValueError("All fixed boundaries required")
+    for r, d in zip(rows, DATES):
+        if (
+            r["native_usdc"] != source.ASSET
+            or r["a_token"] != source.ATOKEN
+            or r["pool"] != source.POOL
+            or r["decimals"] != 6
+            or not r["timestamp"] <= d.timestamp() < r["successor"]["timestamp"]
+            or r["successor"]["number"] != r["number"] + 1
+            or r["successor"]["parent_hash"] != r["hash"]
+            or abs(int(r["normalized_income_ray"]) - int(r["reconstructed_income_ray"])) > 1
+        ):
+            raise ValueError("History identity/boundary/index failed")
+    indexes = [int(r["normalized_income_ray"]) for r in rows]
+    if any(b < a for a, b in zip(indexes, indexes[1:])):
+        raise ValueError("Decreasing income index")
+    windows = [("primary_annual", 0, 12), ("primary_annual", 12, 24), ("full", 0, 24)]
+    windows += [("quarter", i, i + 3) for i in range(0, 24, 3)]
+    windows += [("month", i, i + 1) for i in range(24)]
+    windows += [("rolling_year_dependent", i, i + 12) for i in range(13)]
+    cases = []
+    with localcontext() as ctx:
+        ctx.prec = 60
+        for kind, start, end in windows:
+            days = (DATES[end] - DATES[start]).days
+            for capital in CAPITALS:
+                principal = capital * 10**6
+                units = integer_balance(principal, indexes[start], indexes[end])
+                if units != fraction_balance(principal, indexes[start], indexes[end]):
+                    raise AssertionError("Independent rational reconciliation failed")
+                gross = Decimal(units - principal) / 10**6
+                infra = Decimal(25) * days / 365
+                first, last = rows[start], rows[end]
+                supply = (
+                    int(first["scaled_supply_units"]) * indexes[start] + source.RAY // 2
+                ) // source.RAY
+                cap = int(first["supply_cap_tokens"]) * 10**6
+                entry_ok = (
+                    first["active"]
+                    and not first["paused"]
+                    and not first["frozen"]
+                    and (not cap or supply + principal <= cap)
+                )
+                exit_ok = (
+                    last["active"]
+                    and not last["paused"]
+                    and int(last["unborrowed_liquidity_units"]) >= units
+                )
+                modeled = [
+                    {
+                        "execution_usdc": cost,
+                        "infrastructure_usdc": str(infra),
+                        "net_before_personal_usdc": str(gross - cost - infra),
+                        "additional_cost_break_even_usdc": str(gross - cost - infra),
+                        "additional_cost_sensitivity": [
+                            {"extra_usdc": extra, "net_usdc": str(gross - cost - infra - extra)}
+                            for extra in EXTRA_COSTS
+                        ],
+                        "exit_value_loss_sensitivity": [
+                            {
+                                "loss_fraction": loss,
+                                "net_usdc_equivalent_scenario": str(
+                                    Decimal(units) / 10**6 * (1 - Decimal(loss))
+                                    - capital
+                                    - cost
+                                    - infra
+                                ),
+                            }
+                            for loss in SHOCKS
+                        ],
+                    }
+                    for cost in EXECUTION_COSTS
+                ]
+                cases.append(
+                    {
+                        "kind": kind,
+                        "start": DATES[start].isoformat(),
+                        "end": DATES[end].isoformat(),
+                        "days": days,
+                        "capital_usdc": capital,
+                        "gross_interest_usdc": str(gross),
+                        "redeem_units_conservative": units,
+                        "entry_snapshot_permits_supply": entry_ok,
+                        "exit_snapshot_permits_redemption": exit_ok,
+                        "min_monthly_cash_usdc": str(
+                            Decimal(
+                                min(
+                                    int(r["unborrowed_liquidity_units"])
+                                    for r in rows[start : end + 1]
+                                )
+                            )
+                            / 10**6
+                        ),
+                        "scenarios": modeled,
+                    }
+                )
+    primary = [c for c in cases if c["kind"] == "primary_annual" and c["capital_usdc"] == 5000]
+    gate = all(
+        c["entry_snapshot_permits_supply"]
+        and c["exit_snapshot_permits_redemption"]
+        and Decimal(c["scenarios"][2]["net_before_personal_usdc"]) > 0
+        for c in primary
+    )
+    return {
+        "protocol_id": "AAVE-EXTENDED-20260910-R1",
+        "cases": cases,
+        "historical_candidate_gate_passed": gate,
+        "evidence_kind": "retrospective fixed-window extension; adaptive candidate selection; no prospective observations",
+        "independent_annual_periods_count": 2,
+        "statistical_power_certified": False,
+        "personal_net_profit": None,
+        "future_profit_validated": False,
+        "actual_fills_observed": False,
+        "reconciliation": "All 144 balance calculations matched independent Fraction floor accounting exactly.",
+        "limitations": [
+            "Monthly state snapshots cannot rule out pauses/liquidity problems between points.",
+            "Gas/execution and infrastructure are registered cost scenarios, not wallet-specific quotes.",
+            "No USDC/USDT/USD/BRL price equivalence assumed; shocks are explicit hypothetical valuation losses.",
+            "No borrowing prevents borrower liquidation here, but contract/stablecoin/custody losses remain possible.",
+            "No p-value or future success probability inferred from overlapping years or only two disjoint years.",
+        ],
+    }
+
+
+def evaluate():
+    protocol = strict_json((ROOT / "protocol.json").read_bytes())
+    if protocol["code_hashes"] != fingerprints():
+        raise ValueError("Frozen code changed")
+    rows = strict_json((ROOT / "history.json").read_bytes())
+    result = calculate(rows)
+    save(ROOT / "economic-results.json", result)
+    save(
+        ROOT / "manifest.json",
+        {
+            p.relative_to(ROOT).as_posix(): sha(p.read_bytes())
+            for p in sorted(ROOT.rglob("*"))
+            if p.is_file()
+        },
+    )
+    print(
+        encoded(
+            {
+                "historical_gate": result["historical_candidate_gate_passed"],
+                "primary": [
+                    c
+                    for c in result["cases"]
+                    if c["kind"] == "primary_annual" and c["capital_usdc"] == 5000
+                ],
+            }
+        ).decode()
+    )
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("mode", choices=("prepare", "collect", "evaluate"))
+    action = parser.parse_args().mode
+    {"prepare": prepare, "collect": collect, "evaluate": evaluate}[action]()
