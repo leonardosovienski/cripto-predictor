@@ -1,5 +1,7 @@
 # Continuar o projeto Cripto
 
+**Atualização mais recente:** [dependências executadas em 10/09](docs/manual_dependencies_20260910/EXECUCAO.md). Histórico Aave recuperado, cálculo de custos executável e executor/avaliador LLM implementado, testado e congelado. Confira os checks e o SHA atual; os cortes dos ZIPs antigos permanecem históricos.
+
 Comece pelo estado Git real e por [RESOLUCAO_PR110.md](docs/continuity_20260909/RESOLUCAO_PR110.md). O código incorpora o PR #111 (909724e), que concluiu a revisão de engenharia. O #110 foi corrigido para preservar essa implementação e completar a continuidade. A captura intermediária de 22:31 UTC permanece no histórico 4ae9e3d.
 
 A etapa posterior está em [retomada manual das dependências](docs/manual_dependencies_20260910/RETOMADA.md): explica os 542 dias de gaps dos 12 pares, corrige volume intradiário ausente e prepara uma janela separada de carry. Segurança da branch foi excluída pelo dono. Os ZIPs de continuidade mantêm seus cortes anteriores; os arquivos desta etapa estão diretamente no Git.

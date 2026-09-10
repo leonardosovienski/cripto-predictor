@@ -12,7 +12,10 @@ PATTERNS = {
     "google": re.compile(r"\bAIza[0-9A-Za-z_-]{20,}\b"),
     "github": re.compile(r"\b(?:ghp|github_pat)_[A-Za-z0-9_]{16,}\b"),
     "credential_assignment": re.compile(
-        r"(?i)(?:api[_-]?key|secret|token|password)\s*[=:]\s*[\"']?([^\s\"'#,]{16,})"
+        r"(?i)(?<![a-z0-9_])"
+        r"(?P<name>(?:[a-z0-9]+[_-])*(?:api[_-]?key|secret|token|password|"
+        r"(?:access|auth|bearer|refresh)token))"
+        r"[\"']?\s*[=:]\s*[\"']?(?P<value>[^\s\"'#,]{16,})"
     ),
 }
 ALLOWLIST = ("test-", "unit-test", "example", "placeholder", "dummy", "fake_", "synthetic", "your_")
@@ -62,6 +65,15 @@ def scan(root: Path) -> list[dict[str, object]]:
             for kind, pattern in PATTERNS.items():
                 for match in pattern.finditer(line):
                     value = match.group(match.lastindex or 0)
+                    # Aave's a_token is a public EVM contract identity. An API
+                    # token containing the same hexadecimal shape is still a
+                    # credential; do not exempt arbitrary addresses or hashes.
+                    if (
+                        kind == "credential_assignment"
+                        and match.group("name").lower() == "a_token"
+                        and re.fullmatch(r"0x[0-9a-fA-F]{40}", value)
+                    ):
+                        continue
                     if (
                         "(" in value
                         or (path.suffix == ".py" and ("." in value or value.endswith(")")))

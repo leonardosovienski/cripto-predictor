@@ -1,5 +1,7 @@
 # Retomada manual das dependências
 
+**Atualização posterior:** [execução e recuperação concluídas em 10/09](EXECUCAO.md). O histórico Aave foi recuperado nos 13 pontos, o cálculo e as sensibilidades estão executáveis, e o executor/avaliador LLM foi implementado, testado com APIs reais e congelado. Os trechos abaixo que descrevem Aave inacessível e executor apenas planejado registram o estado anterior; o estado vigente está nessa atualização.
+
 Esta etapa segue a revisão e a integração dos PRs #111 e #110. O dono excluiu **as configurações de segurança da branch**. As checagens de conteúdo e CI antes/depois do merge continuam. O registro vivo permanece em `C:\Cripto\operacao\relatorios\REVISAO_COMPLETA_20260909\REVISAO.md`; este arquivo reúne os comandos e contratos necessários à retomada, sem substituir aquele relatório.
 
 ## Calendário e identidade das altcoins

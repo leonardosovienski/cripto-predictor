@@ -1,0 +1,359 @@
+"""Recover the original fixed Aave window via a bounded public archive endpoint."""
+
+from __future__ import annotations
+
+import argparse
+from datetime import UTC, datetime, timedelta
+from decimal import Decimal, localcontext
+from pathlib import Path
+
+import httpx
+
+from scripts.research_io import encoded, sha, strict_json
+
+POOL = "0x794a61358d6845594f94dc1db02a252b5b4814ad"
+ASSET = "0xaf88d065e77c8cc2239327c5edb3a432268e5831"
+ATOKEN = "0x724dc807b04555b71ed48a6896b6f41593b8c637"
+ENDPOINT = "https://arb-mainnet.g.alchemy.com/public"
+RAY = 10**27
+END = datetime(2026, 9, 9, tzinfo=UTC)
+START = END - timedelta(days=84)
+METHODS = {"eth_chainId", "eth_getBlockByNumber", "eth_call", "web3_sha3"}
+
+
+def save(path, value):
+    with path.open("xb") as stream:
+        stream.write(encoded(value) + b"\n")
+
+
+def words(value):
+    if not isinstance(value, str) or not value.startswith("0x") or (len(value) - 2) % 64:
+        raise ValueError("Invalid ABI words")
+    return [int(value[i : i + 64], 16) for i in range(2, len(value), 64)]
+
+
+def one(value):
+    values = words(value)
+    if len(values) != 1:
+        raise ValueError("Expected single ABI word")
+    return values[0]
+
+
+def address(value):
+    if value < 0 or value >= 2**160:
+        raise ValueError("Invalid ABI address")
+    return "0x" + format(value, "040x")
+
+
+class RPC:
+    def __init__(self, directory):
+        self.directory, self.calls, self.bytes = directory, 0, 0
+        self.client = httpx.Client(timeout=15, trust_env=False, follow_redirects=False)
+        self.headers, self.selectors = {}, {}
+
+    def call(self, method, params):
+        if method not in METHODS or self.calls >= 500 or self.bytes >= 20_000_000:
+            raise ValueError("RPC scope exhausted")
+        self.calls += 1
+        request = {"jsonrpc": "2.0", "id": self.calls, "method": method, "params": params}
+        record = {
+            "request": request,
+            "started_at": datetime.now(UTC).isoformat(),
+            "endpoint": ENDPOINT,
+        }
+        body = bytearray()
+        try:
+            with self.client.stream("POST", ENDPOINT, json=request) as response:
+                record["http_status"] = response.status_code
+                for chunk in response.iter_bytes(chunk_size=65536):
+                    self.bytes += len(chunk)
+                    body.extend(chunk)
+                    if len(body) > 1_000_000 or self.bytes > 20_000_000:
+                        raise ValueError("RPC byte budget exhausted")
+                record["response"] = strict_json(bytes(body))
+                response.raise_for_status()
+        except Exception as exc:
+            record["error_type"] = type(exc).__name__
+            raise
+        finally:
+            record.update(received_at=datetime.now(UTC).isoformat(), raw_sha256=sha(bytes(body)))
+            save(self.directory / f"{self.calls:03}.json", record)
+        result = record["response"]
+        if result.get("id") != self.calls or "error" in result or result.get("result") is None:
+            raise ValueError("RPC error; preserve response, do not retry")
+        return result["result"]
+
+    def header(self, number):
+        if number not in self.headers:
+            raw = self.call(
+                "eth_getBlockByNumber", [hex(number) if isinstance(number, int) else number, False]
+            )
+            header = {
+                "number": int(raw["number"], 16),
+                "timestamp": int(raw["timestamp"], 16),
+                "hash": raw["hash"],
+                "parent_hash": raw["parentHash"],
+            }
+            if isinstance(number, int) and header["number"] != number:
+                raise ValueError("Wrong block number")
+            if len(header["hash"]) != 66 or len(header["parent_hash"]) != 66:
+                raise ValueError("Invalid block identity")
+            self.headers[number] = header
+        return self.headers[number]
+
+    def contract(self, to, signature, args, block):
+        if to not in {POOL, ASSET, ATOKEN}:
+            raise ValueError("Unregistered contract")
+        if signature not in self.selectors:
+            digest = self.call("web3_sha3", ["0x" + signature.encode().hex()])
+            if len(digest) != 66:
+                raise ValueError("Invalid selector hash")
+            self.selectors[signature] = digest[:10]
+        data = self.selectors[signature] + "".join(arg[2:].rjust(64, "0") for arg in args)
+        return self.call("eth_call", [{"to": to, "data": data}, hex(block)])
+
+
+def boundary(rpc, target, lo, hi):
+    """Find the LAST block at/before UTC time, including repeated L2 timestamps."""
+    left, right = rpc.header(lo), rpc.header(hi)
+    if not left["timestamp"] <= target < right["timestamp"]:
+        raise ValueError("Boundary is not bracketed")
+    for _ in range(40):
+        if hi - lo == 1:
+            if right["parent_hash"] != left["hash"]:
+                raise ValueError("Boundary headers are not adjacent on one chain")
+            return left, right
+        # Timestamp interpolation is efficient on regular L2 blocks; periodically
+        # bisect to guarantee progress if timestamps are bursty or discontinuous.
+        fraction = (target - left["timestamp"]) / (right["timestamp"] - left["timestamp"])
+        mid = (
+            (lo + hi) // 2
+            if _ % 5 == 4
+            else max(lo + 1, min(hi - 1, lo + int((hi - lo) * fraction)))
+        )
+        current = rpc.header(mid)
+        if not left["timestamp"] <= current["timestamp"] <= right["timestamp"]:
+            raise ValueError("Nonmonotonic block timestamps")
+        if current["timestamp"] <= target:
+            lo, left = mid, current
+        else:
+            hi, right = mid, current
+    raise ValueError("Finite boundary search exhausted")
+
+
+def reserve(rpc, header):
+    n, t = header["number"], header["timestamp"]
+    income = one(rpc.contract(POOL, "getReserveNormalizedIncome(address)", [ASSET], n))
+    data = words(rpc.contract(POOL, "getReserveData(address)", [ASSET], n))
+    if len(data) != 15 or address(data[8]) != ATOKEN:
+        raise ValueError("Reserve ABI or native USDC aToken mismatch")
+    underlying = address(one(rpc.contract(ATOKEN, "UNDERLYING_ASSET_ADDRESS()", [], n)))
+    token_pool = address(one(rpc.contract(ATOKEN, "POOL()", [], n)))
+    decimals = one(rpc.contract(ASSET, "decimals()", [], n))
+    liquidity = one(rpc.contract(ASSET, "balanceOf(address)", [ATOKEN], n))
+    scaled_supply = one(rpc.contract(ATOKEN, "scaledTotalSupply()", [], n))
+    config, index, rate, updated = data[0], data[1], data[2], data[6]
+    if underlying != ASSET or token_pool != POOL or decimals != 6 or (config >> 48) & 255 != 6:
+        raise ValueError("On-chain reserve identity mismatch")
+    if updated > t or index < RAY or income < index:
+        raise ValueError("Invalid reserve index or timestamp")
+    reconstructed = (index * (RAY + rate * (t - updated) // 31536000) + RAY // 2) // RAY
+    if abs(income - reconstructed) > 1:
+        raise ValueError("Independent normalized-income reconstruction disagrees")
+    return {
+        **header,
+        "native_usdc": ASSET,
+        "a_token": ATOKEN,
+        "pool": POOL,
+        "normalized_income_ray": str(income),
+        "stored_index_ray": str(index),
+        "liquidity_rate_ray": str(rate),
+        "last_update_timestamp": updated,
+        "reconstructed_income_ray": str(reconstructed),
+        "unborrowed_liquidity_units": str(liquidity),
+        "scaled_supply_units": str(scaled_supply),
+        "active": bool(config & (1 << 56)),
+        "frozen": bool(config & (1 << 57)),
+        "paused": bool(config & (1 << 60)),
+        "supply_cap_tokens": str((config >> 116) & ((1 << 36) - 1)),
+        "decimals": 6,
+    }
+
+
+def calculate(rows, additional_costs=(0, 5, 10, 20, 50)):
+    extras = [Decimal(str(value)) for value in additional_costs]
+    if not extras or any(not value.is_finite() or value < 0 for value in extras):
+        raise ValueError("Additional total cost scenarios must be finite and nonnegative")
+    if len(rows) != 13 or [r["boundary_utc"] for r in rows] != [
+        (START + timedelta(days=7 * i)).isoformat() for i in range(13)
+    ]:
+        raise ValueError("Original 13 weekly boundaries required")
+    indices = [int(r["normalized_income_ray"]) for r in rows]
+    if any(b < a for a, b in zip(indices, indices[1:])):
+        raise ValueError("Declining normalized index")
+    cases = []
+    with localcontext() as ctx:
+        ctx.prec = 60
+        for capital in (1000, 5000, 25000):
+            units = capital * 10**6
+            # Conservative scaled-balance floor followed by redemption floor.
+            scaled = units * RAY // indices[0]
+            balances = [scaled * index // RAY for index in indices]
+            gross = Decimal(balances[-1] - units) / 10**6
+            liquid = all(
+                int(r["unborrowed_liquidity_units"]) >= balance
+                for r, balance in zip(rows, balances)
+            )
+            cap = int(rows[0]["supply_cap_tokens"]) * 10**6
+            supplied = int(rows[0]["scaled_supply_units"]) * indices[0] // RAY
+            entry_allowed = (
+                rows[0]["active"]
+                and not rows[0]["paused"]
+                and not rows[0]["frozen"]
+                and (cap == 0 or supplied + units <= cap)
+            )
+            exit_allowed = all(r["active"] and not r["paused"] for r in rows)
+            for cost in (2, 10, 30):
+                cases.append(
+                    {
+                        "capital_usdc": capital,
+                        "entry_exit_cost_scenario_usdc": cost,
+                        "gross_interest_usdc": str(gross),
+                        "partial_remainder_usdc": str(gross - cost),
+                        "unborrowed_liquidity_sufficient_at_all_boundaries": liquid,
+                        "entry_configuration_allows_supply": entry_allowed,
+                        "withdrawal_configuration_at_boundaries": exit_allowed,
+                        "all_in_personal_profit": None,
+                        "maximum_additional_total_cost_for_zero_remainder_usdc": str(gross - cost),
+                        "additional_total_cost_scenarios_usdc": {
+                            str(extra): str(gross - cost - extra) for extra in extras
+                        },
+                        "exit_value_loss_scenarios_usdc": {
+                            str(loss): str(
+                                Decimal(balances[-1]) / 10**6 * (1 - Decimal(str(loss)))
+                                - capital
+                                - cost
+                            )
+                            for loss in (0.01, 0.05, 1)
+                        },
+                    }
+                )
+        weekly = [str(Decimal(b) / a - 1) for a, b in zip(indices, indices[1:])]
+    return {
+        "period_start": START.isoformat(),
+        "period_end": END.isoformat(),
+        "days": 84,
+        "cases": cases,
+        "weekly_index_returns": weekly,
+        "future_profit_validated": False,
+        "history_sha256": sha(encoded(rows)),
+        "unknown_costs": [
+            "funding initial USDC/bridge/conversion",
+            "taxes",
+            "personal custody/operation costs",
+        ],
+        "withdrawal_limit": "Snapshot liquidity/configuration is not a transaction simulation or guarantee between boundaries.",
+    }
+
+
+def collect(directory):
+    directory.mkdir(parents=True, exist_ok=False)
+    scope = {
+        "registered_at": datetime.now(UTC).isoformat(),
+        "original_protocol": "ECONOMIC-ROUND-20260909-R1",
+        "amendment": "Additional public archive source after availability success; no reserve/window/metric/variant changes",
+        "source": ENDPOINT,
+        "source_free_evidence": "https://www.alchemy.com/rpc/arbitrum",
+        "start": START.isoformat(),
+        "end": END.isoformat(),
+        "rpc_calls_max": 500,
+        "retries": 0,
+        "bytes_max": 20_000_000,
+        "ingestion_units": 1,
+        "capital_permission": False,
+        "collector_sha256": sha(Path(__file__).read_bytes()),
+    }
+    save(directory / "scope.json", scope)
+    from GarimpoInvestimentos.config import settings
+    from GarimpoInvestimentos.core.api_guard import allow
+
+    if (
+        not settings.API_GUARD_ENABLED
+        or settings.API_GUARD_MAX_INGEST_ASSETS != 28
+        or not allow("ingest", "assets", 28).allowed
+    ):
+        raise ValueError("Persistent public ingestion budget unavailable")
+    rpc = RPC(directory)
+    rows = []
+    try:
+        if int(rpc.call("eth_chainId", []), 16) != 42161:
+            raise ValueError("Wrong chain")
+        latest = rpc.header("finalized")
+        if not 0 <= datetime.now(UTC).timestamp() - latest["timestamp"] <= 86400:
+            raise ValueError("Finalized header freshness failed")
+        hi = latest["number"]
+        lo = max(1, hi - 110 * 86400 * 4)
+        for i in range(13):
+            target = START + timedelta(days=7 * i)
+            header, successor = boundary(rpc, int(target.timestamp()), lo, hi)
+            row = reserve(rpc, header)
+            row.update(boundary_utc=target.isoformat(), successor=successor)
+            save(directory / f"weekly-{i:02}.json", row)
+            rows.append(row)
+            lo = header["number"]
+            print(f"Validated weekly boundary {i + 1}/13; {rpc.calls} RPC calls", flush=True)
+        current = reserve(rpc, latest)
+        save(directory / "current-finalized.json", current)
+        save(directory / "history.json", rows)
+        save(directory / "calculation.json", calculate(rows))
+        save(
+            directory / "result.json",
+            {
+                "status": "HISTORY_RECOVERED",
+                "boundaries": len(rows),
+                "calls": rpc.calls,
+                "response_bytes": rpc.bytes,
+                "historical_identity_and_liquidity_verified": True,
+            },
+        )
+    except Exception as exc:
+        save(
+            directory / "result.json",
+            {
+                "status": "INCOMPLETE",
+                "error_type": type(exc).__name__,
+                "boundaries": len(rows),
+                "calls": rpc.calls,
+                "response_bytes": rpc.bytes,
+            },
+        )
+        raise
+    finally:
+        rpc.client.close()
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--directory", type=Path, required=True)
+    parser.add_argument("--mode", choices=("calculate", "collect"), default="calculate")
+    parser.add_argument("--additional-cost-usdc", nargs="+", default=["0", "5", "10", "20", "50"])
+    parser.add_argument("--output", type=Path)
+    args = parser.parse_args()
+    try:
+        if args.mode == "collect":
+            collect(args.directory)
+        else:
+            result = calculate(
+                strict_json((args.directory / "history.json").read_bytes()),
+                args.additional_cost_usdc,
+            )
+            if args.output:
+                save(args.output, result)
+            else:
+                print(encoded(result).decode())
+    except Exception as exc:
+        parser.exit(1, f"Aave recovery failed: {type(exc).__name__}; inspect saved evidence\n")
+
+
+if __name__ == "__main__":
+    main()

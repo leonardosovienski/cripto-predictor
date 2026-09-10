@@ -2,6 +2,8 @@
 
 O registro vivo único desta revisão está em `C:\Cripto\operacao\relatorios\REVISAO_COMPLETA_20260909\REVISAO.md`. Ele contém cobertura, matriz de afirmações, arquitetura, contas, falhas, validações por versão e dependências. Os JSONs e logs adjacentes são comprovantes. Este documento versiona os contratos e as erratas; não substitui o registro nem constitui evidência de CI aprovado.
 
+**Atualização de execução:** [histórico Aave recuperado e executor LLM implementado](manual_dependencies_20260910/EXECUCAO.md). A avaliação pareada tem seu próprio contrato, fonte, diário e registro congelado; não altera as definições históricas ou o avaliador geral descrito abaixo. Referências anteriores a Aave inacessível ou executor somente planejado foram superadas por essa etapa.
+
 ## Contrato para novos diagnósticos
 
 - Ingestão diária de cripto materializa `daily-v3-contiguous`. Indicadores usam somente o trecho diário contínuo após a última lacuna; sete observações espaçadas não equivalem a sete dias. Lotes vazios, duplicados, de identidade diferente ou OHLCV inválido falham antes da persistência inicial.
