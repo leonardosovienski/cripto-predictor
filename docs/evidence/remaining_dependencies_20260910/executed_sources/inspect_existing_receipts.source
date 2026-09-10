@@ -1,0 +1,14 @@
+import hashlib
+import json
+from pathlib import Path
+
+R = Path(r'C:\Cripto\operacao\relatorios\REVISAO_COMPLETA_20260909')
+for name in ('executor_preflight01', 'executor_preflight02'):
+    folder = R/name
+    result = json.loads((folder/'result.json').read_bytes())
+    print(json.dumps({'folder':str(folder),'state':result.get('state'),'sources':result.get('sources')},ensure_ascii=False))
+    for path in folder.rglob('*.json'):
+        obj=json.loads(path.read_bytes())
+        if isinstance(obj,dict) and obj.get('name') == 'binance_market':
+            rows=obj.get('response_json')
+            print(json.dumps({'file':str(path),'sha256':hashlib.sha256(path.read_bytes()).hexdigest(),'received_utc':obj.get('received_utc'),'started_utc':obj.get('started_utc'),'url':obj.get('url'),'public_params':obj.get('public_params'),'http_status':obj.get('http_status'),'rows':len(rows) if isinstance(rows,list) else None,'first':rows[0] if isinstance(rows,list) else None,'last':rows[-1] if isinstance(rows,list) else None},ensure_ascii=False))

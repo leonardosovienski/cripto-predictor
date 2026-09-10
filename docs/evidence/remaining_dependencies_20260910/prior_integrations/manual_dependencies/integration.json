@@ -1,0 +1,28 @@
+{
+  "status": "INTEGRADO_E_VALIDADO_NO_MAIN",
+  "summary": "PR #112 integrado em 33b0627ac016b23531228053b9256dbedcb407d0; árvore idêntica à validada. Quatro jobs aprovados no PR e no main; pós-merge local: 1358 passed, 1 skipped in 212.07s (0:03:32). Segurança da branch excluída; nenhuma observação ou automação ativada.",
+  "pr_url": "https://github.com/leonardosovienski/cripto-predictor/pull/112",
+  "pr_number": 112,
+  "base_sha": "9b8de9802c61570610bc0b212bdb0bb4c4e1d643",
+  "head_sha": "b44f29c57b101c18cc45bd7eed6e019a5d5aa9d5",
+  "pr_run_id": 34424968376,
+  "required_jobs": [
+    "quality",
+    "all-extras",
+    "container",
+    "python-314-experimental"
+  ],
+  "branch_security_excluded_by_owner": true,
+  "pr_four_checks_passed": true,
+  "main_four_checks_passed": true,
+  "local_final_checks_passed": true,
+  "postmerge_local_passed": true,
+  "merge_sha": "33b0627ac016b23531228053b9256dbedcb407d0",
+  "local_final_tests": "1358 passed, 1 skipped in 366.84s (0:06:06)",
+  "tested_tree": "76b1fea4f32a26c33709a300c9219b2c82f254be",
+  "updated_at_utc": "2026-09-10T01:39:25.464901+00:00",
+  "merged_tree_equals_tested_tree": true,
+  "owner_prompt_preserved": true,
+  "postmerge_tests": "1358 passed, 1 skipped in 212.07s (0:03:32)",
+  "main_run_id": 34425802284
+}

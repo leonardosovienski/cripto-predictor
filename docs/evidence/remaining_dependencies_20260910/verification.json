@@ -1,0 +1,20 @@
+{
+  "checked_at": "2026-09-10T19:55:02.083884+00:00",
+  "status": "PASS",
+  "report_sha256": "3fbf5669630bfaf397db45582cace3797789381f61400c82e3d00b36cef324df",
+  "sections": 18,
+  "local_links_checked": 117,
+  "missing_links": [],
+  "snapshot_current": "daily-v4-audited",
+  "snapshot_id": "f97b412a7940d8be9b7f046f376d26312ffca07782be5d0a600d781195eb030e",
+  "original_database_rows_unchanged": true,
+  "budget_unchanged": true,
+  "wrong_second_source_responses_rejected": [
+    "WrongBlock",
+    "WrongIncome"
+  ],
+  "network_calls": 0,
+  "llm_future_slots": 84,
+  "carry_observations": 0,
+  "validation_scope": "Operational recovery and local helper checks; no repeat of full PR116 suite or live second-source validation"
+}

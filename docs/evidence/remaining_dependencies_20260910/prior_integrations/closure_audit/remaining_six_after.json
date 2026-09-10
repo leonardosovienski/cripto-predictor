@@ -1,0 +1,82 @@
+{
+  "at_utc": "2026-09-10T19:50:14.775011+00:00",
+  "operational_head": "ac4184e7d3377a8f14aeebac5016c3e18f82cfcf",
+  "operational_status": "M docs/NEXT_CHAT_PROMPT.md",
+  "correction_head": "19da2534baec32028f330d217c32588df35ce19b",
+  "correction_status": "",
+  "llm_frozen_checkout_head": "595f1203475d04b01966ac3471bbafd6770dbb4d",
+  "llm_frozen_checkout_status": "",
+  "owner_prompt_sha256": "8969db38ef9a3ec29ee16a780b9572ec9f7d7808cabc9bac17a319616b47fe20",
+  "budget": [
+    [
+      "2026-09-10",
+      "ingest",
+      "assets",
+      28
+    ],
+    [
+      "2026-09-10",
+      "llm",
+      "cerebras",
+      6
+    ],
+    [
+      "2026-09-10",
+      "llm",
+      "gemini",
+      6
+    ],
+    [
+      "2026-09-10",
+      "llm",
+      "groq",
+      6
+    ],
+    [
+      "2026-09-10",
+      "llm",
+      "mistral",
+      6
+    ],
+    [
+      "2026-09-10",
+      "llm",
+      "openai",
+      6
+    ],
+    [
+      "2026-09-10",
+      "llm",
+      "openrouter",
+      6
+    ],
+    [
+      "2026-09-10",
+      "news",
+      "serpapi",
+      8
+    ]
+  ],
+  "budget_matches_reservation": true,
+  "database_quick_check": [
+    [
+      "ok"
+    ]
+  ],
+  "table_counts": {
+    "predictions": 3,
+    "prediction_inputs": 1,
+    "market_snapshots": 2
+  },
+  "snapshot_versions": [
+    [
+      "daily-v3-contiguous",
+      1
+    ],
+    [
+      "daily-v4-audited",
+      1
+    ]
+  ],
+  "runtime_diff_from_a917": ""
+}

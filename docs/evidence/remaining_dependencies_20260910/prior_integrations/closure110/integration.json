@@ -1,0 +1,52 @@
+{
+  "status": "INTEGRADO_E_VALIDADO_NO_MAIN",
+  "head_sha": "64dbdc2b6172de054c08be9c462772fcb3336da6",
+  "pr_number": 110,
+  "pr_url": "https://github.com/leonardosovienski/cripto-predictor/pull/110",
+  "original_head": "4ae9e3d19d4dc7c761d353a8eab851d70f0230e3",
+  "validated_base": "909724e36d23b1683268c9e43d533f553c7dfe5f",
+  "working_copy": "C:\\Cripto\\correcao-pr110-20260910",
+  "merge_sha": "9b8de9802c61570610bc0b212bdb0bb4c4e1d643",
+  "pr_run_id": 34421408312,
+  "main_run_id": 34421841576,
+  "merge_performed_by_this_task": false,
+  "merge_observation": "GitHub already reported the final head merged during the pre-merge read; no merge mutation was issued by this task.",
+  "summary": "PR #110 integrado e validado no main 9b8de9802c61570610bc0b212bdb0bb4c4e1d643. A árvore 9db8ee873550cf92bd9d51e33192bd439f3d0801 coincide com a versão testada 64dbdc2; runtime, dependências e definições congeladas do #111 preservados. Suítes locais completas antes e depois da integração: 1.342 aprovados, um skip por privilégio de symlink Windows e zero falhas em cada execução, com todos os extras. Os quatro jobs passaram no PR (run 34421408312) e no main (run 34421841576); all-extras do PR: 1.343 aprovados. Ruff, formato, Pyright, scanner, H6, build, contrato do wheel instalado fora do checkout e recuperação integral de 24 ZIPs/9.817 arquivos passaram. Orçamento real e originais preservados; nenhum arquivo de orçamento recuperado. O checkout operacional está atualizado e o prompt do dono permanece byte a byte, agora também publicado como parte da continuidade. Não resta falha executável identificada nesta correção. Permanecem dependências de acesso administrativo para proteger main, dados históricos ausentes, observações futuras e condições reais de execução; seus critérios de retomada estão documentados.",
+  "completed_at_utc": "2026-09-10T00:41:56.307570+00:00",
+  "required_jobs": [
+    "all-extras",
+    "container",
+    "python-314-experimental",
+    "quality"
+  ],
+  "pr_four_checks_passed": true,
+  "main_four_checks_passed": true,
+  "tested_and_merged_tree": "9db8ee873550cf92bd9d51e33192bd439f3d0801",
+  "merged_tree_equals_tested_tree": true,
+  "runtime_and_dependencies_equal_PR111": true,
+  "local_final_suite": {
+    "tests": 1343,
+    "errors": 0,
+    "failures": 0,
+    "skipped": 1,
+    "passed": 1342
+  },
+  "local_postmerge_suite": {
+    "tests": 1343,
+    "errors": 0,
+    "failures": 0,
+    "skipped": 1,
+    "passed": 1342
+  },
+  "local_postmerge_all_extras": true,
+  "current_source_files_verified": 1544,
+  "owner_prompt_preserved_byte_for_byte": true,
+  "working_tree_status": "M docs/NEXT_CHAT_PROMPT.md",
+  "recovered_archives": 24,
+  "recovered_files": 9817,
+  "known_secret_matches_in_examined_exports": 0,
+  "runtime_coverage_percent": 89.29874341305229,
+  "branch_protection_configured": false,
+  "remaining_dependencies": "DEPENDENCIAS.md; administrative branch protection; D01-D10 in the canonical report",
+  "test_failure_history": "final01 retained: unsafe Windows ZIP input was correctly refused but an error-message expectation failed. The corrected complete final02 and postmerge02 suites pass."
+}

@@ -1,0 +1,11 @@
+{
+  "status": "INTEGRADO_E_VALIDADO",
+  "base_sha": "33b0627ac016b23531228053b9256dbedcb407d0",
+  "pr_number": 113,
+  "pr_url": "https://github.com/leonardosovienski/cripto-predictor/pull/113",
+  "head_sha": "3d5fbc1f708c632e015dc512dc4debcb424aa949",
+  "merge_sha": "4fd61cd6fac6e80f06b65496d945f43a4ee91497",
+  "ci_pr_run": 34485834247,
+  "ci_main_run": 34486802834,
+  "summary": "PR #113 integrado em 4fd61cd; árvore igual à aprovada. Quatro jobs aprovados no PR e no main. Windows final: 1391 testes e um skip; pós-merge: 1392 testes e um skip. As 213 evidências conferem no Git e nos arquivos; prompt do dono preservado."
+}

@@ -1,0 +1,13 @@
+{
+  "checked_at": "2026-09-10T19:51:48.971333+00:00",
+  "opera_connector": "UNAUTHORIZED: reauthentication required; tab list unavailable",
+  "available_cua_surfaces": "Only Codex in-app browser; initial inventory had one GitHub documentation tab",
+  "provider_dashboard_examined": false,
+  "scope_limit": "Not a claim that the owner lacks accounts or sessions elsewhere",
+  "documentation_browser_failure": "blockreq.com timed out in in-app browser; public endpoint docs available through web search",
+  "owner_instruction": "Keep current keys; working keys are not to be revoked as a prerequisite",
+  "credential_changes": 0,
+  "financial_credentials_used": false,
+  "historical_revocation_evidence": "Not verified; nonblocking historical information",
+  "historical_usage_exact": "Not reconstructed; administrative reservation is not measured use"
+}
