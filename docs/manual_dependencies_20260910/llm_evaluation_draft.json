@@ -1,0 +1,41 @@
+{
+  "id": "btc-llm-incremental-diagnostic-draft-20260910",
+  "state": "DRAFT_NOT_STARTED",
+  "start_utc": null,
+  "executor_freeze_sha256": null,
+  "capital_permission": false,
+  "scheduler_enabled": false,
+  "scope": "Preparation of a separate diagnostic design; not an activated hypothesis, H6 reopening or confirmation of independent profitability.",
+  "question": "Does adding contemporaneously available news to the same frozen LLM improve association with later BTC returns, relative to the same LLM without news and a simple price rule?",
+  "universe": ["bitcoin"],
+  "planned_pilot_days": 84,
+  "max_nonoverlapping_seven_day_blocks": 12,
+  "daily_slot": "One fixed UTC slot chosen before start; persist the exact scheduled and actual times. Missed slots remain missing and are not backfilled with regenerated LLM output.",
+  "arms": [
+    {"id": "llm_news", "definition": "Frozen Gemini model and prompt; 200 completed contiguous daily bars and news available before request. Save request, response and availability times."},
+    {"id": "llm_no_news", "definition": "Same model, prompt, market snapshot and decoding parameters; explicitly empty news list. Keep all outputs and errors."},
+    {"id": "momentum_7d", "definition": "Prior seven-day close return from the identical market snapshot, with no fitted parameters."},
+    {"id": "no_position", "definition": "Zero market exposure and zero trading contribution; separately report any diagnostic infrastructure cost."}
+  ],
+  "forecast_semantics": "Use the score as ordinal ranking, not as a calibrated probability or price forecast.",
+  "causal_pairing": "Both LLM responses must be durably saved before selecting the first subsequent full UTC daily market bar as the common evaluation anchor. Publication and retrieval must precede each request. Never use the bar during which a response arrived as an executable entry.",
+  "primary_descriptive_metric": "Paired difference between Spearman(score, subsequent seven-day log close return) for llm_news and llm_no_news, on common valid anchors. Constant scores produce undefined correlation, not zero.",
+  "secondary_descriptive_metrics": [
+    "Spearman correlation of the same future return with prior seven-day momentum",
+    "Counts of scheduled, requested, failed, missing and jointly evaluable anchors",
+    "Model response time, physical/logical calls and source availability",
+    "Distribution of score differences; no fitted score threshold"
+  ],
+  "dependence": "Report daily overlapping observations and the deterministic first-anchor-of-each-seven-day-block subset separately. Never report overlapping targets as independent trials.",
+  "multiplicity": "Only the news-minus-no-news contrast is primary. All arms and failures remain visible. Additional contrasts are descriptive and cannot be selected after seeing which wins.",
+  "economic_interpretation": "This pilot does not implement a trading policy or measure executable net profit. Correlation and zero-position comparison are diagnostics only. A policy requires its own preregistered size, fees, fills, risk and cost protocol.",
+  "call_budget": {"news_attempts_per_provider_per_utc_day_max": 8, "llm_logical_calls_per_provider_per_utc_day_max": 6, "planned_llm_calls_per_observed_day": 2, "ingestion_units_per_utc_day_max": 28, "reset_allowed": false},
+  "power_status": "NOT_CERTIFIED: 12 nonoverlapping pilot blocks cannot certify contribution. Before a confirmatory study, fix a minimum relevant effect, account for missingness/dependence, demonstrate at least 80% power and at most 5% family-wise false positives using a validated evaluator, and register a new untouched period.",
+  "remaining_before_collection": [
+    "Implement and offline-validate the complete paired executor and outcome evaluator, including common delayed anchors and failure accounting",
+    "Freeze exact model identifier, both serialized prompts, decoding parameters, source policy and code/environment versions",
+    "Register future start/end, UTC slot and append-only result location before any observations",
+    "Verify available free generation and remaining persistent budget without resetting counters"
+  ],
+  "preservation": "Keep old H5 missing, H6 closed, all prior research states, and current diagnostic predictions unchanged. This draft itself supplies no observations or activation."
+}

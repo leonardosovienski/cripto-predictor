@@ -3,6 +3,7 @@
 ## Estado vigente e continuidade
 
 - [Revisão geral de 09/09: contratos e erratas](REVISAO_COMPLETA_20260909.md): ponto de acesso ao registro vivo, auditorias e dependências restantes.
+- [Retomada manual de 10/09](manual_dependencies_20260910/RETOMADA.md): calendário dos 12 gaps, volume intradiário, registro separado do carry e requisitos concretos ainda externos. Segurança da branch excluída pelo dono.
 
 - [Prontidão de dados](PRONTIDAO_DADOS.md): bases disponíveis, lacunas verificadas, limites de API e critérios para concluir a preparação.
 - [Configuração deste PC em C:\Cripto](CONFIGURACAO_LOCAL.md): mapa operacional vigente; substitui caminhos de máquinas anteriores para qualquer nova execução.

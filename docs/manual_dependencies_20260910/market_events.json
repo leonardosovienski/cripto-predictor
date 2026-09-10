@@ -1,0 +1,241 @@
+{
+  "schema_version": 1,
+  "reviewed_at_utc": "2026-09-10T01:02:10.577069+00:00",
+  "scope": "Retrospective classification of the 12 preserved Binance spot USDT gaps only. Dates manually reconciled from official announcements and their updates. Not a point-in-time complete listing registry.",
+  "method": "A missing full UTC day is explained only if wholly inside [halt,resume). Do not interpolate, change raw data, join returns across episodes, or use this later-acquired registry as a historical signal.",
+  "limitations": "Announcements can be revised; only their currently available versions were read. Boundary partial candles, intraday interruptions, other assets and complete historical investibility are not certified. Reopening/closure dates and unit swaps do not certify liquidity or fills.",
+  "events": [
+    {
+      "symbol": "BNXUSDT",
+      "halt_utc": "2023-02-16T03:00:00+00:00",
+      "resume_utc": "2023-02-22T08:00:00+00:00",
+      "event_type": "redenomination",
+      "old_units_to_new_units": "1:100",
+      "identity_before": "BinaryX old",
+      "identity_after": "BinaryX new",
+      "sources": [
+        {
+          "url": "https://www.binance.com/en/support/announcement/detail/4d23ada51a2e4fa182835c77d51ba1a9",
+          "published_date": "2023-02-10",
+          "title": "BinaryX swap plan"
+        },
+        {
+          "url": "https://www.binance.com/en/support/announcement/detail/fb6c6a1c6a9947b0bd30d58314ab862c",
+          "published_date": "2023-02-21",
+          "title": "BNX revised listing time"
+        }
+      ]
+    },
+    {
+      "symbol": "BTCSTUSDT",
+      "halt_utc": "2021-03-15T07:00:00+00:00",
+      "resume_utc": "2021-03-19T07:00:00+00:00",
+      "event_type": "redenomination",
+      "old_units_to_new_units": "1:10",
+      "identity_before": "BTCST old",
+      "identity_after": "BTCST new",
+      "sources": [
+        {
+          "url": "https://www.binance.com/en/support/announcement/detail/2c08ba9e1a1b409fb6a4a2cb2f5ed58b",
+          "published_date": "2021-03-11",
+          "title": "BTCST redenomination plan"
+        }
+      ]
+    },
+    {
+      "symbol": "COCOSUSDT",
+      "halt_utc": "2021-01-19T02:00:00+00:00",
+      "resume_utc": "2021-01-23T02:00:00+00:00",
+      "event_type": "redenomination",
+      "old_units_to_new_units": "1000:1",
+      "identity_before": "Cocos-BCX old",
+      "identity_after": "Cocos-BCX new",
+      "sources": [
+        {
+          "url": "https://www.binance.com/en/support/announcement/detail/f555f8013eff42bc9c91eaa48b9da24b",
+          "published_date": "2021-01-18",
+          "title": "COCOS redenomination plan"
+        }
+      ]
+    },
+    {
+      "symbol": "CVCUSDT",
+      "halt_utc": "2022-12-09T03:00:00+00:00",
+      "resume_utc": "2023-05-12T08:00:00+00:00",
+      "event_type": "pair_removed_then_relisted",
+      "old_units_to_new_units": null,
+      "identity_before": "CVC/USDT first episode",
+      "identity_after": "CVC/USDT relisted episode",
+      "sources": [
+        {
+          "url": "https://www.binance.com/en/support/announcement/detail/13647176b1594beebe1a8aa3f9f843c8",
+          "published_date": "2022-12-07",
+          "title": "Trading pairs removal 2022-12-09"
+        },
+        {
+          "url": "https://www.binance.com/en/support/announcement/detail/c968644475a74284a292ecd3af39e6ff",
+          "published_date": "2023-05-11",
+          "title": "CVC/USDT and WBETH/ETH additions"
+        }
+      ]
+    },
+    {
+      "symbol": "DREPUSDT",
+      "halt_utc": "2021-03-29T04:00:00+00:00",
+      "resume_utc": "2021-04-02T04:00:00+00:00",
+      "event_type": "redenomination",
+      "old_units_to_new_units": "100:1",
+      "identity_before": "DREP old",
+      "identity_after": "DREP new",
+      "sources": [
+        {
+          "url": "https://www.binance.com/en/support/announcement/detail/51eb4f0351194fab957bb23cc6ee52dd",
+          "published_date": "2021-03-19",
+          "title": "DREP redenomination plan"
+        },
+        {
+          "url": "https://www.binance.com/en/support/announcement/detail/a2c87d5944cd4856af5aabd2cb8f68b4",
+          "published_date": "2021-03-22",
+          "title": "DREP revised halt and listing dates"
+        }
+      ]
+    },
+    {
+      "symbol": "FTTUSDT",
+      "halt_utc": "2022-11-15T04:30:00+00:00",
+      "resume_utc": "2023-09-22T08:00:00+00:00",
+      "event_type": "pair_removed_then_relisted",
+      "old_units_to_new_units": null,
+      "identity_before": "FTT/USDT first episode",
+      "identity_after": "FTT/USDT relisted episode",
+      "sources": [
+        {
+          "url": "https://www.binance.com/en/support/announcement/detail/47642955ae7f4a3688133df8067ac3c2",
+          "published_date": "2022-11-14",
+          "title": "Trading pairs removal 2022-11-15"
+        },
+        {
+          "url": "https://www.binance.com/en/support/announcement/detail/fe93095a80944d31b42fa7eb2afdb12c",
+          "published_date": "2023-09-21",
+          "title": "Trading pairs addition and removal 2023-09-22"
+        }
+      ]
+    },
+    {
+      "symbol": "KEYUSDT",
+      "halt_utc": "2023-02-10T03:00:00+00:00",
+      "resume_utc": "2023-03-10T08:00:00+00:00",
+      "event_type": "pair_removed_then_relisted",
+      "old_units_to_new_units": null,
+      "identity_before": "KEY/USDT first episode",
+      "identity_after": "KEY/USDT relisted episode",
+      "sources": [
+        {
+          "url": "https://www.binance.com/en/support/announcement/detail/7ec33a2d62974c3490b92ff0780ba461",
+          "published_date": "2023-02-08",
+          "title": "Trading pairs removal 2023-02-10"
+        },
+        {
+          "url": "https://www.binance.com/en/support/announcement/detail/8ef61bec1227429a910877be141c5af3",
+          "published_date": "2023-03-09",
+          "title": "CFX/TRY KEY/USDT STX/TRY USTC/USDT additions"
+        }
+      ]
+    },
+    {
+      "symbol": "LUNAUSDT",
+      "halt_utc": "2022-05-13T00:40:00+00:00",
+      "resume_utc": "2022-05-31T06:00:00+00:00",
+      "event_type": "ticker_reused_different_asset",
+      "old_units_to_new_units": null,
+      "identity_before": "Terra Classic formerly LUNA now LUNC",
+      "identity_after": "Terra 2.0 LUNA",
+      "sources": [
+        {
+          "url": "https://www.binance.com/en/support/announcement/detail/514e0ba636e843bda47d5d740b7dadf4",
+          "published_date": "2022-05-13",
+          "title": "Pairs removal and tick size updates 2022-05-13"
+        },
+        {
+          "url": "https://www.binance.com/en/support/announcement/detail/d044a6742e484b77a170111460b0eed3",
+          "published_date": "2022-05-28",
+          "title": "Terra 2.0 listing; old LUNA renamed LUNC; chart clarification updated 2022-05-31"
+        }
+      ]
+    },
+    {
+      "symbol": "QUICKUSDT",
+      "halt_utc": "2023-07-17T03:00:00+00:00",
+      "resume_utc": "2023-07-21T08:00:00+00:00",
+      "event_type": "redenomination",
+      "old_units_to_new_units": "1:1000",
+      "identity_before": "QuickSwap old",
+      "identity_after": "QuickSwap new",
+      "sources": [
+        {
+          "url": "https://www.binance.com/en/support/announcement/detail/50b38ae7b25a45a7854c94ab67a1e7d0",
+          "published_date": "2023-07-10",
+          "title": "QuickSwap swap and redenomination plan"
+        }
+      ]
+    },
+    {
+      "symbol": "STRAXUSDT",
+      "halt_utc": "2024-03-20T03:00:00+00:00",
+      "resume_utc": "2024-03-28T08:00:00+00:00",
+      "event_type": "redenomination",
+      "old_units_to_new_units": "1:10",
+      "identity_before": "Stratis old",
+      "identity_after": "Stratis new",
+      "sources": [
+        {
+          "url": "https://www.binance.com/en/support/announcement/detail/2e6eb8e644664a6ca7b6659a226c41b0",
+          "published_date": "2024-03-08",
+          "title": "Stratis swap and redenomination plan"
+        },
+        {
+          "url": "https://www.binance.com/en/support/announcement/detail/033618992939455aa64fd113a2c1e76f",
+          "published_date": "2024-03-28",
+          "title": "Stratis swap completed"
+        }
+      ]
+    },
+    {
+      "symbol": "SUNUSDT",
+      "halt_utc": "2021-06-14T04:00:00+00:00",
+      "resume_utc": "2021-06-18T04:00:00+00:00",
+      "event_type": "redenomination",
+      "old_units_to_new_units": "1:1000",
+      "identity_before": "SUN old",
+      "identity_after": "SUN new",
+      "sources": [
+        {
+          "url": "https://www.binance.com/en/support/announcement/detail/f923f2e4056843a9a9b87beb2aaa2f31",
+          "published_date": "2021-06-08",
+          "title": "SUN migration and redenomination plan"
+        }
+      ]
+    },
+    {
+      "symbol": "VIDTUSDT",
+      "halt_utc": "2022-10-31T03:00:00+00:00",
+      "resume_utc": "2022-11-09T08:00:00+00:00",
+      "event_type": "redenomination",
+      "old_units_to_new_units": "1:10",
+      "identity_before": "VIDT Datalink",
+      "identity_after": "VIDT DAO",
+      "sources": [
+        {
+          "url": "https://www.binance.com/en/support/announcement/detail/ef40b40af1944bc9b399ad9c52861a04",
+          "published_date": "2022-10-19",
+          "title": "VIDT swap redenomination and rebranding plan"
+        },
+        {
+          "url": "https://www.binance.com/en/support/announcement/detail/e7ce7d49c33a49de916a188dacb38f07",
+          "published_date": "2022-11-10",
+          "title": "VIDT swap completed"
+        }
+      ]
+    }
+  ]
+}

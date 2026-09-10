@@ -1,5 +1,8 @@
 # Frozen research evidence must retain the exact original bytes on every platform.
 # Do not normalize these files or rewrite their published SHA256 manifests.
+# Manual registration binds these exact bytes across Windows/Linux checkouts.
+/scripts/carry_forward_registration.py -text
+/docs/manual_dependencies_20260910/*.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
 /docs/evidence/** whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
 /docs/evidence/absolute_research_20260908/absolute-results-v2/FILES_SHA256.json -text
 /docs/evidence/absolute_research_20260908/absolute-results-v2/carry/AR1_BTCUSDT_adverse_ledger.json -text
