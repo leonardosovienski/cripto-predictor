@@ -1,5 +1,7 @@
 # Atualização de continuidade — 11/09/2026
 
+A revisão arquitetural posterior está implementada e publicada em `main`: Crypto 1.1.0, exportador independente 1.0.1, Core 3.2.1 e Ops 4.2.0. Leia primeiro [ARCHITECTURE_IMPLEMENTATION.md](../ARCHITECTURE_IMPLEMENTATION.md) e [HANDOFF.md](../HANDOFF.md). A CI 34630038441 passou nos quatro perfis e o intercâmbio com CAIN foi testado com wheels separados. A integração preservou o pacote `GarimpoInvestimentos/research` e as evidências congeladas; a continuidade abaixo registra a entrega anterior.
+
 O mandato abaixo é histórico. Para retomar, leia [continuity_20260911/README.md](continuity_20260911/README.md) e o relatório da transferência 20260911T0525. Pesquisa e implementação solicitadas nesta conversa foram concluídas. O próximo trabalho parte do backlog específico, sem repetir auditoria geral nem alterar hipóteses/protocolos congelados. Confira Git e evidências locais antes de afirmar estado atual. A autorização de commit/push desta publicação não autoriza capital, ordens, agendamentos nem reabrir hipóteses.
 
 ---
