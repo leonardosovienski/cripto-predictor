@@ -1,5 +1,9 @@
 > Continuidade atual: [fechamento de 11/09/2026](docs/continuity_20260911/README.md).
 
+## Entrega arquitetural publicada — 11/09/2026
+
+Versão **1.1.0** publicada: [release e artefatos](https://github.com/leonardosovienski/cripto-predictor/releases/tag/v1.1.0). [CI de engenharia aprovada](https://github.com/leonardosovienski/cripto-predictor/actions/runs/34630038441) para a fonte `6ea0d2ccdcfc6a3858083acb6ded5cb39e178586`. Consulte [ARCHITECTURE_IMPLEMENTATION.md](ARCHITECTURE_IMPLEMENTATION.md) para comportamento, migração e limites. Este registro atualiza a entrega de software; estados científicos e registros datados abaixo conservam sua autoridade e contexto histórico.
+
 # cripto-predictor (GarimpoInvestimentos + DPL)
 
 Sistema de pesquisa em criptoativos: ingestão e procedência de dados, análises com LLM, diagnósticos quantitativos e avaliação estatística. Nenhuma linha tem lucro pessoal ou futuro comprovado; os resultados históricos positivos de Aave são condicionais aos cenários de custo. A V3 emite diagnóstico `UNVALIDATED`.

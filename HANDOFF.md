@@ -1,5 +1,9 @@
 > Continuidade vigente: [sessão de 08/09](docs/SESSION_HANDOFF_20260908.md) e [estado da pesquisa](docs/CURRENT_RESEARCH_STATE_20260908.md). A sessão anterior continua no [registro de 07/09](docs/SESSION_HANDOFF_20260907.md) e na tag `cripto-session-20260907-final`.
 
+## Entrega arquitetural publicada — 11/09/2026
+
+Versão **1.1.0** publicada: [release e artefatos](https://github.com/leonardosovienski/cripto-predictor/releases/tag/v1.1.0). [CI de engenharia aprovada](https://github.com/leonardosovienski/cripto-predictor/actions/runs/34630038441) para a fonte `6ea0d2ccdcfc6a3858083acb6ded5cb39e178586`. Consulte [ARCHITECTURE_IMPLEMENTATION.md](ARCHITECTURE_IMPLEMENTATION.md) para comportamento, migração e limites. Este registro atualiza a entrega de software; estados científicos e registros datados abaixo conservam sua autoridade e contexto histórico.
+
 # HANDOFF — GarimpoInvestimentos (Fase 1 + melhorias)
 
 > **Consolidação concluída — 08/09/2026:** somente `main`, local e no GitHub; 1.170 testes e quatro jobs do CI aprovados. Core 3.2.0 e Ops 4.1.0. Código, dados e entregas preservados; ver [auditoria Git](docs/evidence/git_consolidation_20260908/README.md). O agendamento do novo carry continua pendente; o observador de altcoins permanece em seu diretório original.

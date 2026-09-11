@@ -10,4 +10,10 @@ A ingestão emite recibo com etapas efetivamente persistidas. As gravações con
 
 Validação: 59 testes de DPL/história/falhas/fronteiras; 33 testes de migração, backup e jobs; 12 do exportador. Há sobreposição entre conjuntos, portanto não somar como casos únicos. Ruff aprovado nos arquivos alterados. Wheels do predictor e exportador gerados separadamente. Nada foi coletado, agendado ou reavaliado em coortes reais.
 
-Rollback preserva dados e publicações; não reinstalar a árvore inteira do branch antigo do exportador sobre esta linha de pesquisa. Os pins publicados de Core/Ops permanecem até homologação da combinação candidata.
+Rollback preserva dados e publicações; não reinstalar a árvore inteira do branch antigo do exportador sobre esta linha de pesquisa. Os pins Core 3.2.1 e Ops 4.2.0 foram homologados na CI e apontam para wheels publicados, com hashes verificados.
+
+A composição agora separa `arguments`, `runtime_mode`, `ingestion` e `ingest_cli`. Ajuda/status permanecem leves; ingestão não exige credenciais de LLM, enquanto análise conserva suas validações. Os quatro perfis remotos (quality, todos os extras, Python 3.14 e container) passaram na fonte publicada.
+
+## Entrega arquitetural publicada — 11/09/2026
+
+Versão **1.1.0** publicada: [release e artefatos](https://github.com/leonardosovienski/cripto-predictor/releases/tag/v1.1.0). [CI de engenharia aprovada](https://github.com/leonardosovienski/cripto-predictor/actions/runs/34630038441) para a fonte `6ea0d2ccdcfc6a3858083acb6ded5cb39e178586`. Consulte [ARCHITECTURE_IMPLEMENTATION.md](ARCHITECTURE_IMPLEMENTATION.md) para comportamento, migração e limites. Este registro atualiza a entrega de software; estados científicos e registros datados abaixo conservam sua autoridade e contexto histórico.
