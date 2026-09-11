@@ -1,0 +1,630 @@
+{
+  "created_at": "2026-09-11T04:58:07.141453+00:00",
+  "separate_from_primary": true,
+  "derived_cases": [
+    {
+      "case": "spot_info_BTCUSDT",
+      "kind": "EXPLICIT_METADATA_ENRICHMENT",
+      "fields": {
+        "symbol": {
+          "value": "BTCUSDT",
+          "evidence": {
+            "receipt": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\btc-execution-diagnostic-v1\\raw\\spot_info.bin.gz",
+            "sha256": "9eaf77b9e0b5e9691f34c784d0bb920484a6a13353291caca6cd82b55cfd85e1",
+            "field": [
+              "symbols",
+              11,
+              "symbol"
+            ]
+          },
+          "transformation": "identity"
+        },
+        "baseAsset": {
+          "value": "BTC",
+          "evidence": {
+            "receipt": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\btc-execution-diagnostic-v1\\raw\\spot_info.bin.gz",
+            "sha256": "9eaf77b9e0b5e9691f34c784d0bb920484a6a13353291caca6cd82b55cfd85e1",
+            "field": [
+              "symbols",
+              11,
+              "baseAsset"
+            ]
+          },
+          "transformation": "identity"
+        },
+        "quoteAsset": {
+          "value": "USDT",
+          "evidence": {
+            "receipt": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\btc-execution-diagnostic-v1\\raw\\spot_info.bin.gz",
+            "sha256": "9eaf77b9e0b5e9691f34c784d0bb920484a6a13353291caca6cd82b55cfd85e1",
+            "field": [
+              "symbols",
+              11,
+              "quoteAsset"
+            ]
+          },
+          "transformation": "identity"
+        },
+        "isSpotTradingAllowed": {
+          "value": true,
+          "evidence": {
+            "receipt": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\btc-execution-diagnostic-v1\\raw\\spot_info.bin.gz",
+            "sha256": "9eaf77b9e0b5e9691f34c784d0bb920484a6a13353291caca6cd82b55cfd85e1",
+            "field": [
+              "symbols",
+              11,
+              "isSpotTradingAllowed"
+            ]
+          },
+          "transformation": "identity"
+        }
+      },
+      "known_at_ns": 1788833243963778600,
+      "historical_validity_start": "UNKNOWN",
+      "settlement": "UNKNOWN",
+      "decimals": "UNKNOWN; precision fields are not chain decimals",
+      "historical_backfill_authorized": false
+    },
+    {
+      "case": "spot_info_ETHUSDT",
+      "kind": "EXPLICIT_METADATA_ENRICHMENT",
+      "fields": {
+        "symbol": {
+          "value": "ETHUSDT",
+          "evidence": {
+            "receipt": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\btc-execution-diagnostic-v1\\raw\\spot_info.bin.gz",
+            "sha256": "9eaf77b9e0b5e9691f34c784d0bb920484a6a13353291caca6cd82b55cfd85e1",
+            "field": [
+              "symbols",
+              12,
+              "symbol"
+            ]
+          },
+          "transformation": "identity"
+        },
+        "baseAsset": {
+          "value": "ETH",
+          "evidence": {
+            "receipt": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\btc-execution-diagnostic-v1\\raw\\spot_info.bin.gz",
+            "sha256": "9eaf77b9e0b5e9691f34c784d0bb920484a6a13353291caca6cd82b55cfd85e1",
+            "field": [
+              "symbols",
+              12,
+              "baseAsset"
+            ]
+          },
+          "transformation": "identity"
+        },
+        "quoteAsset": {
+          "value": "USDT",
+          "evidence": {
+            "receipt": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\btc-execution-diagnostic-v1\\raw\\spot_info.bin.gz",
+            "sha256": "9eaf77b9e0b5e9691f34c784d0bb920484a6a13353291caca6cd82b55cfd85e1",
+            "field": [
+              "symbols",
+              12,
+              "quoteAsset"
+            ]
+          },
+          "transformation": "identity"
+        },
+        "isSpotTradingAllowed": {
+          "value": true,
+          "evidence": {
+            "receipt": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\btc-execution-diagnostic-v1\\raw\\spot_info.bin.gz",
+            "sha256": "9eaf77b9e0b5e9691f34c784d0bb920484a6a13353291caca6cd82b55cfd85e1",
+            "field": [
+              "symbols",
+              12,
+              "isSpotTradingAllowed"
+            ]
+          },
+          "transformation": "identity"
+        }
+      },
+      "known_at_ns": 1788833243963778600,
+      "historical_validity_start": "UNKNOWN",
+      "settlement": "UNKNOWN",
+      "decimals": "UNKNOWN; precision fields are not chain decimals",
+      "historical_backfill_authorized": false
+    },
+    {
+      "case": "spot_info_WBETHUSDT",
+      "kind": "EXPLICIT_METADATA_ENRICHMENT",
+      "fields": {
+        "symbol": {
+          "value": "WBETHUSDT",
+          "evidence": {
+            "receipt": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\btc-execution-diagnostic-v1\\raw\\spot_info.bin.gz",
+            "sha256": "9eaf77b9e0b5e9691f34c784d0bb920484a6a13353291caca6cd82b55cfd85e1",
+            "field": [
+              "symbols",
+              2248,
+              "symbol"
+            ]
+          },
+          "transformation": "identity"
+        },
+        "baseAsset": {
+          "value": "WBETH",
+          "evidence": {
+            "receipt": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\btc-execution-diagnostic-v1\\raw\\spot_info.bin.gz",
+            "sha256": "9eaf77b9e0b5e9691f34c784d0bb920484a6a13353291caca6cd82b55cfd85e1",
+            "field": [
+              "symbols",
+              2248,
+              "baseAsset"
+            ]
+          },
+          "transformation": "identity"
+        },
+        "quoteAsset": {
+          "value": "USDT",
+          "evidence": {
+            "receipt": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\btc-execution-diagnostic-v1\\raw\\spot_info.bin.gz",
+            "sha256": "9eaf77b9e0b5e9691f34c784d0bb920484a6a13353291caca6cd82b55cfd85e1",
+            "field": [
+              "symbols",
+              2248,
+              "quoteAsset"
+            ]
+          },
+          "transformation": "identity"
+        },
+        "isSpotTradingAllowed": {
+          "value": true,
+          "evidence": {
+            "receipt": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\btc-execution-diagnostic-v1\\raw\\spot_info.bin.gz",
+            "sha256": "9eaf77b9e0b5e9691f34c784d0bb920484a6a13353291caca6cd82b55cfd85e1",
+            "field": [
+              "symbols",
+              2248,
+              "isSpotTradingAllowed"
+            ]
+          },
+          "transformation": "identity"
+        }
+      },
+      "known_at_ns": 1788833243963778600,
+      "historical_validity_start": "UNKNOWN",
+      "settlement": "UNKNOWN",
+      "decimals": "UNKNOWN; precision fields are not chain decimals",
+      "historical_backfill_authorized": false
+    },
+    {
+      "case": "spot_info_USDCUSDT",
+      "kind": "EXPLICIT_METADATA_ENRICHMENT",
+      "fields": {
+        "symbol": {
+          "value": "USDCUSDT",
+          "evidence": {
+            "receipt": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\btc-execution-diagnostic-v1\\raw\\spot_info.bin.gz",
+            "sha256": "9eaf77b9e0b5e9691f34c784d0bb920484a6a13353291caca6cd82b55cfd85e1",
+            "field": [
+              "symbols",
+              422,
+              "symbol"
+            ]
+          },
+          "transformation": "identity"
+        },
+        "baseAsset": {
+          "value": "USDC",
+          "evidence": {
+            "receipt": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\btc-execution-diagnostic-v1\\raw\\spot_info.bin.gz",
+            "sha256": "9eaf77b9e0b5e9691f34c784d0bb920484a6a13353291caca6cd82b55cfd85e1",
+            "field": [
+              "symbols",
+              422,
+              "baseAsset"
+            ]
+          },
+          "transformation": "identity"
+        },
+        "quoteAsset": {
+          "value": "USDT",
+          "evidence": {
+            "receipt": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\btc-execution-diagnostic-v1\\raw\\spot_info.bin.gz",
+            "sha256": "9eaf77b9e0b5e9691f34c784d0bb920484a6a13353291caca6cd82b55cfd85e1",
+            "field": [
+              "symbols",
+              422,
+              "quoteAsset"
+            ]
+          },
+          "transformation": "identity"
+        },
+        "isSpotTradingAllowed": {
+          "value": true,
+          "evidence": {
+            "receipt": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\btc-execution-diagnostic-v1\\raw\\spot_info.bin.gz",
+            "sha256": "9eaf77b9e0b5e9691f34c784d0bb920484a6a13353291caca6cd82b55cfd85e1",
+            "field": [
+              "symbols",
+              422,
+              "isSpotTradingAllowed"
+            ]
+          },
+          "transformation": "identity"
+        }
+      },
+      "known_at_ns": 1788833243963778600,
+      "historical_validity_start": "UNKNOWN",
+      "settlement": "UNKNOWN",
+      "decimals": "UNKNOWN; precision fields are not chain decimals",
+      "historical_backfill_authorized": false
+    },
+    {
+      "case": "spot_info_FDUSDUSDT",
+      "kind": "EXPLICIT_METADATA_ENRICHMENT",
+      "fields": {
+        "symbol": {
+          "value": "FDUSDUSDT",
+          "evidence": {
+            "receipt": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\btc-execution-diagnostic-v1\\raw\\spot_info.bin.gz",
+            "sha256": "9eaf77b9e0b5e9691f34c784d0bb920484a6a13353291caca6cd82b55cfd85e1",
+            "field": [
+              "symbols",
+              2259,
+              "symbol"
+            ]
+          },
+          "transformation": "identity"
+        },
+        "baseAsset": {
+          "value": "FDUSD",
+          "evidence": {
+            "receipt": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\btc-execution-diagnostic-v1\\raw\\spot_info.bin.gz",
+            "sha256": "9eaf77b9e0b5e9691f34c784d0bb920484a6a13353291caca6cd82b55cfd85e1",
+            "field": [
+              "symbols",
+              2259,
+              "baseAsset"
+            ]
+          },
+          "transformation": "identity"
+        },
+        "quoteAsset": {
+          "value": "USDT",
+          "evidence": {
+            "receipt": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\btc-execution-diagnostic-v1\\raw\\spot_info.bin.gz",
+            "sha256": "9eaf77b9e0b5e9691f34c784d0bb920484a6a13353291caca6cd82b55cfd85e1",
+            "field": [
+              "symbols",
+              2259,
+              "quoteAsset"
+            ]
+          },
+          "transformation": "identity"
+        },
+        "isSpotTradingAllowed": {
+          "value": true,
+          "evidence": {
+            "receipt": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\btc-execution-diagnostic-v1\\raw\\spot_info.bin.gz",
+            "sha256": "9eaf77b9e0b5e9691f34c784d0bb920484a6a13353291caca6cd82b55cfd85e1",
+            "field": [
+              "symbols",
+              2259,
+              "isSpotTradingAllowed"
+            ]
+          },
+          "transformation": "identity"
+        }
+      },
+      "known_at_ns": 1788833243963778600,
+      "historical_validity_start": "UNKNOWN",
+      "settlement": "UNKNOWN",
+      "decimals": "UNKNOWN; precision fields are not chain decimals",
+      "historical_backfill_authorized": false
+    },
+    {
+      "case": "future_info_BTCUSDT",
+      "kind": "EXPLICIT_METADATA_ENRICHMENT",
+      "fields": {
+        "symbol": {
+          "value": "BTCUSDT",
+          "evidence": {
+            "receipt": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\btc-execution-diagnostic-v1\\raw\\future_info.bin.gz",
+            "sha256": "5c63ccfebe081ddaf935e1e016978267429899735d063985c532d17835c3dd22",
+            "field": [
+              "symbols",
+              0,
+              "symbol"
+            ]
+          },
+          "transformation": "identity"
+        },
+        "baseAsset": {
+          "value": "BTC",
+          "evidence": {
+            "receipt": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\btc-execution-diagnostic-v1\\raw\\future_info.bin.gz",
+            "sha256": "5c63ccfebe081ddaf935e1e016978267429899735d063985c532d17835c3dd22",
+            "field": [
+              "symbols",
+              0,
+              "baseAsset"
+            ]
+          },
+          "transformation": "identity"
+        },
+        "quoteAsset": {
+          "value": "USDT",
+          "evidence": {
+            "receipt": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\btc-execution-diagnostic-v1\\raw\\future_info.bin.gz",
+            "sha256": "5c63ccfebe081ddaf935e1e016978267429899735d063985c532d17835c3dd22",
+            "field": [
+              "symbols",
+              0,
+              "quoteAsset"
+            ]
+          },
+          "transformation": "identity"
+        },
+        "marginAsset": {
+          "value": "USDT",
+          "evidence": {
+            "receipt": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\btc-execution-diagnostic-v1\\raw\\future_info.bin.gz",
+            "sha256": "5c63ccfebe081ddaf935e1e016978267429899735d063985c532d17835c3dd22",
+            "field": [
+              "symbols",
+              0,
+              "marginAsset"
+            ]
+          },
+          "transformation": "identity"
+        },
+        "contractType": {
+          "value": "PERPETUAL",
+          "evidence": {
+            "receipt": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\btc-execution-diagnostic-v1\\raw\\future_info.bin.gz",
+            "sha256": "5c63ccfebe081ddaf935e1e016978267429899735d063985c532d17835c3dd22",
+            "field": [
+              "symbols",
+              0,
+              "contractType"
+            ]
+          },
+          "transformation": "identity"
+        }
+      },
+      "known_at_ns": 1788833244585202200,
+      "historical_validity_start": "UNKNOWN",
+      "settlement": "UNKNOWN",
+      "decimals": "UNKNOWN; precision fields are not chain decimals",
+      "historical_backfill_authorized": false
+    },
+    {
+      "case": "future_info_ETHUSDT",
+      "kind": "EXPLICIT_METADATA_ENRICHMENT",
+      "fields": {
+        "symbol": {
+          "value": "ETHUSDT",
+          "evidence": {
+            "receipt": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\btc-execution-diagnostic-v1\\raw\\future_info.bin.gz",
+            "sha256": "5c63ccfebe081ddaf935e1e016978267429899735d063985c532d17835c3dd22",
+            "field": [
+              "symbols",
+              1,
+              "symbol"
+            ]
+          },
+          "transformation": "identity"
+        },
+        "baseAsset": {
+          "value": "ETH",
+          "evidence": {
+            "receipt": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\btc-execution-diagnostic-v1\\raw\\future_info.bin.gz",
+            "sha256": "5c63ccfebe081ddaf935e1e016978267429899735d063985c532d17835c3dd22",
+            "field": [
+              "symbols",
+              1,
+              "baseAsset"
+            ]
+          },
+          "transformation": "identity"
+        },
+        "quoteAsset": {
+          "value": "USDT",
+          "evidence": {
+            "receipt": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\btc-execution-diagnostic-v1\\raw\\future_info.bin.gz",
+            "sha256": "5c63ccfebe081ddaf935e1e016978267429899735d063985c532d17835c3dd22",
+            "field": [
+              "symbols",
+              1,
+              "quoteAsset"
+            ]
+          },
+          "transformation": "identity"
+        },
+        "marginAsset": {
+          "value": "USDT",
+          "evidence": {
+            "receipt": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\btc-execution-diagnostic-v1\\raw\\future_info.bin.gz",
+            "sha256": "5c63ccfebe081ddaf935e1e016978267429899735d063985c532d17835c3dd22",
+            "field": [
+              "symbols",
+              1,
+              "marginAsset"
+            ]
+          },
+          "transformation": "identity"
+        },
+        "contractType": {
+          "value": "PERPETUAL",
+          "evidence": {
+            "receipt": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\btc-execution-diagnostic-v1\\raw\\future_info.bin.gz",
+            "sha256": "5c63ccfebe081ddaf935e1e016978267429899735d063985c532d17835c3dd22",
+            "field": [
+              "symbols",
+              1,
+              "contractType"
+            ]
+          },
+          "transformation": "identity"
+        }
+      },
+      "known_at_ns": 1788833244585202200,
+      "historical_validity_start": "UNKNOWN",
+      "settlement": "UNKNOWN",
+      "decimals": "UNKNOWN; precision fields are not chain decimals",
+      "historical_backfill_authorized": false
+    },
+    {
+      "case": "future_info_USDCUSDT",
+      "kind": "EXPLICIT_METADATA_ENRICHMENT",
+      "fields": {
+        "symbol": {
+          "value": "USDCUSDT",
+          "evidence": {
+            "receipt": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\btc-execution-diagnostic-v1\\raw\\future_info.bin.gz",
+            "sha256": "5c63ccfebe081ddaf935e1e016978267429899735d063985c532d17835c3dd22",
+            "field": [
+              "symbols",
+              155,
+              "symbol"
+            ]
+          },
+          "transformation": "identity"
+        },
+        "baseAsset": {
+          "value": "USDC",
+          "evidence": {
+            "receipt": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\btc-execution-diagnostic-v1\\raw\\future_info.bin.gz",
+            "sha256": "5c63ccfebe081ddaf935e1e016978267429899735d063985c532d17835c3dd22",
+            "field": [
+              "symbols",
+              155,
+              "baseAsset"
+            ]
+          },
+          "transformation": "identity"
+        },
+        "quoteAsset": {
+          "value": "USDT",
+          "evidence": {
+            "receipt": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\btc-execution-diagnostic-v1\\raw\\future_info.bin.gz",
+            "sha256": "5c63ccfebe081ddaf935e1e016978267429899735d063985c532d17835c3dd22",
+            "field": [
+              "symbols",
+              155,
+              "quoteAsset"
+            ]
+          },
+          "transformation": "identity"
+        },
+        "marginAsset": {
+          "value": "USDT",
+          "evidence": {
+            "receipt": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\btc-execution-diagnostic-v1\\raw\\future_info.bin.gz",
+            "sha256": "5c63ccfebe081ddaf935e1e016978267429899735d063985c532d17835c3dd22",
+            "field": [
+              "symbols",
+              155,
+              "marginAsset"
+            ]
+          },
+          "transformation": "identity"
+        },
+        "contractType": {
+          "value": "PERPETUAL",
+          "evidence": {
+            "receipt": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\btc-execution-diagnostic-v1\\raw\\future_info.bin.gz",
+            "sha256": "5c63ccfebe081ddaf935e1e016978267429899735d063985c532d17835c3dd22",
+            "field": [
+              "symbols",
+              155,
+              "contractType"
+            ]
+          },
+          "transformation": "identity"
+        }
+      },
+      "known_at_ns": 1788833244585202200,
+      "historical_validity_start": "UNKNOWN",
+      "settlement": "UNKNOWN",
+      "decimals": "UNKNOWN; precision fields are not chain decimals",
+      "historical_backfill_authorized": false
+    },
+    {
+      "case": "AAVE_EXPLICIT_BUNDLE",
+      "kind": "LOCAL_DECODER_CORROBORATION_NOT_INDEPENDENT_PROVIDER",
+      "chain_id": 42161,
+      "pool": "0x794a61358d6845594f94dc1db02a252b5b4814ad",
+      "underlying_contract": "0xaf88d065e77c8cc2239327c5edb3a432268e5831",
+      "function": "getReserveNormalizedIncome(address)",
+      "block_number": 217103100,
+      "raw_value": "1069973262775083814190632012",
+      "normalized_index": "1.069973262775083814190632012",
+      "unit": "RAY-scaled normalized-income index under preserved local decoder; not USDC money",
+      "unit_transform": "exact Decimal(raw)/10**27",
+      "known_at_ns": 1789048125577945000,
+      "semantic_decoder_evidence": {
+        "path": "C:\\Cripto\\pesquisa-20260909\\scripts\\recover_aave_history.py",
+        "sha256": "073daf838238cb206a6aba1d1f1ba77a835795eb7af5b3c1977797f281767e94",
+        "line": 18
+      },
+      "receipt_evidence": [
+        {
+          "receipt": "C:\\Cripto\\pesquisa-20260909\\docs\\evidence\\aave_validation_20260910\\history\\raw\\001.json",
+          "sha256": "b0001477985d2da787a904505886298005898ec7e589b02178cceefc944945ca",
+          "field": [
+            "response",
+            "result"
+          ]
+        },
+        {
+          "receipt": "C:\\Cripto\\pesquisa-20260909\\docs\\evidence\\aave_validation_20260910\\history\\raw\\018.json",
+          "sha256": "547a3aab42015d3fe21ebf343d3a9dca506db2781041119b3c46c1784c954679",
+          "field": [
+            "request",
+            "params",
+            0
+          ]
+        },
+        {
+          "receipt": "C:\\Cripto\\pesquisa-20260909\\docs\\evidence\\aave_validation_20260910\\history\\raw\\018.json",
+          "sha256": "547a3aab42015d3fe21ebf343d3a9dca506db2781041119b3c46c1784c954679",
+          "field": [
+            "response",
+            "result"
+          ]
+        },
+        {
+          "receipt": "C:\\Cripto\\pesquisa-20260909\\docs\\evidence\\aave_validation_20260910\\history\\raw\\019.json",
+          "sha256": "52e3892d67c719da3255c89bd990511f42f1bd4badfbfcc1ffd6d59e5bf25942",
+          "field": [
+            "request",
+            "params"
+          ]
+        },
+        {
+          "receipt": "C:\\Cripto\\pesquisa-20260909\\docs\\evidence\\aave_validation_20260910\\history\\raw\\019.json",
+          "sha256": "52e3892d67c719da3255c89bd990511f42f1bd4badfbfcc1ffd6d59e5bf25942",
+          "field": [
+            "response",
+            "result"
+          ]
+        }
+      ],
+      "normalized_reference": {
+        "path": "C:\\Cripto\\pesquisa-20260909\\docs\\evidence\\aave_validation_20260910\\history\\month-00.json",
+        "sha256": "c25c2d2ede9870c383f361993f21f6d4202f6d907c7b1cb6db96191efda5dc46",
+        "fields": [
+          "normalized_income_ray",
+          "number",
+          "pool",
+          "native_usdc"
+        ]
+      },
+      "limits": [
+        "same provider; not F02",
+        "historical implementation source mapping NOT_PROVEN",
+        "block timestamp from derived month record not proven by selected primary header",
+        "token decimals 6 appears in preserved month record and raw aave_027=6; signature receipt for decimals not in this exact sample, therefore no new historical ABI certification",
+        "chain endpoint corroborated at collection, not omniscient proof of immutable historical semantics"
+      ],
+      "historical_backfill_authorized": false
+    }
+  ],
+  "scope": "No new receipts, no retrospective replacement, no market unit or settlement defaults"
+}

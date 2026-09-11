@@ -1,0 +1,10 @@
+{
+  "verified_at": "2026-09-11T05:01:13.592316+00:00",
+  "protected_files_checked": 277,
+  "changed": [],
+  "passed": true,
+  "network_calls": 0,
+  "capital_operations": 0,
+  "phase2_adapter_unchanged": true,
+  "scope": "Every file listed in baseline; not a claim to have rehashed every unrelated file on disk."
+}

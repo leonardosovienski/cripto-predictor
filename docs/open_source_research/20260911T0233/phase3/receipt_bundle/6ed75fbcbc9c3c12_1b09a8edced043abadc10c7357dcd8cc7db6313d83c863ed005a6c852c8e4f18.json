@@ -1,0 +1,8 @@
+{
+  "url": "https://api.binance.com/api/v3/klines?symbol=ETHUSDT&interval=1d&startTime=1687910400000&endTime=1788739199999&limit=1000",
+  "retrieved_at_utc": "2026-09-07T22:24:19.569405+00:00",
+  "http_status": 200,
+  "sha256": "c4d146a1498eb1a25e83473012be9d9badf3199be274578dc890dd7514256076",
+  "bytes": 184268,
+  "server_date": "Mon, 07 Sep 2026 22:24:19 GMT"
+}

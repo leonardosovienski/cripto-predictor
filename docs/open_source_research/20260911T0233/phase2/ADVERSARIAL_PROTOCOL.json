@@ -1,0 +1,18 @@
+{
+  "registered_at": "2026-09-11T03:35:16.330038+00:00",
+  "parent": "PROTOCOL.json F01/F03",
+  "reason": "Targeted adversarial review after initial run: field distinction alone does not prove semantic consistency; raw field-name absence is insufficient as a PIT gate. No economic parameters changed.",
+  "baseline_implementation_sha256": "c34ff97664b704eb3da64996f4ff7cf87d36034acd73df70256b83253435c648",
+  "F01_controls": [
+    "spot price unit contradicts quote/base",
+    "inverse contract settles in quote rather than base",
+    "spot quantity unit contradicts base",
+    "receipt hash nonhex",
+    "ambiguous same-clock revisions with different value/hash",
+    "NaN monetary amount"
+  ],
+  "expectation": "Each rejected explicitly; record initial failures; if necessary repair only isolated adapter and rerun these controls plus original F01. Do not rerun stochastic F05 or adjust parameters.",
+  "F03": "Map open_ms to event_at and finalized_at_utc to acquisition known-at rather than claiming all fields missing by name. Distinguish derivable identity, historical publication unknown, posthoc eligibility registry, raw receipt versus normalized checksum. Gate still requires semantic evidence, not names.",
+  "calls": 0,
+  "capital": false
+}

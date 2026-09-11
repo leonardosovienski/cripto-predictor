@@ -1,0 +1,8 @@
+{
+  "url": "https://fapi.binance.com/fapi/v1/klines?symbol=BTCUSDT_261225&interval=1h&startTime=1788220800000&endTime=1788739200000&limit=1000",
+  "request_started_utc": "2026-09-08T01:50:34.972590+00:00",
+  "known_at": "2026-09-08T01:50:35.281079+00:00",
+  "status": 200,
+  "sha256": "26f7c61b5580046cf895e2391e01a12037ab5f6c41325d2f87cd437d9d16fff9",
+  "bytes": 17530
+}

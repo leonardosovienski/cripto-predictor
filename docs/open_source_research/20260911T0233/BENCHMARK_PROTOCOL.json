@@ -1,0 +1,17 @@
+{
+  "id": "B01-B02-20260911T0233",
+  "registered_before_execution": true,
+  "purpose": "ENGINEERING",
+  "lineage": "New synthetic differential diagnostics; no economic trial and no frozen family reopening",
+  "baseline": "e4f8974beadc02aed63c7f94cf3d80cb27d4dd7f; baseline.json",
+  "references": "SciPy 1.18.0 spearmanr/rankdata; NumPy 2.5.1 mean/std",
+  "data": "Synthetic only, seed 20260911; integer ties and nonconstant positive prices; fixed cases",
+  "hypothesis_B01": "Local Spearman and ranks agree with SciPy for finite equal-length nonconstant inputs including ties; constant inputs are undefined",
+  "hypothesis_B02": "Local SMA and Bollinger match NumPy with ddof=0; streamed trailing SMA agrees with prefix implementation; a deliberately future-dependent mean fails the same prefix comparison",
+  "design": "100 paired arrays with lengths 3..102; 231 prefixes of one 250-price synthetic series; no tuning",
+  "primary_metric": "Maximum absolute difference and mismatch count",
+  "acceptance": "All defined comparisons within 1e-10; constant handling equivalent after None/NaN normalization; positive leakage control detected; no market conclusion",
+  "resources": "Existing environment only, network denied in runner; <=60 seconds intended; no installations; no changes to operational databases or charters",
+  "failure": "Preserve first result. Numerical mismatch means diagnostic, not alpha; infrastructure failure means not evaluated",
+  "next_gate": "Any broader use needs separate admissibility; no authorization to integrate"
+}

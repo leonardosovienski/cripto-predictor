@@ -1,0 +1,22 @@
+[
+  {
+    "name": "quality",
+    "conclusion": "success",
+    "html_url": "https://github.com/leonardosovienski/cripto-predictor/actions/runs/34541038423/job/103083517119"
+  },
+  {
+    "name": "all-extras",
+    "conclusion": "success",
+    "html_url": "https://github.com/leonardosovienski/cripto-predictor/actions/runs/34541038423/job/103083517351"
+  },
+  {
+    "name": "container",
+    "conclusion": "success",
+    "html_url": "https://github.com/leonardosovienski/cripto-predictor/actions/runs/34541038423/job/103083517353"
+  },
+  {
+    "name": "python-314-experimental",
+    "conclusion": "success",
+    "html_url": "https://github.com/leonardosovienski/cripto-predictor/actions/runs/34541038423/job/103083517431"
+  }
+]

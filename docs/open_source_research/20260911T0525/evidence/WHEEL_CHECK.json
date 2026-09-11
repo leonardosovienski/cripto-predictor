@@ -1,0 +1,18 @@
+{
+  "wheel": "C:\\Cripto\\operacao\\relatorios\\CAPABILITY_TRANSFER_20260911T0525\\wheel\\cripto_predictor-1.0.0-py3-none-any.whl",
+  "sha256": "4af29937a46d0b7eb4df5c72074600d48bc8dc1757fdf94e94952bd7e5f143b2",
+  "package_files": [
+    "GarimpoInvestimentos/research/README.md",
+    "GarimpoInvestimentos/research/__init__.py",
+    "GarimpoInvestimentos/research/__main__.py",
+    "GarimpoInvestimentos/research/factors.py",
+    "GarimpoInvestimentos/research/registry.py",
+    "GarimpoInvestimentos/research/simulation.py",
+    "GarimpoInvestimentos/research/universe.py",
+    "GarimpoInvestimentos/research/validation.py"
+  ],
+  "smoke_exit": 0,
+  "smoke_output": "{\"module\": \"C:\\\\Cripto\\\\operacao\\\\relatorios\\\\CAPABILITY_TRANSFER_20260911T0525\\\\wheel\\\\cripto_predictor-1.0.0-py3-none-any.whl\\\\GarimpoInvestimentos\\\\research\\\\__main__.py\", \"outputs\": [\"factors\", \"universe\", \"splits\", \"simulation\"]}\n",
+  "build_method": "uv build --wheel (isolated)",
+  "initial_build_failure": "hatchling.build unavailable in --no-isolation environment"
+}

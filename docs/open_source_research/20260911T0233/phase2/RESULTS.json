@@ -1,0 +1,1369 @@
+{
+  "initiative": "20260911T0233",
+  "phase": 2,
+  "started_at": "2026-09-11T03:33:43.016038+00:00",
+  "completed_at": "2026-09-11T03:33:44.012110+00:00",
+  "elapsed_seconds": 0.9960724999982631,
+  "protocol_sha256": "a54ab47ab7a3ab16ec6254c68f4f5deef9f1e783302b454c3299971eb2b6e416",
+  "implementation_sha256": "c34ff97664b704eb3da64996f4ff7cf87d36034acd73df70256b83253435c648",
+  "seed_and_design": {
+    "initiative": "20260911T0233",
+    "phase": "2",
+    "registered_at": "2026-09-11T03:30:16.962749+00:00",
+    "head": "e4f8974beadc02aed63c7f94cf3d80cb27d4dd7f",
+    "purpose": "ENGINEERING_AND_SCIENTIFIC_ENABLER; no economic winner search",
+    "network_budget": 0,
+    "orders": 0,
+    "capital_authorized": false,
+    "production_changes": false,
+    "tuning_budget": 0,
+    "baseline_sha256": "fbffd0b566058ecf98ecf354b740693cd1f8b44e2ab57d7e7de72a09ba5497cb",
+    "attempt_policy": "One fixed run; errors retained; repairs versioned and explained; no parameter changes from favorable/unfavorable output",
+    "F01": {
+      "hypothesis": "Explicit identity plus publication/receipt/version gates preserve distinctions lost by the current MarketDataPoint fields.",
+      "inputs": "4 fixed pairs: quote, payoff/settlement, chain token, venue; 2 clock failures; late revision before/after receipt; missing FX and explicit 0.97 conversion; invalid instrument control",
+      "reference": "actual installed MarketDataPoint field introspection; explicit expected pair labels; Decimal arithmetic; no independent human assessor",
+      "metric": "0 collisions among 4 distinct identities; all invalid temporal/conversion inputs rejected; as-of old then revised record; currency amount 100 USDT ->97 USD only with observed FX",
+      "success": "all fixed expectations pass",
+      "reject": "any identity collision, future revision or implicit FX acceptance",
+      "inconclusive": "provider metadata unsupported or unavailable; synthetic success never certifies true identity of market data"
+    },
+    "F02": {
+      "hypothesis": "An accessible separate archival route would corroborate the 38 fixed boundaries.",
+      "inputs": "existing protocol/result hashes and raw-directory inventory; no repeat calls absent evidence of changed access",
+      "metric": "new eligible successful receipt plus full38 comparison required",
+      "success": "all38 match with documented provenance; NOT expected to be testable offline",
+      "reject": "actual block/identity/index mismatch, never timeout",
+      "inconclusive": "no change of access or missing receipts",
+      "budget": "0 new network calls; preserve original1-call timeout"
+    },
+    "F03": {
+      "hypothesis": "Existing retrospective panel can support a new PIT universe/ranking experiment without reconstructing eligibility from future knowledge.",
+      "inputs": "acquisition metadata for all pairs; deterministic schema samples BTCUSDT ETHUSDT FTTUSDT USDCUSDT if present; identity_events13 censored cases; only schema/provenance/dates, no return computation",
+      "controls": "synthetic universe with late listing, known delisting, revision and excluded USDC; oracle membership by explicit decisions; naive latest/current-survivor selection as negative control",
+      "required_fields": [
+        "instrument_id",
+        "event_at",
+        "published_at",
+        "received_at",
+        "eligible_from",
+        "eligible_to",
+        "eligibility_known_at",
+        "source_receipt_hash"
+      ],
+      "metric": "100% coverage of required temporal/eligibility evidence on used data; 0 synthetic membership mismatches",
+      "success": "gate passes only if all evidence exists and PIT is verified",
+      "reject": "reject this dataset use if future information required; do not reject residual ranking economically",
+      "inconclusive": "missing historical evidence/hedge cost/unused evaluation period; no IC/PnL then"
+    },
+    "F04": {
+      "hypothesis": "Partial second-leg fills and segregated cash can overturn apparent full-fill basis profit.",
+      "inputs": "9 scenarios: future fill0,0.5,1 BTC times delay0,1,10 seconds; unwind spot prices100,99,95 tied exogenously to delay; spot buy1 BTC at100; future sell101; matched legs close at100; quote fee0.001 each fill",
+      "capital": "spot venue110 USD, future venue50 USD, margin20% of101*filled, no transfer; matched positions held86400seconds; no funding or interest in base scenario; sensitivity financing break-even reported not estimated",
+      "reference": "event ledger with Decimal versus independent closed-form Fraction cash flows; exact expected no-transfer rejection with future cash0 despite spot cash160",
+      "metric": "cash/PnL error<=1e-10; no negative free cash; no implicit cross-venue netting; payoff sign and delay sensitivity",
+      "success": "ledger matches all9 closed forms and rejects orphan/insufficient local margin controls",
+      "reject": "reject robustness of this synthetic gross-edge example when net<=0; any accounting mismatch rejects adapter correctness",
+      "inconclusive": "no real L2/latency/fees/funding/MTM liquidation path; no empirical fill rates/capacity"
+    },
+    "F05": {
+      "hypothesis": "Dependence and adaptive selection make naive intervals and selected single-test p-values too optimistic.",
+      "inputs": "AR(1) rho0.6,n160,stationary variance1,seed2026091105,400 series; circular block bootstrap length8,299 resamples; fixed95% intervals; exact Gaussian known-covariance reference; no market outcomes",
+      "multiplicity": "8 blocks x4 fixed independent seeded Gaussian magnitudes (seed2026091106); enumerate all256 shared sign patterns; one-sided max-mean selection; exact unadjusted selected p versus maxT corrected p",
+      "labels": "30 synthetic labels, row5 ends25, plus one late-available label; teststarts15,20,25; oracle requires label end and available before cutoff",
+      "reference": "analytic AR1 variance versus covariance matrix sum; loop versus vectorized sign randomization; scalar interval membership oracle",
+      "metric": "coverage counts with Monte Carlo SE; mean interval width; exact selected-family type-I fraction at0.05; 0 forbidden labels after gate",
+      "success": "known-variance95% coverage within0.90..0.99; exact maxT family rejection<=0.05; arithmetic references<=1e-10; all label controls pass",
+      "reject": "reject tested inferential procedure if coverage<0.90 or maxT error>0.05 under its stated null; do not tune blocklength afterward",
+      "inconclusive": "unknown market dependence; block8 may under-cover; no real complete search ledger/label manifest means no economic CI or SPA/PBO claim"
+    },
+    "preservation": "No frozen hypotheses/outcomes updated; new research adapters only; no complete suite repeat"
+  },
+  "results": {
+    "F01": {
+      "status": "PASS_NARROW_ENGINEERING",
+      "passed": true,
+      "pairs": [
+        {
+          "case": "quote",
+          "distinct": true,
+          "left": {
+            "venue": "venueA",
+            "market": "spot",
+            "base_asset": "BTC",
+            "quote_asset": "USD",
+            "settlement_asset": "USD",
+            "chain": "N/A",
+            "contract": "BTC/USD",
+            "expiry": "N/A",
+            "multiplier": "1",
+            "payoff": "spot",
+            "quantity_unit": "BTC",
+            "price_unit": "USD/BTC"
+          },
+          "right": {
+            "venue": "venueA",
+            "market": "spot",
+            "base_asset": "BTC",
+            "quote_asset": "USDT",
+            "settlement_asset": "USDT",
+            "chain": "N/A",
+            "contract": "BTC/USDT",
+            "expiry": "N/A",
+            "multiplier": "1",
+            "payoff": "spot",
+            "quantity_unit": "BTC",
+            "price_unit": "USDT/BTC"
+          }
+        },
+        {
+          "case": "payoff_settlement",
+          "distinct": true,
+          "left": {
+            "venue": "venueA",
+            "market": "perpetual",
+            "base_asset": "BTC",
+            "quote_asset": "USD",
+            "settlement_asset": "USD",
+            "chain": "N/A",
+            "contract": "BTC-PERP",
+            "expiry": "N/A",
+            "multiplier": "1",
+            "payoff": "linear",
+            "quantity_unit": "contract",
+            "price_unit": "USD/BTC"
+          },
+          "right": {
+            "venue": "venueA",
+            "market": "perpetual",
+            "base_asset": "BTC",
+            "quote_asset": "USD",
+            "settlement_asset": "BTC",
+            "chain": "N/A",
+            "contract": "BTC-PERP",
+            "expiry": "N/A",
+            "multiplier": "100",
+            "payoff": "inverse",
+            "quantity_unit": "USD_contract",
+            "price_unit": "USD/BTC"
+          }
+        },
+        {
+          "case": "chain",
+          "distinct": true,
+          "left": {
+            "venue": "venueA",
+            "market": "spot",
+            "base_asset": "USDC",
+            "quote_asset": "USD",
+            "settlement_asset": "USD",
+            "chain": "eip155:1",
+            "contract": "0xsyntheticUSDC",
+            "expiry": "N/A",
+            "multiplier": "1",
+            "payoff": "spot",
+            "quantity_unit": "USDC",
+            "price_unit": "USD/USDC"
+          },
+          "right": {
+            "venue": "venueA",
+            "market": "spot",
+            "base_asset": "USDC",
+            "quote_asset": "USD",
+            "settlement_asset": "USD",
+            "chain": "eip155:42161",
+            "contract": "0xsyntheticUSDC",
+            "expiry": "N/A",
+            "multiplier": "1",
+            "payoff": "spot",
+            "quantity_unit": "USDC",
+            "price_unit": "USD/USDC"
+          }
+        },
+        {
+          "case": "venue",
+          "distinct": true,
+          "left": {
+            "venue": "venueA",
+            "market": "spot",
+            "base_asset": "BTC",
+            "quote_asset": "USD",
+            "settlement_asset": "USD",
+            "chain": "N/A",
+            "contract": "BTC/USD",
+            "expiry": "N/A",
+            "multiplier": "1",
+            "payoff": "spot",
+            "quantity_unit": "BTC",
+            "price_unit": "USD/BTC"
+          },
+          "right": {
+            "venue": "venueB",
+            "market": "spot",
+            "base_asset": "BTC",
+            "quote_asset": "USD",
+            "settlement_asset": "USD",
+            "chain": "N/A",
+            "contract": "BTC/USD",
+            "expiry": "N/A",
+            "multiplier": "1",
+            "payoff": "spot",
+            "quantity_unit": "BTC",
+            "price_unit": "USD/BTC"
+          }
+        }
+      ],
+      "baseline_fields": [
+        "symbol",
+        "timestamp",
+        "open",
+        "high",
+        "low",
+        "close",
+        "volume",
+        "source",
+        "interval",
+        "published_at"
+      ],
+      "missing_explicit_fields": [
+        "venue",
+        "market",
+        "base_asset",
+        "quote_asset",
+        "settlement_asset",
+        "chain",
+        "contract",
+        "expiry",
+        "multiplier",
+        "payoff",
+        "quantity_unit",
+        "price_unit"
+      ],
+      "baseline_limit": "Field absence demonstrates no explicit typed representation; symbol/source strings may encode some identity. No observed production collision or provider truth certified.",
+      "temporal": [
+        {
+          "case": "published before event",
+          "rejected": true
+        },
+        {
+          "case": "receipt before publication",
+          "rejected": true
+        }
+      ],
+      "revision": {
+        "before_receipt": "100",
+        "after_receipt": "90",
+        "naive_latest_would_use": "90",
+        "old_bytes_unchanged": true
+      },
+      "conversion": {
+        "missing_fx_rejected": true,
+        "future_fx_rejected": true,
+        "usd": "97.00",
+        "exact_fraction": "97"
+      },
+      "invalid_multiplier_rejected": true,
+      "equivalent_multiplier_canonicalized": true,
+      "scope": "spot, linear/inverse perpetual/future only; options deliberately unsupported until strike/right/exercise contract exists"
+    },
+    "F02": {
+      "status": "BLOCKED_ACCESS_UNCHANGED",
+      "scientific_result": "INCONCLUSIVE",
+      "prior_attempt": {
+        "bytes": 0,
+        "calls": 1,
+        "completed_at": "2026-09-11T03:01:56.941930+00:00",
+        "endpoint": "https://arbitrum-one-rpc.blockreq.com/v1/rpc/public",
+        "error_type": "ConnectTimeout",
+        "independence_limit": "Different public operator, underlying backend not disclosed. Equality is separate-endpoint corroboration, not proof of independent node operation.",
+        "status": "INCOMPLETE"
+      },
+      "receipt_count": 1,
+      "access_change_evidence": false,
+      "hashes_unchanged": true,
+      "new_calls": 0,
+      "quota_consumed": 0,
+      "claim": "No separate-source comparison or historical implementation mapping established",
+      "pass_preservation": true
+    },
+    "F03": {
+      "status": "BLOCKED_DATA_FOR_ECONOMIC_TEST",
+      "synthetic_gate_passed": true,
+      "negative_control_detected": 3,
+      "membership_controls": [
+        {
+          "decision": 9,
+          "expected": [
+            "BTC",
+            "FTT",
+            "USDC"
+          ],
+          "asof": [
+            "BTC",
+            "FTT",
+            "USDC"
+          ],
+          "naive_current_survivors": [
+            "BTC",
+            "NEW",
+            "USDC"
+          ],
+          "asof_pass": true,
+          "naive_wrong": true
+        },
+        {
+          "decision": 12,
+          "expected": [
+            "BTC",
+            "FTT",
+            "USDC"
+          ],
+          "asof": [
+            "BTC",
+            "FTT",
+            "USDC"
+          ],
+          "naive_current_survivors": [
+            "BTC",
+            "NEW",
+            "USDC"
+          ],
+          "asof_pass": true,
+          "naive_wrong": true
+        },
+        {
+          "decision": 15,
+          "expected": [
+            "BTC",
+            "FTT",
+            "NEW",
+            "USDC"
+          ],
+          "asof": [
+            "BTC",
+            "FTT",
+            "NEW",
+            "USDC"
+          ],
+          "naive_current_survivors": [
+            "BTC",
+            "NEW",
+            "USDC"
+          ],
+          "asof_pass": true,
+          "naive_wrong": true
+        },
+        {
+          "decision": 21,
+          "expected": [
+            "BTC",
+            "NEW",
+            "USDC"
+          ],
+          "asof": [
+            "BTC",
+            "NEW",
+            "USDC"
+          ],
+          "naive_current_survivors": [
+            "BTC",
+            "NEW",
+            "USDC"
+          ],
+          "asof_pass": true,
+          "naive_wrong": false
+        }
+      ],
+      "panel_declared_rows": 727447,
+      "pair_count": 661,
+      "missing_days_metadata_sum": 542,
+      "pairs_with_missing_days": 12,
+      "samples": [
+        {
+          "symbol": "BTCUSDT",
+          "status": "PRESENT",
+          "columns": [
+            "open_ms",
+            "open",
+            "high",
+            "low",
+            "close",
+            "volume",
+            "quote_volume",
+            "close_ms"
+          ],
+          "metadata_keys": [
+            "symbol",
+            "source",
+            "rest_error",
+            "rows",
+            "first_open_ms",
+            "last_open_ms",
+            "missing_internal_days",
+            "duplicate_rows",
+            "finalized_at_utc"
+          ],
+          "rows_declared": 2167,
+          "first_open_ms": 1601510400000,
+          "last_open_ms": 1788652800000,
+          "collected_at": "2026-09-07T18:51:36.481577+00:00",
+          "missing_required_evidence": [
+            "instrument_id",
+            "event_at",
+            "published_at",
+            "received_at",
+            "eligible_from",
+            "eligible_to",
+            "eligibility_known_at",
+            "source_receipt_hash"
+          ],
+          "missing_internal_days": 0,
+          "gate": "BLOCKED_PIT_EVIDENCE"
+        },
+        {
+          "symbol": "ETHUSDT",
+          "status": "PRESENT",
+          "columns": [
+            "open_ms",
+            "open",
+            "high",
+            "low",
+            "close",
+            "volume",
+            "quote_volume",
+            "close_ms"
+          ],
+          "metadata_keys": [
+            "symbol",
+            "source",
+            "rest_error",
+            "rows",
+            "first_open_ms",
+            "last_open_ms",
+            "missing_internal_days",
+            "duplicate_rows",
+            "finalized_at_utc"
+          ],
+          "rows_declared": 2167,
+          "first_open_ms": 1601510400000,
+          "last_open_ms": 1788652800000,
+          "collected_at": "2026-09-07T22:24:20.627982+00:00",
+          "missing_required_evidence": [
+            "instrument_id",
+            "event_at",
+            "published_at",
+            "received_at",
+            "eligible_from",
+            "eligible_to",
+            "eligibility_known_at",
+            "source_receipt_hash"
+          ],
+          "missing_internal_days": 0,
+          "gate": "BLOCKED_PIT_EVIDENCE"
+        },
+        {
+          "symbol": "FTTUSDT",
+          "status": "PRESENT",
+          "columns": [
+            "open_ms",
+            "open",
+            "high",
+            "low",
+            "close",
+            "volume",
+            "quote_volume",
+            "close_ms"
+          ],
+          "metadata_keys": [
+            "symbol",
+            "source",
+            "rest_error",
+            "rows",
+            "first_open_ms",
+            "last_open_ms",
+            "missing_internal_days",
+            "duplicate_rows",
+            "finalized_at_utc"
+          ],
+          "rows_declared": 1857,
+          "first_open_ms": 1601510400000,
+          "last_open_ms": 1788652800000,
+          "collected_at": "2026-09-07T18:51:23.584636+00:00",
+          "missing_required_evidence": [
+            "instrument_id",
+            "event_at",
+            "published_at",
+            "received_at",
+            "eligible_from",
+            "eligible_to",
+            "eligibility_known_at",
+            "source_receipt_hash"
+          ],
+          "missing_internal_days": 310,
+          "gate": "BLOCKED_PIT_EVIDENCE"
+        },
+        {
+          "symbol": "USDCUSDT",
+          "status": "ABSENT",
+          "gate": "BLOCKED_DATA"
+        }
+      ],
+      "identity_events": {
+        "count": 13,
+        "scope": "Only the 13 known v1 censored observations, not a complete corporate-action database.",
+        "historical_feature_use": false,
+        "source_access_date": "2026-09-07"
+      },
+      "input_hashes": {
+        "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-altcoins\\work\\altcoin-retro-data\\acquisition.json": "ca3897824e62fce6b8b944f17af4d6220a28ef66765e83208a43d3c68fabc53d",
+        "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-altcoins\\work\\altcoin-retro-data\\pairs\\BTCUSDT.json.gz": "f055de9208fabde2d40e0c957f44934ae1dc1e1df8730d4061904df2fc60aed7",
+        "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-altcoins\\work\\altcoin-retro-data\\pairs\\ETHUSDT.json.gz": "f7df37a93394dfe6bb83f0e63040d8f77d4ed40e2776d79b9ad082057c1d7e4b",
+        "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-altcoins\\work\\altcoin-retro-data\\pairs\\FTTUSDT.json.gz": "411fe04a59aef62cb5e1306feb3bdfdd5555c0793693c3dbeac80c448400339e",
+        "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-altcoins\\work\\altcoin-retro-package\\docs\\evidence\\altcoin_payoff_20260907\\identity_events.json": "85759f042ec26c8bc24f21883370d7bf538da7e46d0fb26a230582045a3b21cb"
+      },
+      "pit_fraction": "NOT_ESTIMABLE from acquired schema; missing explicit evidence is not proof no public historical information existed",
+      "new_ranking_or_returns_calculated": false,
+      "existing_frozen_selection_changed": false,
+      "reason": "Selected sample schemas lack row-level historical publication/receipt and dated eligibility; 13 posthoc identity events are explicitly not a complete historical universe. Full new-family hedge/cost contract and unused evaluation period also absent."
+    },
+    "F04": {
+      "status": "PASS_ACCOUNTING_ROBUSTNESS_NOT_DEMONSTRATED",
+      "passed": true,
+      "cases": [
+        {
+          "fill_fraction": "0",
+          "delay_seconds": 0,
+          "orphan_unwind_price": "100",
+          "net_pnl_usd": "-0.200",
+          "closed_form_fraction": "-1/5",
+          "error": "0.000",
+          "gross_pnl_usd": "0",
+          "fees_usd": "0.200",
+          "economic_sign": "NONPOSITIVE",
+          "net_on_total_capital": "-0.00125",
+          "additional_all_in_cost_break_even_usd": "0",
+          "capital": {
+            "spot_inventory_cost": "100",
+            "future_margin": "0.0",
+            "orphan_btc": "1",
+            "orphan_capital_seconds": "0",
+            "matched_spot_capital_seconds": "0",
+            "future_margin_seconds": "0.0"
+          },
+          "ledger": [
+            {
+              "event": "spot buy",
+              "spot_cash": "9.900",
+              "future_cash": "50",
+              "future_locked_margin": "0",
+              "future_free_cash": "50",
+              "spot_btc": "1",
+              "future_short_btc": "0"
+            },
+            {
+              "event": "future partial fill",
+              "spot_cash": "9.900",
+              "future_cash": "50.000",
+              "future_locked_margin": "0.0",
+              "future_free_cash": "50.000",
+              "spot_btc": "1",
+              "future_short_btc": "0"
+            },
+            {
+              "event": "spot sell",
+              "spot_cash": "109.800",
+              "future_cash": "50.000",
+              "future_locked_margin": "0.0",
+              "future_free_cash": "50.000",
+              "spot_btc": "0",
+              "future_short_btc": "0"
+            },
+            {
+              "event": "spot sell",
+              "spot_cash": "109.800",
+              "future_cash": "50.000",
+              "future_locked_margin": "0.0",
+              "future_free_cash": "50.000",
+              "spot_btc": "0",
+              "future_short_btc": "0"
+            },
+            {
+              "event": "future close",
+              "spot_cash": "109.800",
+              "future_cash": "50.000",
+              "future_locked_margin": "0",
+              "future_free_cash": "50.000",
+              "spot_btc": "0",
+              "future_short_btc": "0"
+            }
+          ],
+          "all_positions_closed": true,
+          "pass": true
+        },
+        {
+          "fill_fraction": "0",
+          "delay_seconds": 1,
+          "orphan_unwind_price": "99",
+          "net_pnl_usd": "-1.199",
+          "closed_form_fraction": "-1199/1000",
+          "error": "0.000",
+          "gross_pnl_usd": "-1",
+          "fees_usd": "0.199",
+          "economic_sign": "NONPOSITIVE",
+          "net_on_total_capital": "-0.00749375",
+          "additional_all_in_cost_break_even_usd": "0",
+          "capital": {
+            "spot_inventory_cost": "100",
+            "future_margin": "0.0",
+            "orphan_btc": "1",
+            "orphan_capital_seconds": "100",
+            "matched_spot_capital_seconds": "0",
+            "future_margin_seconds": "0.0"
+          },
+          "ledger": [
+            {
+              "event": "spot buy",
+              "spot_cash": "9.900",
+              "future_cash": "50",
+              "future_locked_margin": "0",
+              "future_free_cash": "50",
+              "spot_btc": "1",
+              "future_short_btc": "0"
+            },
+            {
+              "event": "future partial fill",
+              "spot_cash": "9.900",
+              "future_cash": "50.000",
+              "future_locked_margin": "0.0",
+              "future_free_cash": "50.000",
+              "spot_btc": "1",
+              "future_short_btc": "0"
+            },
+            {
+              "event": "spot sell",
+              "spot_cash": "108.801",
+              "future_cash": "50.000",
+              "future_locked_margin": "0.0",
+              "future_free_cash": "50.000",
+              "spot_btc": "0",
+              "future_short_btc": "0"
+            },
+            {
+              "event": "spot sell",
+              "spot_cash": "108.801",
+              "future_cash": "50.000",
+              "future_locked_margin": "0.0",
+              "future_free_cash": "50.000",
+              "spot_btc": "0",
+              "future_short_btc": "0"
+            },
+            {
+              "event": "future close",
+              "spot_cash": "108.801",
+              "future_cash": "50.000",
+              "future_locked_margin": "0",
+              "future_free_cash": "50.000",
+              "spot_btc": "0",
+              "future_short_btc": "0"
+            }
+          ],
+          "all_positions_closed": true,
+          "pass": true
+        },
+        {
+          "fill_fraction": "0",
+          "delay_seconds": 10,
+          "orphan_unwind_price": "95",
+          "net_pnl_usd": "-5.195",
+          "closed_form_fraction": "-1039/200",
+          "error": "0.000",
+          "gross_pnl_usd": "-5",
+          "fees_usd": "0.195",
+          "economic_sign": "NONPOSITIVE",
+          "net_on_total_capital": "-0.03246875",
+          "additional_all_in_cost_break_even_usd": "0",
+          "capital": {
+            "spot_inventory_cost": "100",
+            "future_margin": "0.0",
+            "orphan_btc": "1",
+            "orphan_capital_seconds": "1000",
+            "matched_spot_capital_seconds": "0",
+            "future_margin_seconds": "0.0"
+          },
+          "ledger": [
+            {
+              "event": "spot buy",
+              "spot_cash": "9.900",
+              "future_cash": "50",
+              "future_locked_margin": "0",
+              "future_free_cash": "50",
+              "spot_btc": "1",
+              "future_short_btc": "0"
+            },
+            {
+              "event": "future partial fill",
+              "spot_cash": "9.900",
+              "future_cash": "50.000",
+              "future_locked_margin": "0.0",
+              "future_free_cash": "50.000",
+              "spot_btc": "1",
+              "future_short_btc": "0"
+            },
+            {
+              "event": "spot sell",
+              "spot_cash": "104.805",
+              "future_cash": "50.000",
+              "future_locked_margin": "0.0",
+              "future_free_cash": "50.000",
+              "spot_btc": "0",
+              "future_short_btc": "0"
+            },
+            {
+              "event": "spot sell",
+              "spot_cash": "104.805",
+              "future_cash": "50.000",
+              "future_locked_margin": "0.0",
+              "future_free_cash": "50.000",
+              "spot_btc": "0",
+              "future_short_btc": "0"
+            },
+            {
+              "event": "future close",
+              "spot_cash": "104.805",
+              "future_cash": "50.000",
+              "future_locked_margin": "0",
+              "future_free_cash": "50.000",
+              "spot_btc": "0",
+              "future_short_btc": "0"
+            }
+          ],
+          "all_positions_closed": true,
+          "pass": true
+        },
+        {
+          "fill_fraction": "0.5",
+          "delay_seconds": 0,
+          "orphan_unwind_price": "100",
+          "net_pnl_usd": "0.1995",
+          "closed_form_fraction": "399/2000",
+          "error": "0.0000",
+          "gross_pnl_usd": "0.5",
+          "fees_usd": "0.3005",
+          "economic_sign": "POSITIVE",
+          "net_on_total_capital": "0.001246875",
+          "additional_all_in_cost_break_even_usd": "0.1995",
+          "capital": {
+            "spot_inventory_cost": "100",
+            "future_margin": "10.10",
+            "orphan_btc": "0.5",
+            "orphan_capital_seconds": "0.0",
+            "matched_spot_capital_seconds": "4320000.0",
+            "future_margin_seconds": "872640.00"
+          },
+          "ledger": [
+            {
+              "event": "spot buy",
+              "spot_cash": "9.900",
+              "future_cash": "50",
+              "future_locked_margin": "0",
+              "future_free_cash": "50",
+              "spot_btc": "1",
+              "future_short_btc": "0"
+            },
+            {
+              "event": "future partial fill",
+              "spot_cash": "9.900",
+              "future_cash": "49.9495",
+              "future_locked_margin": "10.10",
+              "future_free_cash": "39.8495",
+              "spot_btc": "1",
+              "future_short_btc": "0.5"
+            },
+            {
+              "event": "spot sell",
+              "spot_cash": "59.8500",
+              "future_cash": "49.9495",
+              "future_locked_margin": "10.10",
+              "future_free_cash": "39.8495",
+              "spot_btc": "0.5",
+              "future_short_btc": "0.5"
+            },
+            {
+              "event": "spot sell",
+              "spot_cash": "109.8000",
+              "future_cash": "49.9495",
+              "future_locked_margin": "10.10",
+              "future_free_cash": "39.8495",
+              "spot_btc": "0.0",
+              "future_short_btc": "0.5"
+            },
+            {
+              "event": "future close",
+              "spot_cash": "109.8000",
+              "future_cash": "50.3995",
+              "future_locked_margin": "0",
+              "future_free_cash": "50.3995",
+              "spot_btc": "0.0",
+              "future_short_btc": "0"
+            }
+          ],
+          "all_positions_closed": true,
+          "pass": true
+        },
+        {
+          "fill_fraction": "0.5",
+          "delay_seconds": 1,
+          "orphan_unwind_price": "99",
+          "net_pnl_usd": "-0.3000",
+          "closed_form_fraction": "-3/10",
+          "error": "0.0000",
+          "gross_pnl_usd": "0.0",
+          "fees_usd": "0.3000",
+          "economic_sign": "NONPOSITIVE",
+          "net_on_total_capital": "-0.001875",
+          "additional_all_in_cost_break_even_usd": "0",
+          "capital": {
+            "spot_inventory_cost": "100",
+            "future_margin": "10.10",
+            "orphan_btc": "0.5",
+            "orphan_capital_seconds": "50.0",
+            "matched_spot_capital_seconds": "4320000.0",
+            "future_margin_seconds": "872640.00"
+          },
+          "ledger": [
+            {
+              "event": "spot buy",
+              "spot_cash": "9.900",
+              "future_cash": "50",
+              "future_locked_margin": "0",
+              "future_free_cash": "50",
+              "spot_btc": "1",
+              "future_short_btc": "0"
+            },
+            {
+              "event": "future partial fill",
+              "spot_cash": "9.900",
+              "future_cash": "49.9495",
+              "future_locked_margin": "10.10",
+              "future_free_cash": "39.8495",
+              "spot_btc": "1",
+              "future_short_btc": "0.5"
+            },
+            {
+              "event": "spot sell",
+              "spot_cash": "59.3505",
+              "future_cash": "49.9495",
+              "future_locked_margin": "10.10",
+              "future_free_cash": "39.8495",
+              "spot_btc": "0.5",
+              "future_short_btc": "0.5"
+            },
+            {
+              "event": "spot sell",
+              "spot_cash": "109.3005",
+              "future_cash": "49.9495",
+              "future_locked_margin": "10.10",
+              "future_free_cash": "39.8495",
+              "spot_btc": "0.0",
+              "future_short_btc": "0.5"
+            },
+            {
+              "event": "future close",
+              "spot_cash": "109.3005",
+              "future_cash": "50.3995",
+              "future_locked_margin": "0",
+              "future_free_cash": "50.3995",
+              "spot_btc": "0.0",
+              "future_short_btc": "0"
+            }
+          ],
+          "all_positions_closed": true,
+          "pass": true
+        },
+        {
+          "fill_fraction": "0.5",
+          "delay_seconds": 10,
+          "orphan_unwind_price": "95",
+          "net_pnl_usd": "-2.2980",
+          "closed_form_fraction": "-1149/500",
+          "error": "0.0000",
+          "gross_pnl_usd": "-2.0",
+          "fees_usd": "0.2980",
+          "economic_sign": "NONPOSITIVE",
+          "net_on_total_capital": "-0.0143625",
+          "additional_all_in_cost_break_even_usd": "0",
+          "capital": {
+            "spot_inventory_cost": "100",
+            "future_margin": "10.10",
+            "orphan_btc": "0.5",
+            "orphan_capital_seconds": "500.0",
+            "matched_spot_capital_seconds": "4320000.0",
+            "future_margin_seconds": "872640.00"
+          },
+          "ledger": [
+            {
+              "event": "spot buy",
+              "spot_cash": "9.900",
+              "future_cash": "50",
+              "future_locked_margin": "0",
+              "future_free_cash": "50",
+              "spot_btc": "1",
+              "future_short_btc": "0"
+            },
+            {
+              "event": "future partial fill",
+              "spot_cash": "9.900",
+              "future_cash": "49.9495",
+              "future_locked_margin": "10.10",
+              "future_free_cash": "39.8495",
+              "spot_btc": "1",
+              "future_short_btc": "0.5"
+            },
+            {
+              "event": "spot sell",
+              "spot_cash": "57.3525",
+              "future_cash": "49.9495",
+              "future_locked_margin": "10.10",
+              "future_free_cash": "39.8495",
+              "spot_btc": "0.5",
+              "future_short_btc": "0.5"
+            },
+            {
+              "event": "spot sell",
+              "spot_cash": "107.3025",
+              "future_cash": "49.9495",
+              "future_locked_margin": "10.10",
+              "future_free_cash": "39.8495",
+              "spot_btc": "0.0",
+              "future_short_btc": "0.5"
+            },
+            {
+              "event": "future close",
+              "spot_cash": "107.3025",
+              "future_cash": "50.3995",
+              "future_locked_margin": "0",
+              "future_free_cash": "50.3995",
+              "spot_btc": "0.0",
+              "future_short_btc": "0"
+            }
+          ],
+          "all_positions_closed": true,
+          "pass": true
+        },
+        {
+          "fill_fraction": "1",
+          "delay_seconds": 0,
+          "orphan_unwind_price": "100",
+          "net_pnl_usd": "0.599",
+          "closed_form_fraction": "599/1000",
+          "error": "0.000",
+          "gross_pnl_usd": "1",
+          "fees_usd": "0.401",
+          "economic_sign": "POSITIVE",
+          "net_on_total_capital": "0.00374375",
+          "additional_all_in_cost_break_even_usd": "0.599",
+          "capital": {
+            "spot_inventory_cost": "100",
+            "future_margin": "20.2",
+            "orphan_btc": "0",
+            "orphan_capital_seconds": "0",
+            "matched_spot_capital_seconds": "8640000",
+            "future_margin_seconds": "1745280.0"
+          },
+          "ledger": [
+            {
+              "event": "spot buy",
+              "spot_cash": "9.900",
+              "future_cash": "50",
+              "future_locked_margin": "0",
+              "future_free_cash": "50",
+              "spot_btc": "1",
+              "future_short_btc": "0"
+            },
+            {
+              "event": "future partial fill",
+              "spot_cash": "9.900",
+              "future_cash": "49.899",
+              "future_locked_margin": "20.2",
+              "future_free_cash": "29.699",
+              "spot_btc": "1",
+              "future_short_btc": "1"
+            },
+            {
+              "event": "spot sell",
+              "spot_cash": "9.900",
+              "future_cash": "49.899",
+              "future_locked_margin": "20.2",
+              "future_free_cash": "29.699",
+              "spot_btc": "1",
+              "future_short_btc": "1"
+            },
+            {
+              "event": "spot sell",
+              "spot_cash": "109.800",
+              "future_cash": "49.899",
+              "future_locked_margin": "20.2",
+              "future_free_cash": "29.699",
+              "spot_btc": "0",
+              "future_short_btc": "1"
+            },
+            {
+              "event": "future close",
+              "spot_cash": "109.800",
+              "future_cash": "50.799",
+              "future_locked_margin": "0",
+              "future_free_cash": "50.799",
+              "spot_btc": "0",
+              "future_short_btc": "0"
+            }
+          ],
+          "all_positions_closed": true,
+          "pass": true
+        },
+        {
+          "fill_fraction": "1",
+          "delay_seconds": 1,
+          "orphan_unwind_price": "99",
+          "net_pnl_usd": "0.599",
+          "closed_form_fraction": "599/1000",
+          "error": "0.000",
+          "gross_pnl_usd": "1",
+          "fees_usd": "0.401",
+          "economic_sign": "POSITIVE",
+          "net_on_total_capital": "0.00374375",
+          "additional_all_in_cost_break_even_usd": "0.599",
+          "capital": {
+            "spot_inventory_cost": "100",
+            "future_margin": "20.2",
+            "orphan_btc": "0",
+            "orphan_capital_seconds": "0",
+            "matched_spot_capital_seconds": "8640000",
+            "future_margin_seconds": "1745280.0"
+          },
+          "ledger": [
+            {
+              "event": "spot buy",
+              "spot_cash": "9.900",
+              "future_cash": "50",
+              "future_locked_margin": "0",
+              "future_free_cash": "50",
+              "spot_btc": "1",
+              "future_short_btc": "0"
+            },
+            {
+              "event": "future partial fill",
+              "spot_cash": "9.900",
+              "future_cash": "49.899",
+              "future_locked_margin": "20.2",
+              "future_free_cash": "29.699",
+              "spot_btc": "1",
+              "future_short_btc": "1"
+            },
+            {
+              "event": "spot sell",
+              "spot_cash": "9.900",
+              "future_cash": "49.899",
+              "future_locked_margin": "20.2",
+              "future_free_cash": "29.699",
+              "spot_btc": "1",
+              "future_short_btc": "1"
+            },
+            {
+              "event": "spot sell",
+              "spot_cash": "109.800",
+              "future_cash": "49.899",
+              "future_locked_margin": "20.2",
+              "future_free_cash": "29.699",
+              "spot_btc": "0",
+              "future_short_btc": "1"
+            },
+            {
+              "event": "future close",
+              "spot_cash": "109.800",
+              "future_cash": "50.799",
+              "future_locked_margin": "0",
+              "future_free_cash": "50.799",
+              "spot_btc": "0",
+              "future_short_btc": "0"
+            }
+          ],
+          "all_positions_closed": true,
+          "pass": true
+        },
+        {
+          "fill_fraction": "1",
+          "delay_seconds": 10,
+          "orphan_unwind_price": "95",
+          "net_pnl_usd": "0.599",
+          "closed_form_fraction": "599/1000",
+          "error": "0.000",
+          "gross_pnl_usd": "1",
+          "fees_usd": "0.401",
+          "economic_sign": "POSITIVE",
+          "net_on_total_capital": "0.00374375",
+          "additional_all_in_cost_break_even_usd": "0.599",
+          "capital": {
+            "spot_inventory_cost": "100",
+            "future_margin": "20.2",
+            "orphan_btc": "0",
+            "orphan_capital_seconds": "0",
+            "matched_spot_capital_seconds": "8640000",
+            "future_margin_seconds": "1745280.0"
+          },
+          "ledger": [
+            {
+              "event": "spot buy",
+              "spot_cash": "9.900",
+              "future_cash": "50",
+              "future_locked_margin": "0",
+              "future_free_cash": "50",
+              "spot_btc": "1",
+              "future_short_btc": "0"
+            },
+            {
+              "event": "future partial fill",
+              "spot_cash": "9.900",
+              "future_cash": "49.899",
+              "future_locked_margin": "20.2",
+              "future_free_cash": "29.699",
+              "spot_btc": "1",
+              "future_short_btc": "1"
+            },
+            {
+              "event": "spot sell",
+              "spot_cash": "9.900",
+              "future_cash": "49.899",
+              "future_locked_margin": "20.2",
+              "future_free_cash": "29.699",
+              "spot_btc": "1",
+              "future_short_btc": "1"
+            },
+            {
+              "event": "spot sell",
+              "spot_cash": "109.800",
+              "future_cash": "49.899",
+              "future_locked_margin": "20.2",
+              "future_free_cash": "29.699",
+              "spot_btc": "0",
+              "future_short_btc": "1"
+            },
+            {
+              "event": "future close",
+              "spot_cash": "109.800",
+              "future_cash": "50.799",
+              "future_locked_margin": "0",
+              "future_free_cash": "50.799",
+              "spot_btc": "0",
+              "future_short_btc": "0"
+            }
+          ],
+          "all_positions_closed": true,
+          "pass": true
+        }
+      ],
+      "insufficient_local_margin_rejected": true,
+      "unbacked_spot_sale_rejected": true,
+      "scenario_net_range": [
+        "-5.195",
+        "0.599"
+      ],
+      "positive_scenarios": 4,
+      "not_empirical_probability": "Scenarios equiprobable only as enumeration; count is not an estimated probability. Delay-price map imposed, not fitted.",
+      "not_modeled": [
+        "actual queue/fill probabilities",
+        "funding and interest",
+        "intraperiod futures margin calls/mark-to-market",
+        "venue default/transfers",
+        "personal fees/taxes/FX",
+        "market impact and liquidity of forced unwind"
+      ]
+    },
+    "F05": {
+      "status": "PASS_REFERENCE_TESTS_MARKET_INFERENCE_BLOCKED",
+      "passed": true,
+      "analytic_mean_variance": 0.02470703125,
+      "matrix_mean_variance": 0.02470703125,
+      "effective_n_known_ar1": 40.47430830039526,
+      "iid_n": 160,
+      "intervals": [
+        {
+          "method": "iid_normal",
+          "covered": 248,
+          "repetitions": 400,
+          "coverage": 0.62,
+          "mc_standard_error": 0.024269322199023193,
+          "mean_interval_width": 0.3041798374145584,
+          "registered_coverage_threshold_pass": false
+        },
+        {
+          "method": "known_covariance",
+          "covered": 374,
+          "repetitions": 400,
+          "coverage": 0.935,
+          "mc_standard_error": 0.012326293035621046,
+          "mean_interval_width": 0.6161527184991653,
+          "registered_coverage_threshold_pass": true
+        },
+        {
+          "method": "circular_block8",
+          "covered": 345,
+          "repetitions": 400,
+          "coverage": 0.8625,
+          "mc_standard_error": 0.017218721642444885,
+          "mean_interval_width": 0.501716186978903,
+          "registered_coverage_threshold_pass": false
+        }
+      ],
+      "multiplicity": {
+        "patterns": 256,
+        "candidate_strategies": 4,
+        "unadjusted_selected_rejections": 41,
+        "unadjusted_family_error": 0.16015625,
+        "maxT_rejections": 12,
+        "maxT_family_error": 0.046875,
+        "scalar_reference_error": 1.1102230246251565e-16,
+        "assumption": "joint block-sign symmetry under complete null and fixed complete candidate family. Does not prove strong control under arbitrary partial null or market dependence.",
+        "magnitudes": [
+          [
+            0.8329167086160782,
+            0.062173284258933356,
+            -0.43426182312625833,
+            0.39798953732449066
+          ],
+          [
+            0.2309194485074657,
+            0.5434125574684121,
+            0.1363911553318539,
+            1.2364388168994342
+          ],
+          [
+            -0.6344592214254781,
+            -0.468599278365504,
+            -1.0927921913865712,
+            0.025683891382978725
+          ],
+          [
+            -0.9588182875624237,
+            1.3235620444568372,
+            -0.6162417081188963,
+            -0.1418586214282781
+          ],
+          [
+            0.31506407376411316,
+            1.9159874691267105,
+            -0.0680794559868863,
+            -0.015619602232940068
+          ],
+          [
+            0.12218677474035754,
+            1.5447471855508723,
+            -1.3557052102405251,
+            1.2459718425196478
+          ],
+          [
+            0.22747516333051243,
+            -1.0523188119759017,
+            1.6009591073871927,
+            2.096172486838585
+          ],
+          [
+            0.49643068225536424,
+            -0.4185275911728738,
+            -0.47638048754731865,
+            -0.47386570877722517
+          ]
+        ]
+      },
+      "label_boundaries": [
+        {
+          "cutoff": 15,
+          "rowgap_train_count": 13,
+          "interval_and_availability_kept": [
+            0,
+            1,
+            2,
+            4,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12
+          ],
+          "forbidden_before": [
+            3,
+            5
+          ],
+          "forbidden_after": 0,
+          "oracle_pass": true
+        },
+        {
+          "cutoff": 20,
+          "rowgap_train_count": 18,
+          "interval_and_availability_kept": [
+            0,
+            1,
+            2,
+            4,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17
+          ],
+          "forbidden_before": [
+            3,
+            5
+          ],
+          "forbidden_after": 0,
+          "oracle_pass": true
+        },
+        {
+          "cutoff": 25,
+          "rowgap_train_count": 23,
+          "interval_and_availability_kept": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22
+          ],
+          "forbidden_before": [
+            5
+          ],
+          "forbidden_after": 0,
+          "oracle_pass": true
+        }
+      ],
+      "market_economic_ci_computed": false,
+      "limits": "AR1 Gaussian stationarity and known covariance are synthetic oracle assumptions. Fixed block8 not retuned; undercoverage reported as result. No real complete trial ledger or PIT labels supplied for new family."
+    }
+  },
+  "new_network_calls": 0,
+  "orders": 0
+}

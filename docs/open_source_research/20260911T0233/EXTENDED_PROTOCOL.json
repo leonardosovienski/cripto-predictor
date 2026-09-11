@@ -1,0 +1,53 @@
+{
+  "registered_at": "2026-09-11T03:01:59.207990+00:00",
+  "data": "deterministic synthetic only; no market observations or trial outcome",
+  "network": "disabled",
+  "tolerance": 1e-10,
+  "variants_fixed": true,
+  "benchmark_type": "correctness, not speed or profitability",
+  "B03": {
+    "question": "Does serving reject unavailable/incorrect identity snapshots?",
+    "cases": [
+      "valid",
+      "future availability",
+      "future receipt",
+      "receipt before publication",
+      "not daily closed",
+      "stale >26h",
+      "different symbol",
+      "naive time",
+      "nonpositive price"
+    ],
+    "acceptance": "only valid accepted"
+  },
+  "B04": {
+    "question": "Does published-depth VWAP agree with exact fractions and reject unfillable orders?",
+    "cases": [
+      "one level buy",
+      "two level buy",
+      "two level sell",
+      "insufficient depth",
+      "zero quantity",
+      "unsorted",
+      "crossed full book"
+    ],
+    "acceptance": "three VWAP comparisons within tolerance and four invalid cases rejected; distinguish rejection from partial-fill prediction"
+  },
+  "B05": {
+    "question": "Can row-gap split retain labels ending in validation time?",
+    "cases": "30 rows, 3 folds, test_size=5, gap=2; labels end at i+1 except row 5 ends at 25",
+    "acceptance": "observe at least one overlap; an interval purge of train labels ending at or after test start removes all; not a claim that sklearn promises label purging"
+  },
+  "B06": {
+    "question": "Does matched net BTC account for spot fee and both legs under published depth?",
+    "cases": "spot bid99 ask100 depth100; future bid101 ask102 depth100; quantity grid .001, min .001 max100 min notional1 precision8",
+    "acceptance": "net >= short, dust < .00100001, outlay<=1250, all-source capital 5000 equals outlay+future entry fee+reserve to 1e-10; negative control insufficient future depth rejected"
+  },
+  "code_sha256": {
+    "GarimpoInvestimentos/dpl/snapshots.py": "925735ef01eb80ac08c7c3babf41a43060a4495a684c6119f02b3fcfe52bedb9",
+    "scripts/diagnose_btc_execution.py": "5f316589e5bbbbebea18e4b4b67023f09d6593601b3d9d956176705b10889cd4",
+    "scripts/plan_btc_hedge.py": "8b926086a2e5b509cc2fb5d9a1b2dd766db101e66e7ce05927a4ca7b057c917c",
+    "scripts/plan_btc_hedge_v2.py": "c619cfde3c85720fd52317f65e63d3a1d04590d7807720cdfb0e5ee3d962bb15"
+  },
+  "economic_inference": "none; no frozen family changed"
+}

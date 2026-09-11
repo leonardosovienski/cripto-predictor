@@ -1,0 +1,6 @@
+{
+  "registered_at": "2026-09-11T04:56:58.368249+00:00",
+  "cause": "Test oracle incorrectly assumed event<=receipt. Real future_00 contradicts assumption; adapter already rejects at receipt.",
+  "change": "Harness v3.1: independently compute eligibility from all proven clocks; report source clock inconsistency separately from future leakage. Adapter bytes unchanged.",
+  "regression": "future_00 must be blocked at receipt and eligible only at max clocks; no timestamp repair"
+}

@@ -1,0 +1,85 @@
+{
+  "overall": "CAUSE_UNKNOWN",
+  "hypotheses": [
+    {
+      "id": "H_CLOCK_1",
+      "hypothesis": "Offset between local and remote clocks",
+      "for": [
+        "T minus local receipt positive in 12/12, range 408.6478 to 446.958 ms",
+        "Both local and source series monotonic in observed sample"
+      ],
+      "against": [
+        "No synchronization log or independent simultaneous time reference",
+        "Stable-looking difference also compatible with timestamp generation semantics"
+      ],
+      "possible_test": "Contemporaneous calibrated clock/NTP/PTP evidence and documented source timestamp meaning; current clock measurement cannot back-prove offset",
+      "conclusion": "COMPATIBLE_NOT_IDENTIFIED"
+    },
+    {
+      "id": "H_CLOCK_2",
+      "hypothesis": "Local wall-clock adjustment or timestamp instrumentation error",
+      "for": [
+        "time.time_ns is wall clock; no monotonic clock recorded",
+        "No record of clock corrections or timing accuracy"
+      ],
+      "against": [
+        "No backward step in the 12 observed request/receipt sequences; all receipts after requests",
+        "Stable offset across samples disfavors one isolated transient, without ruling out a persistent local bias"
+      ],
+      "possible_test": "Saved system clock-adjustment logs and paired monotonic/wall timestamps at collection; none in this capture",
+      "conclusion": "NOT_IDENTIFIED; observed reversal absent, accuracy unknown"
+    },
+    {
+      "id": "H_CLOCK_3",
+      "hypothesis": "Wrong unit conversion or arithmetic",
+      "for": [
+        "Archived depth schema documenting T/E units is absent from bounded bundle"
+      ],
+      "against": [
+        "Integer calculation independently exact: T*10^6 - received_ns = 410300800 ns",
+        "Milliseconds align source T with the collection epoch; seconds/microseconds do not",
+        "Frozen local source proves request/receipt nanoseconds"
+      ],
+      "possible_test": "Historical depth API schema for exact endpoint/version; separate raw-unit validation",
+      "conclusion": "ARITHMETIC_ERROR_REJECTED; primary source unit/semantic proof still incomplete"
+    },
+    {
+      "id": "H_CLOCK_4",
+      "hypothesis": "T/E describe a different instant from the event/publication assumed",
+      "for": [
+        "Only literal T/E keys preserved; exact economic semantics absent",
+        "E greater than T by 2 to 5 raw ticks in saved books"
+      ],
+      "against": [
+        "Ordering and monotonicity are consistent with ordinary event/response labeling, but do not identify it"
+      ],
+      "possible_test": "Archived source specification and corresponding release/version; no automatic interpretation from current docs",
+      "conclusion": "COMPATIBLE_NOT_IDENTIFIED"
+    },
+    {
+      "id": "H_CLOCK_5",
+      "hypothesis": "Wrong body/receipt association or simple cache explanation",
+      "for": [
+        "Two exchangeInfo acquisitions have identical body and older body serverTime; freshness cannot follow body timestamp alone"
+      ],
+      "against": [
+        "All diagnostic bodies match per-name SHA-256; frozen collector records response metadata around same send",
+        "Old cached data alone would not explain future timestamps if clocks were synchronized and timestamp meant an occurred event"
+      ],
+      "possible_test": "Verify preserved name/hash associations (executed); inspect HTTP Age/Date/cache headers and trace IDs (not retained)",
+      "conclusion": "HASH_MISASSOCIATION_NOT_OBSERVED; cache mechanism not proven and insufficient alone"
+    },
+    {
+      "id": "H_CLOCK_6",
+      "hypothesis": "Remote timestamp-generation error",
+      "for": [
+        "Remote timestamps exceed local receipt under ms interpretation"
+      ],
+      "against": [
+        "No independent accurate reference; the same observation is explained by local offset or semantic difference"
+      ],
+      "possible_test": "Independent contemporary remote/local reference or provider incident evidence specific to capture interval",
+      "conclusion": "NOT_IDENTIFIED; no attribution of fault to exchange"
+    }
+  ]
+}

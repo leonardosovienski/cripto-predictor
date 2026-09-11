@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="24" time="9.960" timestamp="2026-09-11T02:47:01.669579-03:00" hostname="Leo"><testcase classname="tests.test_research_capabilities" name="test_panel_differential_scipy_with_ties_and_group_adjustment" time="7.985" /><testcase classname="tests.test_research_capabilities" name="test_ties_turnover_and_empty_bins" time="0.002" /><testcase classname="tests.test_research_capabilities" name="test_factor_rejects_invalid[nan]" time="0.002" /><testcase classname="tests.test_research_capabilities" name="test_factor_rejects_invalid[inf]" time="0.002" /><testcase classname="tests.test_research_capabilities" name="test_factor_rejects_invalid[True]" time="0.002" /><testcase classname="tests.test_research_capabilities" name="test_factor_rejects_invalid[1]" time="0.002" /><testcase classname="tests.test_research_capabilities" name="test_panel_duplicate_and_missing_group_rejected" time="0.001" /><testcase classname="tests.test_research_capabilities" name="test_residual_differential_closed_form_and_orthogonality" time="0.014" /><testcase classname="tests.test_research_capabilities" name="test_universe_versions_no_resurrection_or_symbol_inference" time="0.002" /><testcase classname="tests.test_research_capabilities" name="test_universe_sort_currency_ties_limit_and_unknown" time="0.003" /><testcase classname="tests.test_research_capabilities" name="test_irregular_label_intervals_and_delayed_availability" time="0.002" /><testcase classname="tests.test_research_capabilities" name="test_forward_property_reference_enumeration" time="0.002" /><testcase classname="tests.test_research_capabilities" name="test_partial_fill_reservations_cancel_idempotence_fraction_oracle" time="0.002" /><testcase classname="tests.test_research_capabilities" name="test_invalid_orders_are_atomic[0-1]" time="0.002" /><testcase classname="tests.test_research_capabilities" name="test_invalid_orders_are_atomic[-1-1]" time="0.001" /><testcase classname="tests.test_research_capabilities" name="test_invalid_orders_are_atomic[NaN-1]" time="0.002" /><testcase classname="tests.test_research_capabilities" name="test_invalid_orders_are_atomic[1-Infinity]" time="0.002" /><testcase classname="tests.test_research_capabilities" name="test_simulation_contract_and_live_rejection" time="0.002" /><testcase classname="tests.test_research_capabilities" name="test_registry_immutable_compare_hash_and_invalid_json" time="0.162" /><testcase classname="tests.test_research_capabilities" name="test_registry_paths_and_reserved_names" time="0.008" /><testcase classname="tests.test_research_capabilities" name="test_cli_composition_with_registered_artifacts" time="0.087" /><testcase classname="tests.test_research_capabilities" name="test_existing_cli_dispatches_research_without_pipeline" time="0.017" /><testcase classname="tests.test_research_capabilities" name="test_registry_input_hash_tracks_exact_config" time="0.102" /><testcase classname="tests.test_research_capabilities" name="test_scenario_common_transitions_agree_with_native_execution" time="0.056"><failure message="TypeError: accept() takes 1 positional argument but 2 were given">def test_scenario_common_transitions_agree_with_native_execution():
+        from datetime import UTC, datetime, timedelta
+    
+        from GarimpoInvestimentos.trading import execution
+        from GarimpoInvestimentos.trading.contracts import (
+            Fill,
+            Instrument,
+            Liquidity,
+            Order,
+            OrderSide,
+            OrderStatus,
+            OrderType,
+        )
+    
+        now = datetime(2026, 1, 1, tzinfo=UTC)
+&gt;       native = execution.accept(
+            Order(
+                "one",
+                "scenario",
+                Instrument("BTCUSDT", "A", "spot"),
+                OrderSide.BUY,
+                OrderType.LIMIT,
+                2,
+                OrderStatus.NEW,
+                now,
+                limit_price=100,
+            ),
+            now,
+        )
+E       TypeError: accept() takes 1 positional argument but 2 were given
+
+tests\test_research_capabilities.py:303: TypeError</failure></testcase></testsuite></testsuites>

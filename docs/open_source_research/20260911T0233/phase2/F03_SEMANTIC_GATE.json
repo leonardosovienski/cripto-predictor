@@ -1,0 +1,164 @@
+{
+  "observed_at": "2026-09-11T03:36:56.179651+00:00",
+  "reason": "Semantic correction to initial raw field-name diagnostic, preregistered in ADVERSARIAL_PROTOCOL.json. Missing exact names alone do not mean missing information.",
+  "samples": [
+    {
+      "symbol": "BTCUSDT",
+      "event_at": "REPRESENTABLE: open_ms; daily closure uses close_ms",
+      "instrument_id": "PARTIAL: symbol + source; canonical asset history/quote/contract identity not fully typed",
+      "received_at": "ACQUISITION_METADATA: finalized_at_utc; can enforce no use before this acquisition, not prove older first receipt",
+      "historical_published_at": "UNKNOWN: close_ms is market period closure, not observed publication",
+      "eligibility_history": "NOT_ESTABLISHED for full universe at every decision; posthoc identity_events explicitly limited to13 censored observations",
+      "source_receipt_hash": "PARTIAL: normalized checksum/acquisition provenance exist; no row-level first-publication evidence established by this review",
+      "historical_event_range": [
+        "2020-10-01T00:00:00+00:00",
+        "2026-09-06T00:00:00+00:00"
+      ],
+      "acquisition_at": "2026-09-07T18:51:36.481577+00:00",
+      "missing_internal_days": 0,
+      "state": "BLOCKED_FOR_NEW_PIT_ECONOMIC_TEST"
+    },
+    {
+      "symbol": "ETHUSDT",
+      "event_at": "REPRESENTABLE: open_ms; daily closure uses close_ms",
+      "instrument_id": "PARTIAL: symbol + source; canonical asset history/quote/contract identity not fully typed",
+      "received_at": "ACQUISITION_METADATA: finalized_at_utc; can enforce no use before this acquisition, not prove older first receipt",
+      "historical_published_at": "UNKNOWN: close_ms is market period closure, not observed publication",
+      "eligibility_history": "NOT_ESTABLISHED for full universe at every decision; posthoc identity_events explicitly limited to13 censored observations",
+      "source_receipt_hash": "PARTIAL: normalized checksum/acquisition provenance exist; no row-level first-publication evidence established by this review",
+      "historical_event_range": [
+        "2020-10-01T00:00:00+00:00",
+        "2026-09-06T00:00:00+00:00"
+      ],
+      "acquisition_at": "2026-09-07T22:24:20.627982+00:00",
+      "missing_internal_days": 0,
+      "state": "BLOCKED_FOR_NEW_PIT_ECONOMIC_TEST"
+    },
+    {
+      "symbol": "FTTUSDT",
+      "event_at": "REPRESENTABLE: open_ms; daily closure uses close_ms",
+      "instrument_id": "PARTIAL: symbol + source; canonical asset history/quote/contract identity not fully typed",
+      "received_at": "ACQUISITION_METADATA: finalized_at_utc; can enforce no use before this acquisition, not prove older first receipt",
+      "historical_published_at": "UNKNOWN: close_ms is market period closure, not observed publication",
+      "eligibility_history": "NOT_ESTABLISHED for full universe at every decision; posthoc identity_events explicitly limited to13 censored observations",
+      "source_receipt_hash": "PARTIAL: normalized checksum/acquisition provenance exist; no row-level first-publication evidence established by this review",
+      "historical_event_range": [
+        "2020-10-01T00:00:00+00:00",
+        "2026-09-06T00:00:00+00:00"
+      ],
+      "acquisition_at": "2026-09-07T18:51:23.584636+00:00",
+      "missing_internal_days": 310,
+      "state": "BLOCKED_FOR_NEW_PIT_ECONOMIC_TEST"
+    },
+    {
+      "symbol": "USDCUSDT",
+      "status": "ABSENT_IN_THIS_PANEL"
+    }
+  ],
+  "synthetic_control_result": [
+    {
+      "decision": 9,
+      "expected": [
+        "BTC",
+        "FTT",
+        "USDC"
+      ],
+      "asof": [
+        "BTC",
+        "FTT",
+        "USDC"
+      ],
+      "naive_current_survivors": [
+        "BTC",
+        "NEW",
+        "USDC"
+      ],
+      "asof_pass": true,
+      "naive_wrong": true
+    },
+    {
+      "decision": 12,
+      "expected": [
+        "BTC",
+        "FTT",
+        "USDC"
+      ],
+      "asof": [
+        "BTC",
+        "FTT",
+        "USDC"
+      ],
+      "naive_current_survivors": [
+        "BTC",
+        "NEW",
+        "USDC"
+      ],
+      "asof_pass": true,
+      "naive_wrong": true
+    },
+    {
+      "decision": 15,
+      "expected": [
+        "BTC",
+        "FTT",
+        "NEW",
+        "USDC"
+      ],
+      "asof": [
+        "BTC",
+        "FTT",
+        "NEW",
+        "USDC"
+      ],
+      "naive_current_survivors": [
+        "BTC",
+        "NEW",
+        "USDC"
+      ],
+      "asof_pass": true,
+      "naive_wrong": true
+    },
+    {
+      "decision": 21,
+      "expected": [
+        "BTC",
+        "NEW",
+        "USDC"
+      ],
+      "asof": [
+        "BTC",
+        "NEW",
+        "USDC"
+      ],
+      "naive_current_survivors": [
+        "BTC",
+        "NEW",
+        "USDC"
+      ],
+      "asof_pass": true,
+      "naive_wrong": false
+    }
+  ],
+  "access_scope": "Only previously examined retrospective panel, not forward/holdout files. No prices or returns evaluated.",
+  "gate_decision": "BLOCKED_DATA; not rejection of residual ranking. Full row-level publication/eligibility proof and unused evaluation period absent.",
+  "rows_admissible_percentage": "UNKNOWN; do not report 0% from missing schema names",
+  "known_metadata": {
+    "declared_rows": 727447,
+    "pairs": 661,
+    "missing_days": 542,
+    "identity_events": {
+      "count": 13,
+      "scope": "Only the 13 known v1 censored observations, not a complete corporate-action database.",
+      "historical_feature_use": false,
+      "source_access_date": "2026-09-07"
+    }
+  },
+  "input_hashes": {
+    "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-altcoins\\work\\altcoin-retro-data\\acquisition.json": "ca3897824e62fce6b8b944f17af4d6220a28ef66765e83208a43d3c68fabc53d",
+    "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-altcoins\\work\\altcoin-retro-data\\pairs\\BTCUSDT.json.gz": "f055de9208fabde2d40e0c957f44934ae1dc1e1df8730d4061904df2fc60aed7",
+    "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-altcoins\\work\\altcoin-retro-data\\pairs\\ETHUSDT.json.gz": "f7df37a93394dfe6bb83f0e63040d8f77d4ed40e2776d79b9ad082057c1d7e4b",
+    "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-altcoins\\work\\altcoin-retro-data\\pairs\\FTTUSDT.json.gz": "411fe04a59aef62cb5e1306feb3bdfdd5555c0793693c3dbeac80c448400339e",
+    "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-altcoins\\work\\altcoin-retro-package\\docs\\evidence\\altcoin_payoff_20260907\\identity_events.json": "85759f042ec26c8bc24f21883370d7bf538da7e46d0fb26a230582045a3b21cb"
+  },
+  "new_implementations_integrated": false
+}

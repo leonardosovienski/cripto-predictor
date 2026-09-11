@@ -1,9 +1,12 @@
+> Continuidade atual: [fechamento de 11/09/2026](docs/continuity_20260911/README.md).
+
 # cripto-predictor (GarimpoInvestimentos + DPL)
 
 Sistema de pesquisa em criptoativos: ingestão e procedência de dados, análises com LLM, diagnósticos quantitativos e avaliação estatística. Nenhuma linha tem lucro pessoal ou futuro comprovado; os resultados históricos positivos de Aave são condicionais aos cenários de custo. A V3 emite diagnóstico `UNVALIDATED`.
 
 ## Comece aqui
 
+- [Ferramentas de pesquisa offline](GarimpoInvestimentos/research/README.md): filtros de universo, fatores, splits temporais, ordens sintéticas e experimentos reproduzíveis. Execute `cripto-predictor research --help`; não ativa trading nem altera trials.
 - [Continuidade atual](CONTINUAR_AQUI.md): ordem de leitura e limites de execução.
 - [Conferência de arquivos e documentação de 10/09/2026](docs/CONFERENCIA_ARQUIVOS_20260910.md): conteúdo preservado, limpeza, backups e referências históricas.
 - [Dados, fontes e resultados recentes preservados](docs/continuity_20260910/README.md): 2.685 arquivos em cinco pacotes verificáveis, incluindo o diagnóstico atual.

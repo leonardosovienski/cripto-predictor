@@ -1,0 +1,80 @@
+[
+  {
+    "check": "ruff",
+    "exit_code": 0,
+    "seconds": 0.44430520001333207,
+    "command": [
+      "C:\\Cripto\\pesquisa-20260909\\.venv\\Scripts\\python.exe",
+      "-m",
+      "ruff",
+      "check",
+      "GarimpoInvestimentos/research",
+      "GarimpoInvestimentos/cli.py",
+      "tests/test_research_capabilities.py"
+    ]
+  },
+  {
+    "check": "format",
+    "exit_code": 0,
+    "seconds": 0.4197810999903595,
+    "command": [
+      "C:\\Cripto\\pesquisa-20260909\\.venv\\Scripts\\python.exe",
+      "-m",
+      "ruff",
+      "format",
+      "--check",
+      "GarimpoInvestimentos/research",
+      "GarimpoInvestimentos/cli.py",
+      "tests/test_research_capabilities.py"
+    ]
+  },
+  {
+    "check": "types",
+    "exit_code": 0,
+    "seconds": 8.237730699998792,
+    "command": [
+      "C:\\Cripto\\pesquisa-20260909\\.venv\\Scripts\\python.exe",
+      "-m",
+      "pyright",
+      "--pythonpath",
+      "C:\\Cripto\\pesquisa-20260909\\.venv\\Scripts\\python.exe",
+      "GarimpoInvestimentos/research"
+    ]
+  },
+  {
+    "check": "full_suite",
+    "exit_code": 0,
+    "seconds": 499.5202506999922,
+    "command": [
+      "C:\\Cripto\\pesquisa-20260909\\.venv\\Scripts\\python.exe",
+      "-m",
+      "pytest",
+      "-q",
+      "--junitxml=C:\\Cripto\\operacao\\relatorios\\CAPABILITY_TRANSFER_20260911T0525\\full_suite.xml"
+    ]
+  },
+  {
+    "check": "secrets",
+    "exit_code": 0,
+    "seconds": 58.14078280000831,
+    "command": [
+      "C:\\Cripto\\pesquisa-20260909\\.venv\\Scripts\\python.exe",
+      "scripts/scan_secrets.py",
+      "."
+    ]
+  },
+  {
+    "check": "wheel",
+    "exit_code": 1,
+    "seconds": 1.6126927000004798,
+    "command": [
+      "C:\\Cripto\\pesquisa-20260909\\.venv\\Scripts\\python.exe",
+      "-m",
+      "build",
+      "--wheel",
+      "--no-isolation",
+      "--outdir",
+      "C:\\Cripto\\operacao\\relatorios\\CAPABILITY_TRANSFER_20260911T0525\\wheel"
+    ]
+  }
+]

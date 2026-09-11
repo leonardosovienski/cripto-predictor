@@ -1,0 +1,18 @@
+{
+  "args": [
+    "--strict-config",
+    "--strict-markers",
+    "-q",
+    "-p",
+    "no:cacheprovider",
+    "--junitxml=C:\\Cripto\\operacao\\relatorios\\OPEN_SOURCE_20260911T0233\\selected_tests.xml",
+    "tests/test_dpl.py",
+    "tests/test_pbo.py",
+    "tests/test_v3_costs.py",
+    "tests/test_audit_economic_accounting.py"
+  ],
+  "started_at": "2026-09-11T02:40:58.643350+00:00",
+  "elapsed_seconds": 46.69828530000814,
+  "exit_code": 1,
+  "scope": "Synthetic selected tests only; socket connect denied; no full-suite or frozen market evaluation claim"
+}

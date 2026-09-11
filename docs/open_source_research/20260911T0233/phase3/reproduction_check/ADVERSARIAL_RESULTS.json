@@ -1,0 +1,168 @@
+[
+  {
+    "case": "A_SYMBOL",
+    "parent": "perp_trade",
+    "mutation": {
+      "ASSET_IDENTITY": "same_ticker_other_entity"
+    },
+    "rejected": true,
+    "reason": "Mutation contradicts preserved evidence or lacks provenance; not a new genuine receipt"
+  },
+  {
+    "case": "B_UNIT",
+    "parent": "perp_trade",
+    "mutation": {
+      "UNIT": "USD not USDT"
+    },
+    "rejected": true,
+    "reason": "Mutation contradicts preserved evidence or lacks provenance; not a new genuine receipt"
+  },
+  {
+    "case": "C_SETTLEMENT",
+    "parent": "perp_trade",
+    "mutation": {
+      "SETTLEMENT": "USDC"
+    },
+    "rejected": true,
+    "reason": "Mutation contradicts preserved evidence or lacks provenance; not a new genuine receipt"
+  },
+  {
+    "case": "D_PRICE_TYPE",
+    "parent": "perp_trade",
+    "mutation": {
+      "PRICE_TYPE": "executable_quote"
+    },
+    "rejected": true,
+    "reason": "Mutation contradicts preserved evidence or lacks provenance; not a new genuine receipt"
+  },
+  {
+    "case": "F_CHAIN",
+    "parent": "perp_trade",
+    "mutation": {
+      "CHAIN": 1
+    },
+    "rejected": true,
+    "reason": "Mutation contradicts preserved evidence or lacks provenance; not a new genuine receipt"
+  },
+  {
+    "case": "F_CONTRACT",
+    "parent": "perp_trade",
+    "mutation": {
+      "CONTRACT_ADDRESS": "0x1111111111111111111111111111111111111111"
+    },
+    "rejected": true,
+    "reason": "Mutation contradicts preserved evidence or lacks provenance; not a new genuine receipt"
+  },
+  {
+    "case": "G_DECIMALS",
+    "parent": "perp_trade",
+    "mutation": {
+      "DECIMALS": -1
+    },
+    "rejected": true,
+    "reason": "Mutation contradicts preserved evidence or lacks provenance; not a new genuine receipt"
+  },
+  {
+    "case": "H_MISSING",
+    "parent": "perp_trade",
+    "mutation": {
+      "QUOTE": null
+    },
+    "rejected": true,
+    "reason": "Mutation contradicts preserved evidence or lacks provenance; not a new genuine receipt"
+  },
+  {
+    "case": "G_NaN",
+    "parent": "perp_trade",
+    "rejected": true
+  },
+  {
+    "case": "G_Infinity",
+    "parent": "perp_trade",
+    "rejected": true
+  },
+  {
+    "case": "G_-Infinity",
+    "parent": "perp_trade",
+    "rejected": true
+  },
+  {
+    "case": "G_HASH_zz",
+    "parent": "perp_trade",
+    "rejected": true
+  },
+  {
+    "case": "G_HASH_11",
+    "parent": "perp_trade",
+    "rejected": true
+  },
+  {
+    "case": "E_FUTURE_VERSION",
+    "parent": "perp_trade",
+    "rejected": true,
+    "synthetic_derived": true
+  },
+  {
+    "case": "H_UNKNOWN_JOIN",
+    "parent": "perp_trade",
+    "rejected": true
+  },
+  {
+    "case": "REAL_DIFFERENCE_perp_trade_perp_mark",
+    "parents": [
+      "perp_trade",
+      "perp_mark"
+    ],
+    "rejected": true,
+    "different_proven_fields": [
+      "PRICE_TYPE",
+      "SOURCE",
+      "EVENT_TIME",
+      "INGESTION_TIME",
+      "OBSERVED_VERSION"
+    ]
+  },
+  {
+    "case": "REAL_DIFFERENCE_future_trade_future_mark",
+    "parents": [
+      "future_trade",
+      "future_mark"
+    ],
+    "rejected": true,
+    "different_proven_fields": [
+      "PRICE_TYPE",
+      "SOURCE",
+      "INGESTION_TIME",
+      "OBSERVED_VERSION"
+    ]
+  },
+  {
+    "case": "REAL_DIFFERENCE_spot_info_future_info",
+    "parents": [
+      "spot_info",
+      "future_info"
+    ],
+    "rejected": true,
+    "different_proven_fields": [
+      "VENUE",
+      "MARKET_TYPE",
+      "SOURCE",
+      "INGESTION_TIME",
+      "OBSERVED_VERSION"
+    ]
+  },
+  {
+    "case": "REAL_DIFFERENCE_aave_019_aave_027",
+    "parents": [
+      "aave_019",
+      "aave_027"
+    ],
+    "rejected": true,
+    "different_proven_fields": [
+      "ASSET_IDENTITY",
+      "CONTRACT_ADDRESS",
+      "INGESTION_TIME",
+      "OBSERVED_VERSION"
+    ]
+  }
+]

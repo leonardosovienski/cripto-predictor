@@ -1,0 +1,8 @@
+{
+  "url": "https://api.binance.com/api/v3/klines?symbol=FTTUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+  "retrieved_at_utc": "2026-09-07T18:51:22.207892+00:00",
+  "http_status": 200,
+  "sha256": "b1ae9ed2979295c8d11411e803810eda839ae0871f8c978aa234bea565227842",
+  "bytes": 170133,
+  "server_date": "Mon, 07 Sep 2026 18:51:22 GMT"
+}

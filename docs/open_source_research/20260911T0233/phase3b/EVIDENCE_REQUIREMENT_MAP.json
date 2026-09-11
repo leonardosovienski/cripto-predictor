@@ -1,0 +1,164 @@
+[
+  {
+    "missing_field": "quantity_unit",
+    "why_it_matters": "Defines exposure; contracts and base units differ",
+    "necessary_evidence": "Dated exact spot/depth and USD-M contract specifications defining order/book quantity and lot unit",
+    "exists_locally_in_bounded_scope": "PARTIAL: quantity/volume labels and LOT_SIZE values; no complete unit contract",
+    "legitimate_recovery": "Historical source could prove it; receipt fields alone cannot",
+    "blocks": "F04",
+    "next_action": "Future targeted historical specification search; no convention default"
+  },
+  {
+    "missing_field": "price_unit",
+    "why_it_matters": "Distinguishes USDT/BTC from USD/BTC or inverse quotation",
+    "necessary_evidence": "Dated quote/price definition tied to instrument and metric",
+    "exists_locally_in_bounded_scope": "PARTIAL: base/quote fields and named prices; explicit full unit linkage absent",
+    "legitimate_recovery": "Potentially recoverable from archived contract/API specification, not ticker",
+    "blocks": "F04",
+    "next_action": "Keep NOT_PROVEN until exact dated specification"
+  },
+  {
+    "missing_field": "settlement_asset",
+    "why_it_matters": "Defines actual payout currency",
+    "necessary_evidence": "Historical contract settlement rule for BTCUSDT and BTCUSDT_261225, and spot settlement terms",
+    "exists_locally_in_bounded_scope": "NOT_FOUND; marginAsset=USDT is preserved but not settlement",
+    "legitimate_recovery": "Not derivable from marginAsset; requires separate dated terms",
+    "blocks": "F04",
+    "next_action": "Seek specific archived contract settlement specification in a later authorized phase"
+  },
+  {
+    "missing_field": "multiplier",
+    "why_it_matters": "Converts contractual quantity to exposure",
+    "necessary_evidence": "Instrument-specific contract size/multiplier, or explicit one-unit relationship, versioned",
+    "exists_locally_in_bounded_scope": "NOT_FOUND; no contractSize in sampled rows; LOT_SIZE step is not multiplier",
+    "legitimate_recovery": "Not derivable from precision/lot filters; external historical terms may recover",
+    "blocks": "F04",
+    "next_action": "Keep UNKNOWN; do not default to 1"
+  },
+  {
+    "missing_field": "linear_inverse / payoff",
+    "why_it_matters": "Determines PnL equation and currency",
+    "necessary_evidence": "Dated payoff equation, price basis and payout currency for exact instrument",
+    "exists_locally_in_bounded_scope": "NOT_FOUND; U_MARGINED/PERPETUAL labels alone insufficient",
+    "legitimate_recovery": "Not uniquely identifiable from sample prices or code assumptions",
+    "blocks": "F04",
+    "next_action": "No generic perpetual equation; archive specification needed"
+  },
+  {
+    "missing_field": "margin/collateral semantics",
+    "why_it_matters": "Defines capital constraints and treatment of collateral",
+    "necessary_evidence": "Dated margin mode, collateral rules, haircuts, valuation, tiers and relevant account configuration",
+    "exists_locally_in_bounded_scope": "PARTIAL: marginAsset and percent fields; no complete rule/account context",
+    "legitimate_recovery": "Public historical rules may be recoverable; absent historical account state cannot be synthesized",
+    "blocks": "F04",
+    "next_action": "Separate public contract gate from future scoped account/capital assumptions"
+  },
+  {
+    "missing_field": "expiry semantics",
+    "why_it_matters": "Defines maturity; not source availability",
+    "necessary_evidence": "Contract deliveryDate with exact unit/event definition and dated specification",
+    "exists_locally_in_bounded_scope": "PARTIAL: BTCUSDT_261225 raw deliveryDate present; decoded 2026-12-25 08:00 UTC",
+    "legitimate_recovery": "Raw declared date recovered; old-calendar extrapolation and perpetual sentinel not proven",
+    "blocks": "F04 dated",
+    "next_action": "Use literal field only at collection; do not infer from ticker"
+  },
+  {
+    "missing_field": "price_type / executable status",
+    "why_it_matters": "Mark/trade/book have different uses",
+    "necessary_evidence": "Endpoint/field mapping and, for actual execution, explicit fill evidence",
+    "exists_locally_in_bounded_scope": "PARTIAL: trade/mark endpoint distinction and displayed ask preserved; fill absent",
+    "legitimate_recovery": "Metric distinction recoverable now; realized fills unrecorded cannot be fabricated",
+    "blocks": "F04",
+    "next_action": "Allow semantic checks; refuse mark-as-fill and trade-as-mark"
+  },
+  {
+    "missing_field": "funding position basis / direction / currency",
+    "why_it_matters": "A rate is insufficient to calculate cash",
+    "necessary_evidence": "Versioned funding event formula, eligible position, payer/payee direction, currency and schedule",
+    "exists_locally_in_bounded_scope": "NOT_FOUND; 33 rate observations with fundingTime and markPrice preserved",
+    "legitimate_recovery": "Requires historical rules; actual account settlements require account ledger that was not captured",
+    "blocks": "F04 funding",
+    "next_action": "FUNDING_REPLAY_NOT_PROVEN"
+  },
+  {
+    "missing_field": "funding interval / eligibility",
+    "why_it_matters": "Determines which event applies to a position",
+    "necessary_evidence": "Historical rule for interval/event boundary and eligibility",
+    "exists_locally_in_bounded_scope": "PARTIAL: observed deltas 28799974–28800013 candidate ms; not proof of fixed 8h schedule",
+    "legitimate_recovery": "Specific historical schedule may recover; actual eligibility not in rates alone",
+    "blocks": "F04 funding",
+    "next_action": "Keep rule unknown; no cash conversion"
+  },
+  {
+    "missing_field": "contract_version / valid_from / valid_until",
+    "why_it_matters": "Prevents applying later terms to old observations",
+    "necessary_evidence": "Effective-dated terms, immutable source version and change history",
+    "exists_locally_in_bounded_scope": "NOT_FOUND; content hashes and collection times only",
+    "legitimate_recovery": "Potentially from historical archived specifications; hashes alone cannot recover absent revisions",
+    "blocks": "F03,F04",
+    "next_action": "CURRENT_ONLY; earlier use is RETROACTIVE_ASSUMPTION"
+  },
+  {
+    "missing_field": "source publication time",
+    "why_it_matters": "Needed for historical information availability",
+    "necessary_evidence": "Original publication/distribution timestamp or contemporaneous receipt before cutoff",
+    "exists_locally_in_bounded_scope": "NOT_FOUND; later ingestion, candle open/close and HTTP Date are not original publication",
+    "legitimate_recovery": "Not reconstructible from captured fields; an independent contemporary archive could help",
+    "blocks": "F03",
+    "next_action": "Block earlier cutoff; do not use date labels as availability"
+  },
+  {
+    "missing_field": "listing/delisting/eligibility history",
+    "why_it_matters": "Avoids survivorship and universe backfill",
+    "necessary_evidence": "Complete effective-dated membership events with information availability",
+    "exists_locally_in_bounded_scope": "NOT_FOUND; current status/onboardDate and BTC-only bundle do not cover universe",
+    "legitimate_recovery": "Structurally absent from this BTC bundle; separate historical universe evidence required",
+    "blocks": "F03",
+    "next_action": "No broad collection now; maintain BLOCKED_CURRENT_EVIDENCE"
+  },
+  {
+    "missing_field": "revision control",
+    "why_it_matters": "Prevents selecting future-corrected values",
+    "necessary_evidence": "All necessary as-of versions and when each became available",
+    "exists_locally_in_bounded_scope": "PARTIAL: exact observed hashes; official saved README says archives can be updated",
+    "legitimate_recovery": "Unrecorded versions cannot be regenerated from final body or checksum; external dated copies may exist",
+    "blocks": "F03,F04",
+    "next_action": "Preserve observed versions; refuse historical first-vintage claim"
+  },
+  {
+    "missing_field": "T/E unit and meaning",
+    "why_it_matters": "Prevents assigning remote time to wrong event",
+    "necessary_evidence": "Archived depth endpoint schema with release mapping",
+    "exists_locally_in_bounded_scope": "NOT_FOUND in scope; candidate ms interpretation only",
+    "legitimate_recovery": "Specific historical API reference may recover meaning, not clock calibration",
+    "blocks": "F04 temporal",
+    "next_action": "Keep literal raw fields and conditional arithmetic"
+  },
+  {
+    "missing_field": "remote/local offset and uncertainty",
+    "why_it_matters": "Allows valid cross-clock cutoff comparison",
+    "necessary_evidence": "Contemporaneous clock calibration and uncertainty bounds, or independently timestamped synchronized trace",
+    "exists_locally_in_bounded_scope": "NOT_FOUND; no NTP/PTP, monotonic pairs, trusted response timing",
+    "legitimate_recovery": "Not identifiable from these recorded clocks alone; current calibration cannot recover past offset",
+    "blocks": "F04 temporal",
+    "next_action": "CAUSE_UNKNOWN; OBSERVED only, no economic eligibility by max"
+  },
+  {
+    "missing_field": "source response time",
+    "why_it_matters": "Distinguishes event from response production",
+    "necessary_evidence": "Documented response-time clock or trustworthy server timing headers with calibration",
+    "exists_locally_in_bounded_scope": "NOT_FOUND for diagnostic; body serverTime repeated across acquisitions",
+    "legitimate_recovery": "Absent header/trace cannot be recovered from body alone",
+    "blocks": "F04 temporal",
+    "next_action": "Do not label E or serverTime as response time"
+  },
+  {
+    "missing_field": "ingestion/normalization time",
+    "why_it_matters": "Separates receive from persist/transform",
+    "necessary_evidence": "Contemporaneous write/normalization event log",
+    "exists_locally_in_bounded_scope": "NOT_FOUND in original collector; only time around send retained",
+    "legitimate_recovery": "STRUCTURALLY_UNRECOVERABLE_FROM_CAPTURED_FIELDS unless an independent original log is later found",
+    "blocks": "Temporal provenance",
+    "next_action": "Use UNKNOWN; current file mtime/normalization execution is not historical evidence"
+  }
+]

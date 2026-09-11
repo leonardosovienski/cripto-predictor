@@ -1,0 +1,50 @@
+{
+  "status": "FUNDING_REPLAY_NOT_PROVEN",
+  "receipt": {
+    "path": "C:\\Cripto\\operacao\\dados\\basis-recovered-20260909\\raw\\1d8ca73ab3f84dde4d373c768955bbd75f3178bec185b947bef8eaac38703978.bin.gz",
+    "sha256": "e7ebd47b456cee3d735b4753db33a2e83bb151f42dc0dbbafca3c0e2e343fdc6",
+    "pointer": [],
+    "evidence_clock_ns": 1788832149740362000
+  },
+  "RATE": {
+    "status": "PROVEN",
+    "value": "0.00004595",
+    "pointer": [
+      0,
+      "fundingRate"
+    ],
+    "meaning": "Named numeric rate observation, not account cash"
+  },
+  "REFERENCE_TIMESTAMP": {
+    "status": "PROVEN_RAW",
+    "value": 1787788800000,
+    "unit": "ms under preserved decoder"
+  },
+  "predicted": "NOT_PROVEN",
+  "published": "retrieved from fundingRate endpoint by local receipt; original publication UNKNOWN",
+  "realized_settled_cash": "NOT_PROVEN",
+  "INTERVAL_EVENT": {
+    "observed_rows": 33,
+    "observed_deltas_raw": [
+      28799974,
+      28799991,
+      28799995,
+      28799998,
+      28799999,
+      28800000,
+      28800001,
+      28800002,
+      28800004,
+      28800009,
+      28800013
+    ],
+    "contractual_interval": "NOT_PROVEN; observed spacing is not a guaranteed schedule"
+  },
+  "POSITION_BASIS": "NOT_PROVEN",
+  "PAYMENT_DIRECTION": "NOT_PROVEN",
+  "PAYMENT_CURRENCY": "NOT_PROVEN",
+  "ELIGIBILITY_TIME": "NOT_PROVEN",
+  "rateType_literal": "Regular",
+  "markPrice_literal": "78994.90523913",
+  "no_rate_to_cash_conversion": true
+}

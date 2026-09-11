@@ -1,0 +1,679 @@
+{
+  "BTC_SPOT": {
+    "symbol": "BTCUSDT",
+    "fields": {
+      "venue": {
+        "value": "api.binance.com",
+        "status": "PROVEN",
+        "epistemic_label": "CURRENT_ONLY",
+        "evidence": [
+          {
+            "path": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\btc-execution-diagnostic-v1\\diagnostic.json",
+            "sha256": "9987357a290f4901a07289f52540b03cfb79799c8c10d04bf344a6c183b60cf1",
+            "pointer": [
+              "sources",
+              0,
+              "url"
+            ],
+            "evidence_clock_ns": 1788833243963778600
+          }
+        ],
+        "evidence_clock": 1788833243963778600,
+        "retroactive": false,
+        "why": "Host namespace; not a legal-counterparty or settlement certification"
+      },
+      "market_type": {
+        "value": {
+          "isSpotTradingAllowed": true
+        },
+        "status": "PROVEN",
+        "epistemic_label": "CURRENT_ONLY",
+        "evidence": [
+          {
+            "path": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\btc-execution-diagnostic-v1\\raw\\spot_info.bin.gz",
+            "sha256": "9eaf77b9e0b5e9691f34c784d0bb920484a6a13353291caca6cd82b55cfd85e1",
+            "pointer": [
+              "symbols",
+              11,
+              "isSpotTradingAllowed"
+            ],
+            "evidence_clock_ns": 1788833243963778600
+          }
+        ],
+        "evidence_clock": 1788833243963778600,
+        "retroactive": false,
+        "why": "Spot capability flag in spot endpoint; not proof of a fill"
+      },
+      "base_asset": {
+        "value": "BTC",
+        "status": "PROVEN",
+        "epistemic_label": "CURRENT_ONLY",
+        "evidence": [
+          {
+            "path": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\btc-execution-diagnostic-v1\\raw\\spot_info.bin.gz",
+            "sha256": "9eaf77b9e0b5e9691f34c784d0bb920484a6a13353291caca6cd82b55cfd85e1",
+            "pointer": [
+              "symbols",
+              11,
+              "baseAsset"
+            ],
+            "evidence_clock_ns": 1788833243963778600
+          }
+        ],
+        "evidence_clock": 1788833243963778600,
+        "retroactive": false,
+        "why": "Literal field in received metadata; effective historical period not established"
+      },
+      "quote_asset": {
+        "value": "USDT",
+        "status": "PROVEN",
+        "epistemic_label": "CURRENT_ONLY",
+        "evidence": [
+          {
+            "path": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\btc-execution-diagnostic-v1\\raw\\spot_info.bin.gz",
+            "sha256": "9eaf77b9e0b5e9691f34c784d0bb920484a6a13353291caca6cd82b55cfd85e1",
+            "pointer": [
+              "symbols",
+              11,
+              "quoteAsset"
+            ],
+            "evidence_clock_ns": 1788833243963778600
+          }
+        ],
+        "evidence_clock": 1788833243963778600,
+        "retroactive": false,
+        "why": "Literal field in received metadata; effective historical period not established"
+      },
+      "settlement_asset": {
+        "value": null,
+        "status": "UNKNOWN",
+        "epistemic_label": "NOT_PROVEN",
+        "evidence": [],
+        "evidence_clock": null,
+        "retroactive": false,
+        "why": "No explicit admissible economic specification in bounded saved bundle"
+      },
+      "margin_asset": {
+        "value": null,
+        "status": "UNKNOWN",
+        "epistemic_label": "NOT_PROVEN",
+        "evidence": [],
+        "evidence_clock": null,
+        "retroactive": false,
+        "why": "No explicit admissible economic specification in bounded saved bundle"
+      },
+      "quantity_unit": {
+        "value": null,
+        "status": "UNKNOWN",
+        "epistemic_label": "NOT_PROVEN",
+        "evidence": [],
+        "evidence_clock": null,
+        "retroactive": false,
+        "why": "No explicit admissible economic specification in bounded saved bundle"
+      },
+      "price_unit": {
+        "value": null,
+        "status": "UNKNOWN",
+        "epistemic_label": "NOT_PROVEN",
+        "evidence": [],
+        "evidence_clock": null,
+        "retroactive": false,
+        "why": "No explicit admissible economic specification in bounded saved bundle"
+      },
+      "multiplier": {
+        "value": null,
+        "status": "UNKNOWN",
+        "epistemic_label": "NOT_PROVEN",
+        "evidence": [],
+        "evidence_clock": null,
+        "retroactive": false,
+        "why": "No explicit admissible economic specification in bounded saved bundle"
+      },
+      "linear_inverse": {
+        "value": null,
+        "status": "UNKNOWN",
+        "epistemic_label": "NOT_PROVEN",
+        "evidence": [],
+        "evidence_clock": null,
+        "retroactive": false,
+        "why": "No explicit admissible economic specification in bounded saved bundle"
+      },
+      "payoff": {
+        "value": null,
+        "status": "UNKNOWN",
+        "epistemic_label": "NOT_PROVEN",
+        "evidence": [],
+        "evidence_clock": null,
+        "retroactive": false,
+        "why": "No explicit admissible economic specification in bounded saved bundle"
+      },
+      "expiry": {
+        "value": null,
+        "status": "UNKNOWN",
+        "epistemic_label": "NOT_PROVEN",
+        "evidence": [],
+        "evidence_clock": null,
+        "retroactive": false,
+        "why": "No explicit admissible economic specification in bounded saved bundle"
+      },
+      "price_type": {
+        "value": null,
+        "status": "UNKNOWN",
+        "epistemic_label": "NOT_PROVEN",
+        "evidence": [],
+        "evidence_clock": null,
+        "retroactive": false,
+        "why": "Instrument has multiple observations; type belongs to each receipt, not a single interchangeable instrument price. See OBSERVATION_SEMANTICS.json."
+      },
+      "funding_semantics": {
+        "value": null,
+        "status": "N/A",
+        "epistemic_label": "STRUCTURAL_SCOPE",
+        "evidence": [],
+        "evidence_clock": null,
+        "retroactive": false,
+        "why": "This row studies the spot metadata contract, not a funding event or margin loan. Any financing would require a separate contract."
+      },
+      "contract_version": {
+        "value": null,
+        "status": "UNKNOWN",
+        "epistemic_label": "NOT_PROVEN",
+        "evidence": [],
+        "evidence_clock": null,
+        "retroactive": false,
+        "why": "Only body content hash preserved; no effective economic specification version/change history."
+      },
+      "valid_from": {
+        "value": null,
+        "status": "UNKNOWN",
+        "epistemic_label": "NOT_PROVEN",
+        "evidence": [],
+        "evidence_clock": null,
+        "retroactive": false,
+        "why": "onboardDate, where present, is a claim in later metadata, not publication/knowledge time or proof that all terms were effective since then."
+      },
+      "valid_until": {
+        "value": null,
+        "status": "UNKNOWN",
+        "epistemic_label": "NOT_PROVEN",
+        "evidence": [],
+        "evidence_clock": null,
+        "retroactive": false,
+        "why": "No dated change log or end of validity for the full economic terms."
+      }
+    },
+    "observed_metadata_hash": "b0b5e41545939290197078b93708f917fdd2e6bbf4de865e3904f2ac1c53dfae",
+    "metadata_receipt_time_ns": 1788833243963778600,
+    "raw_onboardDate": null,
+    "raw_deliveryDate": null,
+    "raw_pricePrecision": null,
+    "raw_quantityPrecision": null,
+    "complete_for_replay": false,
+    "notional_formula": "UNSUPPORTED: quantity/price units and economic contract not fully proven",
+    "pnl_formula": "UNSUPPORTED",
+    "margin_formula": "UNSUPPORTED",
+    "settlement_formula": "UNSUPPORTED"
+  },
+  "BTC_PERPETUAL": {
+    "symbol": "BTCUSDT",
+    "fields": {
+      "venue": {
+        "value": "fapi.binance.com",
+        "status": "PROVEN",
+        "epistemic_label": "CURRENT_ONLY",
+        "evidence": [
+          {
+            "path": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\btc-execution-diagnostic-v1\\diagnostic.json",
+            "sha256": "9987357a290f4901a07289f52540b03cfb79799c8c10d04bf344a6c183b60cf1",
+            "pointer": [
+              "sources",
+              1,
+              "url"
+            ],
+            "evidence_clock_ns": 1788833244585202200
+          }
+        ],
+        "evidence_clock": 1788833244585202200,
+        "retroactive": false,
+        "why": "Host namespace; not a legal-counterparty or settlement certification"
+      },
+      "market_type": {
+        "value": "PERPETUAL",
+        "status": "PROVEN",
+        "epistemic_label": "CURRENT_ONLY",
+        "evidence": [
+          {
+            "path": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\btc-execution-diagnostic-v1\\raw\\future_info.bin.gz",
+            "sha256": "5c63ccfebe081ddaf935e1e016978267429899735d063985c532d17835c3dd22",
+            "pointer": [
+              "symbols",
+              0,
+              "contractType"
+            ],
+            "evidence_clock_ns": 1788833244585202200
+          }
+        ],
+        "evidence_clock": 1788833244585202200,
+        "retroactive": false,
+        "why": "Literal field in received metadata; effective historical period not established"
+      },
+      "base_asset": {
+        "value": "BTC",
+        "status": "PROVEN",
+        "epistemic_label": "CURRENT_ONLY",
+        "evidence": [
+          {
+            "path": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\btc-execution-diagnostic-v1\\raw\\future_info.bin.gz",
+            "sha256": "5c63ccfebe081ddaf935e1e016978267429899735d063985c532d17835c3dd22",
+            "pointer": [
+              "symbols",
+              0,
+              "baseAsset"
+            ],
+            "evidence_clock_ns": 1788833244585202200
+          }
+        ],
+        "evidence_clock": 1788833244585202200,
+        "retroactive": false,
+        "why": "Literal field in received metadata; effective historical period not established"
+      },
+      "quote_asset": {
+        "value": "USDT",
+        "status": "PROVEN",
+        "epistemic_label": "CURRENT_ONLY",
+        "evidence": [
+          {
+            "path": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\btc-execution-diagnostic-v1\\raw\\future_info.bin.gz",
+            "sha256": "5c63ccfebe081ddaf935e1e016978267429899735d063985c532d17835c3dd22",
+            "pointer": [
+              "symbols",
+              0,
+              "quoteAsset"
+            ],
+            "evidence_clock_ns": 1788833244585202200
+          }
+        ],
+        "evidence_clock": 1788833244585202200,
+        "retroactive": false,
+        "why": "Literal field in received metadata; effective historical period not established"
+      },
+      "settlement_asset": {
+        "value": null,
+        "status": "UNKNOWN",
+        "epistemic_label": "NOT_PROVEN",
+        "evidence": [],
+        "evidence_clock": null,
+        "retroactive": false,
+        "why": "No explicit admissible economic specification in bounded saved bundle"
+      },
+      "margin_asset": {
+        "value": "USDT",
+        "status": "PROVEN",
+        "epistemic_label": "CURRENT_ONLY",
+        "evidence": [
+          {
+            "path": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\btc-execution-diagnostic-v1\\raw\\future_info.bin.gz",
+            "sha256": "5c63ccfebe081ddaf935e1e016978267429899735d063985c532d17835c3dd22",
+            "pointer": [
+              "symbols",
+              0,
+              "marginAsset"
+            ],
+            "evidence_clock_ns": 1788833244585202200
+          }
+        ],
+        "evidence_clock": 1788833244585202200,
+        "retroactive": false,
+        "why": "Literal field in received metadata; effective historical period not established"
+      },
+      "quantity_unit": {
+        "value": null,
+        "status": "UNKNOWN",
+        "epistemic_label": "NOT_PROVEN",
+        "evidence": [],
+        "evidence_clock": null,
+        "retroactive": false,
+        "why": "No explicit admissible economic specification in bounded saved bundle"
+      },
+      "price_unit": {
+        "value": null,
+        "status": "UNKNOWN",
+        "epistemic_label": "NOT_PROVEN",
+        "evidence": [],
+        "evidence_clock": null,
+        "retroactive": false,
+        "why": "No explicit admissible economic specification in bounded saved bundle"
+      },
+      "multiplier": {
+        "value": null,
+        "status": "UNKNOWN",
+        "epistemic_label": "NOT_PROVEN",
+        "evidence": [],
+        "evidence_clock": null,
+        "retroactive": false,
+        "why": "No explicit admissible economic specification in bounded saved bundle"
+      },
+      "linear_inverse": {
+        "value": null,
+        "status": "UNKNOWN",
+        "epistemic_label": "NOT_PROVEN",
+        "evidence": [],
+        "evidence_clock": null,
+        "retroactive": false,
+        "why": "No explicit admissible economic specification in bounded saved bundle"
+      },
+      "payoff": {
+        "value": null,
+        "status": "UNKNOWN",
+        "epistemic_label": "NOT_PROVEN",
+        "evidence": [],
+        "evidence_clock": null,
+        "retroactive": false,
+        "why": "No explicit admissible economic specification in bounded saved bundle"
+      },
+      "expiry": {
+        "value": null,
+        "status": "UNKNOWN",
+        "epistemic_label": "NOT_PROVEN",
+        "evidence": [],
+        "evidence_clock": null,
+        "retroactive": false,
+        "why": "No explicit admissible economic specification in bounded saved bundle"
+      },
+      "price_type": {
+        "value": null,
+        "status": "UNKNOWN",
+        "epistemic_label": "NOT_PROVEN",
+        "evidence": [],
+        "evidence_clock": null,
+        "retroactive": false,
+        "why": "Instrument has multiple observations; type belongs to each receipt, not a single interchangeable instrument price. See OBSERVATION_SEMANTICS.json."
+      },
+      "funding_semantics": {
+        "value": null,
+        "status": "UNKNOWN",
+        "epistemic_label": "NOT_PROVEN",
+        "evidence": [],
+        "evidence_clock": null,
+        "retroactive": false,
+        "why": "No explicit admissible economic specification in bounded saved bundle"
+      },
+      "contract_version": {
+        "value": null,
+        "status": "UNKNOWN",
+        "epistemic_label": "NOT_PROVEN",
+        "evidence": [],
+        "evidence_clock": null,
+        "retroactive": false,
+        "why": "Only body content hash preserved; no effective economic specification version/change history."
+      },
+      "valid_from": {
+        "value": null,
+        "status": "UNKNOWN",
+        "epistemic_label": "NOT_PROVEN",
+        "evidence": [],
+        "evidence_clock": null,
+        "retroactive": false,
+        "why": "onboardDate, where present, is a claim in later metadata, not publication/knowledge time or proof that all terms were effective since then."
+      },
+      "valid_until": {
+        "value": null,
+        "status": "UNKNOWN",
+        "epistemic_label": "NOT_PROVEN",
+        "evidence": [],
+        "evidence_clock": null,
+        "retroactive": false,
+        "why": "No dated change log or end of validity for the full economic terms."
+      }
+    },
+    "observed_metadata_hash": "18a1918fe29286e3a113d77c6b589cb61bccdbf2e4ae43a706ae28a4338d1bc0",
+    "metadata_receipt_time_ns": 1788833244585202200,
+    "raw_onboardDate": 1567965300000,
+    "raw_deliveryDate": 4133404800000,
+    "raw_pricePrecision": 2,
+    "raw_quantityPrecision": 3,
+    "complete_for_replay": false,
+    "notional_formula": "UNSUPPORTED: quantity/price units and economic contract not fully proven",
+    "pnl_formula": "UNSUPPORTED",
+    "margin_formula": "UNSUPPORTED",
+    "settlement_formula": "UNSUPPORTED"
+  },
+  "BTC_DATED": {
+    "symbol": "BTCUSDT_261225",
+    "fields": {
+      "venue": {
+        "value": "fapi.binance.com",
+        "status": "PROVEN",
+        "epistemic_label": "CURRENT_ONLY",
+        "evidence": [
+          {
+            "path": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\btc-execution-diagnostic-v1\\diagnostic.json",
+            "sha256": "9987357a290f4901a07289f52540b03cfb79799c8c10d04bf344a6c183b60cf1",
+            "pointer": [
+              "sources",
+              1,
+              "url"
+            ],
+            "evidence_clock_ns": 1788833244585202200
+          }
+        ],
+        "evidence_clock": 1788833244585202200,
+        "retroactive": false,
+        "why": "Host namespace; not a legal-counterparty or settlement certification"
+      },
+      "market_type": {
+        "value": "NEXT_QUARTER",
+        "status": "PROVEN",
+        "epistemic_label": "CURRENT_ONLY",
+        "evidence": [
+          {
+            "path": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\btc-execution-diagnostic-v1\\raw\\future_info.bin.gz",
+            "sha256": "5c63ccfebe081ddaf935e1e016978267429899735d063985c532d17835c3dd22",
+            "pointer": [
+              "symbols",
+              801,
+              "contractType"
+            ],
+            "evidence_clock_ns": 1788833244585202200
+          }
+        ],
+        "evidence_clock": 1788833244585202200,
+        "retroactive": false,
+        "why": "Literal field in received metadata; effective historical period not established"
+      },
+      "base_asset": {
+        "value": "BTC",
+        "status": "PROVEN",
+        "epistemic_label": "CURRENT_ONLY",
+        "evidence": [
+          {
+            "path": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\btc-execution-diagnostic-v1\\raw\\future_info.bin.gz",
+            "sha256": "5c63ccfebe081ddaf935e1e016978267429899735d063985c532d17835c3dd22",
+            "pointer": [
+              "symbols",
+              801,
+              "baseAsset"
+            ],
+            "evidence_clock_ns": 1788833244585202200
+          }
+        ],
+        "evidence_clock": 1788833244585202200,
+        "retroactive": false,
+        "why": "Literal field in received metadata; effective historical period not established"
+      },
+      "quote_asset": {
+        "value": "USDT",
+        "status": "PROVEN",
+        "epistemic_label": "CURRENT_ONLY",
+        "evidence": [
+          {
+            "path": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\btc-execution-diagnostic-v1\\raw\\future_info.bin.gz",
+            "sha256": "5c63ccfebe081ddaf935e1e016978267429899735d063985c532d17835c3dd22",
+            "pointer": [
+              "symbols",
+              801,
+              "quoteAsset"
+            ],
+            "evidence_clock_ns": 1788833244585202200
+          }
+        ],
+        "evidence_clock": 1788833244585202200,
+        "retroactive": false,
+        "why": "Literal field in received metadata; effective historical period not established"
+      },
+      "settlement_asset": {
+        "value": null,
+        "status": "UNKNOWN",
+        "epistemic_label": "NOT_PROVEN",
+        "evidence": [],
+        "evidence_clock": null,
+        "retroactive": false,
+        "why": "No explicit admissible economic specification in bounded saved bundle"
+      },
+      "margin_asset": {
+        "value": "USDT",
+        "status": "PROVEN",
+        "epistemic_label": "CURRENT_ONLY",
+        "evidence": [
+          {
+            "path": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\btc-execution-diagnostic-v1\\raw\\future_info.bin.gz",
+            "sha256": "5c63ccfebe081ddaf935e1e016978267429899735d063985c532d17835c3dd22",
+            "pointer": [
+              "symbols",
+              801,
+              "marginAsset"
+            ],
+            "evidence_clock_ns": 1788833244585202200
+          }
+        ],
+        "evidence_clock": 1788833244585202200,
+        "retroactive": false,
+        "why": "Literal field in received metadata; effective historical period not established"
+      },
+      "quantity_unit": {
+        "value": null,
+        "status": "UNKNOWN",
+        "epistemic_label": "NOT_PROVEN",
+        "evidence": [],
+        "evidence_clock": null,
+        "retroactive": false,
+        "why": "No explicit admissible economic specification in bounded saved bundle"
+      },
+      "price_unit": {
+        "value": null,
+        "status": "UNKNOWN",
+        "epistemic_label": "NOT_PROVEN",
+        "evidence": [],
+        "evidence_clock": null,
+        "retroactive": false,
+        "why": "No explicit admissible economic specification in bounded saved bundle"
+      },
+      "multiplier": {
+        "value": null,
+        "status": "UNKNOWN",
+        "epistemic_label": "NOT_PROVEN",
+        "evidence": [],
+        "evidence_clock": null,
+        "retroactive": false,
+        "why": "No explicit admissible economic specification in bounded saved bundle"
+      },
+      "linear_inverse": {
+        "value": null,
+        "status": "UNKNOWN",
+        "epistemic_label": "NOT_PROVEN",
+        "evidence": [],
+        "evidence_clock": null,
+        "retroactive": false,
+        "why": "No explicit admissible economic specification in bounded saved bundle"
+      },
+      "payoff": {
+        "value": null,
+        "status": "UNKNOWN",
+        "epistemic_label": "NOT_PROVEN",
+        "evidence": [],
+        "evidence_clock": null,
+        "retroactive": false,
+        "why": "No explicit admissible economic specification in bounded saved bundle"
+      },
+      "expiry": {
+        "value": {
+          "deliveryDate_raw": 1798185600000,
+          "utc_under_preserved_ms_decoder": "2026-12-25T08:00:00+00:00"
+        },
+        "status": "PROVEN",
+        "epistemic_label": "CURRENT_ONLY",
+        "evidence": [
+          {
+            "path": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\btc-execution-diagnostic-v1\\raw\\future_info.bin.gz",
+            "sha256": "5c63ccfebe081ddaf935e1e016978267429899735d063985c532d17835c3dd22",
+            "pointer": [
+              "symbols",
+              801,
+              "deliveryDate"
+            ],
+            "evidence_clock_ns": 1788833244585202200
+          }
+        ],
+        "evidence_clock": 1788833244585202200,
+        "retroactive": false,
+        "why": "Raw date explicitly declared; UTC rendering uses the preserved project millisecond decoder. Does not back-prove older contracts."
+      },
+      "price_type": {
+        "value": null,
+        "status": "UNKNOWN",
+        "epistemic_label": "NOT_PROVEN",
+        "evidence": [],
+        "evidence_clock": null,
+        "retroactive": false,
+        "why": "Instrument has multiple observations; type belongs to each receipt, not a single interchangeable instrument price. See OBSERVATION_SEMANTICS.json."
+      },
+      "funding_semantics": {
+        "value": null,
+        "status": "UNKNOWN",
+        "epistemic_label": "NOT_PROVEN",
+        "evidence": [],
+        "evidence_clock": null,
+        "retroactive": false,
+        "why": "No explicit admissible economic specification in bounded saved bundle"
+      },
+      "contract_version": {
+        "value": null,
+        "status": "UNKNOWN",
+        "epistemic_label": "NOT_PROVEN",
+        "evidence": [],
+        "evidence_clock": null,
+        "retroactive": false,
+        "why": "Only body content hash preserved; no effective economic specification version/change history."
+      },
+      "valid_from": {
+        "value": null,
+        "status": "UNKNOWN",
+        "epistemic_label": "NOT_PROVEN",
+        "evidence": [],
+        "evidence_clock": null,
+        "retroactive": false,
+        "why": "onboardDate, where present, is a claim in later metadata, not publication/knowledge time or proof that all terms were effective since then."
+      },
+      "valid_until": {
+        "value": null,
+        "status": "UNKNOWN",
+        "epistemic_label": "NOT_PROVEN",
+        "evidence": [],
+        "evidence_clock": null,
+        "retroactive": false,
+        "why": "No dated change log or end of validity for the full economic terms."
+      }
+    },
+    "observed_metadata_hash": "18a1918fe29286e3a113d77c6b589cb61bccdbf2e4ae43a706ae28a4338d1bc0",
+    "metadata_receipt_time_ns": 1788833244585202200,
+    "raw_onboardDate": 1782460800000,
+    "raw_deliveryDate": 1798185600000,
+    "raw_pricePrecision": 1,
+    "raw_quantityPrecision": 3,
+    "complete_for_replay": false,
+    "notional_formula": "UNSUPPORTED: quantity/price units and economic contract not fully proven",
+    "pnl_formula": "UNSUPPORTED",
+    "margin_formula": "UNSUPPORTED",
+    "settlement_formula": "UNSUPPORTED"
+  }
+}

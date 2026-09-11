@@ -1,0 +1,9 @@
+{
+  "checked_files": 381,
+  "changed": [],
+  "passed": true,
+  "phase2_phase3_bytes_preserved": true,
+  "new_network_calls": 0,
+  "capital_operations": 0,
+  "scope": "All baseline-enumerated files; no claim of whole-disk audit"
+}

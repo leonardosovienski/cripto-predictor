@@ -1,0 +1,27 @@
+[
+  {
+    "command": [
+      "-m",
+      "ruff",
+      "check",
+      "GarimpoInvestimentos/research",
+      "GarimpoInvestimentos/cli.py",
+      "tests/test_research_capabilities.py"
+    ],
+    "exit_code": 0,
+    "output": "All checks passed!\n"
+  },
+  {
+    "command": [
+      "-m",
+      "ruff",
+      "format",
+      "--check",
+      "GarimpoInvestimentos/research",
+      "GarimpoInvestimentos/cli.py",
+      "tests/test_research_capabilities.py"
+    ],
+    "exit_code": 0,
+    "output": "10 files already formatted\n"
+  }
+]

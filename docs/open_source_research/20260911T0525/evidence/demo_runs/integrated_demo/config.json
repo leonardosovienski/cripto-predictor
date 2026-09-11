@@ -1,0 +1,205 @@
+{
+  "panel": {
+    "quantiles": 2,
+    "rows": [
+      {
+        "asset": "A",
+        "date": 10,
+        "factor": 0,
+        "label": -0.02
+      },
+      {
+        "asset": "B",
+        "date": 10,
+        "factor": 1,
+        "label": -0.01
+      },
+      {
+        "asset": "C",
+        "date": 10,
+        "factor": 2,
+        "label": 0.0
+      },
+      {
+        "asset": "D",
+        "date": 10,
+        "factor": 3,
+        "label": 0.01
+      },
+      {
+        "asset": "A",
+        "date": 20,
+        "factor": 0,
+        "label": -0.02
+      },
+      {
+        "asset": "B",
+        "date": 20,
+        "factor": 1,
+        "label": -0.01
+      },
+      {
+        "asset": "C",
+        "date": 20,
+        "factor": 2,
+        "label": 0.0
+      },
+      {
+        "asset": "D",
+        "date": 20,
+        "factor": 3,
+        "label": 0.01
+      }
+    ]
+  },
+  "scenario": {
+    "balances": [
+      {
+        "amount": "1000",
+        "asset": "USD",
+        "venue": "SIM"
+      }
+    ],
+    "contracts": {
+      "a": {
+        "base": "A",
+        "instrument_id": "SIM:A/USD",
+        "price_unit": "USD/A",
+        "quantity_unit": "A",
+        "quote": "USD",
+        "settlement": "USD",
+        "venue": "SIM"
+      }
+    },
+    "events": [
+      {
+        "at": 0,
+        "contract": "a",
+        "fee_rate": "0.001",
+        "latency": 2,
+        "limit": "100",
+        "order_id": "one",
+        "quantity": "2",
+        "side": "BUY",
+        "type": "submit"
+      },
+      {
+        "at": 2,
+        "fill_id": "f1",
+        "order_id": "one",
+        "price": "99",
+        "quantity": "0.5",
+        "type": "fill"
+      },
+      {
+        "at": 3,
+        "order_id": "one",
+        "type": "cancel"
+      }
+    ],
+    "synthetic": true
+  },
+  "universe": {
+    "cutoff": 10,
+    "limit": 2,
+    "rows": [
+      {
+        "active": true,
+        "instrument_id": "SIM:A/USD",
+        "known_at": 9,
+        "volume": 100,
+        "volume_unit": "USD"
+      },
+      {
+        "active": true,
+        "instrument_id": "SIM:B/USD",
+        "known_at": 11,
+        "volume": 200,
+        "volume_unit": "USD"
+      }
+    ],
+    "rules": [
+      {
+        "field": "active",
+        "operation": "eq",
+        "value": true
+      }
+    ],
+    "sort_field": "volume"
+  },
+  "validation": {
+    "gap": 0,
+    "labels": [
+      {
+        "available": 3,
+        "end": 2,
+        "start": 0
+      },
+      {
+        "available": 4,
+        "end": 3,
+        "start": 1
+      },
+      {
+        "available": 5,
+        "end": 4,
+        "start": 2
+      },
+      {
+        "available": 6,
+        "end": 5,
+        "start": 3
+      },
+      {
+        "available": 7,
+        "end": 6,
+        "start": 4
+      },
+      {
+        "available": 8,
+        "end": 7,
+        "start": 5
+      },
+      {
+        "available": 9,
+        "end": 8,
+        "start": 6
+      },
+      {
+        "available": 10,
+        "end": 9,
+        "start": 7
+      },
+      {
+        "available": 11,
+        "end": 10,
+        "start": 8
+      },
+      {
+        "available": 12,
+        "end": 11,
+        "start": 9
+      },
+      {
+        "available": 13,
+        "end": 12,
+        "start": 10
+      },
+      {
+        "available": 14,
+        "end": 13,
+        "start": 11
+      }
+    ],
+    "windows": [
+      [
+        6,
+        9
+      ],
+      [
+        9,
+        12
+      ]
+    ]
+  }
+}

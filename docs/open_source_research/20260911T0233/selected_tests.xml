@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="6" skipped="0" tests="33" time="39.131" timestamp="2026-09-10T23:41:04.810336-03:00" hostname="Leo"><testcase classname="tests.test_dpl" name="test_marketdatapoint_rejeita_high_menor_que_low" time="0.002" /><testcase classname="tests.test_dpl" name="test_marketdatapoint_rejeita_published_antes_do_timestamp" time="0.003" /><testcase classname="tests.test_dpl" name="test_marketdatapoint_eh_imutavel" time="0.003" /><testcase classname="tests.test_dpl" name="test_primaria_ok_nao_chama_secundaria" time="0.004"><failure message="RuntimeError: Network disabled for selected offline tests">def test_primaria_ok_nao_chama_secundaria():
+        primaria = _OkProvider("binance", 100.0)
+        secundaria = _OkProvider("coingecko", 200.0)
+        router = FallbackRouter([primaria, secundaria])
+&gt;       pts = asyncio.run(router.fetch_ohlcv("bitcoin"))
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_dpl.py:115: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+work\managed-python\cpython-3.13-windows-x86_64-none\Lib\asyncio\runners.py:195: in run
+    with Runner(debug=debug, loop_factory=loop_factory) as runner:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+work\managed-python\cpython-3.13-windows-x86_64-none\Lib\asyncio\runners.py:59: in __enter__
+    self._lazy_init()
+work\managed-python\cpython-3.13-windows-x86_64-none\Lib\asyncio\runners.py:138: in _lazy_init
+    self._loop = events.new_event_loop()
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+work\managed-python\cpython-3.13-windows-x86_64-none\Lib\asyncio\events.py:840: in new_event_loop
+    return get_event_loop_policy().new_event_loop()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+work\managed-python\cpython-3.13-windows-x86_64-none\Lib\asyncio\events.py:737: in new_event_loop
+    return self._loop_factory()
+           ^^^^^^^^^^^^^^^^^^^^
+work\managed-python\cpython-3.13-windows-x86_64-none\Lib\asyncio\windows_events.py:316: in __init__
+    super().__init__(proactor)
+work\managed-python\cpython-3.13-windows-x86_64-none\Lib\asyncio\proactor_events.py:639: in __init__
+    self._make_self_pipe()
+work\managed-python\cpython-3.13-windows-x86_64-none\Lib\asyncio\proactor_events.py:785: in _make_self_pipe
+    self._ssock, self._csock = socket.socketpair()
+                               ^^^^^^^^^^^^^^^^^^^
+work\managed-python\cpython-3.13-windows-x86_64-none\Lib\socket.py:623: in _fallback_socketpair
+    csock.connect((addr, port))
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+args = (&lt;socket.socket [closed] fd=-1, family=2, type=1, proto=0&gt;, ('127.0.0.1', 52355))
+kwargs = {}
+
+    def denied(*args,**kwargs):
+&gt;       raise RuntimeError('Network disabled for selected offline tests')
+E       RuntimeError: Network disabled for selected offline tests
+
+..\operacao\relatorios\OPEN_SOURCE_20260911T0233\work\verify_selected.py:13: RuntimeError</failure></testcase><testcase classname="tests.test_dpl" name="test_fallback_usa_secundaria_quando_primaria_falha" time="0.068"><failure message="RuntimeError: Network disabled for selected offline tests">tmp_path = WindowsPath('C:/Cripto/operacao/temporarios/pytest-of-leona/pytest-1/test_fallback_usa_secundaria_q0')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x000001E352A2CC30&gt;
+
+    def test_fallback_usa_secundaria_quando_primaria_falha(tmp_path, monkeypatch):
+        events = tmp_path / "ev.jsonl"
+        monkeypatch.setenv("PREDICTOR_EVENTS_PATH", str(events))
+        primaria = _FailProvider("binance")
+        secundaria = _OkProvider("coingecko", 200.0)
+        router = FallbackRouter([primaria, secundaria])
+&gt;       pts = asyncio.run(router.fetch_ohlcv("bitcoin"))
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_dpl.py:126: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+work\managed-python\cpython-3.13-windows-x86_64-none\Lib\asyncio\runners.py:195: in run
+    with Runner(debug=debug, loop_factory=loop_factory) as runner:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+work\managed-python\cpython-3.13-windows-x86_64-none\Lib\asyncio\runners.py:59: in __enter__
+    self._lazy_init()
+work\managed-python\cpython-3.13-windows-x86_64-none\Lib\asyncio\runners.py:138: in _lazy_init
+    self._loop = events.new_event_loop()
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+work\managed-python\cpython-3.13-windows-x86_64-none\Lib\asyncio\events.py:840: in new_event_loop
+    return get_event_loop_policy().new_event_loop()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+work\managed-python\cpython-3.13-windows-x86_64-none\Lib\asyncio\events.py:737: in new_event_loop
+    return self._loop_factory()
+           ^^^^^^^^^^^^^^^^^^^^
+work\managed-python\cpython-3.13-windows-x86_64-none\Lib\asyncio\windows_events.py:316: in __init__
+    super().__init__(proactor)
+work\managed-python\cpython-3.13-windows-x86_64-none\Lib\asyncio\proactor_events.py:639: in __init__
+    self._make_self_pipe()
+work\managed-python\cpython-3.13-windows-x86_64-none\Lib\asyncio\proactor_events.py:785: in _make_self_pipe
+    self._ssock, self._csock = socket.socketpair()
+                               ^^^^^^^^^^^^^^^^^^^
+work\managed-python\cpython-3.13-windows-x86_64-none\Lib\socket.py:623: in _fallback_socketpair
+    csock.connect((addr, port))
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+args = (&lt;socket.socket [closed] fd=-1, family=2, type=1, proto=0&gt;, ('127.0.0.1', 52357))
+kwargs = {}
+
+    def denied(*args,**kwargs):
+&gt;       raise RuntimeError('Network disabled for selected offline tests')
+E       RuntimeError: Network disabled for selected offline tests
+
+..\operacao\relatorios\OPEN_SOURCE_20260911T0233\work\verify_selected.py:13: RuntimeError</failure></testcase><testcase classname="tests.test_dpl" name="test_todas_falham_levanta_data_unavailable" time="0.023"><failure message="RuntimeError: Network disabled for selected offline tests">tmp_path = WindowsPath('C:/Cripto/operacao/temporarios/pytest-of-leona/pytest-1/test_todas_falham_levanta_data0')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x000001E352A2CE90&gt;
+
+    def test_todas_falham_levanta_data_unavailable(tmp_path, monkeypatch):
+        events = tmp_path / "ev.jsonl"
+        monkeypatch.setenv("PREDICTOR_EVENTS_PATH", str(events))
+        router = FallbackRouter([_FailProvider("binance"), _FailProvider("coingecko")])
+        with pytest.raises(DataUnavailableError):
+&gt;           asyncio.run(router.fetch_ohlcv("bitcoin"))
+
+tests\test_dpl.py:138: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+work\managed-python\cpython-3.13-windows-x86_64-none\Lib\asyncio\runners.py:195: in run
+    with Runner(debug=debug, loop_factory=loop_factory) as runner:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+work\managed-python\cpython-3.13-windows-x86_64-none\Lib\asyncio\runners.py:59: in __enter__
+    self._lazy_init()
+work\managed-python\cpython-3.13-windows-x86_64-none\Lib\asyncio\runners.py:138: in _lazy_init
+    self._loop = events.new_event_loop()
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+work\managed-python\cpython-3.13-windows-x86_64-none\Lib\asyncio\events.py:840: in new_event_loop
+    return get_event_loop_policy().new_event_loop()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+work\managed-python\cpython-3.13-windows-x86_64-none\Lib\asyncio\events.py:737: in new_event_loop
+    return self._loop_factory()
+           ^^^^^^^^^^^^^^^^^^^^
+work\managed-python\cpython-3.13-windows-x86_64-none\Lib\asyncio\windows_events.py:316: in __init__
+    super().__init__(proactor)
+work\managed-python\cpython-3.13-windows-x86_64-none\Lib\asyncio\proactor_events.py:639: in __init__
+    self._make_self_pipe()
+work\managed-python\cpython-3.13-windows-x86_64-none\Lib\asyncio\proactor_events.py:785: in _make_self_pipe
+    self._ssock, self._csock = socket.socketpair()
+                               ^^^^^^^^^^^^^^^^^^^
+work\managed-python\cpython-3.13-windows-x86_64-none\Lib\socket.py:623: in _fallback_socketpair
+    csock.connect((addr, port))
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+args = (&lt;socket.socket [closed] fd=-1, family=2, type=1, proto=0&gt;, ('127.0.0.1', 52358))
+kwargs = {}
+
+    def denied(*args,**kwargs):
+&gt;       raise RuntimeError('Network disabled for selected offline tests')
+E       RuntimeError: Network disabled for selected offline tests
+
+..\operacao\relatorios\OPEN_SOURCE_20260911T0233\work\verify_selected.py:13: RuntimeError</failure></testcase><testcase classname="tests.test_dpl" name="test_router_exige_ao_menos_um_provedor" time="0.003" /><testcase classname="tests.test_dpl" name="test_router_emite_telemetria_no_dominio_injetado" time="0.013"><failure message="RuntimeError: Network disabled for selected offline tests">tmp_path = WindowsPath('C:/Cripto/operacao/temporarios/pytest-of-leona/pytest-1/test_router_emite_telemetria_n0')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x000001E352A38950&gt;
+
+    def test_router_emite_telemetria_no_dominio_injetado(tmp_path, monkeypatch):
+        """Core↔Domínio: a camada DPL não hardcoda 'previsao_cripto'. Quando OUTRO
+        domínio (ex.: ações) injeta `domain=`, a telemetria sai atribuída a ELE — nada
+        vaza como cripto. Sem isso, eventos de ações sairiam rotulados de previsao_cripto."""
+        events = tmp_path / "ev.jsonl"
+        monkeypatch.setenv("PREDICTOR_EVENTS_PATH", str(events))
+        router = FallbackRouter(
+            [_FailProvider("b3"), _OkProvider("cotahist", 1.0)], domain="predictor_stocks"
+        )
+&gt;       asyncio.run(router.fetch_ohlcv("PETR4"))
+
+tests\test_dpl.py:157: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+work\managed-python\cpython-3.13-windows-x86_64-none\Lib\asyncio\runners.py:195: in run
+    with Runner(debug=debug, loop_factory=loop_factory) as runner:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+work\managed-python\cpython-3.13-windows-x86_64-none\Lib\asyncio\runners.py:59: in __enter__
+    self._lazy_init()
+work\managed-python\cpython-3.13-windows-x86_64-none\Lib\asyncio\runners.py:138: in _lazy_init
+    self._loop = events.new_event_loop()
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+work\managed-python\cpython-3.13-windows-x86_64-none\Lib\asyncio\events.py:840: in new_event_loop
+    return get_event_loop_policy().new_event_loop()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+work\managed-python\cpython-3.13-windows-x86_64-none\Lib\asyncio\events.py:737: in new_event_loop
+    return self._loop_factory()
+           ^^^^^^^^^^^^^^^^^^^^
+work\managed-python\cpython-3.13-windows-x86_64-none\Lib\asyncio\windows_events.py:316: in __init__
+    super().__init__(proactor)
+work\managed-python\cpython-3.13-windows-x86_64-none\Lib\asyncio\proactor_events.py:639: in __init__
+    self._make_self_pipe()
+work\managed-python\cpython-3.13-windows-x86_64-none\Lib\asyncio\proactor_events.py:785: in _make_self_pipe
+    self._ssock, self._csock = socket.socketpair()
+                               ^^^^^^^^^^^^^^^^^^^
+work\managed-python\cpython-3.13-windows-x86_64-none\Lib\socket.py:623: in _fallback_socketpair
+    csock.connect((addr, port))
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+args = (&lt;socket.socket [closed] fd=-1, family=2, type=1, proto=0&gt;, ('127.0.0.1', 52359))
+kwargs = {}
+
+    def denied(*args,**kwargs):
+&gt;       raise RuntimeError('Network disabled for selected offline tests')
+E       RuntimeError: Network disabled for selected offline tests
+
+..\operacao\relatorios\OPEN_SOURCE_20260911T0233\work\verify_selected.py:13: RuntimeError</failure></testcase><testcase classname="tests.test_dpl" name="test_fachada_latest_close_delegada_ao_router" time="0.004"><failure message="RuntimeError: Network disabled for selected offline tests">def test_fachada_latest_close_delegada_ao_router():
+        router = FallbackRouter([_OkProvider("binance", 42.0)])
+        facade = CryptoDataProvider(router=router)
+&gt;       assert asyncio.run(facade.latest_close("bitcoin")) == 42.0
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_dpl.py:168: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+work\managed-python\cpython-3.13-windows-x86_64-none\Lib\asyncio\runners.py:195: in run
+    with Runner(debug=debug, loop_factory=loop_factory) as runner:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+work\managed-python\cpython-3.13-windows-x86_64-none\Lib\asyncio\runners.py:59: in __enter__
+    self._lazy_init()
+work\managed-python\cpython-3.13-windows-x86_64-none\Lib\asyncio\runners.py:138: in _lazy_init
+    self._loop = events.new_event_loop()
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+work\managed-python\cpython-3.13-windows-x86_64-none\Lib\asyncio\events.py:840: in new_event_loop
+    return get_event_loop_policy().new_event_loop()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+work\managed-python\cpython-3.13-windows-x86_64-none\Lib\asyncio\events.py:737: in new_event_loop
+    return self._loop_factory()
+           ^^^^^^^^^^^^^^^^^^^^
+work\managed-python\cpython-3.13-windows-x86_64-none\Lib\asyncio\windows_events.py:316: in __init__
+    super().__init__(proactor)
+work\managed-python\cpython-3.13-windows-x86_64-none\Lib\asyncio\proactor_events.py:639: in __init__
+    self._make_self_pipe()
+work\managed-python\cpython-3.13-windows-x86_64-none\Lib\asyncio\proactor_events.py:785: in _make_self_pipe
+    self._ssock, self._csock = socket.socketpair()
+                               ^^^^^^^^^^^^^^^^^^^
+work\managed-python\cpython-3.13-windows-x86_64-none\Lib\socket.py:623: in _fallback_socketpair
+    csock.connect((addr, port))
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+args = (&lt;socket.socket [closed] fd=-1, family=2, type=1, proto=0&gt;, ('127.0.0.1', 52360))
+kwargs = {}
+
+    def denied(*args,**kwargs):
+&gt;       raise RuntimeError('Network disabled for selected offline tests')
+E       RuntimeError: Network disabled for selected offline tests
+
+..\operacao\relatorios\OPEN_SOURCE_20260911T0233\work\verify_selected.py:13: RuntimeError</failure></testcase><testcase classname="tests.test_dpl" name="test_fachada_monta_router_do_sources_json" time="0.370" /><testcase classname="tests.test_pbo" name="test_skill_real_produz_pbo_baixo" time="0.238" /><testcase classname="tests.test_pbo" name="test_ruido_puro_produz_pbo_alto" time="0.311" /><testcase classname="tests.test_pbo" name="test_sensibilidade_e_especificidade_juntas" time="0.590" /><testcase classname="tests.test_pbo" name="test_numero_de_combinacoes_e_o_da_teoria" time="0.070" /><testcase classname="tests.test_pbo" name="test_observacoes_descartadas_sao_reportadas_nao_silenciosas" time="0.177" /><testcase classname="tests.test_pbo" name="test_uma_configuracao_so_e_erro_nao_valor_de_conveniencia" time="0.002" /><testcase classname="tests.test_pbo" name="test_n_splits_impar_e_recusado" time="0.004" /><testcase classname="tests.test_pbo" name="test_series_de_comprimentos_diferentes_sao_recusadas" time="0.002" /><testcase classname="tests.test_pbo" name="test_amostra_curta_demais_e_recusada" time="0.002" /><testcase classname="tests.test_pbo" name="test_sharpe_de_serie_constante_nao_vence_ninguem" time="0.003" /><testcase classname="tests.test_pbo" name="test_pbo_fica_no_intervalo_valido" time="0.656" /><testcase classname="tests.test_v3_costs" name="test_friccao_duas_pernas_sobre_posicao_absoluta" time="0.003" /><testcase classname="tests.test_v3_costs" name="test_funding_signed_long_paga_short_recebe" time="0.002" /><testcase classname="tests.test_v3_costs" name="test_net_return_liquido_de_tudo" time="0.004" /><testcase classname="tests.test_v3_costs" name="test_posicao_zero_nao_paga_custo" time="0.002" /><testcase classname="tests.test_v3_costs" name="test_edge_menor_que_custo_vira_prejuizo_liquido" time="0.002" /><testcase classname="tests.test_audit_economic_accounting" name="test_stop_uses_observed_gap_price_and_actual_duration" time="0.021" /><testcase classname="tests.test_audit_economic_accounting" name="test_partial_history_is_not_a_mature_horizon_return" time="0.002" /><testcase classname="tests.test_audit_economic_accounting" name="test_unobserved_barrier_path_is_not_filled_from_future_prices" time="0.002" /><testcase classname="tests.test_audit_economic_accounting" name="test_realized_funding_uses_each_settlement_rate_and_mark" time="0.002" /><testcase classname="tests.test_audit_economic_accounting" name="test_friction_charges_the_actual_exit_notional" time="0.002" /><testcase classname="tests.test_audit_economic_accounting" name="test_edge_estimator_does_not_drop_invalid_observations" time="0.002" /><testcase classname="tests.test_audit_economic_accounting" name="test_frozen_paper_family_stops_before_market_or_pipeline_calls" time="0.007"><failure message="RuntimeError: Network disabled for selected offline tests">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x000001E3529C7CE0&gt;
+
+    def test_frozen_paper_family_stops_before_market_or_pipeline_calls(monkeypatch):
+        async def forbidden(**_kwargs):
+            pytest.fail("pipeline must not run for a frozen family")
+    
+        monkeypatch.setattr("GarimpoInvestimentos.v3.paper_trader.run_symbol", forbidden)
+        with pytest.raises(FrozenFamilyError):
+&gt;           asyncio.run(run_paper("BTCUSDT", "2024-01-01"))
+
+tests\test_audit_economic_accounting.py:63: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+work\managed-python\cpython-3.13-windows-x86_64-none\Lib\asyncio\runners.py:195: in run
+    with Runner(debug=debug, loop_factory=loop_factory) as runner:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+work\managed-python\cpython-3.13-windows-x86_64-none\Lib\asyncio\runners.py:59: in __enter__
+    self._lazy_init()
+work\managed-python\cpython-3.13-windows-x86_64-none\Lib\asyncio\runners.py:138: in _lazy_init
+    self._loop = events.new_event_loop()
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+work\managed-python\cpython-3.13-windows-x86_64-none\Lib\asyncio\events.py:840: in new_event_loop
+    return get_event_loop_policy().new_event_loop()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+work\managed-python\cpython-3.13-windows-x86_64-none\Lib\asyncio\events.py:737: in new_event_loop
+    return self._loop_factory()
+           ^^^^^^^^^^^^^^^^^^^^
+work\managed-python\cpython-3.13-windows-x86_64-none\Lib\asyncio\windows_events.py:316: in __init__
+    super().__init__(proactor)
+work\managed-python\cpython-3.13-windows-x86_64-none\Lib\asyncio\proactor_events.py:639: in __init__
+    self._make_self_pipe()
+work\managed-python\cpython-3.13-windows-x86_64-none\Lib\asyncio\proactor_events.py:785: in _make_self_pipe
+    self._ssock, self._csock = socket.socketpair()
+                               ^^^^^^^^^^^^^^^^^^^
+work\managed-python\cpython-3.13-windows-x86_64-none\Lib\socket.py:623: in _fallback_socketpair
+    csock.connect((addr, port))
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+args = (&lt;socket.socket [closed] fd=-1, family=2, type=1, proto=0&gt;, ('127.0.0.1', 52361))
+kwargs = {}
+
+    def denied(*args,**kwargs):
+&gt;       raise RuntimeError('Network disabled for selected offline tests')
+E       RuntimeError: Network disabled for selected offline tests
+
+..\operacao\relatorios\OPEN_SOURCE_20260911T0233\work\verify_selected.py:13: RuntimeError</failure></testcase></testsuite></testsuites>

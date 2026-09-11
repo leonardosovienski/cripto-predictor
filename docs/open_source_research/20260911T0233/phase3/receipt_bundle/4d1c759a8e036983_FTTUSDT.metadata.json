@@ -1,0 +1,14 @@
+{
+  "symbol": "FTTUSDT",
+  "start_ms": 1668556800000,
+  "end_ms": 1695254400000,
+  "expected_days": 310,
+  "attempts": 1,
+  "known_at_utc": "2026-09-09T20:27:10.849645+00:00",
+  "url": "https://api.binance.com/api/v3/klines?symbol=FTTUSDT&interval=1d&startTime=1668556800000&endTime=1695340799999&limit=1000",
+  "status": 200,
+  "raw_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+  "received_at_utc": "2026-09-09T20:27:11.149417+00:00",
+  "returned_rows": 0,
+  "returned_in_gap": 0
+}

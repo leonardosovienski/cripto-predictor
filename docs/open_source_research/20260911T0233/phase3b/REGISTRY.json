@@ -1,0 +1,87 @@
+{
+  "initiative": "20260911T0233",
+  "phase": "3B",
+  "parent_phase": "C:\\Cripto\\operacao\\relatorios\\OPEN_SOURCE_20260911T0233\\phase3",
+  "decisions": {
+    "initiative": "20260911T0233",
+    "phase": "3B",
+    "F03": {
+      "status": "BLOCKED_CURRENT_EVIDENCE",
+      "scope": "Historical cross-sectional universe/ranking; BTC bundle does not establish membership",
+      "components": {
+        "INSTRUMENT_IDENTITY": "PARTIAL_CURRENT_ONLY",
+        "LISTING_STATE": "NOT_PROVEN_HISTORICALLY",
+        "DELISTING_STATE": "NOT_PROVEN",
+        "ELIGIBILITY": "NOT_PROVEN",
+        "DATA_AVAILABILITY": "LOCAL_RECEIPT_ONLY",
+        "PUBLICATION_TIMING": "NOT_PROVEN",
+        "REVISION_CONTROL": "OBSERVED_HASH_ONLY"
+      },
+      "enabled_subset": null
+    },
+    "F04": {
+      "status": "BLOCKED_CURRENT_EVIDENCE",
+      "scope": "BTCUSDT spot/perpetual and BTCUSDT_261225 economic replay",
+      "components": {
+        "INSTRUMENT": "PARTIAL_CURRENT_ONLY",
+        "QUANTITY_UNIT": "NOT_PROVEN",
+        "PRICE_UNIT": "NOT_PROVEN_FULL_CONTRACT",
+        "SETTLEMENT": "NOT_PROVEN",
+        "PAYOFF": "NOT_PROVEN",
+        "MULTIPLIER": "NOT_PROVEN",
+        "MARGIN_COLLATERAL": "PARTIAL",
+        "PRICE_TYPE": "SUPPORTED_DISTINCTIONS_NO_FILL",
+        "CLOCK_ADMISSIBILITY": "OBSERVED_ONLY_UNRECONCILED"
+      },
+      "enabled_economic_subset": null,
+      "technical_subset_enabled": [
+        "literal metadata reconstruction at recorded collection times",
+        "trade/mark/book semantic separation",
+        "same-local-clock receipt timeline",
+        "dimensional controls on declared units; not actual instrument payoff"
+      ]
+    },
+    "funding": "FUNDING_REPLAY_NOT_PROVEN",
+    "clock_cause": "CAUSE_UNKNOWN",
+    "stop_conditions": [
+      "B_PRECISE_BLOCKERS",
+      "C_NONIDENTIFIABLE_CAPTURED_CLOCK_AND_MISSING_VINTAGE_PROPERTIES",
+      "D_BOUNDED_SAVED_SPECIFICATION_SATURATION"
+    ],
+    "phase4": {
+      "economic_replay_authorized": false,
+      "scopes_promoted": []
+    },
+    "scientific_states_unchanged": true,
+    "no_economic_hypothesis_promoted": true
+  },
+  "answers": {
+    "1": "BTC spot: o recibo spot exchangeInfo comprova o namespace api.binance.com, a flag isSpotTradingAllowed=true, baseAsset=BTC e quoteAsset=USDT no momento de recebimento. Não há contrato econômico completo de quantidade, preço, multiplier, payoff ou settlement certificado neste bundle.",
+    "2": "BTC perpetual: o recibo fapi comprova symbol=BTCUSDT, contractType=PERPETUAL, baseAsset=BTC, quoteAsset=USDT e marginAsset=USDT. Isso não prova linearidade, payout em USDT ou multiplier=1.",
+    "3": "BTCUSDT_261225: o recibo declara NEXT_QUARTER, BTC/USDT, marginAsset=USDT e deliveryDate=1798185600000; o decoder preservado em milissegundos o representa como 2026-12-25 08:00 UTC. Esses termos são declarados na coleta; não validam períodos anteriores nem a regra de settlement.",
+    "4": "Não estão todos comprovados. Quantity unit, price unit como contrato completo, multiplier, payoff e settlement permanecem NOT_PROVEN. Metadados de base/quote não substituem a definição da unidade de ordem, e filtros LOT_SIZE não definem multiplier.",
+    "5": "São historicamente comprovados os bytes recebidos e os registros locais de aquisição, com a limitação de precisão do relógio não calibrado. As declarações de exchangeInfo são CURRENT_ONLY, isto é, apenas como coletadas em 08/09/2026, não documentação atual consultada hoje. Vigência passada ou continuidade entre duas coletas iguais permanece desconhecida. Uso em candles anteriores exigiria RETROACTIVE_ASSUMPTION.",
+    "6": "Funding permanece observação de taxa: FUNDING_REPLAY_NOT_PROVEN. Há 33 registros, deltas entre 28799974 e 28800013 no campo de tempo (sob interpretação ms), mas isso não certifica intervalo fixo, posição elegível, direção, moeda de pagamento ou cash flow realizado.",
+    "7": "Não. A aritmética de +410,3008 ms está confirmada condicionalmente à leitura de T em ms. O fenômeno aparece nos 12 livros futures, entre +408,6478 e +446,958 ms. CAUSE_UNKNOWN.",
+    "8": "Faltam significado/unidade historicamente documentados de T/E para esse endpoint e uma ligação calibrada entre relógio remoto e local naquele intervalo. Não há logs contemporâneos de sincronização, offset, monotonicidade de relógio do sistema ou headers de resposta suficientes para distinguir offset, semântica e erro de geração.",
+    "9": "Nenhum replay econômico parcial BTC spot/perp/future foi habilitado. São possíveis reconstrução literal de metadata, cronologia local de recebimento, separação trade/mark/book e testes dimensionais com unidades explicitamente declaradas. Esses controles não calculam notional/PnL de instrumentos reais nem fills.",
+    "10": "F03 = BLOCKED_CURRENT_EVIDENCE. Faltam membership/listing/delisting/eligibility históricos, disponibilidade e versões apropriadas aos cutoffs. O pequeno bundle BTC não contém um universo histórico.",
+    "11": "F04 = BLOCKED_CURRENT_EVIDENCE. Nenhum subconjunto satisfaz simultaneamente unidade, settlement, payoff, multiplier, collateral e admissibilidade temporal. Não se usa PARTIALLY_READY para chamar preparação técnica de autorização econômica.",
+    "12": "Não se recuperam dos campos capturados: relógio monotônico e offset passado, instante de persistência/normalização não registrado, primeiras publicações e versões ausentes. Logs ou arquivos contemporâneos independentes poderiam mudar alguns estados; dados atuais não recompõem essa história. Essa impossibilidade é relativa ao acervo delimitado, não uma alegação sobre todos os arquivos possíveis.",
+    "13": "A evidência impede abrir Fase 4 econômica, ranking F03 e replay de funding. Permite decidir a próxima busca estrita: especificação histórica exata de unidade, multiplier, payoff e settlement para BTCUSDT/BTCUSDT_261225 válida na janela escolhida. Se não houver prova, encerrar aquele replay histórico; resolver fórmulas por convenção não é alternativa admissível."
+  },
+  "tests": {
+    "positive": 27,
+    "negative": 28,
+    "unknown": 3,
+    "total_controls": 58,
+    "failed": 0,
+    "temporal_controls": 114,
+    "temporal_failed": 0,
+    "economic_admissions": 0,
+    "scope": "Positive economic algebra uses declared units only; no complete real contract implied"
+  },
+  "clock_cause": "CAUSE_UNKNOWN",
+  "stop": "PRECISE_BLOCKERS_AND_BOUNDED_SATURATION",
+  "capital_permission": false
+}

@@ -1,3 +1,9 @@
+# Atualização de continuidade — 11/09/2026
+
+O mandato abaixo é histórico. Para retomar, leia [continuity_20260911/README.md](continuity_20260911/README.md) e o relatório da transferência 20260911T0525. Pesquisa e implementação solicitadas nesta conversa foram concluídas. O próximo trabalho parte do backlog específico, sem repetir auditoria geral nem alterar hipóteses/protocolos congelados. Confira Git e evidências locais antes de afirmar estado atual. A autorização de commit/push desta publicação não autoriza capital, ordens, agendamentos nem reabrir hipóteses.
+
+---
+
 # Continuidade: revisão completa do projeto, arquitetura, lógica, dados e resultado econômico
 
 Versão final consolidada em 09/09/2026, após a preparação e integração do PR #109. Este é o ponto de entrada operacional da nova revisão solicitada pelo dono. O estado abaixo é uma referência datada: confirme o ambiente e confronte cada afirmação material com evidência. A preparação anterior não certifica completude dos dados, correção de todas as premissas nem rentabilidade.

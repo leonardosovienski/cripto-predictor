@@ -1,0 +1,160 @@
+{
+  "factors": {
+    "dates": [
+      {
+        "date": 10,
+        "n": 4,
+        "quantiles": {
+          "1": {
+            "mean_label": -0.015,
+            "members": [
+              "A",
+              "B"
+            ],
+            "turnover": null
+          },
+          "2": {
+            "mean_label": 0.005,
+            "members": [
+              "C",
+              "D"
+            ],
+            "turnover": null
+          }
+        },
+        "rank_ic": 1.0
+      },
+      {
+        "date": 20,
+        "n": 4,
+        "quantiles": {
+          "1": {
+            "mean_label": -0.015,
+            "members": [
+              "A",
+              "B"
+            ],
+            "turnover": 0.0
+          },
+          "2": {
+            "mean_label": 0.005,
+            "members": [
+              "C",
+              "D"
+            ],
+            "turnover": 0.0
+          }
+        },
+        "rank_ic": 1.0
+      }
+    ],
+    "economic_validation": false,
+    "group_adjust": false,
+    "label_contract": "caller supplied; equal-weight descriptive means, no costs",
+    "quantile_policy": "average_rank_ties_together"
+  },
+  "simulation": {
+    "accounts": [
+      {
+        "asset": "A",
+        "balance": "0.5",
+        "free": "0.5",
+        "reserved": "0",
+        "venue": "SIM"
+      },
+      {
+        "asset": "USD",
+        "balance": "950.4505",
+        "free": "950.4505",
+        "reserved": "0.0000",
+        "venue": "SIM"
+      }
+    ],
+    "clock": 3,
+    "events": [
+      {
+        "at": 0,
+        "order": "one",
+        "type": "SUBMIT"
+      },
+      {
+        "at": 2,
+        "fee_quote": "0.0495",
+        "fill_id": "f1",
+        "order": "one",
+        "price": "99",
+        "quantity": "0.5",
+        "type": "FILL"
+      },
+      {
+        "at": 3,
+        "order": "one",
+        "type": "CANCEL"
+      }
+    ],
+    "fill_model": "explicit scenario events; no queue, probability or market impact claim",
+    "orders": {
+      "one": {
+        "filled": "0.5",
+        "remaining": "1.5",
+        "state": "CANCELED"
+      }
+    },
+    "synthetic": true
+  },
+  "splits": [
+    {
+      "end": 9,
+      "excluded": {
+        "10": "FUTURE",
+        "11": "FUTURE",
+        "3": "LABEL_NOT_AVAILABLE",
+        "4": "LABEL_OVERLAP_OR_GAP",
+        "5": "LABEL_OVERLAP_OR_GAP",
+        "9": "FUTURE"
+      },
+      "start": 6,
+      "test": [
+        6,
+        7,
+        8
+      ],
+      "train": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "end": 12,
+      "excluded": {
+        "6": "LABEL_NOT_AVAILABLE",
+        "7": "LABEL_OVERLAP_OR_GAP",
+        "8": "LABEL_OVERLAP_OR_GAP"
+      },
+      "start": 9,
+      "test": [
+        9,
+        10,
+        11
+      ],
+      "train": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    }
+  ],
+  "universe": {
+    "cutoff": 10,
+    "future_versions_excluded": 1,
+    "historical_universe_certified": false,
+    "rejected": {},
+    "selected": [
+      "SIM:A/USD"
+    ]
+  }
+}

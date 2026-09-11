@@ -1,0 +1,53 @@
+{
+  "initiative": "20260911T0233",
+  "phase": "3B",
+  "F03": {
+    "status": "BLOCKED_CURRENT_EVIDENCE",
+    "scope": "Historical cross-sectional universe/ranking; BTC bundle does not establish membership",
+    "components": {
+      "INSTRUMENT_IDENTITY": "PARTIAL_CURRENT_ONLY",
+      "LISTING_STATE": "NOT_PROVEN_HISTORICALLY",
+      "DELISTING_STATE": "NOT_PROVEN",
+      "ELIGIBILITY": "NOT_PROVEN",
+      "DATA_AVAILABILITY": "LOCAL_RECEIPT_ONLY",
+      "PUBLICATION_TIMING": "NOT_PROVEN",
+      "REVISION_CONTROL": "OBSERVED_HASH_ONLY"
+    },
+    "enabled_subset": null
+  },
+  "F04": {
+    "status": "BLOCKED_CURRENT_EVIDENCE",
+    "scope": "BTCUSDT spot/perpetual and BTCUSDT_261225 economic replay",
+    "components": {
+      "INSTRUMENT": "PARTIAL_CURRENT_ONLY",
+      "QUANTITY_UNIT": "NOT_PROVEN",
+      "PRICE_UNIT": "NOT_PROVEN_FULL_CONTRACT",
+      "SETTLEMENT": "NOT_PROVEN",
+      "PAYOFF": "NOT_PROVEN",
+      "MULTIPLIER": "NOT_PROVEN",
+      "MARGIN_COLLATERAL": "PARTIAL",
+      "PRICE_TYPE": "SUPPORTED_DISTINCTIONS_NO_FILL",
+      "CLOCK_ADMISSIBILITY": "OBSERVED_ONLY_UNRECONCILED"
+    },
+    "enabled_economic_subset": null,
+    "technical_subset_enabled": [
+      "literal metadata reconstruction at recorded collection times",
+      "trade/mark/book semantic separation",
+      "same-local-clock receipt timeline",
+      "dimensional controls on declared units; not actual instrument payoff"
+    ]
+  },
+  "funding": "FUNDING_REPLAY_NOT_PROVEN",
+  "clock_cause": "CAUSE_UNKNOWN",
+  "stop_conditions": [
+    "B_PRECISE_BLOCKERS",
+    "C_NONIDENTIFIABLE_CAPTURED_CLOCK_AND_MISSING_VINTAGE_PROPERTIES",
+    "D_BOUNDED_SAVED_SPECIFICATION_SATURATION"
+  ],
+  "phase4": {
+    "economic_replay_authorized": false,
+    "scopes_promoted": []
+  },
+  "scientific_states_unchanged": true,
+  "no_economic_hypothesis_promoted": true
+}

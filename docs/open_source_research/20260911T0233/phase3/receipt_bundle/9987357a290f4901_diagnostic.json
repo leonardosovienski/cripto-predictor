@@ -1,0 +1,587 @@
+{
+  "protocol_sha256": "f602de0270aaf998618c8a78212d8b95233cc9f8569387df29af8c33e98d424f",
+  "known_at": "2026-09-08T02:08:23.697474+00:00",
+  "diagnostic_only": true,
+  "historical_calibration": false,
+  "orders_sent": 0,
+  "account_access": false,
+  "current_filters": {
+    "spot": {
+      "step": "0.00001000",
+      "min_qty": 1e-05,
+      "max_qty": 129.88338504,
+      "min_notional": 5.0,
+      "status": "TRADING"
+    },
+    "future": {
+      "step": "0.001",
+      "min_qty": 0.001,
+      "max_qty": 120.0,
+      "min_notional": 50.0,
+      "status": "TRADING"
+    }
+  },
+  "snapshots": [
+    {
+      "index": 0,
+      "max_request_seconds": 0.3306127,
+      "midpoint_skew_seconds": 0.0081099,
+      "freshness_pass": true,
+      "estimate": {
+        "matched_quantity_btc_assuming_usdt_fees": 0.015,
+        "spot_buy_vwap": 79339.97,
+        "future_sell_vwap": 79310.8,
+        "quoted_entry_basis_fraction": -0.00036765831900364976,
+        "book_only_instant_round_trip_usdt": 0.0016499999997904523,
+        "assumed_fees_round_trip_usdt": 3.5698616999999992,
+        "total_instant_round_trip_bps_spot_notional": 30.010194736030698,
+        "cash_reserve_usdt_assuming_usdt_fees": 3808.11551945,
+        "margin_surplus_after_30pct_mid_jump_usdt": 3428.0175208250002,
+        "spot_fee_in_btc_alternative": {
+          "gross_spot_btc": 0.01575,
+          "fee_btc_at_assumed_10bps": 1.575e-05,
+          "received_btc": 0.01573425,
+          "rounded_future_short_btc": 0.015,
+          "unhedged_dust_btc": 0.0007342500000000023,
+          "dust_marked_usdt": 58.25536930125018
+        },
+        "actual_account_fees": "UNKNOWN",
+        "all_venue_filters_certified": false,
+        "simultaneous_execution_certified": false
+      },
+      "error": null
+    },
+    {
+      "index": 1,
+      "max_request_seconds": 0.3424759,
+      "midpoint_skew_seconds": 0.01473195,
+      "freshness_pass": true,
+      "estimate": {
+        "matched_quantity_btc_assuming_usdt_fees": 0.015,
+        "spot_buy_vwap": 79339.97,
+        "future_sell_vwap": 79310.8,
+        "quoted_entry_basis_fraction": -0.00036765831900364976,
+        "book_only_instant_round_trip_usdt": 0.0016499999997904523,
+        "assumed_fees_round_trip_usdt": 3.5698616999999992,
+        "total_instant_round_trip_bps_spot_notional": 30.010194736030698,
+        "cash_reserve_usdt_assuming_usdt_fees": 3808.11551945,
+        "margin_surplus_after_30pct_mid_jump_usdt": 3428.0175208250002,
+        "spot_fee_in_btc_alternative": {
+          "gross_spot_btc": 0.01575,
+          "fee_btc_at_assumed_10bps": 1.575e-05,
+          "received_btc": 0.01573425,
+          "rounded_future_short_btc": 0.015,
+          "unhedged_dust_btc": 0.0007342500000000023,
+          "dust_marked_usdt": 58.25536930125018
+        },
+        "actual_account_fees": "UNKNOWN",
+        "all_venue_filters_certified": false,
+        "simultaneous_execution_certified": false
+      },
+      "error": null
+    },
+    {
+      "index": 2,
+      "max_request_seconds": 0.3019507,
+      "midpoint_skew_seconds": 0.00276155,
+      "freshness_pass": true,
+      "estimate": {
+        "matched_quantity_btc_assuming_usdt_fees": 0.015,
+        "spot_buy_vwap": 79339.97,
+        "future_sell_vwap": 79310.8,
+        "quoted_entry_basis_fraction": -0.00036765831900364976,
+        "book_only_instant_round_trip_usdt": 0.0016499999997904523,
+        "assumed_fees_round_trip_usdt": 3.5698616999999992,
+        "total_instant_round_trip_bps_spot_notional": 30.010194736030698,
+        "cash_reserve_usdt_assuming_usdt_fees": 3808.11551945,
+        "margin_surplus_after_30pct_mid_jump_usdt": 3428.0175208250002,
+        "spot_fee_in_btc_alternative": {
+          "gross_spot_btc": 0.01575,
+          "fee_btc_at_assumed_10bps": 1.575e-05,
+          "received_btc": 0.01573425,
+          "rounded_future_short_btc": 0.015,
+          "unhedged_dust_btc": 0.0007342500000000023,
+          "dust_marked_usdt": 58.25536930125018
+        },
+        "actual_account_fees": "UNKNOWN",
+        "all_venue_filters_certified": false,
+        "simultaneous_execution_certified": false
+      },
+      "error": null
+    },
+    {
+      "index": 3,
+      "max_request_seconds": 0.4791131,
+      "midpoint_skew_seconds": 0.01908155,
+      "freshness_pass": true,
+      "estimate": {
+        "matched_quantity_btc_assuming_usdt_fees": 0.015,
+        "spot_buy_vwap": 79348.01,
+        "future_sell_vwap": 79314.5,
+        "quoted_entry_basis_fraction": -0.0004223168293696622,
+        "book_only_instant_round_trip_usdt": 0.001650000000008731,
+        "assumed_fees_round_trip_usdt": 3.5701584,
+        "total_instant_round_trip_bps_spot_notional": 30.00964674537193,
+        "cash_reserve_usdt_assuming_usdt_fees": 3807.9947711,
+        "margin_surplus_after_30pct_mid_jump_usdt": 3427.879040225,
+        "spot_fee_in_btc_alternative": {
+          "gross_spot_btc": 0.01575,
+          "fee_btc_at_assumed_10bps": 1.575e-05,
+          "received_btc": 0.01573425,
+          "rounded_future_short_btc": 0.015,
+          "unhedged_dust_btc": 0.0007342500000000023,
+          "dust_marked_usdt": 58.26127267125018
+        },
+        "actual_account_fees": "UNKNOWN",
+        "all_venue_filters_certified": false,
+        "simultaneous_execution_certified": false
+      },
+      "error": null
+    },
+    {
+      "index": 4,
+      "max_request_seconds": 0.3182838,
+      "midpoint_skew_seconds": 0.00813255,
+      "freshness_pass": true,
+      "estimate": {
+        "matched_quantity_btc_assuming_usdt_fees": 0.015,
+        "spot_buy_vwap": 79349.59,
+        "future_sell_vwap": 79318.8,
+        "quoted_entry_basis_fraction": -0.00038802973021023757,
+        "book_only_instant_round_trip_usdt": 0.0016499999997904523,
+        "assumed_fees_round_trip_usdt": 3.5702702999999993,
+        "total_instant_round_trip_bps_spot_notional": 30.009989340207134,
+        "cash_reserve_usdt_assuming_usdt_fees": 3807.97101515,
+        "margin_surplus_after_30pct_mid_jump_usdt": 3427.834676525,
+        "spot_fee_in_btc_alternative": {
+          "gross_spot_btc": 0.01575,
+          "fee_btc_at_assumed_10bps": 1.575e-05,
+          "received_btc": 0.01573425,
+          "rounded_future_short_btc": 0.015,
+          "unhedged_dust_btc": 0.0007342500000000023,
+          "dust_marked_usdt": 58.26243278625017
+        },
+        "actual_account_fees": "UNKNOWN",
+        "all_venue_filters_certified": false,
+        "simultaneous_execution_certified": false
+      },
+      "error": null
+    },
+    {
+      "index": 5,
+      "max_request_seconds": 0.3143901,
+      "midpoint_skew_seconds": 0.00127975,
+      "freshness_pass": true,
+      "estimate": {
+        "matched_quantity_btc_assuming_usdt_fees": 0.015,
+        "spot_buy_vwap": 79349.59,
+        "future_sell_vwap": 79318.8,
+        "quoted_entry_basis_fraction": -0.00038802973021023757,
+        "book_only_instant_round_trip_usdt": 0.0016499999997904523,
+        "assumed_fees_round_trip_usdt": 3.5702702999999993,
+        "total_instant_round_trip_bps_spot_notional": 30.009989340207134,
+        "cash_reserve_usdt_assuming_usdt_fees": 3807.97101515,
+        "margin_surplus_after_30pct_mid_jump_usdt": 3427.834676525,
+        "spot_fee_in_btc_alternative": {
+          "gross_spot_btc": 0.01575,
+          "fee_btc_at_assumed_10bps": 1.575e-05,
+          "received_btc": 0.01573425,
+          "rounded_future_short_btc": 0.015,
+          "unhedged_dust_btc": 0.0007342500000000023,
+          "dust_marked_usdt": 58.26243278625017
+        },
+        "actual_account_fees": "UNKNOWN",
+        "all_venue_filters_certified": false,
+        "simultaneous_execution_certified": false
+      },
+      "error": null
+    },
+    {
+      "index": 6,
+      "max_request_seconds": 0.3181681,
+      "midpoint_skew_seconds": 0.0028466,
+      "freshness_pass": true,
+      "estimate": {
+        "matched_quantity_btc_assuming_usdt_fees": 0.015,
+        "spot_buy_vwap": 79349.59,
+        "future_sell_vwap": 79318.8,
+        "quoted_entry_basis_fraction": -0.00038802973021023757,
+        "book_only_instant_round_trip_usdt": 0.0016499999997904523,
+        "assumed_fees_round_trip_usdt": 3.5702702999999993,
+        "total_instant_round_trip_bps_spot_notional": 30.009989340207134,
+        "cash_reserve_usdt_assuming_usdt_fees": 3807.97101515,
+        "margin_surplus_after_30pct_mid_jump_usdt": 3427.834676525,
+        "spot_fee_in_btc_alternative": {
+          "gross_spot_btc": 0.01575,
+          "fee_btc_at_assumed_10bps": 1.575e-05,
+          "received_btc": 0.01573425,
+          "rounded_future_short_btc": 0.015,
+          "unhedged_dust_btc": 0.0007342500000000023,
+          "dust_marked_usdt": 58.26243278625017
+        },
+        "actual_account_fees": "UNKNOWN",
+        "all_venue_filters_certified": false,
+        "simultaneous_execution_certified": false
+      },
+      "error": null
+    },
+    {
+      "index": 7,
+      "max_request_seconds": 0.3434184,
+      "midpoint_skew_seconds": 0.0060922,
+      "freshness_pass": true,
+      "estimate": {
+        "matched_quantity_btc_assuming_usdt_fees": 0.015,
+        "spot_buy_vwap": 79349.59,
+        "future_sell_vwap": 79318.8,
+        "quoted_entry_basis_fraction": -0.00038802973021023757,
+        "book_only_instant_round_trip_usdt": 0.0016499999997904523,
+        "assumed_fees_round_trip_usdt": 3.5702702999999993,
+        "total_instant_round_trip_bps_spot_notional": 30.009989340207134,
+        "cash_reserve_usdt_assuming_usdt_fees": 3807.97101515,
+        "margin_surplus_after_30pct_mid_jump_usdt": 3427.834676525,
+        "spot_fee_in_btc_alternative": {
+          "gross_spot_btc": 0.01575,
+          "fee_btc_at_assumed_10bps": 1.575e-05,
+          "received_btc": 0.01573425,
+          "rounded_future_short_btc": 0.015,
+          "unhedged_dust_btc": 0.0007342500000000023,
+          "dust_marked_usdt": 58.26243278625017
+        },
+        "actual_account_fees": "UNKNOWN",
+        "all_venue_filters_certified": false,
+        "simultaneous_execution_certified": false
+      },
+      "error": null
+    },
+    {
+      "index": 8,
+      "max_request_seconds": 0.3092408,
+      "midpoint_skew_seconds": 0.00541335,
+      "freshness_pass": true,
+      "estimate": {
+        "matched_quantity_btc_assuming_usdt_fees": 0.015,
+        "spot_buy_vwap": 79342.01,
+        "future_sell_vwap": 79310.9,
+        "quoted_entry_basis_fraction": -0.00039209997326761226,
+        "book_only_instant_round_trip_usdt": 0.001650000000008731,
+        "assumed_fees_round_trip_usdt": 3.5699243999999997,
+        "total_instant_round_trip_bps_spot_notional": 30.00994996282241,
+        "cash_reserve_usdt_assuming_usdt_fees": 3808.0848880999997,
+        "margin_surplus_after_30pct_mid_jump_usdt": 3427.986410225,
+        "spot_fee_in_btc_alternative": {
+          "gross_spot_btc": 0.01575,
+          "fee_btc_at_assumed_10bps": 1.575e-05,
+          "received_btc": 0.01573425,
+          "rounded_future_short_btc": 0.015,
+          "unhedged_dust_btc": 0.0007342500000000023,
+          "dust_marked_usdt": 58.256867171250185
+        },
+        "actual_account_fees": "UNKNOWN",
+        "all_venue_filters_certified": false,
+        "simultaneous_execution_certified": false
+      },
+      "error": null
+    },
+    {
+      "index": 9,
+      "max_request_seconds": 0.3472679,
+      "midpoint_skew_seconds": 0.0002504,
+      "freshness_pass": true,
+      "estimate": {
+        "matched_quantity_btc_assuming_usdt_fees": 0.015,
+        "spot_buy_vwap": 79342.01,
+        "future_sell_vwap": 79310.9,
+        "quoted_entry_basis_fraction": -0.00039209997326761226,
+        "book_only_instant_round_trip_usdt": 0.001650000000008731,
+        "assumed_fees_round_trip_usdt": 3.5699243999999997,
+        "total_instant_round_trip_bps_spot_notional": 30.00994996282241,
+        "cash_reserve_usdt_assuming_usdt_fees": 3808.0848880999997,
+        "margin_surplus_after_30pct_mid_jump_usdt": 3427.986410225,
+        "spot_fee_in_btc_alternative": {
+          "gross_spot_btc": 0.01575,
+          "fee_btc_at_assumed_10bps": 1.575e-05,
+          "received_btc": 0.01573425,
+          "rounded_future_short_btc": 0.015,
+          "unhedged_dust_btc": 0.0007342500000000023,
+          "dust_marked_usdt": 58.256867171250185
+        },
+        "actual_account_fees": "UNKNOWN",
+        "all_venue_filters_certified": false,
+        "simultaneous_execution_certified": false
+      },
+      "error": null
+    },
+    {
+      "index": 10,
+      "max_request_seconds": 0.3061881,
+      "midpoint_skew_seconds": 0.0002226,
+      "freshness_pass": true,
+      "estimate": {
+        "matched_quantity_btc_assuming_usdt_fees": 0.015,
+        "spot_buy_vwap": 79340.4,
+        "future_sell_vwap": 79299.9,
+        "quoted_entry_basis_fraction": -0.0005104587322474208,
+        "book_only_instant_round_trip_usdt": 0.001650000000008731,
+        "assumed_fees_round_trip_usdt": 3.5697110999999992,
+        "total_instant_round_trip_bps_spot_notional": 30.008766656631916,
+        "cash_reserve_usdt_assuming_usdt_fees": 3808.1091447500003,
+        "margin_surplus_after_30pct_mid_jump_usdt": 3428.0633843750006,
+        "spot_fee_in_btc_alternative": {
+          "gross_spot_btc": 0.01575,
+          "fee_btc_at_assumed_10bps": 1.575e-05,
+          "received_btc": 0.01573425,
+          "rounded_future_short_btc": 0.015,
+          "unhedged_dust_btc": 0.0007342500000000023,
+          "dust_marked_usdt": 58.25568502875017
+        },
+        "actual_account_fees": "UNKNOWN",
+        "all_venue_filters_certified": false,
+        "simultaneous_execution_certified": false
+      },
+      "error": null
+    },
+    {
+      "index": 11,
+      "max_request_seconds": 0.323258,
+      "midpoint_skew_seconds": 0.00445095,
+      "freshness_pass": true,
+      "estimate": {
+        "matched_quantity_btc_assuming_usdt_fees": 0.015,
+        "spot_buy_vwap": 79340.4,
+        "future_sell_vwap": 79299.9,
+        "quoted_entry_basis_fraction": -0.0005104587322474208,
+        "book_only_instant_round_trip_usdt": 0.001650000000008731,
+        "assumed_fees_round_trip_usdt": 3.5697110999999992,
+        "total_instant_round_trip_bps_spot_notional": 30.008766656631916,
+        "cash_reserve_usdt_assuming_usdt_fees": 3808.1091447500003,
+        "margin_surplus_after_30pct_mid_jump_usdt": 3428.0633843750006,
+        "spot_fee_in_btc_alternative": {
+          "gross_spot_btc": 0.01575,
+          "fee_btc_at_assumed_10bps": 1.575e-05,
+          "received_btc": 0.01573425,
+          "rounded_future_short_btc": 0.015,
+          "unhedged_dust_btc": 0.0007342500000000023,
+          "dust_marked_usdt": 58.25568502875017
+        },
+        "actual_account_fees": "UNKNOWN",
+        "all_venue_filters_certified": false,
+        "simultaneous_execution_certified": false
+      },
+      "error": null
+    }
+  ],
+  "fresh_valid_snapshots": 12,
+  "median_round_trip_bps": 30.009989340207134,
+  "maximum_round_trip_bps": 30.010194736030698,
+  "sources": [
+    {
+      "name": "spot_info",
+      "url": "https://api.binance.com/api/v3/exchangeInfo",
+      "request_start_ns": 1788833242989838400,
+      "received_ns": 1788833243963778600,
+      "status": 200,
+      "sha256": "b0b5e41545939290197078b93708f917fdd2e6bbf4de865e3904f2ac1c53dfae"
+    },
+    {
+      "name": "future_info",
+      "url": "https://fapi.binance.com/fapi/v1/exchangeInfo",
+      "request_start_ns": 1788833244226826000,
+      "received_ns": 1788833244585202200,
+      "status": 200,
+      "sha256": "18a1918fe29286e3a113d77c6b589cb61bccdbf2e4ae43a706ae28a4338d1bc0"
+    },
+    {
+      "name": "spot_00",
+      "url": "https://api.binance.com/api/v3/depth?symbol=BTCUSDT&limit=100",
+      "request_start_ns": 1788833244616702600,
+      "received_ns": 1788833244931863300,
+      "status": 200,
+      "sha256": "2420facb21195c01c1650b6349eb83efd1b0af46aae6f7e25d899d5a84f22342"
+    },
+    {
+      "name": "future_00",
+      "url": "https://fapi.binance.com/fapi/v1/depth?symbol=BTCUSDT&limit=100",
+      "request_start_ns": 1788833244617086500,
+      "received_ns": 1788833244947699200,
+      "status": 200,
+      "sha256": "e97769e5af290d42fec55a4f8946ed511ad4e34232bcc055e408d8c327c450f2"
+    },
+    {
+      "name": "spot_01",
+      "url": "https://api.binance.com/api/v3/depth?symbol=BTCUSDT&limit=100",
+      "request_start_ns": 1788833249958387800,
+      "received_ns": 1788833250300863700,
+      "status": 200,
+      "sha256": "5aced36775ec0929dd6d07c1d4985fca3866a26a5e2085b734e8878215b54b50"
+    },
+    {
+      "name": "future_01",
+      "url": "https://fapi.binance.com/fapi/v1/depth?symbol=BTCUSDT&limit=100",
+      "request_start_ns": 1788833249958777000,
+      "received_ns": 1788833250271010600,
+      "status": 200,
+      "sha256": "7c444fd84edaea0b08a40177af75c0149fafc7167ca41d79b1e1e3ff55ff2800"
+    },
+    {
+      "name": "spot_02",
+      "url": "https://api.binance.com/api/v3/depth?symbol=BTCUSDT&limit=100",
+      "request_start_ns": 1788833255305352800,
+      "received_ns": 1788833255603519800,
+      "status": 200,
+      "sha256": "7cd0f0cd83b2368008226c7f57f2b0020d0a78c2c7bdc8289e3003f56a0c7b5c"
+    },
+    {
+      "name": "future_02",
+      "url": "https://fapi.binance.com/fapi/v1/depth?symbol=BTCUSDT&limit=100",
+      "request_start_ns": 1788833255306222500,
+      "received_ns": 1788833255608173200,
+      "status": 200,
+      "sha256": "b8d6a33ea6999188e16d5fdd26186426368f082409dc19abfc8b0ab9055f3aa5"
+    },
+    {
+      "name": "spot_03",
+      "url": "https://api.binance.com/api/v3/depth?symbol=BTCUSDT&limit=100",
+      "request_start_ns": 1788833260610417000,
+      "received_ns": 1788833261089530100,
+      "status": 200,
+      "sha256": "56b78764f8a4fad4f130791659a342b67ff0c44cbb5386067d94e3244c6c8624"
+    },
+    {
+      "name": "future_03",
+      "url": "https://fapi.binance.com/fapi/v1/depth?symbol=BTCUSDT&limit=100",
+      "request_start_ns": 1788833260610742000,
+      "received_ns": 1788833261051042000,
+      "status": 200,
+      "sha256": "2065381bf8092b0ee76f88561182e6b28ac819c6ed5e796c9f571498e72b8908"
+    },
+    {
+      "name": "spot_04",
+      "url": "https://api.binance.com/api/v3/depth?symbol=BTCUSDT&limit=100",
+      "request_start_ns": 1788833266091512900,
+      "received_ns": 1788833266393979000,
+      "status": 200,
+      "sha256": "104c5c510115e7cca4edddb1eef8ad9de0ed5f89a1ba15f283bd189f8a1bdda1"
+    },
+    {
+      "name": "future_04",
+      "url": "https://fapi.binance.com/fapi/v1/depth?symbol=BTCUSDT&limit=100",
+      "request_start_ns": 1788833266091736600,
+      "received_ns": 1788833266410020400,
+      "status": 200,
+      "sha256": "0baf4a6f3bfc2173c1703941987d2765e551227bb8f35c12039fa5e05bd0d51c"
+    },
+    {
+      "name": "spot_05",
+      "url": "https://api.binance.com/api/v3/depth?symbol=BTCUSDT&limit=100",
+      "request_start_ns": 1788833271412417400,
+      "received_ns": 1788833271725381800,
+      "status": 200,
+      "sha256": "ebfbe12f13af55af5b10bbd3eeeadb4377c0a47989ff8b441a8b05e6397574e8"
+    },
+    {
+      "name": "future_05",
+      "url": "https://fapi.binance.com/fapi/v1/depth?symbol=BTCUSDT&limit=100",
+      "request_start_ns": 1788833271412984300,
+      "received_ns": 1788833271727374400,
+      "status": 200,
+      "sha256": "d82cfe6d42142a0adebae02d8c1cc1c8338c173ff4209facd94592412bf5ce5c"
+    },
+    {
+      "name": "spot_06",
+      "url": "https://api.binance.com/api/v3/depth?symbol=BTCUSDT&limit=100",
+      "request_start_ns": 1788833276730588100,
+      "received_ns": 1788833277048756200,
+      "status": 200,
+      "sha256": "63aed2b54dd35fb235ce5a2d0707705d2fb8998b25bc97ce87ad356d2758b56e"
+    },
+    {
+      "name": "future_06",
+      "url": "https://fapi.binance.com/fapi/v1/depth?symbol=BTCUSDT&limit=100",
+      "request_start_ns": 1788833276731169000,
+      "received_ns": 1788833277042482100,
+      "status": 200,
+      "sha256": "f93fc1e27888f4f9cb71fefa1c1e1ec4c186dd090cc36c5c386817fb64b50eb6"
+    },
+    {
+      "name": "spot_07",
+      "url": "https://api.binance.com/api/v3/depth?symbol=BTCUSDT&limit=100",
+      "request_start_ns": 1788833282051736600,
+      "received_ns": 1788833282395155000,
+      "status": 200,
+      "sha256": "8f6cee3b580cab87549efae778d3a26f20e1218c8fa1374ee11b048ec16e78b2"
+    },
+    {
+      "name": "future_07",
+      "url": "https://fapi.binance.com/fapi/v1/depth?symbol=BTCUSDT&limit=100",
+      "request_start_ns": 1788833282052401000,
+      "received_ns": 1788833282382306200,
+      "status": 200,
+      "sha256": "646639ec29fb3e2cee76cca7dd1129b98e89226e8b8bba25e60943fc5f3ebc60"
+    },
+    {
+      "name": "spot_08",
+      "url": "https://api.binance.com/api/v3/depth?symbol=BTCUSDT&limit=100",
+      "request_start_ns": 1788833287399056200,
+      "received_ns": 1788833287698544300,
+      "status": 200,
+      "sha256": "6389a88a1f250e55f752761cc1efe1289baa8062dd0751f753282478dc654490"
+    },
+    {
+      "name": "future_08",
+      "url": "https://fapi.binance.com/fapi/v1/depth?symbol=BTCUSDT&limit=100",
+      "request_start_ns": 1788833287399593200,
+      "received_ns": 1788833287708834000,
+      "status": 200,
+      "sha256": "31ebfcd5b9db0b2a20fed3a16bb48642f21696fb81168829ef8c88c957c8ea29"
+    },
+    {
+      "name": "spot_09",
+      "url": "https://api.binance.com/api/v3/depth?symbol=BTCUSDT&limit=100",
+      "request_start_ns": 1788833292711136400,
+      "received_ns": 1788833293058404300,
+      "status": 200,
+      "sha256": "7e78b2f80c2d662d824174b027735dfeaecf9bcded119dbcd71b38872b3c4056"
+    },
+    {
+      "name": "future_09",
+      "url": "https://fapi.binance.com/fapi/v1/depth?symbol=BTCUSDT&limit=100",
+      "request_start_ns": 1788833292711687700,
+      "received_ns": 1788833293057352200,
+      "status": 200,
+      "sha256": "109b494d55d0a0c82588154162f1a12e1011af0fa313e0d387f76e28f2fc7fa4"
+    },
+    {
+      "name": "spot_10",
+      "url": "https://api.binance.com/api/v3/depth?symbol=BTCUSDT&limit=100",
+      "request_start_ns": 1788833298061177600,
+      "received_ns": 1788833298367365700,
+      "status": 200,
+      "sha256": "0ac6a67e698fbee2539336e8ed666c5e44214db4dcc7125c88eabbd6dfd23650"
+    },
+    {
+      "name": "future_10",
+      "url": "https://fapi.binance.com/fapi/v1/depth?symbol=BTCUSDT&limit=100",
+      "request_start_ns": 1788833298061678400,
+      "received_ns": 1788833298367310100,
+      "status": 200,
+      "sha256": "a2173541500ee82bbc2247686b58cf974e4e67bc63038d7c9f2babd681ed0b44"
+    },
+    {
+      "name": "spot_11",
+      "url": "https://api.binance.com/api/v3/depth?symbol=BTCUSDT&limit=100",
+      "request_start_ns": 1788833303371185100,
+      "received_ns": 1788833303694443100,
+      "status": 200,
+      "sha256": "e1ee5c9313b2df7db8e82af4134d702705653295f6c77c9175cd148a3b1a3aaf"
+    },
+    {
+      "name": "future_11",
+      "url": "https://fapi.binance.com/fapi/v1/depth?symbol=BTCUSDT&limit=100",
+      "request_start_ns": 1788833303371701500,
+      "received_ns": 1788833303685024800,
+      "status": 200,
+      "sha256": "669609e4de170d3510fe30d1b17826c4b6ce9a1d6c7ae8a725f1a74a13bbef99"
+    }
+  ]
+}

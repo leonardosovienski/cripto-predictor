@@ -1,0 +1,623 @@
+{
+  "id": "B01-B02-20260911T0233",
+  "observed_at": "2026-09-11T02:39:58.568086+00:00",
+  "protocol_sha256": "7104569a2f43988c858d1ee48d3df48a65656cc2510916739e7f76d2739c687d",
+  "seed": 20260911,
+  "B01": {
+    "cases": 100,
+    "mismatches": 0,
+    "max_error": 1.1102230246251565e-16,
+    "constant_is_undefined": true,
+    "cases_detail": [
+      {
+        "n": 3,
+        "error": 0.0,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 4,
+        "error": 1.1102230246251565e-16,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 5,
+        "error": 1.1102230246251565e-16,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 6,
+        "error": 0.0,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 7,
+        "error": 5.551115123125783e-17,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 8,
+        "error": 5.551115123125783e-17,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 9,
+        "error": 0.0,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 10,
+        "error": 0.0,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 11,
+        "error": 6.938893903907228e-18,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 12,
+        "error": 0.0,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 13,
+        "error": 0.0,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 14,
+        "error": 2.7755575615628914e-17,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 15,
+        "error": 3.469446951953614e-18,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 16,
+        "error": 0.0,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 17,
+        "error": 2.7755575615628914e-17,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 18,
+        "error": 1.1102230246251565e-16,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 19,
+        "error": 0.0,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 20,
+        "error": 0.0,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 21,
+        "error": 0.0,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 22,
+        "error": 2.7755575615628914e-17,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 23,
+        "error": 0.0,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 24,
+        "error": 2.7755575615628914e-17,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 25,
+        "error": 5.551115123125783e-17,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 26,
+        "error": 1.3877787807814457e-17,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 27,
+        "error": 0.0,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 28,
+        "error": 0.0,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 29,
+        "error": 0.0,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 30,
+        "error": 6.938893903907228e-18,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 31,
+        "error": 0.0,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 32,
+        "error": 0.0,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 33,
+        "error": 0.0,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 34,
+        "error": 2.7755575615628914e-17,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 35,
+        "error": 2.7755575615628914e-17,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 36,
+        "error": 2.7755575615628914e-17,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 37,
+        "error": 0.0,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 38,
+        "error": 0.0,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 39,
+        "error": 0.0,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 40,
+        "error": 0.0,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 41,
+        "error": 2.7755575615628914e-17,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 42,
+        "error": 0.0,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 43,
+        "error": 2.7755575615628914e-17,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 44,
+        "error": 0.0,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 45,
+        "error": 0.0,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 46,
+        "error": 2.7755575615628914e-17,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 47,
+        "error": 0.0,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 48,
+        "error": 1.3877787807814457e-17,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 49,
+        "error": 0.0,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 50,
+        "error": 4.336808689942018e-19,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 51,
+        "error": 1.3877787807814457e-17,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 52,
+        "error": 5.551115123125783e-17,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 53,
+        "error": 0.0,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 54,
+        "error": 2.7755575615628914e-17,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 55,
+        "error": 1.3877787807814457e-17,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 56,
+        "error": 3.469446951953614e-18,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 57,
+        "error": 6.938893903907228e-18,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 58,
+        "error": 2.7755575615628914e-17,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 59,
+        "error": 2.7755575615628914e-17,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 60,
+        "error": 2.7755575615628914e-17,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 61,
+        "error": 0.0,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 62,
+        "error": 5.551115123125783e-17,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 63,
+        "error": 1.3877787807814457e-17,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 64,
+        "error": 0.0,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 65,
+        "error": 0.0,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 66,
+        "error": 0.0,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 67,
+        "error": 0.0,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 68,
+        "error": 2.7755575615628914e-17,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 69,
+        "error": 1.3877787807814457e-17,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 70,
+        "error": 6.938893903907228e-18,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 71,
+        "error": 0.0,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 72,
+        "error": 0.0,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 73,
+        "error": 0.0,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 74,
+        "error": 0.0,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 75,
+        "error": 0.0,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 76,
+        "error": 3.469446951953614e-18,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 77,
+        "error": 0.0,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 78,
+        "error": 0.0,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 79,
+        "error": 0.0,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 80,
+        "error": 1.3877787807814457e-17,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 81,
+        "error": 1.3877787807814457e-17,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 82,
+        "error": 0.0,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 83,
+        "error": 0.0,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 84,
+        "error": 1.3877787807814457e-17,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 85,
+        "error": 6.938893903907228e-18,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 86,
+        "error": 0.0,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 87,
+        "error": 1.734723475976807e-18,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 88,
+        "error": 1.3877787807814457e-17,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 89,
+        "error": 2.7755575615628914e-17,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 90,
+        "error": 2.168404344971009e-19,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 91,
+        "error": 3.469446951953614e-18,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 92,
+        "error": 2.7755575615628914e-17,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 93,
+        "error": 6.938893903907228e-18,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 94,
+        "error": 0.0,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 95,
+        "error": 1.3877787807814457e-17,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 96,
+        "error": 1.734723475976807e-18,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 97,
+        "error": 0.0,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 98,
+        "error": 0.0,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 99,
+        "error": 0.0,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 100,
+        "error": 0.0,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 101,
+        "error": 2.7755575615628914e-17,
+        "match": true,
+        "rank_error": 0.0
+      },
+      {
+        "n": 102,
+        "error": 0.0,
+        "match": true,
+        "rank_error": 0.0
+      }
+    ]
+  },
+  "B02": {
+    "prefixes": 231,
+    "max_reference_error": 2.842170943040401e-14,
+    "max_prefix_error": 2.842170943040401e-14,
+    "planted_future_mean_detected_at_prefixes": 230
+  },
+  "elapsed_seconds": 0.37166370000340976,
+  "scope": "synthetic engineering; no alpha, no statistical market validation; no throughput superiority claim",
+  "passed": true
+}

@@ -1,0 +1,30 @@
+{
+  "mission": "F01-real identity only",
+  "registered_at": "2026-09-11T04:50:55.209592+00:00",
+  "first_battery": "Unmodified phase2 Instrument/Observation: assess representability and semantic round-trip; no invented missing fields",
+  "sample_rule": "First lexicographic successful metadata match by declared instrument/endpoint, first unique RPC selectors; includes empty and retrospective mapping",
+  "lossless": [
+    "all 23 identity/status fields",
+    "original values including lexical decimals",
+    "receipt physical and decompressed hashes",
+    "source locator",
+    "known clocks",
+    "observed content version",
+    "semantic type"
+  ],
+  "adversarial": [
+    "A symbol",
+    "B unit",
+    "C settlement",
+    "D price type",
+    "E future version",
+    "F chain/contract",
+    "G nonfinite/decimals/hash",
+    "H missing metadata"
+  ],
+  "success": "Every supported case lossless; every required adversary rejected; no silent inference; all baseline hashes unchanged",
+  "rejection": "Any semantic loss or unsupported join admitted",
+  "inconclusion": "Missing metadata remains UNKNOWN; cannot certify full economic identity",
+  "network_calls": 0,
+  "capital_permission": false
+}

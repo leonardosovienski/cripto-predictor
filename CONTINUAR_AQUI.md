@@ -1,3 +1,7 @@
+# Retomada atual — 11/09/2026
+
+Leia primeiro [o fechamento desta conversa](docs/continuity_20260911/README.md). Ele reúne pesquisa 20260911T0233, fases 2/3/3B e implementação 20260911T0525. O texto abaixo conserva o contexto anterior; seus números e janelas são datados. Não reinicie discovery/auditoria ampla automaticamente.
+
 # Continuar o projeto Cripto
 
 Comece pela [conferência dos arquivos de 10/09/2026](docs/CONFERENCIA_ARQUIVOS_20260910.md) e pela [conferência do chat](docs/CONFERENCIA_CHAT_20260910.md). Elas complementam os registros anteriores com o mapa de preservação, backup e dependências.

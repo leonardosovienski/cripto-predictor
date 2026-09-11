@@ -7,11 +7,17 @@ from GarimpoInvestimentos.local_runtime import LocalRuntimePathError
 
 
 def main() -> None:
+    if len(sys.argv) > 1 and sys.argv[1] == "research":
+        from GarimpoInvestimentos.research.__main__ import main as research_main
+
+        research_main(sys.argv[2:])
+        return
     if any(argument in {"-h", "--help"} for argument in sys.argv[1:]):
         print(
             "usage: cripto-predictor [--ingest] [--assets IDS] [--discover N] [--summary] [--output-dir PATH]"
         )
         print("Fail-closed cryptocurrency research pipeline (no capital authorization).")
+        print("Offline research tools: cripto-predictor research --help")
         return
     # Bootstrap oficial: resolve a configuração de caminho antes de qualquer
     # importação do pipeline. O guard em main.py ainda detecta import tardio.

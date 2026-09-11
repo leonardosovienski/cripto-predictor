@@ -1,0 +1,59 @@
+{
+  "registered_at": "2026-09-11T05:08:09.009244+00:00",
+  "version": "F01-contract-temporal v3B.1",
+  "hypothesis": "Saved bundle suffices for some economic/temporal gates; unknown fields must not be inferred",
+  "contract_fields": [
+    "venue",
+    "market_type",
+    "base_asset",
+    "quote_asset",
+    "settlement_asset",
+    "margin_asset",
+    "quantity_unit",
+    "price_unit",
+    "multiplier",
+    "linear_inverse",
+    "payoff",
+    "expiry",
+    "price_type",
+    "funding_semantics",
+    "contract_version",
+    "valid_from",
+    "valid_until"
+  ],
+  "clock_fields": [
+    "SOURCE_EVENT_TIME",
+    "SOURCE_PUBLICATION_TIME",
+    "SOURCE_RESPONSE_TIME",
+    "LOCAL_REQUEST_TIME",
+    "LOCAL_RECEIPT_TIME",
+    "INGESTION_TIME",
+    "NORMALIZATION_TIME"
+  ],
+  "state_separation": [
+    "OBSERVED in local clock",
+    "EVENT_OCCURRED with source-clock uncertainty",
+    "ECONOMICALLY_ELIGIBLE only with complete scoped economic, historical, availability evidence"
+  ],
+  "economic_negative_controls": [
+    "wrong currency",
+    "base versus contract quantity",
+    "wrong multiplier",
+    "settlement mismatch",
+    "margin versus PnL currency",
+    "linear/inverse",
+    "trade/mark",
+    "mark/executable"
+  ],
+  "positive_controls": "Explicit symbol/base/quote/contractType/deliveryDate extraction and preserved-source provenance; algebra on declared synthetic units only",
+  "unknown_controls": "Missing terms stay unknown; max(event,receipt) is never sufficient for economic eligibility",
+  "gates": [
+    "READY",
+    "PARTIALLY_READY",
+    "BLOCKED_CURRENT_EVIDENCE",
+    "STRUCTURALLY_UNRECOVERABLE_FOR_SCOPE"
+  ],
+  "no_network": true,
+  "capital_permission": false,
+  "no_economic_replay": true
+}

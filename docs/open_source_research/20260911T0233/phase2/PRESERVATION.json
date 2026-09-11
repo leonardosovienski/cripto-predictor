@@ -1,0 +1,36 @@
+{
+  "observed_at": "2026-09-11T03:42:32.717560+00:00",
+  "head": "e4f8974beadc02aed63c7f94cf3d80cb27d4dd7f",
+  "baseline_files_unchanged": {
+    "C:\\Cripto\\pesquisa-20260909\\docs\\open_source_research\\20260911T0233\\REGISTRY.json": true,
+    "C:\\Cripto\\pesquisa-20260909\\docs\\open_source_research\\20260911T0233\\MANIFEST.json": true,
+    "C:\\Cripto\\pesquisa-20260909\\docs\\open_source_research\\20260911T0233\\preservation_completion.json": true,
+    "C:\\Cripto\\pesquisa-20260909\\.venv\\Lib\\site-packages\\predictor_core\\data\\contracts.py": true,
+    "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-altcoins\\work\\altcoin-retro-data\\acquisition.json": true,
+    "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-altcoins\\work\\altcoin-retro-package\\docs\\evidence\\altcoin_payoff_20260907\\identity_events.json": true,
+    "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\remaining_six_20260910\\aave_second_source\\protocol.json": true,
+    "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\remaining_six_20260910\\aave_second_source\\started.json": true,
+    "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\remaining_six_20260910\\aave_second_source\\result.json": true
+  },
+  "protected_files_unchanged": {
+    "docs/NEXT_CHAT_PROMPT.md": true,
+    "charters/scientific_state.json": true,
+    "GarimpoInvestimentos/trials.json": true,
+    "uv.lock": true
+  },
+  "data_samples_unchanged": {
+    "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-altcoins\\work\\altcoin-retro-data\\acquisition.json": true,
+    "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-altcoins\\work\\altcoin-retro-data\\pairs\\BTCUSDT.json.gz": true,
+    "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-altcoins\\work\\altcoin-retro-data\\pairs\\ETHUSDT.json.gz": true,
+    "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-altcoins\\work\\altcoin-retro-data\\pairs\\FTTUSDT.json.gz": true,
+    "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-altcoins\\work\\altcoin-retro-package\\docs\\evidence\\altcoin_payoff_20260907\\identity_events.json": true
+  },
+  "python_source_files_verified": 364,
+  "python_changes": [],
+  "network_calls": 0,
+  "quota_mutations": 0,
+  "orders": 0,
+  "prior_phase_results_unchanged": true,
+  "new_research_code_only": true,
+  "passed": true
+}

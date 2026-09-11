@@ -1,0 +1,85 @@
+[
+  {
+    "id": "R41",
+    "url": "https://www.bis.org/publ/work1087.pdf",
+    "observed_at": "2026-09-11T03:04:49.216102+00:00",
+    "status": 200,
+    "content_type": "text/html; charset=utf-8",
+    "bytes": 130221,
+    "path": "C:\\Cripto\\operacao\\relatorios\\OPEN_SOURCE_20260911T0233\\completion\\external\\R41\\paper.pdf",
+    "sha256": "dfde9da3118270a2d7929ef853b9980a9855c8dd6794bdfbdb5aa2695d334757",
+    "is_pdf": false
+  },
+  {
+    "id": "R42",
+    "url": "https://www.nber.org/system/files/working_papers/w25882/w25882.pdf",
+    "observed_at": "2026-09-11T03:04:49.219663+00:00",
+    "status": 200,
+    "content_type": "application/pdf",
+    "bytes": 543447,
+    "path": "C:\\Cripto\\operacao\\relatorios\\OPEN_SOURCE_20260911T0233\\completion\\external\\R42\\paper.pdf",
+    "sha256": "01fa7e448623627078b43cc75ca70471caa1c436e48795f12704106392b486f2",
+    "is_pdf": true
+  },
+  {
+    "id": "R43",
+    "url": "https://jmlr.org/papers/volume11/cawley10a/cawley10a.pdf",
+    "observed_at": "2026-09-11T03:04:49.221835+00:00",
+    "status": 200,
+    "content_type": "application/pdf",
+    "bytes": 759286,
+    "path": "C:\\Cripto\\operacao\\relatorios\\OPEN_SOURCE_20260911T0233\\completion\\external\\R43\\paper.pdf",
+    "sha256": "db01ac8fabef3064a0297bfcf64fb9791bf35c4d03be7a51f5862260adfca206",
+    "is_pdf": true
+  },
+  {
+    "id": "R44",
+    "url": "https://arxiv.org/pdf/2208.06046",
+    "observed_at": "2026-09-11T03:04:50.975307+00:00",
+    "status": 200,
+    "content_type": "application/pdf",
+    "bytes": 925742,
+    "path": "C:\\Cripto\\operacao\\relatorios\\OPEN_SOURCE_20260911T0233\\completion\\external\\R44\\paper.pdf",
+    "sha256": "a2481c4852f4e93c0169531f30637e6206b3ed5509b893b0a13bc3553cc0059e",
+    "is_pdf": true
+  },
+  {
+    "id": "R03",
+    "url": "https://raw.githubusercontent.com/nautechsystems/nautilus_trader/c993c7dec981ea7eda598ca61fd0a0023cd198cb/crates/execution/src/models/fill.rs",
+    "observed_at": "2026-09-11T03:04:51.846487+00:00",
+    "status": 200,
+    "content_type": "text/plain; charset=utf-8",
+    "bytes": 58109,
+    "path": "C:\\Cripto\\operacao\\relatorios\\OPEN_SOURCE_20260911T0233\\completion\\external\\R03\\crates\\execution\\src\\models\\fill.rs",
+    "sha256": "8203729ffe9576a83de25585a4244753a989f1fa191f6ad45c47e05eb0543cd3",
+    "is_pdf": false
+  },
+  {
+    "id": "R03",
+    "url": "https://raw.githubusercontent.com/nautechsystems/nautilus_trader/c993c7dec981ea7eda598ca61fd0a0023cd198cb/nautilus_trader/backtest/models.pyx",
+    "observed_at": "2026-09-11T03:04:51.896301+00:00",
+    "error": "HTTPError"
+  },
+  {
+    "id": "R27",
+    "url": "https://raw.githubusercontent.com/scikit-learn/scikit-learn/8c54c136cac4982a0dac7bee8b8fbcada411fe10/COPYING",
+    "observed_at": "2026-09-11T03:04:52.027613+00:00",
+    "status": 200,
+    "content_type": "text/plain; charset=utf-8",
+    "bytes": 1532,
+    "path": "C:\\Cripto\\operacao\\relatorios\\OPEN_SOURCE_20260911T0233\\completion\\external\\R27\\COPYING",
+    "sha256": "50d6a9d340f19ab355609917993114daf5f47e3161067bcf34955bbd05cd9cb0",
+    "is_pdf": false
+  },
+  {
+    "id": "R39",
+    "url": "https://raw.githubusercontent.com/lballabio/QuantLib/e06326c4ec955421fc58fbd6b6e33a332535ad80/LICENSE.TXT",
+    "observed_at": "2026-09-11T03:04:52.256008+00:00",
+    "status": 200,
+    "content_type": "text/plain; charset=utf-8",
+    "bytes": 8791,
+    "path": "C:\\Cripto\\operacao\\relatorios\\OPEN_SOURCE_20260911T0233\\completion\\external\\R39\\LICENSE.TXT",
+    "sha256": "b0ba466e8fb8baa6d6d6171dc6130efa70a06139a5e6cfc25e08df0d19aed86e",
+    "is_pdf": false
+  }
+]

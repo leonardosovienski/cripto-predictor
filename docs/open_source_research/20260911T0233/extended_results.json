@@ -1,0 +1,256 @@
+{
+  "observed_at": "2026-09-11T03:03:12.115089+00:00",
+  "protocol_sha256": "52e47cd6c74dcba2db7ed3d9287def1a9369774d1323cfab055a38da7bf8ea22",
+  "B03": [
+    {
+      "name": "valid",
+      "accepted": true,
+      "pass": true
+    },
+    {
+      "name": "future availability",
+      "accepted": false,
+      "pass": true
+    },
+    {
+      "name": "future receipt",
+      "accepted": false,
+      "pass": true
+    },
+    {
+      "name": "receipt before publication",
+      "accepted": false,
+      "pass": true
+    },
+    {
+      "name": "not daily closed",
+      "accepted": false,
+      "pass": true
+    },
+    {
+      "name": "stale >26h",
+      "accepted": false,
+      "pass": true
+    },
+    {
+      "name": "different symbol",
+      "accepted": false,
+      "pass": true
+    },
+    {
+      "name": "naive time",
+      "accepted": false,
+      "pass": true
+    },
+    {
+      "name": "nonpositive price",
+      "accepted": false,
+      "pass": true
+    }
+  ],
+  "B04": [
+    {
+      "name": "one level buy",
+      "actual": 100.0,
+      "exact": "100",
+      "pass": true
+    },
+    {
+      "name": "two level buy",
+      "actual": 101.0,
+      "exact": "101",
+      "pass": true
+    },
+    {
+      "name": "two level sell",
+      "actual": 99.0,
+      "exact": "99",
+      "pass": true
+    },
+    {
+      "name": "insufficient depth",
+      "rejected": true,
+      "pass": true
+    },
+    {
+      "name": "zero quantity",
+      "rejected": true,
+      "pass": true
+    },
+    {
+      "name": "unsorted",
+      "rejected": true,
+      "pass": true
+    },
+    {
+      "name": "crossed full book",
+      "rejected": true,
+      "pass": true
+    }
+  ],
+  "B05": [
+    {
+      "test_start": 15,
+      "train": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "overlap_rows": [
+        5
+      ],
+      "interval_purged_train": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "remaining_overlap": 0
+    },
+    {
+      "test_start": 20,
+      "train": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17
+      ],
+      "overlap_rows": [
+        5
+      ],
+      "interval_purged_train": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17
+      ],
+      "remaining_overlap": 0
+    },
+    {
+      "test_start": 25,
+      "train": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22
+      ],
+      "overlap_rows": [
+        5
+      ],
+      "interval_purged_train": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22
+      ],
+      "remaining_overlap": 0
+    }
+  ],
+  "B06": {
+    "plan": {
+      "gross_spot_buy_btc": "12.500",
+      "spot_commission_btc_assumed": "0.012500",
+      "net_received_btc": "12.487500",
+      "future_short_btc": "12.487",
+      "unhedged_dust_btc": "0.000500",
+      "dust_marked_usdt": "0.0497500",
+      "spot_outlay_usdt": "1250.0000",
+      "future_entry_fee_usdt_assumed": "0.630593499999999937565",
+      "cash_reserve_usdt": "3749.369406500000000062435",
+      "margin_surplus_30pct_mid_jump_usdt": "3338.181861749999875192435",
+      "spot_fee_assumption_bps": 10,
+      "future_fee_assumption_bps": 5,
+      "spot_fee_asset_assumption": "BTC",
+      "commission_rounding": "Conservative upward rounding to public baseCommissionPrecision",
+      "actual_account_commission_asset_and_rate": "UNKNOWN",
+      "orders_sent": 0,
+      "execution_certified": false
+    },
+    "capital_and_net_checks": true,
+    "insufficient_future_depth_rejected": true
+  },
+  "scope": "C4 controlled synthetic correctness; no market profit or empirical partial-fill model",
+  "passed": true
+}

@@ -1,0 +1,8 @@
+{
+  "url": "https://api.binance.com/api/v3/klines?symbol=BTCUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+  "retrieved_at_utc": "2026-09-07T18:51:35.427008+00:00",
+  "http_status": 200,
+  "sha256": "df0add06877694cf170cde72f2b365c206be892422392c0378d75cb48da286bf",
+  "bytes": 187915,
+  "server_date": "Mon, 07 Sep 2026 18:51:35 GMT"
+}

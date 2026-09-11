@@ -1,0 +1,52 @@
+{
+  "initiative": "20260911T0233",
+  "phase": 3,
+  "parent_phase": "C:\\Cripto\\operacao\\relatorios\\OPEN_SOURCE_20260911T0233\\phase2",
+  "baseline_commit": "e4f8974beadc02aed63c7f94cf3d80cb27d4dd7f",
+  "result": {
+    "TOTAL_CASES": 24,
+    "REAL_HTTP_RPC_RECEIPTS": 23,
+    "RETROSPECTIVE_ARTIFACTS": 1,
+    "VALID": 0,
+    "CORRECTLY_REJECTED": 1,
+    "AMBIGUOUS": 22,
+    "UNSUPPORTED": 1,
+    "BUGS_FOUND": 1,
+    "BUGS_FIXED": 1,
+    "BUG_SCOPE": "test oracle only; zero demonstrated v2 production bugs",
+    "REPRESENTATION_GAPS_ADDRESSED": 2,
+    "TEMPORAL_VIOLATIONS": 0,
+    "SOURCE_CLOCK_INCONSISTENCIES": 1,
+    "SILENT_INFERENCES": 0,
+    "ROUND_TRIP_FAILURES": 0,
+    "FAITHFUL_PARTIAL_ENVELOPES": 24,
+    "COMPLETE_ECONOMIC_IDENTITIES": 0,
+    "ADVERSARIAL_TESTS": 19,
+    "ADVERSARIAL_REJECTED": 19,
+    "TEMPORAL_CHECKS": 92
+  },
+  "F03": {
+    "status": "BLOCKED",
+    "reason": "F03: BLOCKED. O envelope preserva incertezas e impede o uso antecipado dos recibos, mas não fornece publicação histórica nem membership/listing/delisting completos. Metadados recentes não abrem ranking point-in-time histórico."
+  },
+  "F04": {
+    "status": "BLOCKED",
+    "reason": "F04: BLOCKED para replay econômico. Já distingue namespaces, metric types, endereços e moedas explicitamente observadas, mas ainda faltam contratos de settlement/payoff/unidade e reconciliação dos clocks; não há comprovação de fills. Isso não impede estudos técnicos isolados de identidade."
+  },
+  "answers": {
+    "1": "Foram avaliados 23 recibos HTTP/RPC reais distintos e 1 artefato retrospectivo de identidade. Para recibos com séries, normalizou-se a primeira observação; não se certificaram todas as linhas. Há ainda 9 casos derivados de enriquecimento, sem novos recibos. Dois recibos exchangeInfo contêm vários símbolos: os derivados incluem stablecoins.",
+    "2": "Zero receberam certificação de identidade econômica completa para replay. Os 24 envelopes preservam fielmente evidência parcial e ausências. Nos derivados, 8 descrições de instrumentos têm base/quote explícitas; o nono reconstrói o índice Aave. Não são 9 instrumentos economicamente certificados.",
+    "3": "BTCUSDT aparece em namespaces spot e futures; candles trade e mark têm semânticas diferentes; fundingRate não prova pagamento nem intervalo; marginAsset não prova settlement; precision não prova decimals on-chain. No livro future_00, evento está 410,3008 ms depois do recebimento local. Headers repetidos do mesmo bloco têm recibos distintos, sem evidência de revisão econômica.",
+    "4": "Não foi demonstrado novo bug de produção no F01 v2. Foram documentadas duas lacunas de representação. Um bug apareceu no oráculo do novo teste: presumir elegibilidade no instante de recebimento apesar de evento posterior. A implementação já bloqueava esse caso; corrigiu-se o teste, preservando sua falha.",
+    "5": "Sim, foi criada a extensão experimental F01-real v3: statuses explícitos, semântica da observação, proveniência e gate conservador. O arquivo F01 v2 permanece idêntico. A correção posterior foi no harness v3.1, sem alterar os bytes do adapter v3. Nenhuma integração em produção.",
+    "6": "Faltam, conforme a fonte, settlement explícito, payoff/multiplier, identidade histórica de tokens, unidades econômicas, publicação original, revisão/provedor/implementação históricos, elegibilidade datada do universo e clocks reconciliados. SOURCE_VERSION=2.0 nos RPC descreve apenas o envelope JSON-RPC, nunca versão da implementação Aave.",
+    "7": "Os recibos exchangeInfo preservados permitem recuperar base, quote, marginAsset e contractType no instante da coleta, com seus próprios clocks. O bundle Aave permite ligar chain observada no endpoint, selector, pool, endereço do argumento e inteiro de normalized income ao registro derivado do bloco. O decoder local documenta RAY=10^27. São evidências separadas; não foram retropropagadas aos candles.",
+    "8": "A amostra não permite recuperar a primeira publicação ou revisões não arquivadas, nem afirmar elegibilidade de universo em datas antigas. Metadados de setembro/2026 não certificam especificações de 2020–2024. Isso é impossibilidade nesta evidência, não prova de que nenhum arquivo histórico externo exista.",
+    "9": "Sim: BTCUSDT spot e PERPETUAL são instrumentos distintos mesmo com o mesmo símbolo; pool Aave e token USDC são contratos diferentes. Trade versus mark são métricas distintas, que podem referir o mesmo instrumento. Não foi demonstrado que a produção tenha efetivamente unido esses registros antes; mostrou-se o risco e a recusa no experimento.",
+    "10": "F03: BLOCKED. O envelope preserva incertezas e impede o uso antecipado dos recibos, mas não fornece publicação histórica nem membership/listing/delisting completos. Metadados recentes não abrem ranking point-in-time histórico.",
+    "11": "F04: BLOCKED para replay econômico. Já distingue namespaces, metric types, endereços e moedas explicitamente observadas, mas ainda faltam contratos de settlement/payoff/unidade e reconciliação dos clocks; não há comprovação de fills. Isso não impede estudos técnicos isolados de identidade.",
+    "12": "A próxima incerteza de maior valor é se o bundle preservado de BTC spot/futures contém especificação explícita, temporalmente compatível, de unidade de quantidade, multiplier, payoff e settlement. Deve-se verificar esse gate necessário antes de replay e explicar a divergência de 410,3008 ms por evidência do coletor. Se faltar, manter UNKNOWN e registrar precisamente o contrato de evidência requerido."
+  },
+  "protected_unchanged": true,
+  "capital_permission": false
+}

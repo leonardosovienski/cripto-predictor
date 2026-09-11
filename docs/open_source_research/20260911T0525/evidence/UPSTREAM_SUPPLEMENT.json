@@ -1,0 +1,28 @@
+[
+  {
+    "repo": "mlflow/mlflow",
+    "path": "LICENSE.txt",
+    "url": "https://raw.githubusercontent.com/mlflow/mlflow/3b3760a077bc85c757eed4886bba47d970793875/LICENSE.txt",
+    "status": "OK",
+    "sha256": "6395355de6f391afff35996a30fb41b189b4991a4cb54993ace35ab69a0bfa28"
+  },
+  {
+    "repo": "robertmartin8/PyPortfolioOpt",
+    "path": "LICENSE",
+    "url": "https://raw.githubusercontent.com/robertmartin8/PyPortfolioOpt/a6638d2e06dae6f444fd022cfd4b3c528902a85b/LICENSE",
+    "status": "OK",
+    "sha256": "0e401d63a7b31bde363ca577a2537af1c345fccbf532edc55cb589f568b2a883"
+  },
+  {
+    "repo": "QuantConnect/Lean",
+    "path": "Algorithm.Framework/Portfolio/PortfolioConstructionModel.cs",
+    "status": "HTTPError"
+  },
+  {
+    "repo": "QuantConnect/Lean",
+    "path": "Engine/DataFeeds/UniverseSelection.cs",
+    "url": "https://raw.githubusercontent.com/QuantConnect/Lean/8ee075a39918f2df6fe9e0a5944e366fb60d10dc/Engine/DataFeeds/UniverseSelection.cs",
+    "status": "OK",
+    "sha256": "795d4567bd410d1dd4620ed7ad33046e367e48bfc2ecb309d4463453f63697ef"
+  }
+]

@@ -1,0 +1,28 @@
+{
+  "executed_at": "2026-09-11T04:56:02.372059+00:00",
+  "summary": {
+    "TOTAL_CASES": 24,
+    "REAL_HTTP_RPC_RECEIPTS": 23,
+    "RETROSPECTIVE_ARTIFACTS": 1,
+    "VALID": 0,
+    "CORRECTLY_REJECTED": 1,
+    "AMBIGUOUS": 22,
+    "UNSUPPORTED": 1,
+    "BUGS_FOUND": 0,
+    "BUGS_FIXED": 0,
+    "REPRESENTATION_GAPS_ADDRESSED": 2,
+    "TEMPORAL_VIOLATIONS": 1,
+    "SILENT_INFERENCES": 0,
+    "ROUND_TRIP_FAILURES": 0,
+    "FAITHFUL_PARTIAL_ENVELOPES": 24,
+    "COMPLETE_ECONOMIC_IDENTITIES": 0,
+    "ADVERSARIAL_TESTS": 19,
+    "ADVERSARIAL_REJECTED": 19,
+    "TEMPORAL_CHECKS": 69
+  },
+  "adapter_version": "F01-real v3",
+  "adapter_hash": "bdadc504e689f49e4f7531bac0b2e2da192c0528068e2ec42cdda49b4ae50150",
+  "F03": "BLOCKED",
+  "F04": "BLOCKED",
+  "scope": "Evidence envelope succeeds at preserving uncertainty; no complete economic instrument or economic replay is certified."
+}

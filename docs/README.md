@@ -1,3 +1,7 @@
+## Continuidade mais recente
+
+[Fechamento de 11/09/2026](continuity_20260911/README.md): código research, estudos preservados, evidências de teste e mapa local para continuar sem o chat.
+
 # Índice da documentação
 
 Comece pela [conferência de arquivos de 10/09](CONFERENCIA_ARQUIVOS_20260910.md) e por [CONTINUAR_AQUI.md](../CONTINUAR_AQUI.md). Esses índices distinguem operação atual, backups e registros históricos.

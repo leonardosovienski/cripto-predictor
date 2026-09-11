@@ -1,0 +1,218 @@
+{
+  "registered_protocol_sha256": "d20fa3f202e73d75a50a96994bab58b8517b6e07cd643eacb96fef9633a91056",
+  "implementation_sha256": "c34ff97664b704eb3da64996f4ff7cf87d36034acd73df70256b83253435c648",
+  "observed_at": "2026-09-11T03:35:27.353319+00:00",
+  "checks": [
+    {
+      "case": "wrong price unit",
+      "rejected": false
+    },
+    {
+      "case": "inverse settlement",
+      "rejected": false
+    },
+    {
+      "case": "spot quantity unit",
+      "rejected": false
+    },
+    {
+      "case": "nonhex receipt",
+      "rejected": false
+    },
+    {
+      "case": "ambiguous revision",
+      "rejected": false
+    },
+    {
+      "case": "NaN amount",
+      "rejected": false
+    }
+  ],
+  "passed": false,
+  "original_F01": {
+    "status": "PASS_NARROW_ENGINEERING",
+    "passed": true,
+    "pairs": [
+      {
+        "case": "quote",
+        "distinct": true,
+        "left": {
+          "venue": "venueA",
+          "market": "spot",
+          "base_asset": "BTC",
+          "quote_asset": "USD",
+          "settlement_asset": "USD",
+          "chain": "N/A",
+          "contract": "BTC/USD",
+          "expiry": "N/A",
+          "multiplier": "1",
+          "payoff": "spot",
+          "quantity_unit": "BTC",
+          "price_unit": "USD/BTC"
+        },
+        "right": {
+          "venue": "venueA",
+          "market": "spot",
+          "base_asset": "BTC",
+          "quote_asset": "USDT",
+          "settlement_asset": "USDT",
+          "chain": "N/A",
+          "contract": "BTC/USDT",
+          "expiry": "N/A",
+          "multiplier": "1",
+          "payoff": "spot",
+          "quantity_unit": "BTC",
+          "price_unit": "USDT/BTC"
+        }
+      },
+      {
+        "case": "payoff_settlement",
+        "distinct": true,
+        "left": {
+          "venue": "venueA",
+          "market": "perpetual",
+          "base_asset": "BTC",
+          "quote_asset": "USD",
+          "settlement_asset": "USD",
+          "chain": "N/A",
+          "contract": "BTC-PERP",
+          "expiry": "N/A",
+          "multiplier": "1",
+          "payoff": "linear",
+          "quantity_unit": "contract",
+          "price_unit": "USD/BTC"
+        },
+        "right": {
+          "venue": "venueA",
+          "market": "perpetual",
+          "base_asset": "BTC",
+          "quote_asset": "USD",
+          "settlement_asset": "BTC",
+          "chain": "N/A",
+          "contract": "BTC-PERP",
+          "expiry": "N/A",
+          "multiplier": "100",
+          "payoff": "inverse",
+          "quantity_unit": "USD_contract",
+          "price_unit": "USD/BTC"
+        }
+      },
+      {
+        "case": "chain",
+        "distinct": true,
+        "left": {
+          "venue": "venueA",
+          "market": "spot",
+          "base_asset": "USDC",
+          "quote_asset": "USD",
+          "settlement_asset": "USD",
+          "chain": "eip155:1",
+          "contract": "0xsyntheticUSDC",
+          "expiry": "N/A",
+          "multiplier": "1",
+          "payoff": "spot",
+          "quantity_unit": "USDC",
+          "price_unit": "USD/USDC"
+        },
+        "right": {
+          "venue": "venueA",
+          "market": "spot",
+          "base_asset": "USDC",
+          "quote_asset": "USD",
+          "settlement_asset": "USD",
+          "chain": "eip155:42161",
+          "contract": "0xsyntheticUSDC",
+          "expiry": "N/A",
+          "multiplier": "1",
+          "payoff": "spot",
+          "quantity_unit": "USDC",
+          "price_unit": "USD/USDC"
+        }
+      },
+      {
+        "case": "venue",
+        "distinct": true,
+        "left": {
+          "venue": "venueA",
+          "market": "spot",
+          "base_asset": "BTC",
+          "quote_asset": "USD",
+          "settlement_asset": "USD",
+          "chain": "N/A",
+          "contract": "BTC/USD",
+          "expiry": "N/A",
+          "multiplier": "1",
+          "payoff": "spot",
+          "quantity_unit": "BTC",
+          "price_unit": "USD/BTC"
+        },
+        "right": {
+          "venue": "venueB",
+          "market": "spot",
+          "base_asset": "BTC",
+          "quote_asset": "USD",
+          "settlement_asset": "USD",
+          "chain": "N/A",
+          "contract": "BTC/USD",
+          "expiry": "N/A",
+          "multiplier": "1",
+          "payoff": "spot",
+          "quantity_unit": "BTC",
+          "price_unit": "USD/BTC"
+        }
+      }
+    ],
+    "baseline_fields": [
+      "symbol",
+      "timestamp",
+      "open",
+      "high",
+      "low",
+      "close",
+      "volume",
+      "source",
+      "interval",
+      "published_at"
+    ],
+    "missing_explicit_fields": [
+      "venue",
+      "market",
+      "base_asset",
+      "quote_asset",
+      "settlement_asset",
+      "chain",
+      "contract",
+      "expiry",
+      "multiplier",
+      "payoff",
+      "quantity_unit",
+      "price_unit"
+    ],
+    "baseline_limit": "Field absence demonstrates no explicit typed representation; symbol/source strings may encode some identity. No observed production collision or provider truth certified.",
+    "temporal": [
+      {
+        "case": "published before event",
+        "rejected": true
+      },
+      {
+        "case": "receipt before publication",
+        "rejected": true
+      }
+    ],
+    "revision": {
+      "before_receipt": "100",
+      "after_receipt": "90",
+      "naive_latest_would_use": "90",
+      "old_bytes_unchanged": true
+    },
+    "conversion": {
+      "missing_fx_rejected": true,
+      "future_fx_rejected": true,
+      "usd": "97.00",
+      "exact_fraction": "97"
+    },
+    "invalid_multiplier_rejected": true,
+    "equivalent_multiplier_canonicalized": true,
+    "scope": "spot, linear/inverse perpetual/future only; options deliberately unsupported until strike/right/exercise contract exists"
+  }
+}

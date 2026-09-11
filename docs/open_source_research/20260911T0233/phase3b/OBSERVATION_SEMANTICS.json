@@ -1,0 +1,148 @@
+[
+  {
+    "case": "spot_BTCUSDT",
+    "type": "trade_candle_close",
+    "evidence": {
+      "path": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-altcoins\\work\\altcoin-retro-data\\raw\\16759df9301ee88bdd24f96f5a8e1d7054497f595ba79fcd796aa0b851271645.bin.gz",
+      "sha256": "ae3c985614ae1f7362866e07397950c616beba7e610c97f6b0838697678ff33b",
+      "pointer": [
+        0,
+        4
+      ],
+      "evidence_clock_ns": null
+    },
+    "source_locator": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-altcoins\\work\\altcoin-retro-data\\raw\\16759df9301ee88bdd24f96f5a8e1d7054497f595ba79fcd796aa0b851271645.json",
+    "supports_executable_fill": false,
+    "index_price": "ABSENT from this bounded sample",
+    "historical_specification": "CURRENT_ONLY for received metadata; RETROACTIVE_ASSUMPTION if imposed on earlier candles",
+    "unit_contract": "NOT_PROVEN for full economic replay"
+  },
+  {
+    "case": "perp_trade",
+    "type": "trade_candle_close",
+    "evidence": {
+      "path": "C:\\Cripto\\operacao\\dados\\basis-recovered-20260909\\raw\\03db7a26855188a406079483ebe6bd0670e725a722a9128a9cc7d252ecd3b6fb.bin.gz",
+      "sha256": "dd7ab1a239d1f55e65702c4d88b6379470000ab3c279ebc6766be72e07e3aa28",
+      "pointer": [
+        0,
+        4
+      ],
+      "evidence_clock_ns": null
+    },
+    "source_locator": "C:\\Cripto\\operacao\\dados\\basis-recovered-20260909\\raw\\03db7a26855188a406079483ebe6bd0670e725a722a9128a9cc7d252ecd3b6fb.json",
+    "supports_executable_fill": false,
+    "index_price": "ABSENT from this bounded sample",
+    "historical_specification": "CURRENT_ONLY for received metadata; RETROACTIVE_ASSUMPTION if imposed on earlier candles",
+    "unit_contract": "NOT_PROVEN for full economic replay"
+  },
+  {
+    "case": "perp_mark",
+    "type": "mark_candle_close",
+    "evidence": {
+      "path": "C:\\Cripto\\operacao\\dados\\basis-recovered-20260909\\raw\\0396697a3f41a553343c5411696158b960719fecd38015c5dc675d639b7ded70.bin.gz",
+      "sha256": "fede17cbca4bba40464062079c9cdfa37aca4154284a528e5ae49407eed08b31",
+      "pointer": [
+        0,
+        4
+      ],
+      "evidence_clock_ns": null
+    },
+    "source_locator": "C:\\Cripto\\operacao\\dados\\basis-recovered-20260909\\raw\\0396697a3f41a553343c5411696158b960719fecd38015c5dc675d639b7ded70.json",
+    "supports_executable_fill": false,
+    "index_price": "ABSENT from this bounded sample",
+    "historical_specification": "CURRENT_ONLY for received metadata; RETROACTIVE_ASSUMPTION if imposed on earlier candles",
+    "unit_contract": "NOT_PROVEN for full economic replay"
+  },
+  {
+    "case": "future_trade",
+    "type": "trade_candle_close",
+    "evidence": {
+      "path": "C:\\Cripto\\operacao\\dados\\basis-recovered-20260909\\raw\\012daf4997042a759267a05a899781f0733c4713e8a751860ae8f785eb7f7e5b.bin.gz",
+      "sha256": "23032bd676c1ceebcbc5072dac35cd7575911959eccd1f116a047593677bda60",
+      "pointer": [
+        0,
+        4
+      ],
+      "evidence_clock_ns": null
+    },
+    "source_locator": "C:\\Cripto\\operacao\\dados\\basis-recovered-20260909\\raw\\012daf4997042a759267a05a899781f0733c4713e8a751860ae8f785eb7f7e5b.json",
+    "supports_executable_fill": false,
+    "index_price": "ABSENT from this bounded sample",
+    "historical_specification": "CURRENT_ONLY for received metadata; RETROACTIVE_ASSUMPTION if imposed on earlier candles",
+    "unit_contract": "NOT_PROVEN for full economic replay"
+  },
+  {
+    "case": "future_mark",
+    "type": "mark_candle_close",
+    "evidence": {
+      "path": "C:\\Cripto\\operacao\\dados\\basis-recovered-20260909\\raw\\20c7f7940e3cabb18944a34b740845a19ed4f8351ff5335015ed386774b09fac.bin.gz",
+      "sha256": "1e1bd1928be5a9c4e9d2feb2251695361c184ec901f61c7d00d7e5a9c775ee65",
+      "pointer": [
+        0,
+        4
+      ],
+      "evidence_clock_ns": null
+    },
+    "source_locator": "C:\\Cripto\\operacao\\dados\\basis-recovered-20260909\\raw\\20c7f7940e3cabb18944a34b740845a19ed4f8351ff5335015ed386774b09fac.json",
+    "supports_executable_fill": false,
+    "index_price": "ABSENT from this bounded sample",
+    "historical_specification": "CURRENT_ONLY for received metadata; RETROACTIVE_ASSUMPTION if imposed on earlier candles",
+    "unit_contract": "NOT_PROVEN for full economic replay"
+  },
+  {
+    "case": "funding",
+    "type": "fundingRate_observation",
+    "evidence": {
+      "path": "C:\\Cripto\\operacao\\dados\\basis-recovered-20260909\\raw\\1d8ca73ab3f84dde4d373c768955bbd75f3178bec185b947bef8eaac38703978.bin.gz",
+      "sha256": "e7ebd47b456cee3d735b4753db33a2e83bb151f42dc0dbbafca3c0e2e343fdc6",
+      "pointer": [
+        0,
+        "fundingRate"
+      ],
+      "evidence_clock_ns": null
+    },
+    "source_locator": "C:\\Cripto\\operacao\\dados\\basis-recovered-20260909\\raw\\1d8ca73ab3f84dde4d373c768955bbd75f3178bec185b947bef8eaac38703978.json",
+    "supports_executable_fill": false,
+    "index_price": "ABSENT from this bounded sample",
+    "historical_specification": "CURRENT_ONLY for received metadata; RETROACTIVE_ASSUMPTION if imposed on earlier candles",
+    "unit_contract": "NOT_PROVEN for full economic replay"
+  },
+  {
+    "case": "spot_00",
+    "type": "displayed_ask_not_fill",
+    "evidence": {
+      "path": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\btc-execution-diagnostic-v1\\raw\\spot_00.bin.gz",
+      "sha256": "1d6bee6f95e0809dce0bd10c6f2f94add54502f6dc185b28339a6425d7adf8d3",
+      "pointer": [
+        "asks",
+        0,
+        0
+      ],
+      "evidence_clock_ns": null
+    },
+    "source_locator": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\btc-execution-diagnostic-v1\\diagnostic.json",
+    "supports_executable_fill": false,
+    "index_price": "ABSENT from this bounded sample",
+    "historical_specification": "CURRENT_ONLY for received metadata; RETROACTIVE_ASSUMPTION if imposed on earlier candles",
+    "unit_contract": "NOT_PROVEN for full economic replay"
+  },
+  {
+    "case": "future_00",
+    "type": "displayed_ask_not_fill",
+    "evidence": {
+      "path": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\btc-execution-diagnostic-v1\\raw\\future_00.bin.gz",
+      "sha256": "9f044cc7afc7ffb84b3c48a1119ff9c3d8e94f9aa0908593dd7214fe9537f5e0",
+      "pointer": [
+        "asks",
+        0,
+        0
+      ],
+      "evidence_clock_ns": null
+    },
+    "source_locator": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\btc-execution-diagnostic-v1\\diagnostic.json",
+    "supports_executable_fill": false,
+    "index_price": "ABSENT from this bounded sample",
+    "historical_specification": "CURRENT_ONLY for received metadata; RETROACTIVE_ASSUMPTION if imposed on earlier candles",
+    "unit_contract": "NOT_PROVEN for full economic replay"
+  }
+]

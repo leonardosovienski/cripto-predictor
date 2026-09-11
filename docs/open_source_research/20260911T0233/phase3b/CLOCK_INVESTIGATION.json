@@ -1,0 +1,206 @@
+{
+  "status": "CAUSE_UNKNOWN",
+  "difference_unit_caveat": "410.3008 ms is exact conditional on T being epoch milliseconds. Local nanoseconds are proven by frozen source; archived depth documentation does not prove T/E event semantics or clock calibration.",
+  "book_pairs": 12,
+  "positive_remote_minus_local": 12,
+  "delta_ms_min": "408.6478",
+  "delta_ms_max": "446.958",
+  "delta_ms_median": "438.8075",
+  "samples": [
+    {
+      "id": "future_00",
+      "request_ns": 1788833244617086500,
+      "receipt_ns": 1788833244947699200,
+      "T_raw": 1788833245358,
+      "E_raw": 1788833245362,
+      "lastUpdateId": 11500867402714,
+      "T_minus_receipt_ms": "410.3008",
+      "round_trip_ms": "330.6127",
+      "E_minus_T_raw": 4,
+      "physical_sha256": "9f044cc7afc7ffb84b3c48a1119ff9c3d8e94f9aa0908593dd7214fe9537f5e0"
+    },
+    {
+      "id": "future_01",
+      "request_ns": 1788833249958777000,
+      "receipt_ns": 1788833250271010600,
+      "T_raw": 1788833250710,
+      "E_raw": 1788833250714,
+      "lastUpdateId": 11500867872753,
+      "T_minus_receipt_ms": "438.9894",
+      "round_trip_ms": "312.2336",
+      "E_minus_T_raw": 4,
+      "physical_sha256": "125ea9a4ef38b5244a20e35beb380c576e92b39e73748266d07cf46a56154e09"
+    },
+    {
+      "id": "future_02",
+      "request_ns": 1788833255306222500,
+      "receipt_ns": 1788833255608173200,
+      "T_raw": 1788833256054,
+      "E_raw": 1788833256057,
+      "lastUpdateId": 11500868367294,
+      "T_minus_receipt_ms": "445.8268",
+      "round_trip_ms": "301.9507",
+      "E_minus_T_raw": 3,
+      "physical_sha256": "dd52806f3f49017deb919ad16b0c3e009ef000620e35a140dbee3b7e19b1c114"
+    },
+    {
+      "id": "future_03",
+      "request_ns": 1788833260610742000,
+      "receipt_ns": 1788833261051042000,
+      "T_raw": 1788833261498,
+      "E_raw": 1788833261500,
+      "lastUpdateId": 11500868881157,
+      "T_minus_receipt_ms": "446.958",
+      "round_trip_ms": "440.3",
+      "E_minus_T_raw": 2,
+      "physical_sha256": "55c046a2b0225da3ff51b8d8907c5a0dfd31176a4fbfe37b78e4a1fbc930bf76"
+    },
+    {
+      "id": "future_04",
+      "request_ns": 1788833266091736600,
+      "receipt_ns": 1788833266410020400,
+      "T_raw": 1788833266838,
+      "E_raw": 1788833266841,
+      "lastUpdateId": 11500869492555,
+      "T_minus_receipt_ms": "427.9796",
+      "round_trip_ms": "318.2838",
+      "E_minus_T_raw": 3,
+      "physical_sha256": "f81814454134549efcdb393dd3c97586ba89fb9104154337456e89f9e8012964"
+    },
+    {
+      "id": "future_05",
+      "request_ns": 1788833271412984300,
+      "receipt_ns": 1788833271727374400,
+      "T_raw": 1788833272166,
+      "E_raw": 1788833272170,
+      "lastUpdateId": 11500869857657,
+      "T_minus_receipt_ms": "438.6256",
+      "round_trip_ms": "314.3901",
+      "E_minus_T_raw": 4,
+      "physical_sha256": "9218c7fb3a9bd4034510331ba7104d5dc73164e89790d0e0fe15f421c6e240ff"
+    },
+    {
+      "id": "future_06",
+      "request_ns": 1788833276731169000,
+      "receipt_ns": 1788833277042482100,
+      "T_raw": 1788833277483,
+      "E_raw": 1788833277486,
+      "lastUpdateId": 11500870266490,
+      "T_minus_receipt_ms": "440.5179",
+      "round_trip_ms": "311.3131",
+      "E_minus_T_raw": 3,
+      "physical_sha256": "d31bb335f52b3b0240349461a05f005e2f037ed66d76a1905f747b9007c8da68"
+    },
+    {
+      "id": "future_07",
+      "request_ns": 1788833282052401000,
+      "receipt_ns": 1788833282382306200,
+      "T_raw": 1788833282815,
+      "E_raw": 1788833282819,
+      "lastUpdateId": 11500870787706,
+      "T_minus_receipt_ms": "432.6938",
+      "round_trip_ms": "329.9052",
+      "E_minus_T_raw": 4,
+      "physical_sha256": "335b8bd350607763bc58a07aea09b1a9857606141e5f347f6e21ef6a2f683929"
+    },
+    {
+      "id": "future_08",
+      "request_ns": 1788833287399593200,
+      "receipt_ns": 1788833287708834000,
+      "T_raw": 1788833288148,
+      "E_raw": 1788833288151,
+      "lastUpdateId": 11500871444125,
+      "T_minus_receipt_ms": "439.166",
+      "round_trip_ms": "309.2408",
+      "E_minus_T_raw": 3,
+      "physical_sha256": "656dbc57e77ed51ff225fd58698281cd0cc2d8991388fecbd0c930c68bdffcda"
+    },
+    {
+      "id": "future_09",
+      "request_ns": 1788833292711687700,
+      "receipt_ns": 1788833293057352200,
+      "T_raw": 1788833293466,
+      "E_raw": 1788833293470,
+      "lastUpdateId": 11500871952625,
+      "T_minus_receipt_ms": "408.6478",
+      "round_trip_ms": "345.6645",
+      "E_minus_T_raw": 4,
+      "physical_sha256": "7d7e2f73ab9c0d3c99ff13b08f4c810544b736af1890f484cb605e97f96abd35"
+    },
+    {
+      "id": "future_10",
+      "request_ns": 1788833298061678400,
+      "receipt_ns": 1788833298367310100,
+      "T_raw": 1788833298803,
+      "E_raw": 1788833298808,
+      "lastUpdateId": 11500872502766,
+      "T_minus_receipt_ms": "435.6899",
+      "round_trip_ms": "305.6317",
+      "E_minus_T_raw": 5,
+      "physical_sha256": "c1cb1672c2f21c73b882a3c7d808eb467e697022a7762f1b549a44b031e3a1c8"
+    },
+    {
+      "id": "future_11",
+      "request_ns": 1788833303371701500,
+      "receipt_ns": 1788833303685024800,
+      "T_raw": 1788833304125,
+      "E_raw": 1788833304127,
+      "lastUpdateId": 11500872925749,
+      "T_minus_receipt_ms": "439.9752",
+      "round_trip_ms": "313.3233",
+      "E_minus_T_raw": 2,
+      "physical_sha256": "68e2a83e45c9a72d105c9e666d0f200145034165d3dd4541b6135772cdc7bce7"
+    }
+  ],
+  "monotonicity": {
+    "request_ns": true,
+    "receipt_ns": true,
+    "T_raw": true,
+    "E_raw": true,
+    "lastUpdateId": true
+  },
+  "local_receipt_after_request": true,
+  "local_encoded_resolution_gcd_ns": 100,
+  "resolution_limit": "Observed integer granularity is not clock accuracy or proof of synchronization; time.time_ns is a wall clock and can jump. No contemporaneous monotonic/NTP/PTP logs.",
+  "collector": {
+    "source": {
+      "path": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\basis-delivery-stage\\scripts\\diagnose_btc_execution.py",
+      "sha256": "5f316589e5bbbbebea18e4b4b67023f09d6593601b3d9d956176705b10889cd4",
+      "pointer": {
+        "lines": [
+          134,
+          135,
+          136,
+          137,
+          138,
+          139,
+          142,
+          145,
+          146
+        ]
+      },
+      "evidence_clock_ns": null
+    },
+    "freeze": {
+      "path": "C:\\Cripto\\pesquisa-20260909\\docs\\evidence\\basis_research_20260908\\implementation_freeze_v1.json",
+      "sha256": "cf7408237d7a2d9786182e40d28f422f145bc88efdfb93a1e6cfb0d5e8890ed1",
+      "pointer": [
+        "files",
+        "scripts/diagnose_btc_execution.py"
+      ],
+      "evidence_clock_ns": null
+    },
+    "hash_matches_freeze": true,
+    "monotonic_clock_logged": false,
+    "clock_offset_logged": false,
+    "response_headers_logged": false,
+    "disk_ingestion_or_normalization_time_logged": false
+  },
+  "metadata_body_repeated": {
+    "identical": true,
+    "first_receipt": "2026-09-08T01:40:01.761587+00:00",
+    "second_receipt_ns": 1788833244585202200,
+    "serverTime_raw": 1788825661657,
+    "meaning": "Body timestamp is not fresh response-time evidence. Static metadata/cache/snapshot possible; causal mechanism not proven."
+  }
+}

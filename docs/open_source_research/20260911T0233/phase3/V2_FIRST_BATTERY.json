@@ -1,0 +1,217 @@
+{
+  "executed_at": "2026-09-11T04:51:42.164714+00:00",
+  "adapter_hash": "b2636d2b290a8dd905a04263d6be501b16598e086eb525a3b3f617f9fab83a3a",
+  "unchanged": true,
+  "cases": [
+    {
+      "case": "spot_BTCUSDT",
+      "result": "UNSUPPORTED_DIRECT_REAL_RECEIPT",
+      "exception": "Observation.__init__() missing 4 required positional arguments: 'instrument', 'event_at', 'published_at', and 'received_at'",
+      "reason": "Real receipt has no complete explicit v2 Instrument plus three proven clocks. No defaults invented.",
+      "round_trip": "NOT_ELIGIBLE",
+      "data_kind": "klines"
+    },
+    {
+      "case": "spot_ETHUSDT",
+      "result": "UNSUPPORTED_DIRECT_REAL_RECEIPT",
+      "exception": "Observation.__init__() missing 4 required positional arguments: 'instrument', 'event_at', 'published_at', and 'received_at'",
+      "reason": "Real receipt has no complete explicit v2 Instrument plus three proven clocks. No defaults invented.",
+      "round_trip": "NOT_ELIGIBLE",
+      "data_kind": "klines"
+    },
+    {
+      "case": "spot_FTTUSDT",
+      "result": "UNSUPPORTED_DIRECT_REAL_RECEIPT",
+      "exception": "Observation.__init__() missing 4 required positional arguments: 'instrument', 'event_at', 'published_at', and 'received_at'",
+      "reason": "Real receipt has no complete explicit v2 Instrument plus three proven clocks. No defaults invented.",
+      "round_trip": "NOT_ELIGIBLE",
+      "data_kind": "klines"
+    },
+    {
+      "case": "spot_WBETHUSDT",
+      "result": "UNSUPPORTED_DIRECT_REAL_RECEIPT",
+      "exception": "Observation.__init__() missing 4 required positional arguments: 'instrument', 'event_at', 'published_at', and 'received_at'",
+      "reason": "Real receipt has no complete explicit v2 Instrument plus three proven clocks. No defaults invented.",
+      "round_trip": "NOT_ELIGIBLE",
+      "data_kind": "klines"
+    },
+    {
+      "case": "perp_trade",
+      "result": "UNSUPPORTED_DIRECT_REAL_RECEIPT",
+      "exception": "Observation.__init__() missing 4 required positional arguments: 'instrument', 'event_at', 'published_at', and 'received_at'",
+      "reason": "Real receipt has no complete explicit v2 Instrument plus three proven clocks. No defaults invented.",
+      "round_trip": "NOT_ELIGIBLE",
+      "data_kind": "klines"
+    },
+    {
+      "case": "perp_mark",
+      "result": "UNSUPPORTED_DIRECT_REAL_RECEIPT",
+      "exception": "Observation.__init__() missing 4 required positional arguments: 'instrument', 'event_at', 'published_at', and 'received_at'",
+      "reason": "Real receipt has no complete explicit v2 Instrument plus three proven clocks. No defaults invented.",
+      "round_trip": "NOT_ELIGIBLE",
+      "data_kind": "klines"
+    },
+    {
+      "case": "future_trade",
+      "result": "UNSUPPORTED_DIRECT_REAL_RECEIPT",
+      "exception": "Observation.__init__() missing 4 required positional arguments: 'instrument', 'event_at', 'published_at', and 'received_at'",
+      "reason": "Real receipt has no complete explicit v2 Instrument plus three proven clocks. No defaults invented.",
+      "round_trip": "NOT_ELIGIBLE",
+      "data_kind": "klines"
+    },
+    {
+      "case": "future_mark",
+      "result": "UNSUPPORTED_DIRECT_REAL_RECEIPT",
+      "exception": "Observation.__init__() missing 4 required positional arguments: 'instrument', 'event_at', 'published_at', and 'received_at'",
+      "reason": "Real receipt has no complete explicit v2 Instrument plus three proven clocks. No defaults invented.",
+      "round_trip": "NOT_ELIGIBLE",
+      "data_kind": "klines"
+    },
+    {
+      "case": "funding",
+      "result": "UNSUPPORTED_DIRECT_REAL_RECEIPT",
+      "exception": "Observation.__init__() missing 4 required positional arguments: 'instrument', 'event_at', 'published_at', and 'received_at'",
+      "reason": "Real receipt has no complete explicit v2 Instrument plus three proven clocks. No defaults invented.",
+      "round_trip": "NOT_ELIGIBLE",
+      "data_kind": "funding"
+    },
+    {
+      "case": "spot_info",
+      "result": "UNSUPPORTED_DIRECT_REAL_RECEIPT",
+      "exception": "Observation.__init__() missing 4 required positional arguments: 'instrument', 'event_at', 'published_at', and 'received_at'",
+      "reason": "Real receipt has no complete explicit v2 Instrument plus three proven clocks. No defaults invented.",
+      "round_trip": "NOT_ELIGIBLE",
+      "data_kind": "exchangeInfo"
+    },
+    {
+      "case": "future_info",
+      "result": "UNSUPPORTED_DIRECT_REAL_RECEIPT",
+      "exception": "Observation.__init__() missing 4 required positional arguments: 'instrument', 'event_at', 'published_at', and 'received_at'",
+      "reason": "Real receipt has no complete explicit v2 Instrument plus three proven clocks. No defaults invented.",
+      "round_trip": "NOT_ELIGIBLE",
+      "data_kind": "exchangeInfo"
+    },
+    {
+      "case": "spot_00",
+      "result": "UNSUPPORTED_DIRECT_REAL_RECEIPT",
+      "exception": "Observation.__init__() missing 4 required positional arguments: 'instrument', 'event_at', 'published_at', and 'received_at'",
+      "reason": "Real receipt has no complete explicit v2 Instrument plus three proven clocks. No defaults invented.",
+      "round_trip": "NOT_ELIGIBLE",
+      "data_kind": "depth"
+    },
+    {
+      "case": "future_00",
+      "result": "UNSUPPORTED_DIRECT_REAL_RECEIPT",
+      "exception": "Observation.__init__() missing 4 required positional arguments: 'instrument', 'event_at', 'published_at', and 'received_at'",
+      "reason": "Real receipt has no complete explicit v2 Instrument plus three proven clocks. No defaults invented.",
+      "round_trip": "NOT_ELIGIBLE",
+      "data_kind": "depth"
+    },
+    {
+      "case": "aave_001",
+      "result": "UNSUPPORTED_DIRECT_REAL_RECEIPT",
+      "exception": "Observation.__init__() missing 4 required positional arguments: 'instrument', 'event_at', 'published_at', and 'received_at'",
+      "reason": "Real receipt has no complete explicit v2 Instrument plus three proven clocks. No defaults invented.",
+      "round_trip": "NOT_ELIGIBLE",
+      "data_kind": "rpc"
+    },
+    {
+      "case": "aave_018",
+      "result": "UNSUPPORTED_DIRECT_REAL_RECEIPT",
+      "exception": "Observation.__init__() missing 4 required positional arguments: 'instrument', 'event_at', 'published_at', and 'received_at'",
+      "reason": "Real receipt has no complete explicit v2 Instrument plus three proven clocks. No defaults invented.",
+      "round_trip": "NOT_ELIGIBLE",
+      "data_kind": "rpc"
+    },
+    {
+      "case": "aave_019",
+      "result": "UNSUPPORTED_DIRECT_REAL_RECEIPT",
+      "exception": "Observation.__init__() missing 4 required positional arguments: 'instrument', 'event_at', 'published_at', and 'received_at'",
+      "reason": "Real receipt has no complete explicit v2 Instrument plus three proven clocks. No defaults invented.",
+      "round_trip": "NOT_ELIGIBLE",
+      "data_kind": "rpc"
+    },
+    {
+      "case": "aave_021",
+      "result": "UNSUPPORTED_DIRECT_REAL_RECEIPT",
+      "exception": "Observation.__init__() missing 4 required positional arguments: 'instrument', 'event_at', 'published_at', and 'received_at'",
+      "reason": "Real receipt has no complete explicit v2 Instrument plus three proven clocks. No defaults invented.",
+      "round_trip": "NOT_ELIGIBLE",
+      "data_kind": "rpc"
+    },
+    {
+      "case": "aave_023",
+      "result": "UNSUPPORTED_DIRECT_REAL_RECEIPT",
+      "exception": "Observation.__init__() missing 4 required positional arguments: 'instrument', 'event_at', 'published_at', and 'received_at'",
+      "reason": "Real receipt has no complete explicit v2 Instrument plus three proven clocks. No defaults invented.",
+      "round_trip": "NOT_ELIGIBLE",
+      "data_kind": "rpc"
+    },
+    {
+      "case": "aave_025",
+      "result": "UNSUPPORTED_DIRECT_REAL_RECEIPT",
+      "exception": "Observation.__init__() missing 4 required positional arguments: 'instrument', 'event_at', 'published_at', and 'received_at'",
+      "reason": "Real receipt has no complete explicit v2 Instrument plus three proven clocks. No defaults invented.",
+      "round_trip": "NOT_ELIGIBLE",
+      "data_kind": "rpc"
+    },
+    {
+      "case": "aave_027",
+      "result": "UNSUPPORTED_DIRECT_REAL_RECEIPT",
+      "exception": "Observation.__init__() missing 4 required positional arguments: 'instrument', 'event_at', 'published_at', and 'received_at'",
+      "reason": "Real receipt has no complete explicit v2 Instrument plus three proven clocks. No defaults invented.",
+      "round_trip": "NOT_ELIGIBLE",
+      "data_kind": "rpc"
+    },
+    {
+      "case": "aave_block_002",
+      "result": "UNSUPPORTED_DIRECT_REAL_RECEIPT",
+      "exception": "Observation.__init__() missing 4 required positional arguments: 'instrument', 'event_at', 'published_at', and 'received_at'",
+      "reason": "Real receipt has no complete explicit v2 Instrument plus three proven clocks. No defaults invented.",
+      "round_trip": "NOT_ELIGIBLE",
+      "data_kind": "rpc"
+    },
+    {
+      "case": "aave_block_004",
+      "result": "UNSUPPORTED_DIRECT_REAL_RECEIPT",
+      "exception": "Observation.__init__() missing 4 required positional arguments: 'instrument', 'event_at', 'published_at', and 'received_at'",
+      "reason": "Real receipt has no complete explicit v2 Instrument plus three proven clocks. No defaults invented.",
+      "round_trip": "NOT_ELIGIBLE",
+      "data_kind": "rpc"
+    },
+    {
+      "case": "empty_FTT",
+      "result": "UNSUPPORTED_DIRECT_REAL_RECEIPT",
+      "exception": "Observation.__init__() missing 4 required positional arguments: 'instrument', 'event_at', 'published_at', and 'received_at'",
+      "reason": "Real receipt has no complete explicit v2 Instrument plus three proven clocks. No defaults invented.",
+      "round_trip": "NOT_ELIGIBLE",
+      "data_kind": "empty"
+    },
+    {
+      "case": "late_identity_mapping",
+      "result": "UNSUPPORTED_DIRECT_REAL_RECEIPT",
+      "exception": "Observation.__init__() missing 4 required positional arguments: 'instrument', 'event_at', 'published_at', and 'received_at'",
+      "reason": "Real receipt has no complete explicit v2 Instrument plus three proven clocks. No defaults invented.",
+      "round_trip": "NOT_ELIGIBLE",
+      "data_kind": "mapping"
+    }
+  ],
+  "scope_defects": [
+    {
+      "id": "D01",
+      "property": "Preserve observation semantic type",
+      "evidence": "Observation fields have no price_type, metric or observation unit; mark and traded candle cannot be encoded distinctly by those fields alone.",
+      "classification": "REPRESENTATION_GAP_NOT_OBSERVED_PRODUCTION_COLLISION"
+    },
+    {
+      "id": "D02",
+      "property": "Preserve incomplete clocks and field-level evidence",
+      "evidence": "Required published_at cannot represent UNKNOWN, and no source/revision/field provenance fields exist.",
+      "classification": "REPRESENTATION_GAP"
+    }
+  ],
+  "bugs_found": 0,
+  "semantic_round_trip_failures": 0,
+  "not_eligible": 24,
+  "warning": "This first battery rejects direct ingestion. It does not claim a production join occurred or that unknown economic identities are now proven."
+}

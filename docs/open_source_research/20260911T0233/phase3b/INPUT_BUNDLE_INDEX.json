@@ -1,0 +1,282 @@
+[
+  {
+    "original_path": "C:\\Cripto\\operacao\\dados\\basis-recovered-20260909\\raw\\012daf4997042a759267a05a899781f0733c4713e8a751860ae8f785eb7f7e5b.bin.gz",
+    "bundle_path": "input_bundle\\23032bd676c1ceeb_012daf4997042a759267a05a899781f0733c4713e8a751860ae8f785eb7f7e5b.bin.gz",
+    "sha256": "23032bd676c1ceebcbc5072dac35cd7575911959eccd1f116a047593677bda60"
+  },
+  {
+    "original_path": "C:\\Cripto\\operacao\\dados\\basis-recovered-20260909\\raw\\012daf4997042a759267a05a899781f0733c4713e8a751860ae8f785eb7f7e5b.json",
+    "bundle_path": "input_bundle\\a1e9e50a6e7f1287_012daf4997042a759267a05a899781f0733c4713e8a751860ae8f785eb7f7e5b.json",
+    "sha256": "a1e9e50a6e7f12879651b50cc00590b7c2ca393ee03ebfc26cc112e163e0e843"
+  },
+  {
+    "original_path": "C:\\Cripto\\operacao\\dados\\basis-recovered-20260909\\raw\\0396697a3f41a553343c5411696158b960719fecd38015c5dc675d639b7ded70.bin.gz",
+    "bundle_path": "input_bundle\\fede17cbca4bba40_0396697a3f41a553343c5411696158b960719fecd38015c5dc675d639b7ded70.bin.gz",
+    "sha256": "fede17cbca4bba40464062079c9cdfa37aca4154284a528e5ae49407eed08b31"
+  },
+  {
+    "original_path": "C:\\Cripto\\operacao\\dados\\basis-recovered-20260909\\raw\\0396697a3f41a553343c5411696158b960719fecd38015c5dc675d639b7ded70.json",
+    "bundle_path": "input_bundle\\4f8cce66c2bf1a50_0396697a3f41a553343c5411696158b960719fecd38015c5dc675d639b7ded70.json",
+    "sha256": "4f8cce66c2bf1a504ffd9f91d2046f5b49e3aaf4e7d84ba5f6e0ce296891488a"
+  },
+  {
+    "original_path": "C:\\Cripto\\operacao\\dados\\basis-recovered-20260909\\raw\\03db7a26855188a406079483ebe6bd0670e725a722a9128a9cc7d252ecd3b6fb.bin.gz",
+    "bundle_path": "input_bundle\\dd7ab1a239d1f55e_03db7a26855188a406079483ebe6bd0670e725a722a9128a9cc7d252ecd3b6fb.bin.gz",
+    "sha256": "dd7ab1a239d1f55e65702c4d88b6379470000ab3c279ebc6766be72e07e3aa28"
+  },
+  {
+    "original_path": "C:\\Cripto\\operacao\\dados\\basis-recovered-20260909\\raw\\03db7a26855188a406079483ebe6bd0670e725a722a9128a9cc7d252ecd3b6fb.json",
+    "bundle_path": "input_bundle\\336f6950759abe57_03db7a26855188a406079483ebe6bd0670e725a722a9128a9cc7d252ecd3b6fb.json",
+    "sha256": "336f6950759abe57c521249f734e229d02648969d2f362c51535519181df5b22"
+  },
+  {
+    "original_path": "C:\\Cripto\\operacao\\dados\\basis-recovered-20260909\\raw\\1d8ca73ab3f84dde4d373c768955bbd75f3178bec185b947bef8eaac38703978.bin.gz",
+    "bundle_path": "input_bundle\\e7ebd47b456cee3d_1d8ca73ab3f84dde4d373c768955bbd75f3178bec185b947bef8eaac38703978.bin.gz",
+    "sha256": "e7ebd47b456cee3d735b4753db33a2e83bb151f42dc0dbbafca3c0e2e343fdc6"
+  },
+  {
+    "original_path": "C:\\Cripto\\operacao\\dados\\basis-recovered-20260909\\raw\\1d8ca73ab3f84dde4d373c768955bbd75f3178bec185b947bef8eaac38703978.json",
+    "bundle_path": "input_bundle\\6fef59bd707a1d16_1d8ca73ab3f84dde4d373c768955bbd75f3178bec185b947bef8eaac38703978.json",
+    "sha256": "6fef59bd707a1d1660424e852c8d81edea6d79c8b9fdcebbb8acea69954800a7"
+  },
+  {
+    "original_path": "C:\\Cripto\\operacao\\dados\\basis-recovered-20260909\\raw\\20c7f7940e3cabb18944a34b740845a19ed4f8351ff5335015ed386774b09fac.bin.gz",
+    "bundle_path": "input_bundle\\1e1bd1928be5a9c4_20c7f7940e3cabb18944a34b740845a19ed4f8351ff5335015ed386774b09fac.bin.gz",
+    "sha256": "1e1bd1928be5a9c4e9d2feb2251695361c184ec901f61c7d00d7e5a9c775ee65"
+  },
+  {
+    "original_path": "C:\\Cripto\\operacao\\dados\\basis-recovered-20260909\\raw\\20c7f7940e3cabb18944a34b740845a19ed4f8351ff5335015ed386774b09fac.json",
+    "bundle_path": "input_bundle\\00abbec90f3c0eb2_20c7f7940e3cabb18944a34b740845a19ed4f8351ff5335015ed386774b09fac.json",
+    "sha256": "00abbec90f3c0eb211681e62cededda3313fa29590a6bf7eab69a123ed7f5d50"
+  },
+  {
+    "original_path": "C:\\Cripto\\pesquisa-20260909\\docs\\evidence\\basis_research_20260908\\data_archives.json",
+    "bundle_path": "input_bundle\\4e37fb5f02b8ce9d_data_archives.json",
+    "sha256": "4e37fb5f02b8ce9d843843841cbfdad7abce77d3f856d994c2c547719d019c6a"
+  },
+  {
+    "original_path": "C:\\Cripto\\pesquisa-20260909\\docs\\evidence\\basis_research_20260908\\data_semantics.json",
+    "bundle_path": "input_bundle\\87043c9155a37434_data_semantics.json",
+    "sha256": "87043c9155a37434587b2f5424bd5b186ced1697e360865704a3e6e9a206ecd4"
+  },
+  {
+    "original_path": "C:\\Cripto\\pesquisa-20260909\\docs\\evidence\\basis_research_20260908\\implementation_freeze_v1.json",
+    "bundle_path": "input_bundle\\cf7408237d7a2d97_implementation_freeze_v1.json",
+    "sha256": "cf7408237d7a2d9786182e40d28f422f145bc88efdfb93a1e6cfb0d5e8890ed1"
+  },
+  {
+    "original_path": "C:\\Cripto\\pesquisa-20260909\\docs\\evidence\\basis_research_20260908\\protocol.json",
+    "bundle_path": "input_bundle\\f602de0270aaf998_protocol.json",
+    "sha256": "f602de0270aaf998618c8a78212d8b95233cc9f8569387df29af8c33e98d424f"
+  },
+  {
+    "original_path": "C:\\Cripto\\pesquisa-20260909\\scripts\\basis_data.py",
+    "bundle_path": "input_bundle\\4b62d143208781a3_basis_data.py",
+    "sha256": "4b62d143208781a36be691691678fa84a6d5ceac51db1fde446c97ad2feb157b"
+  },
+  {
+    "original_path": "C:\\Cripto\\pesquisa-20260909\\scripts\\diagnose_btc_execution.py",
+    "bundle_path": "input_bundle\\5f316589e5bbbbeb_diagnose_btc_execution.py",
+    "sha256": "5f316589e5bbbbebea18e4b4b67023f09d6593601b3d9d956176705b10889cd4"
+  },
+  {
+    "original_path": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-altcoins\\work\\altcoin-retro-data\\raw\\16759df9301ee88bdd24f96f5a8e1d7054497f595ba79fcd796aa0b851271645.bin.gz",
+    "bundle_path": "input_bundle\\ae3c985614ae1f73_16759df9301ee88bdd24f96f5a8e1d7054497f595ba79fcd796aa0b851271645.bin.gz",
+    "sha256": "ae3c985614ae1f7362866e07397950c616beba7e610c97f6b0838697678ff33b"
+  },
+  {
+    "original_path": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-altcoins\\work\\altcoin-retro-data\\raw\\16759df9301ee88bdd24f96f5a8e1d7054497f595ba79fcd796aa0b851271645.json",
+    "bundle_path": "input_bundle\\3226120888321660_16759df9301ee88bdd24f96f5a8e1d7054497f595ba79fcd796aa0b851271645.json",
+    "sha256": "32261208883216601eeab8c9071fc1bf4714e371ebd616ef212a40c1b7f04c72"
+  },
+  {
+    "original_path": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\basis-capability-probe\\dated_archive.meta.json",
+    "bundle_path": "input_bundle\\61e9d61483175320_dated_archive.meta.json",
+    "sha256": "61e9d61483175320cfd2ee1ce6535302c108cfb7ba54c16e0f9da6bec0e9f664"
+  },
+  {
+    "original_path": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\basis-capability-probe\\dated_archive.raw",
+    "bundle_path": "input_bundle\\d02607ff1c104243_dated_archive.raw",
+    "sha256": "d02607ff1c104243a242cfca2054a7cef5f718f882faa6900b56b3d9014ec893"
+  },
+  {
+    "original_path": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\basis-capability-probe\\delivery.meta.json",
+    "bundle_path": "input_bundle\\4c5e3c4843449c61_delivery.meta.json",
+    "sha256": "4c5e3c4843449c6156bcf97a9aa12c67b3b18ab15f3224451835c50e6829636e"
+  },
+  {
+    "original_path": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\basis-capability-probe\\delivery.raw",
+    "bundle_path": "input_bundle\\4c11fe09afdd8a46_delivery.raw",
+    "sha256": "4c11fe09afdd8a46e6496440d1c99ba7ac325326732b3dc0fda327044f02d8c4"
+  },
+  {
+    "original_path": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\basis-capability-probe\\docs.meta.json",
+    "bundle_path": "input_bundle\\0afcc94d55ec76ba_docs.meta.json",
+    "sha256": "0afcc94d55ec76baf8759b50a24cc74012e11ac42335cd28ee19fc0c23114a29"
+  },
+  {
+    "original_path": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\basis-capability-probe\\docs.raw",
+    "bundle_path": "input_bundle\\085ab91377aa9325_docs.raw",
+    "sha256": "085ab91377aa9325d44f4c7ad27cce4ab381e158403e1d7df2bad39d1a66f7c6"
+  },
+  {
+    "original_path": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\basis-capability-probe\\info.meta.json",
+    "bundle_path": "input_bundle\\7cf422489efdba4f_info.meta.json",
+    "sha256": "7cf422489efdba4f452f73a11960bf898df41560a6b695587a0e2f7ef7d285f3"
+  },
+  {
+    "original_path": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\basis-capability-probe\\info.raw",
+    "bundle_path": "input_bundle\\18a1918fe29286e3_info.raw",
+    "sha256": "18a1918fe29286e3a113d77c6b589cb61bccdbf2e4ae43a706ae28a4338d1bc0"
+  },
+  {
+    "original_path": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\basis-capability-probe\\perp_archive.meta.json",
+    "bundle_path": "input_bundle\\9f566776075125e8_perp_archive.meta.json",
+    "sha256": "9f566776075125e8a0813af228498ec5ad245fb25712b41f078a12b15a4311f5"
+  },
+  {
+    "original_path": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\basis-capability-probe\\perp_archive.raw",
+    "bundle_path": "input_bundle\\80fd6610952224e2_perp_archive.raw",
+    "sha256": "80fd6610952224e2f25f9479a8295bbe5b7ef77a7627779c1f374a9d7f2702c9"
+  },
+  {
+    "original_path": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\basis-delivery-stage\\scripts\\diagnose_btc_execution.py",
+    "bundle_path": "input_bundle\\5f316589e5bbbbeb_diagnose_btc_execution.py",
+    "sha256": "5f316589e5bbbbebea18e4b4b67023f09d6593601b3d9d956176705b10889cd4"
+  },
+  {
+    "original_path": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\btc-execution-diagnostic-v1\\diagnostic.json",
+    "bundle_path": "input_bundle\\9987357a290f4901_diagnostic.json",
+    "sha256": "9987357a290f4901a07289f52540b03cfb79799c8c10d04bf344a6c183b60cf1"
+  },
+  {
+    "original_path": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\btc-execution-diagnostic-v1\\raw\\future_00.bin.gz",
+    "bundle_path": "input_bundle\\9f044cc7afc7ffb8_future_00.bin.gz",
+    "sha256": "9f044cc7afc7ffb84b3c48a1119ff9c3d8e94f9aa0908593dd7214fe9537f5e0"
+  },
+  {
+    "original_path": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\btc-execution-diagnostic-v1\\raw\\future_01.bin.gz",
+    "bundle_path": "input_bundle\\125ea9a4ef38b524_future_01.bin.gz",
+    "sha256": "125ea9a4ef38b5244a20e35beb380c576e92b39e73748266d07cf46a56154e09"
+  },
+  {
+    "original_path": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\btc-execution-diagnostic-v1\\raw\\future_02.bin.gz",
+    "bundle_path": "input_bundle\\dd52806f3f49017d_future_02.bin.gz",
+    "sha256": "dd52806f3f49017deb919ad16b0c3e009ef000620e35a140dbee3b7e19b1c114"
+  },
+  {
+    "original_path": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\btc-execution-diagnostic-v1\\raw\\future_03.bin.gz",
+    "bundle_path": "input_bundle\\55c046a2b0225da3_future_03.bin.gz",
+    "sha256": "55c046a2b0225da3ff51b8d8907c5a0dfd31176a4fbfe37b78e4a1fbc930bf76"
+  },
+  {
+    "original_path": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\btc-execution-diagnostic-v1\\raw\\future_04.bin.gz",
+    "bundle_path": "input_bundle\\f81814454134549e_future_04.bin.gz",
+    "sha256": "f81814454134549efcdb393dd3c97586ba89fb9104154337456e89f9e8012964"
+  },
+  {
+    "original_path": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\btc-execution-diagnostic-v1\\raw\\future_05.bin.gz",
+    "bundle_path": "input_bundle\\9218c7fb3a9bd403_future_05.bin.gz",
+    "sha256": "9218c7fb3a9bd4034510331ba7104d5dc73164e89790d0e0fe15f421c6e240ff"
+  },
+  {
+    "original_path": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\btc-execution-diagnostic-v1\\raw\\future_06.bin.gz",
+    "bundle_path": "input_bundle\\d31bb335f52b3b02_future_06.bin.gz",
+    "sha256": "d31bb335f52b3b0240349461a05f005e2f037ed66d76a1905f747b9007c8da68"
+  },
+  {
+    "original_path": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\btc-execution-diagnostic-v1\\raw\\future_07.bin.gz",
+    "bundle_path": "input_bundle\\335b8bd350607763_future_07.bin.gz",
+    "sha256": "335b8bd350607763bc58a07aea09b1a9857606141e5f347f6e21ef6a2f683929"
+  },
+  {
+    "original_path": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\btc-execution-diagnostic-v1\\raw\\future_08.bin.gz",
+    "bundle_path": "input_bundle\\656dbc57e77ed51f_future_08.bin.gz",
+    "sha256": "656dbc57e77ed51ff225fd58698281cd0cc2d8991388fecbd0c930c68bdffcda"
+  },
+  {
+    "original_path": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\btc-execution-diagnostic-v1\\raw\\future_09.bin.gz",
+    "bundle_path": "input_bundle\\7d7e2f73ab9c0d3c_future_09.bin.gz",
+    "sha256": "7d7e2f73ab9c0d3c99ff13b08f4c810544b736af1890f484cb605e97f96abd35"
+  },
+  {
+    "original_path": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\btc-execution-diagnostic-v1\\raw\\future_10.bin.gz",
+    "bundle_path": "input_bundle\\c1cb1672c2f21c73_future_10.bin.gz",
+    "sha256": "c1cb1672c2f21c73b882a3c7d808eb467e697022a7762f1b549a44b031e3a1c8"
+  },
+  {
+    "original_path": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\btc-execution-diagnostic-v1\\raw\\future_11.bin.gz",
+    "bundle_path": "input_bundle\\68e2a83e45c9a72d_future_11.bin.gz",
+    "sha256": "68e2a83e45c9a72d105c9e666d0f200145034165d3dd4541b6135772cdc7bce7"
+  },
+  {
+    "original_path": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\btc-execution-diagnostic-v1\\raw\\future_info.bin.gz",
+    "bundle_path": "input_bundle\\5c63ccfebe081dda_future_info.bin.gz",
+    "sha256": "5c63ccfebe081ddaf935e1e016978267429899735d063985c532d17835c3dd22"
+  },
+  {
+    "original_path": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\btc-execution-diagnostic-v1\\raw\\spot_00.bin.gz",
+    "bundle_path": "input_bundle\\1d6bee6f95e0809d_spot_00.bin.gz",
+    "sha256": "1d6bee6f95e0809dce0bd10c6f2f94add54502f6dc185b28339a6425d7adf8d3"
+  },
+  {
+    "original_path": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\btc-execution-diagnostic-v1\\raw\\spot_01.bin.gz",
+    "bundle_path": "input_bundle\\8ac2dd014f0203c7_spot_01.bin.gz",
+    "sha256": "8ac2dd014f0203c718812a044e626a6c062c4ee0fc341a64a992a598c7f60077"
+  },
+  {
+    "original_path": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\btc-execution-diagnostic-v1\\raw\\spot_02.bin.gz",
+    "bundle_path": "input_bundle\\70150f01780ebd2f_spot_02.bin.gz",
+    "sha256": "70150f01780ebd2fd949fe1a4eeed55ee3eb5f0845bbc98423f1c7b4dd31fe15"
+  },
+  {
+    "original_path": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\btc-execution-diagnostic-v1\\raw\\spot_03.bin.gz",
+    "bundle_path": "input_bundle\\e8864f096dc7c81d_spot_03.bin.gz",
+    "sha256": "e8864f096dc7c81dfef625b9bcbf2884eea6f30898d4cea2fd81c6eaaca1c7e8"
+  },
+  {
+    "original_path": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\btc-execution-diagnostic-v1\\raw\\spot_04.bin.gz",
+    "bundle_path": "input_bundle\\94af72df623799e0_spot_04.bin.gz",
+    "sha256": "94af72df623799e0cc26bb28cc62affaf05df43846ce82fba412111543bae72f"
+  },
+  {
+    "original_path": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\btc-execution-diagnostic-v1\\raw\\spot_05.bin.gz",
+    "bundle_path": "input_bundle\\a1e28a216bf9468d_spot_05.bin.gz",
+    "sha256": "a1e28a216bf9468da6708aa5345b0a812e1d9702ce3894ca8e150d7c48a9f2fe"
+  },
+  {
+    "original_path": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\btc-execution-diagnostic-v1\\raw\\spot_06.bin.gz",
+    "bundle_path": "input_bundle\\46d7db4b1ee88e60_spot_06.bin.gz",
+    "sha256": "46d7db4b1ee88e604d7c674b649d3c18183918e225b54b7160dfaac8cf1b104e"
+  },
+  {
+    "original_path": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\btc-execution-diagnostic-v1\\raw\\spot_07.bin.gz",
+    "bundle_path": "input_bundle\\961be56e792e0247_spot_07.bin.gz",
+    "sha256": "961be56e792e02477d27a051442d1e7f362d9bb03e71518e3b533bb1ce149915"
+  },
+  {
+    "original_path": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\btc-execution-diagnostic-v1\\raw\\spot_08.bin.gz",
+    "bundle_path": "input_bundle\\9494e29ff209fbe6_spot_08.bin.gz",
+    "sha256": "9494e29ff209fbe639e372359821b6a880484cd00a0858ef56994ccea2176d88"
+  },
+  {
+    "original_path": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\btc-execution-diagnostic-v1\\raw\\spot_09.bin.gz",
+    "bundle_path": "input_bundle\\c6e81570edaca20f_spot_09.bin.gz",
+    "sha256": "c6e81570edaca20f1e6aa72b677ab06be87af5bdbe7f4213a6ff6bdbdc5f33b8"
+  },
+  {
+    "original_path": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\btc-execution-diagnostic-v1\\raw\\spot_10.bin.gz",
+    "bundle_path": "input_bundle\\e341cb482e23b3b0_spot_10.bin.gz",
+    "sha256": "e341cb482e23b3b0223db349706aed603a003b60370c18789736c1336b0651c0"
+  },
+  {
+    "original_path": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\btc-execution-diagnostic-v1\\raw\\spot_11.bin.gz",
+    "bundle_path": "input_bundle\\f7907ed409687d29_spot_11.bin.gz",
+    "sha256": "f7907ed409687d29e6466e35e66cd6c29696637059c28cccfcf7f75500e0d8ee"
+  },
+  {
+    "original_path": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\btc-execution-diagnostic-v1\\raw\\spot_info.bin.gz",
+    "bundle_path": "input_bundle\\9eaf77b9e0b5e969_spot_info.bin.gz",
+    "sha256": "9eaf77b9e0b5e9691f34c784d0bb920484a6a13353291caca6cd82b55cfd85e1"
+  }
+]

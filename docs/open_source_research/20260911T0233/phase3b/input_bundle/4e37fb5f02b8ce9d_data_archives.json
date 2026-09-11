@@ -1,0 +1,18 @@
+{
+  "CAPABILITY_PROBES.zip": {
+    "sha256": "67480dd18460322f244e8fab8a5eb0cfc93332359d5448e52b1a2caa79f751dd",
+    "bytes": 55561
+  },
+  "EXECUTION_DATA.zip": {
+    "sha256": "93ab8c3133a9a176e4feccd46bdca1007c8feacb2a3449355d7ddbe9eef5daf7",
+    "bytes": 300285
+  },
+  "RESEARCH_DATA.zip": {
+    "sha256": "c7824daa1d1af2728fd389137627049f600dc18768821afeebb047c9c0efafd6",
+    "bytes": 13537295
+  },
+  "V1_CODE.zip": {
+    "sha256": "07ce43d33b768b4c168faf785eca31bf5e2e874faf590b6c756d7a74b2979346",
+    "bytes": 21731
+  }
+}

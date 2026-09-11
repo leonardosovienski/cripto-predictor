@@ -1,0 +1,2651 @@
+{
+  "adapter": "F01-contract-temporal v3B.1",
+  "adapter_sha256": "afcef87b05500b95350ecbaabe389af66e31c07e1b5cc8534d12c1f0ca357f00",
+  "tests": [
+    {
+      "id": "BTC_SPOT_venue_literal",
+      "kind": "positive",
+      "status": "ACCEPTED",
+      "expected": "ACCEPTED",
+      "passed": true,
+      "detail": true
+    },
+    {
+      "id": "BTC_SPOT_market_type_literal",
+      "kind": "positive",
+      "status": "ACCEPTED",
+      "expected": "ACCEPTED",
+      "passed": true,
+      "detail": true
+    },
+    {
+      "id": "BTC_SPOT_base_asset_literal",
+      "kind": "positive",
+      "status": "ACCEPTED",
+      "expected": "ACCEPTED",
+      "passed": true,
+      "detail": true
+    },
+    {
+      "id": "BTC_SPOT_quote_asset_literal",
+      "kind": "positive",
+      "status": "ACCEPTED",
+      "expected": "ACCEPTED",
+      "passed": true,
+      "detail": true
+    },
+    {
+      "id": "BTC_SPOT_incomplete",
+      "kind": "unknown",
+      "status": "UNSUPPORTED",
+      "expected": [
+        "UNSUPPORTED"
+      ],
+      "passed": true,
+      "detail": "Incomplete economic contract: settlement_asset,margin_asset,quantity_unit,price_unit,multiplier,linear_inverse,payoff,expiry"
+    },
+    {
+      "id": "BTC_SPOT_claim_quantity_unit",
+      "kind": "negative",
+      "status": "UNSUPPORTED",
+      "expected": [
+        "REJECTED",
+        "UNSUPPORTED"
+      ],
+      "passed": true,
+      "detail": "Claim needs evidence: quantity_unit"
+    },
+    {
+      "id": "BTC_SPOT_claim_price_unit",
+      "kind": "negative",
+      "status": "UNSUPPORTED",
+      "expected": [
+        "REJECTED",
+        "UNSUPPORTED"
+      ],
+      "passed": true,
+      "detail": "Claim needs evidence: price_unit"
+    },
+    {
+      "id": "BTC_SPOT_claim_multiplier",
+      "kind": "negative",
+      "status": "UNSUPPORTED",
+      "expected": [
+        "REJECTED",
+        "UNSUPPORTED"
+      ],
+      "passed": true,
+      "detail": "Claim needs evidence: multiplier"
+    },
+    {
+      "id": "BTC_SPOT_claim_settlement_asset",
+      "kind": "negative",
+      "status": "UNSUPPORTED",
+      "expected": [
+        "REJECTED",
+        "UNSUPPORTED"
+      ],
+      "passed": true,
+      "detail": "Claim needs evidence: settlement_asset"
+    },
+    {
+      "id": "BTC_SPOT_claim_payoff",
+      "kind": "negative",
+      "status": "UNSUPPORTED",
+      "expected": [
+        "REJECTED",
+        "UNSUPPORTED"
+      ],
+      "passed": true,
+      "detail": "Claim needs evidence: payoff"
+    },
+    {
+      "id": "BTC_SPOT_claim_linear_inverse",
+      "kind": "negative",
+      "status": "UNSUPPORTED",
+      "expected": [
+        "REJECTED",
+        "UNSUPPORTED"
+      ],
+      "passed": true,
+      "detail": "Claim needs evidence: linear_inverse"
+    },
+    {
+      "id": "BTC_SPOT_roundtrip",
+      "kind": "positive",
+      "status": "ACCEPTED",
+      "expected": "ACCEPTED",
+      "passed": true,
+      "detail": true
+    },
+    {
+      "id": "BTC_SPOT_wrong_quote",
+      "kind": "negative",
+      "status": "REJECTED",
+      "expected": [
+        "REJECTED"
+      ],
+      "passed": true,
+      "detail": "Contradiction to proven field: quote_asset"
+    },
+    {
+      "id": "BTC_PERPETUAL_venue_literal",
+      "kind": "positive",
+      "status": "ACCEPTED",
+      "expected": "ACCEPTED",
+      "passed": true,
+      "detail": true
+    },
+    {
+      "id": "BTC_PERPETUAL_market_type_literal",
+      "kind": "positive",
+      "status": "ACCEPTED",
+      "expected": "ACCEPTED",
+      "passed": true,
+      "detail": true
+    },
+    {
+      "id": "BTC_PERPETUAL_base_asset_literal",
+      "kind": "positive",
+      "status": "ACCEPTED",
+      "expected": "ACCEPTED",
+      "passed": true,
+      "detail": true
+    },
+    {
+      "id": "BTC_PERPETUAL_quote_asset_literal",
+      "kind": "positive",
+      "status": "ACCEPTED",
+      "expected": "ACCEPTED",
+      "passed": true,
+      "detail": true
+    },
+    {
+      "id": "BTC_PERPETUAL_margin_asset_literal",
+      "kind": "positive",
+      "status": "ACCEPTED",
+      "expected": "ACCEPTED",
+      "passed": true,
+      "detail": true
+    },
+    {
+      "id": "BTC_PERPETUAL_incomplete",
+      "kind": "unknown",
+      "status": "UNSUPPORTED",
+      "expected": [
+        "UNSUPPORTED"
+      ],
+      "passed": true,
+      "detail": "Incomplete economic contract: settlement_asset,quantity_unit,price_unit,multiplier,linear_inverse,payoff,expiry"
+    },
+    {
+      "id": "BTC_PERPETUAL_claim_quantity_unit",
+      "kind": "negative",
+      "status": "UNSUPPORTED",
+      "expected": [
+        "REJECTED",
+        "UNSUPPORTED"
+      ],
+      "passed": true,
+      "detail": "Claim needs evidence: quantity_unit"
+    },
+    {
+      "id": "BTC_PERPETUAL_claim_price_unit",
+      "kind": "negative",
+      "status": "UNSUPPORTED",
+      "expected": [
+        "REJECTED",
+        "UNSUPPORTED"
+      ],
+      "passed": true,
+      "detail": "Claim needs evidence: price_unit"
+    },
+    {
+      "id": "BTC_PERPETUAL_claim_multiplier",
+      "kind": "negative",
+      "status": "UNSUPPORTED",
+      "expected": [
+        "REJECTED",
+        "UNSUPPORTED"
+      ],
+      "passed": true,
+      "detail": "Claim needs evidence: multiplier"
+    },
+    {
+      "id": "BTC_PERPETUAL_claim_settlement_asset",
+      "kind": "negative",
+      "status": "UNSUPPORTED",
+      "expected": [
+        "REJECTED",
+        "UNSUPPORTED"
+      ],
+      "passed": true,
+      "detail": "Claim needs evidence: settlement_asset"
+    },
+    {
+      "id": "BTC_PERPETUAL_claim_payoff",
+      "kind": "negative",
+      "status": "UNSUPPORTED",
+      "expected": [
+        "REJECTED",
+        "UNSUPPORTED"
+      ],
+      "passed": true,
+      "detail": "Claim needs evidence: payoff"
+    },
+    {
+      "id": "BTC_PERPETUAL_claim_linear_inverse",
+      "kind": "negative",
+      "status": "UNSUPPORTED",
+      "expected": [
+        "REJECTED",
+        "UNSUPPORTED"
+      ],
+      "passed": true,
+      "detail": "Claim needs evidence: linear_inverse"
+    },
+    {
+      "id": "BTC_PERPETUAL_roundtrip",
+      "kind": "positive",
+      "status": "ACCEPTED",
+      "expected": "ACCEPTED",
+      "passed": true,
+      "detail": true
+    },
+    {
+      "id": "BTC_PERPETUAL_wrong_quote",
+      "kind": "negative",
+      "status": "REJECTED",
+      "expected": [
+        "REJECTED"
+      ],
+      "passed": true,
+      "detail": "Contradiction to proven field: quote_asset"
+    },
+    {
+      "id": "BTC_DATED_venue_literal",
+      "kind": "positive",
+      "status": "ACCEPTED",
+      "expected": "ACCEPTED",
+      "passed": true,
+      "detail": true
+    },
+    {
+      "id": "BTC_DATED_market_type_literal",
+      "kind": "positive",
+      "status": "ACCEPTED",
+      "expected": "ACCEPTED",
+      "passed": true,
+      "detail": true
+    },
+    {
+      "id": "BTC_DATED_base_asset_literal",
+      "kind": "positive",
+      "status": "ACCEPTED",
+      "expected": "ACCEPTED",
+      "passed": true,
+      "detail": true
+    },
+    {
+      "id": "BTC_DATED_quote_asset_literal",
+      "kind": "positive",
+      "status": "ACCEPTED",
+      "expected": "ACCEPTED",
+      "passed": true,
+      "detail": true
+    },
+    {
+      "id": "BTC_DATED_margin_asset_literal",
+      "kind": "positive",
+      "status": "ACCEPTED",
+      "expected": "ACCEPTED",
+      "passed": true,
+      "detail": true
+    },
+    {
+      "id": "BTC_DATED_expiry_literal",
+      "kind": "positive",
+      "status": "ACCEPTED",
+      "expected": "ACCEPTED",
+      "passed": true,
+      "detail": true
+    },
+    {
+      "id": "BTC_DATED_incomplete",
+      "kind": "unknown",
+      "status": "UNSUPPORTED",
+      "expected": [
+        "UNSUPPORTED"
+      ],
+      "passed": true,
+      "detail": "Incomplete economic contract: settlement_asset,quantity_unit,price_unit,multiplier,linear_inverse,payoff"
+    },
+    {
+      "id": "BTC_DATED_claim_quantity_unit",
+      "kind": "negative",
+      "status": "UNSUPPORTED",
+      "expected": [
+        "REJECTED",
+        "UNSUPPORTED"
+      ],
+      "passed": true,
+      "detail": "Claim needs evidence: quantity_unit"
+    },
+    {
+      "id": "BTC_DATED_claim_price_unit",
+      "kind": "negative",
+      "status": "UNSUPPORTED",
+      "expected": [
+        "REJECTED",
+        "UNSUPPORTED"
+      ],
+      "passed": true,
+      "detail": "Claim needs evidence: price_unit"
+    },
+    {
+      "id": "BTC_DATED_claim_multiplier",
+      "kind": "negative",
+      "status": "UNSUPPORTED",
+      "expected": [
+        "REJECTED",
+        "UNSUPPORTED"
+      ],
+      "passed": true,
+      "detail": "Claim needs evidence: multiplier"
+    },
+    {
+      "id": "BTC_DATED_claim_settlement_asset",
+      "kind": "negative",
+      "status": "UNSUPPORTED",
+      "expected": [
+        "REJECTED",
+        "UNSUPPORTED"
+      ],
+      "passed": true,
+      "detail": "Claim needs evidence: settlement_asset"
+    },
+    {
+      "id": "BTC_DATED_claim_payoff",
+      "kind": "negative",
+      "status": "UNSUPPORTED",
+      "expected": [
+        "REJECTED",
+        "UNSUPPORTED"
+      ],
+      "passed": true,
+      "detail": "Claim needs evidence: payoff"
+    },
+    {
+      "id": "BTC_DATED_claim_linear_inverse",
+      "kind": "negative",
+      "status": "UNSUPPORTED",
+      "expected": [
+        "REJECTED",
+        "UNSUPPORTED"
+      ],
+      "passed": true,
+      "detail": "Claim needs evidence: linear_inverse"
+    },
+    {
+      "id": "BTC_DATED_roundtrip",
+      "kind": "positive",
+      "status": "ACCEPTED",
+      "expected": "ACCEPTED",
+      "passed": true,
+      "detail": true
+    },
+    {
+      "id": "BTC_DATED_wrong_quote",
+      "kind": "negative",
+      "status": "REJECTED",
+      "expected": [
+        "REJECTED"
+      ],
+      "passed": true,
+      "detail": "Contradiction to proven field: quote_asset"
+    },
+    {
+      "id": "spot_BTCUSDT_same_metric",
+      "kind": "positive",
+      "status": "ACCEPTED",
+      "expected": "ACCEPTED",
+      "passed": true,
+      "detail": true
+    },
+    {
+      "id": "spot_BTCUSDT_trade_as_mark",
+      "kind": "negative",
+      "status": "REJECTED",
+      "expected": [
+        "REJECTED"
+      ],
+      "passed": true,
+      "detail": "Different observation semantics"
+    },
+    {
+      "id": "perp_trade_same_metric",
+      "kind": "positive",
+      "status": "ACCEPTED",
+      "expected": "ACCEPTED",
+      "passed": true,
+      "detail": true
+    },
+    {
+      "id": "perp_trade_trade_as_mark",
+      "kind": "negative",
+      "status": "REJECTED",
+      "expected": [
+        "REJECTED"
+      ],
+      "passed": true,
+      "detail": "Different observation semantics"
+    },
+    {
+      "id": "perp_mark_same_metric",
+      "kind": "positive",
+      "status": "ACCEPTED",
+      "expected": "ACCEPTED",
+      "passed": true,
+      "detail": true
+    },
+    {
+      "id": "perp_mark_mark_as_fill",
+      "kind": "negative",
+      "status": "REJECTED",
+      "expected": [
+        "REJECTED"
+      ],
+      "passed": true,
+      "detail": "Different observation semantics"
+    },
+    {
+      "id": "future_trade_same_metric",
+      "kind": "positive",
+      "status": "ACCEPTED",
+      "expected": "ACCEPTED",
+      "passed": true,
+      "detail": true
+    },
+    {
+      "id": "future_trade_trade_as_mark",
+      "kind": "negative",
+      "status": "REJECTED",
+      "expected": [
+        "REJECTED"
+      ],
+      "passed": true,
+      "detail": "Different observation semantics"
+    },
+    {
+      "id": "future_mark_same_metric",
+      "kind": "positive",
+      "status": "ACCEPTED",
+      "expected": "ACCEPTED",
+      "passed": true,
+      "detail": true
+    },
+    {
+      "id": "future_mark_mark_as_fill",
+      "kind": "negative",
+      "status": "REJECTED",
+      "expected": [
+        "REJECTED"
+      ],
+      "passed": true,
+      "detail": "Different observation semantics"
+    },
+    {
+      "id": "funding_same_metric",
+      "kind": "positive",
+      "status": "ACCEPTED",
+      "expected": "ACCEPTED",
+      "passed": true,
+      "detail": true
+    },
+    {
+      "id": "spot_00_same_metric",
+      "kind": "positive",
+      "status": "ACCEPTED",
+      "expected": "ACCEPTED",
+      "passed": true,
+      "detail": true
+    },
+    {
+      "id": "future_00_same_metric",
+      "kind": "positive",
+      "status": "ACCEPTED",
+      "expected": "ACCEPTED",
+      "passed": true,
+      "detail": true
+    },
+    {
+      "id": "declared_units_BTC_times_USDT_per_BTC",
+      "kind": "positive",
+      "status": "ACCEPTED",
+      "expected": "ACCEPTED",
+      "passed": true,
+      "detail": {
+        "USDT": 1
+      }
+    },
+    {
+      "id": "wrong_currency_dimension",
+      "kind": "negative",
+      "status": "REJECTED",
+      "expected": [
+        "REJECTED"
+      ],
+      "passed": true,
+      "detail": "Dimension mismatch"
+    },
+    {
+      "id": "contract_as_base_dimension",
+      "kind": "negative",
+      "status": "REJECTED",
+      "expected": [
+        "REJECTED"
+      ],
+      "passed": true,
+      "detail": "Dimension mismatch"
+    }
+  ],
+  "temporal_tests": [
+    {
+      "case": "spot_info",
+      "cutoff": 1788833243963778599,
+      "state": {
+        "OBSERVED": false,
+        "EVENT_OCCURRED": "UNKNOWN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "NOT_OBSERVED_AT_LOCAL_CUTOFF",
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": false,
+      "passed": true
+    },
+    {
+      "case": "spot_info",
+      "cutoff": 1788833243963778600,
+      "state": {
+        "OBSERVED": true,
+        "EVENT_OCCURRED": "UNKNOWN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": true,
+      "passed": true
+    },
+    {
+      "case": "spot_info",
+      "cutoff": 1788919643963778600,
+      "state": {
+        "OBSERVED": true,
+        "EVENT_OCCURRED": "UNKNOWN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": true,
+      "passed": true
+    },
+    {
+      "case": "future_info",
+      "cutoff": 1788833244585202199,
+      "state": {
+        "OBSERVED": false,
+        "EVENT_OCCURRED": "UNKNOWN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "NOT_OBSERVED_AT_LOCAL_CUTOFF",
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": false,
+      "passed": true
+    },
+    {
+      "case": "future_info",
+      "cutoff": 1788833244585202200,
+      "state": {
+        "OBSERVED": true,
+        "EVENT_OCCURRED": "UNKNOWN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": true,
+      "passed": true
+    },
+    {
+      "case": "future_info",
+      "cutoff": 1788919644585202200,
+      "state": {
+        "OBSERVED": true,
+        "EVENT_OCCURRED": "UNKNOWN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": true,
+      "passed": true
+    },
+    {
+      "case": "spot_00",
+      "cutoff": 1788833244931863299,
+      "state": {
+        "OBSERVED": false,
+        "EVENT_OCCURRED": "UNKNOWN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "NOT_OBSERVED_AT_LOCAL_CUTOFF",
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": false,
+      "passed": true
+    },
+    {
+      "case": "spot_00",
+      "cutoff": 1788833244931863300,
+      "state": {
+        "OBSERVED": true,
+        "EVENT_OCCURRED": "UNKNOWN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": true,
+      "passed": true
+    },
+    {
+      "case": "spot_00",
+      "cutoff": 1788919644931863300,
+      "state": {
+        "OBSERVED": true,
+        "EVENT_OCCURRED": "UNKNOWN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": true,
+      "passed": true
+    },
+    {
+      "case": "future_00",
+      "cutoff": 1788833244947699199,
+      "state": {
+        "OBSERVED": false,
+        "EVENT_OCCURRED": "TIMESTAMP_ATTACHED_LOCAL_OCCURRENCE_NOT_PROVEN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "NOT_OBSERVED_AT_LOCAL_CUTOFF",
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": false,
+      "passed": true
+    },
+    {
+      "case": "future_00",
+      "cutoff": 1788833244947699200,
+      "state": {
+        "OBSERVED": true,
+        "EVENT_OCCURRED": "TIMESTAMP_ATTACHED_LOCAL_OCCURRENCE_NOT_PROVEN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": true,
+      "passed": true
+    },
+    {
+      "case": "future_00",
+      "cutoff": 1788919644947699200,
+      "state": {
+        "OBSERVED": true,
+        "EVENT_OCCURRED": "TIMESTAMP_ATTACHED_LOCAL_OCCURRENCE_NOT_PROVEN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": true,
+      "passed": true
+    },
+    {
+      "case": "future_00",
+      "cutoff": 1788833245358000000,
+      "state": {
+        "OBSERVED": true,
+        "EVENT_OCCURRED": "TIMESTAMP_ATTACHED_LOCAL_OCCURRENCE_NOT_PROVEN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": true,
+      "passed": true
+    },
+    {
+      "case": "spot_01",
+      "cutoff": 1788833250300863699,
+      "state": {
+        "OBSERVED": false,
+        "EVENT_OCCURRED": "UNKNOWN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "NOT_OBSERVED_AT_LOCAL_CUTOFF",
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": false,
+      "passed": true
+    },
+    {
+      "case": "spot_01",
+      "cutoff": 1788833250300863700,
+      "state": {
+        "OBSERVED": true,
+        "EVENT_OCCURRED": "UNKNOWN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": true,
+      "passed": true
+    },
+    {
+      "case": "spot_01",
+      "cutoff": 1788919650300863700,
+      "state": {
+        "OBSERVED": true,
+        "EVENT_OCCURRED": "UNKNOWN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": true,
+      "passed": true
+    },
+    {
+      "case": "future_01",
+      "cutoff": 1788833250271010599,
+      "state": {
+        "OBSERVED": false,
+        "EVENT_OCCURRED": "TIMESTAMP_ATTACHED_LOCAL_OCCURRENCE_NOT_PROVEN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "NOT_OBSERVED_AT_LOCAL_CUTOFF",
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": false,
+      "passed": true
+    },
+    {
+      "case": "future_01",
+      "cutoff": 1788833250271010600,
+      "state": {
+        "OBSERVED": true,
+        "EVENT_OCCURRED": "TIMESTAMP_ATTACHED_LOCAL_OCCURRENCE_NOT_PROVEN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": true,
+      "passed": true
+    },
+    {
+      "case": "future_01",
+      "cutoff": 1788919650271010600,
+      "state": {
+        "OBSERVED": true,
+        "EVENT_OCCURRED": "TIMESTAMP_ATTACHED_LOCAL_OCCURRENCE_NOT_PROVEN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": true,
+      "passed": true
+    },
+    {
+      "case": "future_01",
+      "cutoff": 1788833250710000000,
+      "state": {
+        "OBSERVED": true,
+        "EVENT_OCCURRED": "TIMESTAMP_ATTACHED_LOCAL_OCCURRENCE_NOT_PROVEN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": true,
+      "passed": true
+    },
+    {
+      "case": "spot_02",
+      "cutoff": 1788833255603519799,
+      "state": {
+        "OBSERVED": false,
+        "EVENT_OCCURRED": "UNKNOWN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "NOT_OBSERVED_AT_LOCAL_CUTOFF",
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": false,
+      "passed": true
+    },
+    {
+      "case": "spot_02",
+      "cutoff": 1788833255603519800,
+      "state": {
+        "OBSERVED": true,
+        "EVENT_OCCURRED": "UNKNOWN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": true,
+      "passed": true
+    },
+    {
+      "case": "spot_02",
+      "cutoff": 1788919655603519800,
+      "state": {
+        "OBSERVED": true,
+        "EVENT_OCCURRED": "UNKNOWN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": true,
+      "passed": true
+    },
+    {
+      "case": "future_02",
+      "cutoff": 1788833255608173199,
+      "state": {
+        "OBSERVED": false,
+        "EVENT_OCCURRED": "TIMESTAMP_ATTACHED_LOCAL_OCCURRENCE_NOT_PROVEN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "NOT_OBSERVED_AT_LOCAL_CUTOFF",
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": false,
+      "passed": true
+    },
+    {
+      "case": "future_02",
+      "cutoff": 1788833255608173200,
+      "state": {
+        "OBSERVED": true,
+        "EVENT_OCCURRED": "TIMESTAMP_ATTACHED_LOCAL_OCCURRENCE_NOT_PROVEN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": true,
+      "passed": true
+    },
+    {
+      "case": "future_02",
+      "cutoff": 1788919655608173200,
+      "state": {
+        "OBSERVED": true,
+        "EVENT_OCCURRED": "TIMESTAMP_ATTACHED_LOCAL_OCCURRENCE_NOT_PROVEN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": true,
+      "passed": true
+    },
+    {
+      "case": "future_02",
+      "cutoff": 1788833256054000000,
+      "state": {
+        "OBSERVED": true,
+        "EVENT_OCCURRED": "TIMESTAMP_ATTACHED_LOCAL_OCCURRENCE_NOT_PROVEN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": true,
+      "passed": true
+    },
+    {
+      "case": "spot_03",
+      "cutoff": 1788833261089530099,
+      "state": {
+        "OBSERVED": false,
+        "EVENT_OCCURRED": "UNKNOWN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "NOT_OBSERVED_AT_LOCAL_CUTOFF",
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": false,
+      "passed": true
+    },
+    {
+      "case": "spot_03",
+      "cutoff": 1788833261089530100,
+      "state": {
+        "OBSERVED": true,
+        "EVENT_OCCURRED": "UNKNOWN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": true,
+      "passed": true
+    },
+    {
+      "case": "spot_03",
+      "cutoff": 1788919661089530100,
+      "state": {
+        "OBSERVED": true,
+        "EVENT_OCCURRED": "UNKNOWN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": true,
+      "passed": true
+    },
+    {
+      "case": "future_03",
+      "cutoff": 1788833261051041999,
+      "state": {
+        "OBSERVED": false,
+        "EVENT_OCCURRED": "TIMESTAMP_ATTACHED_LOCAL_OCCURRENCE_NOT_PROVEN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "NOT_OBSERVED_AT_LOCAL_CUTOFF",
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": false,
+      "passed": true
+    },
+    {
+      "case": "future_03",
+      "cutoff": 1788833261051042000,
+      "state": {
+        "OBSERVED": true,
+        "EVENT_OCCURRED": "TIMESTAMP_ATTACHED_LOCAL_OCCURRENCE_NOT_PROVEN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": true,
+      "passed": true
+    },
+    {
+      "case": "future_03",
+      "cutoff": 1788919661051042000,
+      "state": {
+        "OBSERVED": true,
+        "EVENT_OCCURRED": "TIMESTAMP_ATTACHED_LOCAL_OCCURRENCE_NOT_PROVEN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": true,
+      "passed": true
+    },
+    {
+      "case": "future_03",
+      "cutoff": 1788833261498000000,
+      "state": {
+        "OBSERVED": true,
+        "EVENT_OCCURRED": "TIMESTAMP_ATTACHED_LOCAL_OCCURRENCE_NOT_PROVEN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": true,
+      "passed": true
+    },
+    {
+      "case": "spot_04",
+      "cutoff": 1788833266393978999,
+      "state": {
+        "OBSERVED": false,
+        "EVENT_OCCURRED": "UNKNOWN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "NOT_OBSERVED_AT_LOCAL_CUTOFF",
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": false,
+      "passed": true
+    },
+    {
+      "case": "spot_04",
+      "cutoff": 1788833266393979000,
+      "state": {
+        "OBSERVED": true,
+        "EVENT_OCCURRED": "UNKNOWN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": true,
+      "passed": true
+    },
+    {
+      "case": "spot_04",
+      "cutoff": 1788919666393979000,
+      "state": {
+        "OBSERVED": true,
+        "EVENT_OCCURRED": "UNKNOWN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": true,
+      "passed": true
+    },
+    {
+      "case": "future_04",
+      "cutoff": 1788833266410020399,
+      "state": {
+        "OBSERVED": false,
+        "EVENT_OCCURRED": "TIMESTAMP_ATTACHED_LOCAL_OCCURRENCE_NOT_PROVEN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "NOT_OBSERVED_AT_LOCAL_CUTOFF",
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": false,
+      "passed": true
+    },
+    {
+      "case": "future_04",
+      "cutoff": 1788833266410020400,
+      "state": {
+        "OBSERVED": true,
+        "EVENT_OCCURRED": "TIMESTAMP_ATTACHED_LOCAL_OCCURRENCE_NOT_PROVEN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": true,
+      "passed": true
+    },
+    {
+      "case": "future_04",
+      "cutoff": 1788919666410020400,
+      "state": {
+        "OBSERVED": true,
+        "EVENT_OCCURRED": "TIMESTAMP_ATTACHED_LOCAL_OCCURRENCE_NOT_PROVEN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": true,
+      "passed": true
+    },
+    {
+      "case": "future_04",
+      "cutoff": 1788833266838000000,
+      "state": {
+        "OBSERVED": true,
+        "EVENT_OCCURRED": "TIMESTAMP_ATTACHED_LOCAL_OCCURRENCE_NOT_PROVEN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": true,
+      "passed": true
+    },
+    {
+      "case": "spot_05",
+      "cutoff": 1788833271725381799,
+      "state": {
+        "OBSERVED": false,
+        "EVENT_OCCURRED": "UNKNOWN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "NOT_OBSERVED_AT_LOCAL_CUTOFF",
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": false,
+      "passed": true
+    },
+    {
+      "case": "spot_05",
+      "cutoff": 1788833271725381800,
+      "state": {
+        "OBSERVED": true,
+        "EVENT_OCCURRED": "UNKNOWN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": true,
+      "passed": true
+    },
+    {
+      "case": "spot_05",
+      "cutoff": 1788919671725381800,
+      "state": {
+        "OBSERVED": true,
+        "EVENT_OCCURRED": "UNKNOWN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": true,
+      "passed": true
+    },
+    {
+      "case": "future_05",
+      "cutoff": 1788833271727374399,
+      "state": {
+        "OBSERVED": false,
+        "EVENT_OCCURRED": "TIMESTAMP_ATTACHED_LOCAL_OCCURRENCE_NOT_PROVEN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "NOT_OBSERVED_AT_LOCAL_CUTOFF",
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": false,
+      "passed": true
+    },
+    {
+      "case": "future_05",
+      "cutoff": 1788833271727374400,
+      "state": {
+        "OBSERVED": true,
+        "EVENT_OCCURRED": "TIMESTAMP_ATTACHED_LOCAL_OCCURRENCE_NOT_PROVEN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": true,
+      "passed": true
+    },
+    {
+      "case": "future_05",
+      "cutoff": 1788919671727374400,
+      "state": {
+        "OBSERVED": true,
+        "EVENT_OCCURRED": "TIMESTAMP_ATTACHED_LOCAL_OCCURRENCE_NOT_PROVEN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": true,
+      "passed": true
+    },
+    {
+      "case": "future_05",
+      "cutoff": 1788833272166000000,
+      "state": {
+        "OBSERVED": true,
+        "EVENT_OCCURRED": "TIMESTAMP_ATTACHED_LOCAL_OCCURRENCE_NOT_PROVEN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": true,
+      "passed": true
+    },
+    {
+      "case": "spot_06",
+      "cutoff": 1788833277048756199,
+      "state": {
+        "OBSERVED": false,
+        "EVENT_OCCURRED": "UNKNOWN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "NOT_OBSERVED_AT_LOCAL_CUTOFF",
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": false,
+      "passed": true
+    },
+    {
+      "case": "spot_06",
+      "cutoff": 1788833277048756200,
+      "state": {
+        "OBSERVED": true,
+        "EVENT_OCCURRED": "UNKNOWN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": true,
+      "passed": true
+    },
+    {
+      "case": "spot_06",
+      "cutoff": 1788919677048756200,
+      "state": {
+        "OBSERVED": true,
+        "EVENT_OCCURRED": "UNKNOWN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": true,
+      "passed": true
+    },
+    {
+      "case": "future_06",
+      "cutoff": 1788833277042482099,
+      "state": {
+        "OBSERVED": false,
+        "EVENT_OCCURRED": "TIMESTAMP_ATTACHED_LOCAL_OCCURRENCE_NOT_PROVEN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "NOT_OBSERVED_AT_LOCAL_CUTOFF",
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": false,
+      "passed": true
+    },
+    {
+      "case": "future_06",
+      "cutoff": 1788833277042482100,
+      "state": {
+        "OBSERVED": true,
+        "EVENT_OCCURRED": "TIMESTAMP_ATTACHED_LOCAL_OCCURRENCE_NOT_PROVEN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": true,
+      "passed": true
+    },
+    {
+      "case": "future_06",
+      "cutoff": 1788919677042482100,
+      "state": {
+        "OBSERVED": true,
+        "EVENT_OCCURRED": "TIMESTAMP_ATTACHED_LOCAL_OCCURRENCE_NOT_PROVEN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": true,
+      "passed": true
+    },
+    {
+      "case": "future_06",
+      "cutoff": 1788833277483000000,
+      "state": {
+        "OBSERVED": true,
+        "EVENT_OCCURRED": "TIMESTAMP_ATTACHED_LOCAL_OCCURRENCE_NOT_PROVEN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": true,
+      "passed": true
+    },
+    {
+      "case": "spot_07",
+      "cutoff": 1788833282395154999,
+      "state": {
+        "OBSERVED": false,
+        "EVENT_OCCURRED": "UNKNOWN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "NOT_OBSERVED_AT_LOCAL_CUTOFF",
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": false,
+      "passed": true
+    },
+    {
+      "case": "spot_07",
+      "cutoff": 1788833282395155000,
+      "state": {
+        "OBSERVED": true,
+        "EVENT_OCCURRED": "UNKNOWN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": true,
+      "passed": true
+    },
+    {
+      "case": "spot_07",
+      "cutoff": 1788919682395155000,
+      "state": {
+        "OBSERVED": true,
+        "EVENT_OCCURRED": "UNKNOWN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": true,
+      "passed": true
+    },
+    {
+      "case": "future_07",
+      "cutoff": 1788833282382306199,
+      "state": {
+        "OBSERVED": false,
+        "EVENT_OCCURRED": "TIMESTAMP_ATTACHED_LOCAL_OCCURRENCE_NOT_PROVEN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "NOT_OBSERVED_AT_LOCAL_CUTOFF",
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": false,
+      "passed": true
+    },
+    {
+      "case": "future_07",
+      "cutoff": 1788833282382306200,
+      "state": {
+        "OBSERVED": true,
+        "EVENT_OCCURRED": "TIMESTAMP_ATTACHED_LOCAL_OCCURRENCE_NOT_PROVEN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": true,
+      "passed": true
+    },
+    {
+      "case": "future_07",
+      "cutoff": 1788919682382306200,
+      "state": {
+        "OBSERVED": true,
+        "EVENT_OCCURRED": "TIMESTAMP_ATTACHED_LOCAL_OCCURRENCE_NOT_PROVEN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": true,
+      "passed": true
+    },
+    {
+      "case": "future_07",
+      "cutoff": 1788833282815000000,
+      "state": {
+        "OBSERVED": true,
+        "EVENT_OCCURRED": "TIMESTAMP_ATTACHED_LOCAL_OCCURRENCE_NOT_PROVEN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": true,
+      "passed": true
+    },
+    {
+      "case": "spot_08",
+      "cutoff": 1788833287698544299,
+      "state": {
+        "OBSERVED": false,
+        "EVENT_OCCURRED": "UNKNOWN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "NOT_OBSERVED_AT_LOCAL_CUTOFF",
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": false,
+      "passed": true
+    },
+    {
+      "case": "spot_08",
+      "cutoff": 1788833287698544300,
+      "state": {
+        "OBSERVED": true,
+        "EVENT_OCCURRED": "UNKNOWN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": true,
+      "passed": true
+    },
+    {
+      "case": "spot_08",
+      "cutoff": 1788919687698544300,
+      "state": {
+        "OBSERVED": true,
+        "EVENT_OCCURRED": "UNKNOWN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": true,
+      "passed": true
+    },
+    {
+      "case": "future_08",
+      "cutoff": 1788833287708833999,
+      "state": {
+        "OBSERVED": false,
+        "EVENT_OCCURRED": "TIMESTAMP_ATTACHED_LOCAL_OCCURRENCE_NOT_PROVEN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "NOT_OBSERVED_AT_LOCAL_CUTOFF",
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": false,
+      "passed": true
+    },
+    {
+      "case": "future_08",
+      "cutoff": 1788833287708834000,
+      "state": {
+        "OBSERVED": true,
+        "EVENT_OCCURRED": "TIMESTAMP_ATTACHED_LOCAL_OCCURRENCE_NOT_PROVEN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": true,
+      "passed": true
+    },
+    {
+      "case": "future_08",
+      "cutoff": 1788919687708834000,
+      "state": {
+        "OBSERVED": true,
+        "EVENT_OCCURRED": "TIMESTAMP_ATTACHED_LOCAL_OCCURRENCE_NOT_PROVEN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": true,
+      "passed": true
+    },
+    {
+      "case": "future_08",
+      "cutoff": 1788833288148000000,
+      "state": {
+        "OBSERVED": true,
+        "EVENT_OCCURRED": "TIMESTAMP_ATTACHED_LOCAL_OCCURRENCE_NOT_PROVEN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": true,
+      "passed": true
+    },
+    {
+      "case": "spot_09",
+      "cutoff": 1788833293058404299,
+      "state": {
+        "OBSERVED": false,
+        "EVENT_OCCURRED": "UNKNOWN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "NOT_OBSERVED_AT_LOCAL_CUTOFF",
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": false,
+      "passed": true
+    },
+    {
+      "case": "spot_09",
+      "cutoff": 1788833293058404300,
+      "state": {
+        "OBSERVED": true,
+        "EVENT_OCCURRED": "UNKNOWN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": true,
+      "passed": true
+    },
+    {
+      "case": "spot_09",
+      "cutoff": 1788919693058404300,
+      "state": {
+        "OBSERVED": true,
+        "EVENT_OCCURRED": "UNKNOWN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": true,
+      "passed": true
+    },
+    {
+      "case": "future_09",
+      "cutoff": 1788833293057352199,
+      "state": {
+        "OBSERVED": false,
+        "EVENT_OCCURRED": "TIMESTAMP_ATTACHED_LOCAL_OCCURRENCE_NOT_PROVEN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "NOT_OBSERVED_AT_LOCAL_CUTOFF",
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": false,
+      "passed": true
+    },
+    {
+      "case": "future_09",
+      "cutoff": 1788833293057352200,
+      "state": {
+        "OBSERVED": true,
+        "EVENT_OCCURRED": "TIMESTAMP_ATTACHED_LOCAL_OCCURRENCE_NOT_PROVEN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": true,
+      "passed": true
+    },
+    {
+      "case": "future_09",
+      "cutoff": 1788919693057352200,
+      "state": {
+        "OBSERVED": true,
+        "EVENT_OCCURRED": "TIMESTAMP_ATTACHED_LOCAL_OCCURRENCE_NOT_PROVEN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": true,
+      "passed": true
+    },
+    {
+      "case": "future_09",
+      "cutoff": 1788833293466000000,
+      "state": {
+        "OBSERVED": true,
+        "EVENT_OCCURRED": "TIMESTAMP_ATTACHED_LOCAL_OCCURRENCE_NOT_PROVEN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": true,
+      "passed": true
+    },
+    {
+      "case": "spot_10",
+      "cutoff": 1788833298367365699,
+      "state": {
+        "OBSERVED": false,
+        "EVENT_OCCURRED": "UNKNOWN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "NOT_OBSERVED_AT_LOCAL_CUTOFF",
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": false,
+      "passed": true
+    },
+    {
+      "case": "spot_10",
+      "cutoff": 1788833298367365700,
+      "state": {
+        "OBSERVED": true,
+        "EVENT_OCCURRED": "UNKNOWN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": true,
+      "passed": true
+    },
+    {
+      "case": "spot_10",
+      "cutoff": 1788919698367365700,
+      "state": {
+        "OBSERVED": true,
+        "EVENT_OCCURRED": "UNKNOWN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": true,
+      "passed": true
+    },
+    {
+      "case": "future_10",
+      "cutoff": 1788833298367310099,
+      "state": {
+        "OBSERVED": false,
+        "EVENT_OCCURRED": "TIMESTAMP_ATTACHED_LOCAL_OCCURRENCE_NOT_PROVEN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "NOT_OBSERVED_AT_LOCAL_CUTOFF",
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": false,
+      "passed": true
+    },
+    {
+      "case": "future_10",
+      "cutoff": 1788833298367310100,
+      "state": {
+        "OBSERVED": true,
+        "EVENT_OCCURRED": "TIMESTAMP_ATTACHED_LOCAL_OCCURRENCE_NOT_PROVEN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": true,
+      "passed": true
+    },
+    {
+      "case": "future_10",
+      "cutoff": 1788919698367310100,
+      "state": {
+        "OBSERVED": true,
+        "EVENT_OCCURRED": "TIMESTAMP_ATTACHED_LOCAL_OCCURRENCE_NOT_PROVEN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": true,
+      "passed": true
+    },
+    {
+      "case": "future_10",
+      "cutoff": 1788833298803000000,
+      "state": {
+        "OBSERVED": true,
+        "EVENT_OCCURRED": "TIMESTAMP_ATTACHED_LOCAL_OCCURRENCE_NOT_PROVEN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": true,
+      "passed": true
+    },
+    {
+      "case": "spot_11",
+      "cutoff": 1788833303694443099,
+      "state": {
+        "OBSERVED": false,
+        "EVENT_OCCURRED": "UNKNOWN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "NOT_OBSERVED_AT_LOCAL_CUTOFF",
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": false,
+      "passed": true
+    },
+    {
+      "case": "spot_11",
+      "cutoff": 1788833303694443100,
+      "state": {
+        "OBSERVED": true,
+        "EVENT_OCCURRED": "UNKNOWN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": true,
+      "passed": true
+    },
+    {
+      "case": "spot_11",
+      "cutoff": 1788919703694443100,
+      "state": {
+        "OBSERVED": true,
+        "EVENT_OCCURRED": "UNKNOWN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": true,
+      "passed": true
+    },
+    {
+      "case": "future_11",
+      "cutoff": 1788833303685024799,
+      "state": {
+        "OBSERVED": false,
+        "EVENT_OCCURRED": "TIMESTAMP_ATTACHED_LOCAL_OCCURRENCE_NOT_PROVEN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "NOT_OBSERVED_AT_LOCAL_CUTOFF",
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": false,
+      "passed": true
+    },
+    {
+      "case": "future_11",
+      "cutoff": 1788833303685024800,
+      "state": {
+        "OBSERVED": true,
+        "EVENT_OCCURRED": "TIMESTAMP_ATTACHED_LOCAL_OCCURRENCE_NOT_PROVEN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": true,
+      "passed": true
+    },
+    {
+      "case": "future_11",
+      "cutoff": 1788919703685024800,
+      "state": {
+        "OBSERVED": true,
+        "EVENT_OCCURRED": "TIMESTAMP_ATTACHED_LOCAL_OCCURRENCE_NOT_PROVEN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": true,
+      "passed": true
+    },
+    {
+      "case": "future_11",
+      "cutoff": 1788833304125000000,
+      "state": {
+        "OBSERVED": true,
+        "EVENT_OCCURRED": "TIMESTAMP_ATTACHED_LOCAL_OCCURRENCE_NOT_PROVEN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": true,
+      "passed": true
+    },
+    {
+      "case": "spot_BTCUSDT",
+      "cutoff": 1788807095427007999,
+      "state": {
+        "OBSERVED": false,
+        "EVENT_OCCURRED": "TIMESTAMP_ATTACHED_LOCAL_OCCURRENCE_NOT_PROVEN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "NOT_OBSERVED_AT_LOCAL_CUTOFF",
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": false,
+      "passed": true
+    },
+    {
+      "case": "spot_BTCUSDT",
+      "cutoff": 1788807095427008000,
+      "state": {
+        "OBSERVED": true,
+        "EVENT_OCCURRED": "TIMESTAMP_ATTACHED_LOCAL_OCCURRENCE_NOT_PROVEN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": true,
+      "passed": true
+    },
+    {
+      "case": "spot_BTCUSDT",
+      "cutoff": 1788893495427008000,
+      "state": {
+        "OBSERVED": true,
+        "EVENT_OCCURRED": "TIMESTAMP_ATTACHED_LOCAL_OCCURRENCE_NOT_PROVEN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": true,
+      "passed": true
+    },
+    {
+      "case": "perp_trade",
+      "cutoff": 1788832141857316999,
+      "state": {
+        "OBSERVED": false,
+        "EVENT_OCCURRED": "TIMESTAMP_ATTACHED_LOCAL_OCCURRENCE_NOT_PROVEN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "NOT_OBSERVED_AT_LOCAL_CUTOFF",
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": false,
+      "passed": true
+    },
+    {
+      "case": "perp_trade",
+      "cutoff": 1788832141857317000,
+      "state": {
+        "OBSERVED": true,
+        "EVENT_OCCURRED": "TIMESTAMP_ATTACHED_LOCAL_OCCURRENCE_NOT_PROVEN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": true,
+      "passed": true
+    },
+    {
+      "case": "perp_trade",
+      "cutoff": 1788918541857317000,
+      "state": {
+        "OBSERVED": true,
+        "EVENT_OCCURRED": "TIMESTAMP_ATTACHED_LOCAL_OCCURRENCE_NOT_PROVEN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": true,
+      "passed": true
+    },
+    {
+      "case": "perp_mark",
+      "cutoff": 1788832143883308999,
+      "state": {
+        "OBSERVED": false,
+        "EVENT_OCCURRED": "TIMESTAMP_ATTACHED_LOCAL_OCCURRENCE_NOT_PROVEN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "NOT_OBSERVED_AT_LOCAL_CUTOFF",
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": false,
+      "passed": true
+    },
+    {
+      "case": "perp_mark",
+      "cutoff": 1788832143883309000,
+      "state": {
+        "OBSERVED": true,
+        "EVENT_OCCURRED": "TIMESTAMP_ATTACHED_LOCAL_OCCURRENCE_NOT_PROVEN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": true,
+      "passed": true
+    },
+    {
+      "case": "perp_mark",
+      "cutoff": 1788918543883309000,
+      "state": {
+        "OBSERVED": true,
+        "EVENT_OCCURRED": "TIMESTAMP_ATTACHED_LOCAL_OCCURRENCE_NOT_PROVEN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": true,
+      "passed": true
+    },
+    {
+      "case": "future_trade",
+      "cutoff": 1788832235281078999,
+      "state": {
+        "OBSERVED": false,
+        "EVENT_OCCURRED": "TIMESTAMP_ATTACHED_LOCAL_OCCURRENCE_NOT_PROVEN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "NOT_OBSERVED_AT_LOCAL_CUTOFF",
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": false,
+      "passed": true
+    },
+    {
+      "case": "future_trade",
+      "cutoff": 1788832235281079000,
+      "state": {
+        "OBSERVED": true,
+        "EVENT_OCCURRED": "TIMESTAMP_ATTACHED_LOCAL_OCCURRENCE_NOT_PROVEN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": true,
+      "passed": true
+    },
+    {
+      "case": "future_trade",
+      "cutoff": 1788918635281079000,
+      "state": {
+        "OBSERVED": true,
+        "EVENT_OCCURRED": "TIMESTAMP_ATTACHED_LOCAL_OCCURRENCE_NOT_PROVEN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": true,
+      "passed": true
+    },
+    {
+      "case": "future_mark",
+      "cutoff": 1788832236466910999,
+      "state": {
+        "OBSERVED": false,
+        "EVENT_OCCURRED": "TIMESTAMP_ATTACHED_LOCAL_OCCURRENCE_NOT_PROVEN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "NOT_OBSERVED_AT_LOCAL_CUTOFF",
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": false,
+      "passed": true
+    },
+    {
+      "case": "future_mark",
+      "cutoff": 1788832236466911000,
+      "state": {
+        "OBSERVED": true,
+        "EVENT_OCCURRED": "TIMESTAMP_ATTACHED_LOCAL_OCCURRENCE_NOT_PROVEN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": true,
+      "passed": true
+    },
+    {
+      "case": "future_mark",
+      "cutoff": 1788918636466911000,
+      "state": {
+        "OBSERVED": true,
+        "EVENT_OCCURRED": "TIMESTAMP_ATTACHED_LOCAL_OCCURRENCE_NOT_PROVEN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": true,
+      "passed": true
+    },
+    {
+      "case": "funding",
+      "cutoff": 1788832149740361999,
+      "state": {
+        "OBSERVED": false,
+        "EVENT_OCCURRED": "TIMESTAMP_ATTACHED_LOCAL_OCCURRENCE_NOT_PROVEN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "NOT_OBSERVED_AT_LOCAL_CUTOFF",
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": false,
+      "passed": true
+    },
+    {
+      "case": "funding",
+      "cutoff": 1788832149740362000,
+      "state": {
+        "OBSERVED": true,
+        "EVENT_OCCURRED": "TIMESTAMP_ATTACHED_LOCAL_OCCURRENCE_NOT_PROVEN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": true,
+      "passed": true
+    },
+    {
+      "case": "funding",
+      "cutoff": 1788918549740362000,
+      "state": {
+        "OBSERVED": true,
+        "EVENT_OCCURRED": "TIMESTAMP_ATTACHED_LOCAL_OCCURRENCE_NOT_PROVEN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": true,
+      "passed": true
+    },
+    {
+      "case": "probe_info",
+      "cutoff": 1788831601761586999,
+      "state": {
+        "OBSERVED": false,
+        "EVENT_OCCURRED": "UNKNOWN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "NOT_OBSERVED_AT_LOCAL_CUTOFF",
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": false,
+      "passed": true
+    },
+    {
+      "case": "probe_info",
+      "cutoff": 1788831601761587000,
+      "state": {
+        "OBSERVED": true,
+        "EVENT_OCCURRED": "UNKNOWN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": true,
+      "passed": true
+    },
+    {
+      "case": "probe_info",
+      "cutoff": 1788918001761587000,
+      "state": {
+        "OBSERVED": true,
+        "EVENT_OCCURRED": "UNKNOWN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": true,
+      "passed": true
+    },
+    {
+      "case": "probe_docs",
+      "cutoff": 1788831601260932999,
+      "state": {
+        "OBSERVED": false,
+        "EVENT_OCCURRED": "UNKNOWN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "NOT_OBSERVED_AT_LOCAL_CUTOFF",
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": false,
+      "passed": true
+    },
+    {
+      "case": "probe_docs",
+      "cutoff": 1788831601260933000,
+      "state": {
+        "OBSERVED": true,
+        "EVENT_OCCURRED": "UNKNOWN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": true,
+      "passed": true
+    },
+    {
+      "case": "probe_docs",
+      "cutoff": 1788918001260933000,
+      "state": {
+        "OBSERVED": true,
+        "EVENT_OCCURRED": "UNKNOWN",
+        "ECONOMICALLY_ELIGIBLE": false,
+        "reasons": [
+          "ECONOMIC_CONTRACT_NOT_PROVEN",
+          "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+          "VALID_FROM_NOT_PROVEN",
+          "VALID_UNTIL_NOT_PROVEN",
+          "CONTRACT_VERSION_NOT_PROVEN"
+        ]
+      },
+      "expected_observed": true,
+      "passed": true
+    }
+  ],
+  "summary": {
+    "positive": 27,
+    "negative": 28,
+    "unknown": 3,
+    "total_controls": 58,
+    "failed": 0,
+    "temporal_controls": 114,
+    "temporal_failed": 0,
+    "economic_admissions": 0,
+    "scope": "Positive economic algebra uses declared units only; no complete real contract implied"
+  }
+}

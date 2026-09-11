@@ -1,0 +1,142 @@
+[
+  {
+    "case": "spot_info",
+    "passed": true,
+    "recorded_sha256": "b0b5e41545939290197078b93708f917fdd2e6bbf4de865e3904f2ac1c53dfae"
+  },
+  {
+    "case": "future_info",
+    "passed": true,
+    "recorded_sha256": "18a1918fe29286e3a113d77c6b589cb61bccdbf2e4ae43a706ae28a4338d1bc0"
+  },
+  {
+    "case": "spot_00",
+    "passed": true,
+    "recorded_sha256": "2420facb21195c01c1650b6349eb83efd1b0af46aae6f7e25d899d5a84f22342"
+  },
+  {
+    "case": "future_00",
+    "passed": true,
+    "recorded_sha256": "e97769e5af290d42fec55a4f8946ed511ad4e34232bcc055e408d8c327c450f2"
+  },
+  {
+    "case": "spot_01",
+    "passed": true,
+    "recorded_sha256": "5aced36775ec0929dd6d07c1d4985fca3866a26a5e2085b734e8878215b54b50"
+  },
+  {
+    "case": "future_01",
+    "passed": true,
+    "recorded_sha256": "7c444fd84edaea0b08a40177af75c0149fafc7167ca41d79b1e1e3ff55ff2800"
+  },
+  {
+    "case": "spot_02",
+    "passed": true,
+    "recorded_sha256": "7cd0f0cd83b2368008226c7f57f2b0020d0a78c2c7bdc8289e3003f56a0c7b5c"
+  },
+  {
+    "case": "future_02",
+    "passed": true,
+    "recorded_sha256": "b8d6a33ea6999188e16d5fdd26186426368f082409dc19abfc8b0ab9055f3aa5"
+  },
+  {
+    "case": "spot_03",
+    "passed": true,
+    "recorded_sha256": "56b78764f8a4fad4f130791659a342b67ff0c44cbb5386067d94e3244c6c8624"
+  },
+  {
+    "case": "future_03",
+    "passed": true,
+    "recorded_sha256": "2065381bf8092b0ee76f88561182e6b28ac819c6ed5e796c9f571498e72b8908"
+  },
+  {
+    "case": "spot_04",
+    "passed": true,
+    "recorded_sha256": "104c5c510115e7cca4edddb1eef8ad9de0ed5f89a1ba15f283bd189f8a1bdda1"
+  },
+  {
+    "case": "future_04",
+    "passed": true,
+    "recorded_sha256": "0baf4a6f3bfc2173c1703941987d2765e551227bb8f35c12039fa5e05bd0d51c"
+  },
+  {
+    "case": "spot_05",
+    "passed": true,
+    "recorded_sha256": "ebfbe12f13af55af5b10bbd3eeeadb4377c0a47989ff8b441a8b05e6397574e8"
+  },
+  {
+    "case": "future_05",
+    "passed": true,
+    "recorded_sha256": "d82cfe6d42142a0adebae02d8c1cc1c8338c173ff4209facd94592412bf5ce5c"
+  },
+  {
+    "case": "spot_06",
+    "passed": true,
+    "recorded_sha256": "63aed2b54dd35fb235ce5a2d0707705d2fb8998b25bc97ce87ad356d2758b56e"
+  },
+  {
+    "case": "future_06",
+    "passed": true,
+    "recorded_sha256": "f93fc1e27888f4f9cb71fefa1c1e1ec4c186dd090cc36c5c386817fb64b50eb6"
+  },
+  {
+    "case": "spot_07",
+    "passed": true,
+    "recorded_sha256": "8f6cee3b580cab87549efae778d3a26f20e1218c8fa1374ee11b048ec16e78b2"
+  },
+  {
+    "case": "future_07",
+    "passed": true,
+    "recorded_sha256": "646639ec29fb3e2cee76cca7dd1129b98e89226e8b8bba25e60943fc5f3ebc60"
+  },
+  {
+    "case": "spot_08",
+    "passed": true,
+    "recorded_sha256": "6389a88a1f250e55f752761cc1efe1289baa8062dd0751f753282478dc654490"
+  },
+  {
+    "case": "future_08",
+    "passed": true,
+    "recorded_sha256": "31ebfcd5b9db0b2a20fed3a16bb48642f21696fb81168829ef8c88c957c8ea29"
+  },
+  {
+    "case": "spot_09",
+    "passed": true,
+    "recorded_sha256": "7e78b2f80c2d662d824174b027735dfeaecf9bcded119dbcd71b38872b3c4056"
+  },
+  {
+    "case": "future_09",
+    "passed": true,
+    "recorded_sha256": "109b494d55d0a0c82588154162f1a12e1011af0fa313e0d387f76e28f2fc7fa4"
+  },
+  {
+    "case": "spot_10",
+    "passed": true,
+    "recorded_sha256": "0ac6a67e698fbee2539336e8ed666c5e44214db4dcc7125c88eabbd6dfd23650"
+  },
+  {
+    "case": "future_10",
+    "passed": true,
+    "recorded_sha256": "a2173541500ee82bbc2247686b58cf974e4e67bc63038d7c9f2babd681ed0b44"
+  },
+  {
+    "case": "spot_11",
+    "passed": true,
+    "recorded_sha256": "e1ee5c9313b2df7db8e82af4134d702705653295f6c77c9175cd148a3b1a3aaf"
+  },
+  {
+    "case": "future_11",
+    "passed": true,
+    "recorded_sha256": "669609e4de170d3510fe30d1b17826c4b6ce9a1d6c7ae8a725f1a74a13bbef99"
+  },
+  {
+    "case": "probe_docs",
+    "passed": true,
+    "recorded_sha256": "085ab91377aa9325d44f4c7ad27cce4ab381e158403e1d7df2bad39d1a66f7c6"
+  },
+  {
+    "case": "probe_info",
+    "passed": true,
+    "recorded_sha256": "18a1918fe29286e3a113d77c6b589cb61bccdbf2e4ae43a706ae28a4338d1bc0"
+  }
+]

@@ -1,0 +1,15 @@
+{
+  "args": [
+    "--strict-config",
+    "--strict-markers",
+    "-q",
+    "-p",
+    "no:cacheprovider",
+    "--junitxml=C:\\Cripto\\operacao\\relatorios\\OPEN_SOURCE_20260911T0233\\completion\\full_suite.xml",
+    "tests"
+  ],
+  "started_at": "2026-09-11T02:55:22.980749+00:00",
+  "elapsed_seconds": 431.5433109999867,
+  "exit_code": 0,
+  "scope": "Complete repository test suite; individual historical evidence tests included; external socket connect denied; loopback allowed for Windows asyncio; no new economic trial or frozen live evaluator execution"
+}

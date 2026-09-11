@@ -1,0 +1,13 @@
+{
+  "registered_at": "2026-09-11T04:54:05.649011+00:00",
+  "version": "F01-real v3",
+  "prior_failure_sha256": "569de6596215bfb998e434a4797657a673dcde3afe96b1eaca5cc4d662917ea2",
+  "change": "Separate evidence envelope with explicit statuses, semantic descriptor, immutable provenance and conservative asof. No modifications to v2. No invented identity, no automatic migration into production.",
+  "invariants": [
+    "All proven values recomputable from sealed receipts",
+    "Unknown required economic identity blocks join",
+    "Receipt time is only local-known upper bound, never historical publication",
+    "All eight adversarial families must reject"
+  ],
+  "scope": "Partial evidence normalization is supported; complete economic replay is not implied"
+}

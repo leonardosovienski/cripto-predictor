@@ -1,0 +1,18 @@
+{
+  "case": "future_00",
+  "cutoff_ns": 1788833245358000000,
+  "v3_available_predicate": true,
+  "v3B_states": {
+    "OBSERVED": true,
+    "EVENT_OCCURRED": "TIMESTAMP_ATTACHED_LOCAL_OCCURRENCE_NOT_PROVEN",
+    "ECONOMICALLY_ELIGIBLE": false,
+    "reasons": [
+      "ECONOMIC_CONTRACT_NOT_PROVEN",
+      "SOURCE_TO_LOCAL_CLOCK_MAPPING_NOT_PROVEN",
+      "VALID_FROM_NOT_PROVEN",
+      "VALID_UNTIL_NOT_PROVEN",
+      "CONTRACT_VERSION_NOT_PROVEN"
+    ]
+  },
+  "meaning": "v3 numeric predicate was a technical filter, not proof of economic admissibility. Same-domain observation and cross-domain event meaning are now distinct; no earlier artifacts changed."
+}

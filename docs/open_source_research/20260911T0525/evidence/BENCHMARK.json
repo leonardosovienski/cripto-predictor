@@ -1,0 +1,64 @@
+{
+  "seed": 20260911,
+  "timings": [
+    {
+      "name": "panel_20000_rows",
+      "median_seconds": 0.19693520000146236,
+      "seconds": [
+        0.19693520000146236,
+        0.25019560000509955,
+        0.1682452000095509,
+        0.2502442999975756,
+        0.16386290000809822
+      ],
+      "deterministic": true
+    },
+    {
+      "name": "universe_10000_rows",
+      "median_seconds": 0.0627393999893684,
+      "seconds": [
+        0.09594749999814667,
+        0.03911840000364464,
+        0.06802459999744315,
+        0.04577550000976771,
+        0.0627393999893684
+      ],
+      "deterministic": true
+    },
+    {
+      "name": "interval_split_10000_rows_10_windows",
+      "median_seconds": 0.03856359999917913,
+      "seconds": [
+        0.039816699994844384,
+        0.03856359999917913,
+        0.0368255999928806,
+        0.03631749999476597,
+        0.04109650000464171
+      ],
+      "deterministic": true
+    },
+    {
+      "name": "composed_demo",
+      "median_seconds": 0.0003862999874399975,
+      "seconds": [
+        0.0037453999975696206,
+        0.0003862999874399975,
+        0.00022679999528918415,
+        0.0003647999983513728,
+        0.0005075999943073839
+      ],
+      "deterministic": true
+    }
+  ],
+  "comparison": {
+    "economic_validation": {
+      "left": false,
+      "right": false
+    },
+    "outputs": {
+      "left": 4,
+      "right": 4
+    }
+  },
+  "limits": "Local warm timings, not speedup vs competitor or alpha. First implementation previously absent; no human-productivity multiplier estimated."
+}

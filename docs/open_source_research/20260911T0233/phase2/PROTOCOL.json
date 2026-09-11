@@ -1,0 +1,73 @@
+{
+  "initiative": "20260911T0233",
+  "phase": "2",
+  "registered_at": "2026-09-11T03:30:16.962749+00:00",
+  "head": "e4f8974beadc02aed63c7f94cf3d80cb27d4dd7f",
+  "purpose": "ENGINEERING_AND_SCIENTIFIC_ENABLER; no economic winner search",
+  "network_budget": 0,
+  "orders": 0,
+  "capital_authorized": false,
+  "production_changes": false,
+  "tuning_budget": 0,
+  "baseline_sha256": "fbffd0b566058ecf98ecf354b740693cd1f8b44e2ab57d7e7de72a09ba5497cb",
+  "attempt_policy": "One fixed run; errors retained; repairs versioned and explained; no parameter changes from favorable/unfavorable output",
+  "F01": {
+    "hypothesis": "Explicit identity plus publication/receipt/version gates preserve distinctions lost by the current MarketDataPoint fields.",
+    "inputs": "4 fixed pairs: quote, payoff/settlement, chain token, venue; 2 clock failures; late revision before/after receipt; missing FX and explicit 0.97 conversion; invalid instrument control",
+    "reference": "actual installed MarketDataPoint field introspection; explicit expected pair labels; Decimal arithmetic; no independent human assessor",
+    "metric": "0 collisions among 4 distinct identities; all invalid temporal/conversion inputs rejected; as-of old then revised record; currency amount 100 USDT ->97 USD only with observed FX",
+    "success": "all fixed expectations pass",
+    "reject": "any identity collision, future revision or implicit FX acceptance",
+    "inconclusive": "provider metadata unsupported or unavailable; synthetic success never certifies true identity of market data"
+  },
+  "F02": {
+    "hypothesis": "An accessible separate archival route would corroborate the 38 fixed boundaries.",
+    "inputs": "existing protocol/result hashes and raw-directory inventory; no repeat calls absent evidence of changed access",
+    "metric": "new eligible successful receipt plus full38 comparison required",
+    "success": "all38 match with documented provenance; NOT expected to be testable offline",
+    "reject": "actual block/identity/index mismatch, never timeout",
+    "inconclusive": "no change of access or missing receipts",
+    "budget": "0 new network calls; preserve original1-call timeout"
+  },
+  "F03": {
+    "hypothesis": "Existing retrospective panel can support a new PIT universe/ranking experiment without reconstructing eligibility from future knowledge.",
+    "inputs": "acquisition metadata for all pairs; deterministic schema samples BTCUSDT ETHUSDT FTTUSDT USDCUSDT if present; identity_events13 censored cases; only schema/provenance/dates, no return computation",
+    "controls": "synthetic universe with late listing, known delisting, revision and excluded USDC; oracle membership by explicit decisions; naive latest/current-survivor selection as negative control",
+    "required_fields": [
+      "instrument_id",
+      "event_at",
+      "published_at",
+      "received_at",
+      "eligible_from",
+      "eligible_to",
+      "eligibility_known_at",
+      "source_receipt_hash"
+    ],
+    "metric": "100% coverage of required temporal/eligibility evidence on used data; 0 synthetic membership mismatches",
+    "success": "gate passes only if all evidence exists and PIT is verified",
+    "reject": "reject this dataset use if future information required; do not reject residual ranking economically",
+    "inconclusive": "missing historical evidence/hedge cost/unused evaluation period; no IC/PnL then"
+  },
+  "F04": {
+    "hypothesis": "Partial second-leg fills and segregated cash can overturn apparent full-fill basis profit.",
+    "inputs": "9 scenarios: future fill0,0.5,1 BTC times delay0,1,10 seconds; unwind spot prices100,99,95 tied exogenously to delay; spot buy1 BTC at100; future sell101; matched legs close at100; quote fee0.001 each fill",
+    "capital": "spot venue110 USD, future venue50 USD, margin20% of101*filled, no transfer; matched positions held86400seconds; no funding or interest in base scenario; sensitivity financing break-even reported not estimated",
+    "reference": "event ledger with Decimal versus independent closed-form Fraction cash flows; exact expected no-transfer rejection with future cash0 despite spot cash160",
+    "metric": "cash/PnL error<=1e-10; no negative free cash; no implicit cross-venue netting; payoff sign and delay sensitivity",
+    "success": "ledger matches all9 closed forms and rejects orphan/insufficient local margin controls",
+    "reject": "reject robustness of this synthetic gross-edge example when net<=0; any accounting mismatch rejects adapter correctness",
+    "inconclusive": "no real L2/latency/fees/funding/MTM liquidation path; no empirical fill rates/capacity"
+  },
+  "F05": {
+    "hypothesis": "Dependence and adaptive selection make naive intervals and selected single-test p-values too optimistic.",
+    "inputs": "AR(1) rho0.6,n160,stationary variance1,seed2026091105,400 series; circular block bootstrap length8,299 resamples; fixed95% intervals; exact Gaussian known-covariance reference; no market outcomes",
+    "multiplicity": "8 blocks x4 fixed independent seeded Gaussian magnitudes (seed2026091106); enumerate all256 shared sign patterns; one-sided max-mean selection; exact unadjusted selected p versus maxT corrected p",
+    "labels": "30 synthetic labels, row5 ends25, plus one late-available label; teststarts15,20,25; oracle requires label end and available before cutoff",
+    "reference": "analytic AR1 variance versus covariance matrix sum; loop versus vectorized sign randomization; scalar interval membership oracle",
+    "metric": "coverage counts with Monte Carlo SE; mean interval width; exact selected-family type-I fraction at0.05; 0 forbidden labels after gate",
+    "success": "known-variance95% coverage within0.90..0.99; exact maxT family rejection<=0.05; arithmetic references<=1e-10; all label controls pass",
+    "reject": "reject tested inferential procedure if coverage<0.90 or maxT error>0.05 under its stated null; do not tune blocklength afterward",
+    "inconclusive": "unknown market dependence; block8 may under-cover; no real complete search ledger/label manifest means no economic CI or SPA/PBO claim"
+  },
+  "preservation": "No frozen hypotheses/outcomes updated; new research adapters only; no complete suite repeat"
+}

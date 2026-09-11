@@ -1,0 +1,112 @@
+{
+  "initiative": "20260911T0233",
+  "phase": 2,
+  "files": [
+    {
+      "path": "ADVERSARIAL_PROTOCOL.json",
+      "sha256": "d20fa3f202e73d75a50a96994bab58b8517b6e07cd643eacb96fef9633a91056",
+      "bytes": 1268
+    },
+    {
+      "path": "BASELINE.json",
+      "sha256": "fbffd0b566058ecf98ecf354b740693cd1f8b44e2ab57d7e7de72a09ba5497cb",
+      "bytes": 2387
+    },
+    {
+      "path": "EXPERIMENTS.md",
+      "sha256": "2fc35a411468b2af533da544535ed2382e3a137a9c136a4ff463815ee4695884",
+      "bytes": 17570
+    },
+    {
+      "path": "F01_ADVERSARIAL_V1.json",
+      "sha256": "2a97eb2a3f84130b5ffc5427e7d556fc5e9ed53e581a9ab3b6d5ba58f27b20de",
+      "bytes": 5949
+    },
+    {
+      "path": "F01_ADVERSARIAL_V2.json",
+      "sha256": "dd58d09318150c22b4231d6479f28f7656c116208af52c49c00f2e3f397a96e3",
+      "bytes": 5942
+    },
+    {
+      "path": "F03_SEMANTIC_GATE.json",
+      "sha256": "3f352f58c1af523b27a3fd947a98702b05cfdffe29ec030de1886b8fe67002f8",
+      "bytes": 6702
+    },
+    {
+      "path": "phase1_manifest_snapshot.json",
+      "sha256": "5ce4069478197afc822f1e2d89e5e4e79a0787254b9a66e81d1e046fc2376708",
+      "bytes": 7347
+    },
+    {
+      "path": "phase1_registry_snapshot.json",
+      "sha256": "1b976f23371c3b8de9775f7b7a9590757df111d2981e1e76676fa2abb197259b",
+      "bytes": 241769
+    },
+    {
+      "path": "phase1_report_snapshot.md",
+      "sha256": "a9017fe4e9aafe058e577ddc930d3a4f999107e8c41d72349fbc24cae40b5afc",
+      "bytes": 11925
+    },
+    {
+      "path": "PRESERVATION.json",
+      "sha256": "59047c8c6f4888597483628ecf86fa7a4bd6152b8b4ce02eee60cc84defb8385",
+      "bytes": 2367
+    },
+    {
+      "path": "PROTOCOL.json",
+      "sha256": "a54ab47ab7a3ab16ec6254c68f4f5deef9f1e783302b454c3299971eb2b6e416",
+      "bytes": 6313
+    },
+    {
+      "path": "REGISTRY.json",
+      "sha256": "40ed8521279da5370c0f242439dc83b1b1caef378a6cdd19384771dc2c303a12",
+      "bytes": 22497
+    },
+    {
+      "path": "REPORT.md",
+      "sha256": "1b4a9f13078505124c989d401cec5f2bac3e8dffe836a17e0013b999ac9e09e6",
+      "bytes": 9741
+    },
+    {
+      "path": "reproduction/adversarial.py",
+      "sha256": "c4bca55ad193b32b26fc50286c0b123928fb7befdea59c0505d89fe3809d64a1",
+      "bytes": 1326
+    },
+    {
+      "path": "reproduction/adversarial_protocol.py",
+      "sha256": "0a3d689ca973fd351e4c452f11dde06934f3811d03903609fee024afb5754998",
+      "bytes": 1420
+    },
+    {
+      "path": "reproduction/experiments.py",
+      "sha256": "b2636d2b290a8dd905a04263d6be501b16598e086eb525a3b3f617f9fab83a3a",
+      "bytes": 19894
+    },
+    {
+      "path": "reproduction/experiments_v1_preserved.py",
+      "sha256": "c34ff97664b704eb3da64996f4ff7cf87d36034acd73df70256b83253435c648",
+      "bytes": 18805
+    },
+    {
+      "path": "reproduction/prepare.py",
+      "sha256": "cf13174509b34e1c533202b5a6181244f0bbd429b52c3d05a326908d380b6020",
+      "bytes": 7903
+    },
+    {
+      "path": "reproduction/report_phase2.py",
+      "sha256": "b29b10e3071c403f429fc476a0189e6a45253ff8b22232cf0b85449d7c5c97c4",
+      "bytes": 32119
+    },
+    {
+      "path": "reproduction/semantic_gate.py",
+      "sha256": "454c61808380f8f66237b7623393eec03e2186cf7a86150f23b45c952d66a893",
+      "bytes": 2499
+    },
+    {
+      "path": "RESULTS.json",
+      "sha256": "5fe1d217f751ebd1de2870612fae7f6b9941e9ccc3de9bcd061b14266bd857c0",
+      "bytes": 48368
+    }
+  ],
+  "validation": "5 experiments x15 fields; initial and adversarial failure/success preserved; no stochastic rerun; baseline/protected/source/data hashes checked"
+}

@@ -1,0 +1,44 @@
+{
+  "origin": "existing registered historical primary cases; no selection among 1728 by profit",
+  "source": "C:\\Cripto\\pesquisa-20260909\\docs\\evidence\\aave_validation_20260910\\funded_costs\\results.json",
+  "sha256": "93f3e27bbdb203aaf430f576784b5f9c7d7cc00a5e8f41cb3e96e2dd4b6c1423",
+  "cashflows_reconciled": 1728,
+  "primary": [
+    {
+      "additional_cost_scenario_usdc": 0,
+      "days": 365,
+      "end": "2025-06-01T00:00:00+00:00",
+      "entry_exit_snapshot_gate": true,
+      "execution_cost_usdc": 30,
+      "final_equity_usdc": "5232.413985",
+      "gross_interest_usdc": "287.413985",
+      "kind": "primary_annual",
+      "lent_principal_usdc": "4945",
+      "loss_5pct_exit_equivalent_usdc": "-116826857/4000000",
+      "net_after_registered_costs_usdc": "232.413985",
+      "personal_profit_validated": false,
+      "reserved_costs_usdc": "55",
+      "start": "2024-06-01T00:00:00+00:00",
+      "total_capital_usdc": 5000
+    },
+    {
+      "additional_cost_scenario_usdc": 0,
+      "days": 365,
+      "end": "2026-06-01T00:00:00+00:00",
+      "entry_exit_snapshot_gate": true,
+      "execution_cost_usdc": 30,
+      "final_equity_usdc": "5110.170571",
+      "gross_interest_usdc": "165.170571",
+      "kind": "primary_annual",
+      "lent_principal_usdc": "4945",
+      "loss_5pct_exit_equivalent_usdc": "-2906759151/20000000",
+      "net_after_registered_costs_usdc": "110.170571",
+      "personal_profit_validated": false,
+      "reserved_costs_usdc": "55",
+      "start": "2025-06-01T00:00:00+00:00",
+      "total_capital_usdc": 5000
+    }
+  ],
+  "future_profit_validated": false,
+  "personal_profit_validated": false
+}

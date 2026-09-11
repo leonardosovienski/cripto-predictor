@@ -1,0 +1,187 @@
+[
+  {
+    "original": "C:\\Cripto\\operacao\\dados\\altcoin-gap-probes-20260909\\FTTUSDT.metadata.json",
+    "bundled": "receipt_bundle\\4d1c759a8e036983_FTTUSDT.metadata.json",
+    "sha256": "4d1c759a8e036983b40de35e60dda0c39c9cace2085fcb2c9080a5f0740aef00"
+  },
+  {
+    "original": "C:\\Cripto\\operacao\\dados\\altcoin-gap-probes-20260909\\FTTUSDT.response.gz",
+    "bundled": "receipt_bundle\\64406e753d82e11c_FTTUSDT.response.gz",
+    "sha256": "64406e753d82e11c6bd63d1d04bb6aa083eefa0a46949bbfce994d556b989f0f"
+  },
+  {
+    "original": "C:\\Cripto\\operacao\\dados\\basis-recovered-20260909\\raw\\012daf4997042a759267a05a899781f0733c4713e8a751860ae8f785eb7f7e5b.bin.gz",
+    "bundled": "receipt_bundle\\23032bd676c1ceeb_012daf4997042a759267a05a899781f0733c4713e8a751860ae8f785eb7f7e5b.bin.gz",
+    "sha256": "23032bd676c1ceebcbc5072dac35cd7575911959eccd1f116a047593677bda60"
+  },
+  {
+    "original": "C:\\Cripto\\operacao\\dados\\basis-recovered-20260909\\raw\\012daf4997042a759267a05a899781f0733c4713e8a751860ae8f785eb7f7e5b.json",
+    "bundled": "receipt_bundle\\a1e9e50a6e7f1287_012daf4997042a759267a05a899781f0733c4713e8a751860ae8f785eb7f7e5b.json",
+    "sha256": "a1e9e50a6e7f12879651b50cc00590b7c2ca393ee03ebfc26cc112e163e0e843"
+  },
+  {
+    "original": "C:\\Cripto\\operacao\\dados\\basis-recovered-20260909\\raw\\0396697a3f41a553343c5411696158b960719fecd38015c5dc675d639b7ded70.bin.gz",
+    "bundled": "receipt_bundle\\fede17cbca4bba40_0396697a3f41a553343c5411696158b960719fecd38015c5dc675d639b7ded70.bin.gz",
+    "sha256": "fede17cbca4bba40464062079c9cdfa37aca4154284a528e5ae49407eed08b31"
+  },
+  {
+    "original": "C:\\Cripto\\operacao\\dados\\basis-recovered-20260909\\raw\\0396697a3f41a553343c5411696158b960719fecd38015c5dc675d639b7ded70.json",
+    "bundled": "receipt_bundle\\4f8cce66c2bf1a50_0396697a3f41a553343c5411696158b960719fecd38015c5dc675d639b7ded70.json",
+    "sha256": "4f8cce66c2bf1a504ffd9f91d2046f5b49e3aaf4e7d84ba5f6e0ce296891488a"
+  },
+  {
+    "original": "C:\\Cripto\\operacao\\dados\\basis-recovered-20260909\\raw\\03db7a26855188a406079483ebe6bd0670e725a722a9128a9cc7d252ecd3b6fb.bin.gz",
+    "bundled": "receipt_bundle\\dd7ab1a239d1f55e_03db7a26855188a406079483ebe6bd0670e725a722a9128a9cc7d252ecd3b6fb.bin.gz",
+    "sha256": "dd7ab1a239d1f55e65702c4d88b6379470000ab3c279ebc6766be72e07e3aa28"
+  },
+  {
+    "original": "C:\\Cripto\\operacao\\dados\\basis-recovered-20260909\\raw\\03db7a26855188a406079483ebe6bd0670e725a722a9128a9cc7d252ecd3b6fb.json",
+    "bundled": "receipt_bundle\\336f6950759abe57_03db7a26855188a406079483ebe6bd0670e725a722a9128a9cc7d252ecd3b6fb.json",
+    "sha256": "336f6950759abe57c521249f734e229d02648969d2f362c51535519181df5b22"
+  },
+  {
+    "original": "C:\\Cripto\\operacao\\dados\\basis-recovered-20260909\\raw\\1d8ca73ab3f84dde4d373c768955bbd75f3178bec185b947bef8eaac38703978.bin.gz",
+    "bundled": "receipt_bundle\\e7ebd47b456cee3d_1d8ca73ab3f84dde4d373c768955bbd75f3178bec185b947bef8eaac38703978.bin.gz",
+    "sha256": "e7ebd47b456cee3d735b4753db33a2e83bb151f42dc0dbbafca3c0e2e343fdc6"
+  },
+  {
+    "original": "C:\\Cripto\\operacao\\dados\\basis-recovered-20260909\\raw\\1d8ca73ab3f84dde4d373c768955bbd75f3178bec185b947bef8eaac38703978.json",
+    "bundled": "receipt_bundle\\6fef59bd707a1d16_1d8ca73ab3f84dde4d373c768955bbd75f3178bec185b947bef8eaac38703978.json",
+    "sha256": "6fef59bd707a1d1660424e852c8d81edea6d79c8b9fdcebbb8acea69954800a7"
+  },
+  {
+    "original": "C:\\Cripto\\operacao\\dados\\basis-recovered-20260909\\raw\\20c7f7940e3cabb18944a34b740845a19ed4f8351ff5335015ed386774b09fac.bin.gz",
+    "bundled": "receipt_bundle\\1e1bd1928be5a9c4_20c7f7940e3cabb18944a34b740845a19ed4f8351ff5335015ed386774b09fac.bin.gz",
+    "sha256": "1e1bd1928be5a9c4e9d2feb2251695361c184ec901f61c7d00d7e5a9c775ee65"
+  },
+  {
+    "original": "C:\\Cripto\\operacao\\dados\\basis-recovered-20260909\\raw\\20c7f7940e3cabb18944a34b740845a19ed4f8351ff5335015ed386774b09fac.json",
+    "bundled": "receipt_bundle\\00abbec90f3c0eb2_20c7f7940e3cabb18944a34b740845a19ed4f8351ff5335015ed386774b09fac.json",
+    "sha256": "00abbec90f3c0eb211681e62cededda3313fa29590a6bf7eab69a123ed7f5d50"
+  },
+  {
+    "original": "C:\\Cripto\\pesquisa-20260909\\docs\\evidence\\aave_validation_20260910\\history\\month-00.json",
+    "bundled": "receipt_bundle\\c25c2d2ede9870c3_month-00.json",
+    "sha256": "c25c2d2ede9870c383f361993f21f6d4202f6d907c7b1cb6db96191efda5dc46"
+  },
+  {
+    "original": "C:\\Cripto\\pesquisa-20260909\\docs\\evidence\\aave_validation_20260910\\history\\raw\\001.json",
+    "bundled": "receipt_bundle\\b0001477985d2da7_001.json",
+    "sha256": "b0001477985d2da787a904505886298005898ec7e589b02178cceefc944945ca"
+  },
+  {
+    "original": "C:\\Cripto\\pesquisa-20260909\\docs\\evidence\\aave_validation_20260910\\history\\raw\\002.json",
+    "bundled": "receipt_bundle\\911dcd83a9d9bf2e_002.json",
+    "sha256": "911dcd83a9d9bf2e4f749ff14216d6f7a881708475cd7ca8d024945eca221b74"
+  },
+  {
+    "original": "C:\\Cripto\\pesquisa-20260909\\docs\\evidence\\aave_validation_20260910\\history\\raw\\004.json",
+    "bundled": "receipt_bundle\\9db2797b07378bae_004.json",
+    "sha256": "9db2797b07378baed923ce5c0a71efc1a8e310267501b428320c1df651ced4d1"
+  },
+  {
+    "original": "C:\\Cripto\\pesquisa-20260909\\docs\\evidence\\aave_validation_20260910\\history\\raw\\018.json",
+    "bundled": "receipt_bundle\\547a3aab42015d3f_018.json",
+    "sha256": "547a3aab42015d3fe21ebf343d3a9dca506db2781041119b3c46c1784c954679"
+  },
+  {
+    "original": "C:\\Cripto\\pesquisa-20260909\\docs\\evidence\\aave_validation_20260910\\history\\raw\\019.json",
+    "bundled": "receipt_bundle\\52e3892d67c719da_019.json",
+    "sha256": "52e3892d67c719da3255c89bd990511f42f1bd4badfbfcc1ffd6d59e5bf25942"
+  },
+  {
+    "original": "C:\\Cripto\\pesquisa-20260909\\docs\\evidence\\aave_validation_20260910\\history\\raw\\021.json",
+    "bundled": "receipt_bundle\\91fef22f7b040d5c_021.json",
+    "sha256": "91fef22f7b040d5cce596bc6bfaebd46f08452ec7dda083b9abc60e60a1e84f9"
+  },
+  {
+    "original": "C:\\Cripto\\pesquisa-20260909\\docs\\evidence\\aave_validation_20260910\\history\\raw\\023.json",
+    "bundled": "receipt_bundle\\c25290f8f88e8e0e_023.json",
+    "sha256": "c25290f8f88e8e0e0e1cbfcffeb8f68a810684aff01714a7f90eac9543f0f245"
+  },
+  {
+    "original": "C:\\Cripto\\pesquisa-20260909\\docs\\evidence\\aave_validation_20260910\\history\\raw\\025.json",
+    "bundled": "receipt_bundle\\ebeec3a29c3c7631_025.json",
+    "sha256": "ebeec3a29c3c7631043393a5506117ee447d067898c9db4c3ce1be39d02b7f3f"
+  },
+  {
+    "original": "C:\\Cripto\\pesquisa-20260909\\docs\\evidence\\aave_validation_20260910\\history\\raw\\027.json",
+    "bundled": "receipt_bundle\\8f9db08bf63a6d74_027.json",
+    "sha256": "8f9db08bf63a6d747c82b2fcf8ba4b768853a783b582c0c80bb9814afb7f912d"
+  },
+  {
+    "original": "C:\\Cripto\\pesquisa-20260909\\scripts\\recover_aave_history.py",
+    "bundled": "receipt_bundle\\073daf838238cb20_recover_aave_history.py",
+    "sha256": "073daf838238cb206a6aba1d1f1ba77a835795eb7af5b3c1977797f281767e94"
+  },
+  {
+    "original": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-altcoins\\work\\altcoin-retro-data\\raw\\16759df9301ee88bdd24f96f5a8e1d7054497f595ba79fcd796aa0b851271645.bin.gz",
+    "bundled": "receipt_bundle\\ae3c985614ae1f73_16759df9301ee88bdd24f96f5a8e1d7054497f595ba79fcd796aa0b851271645.bin.gz",
+    "sha256": "ae3c985614ae1f7362866e07397950c616beba7e610c97f6b0838697678ff33b"
+  },
+  {
+    "original": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-altcoins\\work\\altcoin-retro-data\\raw\\16759df9301ee88bdd24f96f5a8e1d7054497f595ba79fcd796aa0b851271645.json",
+    "bundled": "receipt_bundle\\3226120888321660_16759df9301ee88bdd24f96f5a8e1d7054497f595ba79fcd796aa0b851271645.json",
+    "sha256": "32261208883216601eeab8c9071fc1bf4714e371ebd616ef212a40c1b7f04c72"
+  },
+  {
+    "original": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-altcoins\\work\\altcoin-retro-data\\raw\\1b09a8edced043abadc10c7357dcd8cc7db6313d83c863ed005a6c852c8e4f18.bin.gz",
+    "bundled": "receipt_bundle\\1d767550b3c1c580_1b09a8edced043abadc10c7357dcd8cc7db6313d83c863ed005a6c852c8e4f18.bin.gz",
+    "sha256": "1d767550b3c1c58087cabffa756f838ff1844875ec8e017fc12255d097486b48"
+  },
+  {
+    "original": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-altcoins\\work\\altcoin-retro-data\\raw\\1b09a8edced043abadc10c7357dcd8cc7db6313d83c863ed005a6c852c8e4f18.json",
+    "bundled": "receipt_bundle\\6ed75fbcbc9c3c12_1b09a8edced043abadc10c7357dcd8cc7db6313d83c863ed005a6c852c8e4f18.json",
+    "sha256": "6ed75fbcbc9c3c12154edacc3fe25709d91e0118140ccb4f88653ecd2fb0ddd4"
+  },
+  {
+    "original": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-altcoins\\work\\altcoin-retro-data\\raw\\2417ae507fcb43188af0cf2936cb3632942a1a931a7860e5eebed521ddddc0e4.bin.gz",
+    "bundled": "receipt_bundle\\99d6a5a123df423a_2417ae507fcb43188af0cf2936cb3632942a1a931a7860e5eebed521ddddc0e4.bin.gz",
+    "sha256": "99d6a5a123df423a9138bf5fb89b5e56b818235b7af193efe71522c0f45e70a9"
+  },
+  {
+    "original": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-altcoins\\work\\altcoin-retro-data\\raw\\2417ae507fcb43188af0cf2936cb3632942a1a931a7860e5eebed521ddddc0e4.json",
+    "bundled": "receipt_bundle\\553afc487f351900_2417ae507fcb43188af0cf2936cb3632942a1a931a7860e5eebed521ddddc0e4.json",
+    "sha256": "553afc487f3519005248737dc57ab7986b91ea1fa37dbfe94b5f0632826cdacb"
+  },
+  {
+    "original": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-altcoins\\work\\altcoin-retro-data\\raw\\407fc77e3a2371cc121b18591f0577053b94035c7be402259b77372543e755f7.bin.gz",
+    "bundled": "receipt_bundle\\b8e5eb56e485c40a_407fc77e3a2371cc121b18591f0577053b94035c7be402259b77372543e755f7.bin.gz",
+    "sha256": "b8e5eb56e485c40a253af4999ee2c99ceeb01d30be3fa9fdfa8ca3937707dfe5"
+  },
+  {
+    "original": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-altcoins\\work\\altcoin-retro-data\\raw\\407fc77e3a2371cc121b18591f0577053b94035c7be402259b77372543e755f7.json",
+    "bundled": "receipt_bundle\\cf8ee2c562b0a04f_407fc77e3a2371cc121b18591f0577053b94035c7be402259b77372543e755f7.json",
+    "sha256": "cf8ee2c562b0a04f762da2f8b4fb2f958ea37102ff5c552088dc6db5caa55934"
+  },
+  {
+    "original": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-altcoins\\work\\altcoin-retro-package\\docs\\evidence\\altcoin_payoff_20260907\\identity_events.json",
+    "bundled": "receipt_bundle\\85759f042ec26c8b_identity_events.json",
+    "sha256": "85759f042ec26c8bc24f21883370d7bf538da7e46d0fb26a230582045a3b21cb"
+  },
+  {
+    "original": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\btc-execution-diagnostic-v1\\diagnostic.json",
+    "bundled": "receipt_bundle\\9987357a290f4901_diagnostic.json",
+    "sha256": "9987357a290f4901a07289f52540b03cfb79799c8c10d04bf344a6c183b60cf1"
+  },
+  {
+    "original": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\btc-execution-diagnostic-v1\\raw\\future_00.bin.gz",
+    "bundled": "receipt_bundle\\9f044cc7afc7ffb8_future_00.bin.gz",
+    "sha256": "9f044cc7afc7ffb84b3c48a1119ff9c3d8e94f9aa0908593dd7214fe9537f5e0"
+  },
+  {
+    "original": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\btc-execution-diagnostic-v1\\raw\\future_info.bin.gz",
+    "bundled": "receipt_bundle\\5c63ccfebe081dda_future_info.bin.gz",
+    "sha256": "5c63ccfebe081ddaf935e1e016978267429899735d063985c532d17835c3dd22"
+  },
+  {
+    "original": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\btc-execution-diagnostic-v1\\raw\\spot_00.bin.gz",
+    "bundled": "receipt_bundle\\1d6bee6f95e0809d_spot_00.bin.gz",
+    "sha256": "1d6bee6f95e0809dce0bd10c6f2f94add54502f6dc185b28339a6425d7adf8d3"
+  },
+  {
+    "original": "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-pesquisa\\work\\btc-execution-diagnostic-v1\\raw\\spot_info.bin.gz",
+    "bundled": "receipt_bundle\\9eaf77b9e0b5e969_spot_info.bin.gz",
+    "sha256": "9eaf77b9e0b5e9691f34c784d0bb920484a6a13353291caca6cd82b55cfd85e1"
+  }
+]

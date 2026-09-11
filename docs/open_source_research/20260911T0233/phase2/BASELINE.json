@@ -1,0 +1,26 @@
+{
+  "phase": "2",
+  "initiative": "20260911T0233",
+  "observed_at": "2026-09-11T03:30:16.950535+00:00",
+  "head": "e4f8974beadc02aed63c7f94cf3d80cb27d4dd7f",
+  "prior_manifest_verified": 43,
+  "source_hashes_verified": 364,
+  "inputs": {
+    "C:\\Cripto\\pesquisa-20260909\\docs\\open_source_research\\20260911T0233\\REGISTRY.json": "1b976f23371c3b8de9775f7b7a9590757df111d2981e1e76676fa2abb197259b",
+    "C:\\Cripto\\pesquisa-20260909\\docs\\open_source_research\\20260911T0233\\MANIFEST.json": "5ce4069478197afc822f1e2d89e5e4e79a0787254b9a66e81d1e046fc2376708",
+    "C:\\Cripto\\pesquisa-20260909\\docs\\open_source_research\\20260911T0233\\preservation_completion.json": "8bab675b3cb798c1f29bb22f7165e492f7f68114096be86caf92bc55a916509d",
+    "C:\\Cripto\\pesquisa-20260909\\.venv\\Lib\\site-packages\\predictor_core\\data\\contracts.py": "33476efcd3691ca876c1a5f5441925819808a68f5fc5fd25dfbb8088a453df73",
+    "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-altcoins\\work\\altcoin-retro-data\\acquisition.json": "ca3897824e62fce6b8b944f17af4d6220a28ef66765e83208a43d3c68fabc53d",
+    "C:\\Cripto\\restaurado-20260908\\sessoes\\20260907-altcoins\\work\\altcoin-retro-package\\docs\\evidence\\altcoin_payoff_20260907\\identity_events.json": "85759f042ec26c8bc24f21883370d7bf538da7e46d0fb26a230582045a3b21cb",
+    "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\remaining_six_20260910\\aave_second_source\\protocol.json": "ecdb64c554d9ed5352444d599c40cbea417b1bde4bc6f6288606a41f53a47a71",
+    "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\remaining_six_20260910\\aave_second_source\\started.json": "43b8d7dfee970e6938641fbf1ecffcbf804b3741b61ff75add7982b2dff6c2dc",
+    "C:\\Cripto\\operacao\\relatorios\\REVISAO_COMPLETA_20260909\\remaining_six_20260910\\aave_second_source\\result.json": "0cc4b9f1601b3abfe19e4f8478f9c5ca29faa06252ce0761512d9af86ff92e6e"
+  },
+  "source_preservation": {
+    "docs/NEXT_CHAT_PROMPT.md": "8969db38ef9a3ec29ee16a780b9572ec9f7d7808cabc9bac17a319616b47fe20",
+    "charters/scientific_state.json": "f9d20abdef2fa77df98784a90f5d4c2e1a45907e6438ffa9d8235e5a9e063c75",
+    "GarimpoInvestimentos/trials.json": "7193b15df347b8243a65ab92449503dd64f90a9777207aadc8c80da2e0ac844b",
+    "uv.lock": "6879c2ae163acb7630c6bb37a40f11b1e62437b6bf74840cc93a4bdeb1514599"
+  },
+  "prior_outputs_not_rerun": true
+}

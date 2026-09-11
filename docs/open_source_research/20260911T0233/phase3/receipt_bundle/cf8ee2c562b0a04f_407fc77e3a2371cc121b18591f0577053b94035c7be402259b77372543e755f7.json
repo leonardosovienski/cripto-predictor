@@ -1,0 +1,8 @@
+{
+  "url": "https://api.binance.com/api/v3/klines?symbol=WBETHUSDT&interval=1d&startTime=1601510400000&endTime=1788739199999&limit=1000",
+  "retrieved_at_utc": "2026-09-07T18:51:27.706565+00:00",
+  "http_status": 200,
+  "sha256": "d2502ef8e3dfc584429ecd2f98e9e6bb46f3f68a6011cbf84c13524a41751022",
+  "bytes": 170311,
+  "server_date": "Mon, 07 Sep 2026 18:51:27 GMT"
+}

@@ -1,0 +1,15 @@
+{
+  "code_version": "ba2384abf0c6ad3f20008424c58550ce4b5652ae72808956b976370318be41eb",
+  "created_at": "2026-09-11T05:39:41.163689+00:00",
+  "economic_validation": false,
+  "files": {
+    "config.json": "c9cf01ee8aae20a98e776b099e94bed1b084a2a7c82a67d79e0b8d2a544c56ca",
+    "metrics.json": "eaa2662132aa7f61a9f9dfa48e3762eaa587307af7f9287d290a30171dfc1432",
+    "results.json": "dac40eab99132999dda8e15aff1d060648e82db8f97ebf68e831a6bee937f092"
+  },
+  "inputs": {
+    "config": "c9cf01ee8aae20a98e776b099e94bed1b084a2a7c82a67d79e0b8d2a544c56ca"
+  },
+  "run_id": "integrated_demo",
+  "schema": 1
+}

@@ -1,0 +1,8 @@
+{
+  "url": "https://fapi.binance.com/fapi/v1/fundingRate?symbol=BTCUSDT&startTime=1787760000001&endTime=1788739199999&limit=1000",
+  "request_started_utc": "2026-09-08T01:49:09.442542+00:00",
+  "known_at": "2026-09-08T01:49:09.740362+00:00",
+  "status": 200,
+  "sha256": "25810cacc6204af1ca92a64051fec38e22af3938c48d100ed1107a78c90c34e7",
+  "bytes": 4160
+}

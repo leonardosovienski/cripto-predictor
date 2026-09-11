@@ -1,0 +1,33 @@
+{
+  "protected_files": [
+    {
+      "path": "docs/NEXT_CHAT_PROMPT.md",
+      "before": "8969db38ef9a3ec29ee16a780b9572ec9f7d7808cabc9bac17a319616b47fe20",
+      "after": "8969db38ef9a3ec29ee16a780b9572ec9f7d7808cabc9bac17a319616b47fe20",
+      "unchanged": true
+    },
+    {
+      "path": "charters/scientific_state.json",
+      "before": "f9d20abdef2fa77df98784a90f5d4c2e1a45907e6438ffa9d8235e5a9e063c75",
+      "after": "f9d20abdef2fa77df98784a90f5d4c2e1a45907e6438ffa9d8235e5a9e063c75",
+      "unchanged": true
+    },
+    {
+      "path": "GarimpoInvestimentos/trials.json",
+      "before": "7193b15df347b8243a65ab92449503dd64f90a9777207aadc8c80da2e0ac844b",
+      "after": "7193b15df347b8243a65ab92449503dd64f90a9777207aadc8c80da2e0ac844b",
+      "unchanged": true
+    },
+    {
+      "path": "uv.lock",
+      "before": "6879c2ae163acb7630c6bb37a40f11b1e62437b6bf74840cc93a4bdeb1514599",
+      "after": "6879c2ae163acb7630c6bb37a40f11b1e62437b6bf74840cc93a4bdeb1514599",
+      "unchanged": true
+    }
+  ],
+  "source_files_changed": [],
+  "git_head": "e4f8974beadc02aed63c7f94cf3d80cb27d4dd7f",
+  "git_status": "M docs/NEXT_CHAT_PROMPT.md\n?? docs/open_source_research/",
+  "ci_connector_attempt": "fetch_commit_workflow_runs returned empty list; not proof of absence or success",
+  "passed": true
+}
