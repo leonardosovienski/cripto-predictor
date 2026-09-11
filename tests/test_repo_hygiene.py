@@ -12,7 +12,9 @@ def test_python_payload_is_present_and_not_runtime_ignored():
 
 def test_no_legacy_shared_source_directories():
     assert not (ROOT / "vendor").exists()
-    assert not (ROOT / "packages").exists()
+    assert {path.name for path in (ROOT / "packages").iterdir()} == {"research-export"}
+    for shared in ("predictor_core", "predictor_ops"):
+        assert not list((ROOT / "packages").rglob(shared))
 
 
 def test_pyright_tem_uma_unica_fonte_de_configuracao():

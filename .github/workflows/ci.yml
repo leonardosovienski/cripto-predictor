@@ -30,6 +30,11 @@ jobs:
       - run: uv run python scripts/scan_secrets.py .
       - run: uv build
       - run: uv run pytest --cov=GarimpoInvestimentos --cov-report=term-missing
+      - uses: actions/upload-artifact@v4
+        with:
+          name: crypto-distributions
+          path: dist/*
+          if-no-files-found: error
       - name: Contract test installed wheels outside checkout
         shell: bash
         run: |
@@ -80,6 +85,7 @@ jobs:
         with:
           path: .
           output-file: sbom.spdx.json
+          upload-release-assets: false
       - run: docker build --tag cripto-predictor:test .
       - run: docker run --rm --read-only --tmpfs /tmp --cap-drop ALL cripto-predictor:test --help
       - name: Empty installed store must fail without network

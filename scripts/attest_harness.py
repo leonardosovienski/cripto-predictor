@@ -4,6 +4,11 @@ import sys
 
 from GarimpoInvestimentos.operational import attest_harness as _implementation
 
+
+def __getattr__(name):
+    return getattr(_implementation, name)
+
+
 if __name__ == "__main__":
     raise SystemExit(_implementation.main())
 else:

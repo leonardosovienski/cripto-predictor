@@ -11,8 +11,8 @@ requires-python = ">=3.13,<3.15"
 license = { text = "Proprietary" }
 dependencies = [
   "httpx>=0.28.1,<1",
-  "predictor-core>=3.2.0,<4",
-  "predictor-ops>=4.1.0,<5",
+  "predictor-core>=3.2.1,<4",
+  "predictor-ops>=4.2.0,<5",
   "pydantic>=2.12,<3",
   "pydantic-settings>=2.10,<3",
   "platformdirs>=4.3,<5",
