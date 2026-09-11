@@ -53,4 +53,4 @@ def test_backup_e_um_job_declarado(tmp_path, monkeypatch):
     monkeypatch.setenv("PREDICTOR_OPS_STATE_DIR", str(tmp_path))
     comando = jobs.job_config("backup").command
     assert comando[-3:] == ["create", "--output-root"] or "--output-root" in comando
-    assert "scripts.feature_store_backup" in comando
+    assert "GarimpoInvestimentos.operational.feature_store_backup" in comando

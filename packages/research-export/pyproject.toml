@@ -1,0 +1,15 @@
+[build-system]
+requires = ["setuptools>=75"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "crypto-research-export"
+version = "1.0.1"
+requires-python = ">=3.11"
+dependencies = ["predictor-research-snapshot>=1.0.1,<2"]
+
+[project.scripts]
+crypto-research-export = "crypto_research_export:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

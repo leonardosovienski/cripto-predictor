@@ -1,7 +1,7 @@
 """Backtesting de performance das previsões.
 
-Lê o histórico OFICIAL (Feature Store, tabela `predictions` — o CSV legado é
-absorvido de forma idempotente se existir), e para cada previsão busca o
+Lê o histórico OFICIAL (Feature Store, tabela `predictions`, sem importar CSV
+ou migrar schema), e para cada previsão busca o
 preço real do ativo em D+1, D+7 e D+30 via CoinGecko, calcula a variação
 percentual e a correlação de Spearman entre o `Score` do LLM e a variação,
 com IC95% (block bootstrap), estratificação por divergência e por Fonte,
@@ -32,7 +32,6 @@ from GarimpoInvestimentos.analyzers.trials import (
     registry_deflated_sharpe_ratio,
 )
 from GarimpoInvestimentos.config import settings
-from GarimpoInvestimentos.core.history import migrate_csv_to_store
 from GarimpoInvestimentos.core.paths import FEATURE_STORE_DB, OUTPUT_DIR
 from GarimpoInvestimentos.dpl import FeatureStore
 from GarimpoInvestimentos.dpl.providers.coingecko import coingecko_auth_headers
@@ -116,14 +115,10 @@ async def _realized_price(
 
 
 def _load_rows(*, include_legacy: bool = False) -> list[dict]:
-    """Lê o histórico OFICIAL (Feature Store, tabela predictions — passo 4),
-    absorvendo antes o CSV legado se existir (idempotente; fonte vazia → 'direct').
+    """Lê o histórico oficial sem migrar schema ou absorver CSV legado.
     Descarta linhas de fallback de LLM e sem preço/data válidos. Dedup é estrutural
     (PK ativo+ts na store)."""
-    with FeatureStore(FEATURE_STORE_DB) as store:
-        n = migrate_csv_to_store(store)
-        if n:
-            print(f"🗄️ Histórico legado absorvido na Feature Store: {n} linha(s) do CSV.")
+    with FeatureStore(FEATURE_STORE_DB, read_only=True) as store:
         preds = store.read_predictions()
         inputs = {
             (r["ativo"], r["ts"]): store.read_prediction_input(r["ativo"], r["ts"]) for r in preds

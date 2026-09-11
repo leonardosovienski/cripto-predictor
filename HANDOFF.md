@@ -1175,3 +1175,8 @@ independência de cwd): ver seção **"Como testar o projeto inteiro"** no `READ
 > 14/06. O `python.exe -m` da venv continua funcionando no novo local; só os atalhos
 > `activate` e `pip.exe` da venv guardam o caminho antigo — use sempre
 > `env\Scripts\python.exe -m pip ...` (ou recrie a venv) se precisar instalar algo.
+
+
+## Implementação arquitetural local — 2026-09-11
+
+As alterações candidatas, seus limites, verificações e rollback estão em [ARCHITECTURE_IMPLEMENTATION.md](ARCHITECTURE_IMPLEMENTATION.md). Esta implementação local não publica releases, não atualiza automaticamente os consumidores e não altera os vereditos científicos históricos.

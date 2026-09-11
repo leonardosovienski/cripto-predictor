@@ -61,7 +61,7 @@ def series_quality(points, interval: str = "1d") -> dict:
     return {"n_gaps": n_gaps, "jumps": jumps}
 
 
-async def ingest_crypto(
+async def _ingest_crypto(
     store: FeatureStore,
     facade: _OhlcvFacade,
     symbol: str,
@@ -71,6 +71,7 @@ async def ingest_crypto(
     max_staleness: dict[str, timedelta] | None = None,
     domain: str = _DEFAULT_DOMAIN,
     record_provenance: bool = True,
+    receipt: dict | None = None,
 ) -> list[dict]:
     """Coleta candles (+ sinais), grava bruto, alinha e materializa features.
 
@@ -97,6 +98,8 @@ async def ingest_crypto(
     # as observations; daily derived indicators use the contiguous suffix.
     derived = derive_features(points) if interval == "1d" else {}
     store.write_raw(points)
+    if receipt is not None:
+        receipt["stages_completed"].append("raw")
     # Proveniência (ADR-015): hash do CONTEÚDO ingerido + versão do core, em coluna
     # própria (migração 0012) — antes o hash ficava sobrecarregado dentro de `origin`,
     # colidindo semanticamente com o uso de `origin` em stocks.py ("cotahist+bcb",
@@ -117,6 +120,8 @@ async def ingest_crypto(
             code_version=f"predictor_core:{predictor_core.__version__}",
             content_hash=content_hash,
         )
+        if receipt is not None:
+            receipt["stages_completed"].append("provenance")
     emit_event(
         domain,
         "data.ingested",
@@ -178,8 +183,12 @@ async def ingest_crypto(
     crypto_daily = interval == "1d" and domain == _DEFAULT_DOMAIN
     version = DAILY_FEATURE_VERSION if crypto_daily else "v1"
     n_features = store.write_features(symbol, interval, aligned, feature_version=version)
+    if receipt is not None:
+        receipt["stages_completed"].append("features")
     if crypto_daily:
         store.write_market_snapshot(market_payload(points, aligned, signals))
+        if receipt is not None:
+            receipt["stages_completed"].append("market_snapshot")
     emit_event(
         domain,
         "data.materialized",
@@ -187,3 +196,48 @@ async def ingest_crypto(
         metadata={"symbol": symbol, "interval": interval, "signals": list(signals)},
     )
     return aligned
+
+
+async def ingest_crypto(
+    store: FeatureStore,
+    facade: _OhlcvFacade,
+    symbol: str,
+    interval: str = "1d",
+    limit: int = 30,
+    signal_providers: list[SignalProvider] | None = None,
+    max_staleness: dict[str, timedelta] | None = None,
+    domain: str = _DEFAULT_DOMAIN,
+    record_provenance: bool = True,
+) -> list[dict]:
+    """Preserve the legacy return value and record completed persistence stages.
+
+    Separate store commits remain visible after failure; a failed materialization
+    must never be reported as a completed ingestion or an atomic rollback.
+    """
+    receipt = {
+        "schema_version": "crypto-ingestion-receipt/1",
+        "symbol": symbol,
+        "interval": interval,
+        "stages_completed": [],
+        "status": "FAILED",
+    }
+    try:
+        result = await _ingest_crypto(
+            store,
+            facade,
+            symbol,
+            interval,
+            limit,
+            signal_providers,
+            max_staleness,
+            domain,
+            record_provenance,
+            receipt,
+        )
+        receipt["status"] = "SUCCEEDED"
+        return result
+    except Exception as exc:
+        receipt["error_type"] = type(exc).__name__
+        raise
+    finally:
+        emit_event(domain, "data.ingestion_receipt", metrics={}, metadata=receipt)

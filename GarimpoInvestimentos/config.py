@@ -8,12 +8,15 @@ from pydantic import Field, field_validator, model_validator
 from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
 
 from GarimpoInvestimentos.local_runtime import environment_file
+from GarimpoInvestimentos.runtime_mode import Mode, selected_mode
 
 CsvList = Annotated[list[str], NoDecode]
 
 
 class Settings(BaseSettings):
     """Typed operational settings. Scientific defaults remain unchanged."""
+
+    runtime_mode: Mode = Field(default="analysis", exclude=True)
 
     model_config = SettingsConfigDict(
         env_file=environment_file(),
@@ -117,6 +120,8 @@ class Settings(BaseSettings):
             raise ValueError("pacing must be nonnegative; TTL/horizon must be positive")
         if self.LLM_ENSEMBLE_N < 1:
             raise ValueError("LLM_ENSEMBLE_N deve ser >= 1")
+        if self.runtime_mode == "ingest":
+            return self
         provider_keys = {
             "gemini": "GEMINI_API_KEY",
             "openai": "OPENAI_API_KEY",
@@ -156,4 +161,4 @@ class Settings(BaseSettings):
         return self
 
 
-settings = Settings()
+settings = Settings(runtime_mode=selected_mode())

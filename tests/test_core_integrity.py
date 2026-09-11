@@ -15,19 +15,19 @@ ROOT = Path(__file__).resolve().parents[1]
 # truth is the lockfile itself.
 EXPECTED = {
     "predictor-core": (
-        "https://github.com/leonardosovienski/core-predictor/releases/download/v3.2.0/predictor_core-3.2.0-py3-none-any.whl",
-        "sha256:9166dd6bd3be99668c0eb8bd3c59a92061e765186608465c0caf48a2417e3009",
+        "https://github.com/leonardosovienski/core-predictor/releases/download/v3.2.1/predictor_core-3.2.1-py3-none-any.whl",
+        "sha256:10ef42f34ace8bb2df5f83ff7de2ceec79b035a25ea0a690e8942bd60d2fb4e3",
     ),
     "predictor-ops": (
-        "https://github.com/leonardosovienski/predictor-ops/releases/download/v4.1.0/predictor_ops-4.1.0-py3-none-any.whl",
-        "sha256:6d428a4d3d4fbd3f692725bf684024131f0fa65cc11d0e739e9ccb82ba9834e4",
+        "https://github.com/leonardosovienski/predictor-ops/releases/download/v4.2.0/predictor_ops-4.2.0-py3-none-any.whl",
+        "sha256:a6108ee1c6fe9c14752766a435109f9b6bcf98102ee178330512efbcac984000",
     ),
 }
 
 
 def test_shared_versions_are_exactly_compatible():
-    assert importlib.metadata.version("predictor-core") == "3.2.0"
-    assert importlib.metadata.version("predictor-ops") == "4.1.0"
+    assert importlib.metadata.version("predictor-core") == "3.2.1"
+    assert importlib.metadata.version("predictor-ops") == "4.2.0"
 
 
 def test_shared_libraries_resolve_from_site_packages():
@@ -48,4 +48,8 @@ def test_wheelhouse_hashes_are_pinned():
 
 def test_no_shared_source_copy_exists():
     assert not (ROOT / "vendor").exists()
-    assert not (ROOT / "packages").exists()
+    assert {path.name for path in (ROOT / "packages").iterdir() if path.is_dir()} == {"research-export"}
+    export = tomllib.loads((ROOT / "packages/research-export/pyproject.toml").read_text())
+    assert export["project"]["name"] == "crypto-research-export"
+    assert not list((ROOT / "packages").rglob("predictor_core"))
+    assert not list((ROOT / "packages").rglob("predictor_ops"))

@@ -32,9 +32,9 @@ jobs:
           python -m venv "$RUNNER_TEMP/wheel-contract"
           "$RUNNER_TEMP/wheel-contract/bin/pip" install --upgrade pip
           "$RUNNER_TEMP/wheel-contract/bin/pip" install \
-            "predictor-core @ https://github.com/leonardosovienski/core-predictor/releases/download/v3.2.0/predictor_core-3.2.0-py3-none-any.whl" \
-            "predictor-ops @ https://github.com/leonardosovienski/predictor-ops/releases/download/v4.1.0/predictor_ops-4.1.0-py3-none-any.whl" \
-            dist/cripto_predictor-1.0.0-py3-none-any.whl
+            "predictor-core @ https://github.com/leonardosovienski/core-predictor/releases/download/v3.2.1/predictor_core-3.2.1-py3-none-any.whl" \
+            "predictor-ops @ https://github.com/leonardosovienski/predictor-ops/releases/download/v4.2.0/predictor_ops-4.2.0-py3-none-any.whl" \
+            dist/cripto_predictor-1.1.0-py3-none-any.whl
           cd "$RUNNER_TEMP"
           "$RUNNER_TEMP/wheel-contract/bin/python" "$GITHUB_WORKSPACE/scripts/verify_installed_wheels.py"
 
@@ -78,14 +78,21 @@ jobs:
           output-file: sbom.spdx.json
       - run: docker build --tag cripto-predictor:test .
       - run: docker run --rm --read-only --tmpfs /tmp --cap-drop ALL cripto-predictor:test --help
-      - run: >-
-          docker run --rm --read-only --tmpfs /tmp --cap-drop ALL
-          --tmpfs /var/lib/cripto-predictor:rw,noexec,nosuid,size=64m,uid=10001,gid=10001
-          -e GEMINI_API_KEY=test-gemini-key-for-ci-only
-          -e SERP_API_KEY=test-serp-key-for-ci-only
-          -e LLM_PROVIDER=gemini
-          -e GEMINI_MODEL=gemini-2.5-flash
-          cripto-predictor:test --assets bitcoin --no-cache
+      - name: Empty installed store must fail without network
+        shell: bash
+        run: |
+          set +e
+          docker run --rm --network none --read-only --tmpfs /tmp --cap-drop ALL \
+            --tmpfs /var/lib/cripto-predictor:rw,noexec,nosuid,size=64m,uid=10001,gid=10001 \
+            -e GEMINI_API_KEY=test-gemini-key-for-ci-only \
+            -e SERP_API_KEY=test-serp-key-for-ci-only -e LLM_PROVIDER=gemini \
+            -e GEMINI_MODEL=gemini-2.5-flash \
+            cripto-predictor:test --assets bitcoin --no-cache > /tmp/empty-store.txt 2>&1
+          status=$?
+          set -e
+          cat /tmp/empty-store.txt
+          test "$status" -eq 1
+          grep -F 'Pipeline interrompido' /tmp/empty-store.txt
       - uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
         with:
           image-ref: cripto-predictor:test

@@ -18,6 +18,7 @@ from __future__ import annotations
 import hashlib
 import json
 import math
+import sqlite3
 from datetime import datetime, timedelta
 from pathlib import Path
 
@@ -117,8 +118,18 @@ def _parse(s: str) -> datetime:
 
 class FeatureStore:
     def __init__(
-        self, db_path: Path | str, *, max_publication_lag: timedelta = MAX_PUBLICATION_LAG
+        self,
+        db_path: Path | str,
+        *,
+        max_publication_lag: timedelta = MAX_PUBLICATION_LAG,
+        read_only: bool = False,
     ):
+        self._max_publication_lag = max_publication_lag
+        if read_only:
+            self._conn = sqlite3.connect(Path(db_path).resolve().as_uri() + "?mode=ro", uri=True)
+            self._conn.row_factory = sqlite3.Row
+            self._conn.execute("PRAGMA query_only=ON")
+            return
         self._conn = infra.connect(db_path)
         # Integridade do ledger (auditoria externa 2026-08-24): com o default
         # recursive_triggers=OFF, um `INSERT OR REPLACE` executa o DELETE

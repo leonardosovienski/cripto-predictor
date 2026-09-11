@@ -45,7 +45,7 @@ def job_config(name: str, *, timeout_seconds: float | None = None) -> JobConfig:
         "attest-renew": [
             sys.executable,
             "-m",
-            "scripts.attest_harness",
+            "GarimpoInvestimentos.operational.attest_harness",
             "--if-expiring-within",
             "2",
         ],
@@ -55,7 +55,7 @@ def job_config(name: str, *, timeout_seconds: float | None = None) -> JobConfig:
         "backup": [
             sys.executable,
             "-m",
-            "scripts.feature_store_backup",
+            "GarimpoInvestimentos.operational.feature_store_backup",
             "create",
             "--output-root",
         ],

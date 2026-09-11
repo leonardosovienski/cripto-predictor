@@ -79,3 +79,8 @@ Os caminhos, protocolos e condições de retomada estão na [conferência do cha
 Git contém código, documentação e evidências selecionadas. Configuração privada, banco operacional, dados completos e cópia privada do chat ficam em `C:\Cripto`; clonar o repositório sozinho não restaura toda a operação. O pacote original e `restaurado-20260908` permanecem preservados.
 
 Documentos datados registram o estado de suas respectivas etapas. Para interpretar caminhos e instruções antigos, consulte a [conferência de arquivos](docs/CONFERENCIA_ARQUIVOS_20260910.md) e o [índice documental](docs/README.md). O [prompt original](docs/NEXT_CHAT_PROMPT.md) permanece intacto como mandato.
+
+
+## Implementação arquitetural local — 2026-09-11
+
+As alterações candidatas, seus limites, verificações e rollback estão em [ARCHITECTURE_IMPLEMENTATION.md](ARCHITECTURE_IMPLEMENTATION.md). Esta implementação local não publica releases, não atualiza automaticamente os consumidores e não altera os vereditos científicos históricos.
