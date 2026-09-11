@@ -129,3 +129,8 @@
 /docs/evidence/remaining_dependencies_20260910/** -text
 /docs/evidence/file_document_audit_20260910/** -text
 /docs/continuity_20260910/** -text
+
+# Capability studies and source fingerprints: preserve receipt bytes across platforms.
+/docs/open_source_research/** -text -whitespace
+/GarimpoInvestimentos/research/** -text
+/docs/continuity_20260911/** -text
