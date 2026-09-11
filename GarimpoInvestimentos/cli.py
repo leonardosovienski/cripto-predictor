@@ -7,6 +7,13 @@ from GarimpoInvestimentos.local_runtime import LocalRuntimePathError
 
 
 def main() -> None:
+    if sys.argv[1:2] == ["research-export"]:
+        try:
+            from crypto_research_export import main as export_main
+        except ImportError:
+            print("Install the local crypto-research-export wheel first.", file=sys.stderr)
+            raise SystemExit(1) from None
+        raise SystemExit(export_main(sys.argv[2:]))
     if any(argument in {"-h", "--help"} for argument in sys.argv[1:]):
         print(
             "usage: cripto-predictor [--ingest] [--assets IDS] [--discover N] [--summary] [--output-dir PATH]"
