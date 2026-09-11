@@ -1,9 +1,7 @@
 import os
 
 import pytest
-
 from crypto_research_export import export
-from test_export import fixture  # noqa: F401
 
 
 def test_retry_recovers_the_same_receipt(fixture):

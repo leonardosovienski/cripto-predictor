@@ -48,7 +48,9 @@ def test_wheelhouse_hashes_are_pinned():
 
 def test_no_shared_source_copy_exists():
     assert not (ROOT / "vendor").exists()
-    assert {path.name for path in (ROOT / "packages").iterdir() if path.is_dir()} == {"research-export"}
+    assert {path.name for path in (ROOT / "packages").iterdir() if path.is_dir()} == {
+        "research-export"
+    }
     export = tomllib.loads((ROOT / "packages/research-export/pyproject.toml").read_text())
     assert export["project"]["name"] == "crypto-research-export"
     assert not list((ROOT / "packages").rglob("predictor_core"))
