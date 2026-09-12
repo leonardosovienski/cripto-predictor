@@ -8,6 +8,9 @@ version = "1.0.1"
 requires-python = ">=3.11"
 dependencies = ["predictor-research-snapshot>=1.0.1,<2"]
 
+[project.optional-dependencies]
+bundle = ["predictor-research-bundle==1.0.0"]
+
 [project.scripts]
 crypto-research-export = "crypto_research_export:main"
 

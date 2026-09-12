@@ -1,5 +1,13 @@
 > Continuidade vigente: [sessão de 08/09](docs/SESSION_HANDOFF_20260908.md) e [estado da pesquisa](docs/CURRENT_RESEARCH_STATE_20260908.md). A sessão anterior continua no [registro de 07/09](docs/SESSION_HANDOFF_20260907.md) e na tag `cripto-session-20260907-final`.
 
+## Candidato local ResearchBundleV1
+
+Leia [a exportação aditiva](docs/RESEARCH_BUNDLE_V1.md): charter e seleção explícita
+de trials existentes, parâmetros/métricas preservados, sem reexecução. 22 testes do
+exportador independente passaram; dez objetos reais foram preservados pelo CAIN e
+recuperados offline. Inputs exatos e atestados seguem fora do recorte. Sem push,
+release ou instalação operacional; fontes científicas mantiveram seus hashes.
+
 ## Entrega arquitetural publicada — 11/09/2026
 
 Versão **1.1.0** publicada: [release e artefatos](https://github.com/leonardosovienski/cripto-predictor/releases/tag/v1.1.0). [CI de engenharia aprovada](https://github.com/leonardosovienski/cripto-predictor/actions/runs/34630038441) para a fonte `6ea0d2ccdcfc6a3858083acb6ded5cb39e178586`. Consulte [ARCHITECTURE_IMPLEMENTATION.md](ARCHITECTURE_IMPLEMENTATION.md) para comportamento, migração e limites. Este registro atualiza a entrega de software; estados científicos e registros datados abaixo conservam sua autoridade e contexto histórico.
