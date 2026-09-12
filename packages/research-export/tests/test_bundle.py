@@ -14,7 +14,7 @@ SAMPLE = '{"schema_version":"crypto-scientific-state/1","hypotheses":{"TEST-HYPO
 
 class ExportTests(unittest.TestCase):
     def setUp(self):
-        area = Path("C:/CRIPTO/operacao/temporarios/bundle-export-tests")
+        area = Path(tempfile.gettempdir()) / "bundle-export-tests"
         area.mkdir(parents=True, exist_ok=True)
         self.temporary = tempfile.TemporaryDirectory(dir=area)
         self.base = Path(self.temporary.name)

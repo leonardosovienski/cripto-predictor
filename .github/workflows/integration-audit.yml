@@ -1,0 +1,39 @@
+name: Installed Crypto CAIN integration
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  installed-integration:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ['3.11', '3.12', '3.13', '3.14']
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: ${{ matrix.python }}
+      - uses: astral-sh/setup-uv@v7
+        with:
+          version: '0.12.1'
+      - name: Fresh clones, installed artifacts, negative tests and offline restoration
+        run: python .ci/integration-audit/validate.py --crypto-sha "$GITHUB_SHA" --work "$RUNNER_TEMP/crypto-integration"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: installed-integration-${{ matrix.python }}
+          path: |
+            ${{ runner.temp }}/crypto-integration/*.json
+            ${{ runner.temp }}/crypto-integration/*.xml
+            ${{ runner.temp }}/crypto-integration/logs/
+            ${{ runner.temp }}/crypto-integration/real-e2e/*.json
+            ${{ runner.temp }}/crypto-integration/distributions/
+          if-no-files-found: error

@@ -34,11 +34,20 @@ def export(root, expected, destination, exported_at):
                 raise ValueError("Ambiguous trial identity")
             trials[record["name"]] = record
     provenance = exporter_provenance({"bundle.py": Path(__file__)})
-    builder = Builder(dict(domain="crypto", repository="https://github.com/leonardosovienski/cripto-predictor",
-                           publisher="crypto-local", stream="research-bundle", code_revision=revision,
-                           exporter_revision="sha256:" + digest(canonical(provenance)), inputs=expected),
-                      dict(policy="crypto-research-bundle/1", read=True, disclose=False, generate=False),
-                      exported_at, provenance=provenance)
+    builder = Builder(
+        dict(
+            domain="crypto",
+            repository="https://github.com/leonardosovienski/cripto-predictor",
+            publisher="crypto-local",
+            stream="research-bundle",
+            code_revision=revision,
+            exporter_revision="sha256:" + digest(canonical(provenance)),
+            inputs=expected,
+        ),
+        dict(policy="crypto-research-bundle/1", read=True, disclose=False, generate=False),
+        exported_at,
+        provenance=provenance,
+    )
     document = builder.resource(
         name,
         "producer:" + name,

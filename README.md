@@ -1,3 +1,5 @@
+> Continuidade da auditoria e integração em main: [protocolo e combinação reproduzível](docs/FINAL_INTEGRATION_AUDIT.md). A aprovação e a consolidação dependem dos recibos e da CI do SHA efetivo. Os registros datados abaixo conservam seu contexto histórico.
+
 
 <!-- DOC-SYNC-20260912 -->
 > **Estado de publicação em 12/09/2026:** leia [a continuidade atual](PUBLICATION_STATUS_20260912.md). Branch `validation/retest-six-20260911`. O código deste projeto foi publicado na branch indicada. O candidato CAIN Supply permanece sem aprovação de estabilização. Afirmações anteriores de “sem push” descrevem a etapa histórica anterior à autorização.
