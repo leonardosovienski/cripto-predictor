@@ -170,6 +170,27 @@ workspace = WorkspaceStore(area / "workspace.db")
 backup(workspace.path, service.path, policy_path, area / "backup")
 restore(area / "backup", area / "restored")
 transport.rename(area / "producer-unavailable")
+offline_guard = {"active": True, "denied": 0}
+
+
+def deny_producer_reads(event, arguments):
+    if event != "open" or not offline_guard["active"] or not arguments:
+        return
+    path = arguments[0]
+    if not isinstance(path, (str, bytes)):
+        return
+    candidate = Path(path.decode() if isinstance(path, bytes) else path).resolve()
+    if any(
+        candidate.is_relative_to(root)
+        for root in (source, transport, area / "producer-unavailable")
+    ):
+        offline_guard["denied"] += 1
+        raise PermissionError("Producer source and transport unavailable during offline recovery")
+
+
+sys.addaudithook(deny_producer_reads)
+rejected(lambda: (source / names[0]).read_bytes())
+assert offline_guard["denied"] == 1
 restored_service = ResearchService(area / "restored/research.db", area / "restored/policy.json")
 restored = BundleService(restored_service)
 assert restored.query(scope, limit=50)["entities"] == result["entities"]
@@ -196,6 +217,8 @@ first = next(a for a in result["artifacts"] if a["availability"] == "received")
 rejected(
     lambda: restored.materialize(scope, bundle["bundle_id"], first["artifact_id"], area / "denied")
 )
+assert offline_guard["denied"] == 1  # Only the discriminating probe attempted producer I/O.
+offline_guard["active"] = False
 assert {name: sha(source / name) for name in names} == pins
 assert not any(n.startswith("GarimpoInvestimentos") for n in sys.modules)
 receipt = dict(
@@ -209,6 +232,8 @@ receipt = dict(
     snapshot_records=snap["total_record_revisions"],
     materialized=received,
     offline_restore=True,
+    offline_origin_access="Python audit open guard; source and both transport paths denied",
+    kernel_isolation_tested=False,
     revocation=True,
     absent_approval_refused=True,
     isolated_environments=True,

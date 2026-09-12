@@ -5,6 +5,26 @@ runtime 1.1.0, o exportador independente 1.0.1 e todas as fontes científicas.
 A promoção e a limpeza Git dependem dos recibos do commit final; a existência
 deste documento não declara esses gates aprovados.
 
+## Bloqueio obrigatório encontrado na conferência ao vivo
+
+O checker Ecosystem em `821c7d7411ee983ef2c7ac03fa11083944826321`
+passa suas invariantes offline, mas a leitura ao vivo e o modo `--from-clones`
+detectaram cinco divergências em 12/09/2026: Core anunciado 3.2.0 versus
+3.2.1 publicado; Ops 4.1.0 versus 4.2.0; release Core antiga no registry de
+harnesses; versão e expiração Crypto diferentes do atestado original.
+
+Uma prova controlada em memória, sem editar registries, confirmou que trocar
+apenas a versão corrente para 3.2.1 faz o gate offline recusar a ausência de
+harness `ALIGNED` dessa versão. Não foi emitido atestado, alterado resultado
+científico nem enfraquecido o checker. Resolver exige evidência de alinhamento
+admitida pela governança, ou uma decisão explícita sobre o contrato desse gate.
+As fontes consultadas não fornecem essa evidência. O PASS da CI de engenharia
+não elimina o FAIL dessa conferência obrigatória.
+
+Portanto, a candidata permanece em `integration/final-audit-20260912`;
+`main` não foi promovida e nenhuma branch foi excluída. O relatório privado
+`RELATORIO_FINAL.md` na área indicada abaixo contém a matriz e a retomada.
+
 ## Combinação reproduzível
 
 - CAIN: `5ba4177a11b9312900e5035517aa5ef25d509859`, versão 0.4.7.
@@ -49,6 +69,10 @@ aprovação administrativa, importação idempotente, isolamento de escopos,
 Snapshot legado, backup/restore/rebuild, materialização offline e revogação.
 Produtor e receptor usam ambientes separados e não instalam o runtime científico
 para transportar ou consultar relatórios. As políticas são descartáveis.
+Durante a recuperação, um audit hook Python recusa aberturas sob a origem e
+ambos os caminhos de transporte. Uma tentativa discriminante confirma a recusa;
+verify/rebuild/materialização não tentam esses acessos. Essa observação não é
+uma prova de isolamento de kernel.
 
 O E2E funcional do runtime usa a demonstração sintética oficial e verifica a
 persistência do RunStore. Isso não executa campanha científica, coleta de mercado,
