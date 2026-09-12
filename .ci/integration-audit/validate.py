@@ -10,7 +10,7 @@ import time
 from datetime import UTC, datetime
 from pathlib import Path
 
-ECOSYSTEM = "821c7d7411ee983ef2c7ac03fa11083944826321"
+ECOSYSTEM = "6a998520825292895bcae71e589fa8ac0e02bb85"
 CAIN = "5ba4177a11b9312900e5035517aa5ef25d509859"
 OWNER = "https://github.com/leonardosovienski/"
 

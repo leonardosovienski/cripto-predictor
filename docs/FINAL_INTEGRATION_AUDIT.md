@@ -5,30 +5,29 @@ runtime 1.1.0, o exportador independente 1.0.1 e todas as fontes científicas.
 A promoção e a limpeza Git dependem dos recibos do commit final; a existência
 deste documento não declara esses gates aprovados.
 
-## Bloqueio obrigatório encontrado na conferência ao vivo
+## Divergências corrigidas na retomada
 
-O checker Ecosystem em `821c7d7411ee983ef2c7ac03fa11083944826321`
-passa suas invariantes offline, mas a leitura ao vivo e o modo `--from-clones`
-detectaram cinco divergências em 12/09/2026: Core anunciado 3.2.0 versus
-3.2.1 publicado; Ops 4.1.0 versus 4.2.0; release Core antiga no registry de
-harnesses; versão e expiração Crypto diferentes do atestado original.
+Os cinco drifts observados foram reconciliados com as versões publicadas e
+atestados recuperáveis. Os controles oficiais sintéticos dos julgadores V3 e
+Fase 1 passaram com Core 3.2.1, executados pela wheel instalada contra a fonte
+limpa Crypto 22219e3db8130bfe81abe95b38ecfbc3cacdb5f9, com saída isolada.
+Os quatro braços edge/ruído passaram. Os atestados originais do domínio não
+foram modificados; nenhuma hipótese, trial ou permissão de capital foi ativada.
 
-Uma prova controlada em memória, sem editar registries, confirmou que trocar
-apenas a versão corrente para 3.2.1 faz o gate offline recusar a ausência de
-harness `ALIGNED` dessa versão. Não foi emitido atestado, alterado resultado
-científico nem enfraquecido o checker. Resolver exige evidência de alinhamento
-admitida pela governança, ou uma decisão explícita sobre o contrato desse gate.
-As fontes consultadas não fornecem essa evidência. O PASS da CI de engenharia
-não elimina o FAIL dessa conferência obrigatória.
+O Ecosystem registra a nova evidência separadamente em
+docs/engineering_controls/20260912, verifica seu SHA256 e seus campos, e preserva
+os bytes JSON no Git. Os modos offline, remoto e com clones do checker passaram;
+76 testes locais do Ecosystem passaram. As atualizações concorrentes já publicadas
+na main Ecosystem foram preservadas na combinação.
 
-Portanto, a candidata permanece em `integration/final-audit-20260912`;
-`main` não foi promovida e nenhuma branch foi excluída. O relatório privado
-`RELATORIO_FINAL.md` na área indicada abaixo contém a matriz e a retomada.
+ALIGNED descreve esses controles sintéticos, não validação econômica ou promoção
+dos atestados históricos. O bloqueio anterior e seus recibos são históricos.
+A promoção e a limpeza dependem da CI e dos recibos finais desta combinação.
 
 ## Combinação reproduzível
 
 - CAIN: `5ba4177a11b9312900e5035517aa5ef25d509859`, versão 0.4.7.
-- Ecosystem: `821c7d7411ee983ef2c7ac03fa11083944826321`, versão 0.2.0,
+- Ecosystem: `6a998520825292895bcae71e589fa8ac0e02bb85`, versão 0.2.0,
   com Snapshot 1.0.1 e Bundle 1.0.0 construídos de fonte versionada.
 - O produtor usa Snapshot 1.0.1. O receptor preserva o leitor Snapshot 1.0.0
   requerido pelo CAIN. O manifesto em `vendor/provenance.json` desse commit
