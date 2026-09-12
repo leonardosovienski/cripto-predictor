@@ -1,5 +1,10 @@
 # Configuração deste PC: somente C:\Cripto
 
+<!-- DOC-SYNC-20260912 -->
+> **Estado de publicação em 12/09/2026:** leia [a continuidade atual](../PUBLICATION_STATUS_20260912.md). Branch `validation/retest-six-20260911`. O código deste projeto foi publicado na branch indicada. O candidato CAIN Supply permanece sem aprovação de estabilização. Afirmações anteriores de “sem push” descrevem a etapa histórica anterior à autorização.
+<!-- /DOC-SYNC-20260912 -->
+
+
 A raiz de trabalho autorizada neste computador é **`C:\Cripto`**. Código, ambientes do projeto, dados, configuração privada, saídas, logs, estado dos jobs, caches, temporários e novas entregas devem ficar dentro dela. Use este mapa para executar e continuar o projeto; caminhos de máquinas anteriores nos arquivos históricos não são destinos operacionais.
 
 | Caminho | Uso atual |

@@ -1,0 +1,22 @@
+# Estado de publicação e continuidade — Crypto
+
+Conferência documental de 12/09/2026. Este registro complementa os protocolos científicos e substitui apenas afirmações anteriores de que o candidato ainda não teve commit/push.
+
+- Checkout de trabalho: `C:\CRIPTO\pesquisa-20260909`.
+- Branch de trabalho: `validation/retest-six-20260911`. Não presumir que `main` contém esta entrega.
+- HEAD conferido antes desta atualização documental: `aeb1b779703def8e3b188e05cde0e7fbfc4552f1`.
+- O código deste projeto foi publicado na branch indicada. O candidato CAIN Supply permanece sem aprovação de estabilização.
+- Sem merge, release, instalação operacional ou nova execução científica nesta conferência.
+
+## Validação e pendências
+
+A [CI geral do CAIN](https://github.com/leonardosovienski/cain/actions/runs/34674661122) passou para `7e6105e`.
+O [gate Linux dedicado](https://github.com/leonardosovienski/cain/actions/runs/34674661161) falhou na suíte completa em Python 3.13 e 3.14.
+No artefato 3.13, equivalência do candidato confirmada e 187 testes direcionados passaram sem skips. A suíte completa registrou 547 passes, 13 falhas, 4 erros e 2 skips: faltam arquivos de cenários na instalação isolada do wheel CAIN. Esses resultados não certificam o runtime científico deste projeto.
+As etapas posteriores de E2E instalado, restore offline, testes dos produtores e mini-auditoria não foram alcançadas nessa execução. Próximo gate: corrigir a localização/empacotamento dos cenários, congelar o candidato corrigido, repetir os testes afetados e concluir o Linux antes de discutir estabilização.
+
+## Preservação e retomada
+
+Foram inventariados 140 Markdown versionados antes da atualização, com hashes e verificação de leitura UTF-8. Inventário local: `C:\CRIPTO\operacao\relatorios\documentation-sync-20260912`.
+Inventário não é recertificação semântica de cada relatório histórico nem prova de backup dos arquivos ignorados pelo Git. Relatórios datados, fontes, bancos, manifests e snapshots congelados conservam seus bytes e contexto. Outros worktrees são checkouts de outras branches; não devem receber cópia cega desta branch.
+Leia os documentos de entrada deste checkout e seus protocolos antes de executar trabalho de domínio. Para verificar publicação após novos commits: `git status --short`, `git rev-parse HEAD` e `git ls-remote origin refs/heads/validation/retest-six-20260911`; os dois SHAs devem coincidir e o status deve estar vazio.

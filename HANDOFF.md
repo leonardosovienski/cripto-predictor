@@ -1,3 +1,8 @@
+
+<!-- DOC-SYNC-20260912 -->
+> **Estado de publicação em 12/09/2026:** leia [a continuidade atual](PUBLICATION_STATUS_20260912.md). Branch `validation/retest-six-20260911`. O código deste projeto foi publicado na branch indicada. O candidato CAIN Supply permanece sem aprovação de estabilização. Afirmações anteriores de “sem push” descrevem a etapa histórica anterior à autorização.
+<!-- /DOC-SYNC-20260912 -->
+
 > Continuidade vigente: [sessão de 08/09](docs/SESSION_HANDOFF_20260908.md) e [estado da pesquisa](docs/CURRENT_RESEARCH_STATE_20260908.md). A sessão anterior continua no [registro de 07/09](docs/SESSION_HANDOFF_20260907.md) e na tag `cripto-session-20260907-final`.
 
 ## Candidato local ResearchBundleV1
