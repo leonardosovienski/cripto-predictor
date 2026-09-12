@@ -4,7 +4,7 @@ import argparse
 from pathlib import Path
 
 from research_bundle import canonical, digest, loads
-from research_bundle.export import Builder, admitted_sources
+from research_bundle.export import Builder, admitted_sources, exporter_provenance
 
 TRIALS = "GarimpoInvestimentos/trials.json"
 ATTESTATIONS = {
@@ -33,9 +33,12 @@ def export(root, expected, destination, exported_at):
             ):
                 raise ValueError("Ambiguous trial identity")
             trials[record["name"]] = record
-    builder = Builder(
-        "crypto", revision, "sha256:" + digest(Path(__file__).read_bytes()), expected, exported_at
-    )
+    provenance = exporter_provenance({"bundle.py": Path(__file__)})
+    builder = Builder(dict(domain="crypto", repository="https://github.com/leonardosovienski/cripto-predictor",
+                           publisher="crypto-local", stream="research-bundle", code_revision=revision,
+                           exporter_revision="sha256:" + digest(canonical(provenance)), inputs=expected),
+                      dict(policy="crypto-research-bundle/1", read=True, disclose=False, generate=False),
+                      exported_at, provenance=provenance)
     document = builder.resource(
         name,
         "producer:" + name,
