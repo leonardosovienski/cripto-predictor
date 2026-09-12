@@ -20,3 +20,14 @@ As etapas posteriores de E2E instalado, restore offline, testes dos produtores e
 Foram inventariados 140 Markdown versionados antes da atualização, com hashes e verificação de leitura UTF-8. Inventário local: `C:\CRIPTO\operacao\relatorios\documentation-sync-20260912`.
 Inventário não é recertificação semântica de cada relatório histórico nem prova de backup dos arquivos ignorados pelo Git. Relatórios datados, fontes, bancos, manifests e snapshots congelados conservam seus bytes e contexto. Outros worktrees são checkouts de outras branches; não devem receber cópia cega desta branch.
 Leia os documentos de entrada deste checkout e seus protocolos antes de executar trabalho de domínio. Para verificar publicação após novos commits: `git status --short`, `git rev-parse HEAD` e `git ls-remote origin refs/heads/validation/retest-six-20260911`; os dois SHAs devem coincidir e o status deve estar vazio.
+
+## Exceções locais encontradas nesta conferência
+
+O checkout ativo acima é o destino atualizado. O worktree histórico
+`C:\Cripto\publicacao-chat-20260909` conserva alterações anteriores e conflitos
+não resolvidos em README.md, tests/test_review_failure_boundaries.py e
+tests/test_store_history.py. Não é um checkout limpo nem uma entrega atual;
+seu trabalho não foi descartado, resolvido automaticamente ou incorporado à branch ativa.
+O snapshot `C:\Cripto\restaurado-20260908\projeto` contém `fred_test.csv`
+não versionado, igualmente preservado. Portanto a sincronização da branch ativa
+não significa que todos os diretórios históricos sejam cópias limpas do GitHub.
