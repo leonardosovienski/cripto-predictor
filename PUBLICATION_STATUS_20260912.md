@@ -31,3 +31,8 @@ seu trabalho não foi descartado, resolvido automaticamente ou incorporado à br
 O snapshot `C:\Cripto\restaurado-20260908\projeto` contém `fred_test.csv`
 não versionado, igualmente preservado. Portanto a sincronização da branch ativa
 não significa que todos os diretórios históricos sejam cópias limpas do GitHub.
+
+
+## Encerramento e retomada da sessão
+
+Registro consolidado: [decisões, acertos, erros, pendências e próximo prompt](https://github.com/leonardosovienski/cain/blob/feature/research-bundle-v1/docs/research/SESSION_HANDOFF_20260912.md). O gate Linux permanece reprovado. A conferência documental não foi uma revisão semântica integral dos relatórios históricos. Os dois skips conferidos no XML Linux 3.13 são testes exclusivos do launcher Windows; não incluem o teste obrigatório de symlink, que passou.
