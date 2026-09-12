@@ -28,7 +28,9 @@ def rejected(operation):
 
 
 source, cain_source, producer, area = map(Path, sys.argv[1:])
-source, cain_source, producer, area = [p.resolve() for p in (source, cain_source, producer, area)]
+source, cain_source, area = [p.resolve() for p in (source, cain_source, area)]
+# POSIX venv executables are symlinks: resolving them selects the base interpreter.
+producer = producer.absolute()
 area.mkdir(parents=True, exist_ok=False)
 assert area.is_relative_to(source.parent) and not area.is_relative_to(source)
 for module in (cain, research_bundle):
