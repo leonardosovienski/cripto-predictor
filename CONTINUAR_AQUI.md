@@ -1,3 +1,5 @@
+> **Ponto de entrada atual:** [publicação, resultado e ordem de leitura](PUBLICATION_STATUS_20260912.md). A auditoria foi concluída para `9db8e93`; os registros anteriores abaixo mantêm seu contexto e não são instrução para repetir a consolidação.
+
 > Continuidade da auditoria e integração em main: [protocolo e combinação reproduzível](docs/FINAL_INTEGRATION_AUDIT.md). A aprovação e a consolidação dependem dos recibos e da CI do SHA efetivo. Os registros datados abaixo conservam seu contexto histórico.
 
 # Retomada atual — 11/09/2026

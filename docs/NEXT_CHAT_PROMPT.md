@@ -1,3 +1,5 @@
+> **Ponto de entrada atual:** [publicação, resultado e ordem de leitura](../PUBLICATION_STATUS_20260912.md). A auditoria foi concluída para `9db8e93`; os registros anteriores abaixo mantêm seu contexto e não são instrução para repetir a consolidação.
+
 # Atualização de continuidade — 11/09/2026
 
 A revisão arquitetural posterior está implementada e publicada em `main`: Crypto 1.1.0, exportador independente 1.0.1, Core 3.2.1 e Ops 4.2.0. Leia primeiro [ARCHITECTURE_IMPLEMENTATION.md](../ARCHITECTURE_IMPLEMENTATION.md) e [HANDOFF.md](../HANDOFF.md). A CI 34630038441 passou nos quatro perfis e o intercâmbio com CAIN foi testado com wheels separados. A integração preservou o pacote `GarimpoInvestimentos/research` e as evidências congeladas; a continuidade abaixo registra a entrega anterior.

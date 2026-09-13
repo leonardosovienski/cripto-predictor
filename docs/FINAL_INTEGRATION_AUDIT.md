@@ -1,3 +1,5 @@
+> **Ponto de entrada atual:** [publicação, resultado e ordem de leitura](../PUBLICATION_STATUS_20260912.md). A auditoria foi concluída para `9db8e93`; os registros anteriores abaixo mantêm seu contexto e não são instrução para repetir a consolidação.
+
 # Auditoria de engenharia e integração — 12/09/2026
 
 Esta linha parte de `97d60222d14ff211bfd415fff374d0751d5ac235` e preserva o
