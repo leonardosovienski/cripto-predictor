@@ -469,7 +469,7 @@ requires-dist = [
     { name = "platformdirs", specifier = ">=4.3,<5" },
     { name = "pre-commit", marker = "extra == 'test'", specifier = ">=4.3,<5" },
     { name = "predictor-core", url = "https://github.com/leonardosovienski/core-predictor/releases/download/v3.2.1/predictor_core-3.2.1-py3-none-any.whl" },
-    { name = "predictor-ops", url = "https://github.com/leonardosovienski/predictor-ops/releases/download/v4.2.0/predictor_ops-4.2.0-py3-none-any.whl" },
+    { name = "predictor-ops", url = "https://github.com/leonardosovienski/predictor-ops/releases/download/v4.2.1/predictor_ops-4.2.1-py3-none-any.whl" },
     { name = "pydantic", specifier = ">=2.12,<3" },
     { name = "pydantic-settings", specifier = ">=2.10,<3" },
     { name = "pyright", marker = "extra == 'test'", specifier = ">=1.1.403,<2" },
@@ -1115,14 +1115,14 @@ provides-extras = ["dev", "http", "science", "scraping", "test"]
 
 [[package]]
 name = "predictor-ops"
-version = "4.2.0"
-source = { url = "https://github.com/leonardosovienski/predictor-ops/releases/download/v4.2.0/predictor_ops-4.2.0-py3-none-any.whl" }
+version = "4.2.1"
+source = { url = "https://github.com/leonardosovienski/predictor-ops/releases/download/v4.2.1/predictor_ops-4.2.1-py3-none-any.whl" }
 dependencies = [
     { name = "pydantic" },
     { name = "pydantic-settings" },
 ]
 wheels = [
-    { url = "https://github.com/leonardosovienski/predictor-ops/releases/download/v4.2.0/predictor_ops-4.2.0-py3-none-any.whl", hash = "sha256:a6108ee1c6fe9c14752766a435109f9b6bcf98102ee178330512efbcac984000" },
+    { url = "https://github.com/leonardosovienski/predictor-ops/releases/download/v4.2.1/predictor_ops-4.2.1-py3-none-any.whl", hash = "sha256:da4fa540703879669caba919521ec7d3c33734b5d57781122823df8817346f0e" },
 ]
 
 [package.metadata]

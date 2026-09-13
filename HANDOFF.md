@@ -1,3 +1,5 @@
+> **Ops dependency update:** source/CI pins now use published Ops 4.2.1 (SHA256 da4fa540703879669caba919521ec7d3c33734b5d57781122823df8817346f0e). Installed real wrapper tests preserved SKIPPED -> 3, success -> 0 and failure -> 1 using synthetic data. The operational .venv still contains Ops 4.2.0 and was not upgraded. No domain code, scientific protocol or consumer release changed. See predictor-ops docs/stabilization-20260912/REPORT.md for evidence.
+
 > Continuidade da auditoria e integração em main: [protocolo e combinação reproduzível](docs/FINAL_INTEGRATION_AUDIT.md). A aprovação e a consolidação dependem dos recibos e da CI do SHA efetivo. Os registros datados abaixo conservam seu contexto histórico.
 
 
