@@ -26,7 +26,7 @@ jobs:
           version: '0.12.1'
       - name: Fresh clones, installed artifacts, negative tests and offline restoration
         run: python .ci/integration-audit/validate.py --crypto-sha "$GITHUB_SHA" --work "$RUNNER_TEMP/crypto-integration"
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: installed-integration-${{ matrix.python }}
