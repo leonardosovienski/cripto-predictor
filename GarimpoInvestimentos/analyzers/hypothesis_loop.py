@@ -42,7 +42,7 @@ import hashlib
 import json
 import math
 from collections.abc import Callable, Sequence
-from dataclasses import asdict, dataclass, field
+from dataclasses import asdict, dataclass, field, replace
 from datetime import UTC, datetime
 from pathlib import Path
 
@@ -187,29 +187,30 @@ def parse_proposals(
         hipotese = (item or {}).get("hypothesis", "") if isinstance(item, dict) else ""
         recipe = (item or {}).get("recipe", {}) if isinstance(item, dict) else {}
         fid = recipe_fingerprint(recipe)
-        base = dict(
+        base = Proposal(
             proposal_id=fid,
             proposed_at=proposed_at,
             hypothesis=str(hipotese),
             recipe=recipe if isinstance(recipe, dict) else {},
             horizon_days=horizon_days,
             proposer=proposer,
+            status=ACCEPTED,
         )
         if not isinstance(item, dict) or not isinstance(recipe, dict) or not recipe:
-            saida.append(Proposal(**base, status=REJECTED_MALFORMED, reason="item sem recipe"))
+            saida.append(replace(base, status=REJECTED_MALFORMED, reason="item sem recipe"))
             continue
         try:
             from_recipe(recipe)
         except RecipeError as exc:
-            saida.append(Proposal(**base, status=REJECTED_INVALID, reason=str(exc)))
+            saida.append(replace(base, status=REJECTED_INVALID, reason=str(exc)))
             continue
         if fid in ja_vistos:
             saida.append(
-                Proposal(**base, status=REJECTED_DUPLICATE, reason="recipe ja proposta antes")
+                replace(base, status=REJECTED_DUPLICATE, reason="recipe ja proposta antes")
             )
             continue
         ja_vistos.add(fid)
-        saida.append(Proposal(**base, status=ACCEPTED))
+        saida.append(base)
     return saida
 
 

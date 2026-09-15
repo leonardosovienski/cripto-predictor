@@ -303,9 +303,10 @@ def build_feature_vectors(
         if any(value is None or value <= 0 for value in vol_closes):
             skipped += 1
             continue
+        complete_vol_closes = [value for value in vol_closes if value is not None]
         vol_log_returns = [
             math.log(current) - math.log(previous)
-            for previous, current in zip(vol_closes, vol_closes[1:])
+            for previous, current in zip(complete_vol_closes, complete_vol_closes[1:])
         ]
         realized_vol_24h = _realized_vol(vol_log_returns)
 

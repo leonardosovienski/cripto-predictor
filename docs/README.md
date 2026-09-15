@@ -9,6 +9,10 @@
 
 # Índice da documentação
 
+[Auditoria tecnica e correcoes de 15/09](AUDITORIA_TECNICA_20260915.md): testes, tipagem, publicacao e limites da verificacao.
+
+Leia a [errata da auditoria de evidências de 15/09](ERRATA_AUDITORIA_20260915.md) ao reutilizar os registros históricos: ela distingue o poder simulado de H6, corrige a interpretação dos custos de BR2 e atualiza a tentativa da segunda fonte Aave e a validade dos atestados.
+
 Comece pela [conferência de arquivos de 10/09](CONFERENCIA_ARQUIVOS_20260910.md) e por [CONTINUAR_AQUI.md](../CONTINUAR_AQUI.md). Esses índices distinguem operação atual, backups e registros históricos.
 
 A [auditoria ampliada de 10/09](AUDITORIA_AMPLIADA_20260910.md) registra as correções posteriores de fontes, temporalidade, execução simulada, persistência e estatística. Consulte-a antes de reutilizar dados, modelos ou conclusões de documentos anteriores.

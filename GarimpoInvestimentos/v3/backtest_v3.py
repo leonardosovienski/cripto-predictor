@@ -583,6 +583,7 @@ def run_wfa(
     sym_dir = _DATA_ROOT / symbol
     input_paths = [sym_dir / name for name in ("funding.csv", "oi.csv", "spot_binance_1h.csv")]
     if use_macro_dxy:
+        assert dxy_closes_path is not None  # Validated above before reading any inputs.
         input_paths.extend([dxy_closes_path, DEFAULT_CALENDAR_PATH])
     input_hashes = {
         str(path): hashlib.sha256(path.read_bytes()).hexdigest()
@@ -687,6 +688,7 @@ def run_wfa(
     _dxy_by_ts: dict[int, float] = {}
     _oiv_by_ts: dict[int, float] = {}
     if use_macro_dxy:
+        assert dxy_closes_path is not None  # Same validated macro configuration.
         regime_extra_features += ("macro_event_dummy", "dxy_return_1d")
         macro_all = build_macro_event_dummy(
             all_features,

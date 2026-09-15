@@ -380,7 +380,7 @@ class RegimeEngine:
                     seed,
                 )
             break
-        if model is None:
+        if model is None or all_states is None:
             raise RuntimeError(
                 f"RegimeEngine.fit: HMM nao convergiu para modelo valido em "
                 f"{_MAX_FIT_RETRIES} tentativas de seed (42..{42 + _MAX_FIT_RETRIES - 1}). "
