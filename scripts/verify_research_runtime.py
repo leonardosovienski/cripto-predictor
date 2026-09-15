@@ -30,7 +30,7 @@ def verify():
         for item in package.files or []:
             if item.hash is None:
                 continue
-            path = item.locate()
+            path = Path(item.locate())
             if not path.exists():
                 missing.append(str(item))
                 continue

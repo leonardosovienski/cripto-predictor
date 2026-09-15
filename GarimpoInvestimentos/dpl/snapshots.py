@@ -47,8 +47,9 @@ def market_payload(points, aligned, signals, *, collected_at=None) -> dict:
     last = ordered[-1]
     if len({(p.symbol, p.source, p.interval) for p in ordered}) != 1:
         raise ValueError("mixed identity/source/interval in market snapshot")
-    return _clean(
-        {
+    return {
+        key: _clean(value)
+        for key, value in {
             "schema": "market-snapshot/1",
             "feature_version": DAILY_FEATURE_VERSION,
             "symbol": last.symbol,
@@ -61,8 +62,8 @@ def market_payload(points, aligned, signals, *, collected_at=None) -> dict:
             "normalized_candles": [asdict(p) for p in ordered],
             "signals": {name: [asdict(s) for s in series] for name, series in signals.items()},
             "raw_http_response_preserved": False,
-        }
-    )
+        }.items()
+    }
 
 
 def serving_context(store, symbol: str, *, now: datetime | None = None) -> dict:

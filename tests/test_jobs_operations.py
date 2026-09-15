@@ -14,7 +14,9 @@ from GarimpoInvestimentos.core.paths import FEATURE_STORE_DB
 from GarimpoInvestimentos.v3 import daily
 
 
-def _job(tmp_path: Path, code: str, *, timeout: float = 5, environment=None) -> JobConfig:
+def _job(tmp_path: Path, code: str, *, timeout: float = 30, environment=None) -> JobConfig:
+    # Non-timeout tests must allow instrumented Python startup on Windows.
+    # Tests of termination explicitly pass their short timeout below.
     return JobConfig(
         id="contract-job",
         command=[sys.executable, "-c", code],
@@ -142,16 +144,23 @@ def test_job_cli_maps_operational_status(monkeypatch):
 def test_timeout_shutdown_heartbeat_events_and_redaction(tmp_path):
     secret = "synthetic-serp-secret-123456"
     leaking = _job(
-        tmp_path,
-        "import os,sys,time; print(os.environ['SERP_API_KEY']); print(os.environ['SERP_API_KEY'], file=sys.stderr); time.sleep(5)",
-        timeout=1.0,
+        tmp_path / "redaction",
+        "import os,sys; print(os.environ['SERP_API_KEY'], flush=True); print(os.environ['SERP_API_KEY'], file=sys.stderr, flush=True)",
+        timeout=15,
         environment={"SERP_API_KEY": secret},
     )
-    result = run_job(leaking)
-    assert result.exit_code == 124 and result.run_status == RunStatus.FAILED
-    serialized = json.dumps(result.record)
+    # Coverage instrumentation can delay interpreter startup beyond the short
+    # timeout. Prove redaction with a completed child, then test termination
+    # separately; an empty output is not evidence of redaction.
+    redacted = run_job(leaking)
+    assert redacted.run_status == RunStatus.SUCCEEDED
+    serialized = json.dumps(redacted.record)
     assert secret not in serialized and "[REDACTED]" in serialized
-    root = tmp_path / leaking.id
+    assert secret not in (tmp_path / "redaction" / leaking.id / "events.jsonl").read_text()
+    timed = _job(tmp_path / "timeout", "import time; time.sleep(30)", timeout=1.0)
+    result = run_job(timed)
+    assert result.exit_code == 124 and result.run_status == RunStatus.FAILED
+    root = tmp_path / "timeout" / timed.id
     assert json.loads((root / "heartbeat.json").read_text())["run_status"] == "FAILED"
     assert secret not in (root / "events.jsonl").read_text()
 
@@ -163,13 +172,26 @@ def test_timeout_shutdown_heartbeat_events_and_redaction(tmp_path):
 
 
 def test_lock_prevents_concurrent_duplicate(tmp_path):
-    job = _job(tmp_path, "import time; time.sleep(0.5)")
+    ready, release = tmp_path / "child-ready", tmp_path / "child-release"
+    code = (
+        "from pathlib import Path; import time\n"
+        f"Path({str(ready)!r}).touch()\n"
+        f"while not Path({str(release)!r}).exists(): time.sleep(0.01)\n"
+    )
+    job = _job(tmp_path, code)
     first: list = []
     thread = threading.Thread(target=lambda: first.append(run_job(job)))
     thread.start()
-    time.sleep(0.1)
-    second = run_job(job)
-    thread.join()
+    try:
+        deadline = time.monotonic() + 25
+        while not ready.exists() and thread.is_alive() and time.monotonic() < deadline:
+            time.sleep(0.01)
+        assert ready.exists(), "child must hold the lock before duplicate submission"
+        second = run_job(job)
+    finally:
+        release.touch()
+        thread.join(timeout=35)
+    assert not thread.is_alive()
     assert second.run_status == RunStatus.SKIPPED
     assert first[0].run_status == RunStatus.SUCCEEDED
 

@@ -622,7 +622,7 @@ def main(*, chain_manifest_path: Path | None = None, feature_store_db: Path | No
                             )
                     elif head is not None or anterior.get("entries") != 0:
                         raise ValueError("invalid empty prior manifest")
-                if anterior is None or anterior.get("head") != manifest.get("head"):
+                if not isinstance(anterior, dict) or anterior.get("head") != manifest.get("head"):
                     atomic_write(
                         manifest_path,
                         (

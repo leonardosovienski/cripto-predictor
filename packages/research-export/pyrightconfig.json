@@ -1,0 +1,5 @@
+{
+  "extends": "../../pyrightconfig.json",
+  "pythonVersion": "3.11",
+  "include": ["src", "tests"]
+}

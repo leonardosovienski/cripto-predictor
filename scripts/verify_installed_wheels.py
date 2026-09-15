@@ -37,6 +37,7 @@ def main() -> int:
     assert importlib.metadata.version("predictor-core") == "3.2.1"
     assert importlib.metadata.version("predictor-ops") == "4.2.1"
     for module in (predictor_core, predictor_ops):
+        assert module.__file__ is not None
         assert "site-packages" in Path(module.__file__).resolve().as_posix().lower()
     entrypoint = next(
         item

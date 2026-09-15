@@ -131,7 +131,10 @@ def export(root, expected, destination, exported_at):
             )
             builder.relation(node, "HAS_TRIAL", trial)
             builder.relation(trial, "REPRESENTED_BY", reference)
-    builder.body["coverage"]["missing"] = [
+    coverage = builder.body["coverage"]
+    if not isinstance(coverage, dict):
+        raise ValueError("Bundle builder returned invalid coverage metadata")
+    coverage["missing"] = [
         "Exact input datasets not admitted in this slice",
         *([] if ATTESTATIONS & sources.keys() else ["Harness attestations not admitted"]),
         *([] if TRIALS in sources else ["Trial registry not admitted"]),

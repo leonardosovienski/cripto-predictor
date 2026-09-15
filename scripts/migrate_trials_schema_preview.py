@@ -64,7 +64,7 @@ TARGET_FIELDS = [
 # legado responde inequivocamente à pergunta do campo alvo; tudo o mais fica
 # UNKNOWN.
 def migrate_record(legacy: dict) -> dict:
-    rec = {field: UNKNOWN for field in TARGET_FIELDS}
+    rec: dict[str, object] = {field: UNKNOWN for field in TARGET_FIELDS}
     rec["trial_id"] = legacy.get("name", UNKNOWN)
     rec["registered_at"] = legacy.get("registered_at", UNKNOWN)
     rec["params"] = legacy.get("params", UNKNOWN)

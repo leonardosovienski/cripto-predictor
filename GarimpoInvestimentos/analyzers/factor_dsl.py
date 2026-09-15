@@ -29,7 +29,7 @@ from __future__ import annotations
 
 import math
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, TypeGuard
 
 Serie = list[float | None]
 
@@ -187,7 +187,7 @@ def to_recipe(f: Factor) -> dict:
     }
 
 
-def _finito(x: float | None) -> bool:
+def _finito(x: float | None) -> TypeGuard[float]:
     return x is not None and math.isfinite(x)
 
 
@@ -248,7 +248,7 @@ def _evaluate(f: Factor, dados: dict[str, Serie]) -> Serie:
             if f.op == "rolling_std":
                 saida.append(desvio)
             else:
-                saida.append(None if desvio == 0 else (base[i] - media) / desvio)
+                saida.append(None if desvio == 0 else (bloco[-1] - media) / desvio)
         return saida
 
     if f.op == "sign":
