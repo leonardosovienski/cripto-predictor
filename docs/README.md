@@ -9,6 +9,8 @@
 
 # Índice da documentação
 
+[Consolidacao em main de 15/09](CONSOLIDACAO_MAIN_20260915.md): integracao e remocao das branches incorporadas, preservando arquivos locais.
+
 [Auditoria tecnica e correcoes de 15/09](AUDITORIA_TECNICA_20260915.md): testes, tipagem, publicacao e limites da verificacao.
 
 Leia a [errata da auditoria de evidências de 15/09](ERRATA_AUDITORIA_20260915.md) ao reutilizar os registros históricos: ela distingue o poder simulado de H6, corrige a interpretação dos custos de BR2 e atualiza a tentativa da segunda fonte Aave e a validade dos atestados.
