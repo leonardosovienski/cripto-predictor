@@ -67,11 +67,17 @@ O corte operacional de 10/09 registrou três previsões, dois snapshots e um reg
 
 As famílias antigas seguem o [charter](charters/scientific_state.json), acompanhado da [errata de interpretação](docs/ERRATA_AUDITORIA_20260915.md), e os registros de congelamento. Novas linhas têm protocolos separados; infraestrutura não reabre hipóteses encerradas.
 
-| Hipóteses | Estado literal no charter conferido |
-|---|---|
-| H1, H2, H3 e H5 | `CLOSED_NO_GO` |
-| H4, H6 e H9 | `CLOSED_INSUFFICIENT_SAMPLE` |
-| H7 e H8 | `REGISTERED_NOT_ACTIVATED` |
+| # | Hipótese | Trial (`trials.json`) | Status |
+|---|---|---|---|
+| H1 | Funding/OI + regime HMM prevê retorno 24h | `v3-hmm-funding-oi-fr90` | **CLOSED_NO_GO**; resultado histórico sob o modelo de custos registrado |
+| H2 | Janela curta de funding (fr21) | `v3-hmm-funding-oi-fr21` | **CLOSED_NO_GO** |
+| H3 | Horizonte 48h amortiza a fricção | `v3-hmm-funding-oi-fr90-h48` | **CLOSED_NO_GO** |
+| H4 | Score do LLM prevê retorno D+7 | `v2-dpl-gemini-h7` | **CLOSED_INSUFFICIENT_SAMPLE**; coleta interrompida com cinco previsões declaradas, sem veredicto estatístico |
+| H5 | Score D+7 com partição multi-juiz | `v2-dpl-multi-h7` | **CLOSED_NO_GO**; resultado histórico negativo, reprodução limitada pelos dados originais ausentes |
+| H6 | Leitura invertida do score do LLM | `h6-sinal-invertido-d7` | **CLOSED_INSUFFICIENT_SAMPLE**; n observado=84, IC cruza zero; poder tabelado para n de referência=60, não 84 |
+| H7 | Calendário macro (FOMC/CPI/PPI) + DXY | `h7-macro-dxy-hmm-v1` | **REGISTERED_NOT_ACTIVATED** |
+| H8 | LLM como gerador de hipóteses, não preditor | `h8-llm-hypothesis-generator` | **REGISTERED_NOT_ACTIVATED** |
+| H9 | Razão OI/volume | `h9-oi-volume-ratio-hmm-v1` | **CLOSED_INSUFFICIENT_SAMPLE**; 44 dos 45 folds insuficientes |
 
 H4 foi interrompida com cinco previsões declaradas, sem veredicto estatístico. H5 preserva resultado histórico negativo, mas faltam seus dados brutos originais. H6 tem rho aproximadamente -0,0567 e IC95 [-0,2312; +0,1294], com n=84; o intervalo cruza zero e não deve ser chamado de refutação. Os valores de poder disponíveis têm **n de referência 60, não 84**. H9 teve 44 de 45 folds insuficientes. Não foram recalculados resultados nem alterados estados nesta correção.
 
