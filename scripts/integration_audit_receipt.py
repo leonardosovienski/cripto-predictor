@@ -47,10 +47,7 @@ def summarize(work: Path, exit_code: int) -> dict[str, Any]:
     result = json.loads(result_path.read_text()) if result_path.exists() else {}
     completed = isinstance(result, dict) and result.get("status") == "PASS"
     passed = (
-        exit_code == 0
-        and completed
-        and bool(checks)
-        and all(c["status"] == "PASS" for c in checks)
+        exit_code == 0 and completed and bool(checks) and all(c["status"] == "PASS" for c in checks)
     )
     return {
         "schema_version": 1,
