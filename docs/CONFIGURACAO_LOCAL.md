@@ -1,9 +1,6 @@
 # Configuração deste PC: somente C:\Cripto
 
-<!-- DOC-SYNC-20260912 -->
-> **Continuidade atual:** [publicação e ordem de leitura](../PUBLICATION_STATUS_20260912.md). Crypto consolidado em `main`; auditoria de engenharia aprovada para `9db8e93`. A branch de validação e o bloqueio Linux citados nos registros anteriores são históricos. Instalações operacionais e estados científicos permanecem separados da consolidação Git.
-<!-- /DOC-SYNC-20260912 -->
-
+> **Continuidade:** [CONTINUAR_AQUI.md](../CONTINUAR_AQUI.md) identifica o último corte de engenharia conferido e as pendências. Core e Ops selecionados na fonte de 17/09 são 3.2.1 e 4.2.1; isso não atesta a versão instalada neste PC. As verificações locais e de provedores datadas abaixo não foram repetidas nesta revisão documental.
 
 A raiz de trabalho autorizada neste computador é **`C:\Cripto`**. Código, ambientes do projeto, dados, configuração privada, saídas, logs, estado dos jobs, caches, temporários e novas entregas devem ficar dentro dela. Use este mapa para executar e continuar o projeto; caminhos de máquinas anteriores nos arquivos históricos não são destinos operacionais.
 
@@ -44,13 +41,13 @@ Dentro desse perfil, `DATA_DIR`, `OUTPUT_DIR`, `CACHE_DIR`, `LOGS_DIR`, as varia
 
 O perfil configura o armazenamento do projeto, não é uma sandbox do Windows para comandos Python arbitrários. Windows, Git e Codex são aplicativos do computador e mantêm seus próprios arquivos. Os snapshots e relatórios anteriores fora da raiz não são apagados; as cópias de trabalho necessárias ficam em `C:\Cripto`.
 
-## Configuração privada e estado real
+## Configuração privada e verificações datadas
 
 `pipeline.env` parte do exemplo público com as chaves vazias. Configure valores reais somente nesse arquivo local ou em um ambiente de processo privado. Não cole segredos no chat, documentação, commits ou relatórios. O perfil não importa credenciais do computador antigo nem inventa chaves.
 
-**Estado verificado em 09/09/2026:** Gemini e Groq geraram análises reais; SerpAPI forneceu notícias em plano de preço zero; CoinGecko respondeu ao endpoint de verificação. A geração Cerebras retornou HTTP 402 (pagamento necessário), apesar de a listagem de modelos responder. O modo atual é Gemini + SerpAPI. O modelo Groq foi atualizado para `openai/gpt-oss-120b`; GNews e credenciais privadas Binance continuam sem uso. Consulte [o fechamento e seus limites](FECHAMENTO_PENDENCIAS_20260909.md).
+**Estado verificado em 09/09/2026, não revalidado nesta atualização:** Gemini e Groq geraram análises reais; SerpAPI forneceu notícias em plano de preço zero; CoinGecko respondeu ao endpoint de verificação. A geração Cerebras retornou HTTP 402 (pagamento necessário), apesar de a listagem de modelos responder. O modo configurado naquela conferência era Gemini + SerpAPI. O modelo Groq foi atualizado para `openai/gpt-oss-120b`; GNews e credenciais privadas Binance estavam sem uso. Consulte [o fechamento e seus limites](FECHAMENTO_PENDENCIAS_20260909.md). Disponibilidade, modelos e quotas atuais exigem verificação própria autorizada.
 
-Os limites diários persistentes são 28 unidades de ingestão, 8 tentativas de notícias por provedor e 6 chamadas lógicas de LLM por provedor, por dia UTC. O dono confirmou planos gratuitos. Isso não é teto monetário nem cobertura de todos os retries internos. Duas execuções pontuais de diagnóstico produziram dados e resultados em `operacao\saidas`, sem ativar agendamentos ou capital. As 48 observações de futuros recuperadas estão na nova base `operacao\dados\basis-recovered-20260909`, separada dos originais.
+Os limites diários persistentes documentados para o perfil são 28 unidades de ingestão, 8 tentativas de notícias por provedor e 6 chamadas lógicas de LLM por provedor, por dia UTC. O dono confirmou planos gratuitos na conferência. Isso não é teto monetário nem cobertura de todos os retries internos. Duas execuções pontuais de diagnóstico produziram dados e resultados em `operacao\saidas`, sem ativar agendamentos ou capital. As 48 observações de futuros recuperadas estão na nova base `operacao\dados\basis-recovered-20260909`, separada dos originais.
 
 O comando `status` mostra os caminhos e se a configuração do pipeline carrega, sem imprimir credenciais nem fazer requisições. Enquanto faltarem as chaves exigidas pelos provedores selecionados, ele informa a falha de configuração e o pipeline mantém a recusa existente. Pesquisa local e diagnóstico AR2 não exigem essas APIs. Configurar pastas não comprova conectividade, disponibilidade de dados históricos ou lucro.
 
@@ -63,6 +60,6 @@ Seus códigos e runtimes congelados permanecem preservados. Esta configuração 
 
 ## Continuidade e recuperação
 
-Leia este arquivo, [a conferência atual dos arquivos](CONFERENCIA_ARQUIVOS_20260910.md), [CONFERENCIA_CHAT_20260910.md](CONFERENCIA_CHAT_20260910.md) e [NEXT_CHAT_PROMPT.md](NEXT_CHAT_PROMPT.md), preservado como mandato. O [resultado econômico de 09/09](evidence/economic_round_20260909/RESULTADOS.md) é histórico; a avaliação Aave posterior está em [AAVE_VALIDACAO_20260910.md](AAVE_VALIDACAO_20260910.md). Não use `C:\Users\Superleo13`, `USERPROFILE`, `AppData` ou as antigas pastas de tarefas do Codex como destinos para novos arquivos do projeto. Entregue novos relatórios em `C:\Cripto\operacao\relatorios`.
+Leia [CONTINUAR_AQUI.md](../CONTINUAR_AQUI.md), este arquivo, [a conferência dos arquivos de 10/09](CONFERENCIA_ARQUIVOS_20260910.md), [CONFERENCIA_CHAT_20260910.md](CONFERENCIA_CHAT_20260910.md) e [NEXT_CHAT_PROMPT.md](NEXT_CHAT_PROMPT.md), preservado como mandato. O [resultado econômico de 09/09](evidence/economic_round_20260909/RESULTADOS.md) é histórico; a avaliação Aave posterior está em [AAVE_VALIDACAO_20260910.md](AAVE_VALIDACAO_20260910.md), acompanhada da [errata de evidências](ERRATA_AUDITORIA_20260915.md). Não use `C:\Users\Superleo13`, `USERPROFILE`, `AppData` ou as antigas pastas de tarefas do Codex como destinos para novos arquivos do projeto. Entregue novos relatórios em `C:\Cripto\operacao\relatorios`.
 
-O pacote original na raiz e seus guias preservam os hashes da migração. O arquivo local `C:\Cripto\LEIA_PRIMEIRO.md` aponta para este mapa atual. Não reescreva evidências, manifestos ou documentos congelados para trocar seus caminhos históricos. Para outra máquina, consulte [MIGRACAO_WINDOWS.md](MIGRACAO_WINDOWS.md); não restaure novamente sobre as pastas já existentes neste PC.
+O pacote original na raiz e seus guias preservam os hashes da migração. A versão local de `C:\Cripto\LEIA_PRIMEIRO.md` precisa ser conferida no PC; sua existência no relato não comprova sincronização com o GitHub. Não reescreva evidências, manifestos ou documentos congelados para trocar seus caminhos históricos. Para outra máquina, consulte [MIGRACAO_WINDOWS.md](MIGRACAO_WINDOWS.md); não restaure novamente sobre as pastas já existentes neste PC.

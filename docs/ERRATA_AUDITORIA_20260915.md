@@ -1,3 +1,9 @@
+> **Orientação de reutilização acrescentada em 17/09/2026:** leia esta errata antes de HYPOTHESES, EVIDENCE_REGISTRY, notes do charter e índices de congelamento. O corpo datado abaixo mantém as conclusões e limites da auditoria de 15/09. O [ponto de entrada](../CONTINUAR_AQUI.md) identifica o corte de engenharia posterior.
+>
+> **H6:** n observado=84; poder tabelado para **n de referência=60**: 23,3% para rho=0,2 e 47,3% para rho=0,3. O texto de notes de `charters/scientific_state.json` também associa esses números indevidamente à amostra observada. Essa ressalva corrige a leitura, sem modificar as fontes congeladas ou os estados literais das hipóteses.
+>
+> **Exportação:** Snapshot e Bundle preservam fontes admitidas por hash e não aplicam nem transportam automaticamente esta errata. Um relatório literal exportado não se torna uma síntese corrigida. Acompanhe sua reutilização com esta nota e a identidade da fonte original; não altere hashes de admissão, allowlists, protocolos ou datas de atestados para simular atualização científica.
+
 # Errata documental da auditoria de evidências — 15/09/2026
 
 Baseline: `main`, commit `4eb96e141389b8390536716af3c4a0cb46edab23`.

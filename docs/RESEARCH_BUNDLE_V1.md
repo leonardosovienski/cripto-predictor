@@ -1,58 +1,35 @@
-# Exportação ResearchBundleV1 — candidato local
+# Exportação ResearchBundleV1
 
-<!-- DOC-SYNC-20260912 -->
-> **Continuidade atual:** [publicação e ordem de leitura](../PUBLICATION_STATUS_20260912.md). Crypto consolidado em `main`; auditoria de engenharia aprovada para `9db8e93`. A branch de validação e o bloqueio Linux citados nos registros anteriores são históricos. Instalações operacionais e estados científicos permanecem separados da consolidação Git.
-<!-- /DOC-SYNC-20260912 -->
+> **Continuidade:** [CONTINUAR_AQUI.md](../CONTINUAR_AQUI.md). O código do exportador está integrado à fonte publicada; os relatos de “candidato local”, “sem push” e de E2Es de 12/09 abaixo são históricos. Publicação da fonte não comprova instalação no ambiente operacional.
+>
+> **Interpretação das fontes:** leia a [errata de evidências](ERRATA_AUDITORIA_20260915.md), inclusive a distinção H6 n observado=84 versus poder tabelado para n de referência=60. O Bundle preserva os textos e estados admitidos; não aplica nem inclui automaticamente essa errata.
 
+## Uso e configuração conferidos em 17/09/2026
 
-Estado corrente 12/09/2026: remediação local, perfil `local-research/2`.
-Origem e restrições são definidas por este produtor. `exporter_revision` é o hash
-do manifesto `exporter-provenance/1`, recuperável na coleção evidence, que inclui
-os bytes efetivos do exportador e dos contratos compartilhados e suas versões.
-O receptor exige aprovação administrativa do hash exato antes de importar.
-Recibos/E2Es abaixo são históricos; evidência nova fica em
-`C:/CRIPTO/operacao/relatorios/bundle-remediation-20260912-real`.
-Sem publicação ou instalação operacional nesta remediação. Snapshot e fontes preservados.
+O pacote independente é `crypto-research-export` `1.0.1`, Python `>=3.11`, com Snapshot `>=1.0.1,<2` e extra `bundle` exigindo `predictor-research-bundle==1.0.0`. Consulte o [manifesto](../packages/research-export/pyproject.toml) e o [guia de instalação](../packages/research-export/README.md). Use ambiente auxiliar separado do runtime científico e do receptor CAIN.
 
-Este incremento é aditivo ao exportador ResearchSnapshotV1, que permanece intacto.
-O produtor usa somente o pacote independente predictor-research-bundle 1.0.0 do Ecosystem;
-não importa CAIN nem executa o runtime científico. Instale o wheel compartilhado em ambiente
-auxiliar separado. Não instale o runtime de produção para usar estas ferramentas.
+O caminho Bundle é aditivo ao Snapshot. A [integração instalada](FINAL_INTEGRATION_AUDIT.md) identifica fontes, contratos e a diferença entre produtor e leitor legado. A aprovação de uma execução pertence ao SHA, aos bytes instalados e ao escopo dos testes registrados; não renova atestados científicos nem prova que o CAIN principal esteja implantado.
 
-Fontes têm allowlist fixa, SHA256 explícito, limite de 100 KB e precisam estar commitadas.
-O exportador verifica novamente os hashes antes de criar saída. O destino é novo, fora do
-checkout e dentro da raiz do produtor. Manifest é escrito por último; não há sobrescrita.
-O horário --exported-at é explícito para permitir repetição determinística e nunca preenche
-os clocks científicos ausentes. Cada entity tem status, eixo, payload, clocks e proveniência.
+Entrada documentada:
 
-Entrada: `python -m crypto_research_export.bundle --root ROOT --expected-sha CHARTER_SHA --trials-sha TRIALS_SHA --destination DESTINO_NOVO --exported-at ISO_OFFSET`.
---trials-sha é opcional. O charter admitido é charters/scientific_state.json. O registro
-opcional é GarimpoInvestimentos/trials.json; somente entradas com nomes explicitamente
-mapeados no charter são selecionadas. O status de hipótese vem literalmente do charter;
-trial sem status explícito permanece UNKNOWN. Payload preserva params/sharpe/notes e outros
-campos existentes, sem recalcular resultados. registered_at conhecido vira recorded_at.
-Charter é preservado byte a byte; cada trial selecionada é um objeto JSON canônico, identificado
-como representação serializada e ligado ao hash da fonte e ao seletor name. Não confundir
-esta representação com os bytes do arquivo original completo. Ausência de entrada vira referência.
-Não são exportados feature store, mercados, caches, segredos ou campanhas completas.
-Dados de entrada exatos continuam fora do recorte. Os dois atestados pipeline-power/2
-podem ser admitidos explicitamente com --attestation-sha PATH=SHA256. São recibos de
-controle plantado, com passed_at/expires_at e veredictos literais preservados; não
-certificam validade atual nem são associados a trials por inferência. Instalação opcional:
-`crypto-research-export[bundle]`, resolvendo o wheel compartilhado localmente.
+```text
+python -m crypto_research_export.bundle --root ROOT --expected-sha CHARTER_SHA --trials-sha TRIALS_SHA --destination DESTINO_NOVO --exported-at ISO_OFFSET
+```
 
-E2E local ampliado: C:/CRIPTO/bundle-v1-enriched-e2e. Wheels/recibos em
-C:/CRIPTO/operacao/relatorios/bundle-wheels-final e bundle-tests.log.
+`--trials-sha` é opcional. O charter é `charters/scientific_state.json`; o registro opcional é `GarimpoInvestimentos/trials.json`. Somente trials explicitamente mapeadas no charter são selecionadas. Os dois atestados `pipeline-power/2` podem ser admitidos com `--attestation-sha PATH=SHA256`. Não invente hashes, revisão ou horários para executar o exemplo.
 
-Validação: 11 testes específicos com fixtures fictícias e fontes commitadas: determinismo,
-UNKNOWN/null, leitura sem alteração, fonte inesperada/ausente/alterada, hash incorreto,
-destino existente/checkout, entrada malformada e credencial fictícia. Wheels e E2E foram
-exercitados separadamente; isso não é validação científica ou econômica.
+As fontes têm allowlist fixa, hashes explícitos, limite de 100 KB e precisam estar commitadas. O destino é novo, fora do checkout e dentro da raiz autorizada do produtor. Manifest é escrito por último, sem sobrescrita. O horário de exportação não preenche clocks científicos ausentes. `exporter_revision` é o hash do manifesto `exporter-provenance/1`, com bytes e versões do exportador e dos contratos; o receptor exige aprovação administrativa do hash exato.
 
-Nenhum push, release, instalação operacional, modelo, hipótese, trial, holdout, ledger ou
-banco científico foi executado/alterado. Rollback desativa esta ferramenta opcional e mantém
-as publicações/bundles existentes. Não apagar evidências para retornar ao caminho SnapshotV1.
+O status de hipótese vem literalmente do charter; trial sem status explícito permanece `UNKNOWN`. Parâmetros, Sharpe e notes são preservados sem recálculo. Charter é preservado byte a byte; cada trial selecionada é uma representação JSON canônica ligada à fonte e ao seletor `name`, não os bytes do arquivo original inteiro. Atestados conservam `passed_at` e `expires_at`; transportá-los não certifica validade corrente nem os associa a trials por inferência.
 
-Na retomada, 11 testes do exportador instalado passaram. O bundle real em
-C:/CRIPTO/bundle-v1-completion-e2e contém 20 entidades e 12 objetos, incluindo
-os dois atestados. As quatro fontes pinadas ficaram byte a byte inalteradas.
+Feature store, mercados, caches, segredos, campanhas completas e inputs exatos permanecem fora desse recorte. Não altere as quatro fontes admitidas, suas autorizações ou hashes para acomodar uma correção documental. Rollback desativa a ferramenta opcional e preserva publicações anteriores.
+
+## Registro histórico da implementação e remediação de 12/09
+
+Os caminhos, contagens e estados deste registro pertencem àquela execução, não ao HEAD ou à instalação atual. O [texto integral anterior](https://github.com/leonardosovienski/cripto-predictor/blob/e5997104f9c72f31764acdbdd4d26ec176791b68/docs/RESEARCH_BUNDLE_V1.md) permanece recuperável no Git.
+
+A remediação local usou perfil `local-research/2`, com recibos em `C:/CRIPTO/operacao/relatorios/bundle-remediation-20260912-real`. Os E2Es anteriores ficaram em `C:/CRIPTO/bundle-v1-enriched-e2e`; wheels e recibos em `C:/CRIPTO/operacao/relatorios/bundle-wheels-final` e `bundle-tests.log`.
+
+O registro reportou 11 testes específicos com fixtures fictícias e fontes commitadas, cobrindo determinismo, UNKNOWN/null, leitura sem alteração, fontes inesperadas/ausentes/alteradas, hashes incorretos, destino existente/checkout, entrada malformada e credencial fictícia. Na retomada, 11 testes do exportador instalado passaram; o bundle em `C:/CRIPTO/bundle-v1-completion-e2e` tinha 20 entidades e 12 objetos, incluindo os dois atestados, com as quatro fontes byte a byte inalteradas. Não somar rodadas sobrepostas como casos independentes.
+
+A declaração “sem publicação ou instalação operacional” descrevia aquela remediação local. A consolidação posterior da fonte está documentada na continuidade e na integração; isso não converte os E2Es em validação científica ou econômica. Esta atualização não executa modelo, hipótese, trial, holdout, ledger ou banco científico.

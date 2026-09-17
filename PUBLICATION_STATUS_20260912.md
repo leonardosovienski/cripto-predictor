@@ -1,4 +1,6 @@
-# Publicação atual e ordem de leitura
+# Registro de publicação e ordem de leitura de 12/09/2026
+
+> **Histórico, não estado atual de main.** Para o corte de engenharia posterior e a ordem de leitura corrente, use [CONTINUAR_AQUI.md](CONTINUAR_AQUI.md). “Atual”, “inalterado”, branches, contagens e caminhos no registro abaixo referem-se à conferência de 12/09. A validade temporal de atestados deve ser interpretada com a [errata de evidências](docs/ERRATA_AUDITORIA_20260915.md).
 
 Consolidação de engenharia encerrada em 12/09/2026. Esta seção substitui o estado de publicação das seções históricas abaixo.
 
@@ -71,4 +73,4 @@ não significa que todos os diretórios históricos sejam cópias limpas do GitH
 
 ## Encerramento e retomada da sessão
 
-Registro consolidado: [decisões, acertos, erros, pendências e próximo prompt](https://github.com/leonardosovienski/cain/blob/feature/research-bundle-v1/docs/research/SESSION_HANDOFF_20260912.md). O gate Linux permanece reprovado. A conferência documental não foi uma revisão semântica integral dos relatórios históricos. Os dois skips conferidos no XML Linux 3.13 são testes exclusivos do launcher Windows; não incluem o teste obrigatório de symlink, que passou.
+Registro consolidado: [decisões, acertos, erros, pendências e próximo prompt](https://github.com/leonardosovienski/cain/blob/5ba4177a11b9312900e5035517aa5ef25d509859/docs/research/SESSION_HANDOFF_20260912.md). O link foi fixado na revisão preservada, em vez da antiga branch móvel. O gate Linux permanece reprovado no registro dessa etapa. A conferência documental não foi uma revisão semântica integral dos relatórios históricos. Os dois skips conferidos no XML Linux 3.13 são testes exclusivos do launcher Windows; não incluem o teste obrigatório de symlink, que passou.

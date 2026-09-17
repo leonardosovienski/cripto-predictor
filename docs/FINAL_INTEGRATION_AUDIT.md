@@ -1,4 +1,40 @@
-> **Ponto de entrada atual:** [publicação, resultado e ordem de leitura](../PUBLICATION_STATUS_20260912.md). A auditoria foi concluída para `9db8e93`; os registros anteriores abaixo mantêm seu contexto e não são instrução para repetir a consolidação.
+# Integração instalada: configuração e reprodução histórica
+
+> Ponto de entrada: [CONTINUAR_AQUI.md](../CONTINUAR_AQUI.md). Esta página separa o script da fonte conferida em 17/09 do relatório histórico de 12/09. Não execute o script de uma revisão presumindo que seus pins pertencem a outra.
+
+## Configuração da fonte conferida em 17/09/2026
+
+Referência Crypto: `e5997104f9c72f31764acdbdd4d26ec176791b68`, após o PR #120. O [script dessa referência](https://github.com/leonardosovienski/cripto-predictor/blob/e5997104f9c72f31764acdbdd4d26ec176791b68/.ci/integration-audit/validate.py) seleciona:
+
+| Componente | Revisão ou versão selecionada |
+|---|---|
+| Ecosystem | `c51d9e63e8441e15b2d045ea4d6a7c67f4ebbdfd` |
+| CAIN | `5ba4177a11b9312900e5035517aa5ef25d509859` |
+| Core | `3.2.1` |
+| Ops | `4.2.1` |
+| Exportador Crypto | `1.0.1` |
+| Contratos do produtor | Snapshot `1.0.1`; Bundle `1.0.0` |
+| Receptor CAIN legado | Leitor Snapshot `1.0.0`, em ambiente separado |
+
+A [CI 35274798009](https://github.com/leonardosovienski/cripto-predictor/actions/runs/35274798009) e a [integração 35274798091](https://github.com/leonardosovienski/cripto-predictor/actions/runs/35274798091) terminaram com sucesso para o SHA Crypto acima. A combinação de 12/09, descrita no registro abaixo, não foi renomeada ou recertificada como se fosse esta.
+
+A matriz de integração usa Python 3.11–3.14 para contratos/exportadores/CAIN. O runtime Crypto e seus extras são exercitados em 3.13/3.14. Na CI principal, `quality` e `all-extras` cobrem todos os extras em 3.13; o perfil experimental 3.14 é reduzido a `test` + `science`, com lock. Não somar casos sobrepostos ou atribuir o escopo completo ao perfil reduzido.
+
+```text
+python .ci/integration-audit/validate.py --crypto-sha SHA_EXATO --work DESTINO_NOVO
+```
+
+Execute a versão do script que pertence ao corte pretendido, em destino novo, com os pré-requisitos indicados no workflow dessa mesma revisão. O script constrói ambientes e artefatos de teste; não é um comando para atualizar a instalação principal. Versões nominais não substituem hashes dos wheels e fingerprints.
+
+**Para reproduzir 12/09:** use o script e a fonte Crypto do corte `9db8e9300dd5f743b71675e5217bee8cbeee5c90`, recuperados em checkout separado. Não basta passar esse SHA a um script mais novo que já contém outro pin de Ecosystem. Preserve recibos e estados originais; a validade corrente de atestados depende do relógio real. Uma aprovação histórica não garante que um gate temporal passe hoje. Não congele o relógio nem renove datas apenas para obter PASS.
+
+Os textos científicos admitidos continuam literais. Consulte a [errata de evidências](ERRATA_AUDITORIA_20260915.md) antes de interpretar H6 e atestados exportados. Transporte correto e controles sintéticos não comprovam lucro, execução de mercado, dados atualizados ou implantação do CAIN principal.
+
+---
+
+## Registro histórico de 12/09/2026
+
+A aprovação de encerramento dessa etapa está em [PUBLICATION_STATUS_20260912.md](../PUBLICATION_STATUS_20260912.md). As descrições de preparação, pendências, caminhos e pins abaixo conservam o contexto histórico; não são instrução para repetir a consolidação.
 
 # Auditoria de engenharia e integração — 12/09/2026
 
