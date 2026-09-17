@@ -1,8 +1,8 @@
 version: 2
 
 updates:
-  # Dependências Python declaradas no pyproject.toml / uv.lock
-  - package-ecosystem: "pip"
+  # uv.lock is the canonical resolution; URL-pinned Core/Ops require review.
+  - package-ecosystem: "uv"
     directory: "/"
 
     schedule:
@@ -13,11 +13,18 @@ updates:
 
     open-pull-requests-limit: 5
 
+    # Scientific/runtime dependencies remain individually reviewable.
     groups:
-      python-minor-patch:
+      python-tooling-minor-patch:
         applies-to: "version-updates"
         patterns:
-          - "*"
+          - "ruff"
+          - "pyright"
+          - "pytest"
+          - "pytest-cov"
+          - "coverage"
+          - "pre-commit"
+          - "build"
         update-types:
           - "minor"
           - "patch"

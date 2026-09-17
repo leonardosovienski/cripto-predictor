@@ -22,15 +22,15 @@ jobs:
       - uses: actions/setup-python@v7
         with:
           python-version: "3.13"
-      - run: uv sync --locked --extra test --extra science
+      - run: uv sync --locked --all-extras
       - name: Preserve frozen OSS evidence bytes
         run: git diff --exit-code 39b0f57496cee06e6f8841c2476f8428210aaf76 -- docs/open_source_research/20260911T0233 docs/open_source_research/20260911T0525
-      - run: uv run ruff check .
-      - run: uv run ruff format --check --diff .
-      - run: uv run pyright
-      - run: uv run python scripts/scan_secrets.py .
+      - run: uv run --no-sync ruff check .
+      - run: uv run --no-sync ruff format --check --diff .
+      - run: uv run --no-sync pyright
+      - run: uv run --no-sync python scripts/scan_secrets.py .
       - run: uv build
-      - run: uv run pytest --cov=GarimpoInvestimentos --cov-report=term-missing
+      - run: uv run --no-sync pytest --cov=GarimpoInvestimentos --cov-report=term-missing
       - uses: actions/upload-artifact@v7
         with:
           name: crypto-distributions
@@ -42,9 +42,10 @@ jobs:
           python -m venv "$RUNNER_TEMP/wheel-contract"
           "$RUNNER_TEMP/wheel-contract/bin/pip" install --upgrade pip
           "$RUNNER_TEMP/wheel-contract/bin/pip" install \
-            "predictor-core @ https://github.com/leonardosovienski/core-predictor/releases/download/v3.2.1/predictor_core-3.2.1-py3-none-any.whl" \
-            "predictor-ops @ https://github.com/leonardosovienski/predictor-ops/releases/download/v4.2.1/predictor_ops-4.2.1-py3-none-any.whl" \
+            "predictor-core @ https://github.com/leonardosovienski/core-predictor/releases/download/v3.2.1/predictor_core-3.2.1-py3-none-any.whl#sha256=10ef42f34ace8bb2df5f83ff7de2ceec79b035a25ea0a690e8942bd60d2fb4e3" \
+            "predictor-ops @ https://github.com/leonardosovienski/predictor-ops/releases/download/v4.2.1/predictor_ops-4.2.1-py3-none-any.whl#sha256=da4fa540703879669caba919521ec7d3c33734b5d57781122823df8817346f0e" \
             dist/cripto_predictor-1.1.0-py3-none-any.whl
+          "$RUNNER_TEMP/wheel-contract/bin/pip" check
           cd "$RUNNER_TEMP"
           "$RUNNER_TEMP/wheel-contract/bin/python" "$GITHUB_WORKSPACE/scripts/verify_installed_wheels.py"
 
@@ -58,9 +59,9 @@ jobs:
       - uses: actions/setup-python@v7
         with:
           python-version: "3.14"
-      - run: uv sync --extra test --extra science
+      - run: uv sync --locked --extra test --extra science
       - run: uv build
-      - run: uv run pytest -q
+      - run: uv run --no-sync pytest -q
 
   all-extras:
     runs-on: ubuntu-latest
@@ -74,8 +75,8 @@ jobs:
           python-version: "3.13"
       - run: uv sync --locked --all-extras
       - run: uv build
-      - run: uv run coverage run --rcfile=coverage-runtime.ini -m pytest -q
-      - run: uv run coverage report --rcfile=coverage-runtime.ini
+      - run: uv run --no-sync coverage run --rcfile=coverage-runtime.ini -m pytest -q
+      - run: uv run --no-sync coverage report --rcfile=coverage-runtime.ini
 
   container:
     runs-on: ubuntu-latest
