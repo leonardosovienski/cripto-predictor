@@ -1,3 +1,5 @@
+> **Registro datado da entrega de 11/09/2026.** Para versões e código posteriores, leia [CONTINUAR_AQUI.md](CONTINUAR_AQUI.md) e o [guia de integração](docs/FINAL_INTEGRATION_AUDIT.md). Os testes, pins e release deste registro pertencem ao corte indicado, não ao HEAD atual.
+
 # Implementação arquitetural — 2026-09-11
 
 Exportador integrado à linha de pesquisa atual copiando apenas `packages/research-export`; os módulos existentes em `GarimpoInvestimentos/research` foram preservados. O wheel do exportador 1.0.1 requer o contrato stdlib >=1.0.1,<2 e não importa o predictor.
@@ -16,4 +18,4 @@ A composição agora separa `arguments`, `runtime_mode`, `ingestion` e `ingest_c
 
 ## Entrega arquitetural publicada — 11/09/2026
 
-Versão **1.1.0** publicada: [release e artefatos](https://github.com/leonardosovienski/cripto-predictor/releases/tag/v1.1.0). [CI de engenharia aprovada](https://github.com/leonardosovienski/cripto-predictor/actions/runs/34630038441) para a fonte `6ea0d2ccdcfc6a3858083acb6ded5cb39e178586`. Consulte [ARCHITECTURE_IMPLEMENTATION.md](ARCHITECTURE_IMPLEMENTATION.md) para comportamento, migração e limites. Este registro atualiza a entrega de software; estados científicos e registros datados abaixo conservam sua autoridade e contexto histórico.
+Versão **1.1.0** publicada: [release e artefatos](https://github.com/leonardosovienski/cripto-predictor/releases/tag/v1.1.0). [CI de engenharia aprovada](https://github.com/leonardosovienski/cripto-predictor/actions/runs/34630038441) para a fonte `6ea0d2ccdcfc6a3858083acb6ded5cb39e178586`. Este registro documenta aquela entrega de software; estados científicos conservam sua autoridade e seu contexto histórico. A [continuidade](CONTINUAR_AQUI.md) descreve o corte posterior sem atribuir a ele esta execução de CI.

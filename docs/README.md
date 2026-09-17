@@ -1,61 +1,62 @@
-
-<!-- DOC-SYNC-20260912 -->
-> **Continuidade atual:** [publicação e ordem de leitura](../PUBLICATION_STATUS_20260912.md). Crypto consolidado em `main`; auditoria de engenharia aprovada para `9db8e93`. A branch de validação e o bloqueio Linux citados nos registros anteriores são históricos. Instalações operacionais e estados científicos permanecem separados da consolidação Git.
-<!-- /DOC-SYNC-20260912 -->
-
-## Continuidade histórica — 11/09/2026
-
-[Fechamento de 11/09/2026](continuity_20260911/README.md): código research, estudos preservados, evidências de teste e mapa local para continuar sem o chat.
-
 # Índice da documentação
 
-[Consolidacao em main de 15/09](CONSOLIDACAO_MAIN_20260915.md): integracao e remocao das branches incorporadas, preservando arquivos locais.
+> **Comece pela [continuidade do projeto](../CONTINUAR_AQUI.md).** Ela é o ponto de entrada para o último corte de engenharia conferido e para a ordem de leitura. Os relatórios datados abaixo conservam o contexto de suas respectivas execuções.
+>
+> **Leitura obrigatória antes das fontes científicas históricas:** [errata de evidências de 15/09](ERRATA_AUDITORIA_20260915.md), com orientação de reutilização destacada em 17/09. H6: n observado=84, mas poder tabelado para n de referência=60. A errata também trata BR2, segunda fonte Aave, atestados expirados e contagens de trials. Os exportadores não aplicam essas correções automaticamente aos textos congelados.
 
-[Auditoria tecnica e correcoes de 15/09](AUDITORIA_TECNICA_20260915.md): testes, tipagem, publicacao e limites da verificacao.
+## Uso e engenharia
 
-Leia a [errata da auditoria de evidências de 15/09](ERRATA_AUDITORIA_20260915.md) ao reutilizar os registros históricos: ela distingue o poder simulado de H6, corrige a interpretação dos custos de BR2 e atualiza a tentativa da segunda fonte Aave e a validade dos atestados.
+- [README principal](../README.md): capacidades, dependências selecionadas, instalação e limites.
+- [Configuração do Windows em C:\Cripto](CONFIGURACAO_LOCAL.md): mapa do perfil local; não comprova o estado ao vivo da instalação.
+- [Integração instalada](FINAL_INTEGRATION_AUDIT.md): combinação do script atual e reprodução separada da auditoria de 12/09.
+- [Ferramentas de pesquisa offline](../GarimpoInvestimentos/research/README.md): universo, fatores, splits, simulação sintética e RunStore.
+- [Exportador Snapshot](../packages/research-export/README.md) e [ResearchBundleV1](RESEARCH_BUNDLE_V1.md): instalação independente, contratos e admissão de fontes.
+- [Guardas de API](API_GUARDS.md) e [backup/restauração](BACKUP_RESTORE.md): contratos operacionais; não ativam tarefas por sua existência.
 
-Comece pela [conferência de arquivos de 10/09](CONFERENCIA_ARQUIVOS_20260910.md) e por [CONTINUAR_AQUI.md](../CONTINUAR_AQUI.md). Esses índices distinguem operação atual, backups e registros históricos.
+A fonte de código conferida em 17/09 é `e5997104f9c72f31764acdbdd4d26ec176791b68`, após o PR #120. Os links e resultados das suas execuções estão na continuidade. A [publicação de 12/09](../PUBLICATION_STATUS_20260912.md) não descreve o HEAD posterior.
 
-A [auditoria ampliada de 10/09](AUDITORIA_AMPLIADA_20260910.md) registra as correções posteriores de fontes, temporalidade, execução simulada, persistência e estatística. Consulte-a antes de reutilizar dados, modelos ou conclusões de documentos anteriores.
+## Auditorias e continuidade datadas
 
-A rodada de 10/09 está em [Aave: validação histórica, custos e execução](AAVE_VALIDACAO_20260910.md). Ela apresenta resultados positivos condicionais com o capital integralmente reconciliado, sem declarar lucro pessoal ou futuro comprovado.
+- [Consolidação em main de 15/09](CONSOLIDACAO_MAIN_20260915.md): integração e remoção das branches incorporadas naquele corte, preservando arquivos locais.
+- [Auditoria técnica e correções de 15/09](AUDITORIA_TECNICA_20260915.md): testes, tipagem, publicação e limites da verificação; não transferir contagens para outros commits.
+- [Fechamento de 11/09](continuity_20260911/README.md): código research, estudos preservados, evidências de teste e mapa local para continuar sem o chat.
+- [Conferência de arquivos de 10/09](CONFERENCIA_ARQUIVOS_20260910.md) e [conferência do chat de 10/09](CONFERENCIA_CHAT_20260910.md): preservação, snapshot recuperado, estado dos itens após #116 e calendários manuais.
+- [Auditoria ampliada de 10/09](AUDITORIA_AMPLIADA_20260910.md): correções de fontes, temporalidade, execução simulada, persistência e estatística.
+- [Revisão geral de 09/09](REVISAO_COMPLETA_20260909.md): acesso ao registro local daquela revisão e suas dependências.
+- [Fechamento da preparação de 09/09](FECHAMENTO_PENDENCIAS_20260909.md): correções, execução real e limites.
 
-## Estado vigente e continuidade
+Os calendários manuais que começam em 12/09 não são instrução para executar janelas perdidas retroativamente. A presença de um protocolo ou runbook não prova que a coleta ocorreu. Consulte recibos e a continuidade antes de qualquer execução.
 
-- [Conferência do chat e publicação de 10/09](CONFERENCIA_CHAT_20260910.md): correções documentais, snapshot recuperado e estado dos seis itens após #116.
+## Pesquisa, dados e dependências
 
-- [Revisão geral de 09/09: contratos e erratas](REVISAO_COMPLETA_20260909.md): ponto de acesso ao registro vivo, auditorias e dependências restantes.
-- [Dependências executadas em 10/09](manual_dependencies_20260910/EXECUCAO.md): histórico Aave recuperado, custos calculáveis e executor/avaliador LLM implementado e congelado. [Retomada anterior](manual_dependencies_20260910/RETOMADA.md): calendário dos 12 gaps, volume intradiário e registro separado do carry. Segurança da branch excluída pelo dono.
-
-- [Prontidão de dados](PRONTIDAO_DADOS.md): bases disponíveis, lacunas verificadas, limites de API e critérios para concluir a preparação.
-- [Configuração deste PC em C:\Cripto](CONFIGURACAO_LOCAL.md): mapa operacional vigente; substitui caminhos de máquinas anteriores para qualquer nova execução.
+- [Aave: validação histórica, custos e execução](AAVE_VALIDACAO_20260910.md): resultados positivos condicionais, sem comprovação de lucro pessoal ou futuro. A tentativa posterior de segunda fonte está reconciliada na [errata](ERRATA_AUDITORIA_20260915.md).
+- [Dependências executadas em 10/09](manual_dependencies_20260910/EXECUCAO.md): histórico Aave, custos e executor/avaliador LLM congelado. [Retomada anterior](manual_dependencies_20260910/RETOMADA.md): calendário dos gaps, volume intradiário e carry separado.
+- [Prontidão de dados](PRONTIDAO_DADOS.md): bases e lacunas verificadas no seu corte, limites de API e critérios de preparação.
 - [Rodada econômica de 09/09](evidence/economic_round_20260909/RESULTADOS.md): resultados, limitações e condições de retomada.
-
-- [Estado da pesquisa em 08/09](CURRENT_RESEARCH_STATE_20260908.md): registro histórico; suas pendências não substituem os adendos de 10/09.
+- [Estado da pesquisa em 08/09](CURRENT_RESEARCH_STATE_20260908.md): registro histórico; suas pendências não substituem adendos posteriores. Leia a correção de BR2 na errata antes de reutilizá-lo.
 - [Continuidade de 08/09](SESSION_HANDOFF_20260908.md): Git, validação, observadores, dados e recuperação.
-- [Prompt de continuidade](NEXT_CHAT_PROMPT.md): novo pedido de revisão geral de arquitetura, lógica, testes e resultado econômico, com o estado atualizado das chaves.
-- [Migração para Windows](MIGRACAO_WINDOWS.md): código versionado no Git e dados em pacote externo.
-- [Auditoria da consolidação](evidence/git_consolidation_20260908/README.md): integração das branches e preservação.
+- [Prompt original de continuidade](NEXT_CHAT_PROMPT.md): mandato preservado, não ordem para repetir automaticamente trabalho concluído.
 
-## Evidências e reprodução
+## Evidências e recuperação
 
-- [Dados e fontes recentes: complemento final de 10/09](continuity_20260910/README.md), [manifesto](continuity_20260910/MANIFEST.json) e [teste de recuperação](continuity_20260910/VALIDACAO.json): cinco ZIPs com 2.685 arquivos.
-
-- [Coleta imediata e auditoria](evidence/immediate_audit_20260908/RESULTADOS.md).
+- [Dados e fontes: complemento de 10/09](continuity_20260910/README.md), [manifesto](continuity_20260910/MANIFEST.json) e [teste de recuperação](continuity_20260910/VALIDACAO.json): cinco ZIPs com 2.685 arquivos no corte registrado.
+- [Pacotes anteriores de 09/09](continuity_20260909/README.md) e [manifesto](continuity_20260909/MANIFEST.json).
+- [Coleta imediata e auditoria de 08/09](evidence/immediate_audit_20260908/RESULTADOS.md).
 - [Pacotes da pesquisa de 08/09](session_archive_20260908/deliverables/) e [manifesto](session_archive_20260908/DELIVERABLES_SHA256.json).
 - [Sessão histórica de 07/09](SESSION_HANDOFF_20260907.md) e [arquivos preservados](session_archive_20260907/).
-- [Runbook do carry](evidence/carry_forward_20260908/RUNBOOK.md) e [registro histórico do agendamento](evidence/carry_forward_20260908/scheduling.json).
+- [Runbook histórico do carry](evidence/carry_forward_20260908/RUNBOOK.md) e [registro do agendamento daquela etapa](evidence/carry_forward_20260908/scheduling.json).
+- [Migração Windows](MIGRACAO_WINDOWS.md) e [mapa da pasta local](LOCAL_FOLDER_AUDIT.md).
+- [Auditoria da consolidação de 08/09](evidence/git_consolidation_20260908/README.md).
 
-Os diretórios `evidence/` e `session_archive_*/` preservam decisões e entregas das respectivas etapas. Seus resultados e instruções de execução devem ser interpretados conforme a data e a versão. Não altere arquivos congelados para corrigir uma apresentação histórica; use os documentos de continuidade para a situação atual.
+Os diretórios `evidence/`, `session_archive_*/`, `source_archive_*/`, os estudos OSS e os pacotes de continuidade preservam decisões e entregas datadas. Não reescreva seus bytes para atualizar caminhos ou apresentações históricas. Git não contém a configuração privada, todos os bancos, ambientes ou recibos locais. Recuperação deve usar destino novo, sem sobrescrever o acervo.
 
-## Governança e referências anteriores
+## Governança e fontes científicas preservadas
 
-- [Histórico das hipóteses](HYPOTHESES.md) e [estado científico canônico](../charters/scientific_state.json).
+Leia primeiro a [errata](ERRATA_AUDITORIA_20260915.md); depois consulte [HYPOTHESES](HYPOTHESES.md), [EVIDENCE_REGISTRY](EVIDENCE_REGISTRY.md) e o [charter](../charters/scientific_state.json). As hipóteses seguem seus estados literais; ressalvas narrativas, inclusive as notes do charter sobre poder da H6, não devem ser reutilizadas sem a correção.
+
 - [Índice do congelamento](../CR_FREEZE_INDEX.md) e [manifesto das famílias anteriores](../CR_RESEARCH_FREEZE.md).
-- [Política de merge e histórico de incidentes](POLITICA_DE_MERGE.md), [backup e restauração](BACKUP_RESTORE.md) e [registro histórico do incidente SerpAPI](SECURITY_INCIDENT_SERPAPI.md). A segurança da branch está excluída do escopo atual; o dono decidiu manter as chaves atuais. As ações antigas não são requisitos novos de revogação.
-- [Handoff com notas históricas](../HANDOFF.md), [roadmap de agosto](OVERVIEW_E_ROADMAP_2026-08-21.md) e [panorama de agosto](PANORAMA_2026-08-21.md).
+- [Política de merge e histórico de incidentes](POLITICA_DE_MERGE.md) e [incidente SerpAPI](SECURITY_INCIDENT_SERPAPI.md). Esta revisão não administra segurança da branch nem credenciais; ações históricas não são novas autorizações.
+- [Handoff de entrada](../HANDOFF.md) e [handoff integral histórico](../HANDOFF_HISTORICO_ATE_20260917.md).
+- [Roadmap de agosto](OVERVIEW_E_ROADMAP_2026-08-21.md) e [panorama de agosto](PANORAMA_2026-08-21.md).
 
-H6 e H9 permanecem encerradas por insuficiência de amostra. Os runbooks e prompts antigos de acompanhamento da H6 documentam sua operação passada; não autorizam reiniciar essa coleta. As novas pesquisas têm protocolos separados.
-
-- [Fechamento da preparação de 09/09/2026: correções, execução real e limites](FECHAMENTO_PENDENCIAS_20260909.md).
+H6 e H9 permanecem encerradas por insuficiência de amostra. Runbooks e prompts antigos da H6 não autorizam reiniciar sua coleta. As novas pesquisas exigem protocolos próprios. Esta correção de navegação não recertifica semanticamente todos os documentos históricos.
