@@ -25,7 +25,7 @@ jobs:
         with:
           version: '0.12.1'
       - name: Fresh clones, installed artifacts, negative tests and offline restoration
-        run: python .ci/integration-audit/validate.py --crypto-sha "$GITHUB_SHA" --work "$RUNNER_TEMP/crypto-integration"
+        run: python scripts/integration_audit_receipt.py --crypto-sha "$GITHUB_SHA" --work "$RUNNER_TEMP/crypto-integration"
       - uses: actions/upload-artifact@v7
         if: always()
         with:
