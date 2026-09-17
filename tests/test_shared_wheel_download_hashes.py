@@ -13,7 +13,7 @@ import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 SHARED_URL = re.compile(
-    r'https://github\.com/leonardosovienski/(?:core-predictor|predictor-ops)/'
+    r"https://github\.com/leonardosovienski/(?:core-predictor|predictor-ops)/"
     r'releases/download/[^"\s\\]+'
 )
 

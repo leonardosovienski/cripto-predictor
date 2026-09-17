@@ -87,19 +87,13 @@ def test_real_wfa_consumes_only_its_declared_fit_and_evaluation_intervals(
         engines, [(0, 180, 187, 217), (30, 210, 217, 247)], strict=True
     ):
         train = [
-            v
-            for v in built
-            if is_start * DAY <= v.timestamp_exchange_ms - ORIGIN < is_end * DAY
+            v for v in built if is_start * DAY <= v.timestamp_exchange_ms - ORIGIN < is_end * DAY
         ]
         inference = [
-            v
-            for v in built
-            if is_start * DAY <= v.timestamp_exchange_ms - ORIGIN < oos_end * DAY
+            v for v in built if is_start * DAY <= v.timestamp_exchange_ms - ORIGIN < oos_end * DAY
         ]
         evaluation = [
-            v
-            for v in built
-            if oos_start * DAY <= v.timestamp_exchange_ms - ORIGIN < oos_end * DAY
+            v for v in built if oos_start * DAY <= v.timestamp_exchange_ms - ORIGIN < oos_end * DAY
         ]
         assert train and inference and evaluation
         assert engine.fit_inputs == (
@@ -112,8 +106,7 @@ def test_real_wfa_consumes_only_its_declared_fit_and_evaluation_intervals(
         )
         # Purge observations are legitimate causal warmup, not fit/evaluation observations.
         assert any(
-            is_end * DAY <= v.timestamp_exchange_ms - ORIGIN < oos_start * DAY
-            for v in inference
+            is_end * DAY <= v.timestamp_exchange_ms - ORIGIN < oos_start * DAY for v in inference
         )
         calibration = (
             [

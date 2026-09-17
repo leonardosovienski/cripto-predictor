@@ -18,9 +18,9 @@ def write_receipts(work, *, expired=False, completed=False):
     records = [{"name": "crypto-wheel-contract", "exit_code": 0, "expected_exit": 0}]
     if expired:
         raw = (
-            "ECOSYSTEM_DRIFT_DETECTED (OFFLINE): 1\n"
-            "  - brasileirao-predictor: atestado venceu em 2026-09-13T16:42:06Z e segue ALIGNED\n"
-        ).encode()
+            b"ECOSYSTEM_DRIFT_DETECTED (OFFLINE): 1\n"
+            b"  - brasileirao-predictor: atestado venceu em 2026-09-13T16:42:06Z e segue ALIGNED\n"
+        )
         (work / "logs").mkdir()
         (work / "logs/ecosystem-offline.log").write_bytes(raw)
         records.append(
