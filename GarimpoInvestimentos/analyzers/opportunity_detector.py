@@ -75,6 +75,49 @@ def _indicator(hard_data: dict, key: str) -> float | None:
     return _number(indicators.get(key))
 
 
+
+def augment_opportunity_features(
+    hard_data: dict,
+    normalized_candles: list[dict],
+    *,
+    source: str,
+) -> dict:
+    """Add detector-only features without changing the scientific/LLM feature contract.
+
+    The LLM trial keeps receiving the exact existing hard_data. This function works on
+    a copy and derives only point-in-time fields needed by the alert path.
+    """
+
+    out = dict(hard_data)
+    if not normalized_candles:
+        return out
+
+    ordered = sorted(normalized_candles, key=lambda row: str(row.get("timestamp") or ""))
+    closes = [_number(row.get("close")) for row in ordered]
+    if all(value is not None for value in closes):
+        clean_closes = [float(value) for value in closes if value is not None]
+        if len(clean_closes) > 3 and clean_closes[-4] != 0:
+            out["change_3d"] = round((clean_closes[-1] / clean_closes[-4] - 1) * 100, 2)
+
+    if len(ordered) >= 21:
+        quote_volumes: list[float] = []
+        for row in ordered[-21:]:
+            volume = _number(row.get("volume"))
+            close = _number(row.get("close"))
+            if volume is None or close is None or volume < 0 or close <= 0:
+                quote_volumes = []
+                break
+            if source in {"binance", "kraken", "consensus_mean", "consensus_median"}:
+                quote_volumes.append(volume * close)
+            else:
+                quote_volumes.append(volume)
+        if len(quote_volumes) == 21:
+            baseline = sum(quote_volumes[:-1]) / 20
+            if baseline > 0:
+                out["volume_ratio_20d"] = round(quote_volumes[-1] / baseline, 4)
+
+    return out
+
 def detect_asset_opportunity(asset: str, hard_data: dict) -> OpportunitySignal:
     """Detect a material directional move using only already-observed features.
 
