@@ -17,8 +17,8 @@ from pathlib import Path
 from predictor_core.obs import emit_event
 
 from GarimpoInvestimentos.analyzers.opportunity_detector import (
-    NORMAL,
     BreadthSignal,
+    NORMAL,
     OpportunitySignal,
     augment_opportunity_features,
     detect_asset_opportunity,
