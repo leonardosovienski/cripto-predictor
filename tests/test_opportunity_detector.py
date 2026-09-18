@@ -1,6 +1,6 @@
 from GarimpoInvestimentos.analyzers.opportunity_detector import (
-    BULL,
     BEAR,
+    BULL,
     NORMAL,
     PERSISTENT,
     STRONG_MOVE,
