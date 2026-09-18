@@ -75,7 +75,6 @@ def _indicator(hard_data: dict, key: str) -> float | None:
     return _number(indicators.get(key))
 
 
-
 def augment_opportunity_features(
     hard_data: dict,
     normalized_candles: list[dict],
@@ -171,23 +170,15 @@ def detect_asset_opportunity(asset: str, hard_data: dict) -> OpportunitySignal:
             bear_acceleration = True
             bear_reasons.append("7d<=-10%")
 
-    bull_trend = (
-        ch7 is not None and ch7 >= 5.0 and macd_hist is not None and macd_hist > 0
-    )
-    bear_trend = (
-        ch7 is not None and ch7 <= -5.0 and macd_hist is not None and macd_hist < 0
-    )
+    bull_trend = ch7 is not None and ch7 >= 5.0 and macd_hist is not None and macd_hist > 0
+    bear_trend = ch7 is not None and ch7 <= -5.0 and macd_hist is not None and macd_hist < 0
     if bull_trend:
         bull_reasons.append("7d>=5% with positive MACD histogram")
     if bear_trend:
         bear_reasons.append("7d<=-5% with negative MACD histogram")
 
-    bull_persistent = (
-        ch30 is not None and ch30 >= 15.0 and vs_sma50 is not None and vs_sma50 > 0
-    )
-    bear_persistent = (
-        ch30 is not None and ch30 <= -15.0 and vs_sma50 is not None and vs_sma50 < 0
-    )
+    bull_persistent = ch30 is not None and ch30 >= 15.0 and vs_sma50 is not None and vs_sma50 > 0
+    bear_persistent = ch30 is not None and ch30 <= -15.0 and vs_sma50 is not None and vs_sma50 < 0
     if bull_persistent:
         bull_reasons.append("30d>=15% and price above SMA50")
     if bear_persistent:
@@ -253,9 +244,7 @@ def detect_market_breadth(
 
     bull_assets = tuple(
         sorted(
-            s.asset
-            for s in signals
-            if s.metrics.get("change_24h", 0.0) >= daily_move_threshold_pct
+            s.asset for s in signals if s.metrics.get("change_24h", 0.0) >= daily_move_threshold_pct
         )
     )
     bear_assets = tuple(
