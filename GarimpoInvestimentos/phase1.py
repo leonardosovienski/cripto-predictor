@@ -57,6 +57,7 @@ from GarimpoInvestimentos.dpl.feature_store import fonte_label
 from GarimpoInvestimentos.dpl.ingest import ingest_crypto
 from GarimpoInvestimentos.dpl.providers.fear_greed import FearAndGreedProvider
 from GarimpoInvestimentos.dpl.snapshots import prediction_payload, serving_context
+from GarimpoInvestimentos.opportunity_monitor import scan_opportunities
 from GarimpoInvestimentos.security.redaction import safe_redact_text
 
 INGEST_HISTORY_DAYS = 200  # mesmo valor do main.py (SMA-200 + change_30d)
@@ -326,11 +327,41 @@ async def main() -> int:
             "(análise offline usa o último snapshot da Feature Store)"
         )
 
-    # 2) Idempotência + 3) inferência isolada por juiz + 4) gravação.
+    # 2) Radar econômico determinístico, INDEPENDENTE do LLM e dos gates científicos.
+    # Ele precisa rodar antes da idempotência dos juízes: "LLM já coletado hoje" nunca
+    # pode significar "não verificar se o mercado entrou em movimento relevante".
+    radar_failed = False
     store = FeatureStore(FEATURE_STORE_DB)
     try:
         universo = store.list_symbols("1d") or settings.DEFAULT_ASSETS
         universo = order_by_staleness(universo, store)
+        try:
+            radar = scan_opportunities(store, universo)
+            radar_failed = bool(radar["failed"])
+            log.info(
+                "radar: %d ativo(s) verificados, %d ativo(s) em estado de oportunidade, "
+                "%d transição(ões) nova(s), breadth=%s",
+                radar["scanned"],
+                radar["active"],
+                radar["triggered"],
+                radar["breadth_triggered"],
+            )
+            if radar_failed:
+                log.warning(
+                    "radar ficou cego para %d ativo(s) — rodada marcada como parcial",
+                    radar["failed"],
+                )
+        except Exception as e:
+            radar_failed = True
+            log.error("radar de oportunidades falhou: %s: %s", type(e).__name__, e)
+            emit_event(
+                "previsao_cripto",
+                "opportunity.radar_failed",
+                metrics={},
+                metadata={"error": type(e).__name__},
+            )
+
+        # 3) Idempotência + 4) inferência isolada por juiz + 5) gravação.
         done = judges_done_today(store, today_utc)
         by_provider: dict[str, set[str]] = {}
         for ativo, juiz in done:
@@ -346,7 +377,7 @@ async def main() -> int:
 
         if not pending:
             log.info("todos os juízes já coletados hoje (%s) — nada a fazer", today_utc)
-            return 0
+            return 1 if radar_failed else 0
 
         log.info(
             "pendentes hoje: %d ativo(s) → %s",
@@ -360,7 +391,7 @@ async def main() -> int:
     log.info(
         "=== concluído: %d gravado(s) na Feature Store, %d falha(s) isolada(s) ===", n_ok, n_fail
     )
-    return 0 if n_fail == 0 else 1
+    return 0 if n_fail == 0 and not radar_failed else 1
 
 
 if __name__ == "__main__":
