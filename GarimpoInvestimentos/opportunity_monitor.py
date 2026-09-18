@@ -184,25 +184,23 @@ def scan_opportunities(
         )
     )
 
-    current_state = {
-        "schema_version": "opportunity-state/1",
-        "updated_at": now.isoformat(),
-        "capital_authorized": False,
-        "assets": {signal.asset: signal.as_dict() for signal in signals},
-        "breadth": breadth.as_dict(),
-        "failures": failures,
-    }
-    _save_state(state_path, current_state)
+    retry_pending = bool(previous.get("delivery_pending")) and (
+        any(signal.active for signal in signals) or breadth.active
+    )
+    should_attempt_alert = bool(triggered or breadth_triggered or retry_pending)
+    notified_signals = triggered
+    if retry_pending and not notified_signals:
+        notified_signals = [signal for signal in signals if signal.active]
 
     alert_sent = False
-    if triggered or breadth_triggered:
+    if should_attempt_alert:
         lines = [
             f"RADAR CRIPTO — {now.isoformat(timespec='seconds')}",
             "Alerta informativo de mercado; NÃO autoriza capital nem envia ordens.",
             "",
         ]
-        lines.extend(_signal_line(signal) for signal in triggered)
-        if breadth_triggered:
+        lines.extend(_signal_line(signal) for signal in notified_signals)
+        if breadth_triggered or (retry_pending and breadth.active):
             lines.append(_breadth_line(breadth))
         text = "\n".join(lines) + "\n"
         alert_path.parent.mkdir(parents=True, exist_ok=True)
@@ -211,14 +209,33 @@ def scan_opportunities(
         emit_event(
             "previsao_cripto",
             "opportunity.alert",
-            metrics={"n_asset_alerts": float(len(triggered)), "breadth": float(breadth_triggered)},
+            metrics={
+                "n_asset_alerts": float(len(notified_signals)),
+                "breadth": float(breadth_triggered or (retry_pending and breadth.active)),
+            },
             metadata={
-                "assets": [signal.asset for signal in triggered],
-                "breadth_direction": breadth.direction if breadth_triggered else NORMAL,
+                "assets": [signal.asset for signal in notified_signals],
+                "breadth_direction": (
+                    breadth.direction
+                    if breadth_triggered or (retry_pending and breadth.active)
+                    else NORMAL
+                ),
                 "webhook_sent": alert_sent,
+                "delivery_retry": retry_pending,
                 "capital_authorized": False,
             },
         )
+
+    current_state = {
+        "schema_version": "opportunity-state/1",
+        "updated_at": now.isoformat(),
+        "capital_authorized": False,
+        "delivery_pending": bool(should_attempt_alert and not alert_sent),
+        "assets": {signal.asset: signal.as_dict() for signal in signals},
+        "breadth": breadth.as_dict(),
+        "failures": failures,
+    }
+    _save_state(state_path, current_state)
 
     return {
         "scanned": len(signals),

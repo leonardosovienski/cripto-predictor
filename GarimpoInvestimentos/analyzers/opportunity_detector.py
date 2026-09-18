@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import math
 from dataclasses import asdict, dataclass
+from datetime import datetime, timedelta
 
 NORMAL = "NORMAL"
 WATCH = "WATCH"
@@ -75,6 +76,31 @@ def _indicator(hard_data: dict, key: str) -> float | None:
     return _number(indicators.get(key))
 
 
+def _contiguous_daily_suffix(rows: list[dict]) -> list[dict]:
+    """Return only the most recent uninterrupted daily sequence."""
+
+    parsed: list[tuple[datetime, dict]] = []
+    for row in sorted(rows, key=lambda item: str(item.get("timestamp") or "")):
+        raw = row.get("timestamp")
+        if not isinstance(raw, str):
+            return []
+        try:
+            stamp = datetime.fromisoformat(raw.replace("Z", "+00:00"))
+        except ValueError:
+            return []
+        parsed.append((stamp, row))
+
+    if not parsed:
+        return []
+
+    start = 0
+    for index in range(len(parsed) - 1, 0, -1):
+        if parsed[index][0] - parsed[index - 1][0] != timedelta(days=1):
+            start = index
+            break
+    return [row for _, row in parsed[start:]]
+
+
 def augment_opportunity_features(
     hard_data: dict,
     normalized_candles: list[dict],
@@ -91,7 +117,9 @@ def augment_opportunity_features(
     if not normalized_candles:
         return out
 
-    ordered = sorted(normalized_candles, key=lambda row: str(row.get("timestamp") or ""))
+    ordered = _contiguous_daily_suffix(normalized_candles)
+    if not ordered:
+        return out
     closes = [_number(row.get("close")) for row in ordered]
     if all(value is not None for value in closes):
         clean_closes = [float(value) for value in closes if value is not None]

@@ -84,3 +84,54 @@ def test_scan_persists_and_deduplicates_alert_transition(tmp_path, monkeypatch):
     assert second["triggered"] == 0
     assert len(sent) == 1
     assert alert.exists()
+
+
+def test_detector_features_refuse_to_bridge_a_daily_gap():
+    rows = _candles(last_jump=True)
+    rows.pop(-2)
+    enriched = augment_opportunity_features({}, rows, source="binance")
+    assert "change_3d" not in enriched
+    assert "volume_ratio_20d" not in enriched
+
+
+def test_failed_webhook_is_retried_while_opportunity_remains_active(tmp_path, monkeypatch):
+    snapshot = {
+        "features": {
+            "change_24h": 7.12,
+            "change_7d": 9.22,
+            "change_30d": 6.25,
+            "rsi_14": 73.5,
+            "preco_vs_sma50_pct": 8.29,
+            "macd_histogram": 369.71,
+        },
+        "normalized_candles": _candles(last_jump=True),
+        "source": "binance",
+    }
+    monkeypatch.setattr(
+        "GarimpoInvestimentos.opportunity_monitor.serving_context",
+        lambda store, asset, now=None: snapshot,
+    )
+    monkeypatch.setattr(
+        "GarimpoInvestimentos.opportunity_monitor.emit_event",
+        lambda *args, **kwargs: None,
+    )
+    outcomes = iter((False, True))
+    attempts = []
+    monkeypatch.setattr(
+        "GarimpoInvestimentos.opportunity_monitor._notify_webhook",
+        lambda text, title: attempts.append((title, text)) or next(outcomes),
+    )
+
+    state = tmp_path / "state.json"
+    alert = tmp_path / "alert.txt"
+    now = datetime(2026, 8, 20, 1, 0, tzinfo=UTC)
+
+    first = scan_opportunities(_Store(), ["bitcoin"], now=now, state_path=state, alert_path=alert)
+    assert first["webhook_sent"] is False
+    assert json.loads(state.read_text(encoding="utf-8"))["delivery_pending"] is True
+
+    second = scan_opportunities(_Store(), ["bitcoin"], now=now, state_path=state, alert_path=alert)
+    assert second["triggered"] == 0
+    assert second["webhook_sent"] is True
+    assert json.loads(state.read_text(encoding="utf-8"))["delivery_pending"] is False
+    assert len(attempts) == 2
