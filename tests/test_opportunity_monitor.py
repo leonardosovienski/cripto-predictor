@@ -74,12 +74,8 @@ def test_scan_persists_and_deduplicates_alert_transition(tmp_path, monkeypatch):
     alert = tmp_path / "alert.txt"
     now = datetime(2026, 8, 20, 1, 0, tzinfo=UTC)
 
-    first = scan_opportunities(
-        _Store(), ["bitcoin"], now=now, state_path=state, alert_path=alert
-    )
-    second = scan_opportunities(
-        _Store(), ["bitcoin"], now=now, state_path=state, alert_path=alert
-    )
+    first = scan_opportunities(_Store(), ["bitcoin"], now=now, state_path=state, alert_path=alert)
+    second = scan_opportunities(_Store(), ["bitcoin"], now=now, state_path=state, alert_path=alert)
 
     saved = json.loads(state.read_text(encoding="utf-8"))
     assert saved["assets"]["bitcoin"]["state"] == STRONG_MOVE
