@@ -250,7 +250,9 @@ def detect_market_breadth(
     )
     bear_assets = tuple(
         sorted(
-            s.asset for s in signals if s.metrics.get("change_24h", 0.0) <= -daily_move_threshold_pct
+            s.asset
+            for s in signals
+            if s.metrics.get("change_24h", 0.0) <= -daily_move_threshold_pct
         )
     )
 
