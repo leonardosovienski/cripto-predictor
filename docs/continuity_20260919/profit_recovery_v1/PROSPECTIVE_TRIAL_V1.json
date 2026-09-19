@@ -1,0 +1,62 @@
+{
+  "schema_version": "PROSPECTIVE_TRIAL_V1/1",
+  "state": "NOT_READY",
+  "spec": {
+    "universe": [
+      "BTC",
+      "ETH",
+      "SOL"
+    ],
+    "frequency": "1d candidate scan; event-time market quotes",
+    "opportunity_classes": [
+      "STRONG_MOVE",
+      "PERSISTENT",
+      "WATCH"
+    ],
+    "features": [
+      "returns",
+      "momentum",
+      "acceleration",
+      "relative_volume",
+      "volatility",
+      "MACD",
+      "RSI",
+      "SMA_distance",
+      "breadth",
+      "cross_asset_confirmation"
+    ],
+    "target": "future_net_return_72h_from_first_executable_quote",
+    "model_rule": "expanding-window-v1; outcomes available before candidate only",
+    "thresholds": "PR122 frozen at 1b2bee85f552667ed74a17e5da3526b62541d2d2",
+    "baseline": [
+      "always-flat",
+      "buy-and-hold",
+      "momentum-1d",
+      "momentum-7d",
+      "momentum-30d",
+      "breakout-20d",
+      "moving-average-trend",
+      "mean-reversion-1d"
+    ],
+    "entry": "first marketable observed quote no later than 5m after decision",
+    "exit": "fixed 72h marketable observed quote; no oracle exit",
+    "cost_model": "observed fee, spread, depth, slippage and latency; +50% stress",
+    "sizing": "fixed 1 percent opening equity per independent event",
+    "risk": "max 3 percent gross exposure; 15 percent MaxDD halt",
+    "minimum_observations": 60,
+    "minimum_duration": "180 calendar days; maximum 365 days",
+    "GO": "lower95 net and incremental vs best baseline >0; PF>1.10; MaxDD<=15%; coverage and delivery>=99%; survives +50% cost stress",
+    "NO_GO": "upper95 net or incremental <=0, or stressed upper95 <=0",
+    "INCONCLUSIVE": "all other outcomes or fewer than 60 independent events by day 365",
+    "version": "profit-recovery-prospective-v1",
+    "freeze_policy": "any material change creates NEW_TRIAL_VERSION"
+  },
+  "sha256": "fb33eed46841c8251297f61e416bd2282134a88a34fb4827cc259d842c3f61a5",
+  "blockers": [
+    "AUTOMATIC_SCHEDULER_NOT_ENABLED",
+    "DELIVERY_ACK_NOT_OBSERVED",
+    "MULTI_ASSET_PIT_DATA_NOT_CURRENT",
+    "OBSERVED_MARKET_COSTS_NOT_AVAILABLE"
+  ],
+  "capital_permission": false
+}

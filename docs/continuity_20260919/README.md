@@ -20,7 +20,8 @@ git show --stat --oneline origin/profit-recovery-20260919
 3. [Resumo econômico estruturado](LEVEL2_SUMMARY.json).
 4. [Manifesto de publicação e artefatos locais](MANIFEST.json).
 5. [Resultado expandido](LEVEL2_EXECUTION.json) e ledgers causais [BTC](BTC_CAUSAL_LEDGER_V2.json), [ETH](ETH_CAUSAL_LEDGER_V2.json) e [SOL](SOL_CAUSAL_LEDGER_V2.json).
-6. Código: [`profit_recovery_v1.py`](../../GarimpoInvestimentos/profit_recovery_v1.py) e [testes](../../tests/test_profit_recovery_v1.py).
+6. Relatórios anteriores preservados: [auditoria econômica sequencial](AUDITORIA_ECONOMICA_SEQUENCIAL_20260919.md) e [execução profit recovery V1](PROFIT_RECOVERY_EXECUTION.md), com seus [artefatos estruturados](profit_recovery_v1/).
+7. Código: [`profit_recovery_v1.py`](../../GarimpoInvestimentos/profit_recovery_v1.py) e [testes](../../tests/test_profit_recovery_v1.py).
 
 ## Resultado que deve ser preservado
 
@@ -48,7 +49,7 @@ O primeiro intento da suíte ampla parou na coleta por `numpy` ausente no ambien
 
 ## Git versus somente local
 
-O GitHub contém o código, os testes, o relatório completo, o baseline, o resumo, o JSON expandido, os três ledgers causais e este handoff. Os inputs de mercado, o banco operacional, builds e ambientes permanecem locais; seus hashes/procedência necessários estão preservados nos artefatos e no relatório.
+O GitHub contém o código, os testes, os três relatórios, os artefatos estruturados das duas execuções, o baseline, o resumo, o JSON expandido, os três ledgers causais e este handoff. Os inputs brutos de mercado, o banco operacional, builds e ambientes permanecem locais; seus hashes/procedência necessários estão preservados nos artefatos e no relatório.
 
 Clonar a branch permite revisar e reproduzir a lógica, mas não restaura `C:\Cripto\operacao`, `C:\Cripto\restaurado-20260908`, configuração privada ou ambientes locais. Preserve `C:\Cripto` se esses itens forem necessários.
 

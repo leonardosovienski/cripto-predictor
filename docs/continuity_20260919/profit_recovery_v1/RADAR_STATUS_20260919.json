@@ -1,0 +1,13 @@
+{
+  "SCHEDULE_CONFIGURED": false,
+  "SCHEDULER_ENABLED": "NOT_VERIFIED",
+  "HEARTBEAT_OBSERVED": false,
+  "LIVE_SCAN_OBSERVED": false,
+  "FRESH_DATA_OBSERVED": false,
+  "ALERT_CREATED_OBSERVED": false,
+  "ALERT_DELIVERY_OBSERVED": false,
+  "BLIND_TIME_MEASURABLE": false,
+  "blind_time_hours": null,
+  "missed_cycles_lower_bound": null,
+  "capital_permission": false
+}

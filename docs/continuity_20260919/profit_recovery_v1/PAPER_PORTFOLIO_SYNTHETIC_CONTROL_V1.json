@@ -1,0 +1,60 @@
+{
+  "artifact_type": "SYNTHETIC_ENGINEERING_CONTROL_NOT_MARKET_EVIDENCE",
+  "paper_trade": {
+    "schema_version": "REALISTIC_PAPER_V2/1",
+    "opportunity_id": "SYNTHETIC_CONTROL_ONLY",
+    "decision_timestamp": "2026-01-01T00:00:00+00:00",
+    "quote_timestamp": "2026-01-01T00:00:02+00:00",
+    "bid": 99,
+    "ask": 100,
+    "order_type": "MARKETABLE",
+    "requested_size": 10.0,
+    "latency_seconds": 2,
+    "fill_status": "FILLED",
+    "filled_size": 10.0,
+    "partial_fill": false,
+    "rejection": false,
+    "entry_price": 100,
+    "fee": 2.1,
+    "spread_cost": 10.0,
+    "slippage": 0.0,
+    "funding": 0.0,
+    "mark_to_market": 97.9,
+    "exit_reason": "fixed_horizon",
+    "exit_price": 110,
+    "gross_pnl": 100.0,
+    "costs": 2.1,
+    "net_pnl": 97.9,
+    "quote_evidence": "ESTIMATED",
+    "capital_permission": false
+  },
+  "portfolio": {
+    "schema_version": "PAPER_PORTFOLIO_V1/1",
+    "cash": 5097.9,
+    "open_positions": 0,
+    "realized_pnl": 97.89999999999964,
+    "unrealized_pnl": 0.0,
+    "fees": 2.1,
+    "funding": 0.0,
+    "gross_exposure": 0.0,
+    "net_exposure": 0.0,
+    "equity_curve": [
+      {
+        "index": 0,
+        "equity": 5000
+      },
+      {
+        "index": 1,
+        "equity": 5097.9
+      }
+    ],
+    "turnover": 2100.0,
+    "MaxDD": 0.0,
+    "gross_pnl": 100.0,
+    "costs": 2.1,
+    "net_pnl": 97.9,
+    "trade_count": 1,
+    "capital_permission": false
+  },
+  "capital_permission": false
+}
