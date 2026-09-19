@@ -13,6 +13,7 @@ dependencies = [
   "httpx>=0.28.1,<1",
   "predictor-core>=3.2.1,<4",
   "predictor-ops>=4.2.0,<5",
+  "predictor-research-protocol==1.0.0",
   "pydantic>=2.12,<3",
   "pydantic-settings>=2.10,<3",
   "platformdirs>=4.3,<5",
