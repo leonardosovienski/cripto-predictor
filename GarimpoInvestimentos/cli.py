@@ -41,12 +41,17 @@ def main() -> None:
 
         research_main(sys.argv[2:])
         return
+    if len(sys.argv) > 1 and sys.argv[1] == "profit-recovery":
+        from GarimpoInvestimentos.profit_recovery_v1 import main as recovery_main
+
+        raise SystemExit(recovery_main(sys.argv[2:]))
     if any(argument in {"-h", "--help"} for argument in sys.argv[1:]):
         print(
             "usage: cripto-predictor [--ingest] [--assets IDS] [--discover N] [--summary] [--output-dir PATH]"
         )
         print("Fail-closed cryptocurrency research pipeline (no capital authorization).")
         print("Offline research tools: cripto-predictor research --help")
+        print("Causal opportunity research: cripto-predictor profit-recovery --help")
         print("Read-only history: cripto-predictor history --database PATH [--limit N]")
         print("Explicit legacy import: cripto-predictor migrate-history --database PATH --csv PATH")
         return
