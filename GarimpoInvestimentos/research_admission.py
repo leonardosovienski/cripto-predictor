@@ -429,6 +429,22 @@ class AdmissionStore:
             ).fetchone()
         return self._decode_receipt(row)
 
+    def admitted_context(self, task_id):
+        """Return the immutable task and latest receipt only when admission is accepted."""
+        with self.connection() as db:
+            inbox = db.execute(
+                "SELECT envelope,payload_hash FROM task_inbox WHERE task_id=?", (task_id,)
+            ).fetchone()
+        receipt = self.receipt(task_id)
+        if inbox is None or receipt is None or receipt["decision"] != "ACCEPTED":
+            raise PermissionError("RESULT_NOT_AUTHORIZED: task has no accepted admission")
+        envelope = json.loads(inbox["envelope"])
+        return {
+            "task": envelope["payload"],
+            "task_payload_hash": inbox["payload_hash"],
+            "receipt": receipt,
+        }
+
     def revalidate(self, task_id, *, now=None):
         now = _now(now)
         current = self.policy()
