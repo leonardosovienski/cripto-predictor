@@ -101,3 +101,26 @@ def test_result_must_match_admission_identities(tmp_path):
     changed["provenance"]["admission_policy_hash"] = "cd" * 32
     with pytest.raises(PermissionError):
         store(tmp_path).produce(changed)
+
+
+def test_result_delivery_attempt_ack_and_retry_are_durable(tmp_path):
+    path_store = store(tmp_path)
+    envelope = path_store.produce(result())["envelope"]
+    path_store.record_send("RESULT-001", envelope["message_id"])
+    assert store(tmp_path).state("RESULT-001")["attempt_count"] == 1
+    assert store(tmp_path).fail_delivery(
+        "RESULT-001", envelope["message_id"], "CAIN_OFFLINE", max_attempts=2
+    )["status"] == "RETRYABLE"
+    store(tmp_path).record_send("RESULT-001", envelope["message_id"])
+    state = store(tmp_path).acknowledge(
+        "RESULT-001", envelope["message_id"], processed_at=result()["produced_at"]
+    )
+    assert state["status"] == "PUBLISHED"
+    assert store(tmp_path).reconcile() == {"pending": 0, "published": 1, "dead_letters": 0}
+
+
+def test_result_ack_rejects_wrong_message_identity(tmp_path):
+    path_store = store(tmp_path)
+    path_store.produce(result())
+    with pytest.raises(ValueError, match="ACK_CONFLICT"):
+        path_store.acknowledge("RESULT-001", "00" * 32, processed_at=result()["produced_at"])

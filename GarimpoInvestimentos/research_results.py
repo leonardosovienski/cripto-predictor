@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import sqlite3
 from contextlib import contextmanager
+from datetime import datetime
 from pathlib import Path
 
 from research_protocol import canonical, digest, loads, payload_hash, sign_result, validate_result
@@ -140,6 +141,81 @@ class ResultOutbox:
                 (limit,),
             ).fetchall()
         return [loads(row["envelope"]) for row in rows]
+
+    def record_send(self, result_id, message_id):
+        """Persist an at-least-once delivery attempt before invoking transport."""
+        with self.connection() as db:
+            db.execute("BEGIN IMMEDIATE")
+            row = db.execute(
+                "SELECT envelope,message_id,status FROM result_outbox WHERE result_id=?",
+                (result_id,),
+            ).fetchone()
+            if row is None or row["message_id"] != message_id:
+                raise ValueError("ACK_CONFLICT: unknown result/message identity")
+            if row["status"] == "PUBLISHED":
+                return {"status": "already_published", "envelope": loads(row["envelope"])}
+            if row["status"] == "DEAD_LETTER":
+                raise ValueError("DELIVERY_BLOCKED: result is dead-lettered")
+            db.execute(
+                "UPDATE result_outbox SET attempt_count=attempt_count+1,error=NULL "
+                "WHERE result_id=?",
+                (result_id,),
+            )
+        return {"status": "send_recorded", "envelope": loads(row["envelope"])}
+
+    def acknowledge(self, result_id, message_id, *, processed_at):
+        parsed = datetime.fromisoformat(processed_at.replace("Z", "+00:00"))
+        if parsed.tzinfo is None or parsed.utcoffset() is None:
+            raise ValueError("Invalid acknowledgement time")
+        with self.connection() as db:
+            db.execute("BEGIN IMMEDIATE")
+            row = db.execute(
+                "SELECT message_id,status,attempt_count FROM result_outbox WHERE result_id=?",
+                (result_id,),
+            ).fetchone()
+            if row is None or row["message_id"] != message_id:
+                raise ValueError("ACK_CONFLICT: unknown result/message identity")
+            if row["attempt_count"] < 1:
+                raise ValueError("ACK_CONFLICT: result has no recorded send")
+            if row["status"] != "PUBLISHED":
+                db.execute(
+                    "UPDATE result_outbox SET status='PUBLISHED',processed_at=?,error=NULL "
+                    "WHERE result_id=?",
+                    (processed_at, result_id),
+                )
+        return self.state(result_id)
+
+    def fail_delivery(self, result_id, message_id, error, *, max_attempts=3):
+        if type(max_attempts) is not int or max_attempts < 1 or not error:
+            raise ValueError("Invalid delivery failure")
+        with self.connection() as db:
+            db.execute("BEGIN IMMEDIATE")
+            row = db.execute(
+                "SELECT message_id,status,attempt_count FROM result_outbox WHERE result_id=?",
+                (result_id,),
+            ).fetchone()
+            if row is None or row["message_id"] != message_id:
+                raise ValueError("ACK_CONFLICT: unknown result/message identity")
+            if row["status"] == "PUBLISHED":
+                raise ValueError("ACK_CONFLICT: published result cannot fail delivery")
+            status = "DEAD_LETTER" if row["attempt_count"] >= max_attempts else "RETRYABLE"
+            db.execute(
+                "UPDATE result_outbox SET status=?,error=? WHERE result_id=?",
+                (status, error[:1000], result_id),
+            )
+        return self.state(result_id)
+
+    def reconcile(self):
+        with self.connection() as db:
+            rows = db.execute(
+                "SELECT status,count(*) AS count FROM result_outbox GROUP BY status"
+            ).fetchall()
+        counts = {row["status"]: row["count"] for row in rows}
+        return {
+            "pending": counts.get("PENDING", 0) + counts.get("RETRYABLE", 0),
+            "published": counts.get("PUBLISHED", 0),
+            "dead_letters": counts.get("DEAD_LETTER", 0),
+        }
 
     def state(self, result_id):
         with self.connection() as db:
