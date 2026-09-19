@@ -1,6 +1,12 @@
 # Continuar o projeto Cripto
 
-Este é o ponto de entrada de continuidade. O corte abaixo foi conferido em **17/09/2026** e não é um painel ao vivo do computador, dos provedores ou de commits futuros. Documentos datados descrevem suas próprias etapas.
+Este é o ponto de entrada de continuidade. O corte econômico mais recente foi conferido em **19/09/2026** na branch `profit-recovery-20260919`; o último corte integrado em `main` descrito abaixo continua sendo o de 17/09. Este documento não é um painel ao vivo do computador, dos provedores ou de commits futuros. Documentos datados descrevem suas próprias etapas.
+
+## Execução econômica Nível 2/3 — 19/09/2026
+
+Leia primeiro o [handoff autocontido](docs/continuity_20260919/README.md) e o [relatório completo](docs/continuity_20260919/REUSE_VERIFY_GAP_EXECUTION.md). A branch contém o laço causal de recuperação de lucro, ledger V2, agrupamento em episódios, custos comparáveis e as rodadas BTC/ETH/SOL.
+
+Resultado: `INCONCLUSIVE`; operação `RESEARCH_ONLY`; paper trading e microcapital `NOT_READY`; reservado final `RESERVED_FINAL_INSUFFICIENT`. Não foi provado edge incremental do PR122. A branch não está integrada em `main`, não foi instalada na operação principal e não autoriza capital.
 
 ## Último corte de engenharia conferido
 

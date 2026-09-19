@@ -17,6 +17,7 @@ A fonte de código conferida em 17/09 é `e5997104f9c72f31764acdbdd4d26ec176791b
 
 ## Auditorias e continuidade datadas
 
+- [Recuperação econômica Nível 2/3 de 19/09](continuity_20260919/README.md): relatório reuse/verify/gap, baseline congelado, resumo, manifesto e distinção GitHub/local para retomada sem o chat.
 - [Consolidação em main de 15/09](CONSOLIDACAO_MAIN_20260915.md): integração e remoção das branches incorporadas naquele corte, preservando arquivos locais.
 - [Auditoria técnica e correções de 15/09](AUDITORIA_TECNICA_20260915.md): testes, tipagem, publicação e limites da verificação; não transferir contagens para outros commits.
 - [Fechamento de 11/09](continuity_20260911/README.md): código research, estudos preservados, evidências de teste e mapa local para continuar sem o chat.

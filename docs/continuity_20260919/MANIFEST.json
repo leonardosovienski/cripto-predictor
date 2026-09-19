@@ -1,0 +1,43 @@
+{
+  "schema_version": "continuity-manifest/1",
+  "date": "2026-09-19",
+  "published_files": {
+    "REUSE_VERIFY_GAP_EXECUTION.md": {
+      "sha256": "a51364720f82df94456918233927c44085b36aeb85e00351e44633bbad1160d3",
+      "source": "C:\\Cripto\\operacao\\relatorios\\REUSE_VERIFY_GAP_EXECUTION.md"
+    },
+    "BASELINE_V1.json": {
+      "sha256": "6dc31a97aee92939d395820a65619d8db36113c18302ce95f9ae29f551c60e29",
+      "source": "C:\\Cripto\\operacao\\saidas\\reuse-verify-gap\\BASELINE_V1.json"
+    }
+  },
+  "published_derived_artifacts": {
+    "LEVEL2_EXECUTION.json": {
+      "bytes": 218950,
+      "sha256": "19ace5aa7ff6f12021fad4710840834994976196eb44cee050bac5ba43f14bbe"
+    },
+    "BTC_CAUSAL_LEDGER_V2.json": {
+      "sha256": "ef4064a63d88f3da107d9bbb6fa9a5f3ee53c6cc354df6001c1995399ed85a37"
+    },
+    "ETH_CAUSAL_LEDGER_V2.json": {
+      "sha256": "4ba27e74b42654db47098ea8fdDBB52E47B9FA66FB1FD5EF7D564D289BE02F28"
+    },
+    "SOL_CAUSAL_LEDGER_V2.json": {
+      "sha256": "348c613a4355e86f0a41d96102ef99d910f66b45ec4cf928f0e692d6dba99a7e"
+    }
+  },
+  "restored_input_hashes": {
+    "ETHUSDT.json.gz": "f7df37a93394dfe6bb83f0e63040d8f77d4ed40e2776d79b9ad082057c1d7e4b",
+    "SOLUSDT.json.gz": "57ebea7fbe67b4089bb2c25b79d83537b654f290c6fc4a7d887799c2bafdda49"
+  },
+  "local_only_builds": {
+    "cripto_predictor-1.1.0-py3-none-any.whl": "5c5029254d9d2beca50de56dc5681fe724f77408e511fd37e265048e97f2d66c",
+    "cripto_predictor-1.1.0.tar.gz": "b82db3ca12a6ef18ee7d6fd749ce2405b4834553952e2c063bd80d558b1e1a7b",
+    "directory": "C:\\Cripto\\operacao\\temporarios\\reuse-verify-gap-build-20260919"
+  },
+  "preserved_prior_report_hashes": {
+    "AUDITORIA_ECONOMICA_SEQUENCIAL_20260919.md": "6637de6fd4ab36f166ffd42d57e935492de7550fef1ec37ebf9645538ceb9e64",
+    "PROFIT_RECOVERY_EXECUTION.md": "098adc49cf38c389c87a706f80b68abb15bfc7a6a4d3e02c979108dc273f7724"
+  },
+  "capital_permission": false
+}

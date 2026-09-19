@@ -1,5 +1,7 @@
 # Pesquisa de lucro multiestratégia — entrega de engenharia de 08/09/2026
 
+> Atualização posterior: a execução causal e econômica Nível 2/3 de 19/09/2026 está no [handoff reuse/verify/gap](continuity_20260919/README.md). O veredicto permanece `INCONCLUSIVE`; isso não altera retroativamente esta entrega de 08/09.
+
 A rodada de 10/09 está em [Aave: validação histórica, custos e execução](AAVE_VALIDACAO_20260910.md). Ela apresenta resultados positivos condicionais com o capital integralmente reconciliado, sem declarar lucro pessoal ou futuro comprovado.
 
 Neste PC, execute e salve toda pesquisa somente dentro de `C:\Cripto`, seguindo [CONFIGURACAO_LOCAL.md](CONFIGURACAO_LOCAL.md). Código atual em `C:\Cripto\pesquisa-20260909`; dados originais em `C:\Cripto\restaurado-20260908`; novas entregas em `C:\Cripto\operacao\relatorios`.

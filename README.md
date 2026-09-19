@@ -2,7 +2,7 @@
 
 Sistema de pesquisa em criptoativos: ingestão e procedência de dados, análises com LLM, diagnósticos quantitativos e avaliação estatística. Nenhuma linha tem lucro pessoal ou futuro comprovado; os resultados históricos positivos de Aave são condicionais aos cenários de custo. A V3 emite diagnóstico `UNVALIDATED`.
 
-> **Continuidade:** [CONTINUAR_AQUI.md](CONTINUAR_AQUI.md) é o ponto de entrada para o último corte conferido, a ordem de leitura e as pendências. [Índice documental](docs/README.md). Documentos datados não são painéis ao vivo da instalação.
+> **Continuidade:** [CONTINUAR_AQUI.md](CONTINUAR_AQUI.md) é o ponto de entrada para o último corte conferido, a ordem de leitura e as pendências. A execução econômica Nível 2/3 de 19/09 está no [handoff reuse/verify/gap](docs/continuity_20260919/README.md). [Índice documental](docs/README.md). Documentos datados não são painéis ao vivo da instalação.
 >
 > **Antes de reutilizar resultados históricos:** leia a [errata de evidências](docs/ERRATA_AUDITORIA_20260915.md). Na H6, a amostra observada é n=84, mas os poderes de 23,3% e 47,3% pertencem à tabela de referência n=60. As fontes congeladas conservam seus bytes e devem ser acompanhadas da errata.
 

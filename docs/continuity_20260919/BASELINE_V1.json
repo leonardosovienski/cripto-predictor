@@ -1,0 +1,48 @@
+{
+  "schema_version": "BASELINE_V1/1",
+  "frozen_at": "2026-09-19T18:10:28.959236+00:00",
+  "economic_baseline_commit": "1b2bee85f552667ed74a17e5da3526b62541d2d2",
+  "implementation_commit_before_level2": "854854b6e7de41a95383aa881eccb4a4360d98a6",
+  "measurement_module_sha256": "25e5dbdf6deb2e2d23d28d591fb5f7bcd404dfccc732b3f68f89815ac61af8da",
+  "detector_sha256": "b6e7deb9c20de5843130d1c04584730178f214e304a9324451ee97d56b8ecca5",
+  "detector_thresholds": {
+    "acceleration": "1d abs>=5% and volume ratio>=1.5; or 3d abs>=8%; or 7d abs>=10%",
+    "trend": "7d abs>=5% with direction-confirming MACD histogram",
+    "persistence": "30d abs>=15% with direction-confirming SMA50 distance"
+  },
+  "features": [
+    "change_24h",
+    "change_3d",
+    "change_7d",
+    "change_30d",
+    "volume_ratio_20d",
+    "MACD_histogram",
+    "SMA50_distance",
+    "RSI14_risk_metadata"
+  ],
+  "candidate_horizon": "3d fixed close-to-close diagnostic",
+  "outcome_horizons": {
+    "1h": "NOT_AVAILABLE_DAILY_DATA_FREQUENCY",
+    "4h": "NOT_AVAILABLE_DAILY_DATA_FREQUENCY",
+    "1d": "available retrospective",
+    "3d": "available retrospective",
+    "7d": "available retrospective"
+  },
+  "episode_rule": "same asset and direction within 7d; first candidate is effective event",
+  "split_rule": "trailing 200 contiguous daily rows; chronological 60/20/20",
+  "reserved_final_status": "RESERVED_FINAL_INSUFFICIENT",
+  "cost_scenarios_round_trip_bps": {
+    "optimistic": 10.0,
+    "base": 35.0,
+    "conservative": 70.0,
+    "stress": 105.0
+  },
+  "cost_evidence": "ASSUMED",
+  "changes_allowed": "measurement, provenance labels, integrity checks, and reports only",
+  "economic_logic_changed": false,
+  "capital_permission": false,
+  "previous_report_hashes": {
+    "AUDITORIA_ECONOMICA_SEQUENCIAL_20260919.md": "6637de6fd4ab36f166ffd42d57e935492de7550fef1ec37ebf9645538ceb9e64",
+    "PROFIT_RECOVERY_EXECUTION.md": "098adc49cf38c389c87a706f80b68abb15bfc7a6a4d3e02c979108dc273f7724"
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "schema_version": "reuse-verify-gap/continuity-v1",
+  "date": "2026-09-19",
+  "branch": "profit-recovery-20260919",
+  "implementation_commit_before_publication_handoff": "a458bb6688f0b682a7d1008aa3f29321904eaae7",
+  "economic_baseline_commit": "1b2bee85f552667ed74a17e5da3526b62541d2d2",
+  "verdicts": {
+    "level_2": "INCONCLUSIVE",
+    "round_a_btc": "INCONCLUSIVE",
+    "round_b_eth_sol": "INCONCLUSIVE",
+    "operational": "RESEARCH_ONLY",
+    "paper_trading": "NOT_READY",
+    "microcapital": "NOT_READY",
+    "reserved_final": "RESERVED_FINAL_INSUFFICIENT"
+  },
+  "validation_base_35bps": {
+    "btc": {
+      "signals": 1,
+      "effective_independent_count": 1,
+      "gross_expectancy": 0.0034837825472280315,
+      "net_expectancy": -0.000016217452771968583,
+      "best_simple_baseline": "breakout-20d",
+      "incremental_vs_best": -0.000016217452771968583
+    },
+    "eth": {
+      "signals": 6,
+      "effective_independent_count": 3,
+      "gross_expectancy": 0.007001767400884244,
+      "net_expectancy": 0.003501767400884243,
+      "lower95_net_expectancy": -0.040758882844562576,
+      "best_simple_baseline": "buy-and-hold",
+      "incremental_vs_best": -0.0017518794434806158
+    },
+    "sol": {
+      "signals": 8,
+      "effective_independent_count": 5,
+      "gross_expectancy": 0.021576056698610024,
+      "net_expectancy": 0.018076056698610024,
+      "lower95_net_expectancy": -0.008126919531874357,
+      "best_simple_baseline": "momentum-1d",
+      "incremental_vs_best": 0.0
+    }
+  },
+  "cost_scenarios_round_trip_bps": {
+    "optimistic": 10.0,
+    "base": 35.0,
+    "conservative": 70.0,
+    "stress": 105.0
+  },
+  "full_suite": {
+    "passed": 1585,
+    "skipped": 2
+  },
+  "capital_permission": false,
+  "merge_authorized": false,
+  "deployment_authorized": false
+}
