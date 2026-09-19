@@ -19,6 +19,7 @@ from GarimpoInvestimentos.profit_recovery_v1 import (
     Quote,
     baseline_report,
     causal_opportunity_ledger,
+    cluster_candidate_episodes,
     default_trial,
     economic_decision,
     freeze_trial,
@@ -30,6 +31,7 @@ from GarimpoInvestimentos.profit_recovery_v1 import (
     paper_execute_v2,
     portfolio_summary,
     run_replay,
+    strategy_economic_report,
     synthetic_control,
 )
 
@@ -338,3 +340,26 @@ def test_non_contiguous_data_fails_closed() -> None:
     del series[20]
     with pytest.raises(ValueError, match="contiguous"):
         causal_opportunity_ledger(series, assumed_cost())
+
+
+def test_ledger_v2_has_all_required_horizons_without_inventing_intraday_data() -> None:
+    rows = causal_opportunity_ledger(candles(), assumed_cost())
+    assert rows
+    outcomes = rows[0]["future_returns_after_signal"]
+    assert set(outcomes) == {"1h", "4h", "1d", "3d", "7d"}
+    assert outcomes["1h"] is None and outcomes["4h"] is None
+    assert rows[0]["intraday_outcome_status"] == "NOT_AVAILABLE_DAILY_DATA_FREQUENCY"
+
+
+def test_episode_clustering_and_economic_report_use_effective_count() -> None:
+    rows = causal_opportunity_ledger(candles(n=120), assumed_cost())
+    clustered = cluster_candidate_episodes(rows)
+    assert clustered
+    assert clustered[0]["independent_event"] is True
+    report = strategy_economic_report(rows, round_trip_bps=35)
+    assert report["signal_count"] == len(rows)
+    assert report["effective_independent_count"] <= report["signal_count"]
+    assert report["strategies"]["PR122-direction"]["cost_expectancy"] is not None
+    assert report["PR122_incremental_vs_best"]["paired_event_count"] == report[
+        "effective_independent_count"
+    ]
