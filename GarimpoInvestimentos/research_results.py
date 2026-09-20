@@ -25,8 +25,9 @@ class ResultOutbox:
         *,
         admission_store,
         publisher_identity: str,
-        key_id: str,
-        secret: bytes,
+        key_id: str | None = None,
+        secret: bytes | None = None,
+        key_store=None,
         scope: str = "crypto.research.result",
     ):
         self.path = Path(path)
@@ -34,7 +35,10 @@ class ResultOutbox:
         self.publisher_identity = publisher_identity
         self.key_id = key_id
         self.secret = secret
+        self.key_store = key_store
         self.scope = scope
+        if key_store is None and (key_id is None or secret is None):
+            raise ValueError("fixed key or operator key store required")
         self.path.parent.mkdir(parents=True, exist_ok=True)
         with self.connection() as db:
             db.execute(
@@ -89,14 +93,19 @@ class ResultOutbox:
     def produce(self, result):
         validate_result(result)
         self._authorize(result)
+        key_id, secret = (
+            self.key_store.signing_key(self.publisher_identity, self.scope)
+            if self.key_store is not None
+            else (self.key_id, self.secret)
+        )
         envelope = sign_result(
             result,
             producer="CRIPTO",
             publisher_identity=self.publisher_identity,
             consumer="CAIN",
             scope=self.scope,
-            key_id=self.key_id,
-            secret=self.secret,
+            key_id=key_id,
+            secret=secret,
         )
         result_hash = payload_hash(result)
         with self.connection() as db:

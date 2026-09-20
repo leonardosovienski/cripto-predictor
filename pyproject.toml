@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "cripto-predictor"
-version = "1.1.1rc1"
+version = "1.1.1rc2"
 description = "Portable, fail-closed cryptocurrency research pipeline"
 readme = "README.md"
 requires-python = ">=3.13,<3.15"
@@ -13,7 +13,7 @@ dependencies = [
   "httpx>=0.28.1,<1",
   "predictor-core>=3.2.1,<4",
   "predictor-ops>=4.2.0,<5",
-  "predictor-research-protocol==1.0.1rc1",
+  "predictor-research-protocol==1.0.2rc1",
   "pydantic>=2.12,<3",
   "pydantic-settings>=2.10,<3",
   "platformdirs>=4.3,<5",

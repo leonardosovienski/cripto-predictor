@@ -1,7 +1,7 @@
 from copy import deepcopy
 
 import pytest
-from research_protocol import canonical, digest, payload_hash
+from research_protocol import HmacKeyStore, canonical, digest, payload_hash
 
 from GarimpoInvestimentos.research_results import ResultConflict, ResultOutbox
 
@@ -124,3 +124,17 @@ def test_result_ack_rejects_wrong_message_identity(tmp_path):
     path_store.produce(result())
     with pytest.raises(ValueError, match="ACK_CONFLICT"):
         path_store.acknowledge("RESULT-001", "00" * 32, processed_at=result()["produced_at"])
+
+
+def test_result_outbox_uses_current_operator_signing_key(tmp_path):
+    keys = HmacKeyStore(tmp_path / "keys")
+    keys.provision("crypto-qa", "crypto.research.result", "crypto-key-1", secret=b"a" * 32)
+    keys.rotate(
+        "crypto-qa", "crypto.research.result", "crypto-key-2",
+        grace_seconds=3600, secret=b"b" * 32,
+    )
+    outbox = ResultOutbox(
+        tmp_path / "rotated-result.db", admission_store=Admission(),
+        publisher_identity="crypto-qa", key_store=keys,
+    )
+    assert outbox.produce(result())["envelope"]["key_id"] == "crypto-key-2"

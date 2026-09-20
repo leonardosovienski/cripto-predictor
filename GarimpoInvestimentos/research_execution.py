@@ -298,13 +298,45 @@ class ResearchExecutor:
         if crash_at == "after_persist":
             raise RuntimeError("INJECTED_CRASH_AFTER_PERSIST")
 
+        recorded = self.journal.get(experiment_id)
+        if recorded["effect_hash"] and effect_path.exists() and _sha(effect_path) != recorded["effect_hash"]:
+            self.journal.transition(
+                experiment_id, "RECONCILIATION_REQUIRED", error="effect hash mismatch"
+            )
+            raise ValueError("domain effect hash mismatch")
+        if recorded["effect_hash"] and not effect_path.exists():
+            self.journal.transition(
+                experiment_id, "RECONCILIATION_REQUIRED",
+                error="effect metadata exists without immutable bytes",
+            )
+            raise ValueError("domain effect bytes missing")
+        if recorded["result_hash"] and not result_path.exists():
+            self.journal.transition(
+                experiment_id, "RECONCILIATION_REQUIRED",
+                error="result metadata exists without immutable bytes",
+            )
+            raise ValueError("result bytes missing")
+        if recorded["result_hash"] and result_path.exists() and _sha(result_path) != recorded["result_hash"]:
+            self.journal.transition(
+                experiment_id, "RECONCILIATION_REQUIRED", error="result hash mismatch"
+            )
+            raise ValueError("research result hash mismatch")
+
         run = None
         if not effect_path.exists():
             self.journal.transition(experiment_id, "SCHEDULED", detail="static worker selected")
+            command = [
+                self.python, "-m", "GarimpoInvestimentos.research_worker",
+                "--request", str(request_path), "--effect", str(effect_path),
+                "--trial-registry", str(trial_path),
+            ]
+            if crash_at == "runner_crash":
+                command.extend(["--fault", "crash"])
+            elif crash_at == "runner_timeout":
+                command.extend(["--fault", "hang"])
             config = JobConfig(
                 id="research-" + logical_hash[:24],
-                command=[self.python, "-m", "GarimpoInvestimentos.research_worker", "--request", str(request_path),
-                         "--effect", str(effect_path), "--trial-registry", str(trial_path)],
+                command=command,
                 cwd=Path(__file__).resolve().parents[1],
                 timeout_seconds=context["receipt"]["resource_budget"]["timeout_seconds"],
                 expected_artifact=effect_path,
@@ -375,12 +407,19 @@ class ResearchExecutor:
         for raw in rows:
             row = dict(raw)
             effect = Path(row["effect_path"]) if row["effect_path"] else self.root / "experiments" / row["experiment_id"] / "domain-effect.json"
+            result = Path(row["result_path"]) if row["result_path"] else self.root / "experiments" / row["experiment_id"] / "research-result.json"
             if effect.exists() and row["effect_hash"] and _sha(effect) != row["effect_hash"]:
                 findings.append({"experiment_id": row["experiment_id"], "finding": "HASH_MISMATCH"})
             elif row["effect_hash"] and not effect.exists():
                 findings.append({"experiment_id": row["experiment_id"], "finding": "MISSING_BYTES"})
             elif effect.exists() and not row["effect_hash"]:
                 findings.append({"experiment_id": row["experiment_id"], "finding": "ORPHAN_EFFECT_RECOVERABLE"})
+            if result.exists() and row["result_hash"] and _sha(result) != row["result_hash"]:
+                findings.append({"experiment_id": row["experiment_id"], "finding": "RESULT_HASH_MISMATCH"})
+            elif row["result_hash"] and not result.exists():
+                findings.append({"experiment_id": row["experiment_id"], "finding": "RESULT_MISSING_BYTES"})
+            elif result.exists() and not row["result_hash"]:
+                findings.append({"experiment_id": row["experiment_id"], "finding": "ORPHAN_RESULT_RECOVERABLE"})
         return findings
 
 

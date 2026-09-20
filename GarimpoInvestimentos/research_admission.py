@@ -52,7 +52,8 @@ class AdmissionStore:
     def __init__(self, path, policy_path, *, keys, available_handlers=None):
         self.path = Path(path)
         self.policy_path = Path(policy_path)
-        self.keys = dict(keys)
+        self.keys = dict(keys) if not hasattr(keys, "resolve") else None
+        self.key_store = keys if hasattr(keys, "resolve") else None
         self.available_handlers = frozenset(
             KNOWN_HANDLERS.values() if available_handlers is None else available_handlers
         )
@@ -254,7 +255,11 @@ class AdmissionStore:
         try:
             verify_task(
                 envelope,
-                lambda identity, key_id: self.keys.get((identity, key_id)),
+                lambda identity, key_id: (
+                    self.key_store.resolve(identity, key_id, envelope["scope"])
+                    if self.key_store is not None
+                    else self.keys.get((identity, key_id))
+                ),
             )
         except PermissionError:
             return "UNAUTHORIZED", "AUTHENTICATION_FAILED", [], None

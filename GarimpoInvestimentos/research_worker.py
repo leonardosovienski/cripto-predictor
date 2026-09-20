@@ -11,6 +11,8 @@ import argparse
 import hashlib
 import json
 import math
+import os
+import time
 from datetime import datetime
 from pathlib import Path
 
@@ -178,7 +180,12 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--request", type=Path, required=True)
     parser.add_argument("--effect", type=Path, required=True)
     parser.add_argument("--trial-registry", type=Path, required=True)
+    parser.add_argument("--fault", choices=("crash", "hang"))
     args = parser.parse_args(argv)
+    if args.fault == "crash":
+        os._exit(97)
+    if args.fault == "hang":
+        time.sleep(5)
     request = _load(args.request)
     effect = evaluate(request)
     registry = TrialRegistryV2(args.trial_registry)

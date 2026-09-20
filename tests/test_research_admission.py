@@ -1,7 +1,7 @@
 import json
 
 import pytest
-from research_protocol import sign_task
+from research_protocol import HmacKeyStore, sign_task
 
 from GarimpoInvestimentos.research_admission import AdmissionStore
 
@@ -139,6 +139,25 @@ def test_accepts_authenticates_freezes_refs_and_clamps_priority(tmp_path):
     assert receipt["normalized_priority"] == "NORMAL"
     assert receipt["provenance"]["authorization_result"] == "AUTHORIZED"
     assert store.revalidate("TASK-001", now="2026-09-19T22:32:00Z")["decision"] == "ACCEPTED"
+
+
+def test_operator_key_rotation_accepts_new_key_and_revocation_fails_closed(tmp_path):
+    keys = HmacKeyStore(tmp_path / "keys")
+    keys.provision("cain-qa", SCOPE, "cain-f3-key", secret=SECRET)
+    keys.rotate("cain-qa", SCOPE, "cain-f3-key-2", grace_seconds=3600, secret=b"r" * 32)
+    value = policy()
+    value["publishers"].append({
+        "publisher_identity": "cain-qa", "key_id": "cain-f3-key-2",
+        "scopes": [SCOPE], "revoked": False,
+    })
+    store, _ = setup(tmp_path / "rotated", value, keys)
+    rotated = envelope(key_id="cain-f3-key-2", secret=b"r" * 32)
+    assert store.submit(rotated, now="2026-09-19T22:31:00Z")["decision"] == "ACCEPTED"
+
+    keys.revoke("cain-f3-key-2")
+    value2 = task("TASK-ROTATED-002")
+    denied = envelope(value2, key_id="cain-f3-key-2", secret=b"r" * 32)
+    assert store.submit(denied, now="2026-09-19T22:31:01Z")["decision"] == "UNAUTHORIZED"
 
 
 def test_duplicate_is_idempotent_and_changed_payload_conflicts(tmp_path):

@@ -2,11 +2,11 @@ import json
 from datetime import UTC, datetime, timedelta
 
 import pytest
+from cain.research_results import ResultInbox
+from cain.research_tasks import TaskOutbox
 from predictor_core.contracts.trial_v2 import dataset_fingerprint
 from research_protocol import sign_task
 
-from cain.research_results import ResultInbox
-from cain.research_tasks import TaskOutbox
 from GarimpoInvestimentos.research_admission import AdmissionStore
 from GarimpoInvestimentos.research_execution import ReferenceStore, ResearchExecutor
 from GarimpoInvestimentos.research_results import ResultOutbox
@@ -26,7 +26,7 @@ def identity(name):
     return {"package_version": name, "source_sha": SOURCE, "artifact_sha256": SHA}
 
 
-def setup_stack(tmp_path):
+def setup_stack(tmp_path, *, timeout_seconds=30):
     object_store = ReferenceStore(tmp_path / "operator-objects")
     cutoff = datetime.now(UTC) - timedelta(days=1)
     rows = []
@@ -94,7 +94,7 @@ def setup_stack(tmp_path):
         "limits": {"max_pending_tasks": 10, "max_task_bytes": 16384, "max_refs": 8,
                    "max_parameter_bytes": 1024, "rate_limit_per_minute": 10,
                    "max_concurrency": 1, "cpu_seconds": 60, "memory_mb": 512,
-                   "disk_mb": 128, "timeout_seconds": 30, "max_retries": 2,
+                   "disk_mb": 128, "timeout_seconds": timeout_seconds, "max_retries": 2,
                    "dead_letter_threshold": 3, "max_age_seconds": 86400,
                    "per_publisher_pending": 10, "max_priority": "NORMAL"},
         "allowed_symbols": ["BTCUSDT"],
@@ -229,3 +229,48 @@ def test_bidirectional_real_loop_survives_restart_and_correlates_in_cain(tmp_pat
     assert restarted.for_task("TASK-E2E-001")[0]["result_id"] == result_id
     assert cain_tasks.reconcile()["published"] == 1
     assert crypto_outbox.reconcile()["published"] == 1
+
+
+def test_real_ops_runner_crash_fails_without_scientific_result_and_can_retry(tmp_path):
+    executor, _, outbox, _ = setup_stack(tmp_path)
+    with pytest.raises(RuntimeError, match="OPS_EXECUTION_FAILED"):
+        executor.execute("TASK-E2E-001", crash_at="runner_crash")
+    assert executor.journal.get(executor.logical_identity(
+        executor.admission_store.admitted_context("TASK-E2E-001")
+    )[0])["state"] == "FAILED"
+    assert outbox.pending() == []
+    recovered = executor.execute("TASK-E2E-001")
+    assert recovered["experiment"]["state"] == "COMPLETED"
+    assert len(outbox.pending()) == 1
+
+
+def test_real_ops_timeout_fails_closed_and_writes_no_domain_effect(tmp_path):
+    executor, _, outbox, _ = setup_stack(tmp_path, timeout_seconds=1)
+    with pytest.raises(RuntimeError, match="OPS_EXECUTION_FAILED"):
+        executor.execute("TASK-E2E-001", crash_at="runner_timeout")
+    assert not list((tmp_path / "execution/experiments").glob("*/domain-effect.json"))
+    assert outbox.pending() == []
+
+
+def test_filesystem_database_split_brain_is_detected_and_not_reexecuted(tmp_path):
+    executor, _, outbox, _ = setup_stack(tmp_path)
+    completed = executor.execute("TASK-E2E-001")
+    effect = next((tmp_path / "execution/experiments").glob("*/domain-effect.json"))
+    effect.unlink()
+    assert executor.reconcile()[0]["finding"] == "MISSING_BYTES"
+    with pytest.raises(ValueError, match="domain effect bytes missing"):
+        executor.execute("TASK-E2E-001")
+    assert executor.journal.get(completed["experiment"]["experiment_id"])["state"] == "RECONCILIATION_REQUIRED"
+    assert len(outbox.pending()) == 1
+
+
+def test_result_artifact_replacement_is_detected(tmp_path):
+    executor, _, _, _ = setup_stack(tmp_path)
+    completed = executor.execute("TASK-E2E-001")
+    result_path = next((tmp_path / "execution/experiments").glob("*/research-result.json"))
+    result_path.write_bytes(b"{}")
+    findings = executor.reconcile()
+    assert {item["finding"] for item in findings} == {"RESULT_HASH_MISMATCH"}
+    with pytest.raises(ValueError):
+        executor.execute("TASK-E2E-001")
+    assert executor.journal.get(completed["experiment"]["experiment_id"])["state"] == "RECONCILIATION_REQUIRED"

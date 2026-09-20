@@ -15,4 +15,4 @@ for _stream in (sys.stdout, sys.stderr):
         # ou já estar fechado. Só esses casos são toleráveis — não engolir o resto.
         pass
 
-__version__ = "1.1.1rc1"
+__version__ = "1.1.1rc2"
