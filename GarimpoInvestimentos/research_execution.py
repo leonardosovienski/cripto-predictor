@@ -13,6 +13,7 @@ from contextlib import contextmanager
 from datetime import UTC, datetime
 from pathlib import Path
 from types import SimpleNamespace
+from uuid import uuid4
 
 from predictor_ops import JobConfig, JobType, RunStatus, run_job
 from predictor_ops.models import RuntimeConfig
@@ -106,7 +107,19 @@ class ReferenceStore:
                 target.chmod(stat.S_IREAD)
             if _sha(target) != expected:
                 raise ValueError("materialized reference changed")
-            materialized.append({**reference, "path": str(target), "size": size})
+            materialized.append({
+                **reference,
+                "expected_hash": expected,
+                "observed_hash": _sha(target),
+                "resolver_id": "crypto-operator-cas",
+                "resolver_version": "1",
+                "source_cas_identity": str(resolved),
+                "materialized_path": str(target),
+                "materialized_at": _now(),
+                "path": str(target),
+                "size": size,
+                "verification": "PASS",
+            })
         return materialized
 
 
@@ -128,6 +141,14 @@ class ExperimentJournal:
                   experiment_id TEXT NOT NULL, sequence INTEGER PRIMARY KEY AUTOINCREMENT,
                   state TEXT NOT NULL, recorded_at TEXT NOT NULL, detail TEXT
                 );
+                CREATE TABLE IF NOT EXISTS attempts(
+                  attempt_id TEXT PRIMARY KEY, experiment_id TEXT NOT NULL,
+                  ops_run_id TEXT, state TEXT NOT NULL,
+                  started_at TEXT NOT NULL, finished_at TEXT,
+                  runtime_provenance_hash TEXT, error TEXT
+                );
+                CREATE INDEX IF NOT EXISTS attempts_experiment
+                  ON attempts(experiment_id,started_at,attempt_id);
                 """
             )
 
@@ -182,6 +203,37 @@ class ExperimentJournal:
     def get(self, experiment_id: str) -> dict:
         with self.connection() as db:
             row = db.execute("SELECT * FROM experiments WHERE experiment_id=?", (experiment_id,)).fetchone()
+        if row is None:
+            raise ValueError("unknown experiment")
+        return dict(row)
+
+    def start_attempt(self, experiment_id: str) -> str:
+        attempt_id = "ATTEMPT-" + uuid4().hex
+        with self.connection() as db:
+            db.execute(
+                "INSERT INTO attempts(attempt_id,experiment_id,state,started_at) VALUES(?,?,?,?)",
+                (attempt_id, experiment_id, "RUNNING", _now()),
+            )
+        return attempt_id
+
+    def finish_attempt(self, attempt_id: str, *, state: str, run=None, error=None) -> None:
+        if state not in {"SUCCEEDED", "FAILED"}:
+            raise ValueError("invalid attempt state")
+        ops_run_id = getattr(run, "run_id", None)
+        provenance = digest(canonical(run.record)) if run is not None else None
+        with self.connection() as db:
+            db.execute(
+                "UPDATE attempts SET state=?,ops_run_id=?,finished_at=?,"
+                "runtime_provenance_hash=?,error=? WHERE attempt_id=?",
+                (state, ops_run_id, _now(), provenance, error, attempt_id),
+            )
+
+    def successful_attempt(self, experiment_id: str) -> dict | None:
+        with self.connection() as db:
+            row = db.execute(
+                "SELECT * FROM attempts WHERE experiment_id=? AND state='SUCCEEDED' "
+                "ORDER BY finished_at DESC LIMIT 1", (experiment_id,),
+            ).fetchone()
         return dict(row) if row else None
 
 
@@ -210,7 +262,10 @@ class ResearchExecutor:
         }))
         return "EXP-" + logical_hash[:32], logical_hash
 
-    def _result(self, context: dict, experiment_id: str, effect: dict, effect_path: Path, run) -> dict:
+    def _result(
+        self, context: dict, experiment_id: str, effect: dict, effect_path: Path, run,
+        *, attempt_id: str, materialization_hash: str, logical_hash: str,
+    ) -> dict:
         task, receipt = context["task"], context["receipt"]
         produced_at = _now()
         started = run.record["started_at"]
@@ -234,6 +289,7 @@ class ResearchExecutor:
             },
             "ops_facts": {
                 "identity": self.identities["ops"], "ops_run_ids": [run.run_id],
+                "attempt_ids": [attempt_id],
                 "operational_state": run.run_status.value, "started_at": started,
                 "finished_at": finished, "exit_code": run.exit_code,
                 "runtime_provenance_hash": digest(canonical(run.record)),
@@ -257,6 +313,14 @@ class ResearchExecutor:
                 "admission_policy_hash": receipt["policy_hash"],
                 "resolved_references_hash": digest(canonical(receipt["resolved_references"])),
                 "crypto_source_sha": self.crypto_source_sha,
+                "handler_identity": receipt["admitted_handler"],
+                "logical_experiment_hash": logical_hash,
+                "journal_identity": digest(canonical({
+                    "experiment_id": experiment_id,
+                    "attempt_id": attempt_id,
+                    "ops_run_id": run.run_id,
+                })),
+                "reference_materialization_receipt_hash": materialization_hash,
             },
         }
         return validate_result(result)
@@ -279,6 +343,25 @@ class ResearchExecutor:
         refs_dir, effect_path = work / "references", work / "domain-effect.json"
         result_path, trial_path = work / "research-result.json", work / "trials-v2.json"
         materialized = self.references.materialize(context["receipt"]["resolved_references"], refs_dir)
+        materialization_path = work / "reference-materialization.json"
+        if materialization_path.exists():
+            materialization_receipt = _json(materialization_path)
+            stable = [{key: value for key, value in item.items() if key != "materialized_at"}
+                      for item in materialized]
+            recorded_stable = [
+                {key: value for key, value in item.items() if key != "materialized_at"}
+                for item in materialization_receipt["references"]
+            ]
+            if stable != recorded_stable:
+                raise ValueError("reference materialization receipt conflict")
+        else:
+            materialization_receipt = {
+                "schema": "ReferenceMaterializationReceiptV1",
+                "experiment_id": experiment_id,
+                "references": materialized,
+            }
+            atomic_write(materialization_path, canonical(materialization_receipt))
+        materialization_hash = _sha(materialization_path)
         if row["state"] == "PLANNED":
             self.journal.transition(experiment_id, "MATERIALIZED", detail="all admitted hashes verified")
         registered_at = self.journal.get(experiment_id)["created_at"]
@@ -323,6 +406,7 @@ class ResearchExecutor:
             raise ValueError("research result hash mismatch")
 
         run = None
+        attempt_id = None
         if not effect_path.exists():
             self.journal.transition(experiment_id, "SCHEDULED", detail="static worker selected")
             command = [
@@ -346,10 +430,15 @@ class ResearchExecutor:
                 capital_permission=False, runtime=RuntimeConfig(root=self.root / "ops-runtime"),
             )
             self.journal.transition(experiment_id, "RUNNING", detail="delegated to predictor_ops")
+            attempt_id = self.journal.start_attempt(experiment_id)
             run = run_job(config)
             if run.run_status is not RunStatus.SUCCEEDED:
+                self.journal.finish_attempt(
+                    attempt_id, state="FAILED", run=run, error=str(run.record)
+                )
                 self.journal.transition(experiment_id, "FAILED", detail="OPS execution failed", error=str(run.record))
                 raise RuntimeError(f"OPS_EXECUTION_FAILED: {run.run_status}")
+            self.journal.finish_attempt(attempt_id, state="SUCCEEDED", run=run)
             if crash_at == "after_domain_effect":
                 raise RuntimeError("INJECTED_CRASH_AFTER_DOMAIN_EFFECT")
             self.journal.transition(
@@ -369,6 +458,9 @@ class ResearchExecutor:
                 experiment_id, "DOMAIN_EFFECT_COMMITTED", detail="reconciled committed effect",
                 effect_path=str(effect_path), effect_hash=effect_hash,
             )
+            previous_attempt = self.journal.successful_attempt(experiment_id)
+            if previous_attempt is not None:
+                attempt_id = previous_attempt["attempt_id"]
         effect = _json(effect_path)
         self.journal.transition(experiment_id, "MEASURED", detail="causal domain output loaded")
 
@@ -387,7 +479,16 @@ class ResearchExecutor:
                     run_id=record["run_id"], run_status=RunStatus(record["run_status"]),
                     exit_code=record["exit_code"], record=record,
                 )
-            result = self._result(context, experiment_id, effect, effect_path, run)
+            if attempt_id is None:
+                previous_attempt = self.journal.successful_attempt(experiment_id)
+                if previous_attempt is None:
+                    raise ValueError("successful execution attempt receipt missing")
+                attempt_id = previous_attempt["attempt_id"]
+            result = self._result(
+                context, experiment_id, effect, effect_path, run,
+                attempt_id=attempt_id, materialization_hash=materialization_hash,
+                logical_hash=logical_hash,
+            )
             atomic_write(result_path, canonical(result))
         self.journal.transition(
             experiment_id, "RESULT_CREATED", detail="ResearchResultV1 validated",

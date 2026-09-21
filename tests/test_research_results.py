@@ -52,6 +52,7 @@ def result():
         },
         "ops_facts": {
             "identity": identity(), "ops_run_ids": ["RUN-001"],
+            "attempt_ids": ["ATTEMPT-001"],
             "operational_state": "SUCCEEDED", "started_at": "2026-09-19T23:00:00Z",
             "finished_at": "2026-09-19T23:02:00Z", "exit_code": 0,
             "runtime_provenance_hash": SHA,
@@ -69,7 +70,10 @@ def result():
             "economic_state": "NO_EDGE", "artifacts": [],
         },
         "provenance": {"task_payload_hash": SHA, "admission_policy_hash": SHA,
-                       "resolved_references_hash": resolved, "crypto_source_sha": SOURCE},
+                       "resolved_references_hash": resolved, "crypto_source_sha": SOURCE,
+                       "handler_identity": "crypto.handlers.backtest_existing_hypothesis.v1",
+                       "logical_experiment_hash": SHA, "journal_identity": SHA,
+                       "reference_materialization_receipt_hash": SHA},
     }
 
 

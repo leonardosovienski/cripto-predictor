@@ -153,6 +153,15 @@ def test_real_admitted_execution_uses_core_ops_and_crypto_and_enqueues_result(tm
     assert result["crypto_facts"]["metrics"]["gross_return_bps"] == 20
     assert result["crypto_facts"]["metrics"]["net_return_bps"] == 5
     assert result["crypto_facts"]["economic_state"] == "NO_EDGE"
+    assert result["ops_facts"]["attempt_ids"][0].startswith("ATTEMPT-")
+    materialization = next(
+        (tmp_path / "execution/experiments").glob("*/reference-materialization.json")
+    )
+    receipt = json.loads(materialization.read_text(encoding="utf-8"))
+    assert all(item["expected_hash"] == item["observed_hash"] for item in receipt["references"])
+    assert all(item["verification"] == "PASS" for item in receipt["references"])
+    assert result["provenance"]["reference_materialization_receipt_hash"]
+    assert result["provenance"]["handler_identity"].endswith(".v1")
     assert outbox.pending()[0]["payload"]["result_id"] == result["result_id"]
     duplicate = executor.execute("TASK-E2E-001")
     assert duplicate["outbox"]["status"] == "duplicate"
@@ -242,6 +251,13 @@ def test_real_ops_runner_crash_fails_without_scientific_result_and_can_retry(tmp
     recovered = executor.execute("TASK-E2E-001")
     assert recovered["experiment"]["state"] == "COMPLETED"
     assert len(outbox.pending()) == 1
+    with executor.journal.connection() as db:
+        attempts = db.execute(
+            "SELECT attempt_id,ops_run_id,state FROM attempts ORDER BY started_at"
+        ).fetchall()
+    assert [row["state"] for row in attempts] == ["FAILED", "SUCCEEDED"]
+    assert attempts[0]["attempt_id"] != attempts[1]["attempt_id"]
+    assert attempts[0]["ops_run_id"] != attempts[1]["ops_run_id"]
 
 
 def test_real_ops_timeout_fails_closed_and_writes_no_domain_effect(tmp_path):
