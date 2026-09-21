@@ -13,6 +13,7 @@ from platformdirs import user_state_path
 from predictor_ops import JobConfig, RunResult, RunStatus, run_job
 
 from GarimpoInvestimentos.core.paths import FEATURE_STORE_DB
+from GarimpoInvestimentos.external_intelligence.__main__ import default_db_path
 
 
 def _state_root() -> Path:
@@ -102,6 +103,14 @@ def job_config(name: str, *, timeout_seconds: float | None = None) -> JobConfig:
             "BTCUSDT",
             "ETHUSDT",
         ],
+        # Research-only external evidence. The collector refuses to run without
+        # explicit rights, start/end cutoffs and never touches the canonical store.
+        "external-coinmetrics": [
+            sys.executable,
+            "-m",
+            "GarimpoInvestimentos.external_intelligence",
+            "collect-coinmetrics",
+        ],
         # H8 (docs/HYPOTHESES.md, checklist item 4): motor propõe->valida->avalia
         # ja existia (analyzers/hypothesis_loop.py) e era so testado isolado —
         # nada rodava em producao. Disponibilizado aqui, NAO agendado
@@ -120,7 +129,13 @@ def job_config(name: str, *, timeout_seconds: float | None = None) -> JobConfig:
     }
     if name not in commands:
         raise ValueError(f"unknown job: {name}")
-    artifact = FEATURE_STORE_DB if name in {"phase1", "backtest", "discover"} else None
+    artifact = (
+        FEATURE_STORE_DB
+        if name in {"phase1", "backtest", "discover"}
+        else default_db_path()
+        if name == "external-coinmetrics"
+        else None
+    )
     return JobConfig.model_validate(
         dict(
             id=f"cripto-{name}",
@@ -137,6 +152,7 @@ def job_config(name: str, *, timeout_seconds: float | None = None) -> JobConfig:
                     "observation-daily",
                     "observation-live",
                     "microstructure-live",
+                    "external-coinmetrics",
                     "h8-hypothesis-loop",
                 }
                 else None
@@ -199,6 +215,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             "backup",
             "quality-snapshot",
             "discover",
+            "external-coinmetrics",
         ),
     )
     parser.add_argument("--timeout", type=float)
