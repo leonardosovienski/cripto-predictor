@@ -253,14 +253,9 @@ class AdmissionStore:
         ):
             return "UNAUTHORIZED", "PUBLISHER_OR_SCOPE_DENIED", [], None
         try:
-            verify_task(
-                envelope,
-                lambda identity, key_id: (
-                    self.key_store.resolve(identity, key_id, envelope["scope"])
-                    if self.key_store is not None
-                    else self.keys.get((identity, key_id))
-                ),
-            )
+            verify_task(envelope, lambda identity, key_id: self._resolve_key(
+                identity, key_id, envelope["scope"]
+            ))
         except PermissionError:
             return "UNAUTHORIZED", "AUTHENTICATION_FAILED", [], None
         task = envelope["payload"]
@@ -381,7 +376,10 @@ class AdmissionStore:
                     "ORDER BY decided_at LIMIT 1",
                     (task["task_id"], envelope["payload_hash"]),
                 ).fetchone()
-                return self._decode_receipt(row) | {"duplicate": True}
+                decoded = self._decode_receipt(row)
+                if decoded is None:
+                    raise ValueError("ADMISSION_RECEIPT_NOT_FOUND")
+                return decoded | {"duplicate": True}
             pending = db.execute(
                 "SELECT count(*) FROM admissions WHERE decision='ACCEPTED'"
             ).fetchone()[0]
@@ -418,7 +416,7 @@ class AdmissionStore:
         return receipt
 
     @staticmethod
-    def _decode_receipt(row):
+    def _decode_receipt(row) -> dict | None:
         if row is None:
             return None
         value = dict(row)
@@ -433,6 +431,13 @@ class AdmissionStore:
                 (task_id,),
             ).fetchone()
         return self._decode_receipt(row)
+
+    def _resolve_key(self, identity, key_id, scope):
+        if self.key_store is not None:
+            return self.key_store.resolve(identity, key_id, scope)
+        if self.keys is None:
+            return None
+        return self.keys.get((identity, key_id))
 
     def admitted_context(self, task_id):
         """Return the immutable task and latest receipt only when admission is accepted."""
@@ -459,6 +464,8 @@ class AdmissionStore:
             raise ValueError("TASK_NOT_FOUND")
         envelope = json.loads(inbox["envelope"])
         previous = self.receipt(task_id)
+        if previous is None:
+            raise ValueError("ADMISSION_RECEIPT_NOT_FOUND")
         if previous["decision"] != "ACCEPTED":
             return {"decision": previous["decision"], "reason_code": "NOT_PREVIOUSLY_ACCEPTED"}
         if previous["policy_hash"] != self.policy_hash(current):
