@@ -123,7 +123,8 @@ def utc(value: Any, field: str) -> datetime:
         parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
     except ValueError as exc:
         raise ContractError("SCHEMA_INVALID", f"{field} is not a timestamp") from exc
-    if parsed.utcoffset() is None or parsed.utcoffset().total_seconds() != 0:
+    offset = parsed.utcoffset()
+    if offset is None or offset.total_seconds() != 0:
         raise ContractError("SCHEMA_INVALID", f"{field} must be UTC")
     return parsed
 

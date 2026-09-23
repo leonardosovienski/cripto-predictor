@@ -42,8 +42,8 @@ from GarimpoInvestimentos.research_execution import (
     ExecutionError,
     ReferenceStore,
     ResearchExecutor,
-    fault,
 )
+from GarimpoInvestimentos.research_faults import fault
 from GarimpoInvestimentos.research_results import ResultConflict, ResultIntegrityError, ResultStore
 
 MAX_REQUEST_FILE_BYTES = 256 * 1024
@@ -89,6 +89,9 @@ class Circuit:
 
     def submit_request(self, raw: bytes, *, source: str) -> dict:
         """adapter_api (C24.1): request bytes -> outcome, the same path as the entrypoint."""
+        admission, executor = self.admission, self.executor
+        if admission is None or executor is None:
+            raise RuntimeError("processing requires --policy and --objects")
         base = {
             "schema": OUTCOME_SCHEMA,
             "submission_file": source,
@@ -99,9 +102,9 @@ class Circuit:
             if len(raw) > MAX_REQUEST_FILE_BYTES:
                 raise ContractError("REQUEST_SIZE_LIMIT", "file larger than the entrypoint bound")
             request = loads_strict(raw)
-            receipt = self.admission.submit(request, size=len(raw))
+            receipt = admission.submit(request, size=len(raw))
         except ContractError as exc:
-            self.admission.record_invalid(raw, exc)
+            admission.record_invalid(raw, exc)
             request_id = None
             try:
                 parsed = json.loads(raw)
@@ -131,7 +134,7 @@ class Circuit:
             return self._finish(base | {"status": "REJECTED", "reason": receipt["reason_code"]})
         fault("after_admission")
         try:
-            executed = self.executor.execute(request["request_id"])
+            executed = executor.execute(request["request_id"])
         except ExecutionError as exc:
             detail = {
                 "operational_state": exc.detail.get("operational_state", "NOT_RUN"),
@@ -213,7 +216,9 @@ def _route_ops_logs_to_stderr() -> None:
 
 def main(argv: list[str] | None = None) -> int:
     _route_ops_logs_to_stderr()
-    parser = argparse.ArgumentParser(prog="cripto-research", description=__doc__.splitlines()[0])
+    parser = argparse.ArgumentParser(
+        prog="cripto-research", description=(__doc__ or "").splitlines()[0]
+    )
     parser.add_argument("--state", type=Path, required=True)
     sub = parser.add_subparsers(dest="command", required=True)
     for name in ("process", "run"):

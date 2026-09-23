@@ -398,12 +398,14 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--request", type=Path, required=True)
     parser.add_argument("--effect", type=Path, required=True)
     parser.add_argument("--trial-registry", type=Path, required=True)
-    parser.add_argument("--fault", choices=("crash", "hang"))
+    parser.add_argument("--fault", choices=("crash", "hang", "slow"))
     args = parser.parse_args(argv)
     if args.fault == "crash":
         os._exit(97)
     if args.fault == "hang":
         time.sleep(600)
+    if args.fault == "slow":
+        time.sleep(8)  # qualification: keeps the job running while the host process is killed
     refusal = args.effect.with_name("worker-refusal.json")
     try:
         effect = evaluate(_load(args.request))

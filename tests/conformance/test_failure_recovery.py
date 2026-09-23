@@ -16,7 +16,7 @@ from pathlib import Path
 import pytest
 
 from conformance.fixtures import build, cli, request, write_request
-from GarimpoInvestimentos.research_execution import FAULT_EXIT, FAULT_POINTS
+from GarimpoInvestimentos.research_faults import FAULT_EXIT, FAULT_POINTS, PROCESS_DEATH_POINTS
 
 
 def _only(lines):
@@ -46,15 +46,16 @@ def _single_experiment(env) -> Path:
     return experiments[0]
 
 
-@pytest.mark.parametrize(
-    "point",
-    [p for p in FAULT_POINTS if p not in {"ops_worker_crash", "ops_worker_hang"}],
-)
+@pytest.mark.parametrize("point", PROCESS_DEATH_POINTS)
 def test_process_death_at_each_point_recovers_exactly_once(tmp_path, point):
     env = build(tmp_path)
     path = write_request(env, "r", request("crypto:REQ-FAULT-001"))
     code, _ = cli(env, "process", str(path), fault=point)
     assert code == FAULT_EXIT
+    if point == "before_admission_commit":
+        with sqlite3.connect(env["state"] / "admission.sqlite") as db:
+            assert db.execute("SELECT count(*) FROM request_inbox").fetchone()[0] == 0
+            assert db.execute("SELECT count(*) FROM admissions").fetchone()[0] == 0
     code, lines = cli(env, "process", str(path))
     outcome = _only(lines)
     assert code == 0 and outcome["status"] in {"RESULT", "DUPLICATE"}
@@ -238,16 +239,74 @@ def test_result_metadata_inconsistent_with_index_fails_closed(tmp_path):
 
 
 def test_fault_points_are_the_frozen_matrix():
-    assert FAULT_POINTS == (
+    assert PROCESS_DEATH_POINTS == (
+        "before_admission_commit",
         "after_admission",
         "during_materialization",
         "before_ops",
-        "ops_worker_crash",
-        "ops_worker_hang",
         "after_ops",
         "after_domain_effect",
         "during_result_write",
         "after_result_write",
         "after_result_store",
     )
+    assert FAULT_POINTS[-3:] == ("ops_worker_crash", "ops_worker_hang", "ops_worker_slow")
     assert os.environ.get("CRIPTO_RESEARCH_FAULT") is None
+
+
+def test_host_process_killed_during_ops_job_recovers_exactly_once(tmp_path):
+    """Crash of the process hosting predictor_ops while the worker runs (killed from outside).
+
+    Windows: the Ops job object kills the worker with its host. Linux: the worker survives
+    as an orphan in its own session and may finish later; either way there must be one
+    logical effect, one result and no second success reported by Ops for another effect.
+    """
+    import subprocess
+    import sys
+    import time
+
+    env = build(tmp_path)
+    path = write_request(env, "r", request("crypto:REQ-HOSTKILL-001"))
+    environment = dict(os.environ, CRIPTO_RESEARCH_FAULT="ops_worker_slow")
+    host = subprocess.Popen(
+        [
+            sys.executable,
+            "-m",
+            "GarimpoInvestimentos.research_runner",
+            "--state",
+            str(env["state"]),
+            "process",
+            "--policy",
+            str(env["policy"]),
+            "--objects",
+            str(env["objects"]),
+            str(path),
+        ],
+        env=environment,
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+    )
+    ops_root = env["state"] / "execution" / "ops-runtime"
+    deadline = time.monotonic() + 60
+    while not list(ops_root.glob("crypto-research-*/heartbeat.json")):
+        assert host.poll() is None and time.monotonic() < deadline, "job never started"
+        time.sleep(0.05)
+    time.sleep(0.5)
+    host.kill()
+    host.wait(30)
+    code, lines = cli(env, "process", str(path))
+    outcome = _only(lines)
+    assert code == 0 and outcome["status"] == "RESULT"
+    time.sleep(12)  # let a possible orphan worker (Linux) finish its slow run
+    effects = list((env["state"] / "execution" / "experiments").rglob("domain-effect.json"))
+    assert len(effects) == 1
+    stored = _only(cli(env, "show", "crypto:REQ-HOSTKILL-001")[1])["result"]
+    assert (
+        stored["domain_facts"]["effect_sha256"]
+        == __import__("hashlib").sha256(effects[0].read_bytes()).hexdigest()
+    )
+    assert _results(env) == 1
+    code, lines = cli(env, "process", str(path))
+    assert code == 0 and _only(lines)["status"] == "DUPLICATE"
+    code, lines = cli(env, "reconcile")
+    assert code == 0 and _only(lines)["findings"] == []

@@ -25,6 +25,7 @@ from GarimpoInvestimentos.research_contract import (
     request_content_hash,
     validate_request,
 )
+from GarimpoInvestimentos.research_faults import fault
 
 POLICY_SCHEMA = "CryptoResearchAdmissionPolicyV2"
 DECISIONS = {"ACCEPTED", "REJECTED", "CONFLICT", "REQUIRES_READMISSION"}
@@ -361,6 +362,7 @@ class AdmissionStore:
                     (request["request_id"], chash, canonical(request), now),
                 )
             self._persist_receipt(db, receipt)
+            fault("before_admission_commit")  # dies with the transaction still open
         return receipt
 
     def mark_terminal(self, request_id: str, result_id: str) -> None:

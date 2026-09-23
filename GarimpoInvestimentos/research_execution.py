@@ -35,6 +35,13 @@ from GarimpoInvestimentos.research_contract import (
     utc,
     validate_result,
 )
+from GarimpoInvestimentos.research_faults import (
+    FAULT_ENV,
+    FAULT_EXIT,
+    FAULT_POINTS,
+    fault,
+    worker_flag,
+)
 
 HANDLER = "crypto.handlers.backtest_existing_hypothesis.v1"
 STATES = (
@@ -52,28 +59,6 @@ STATES = (
     "RECONCILIATION_REQUIRED",
 )
 _HASH = re.compile(r"[0-9a-f]{64}")
-FAULT_ENV = "CRIPTO_RESEARCH_FAULT"
-FAULT_EXIT = 86
-FAULT_POINTS = (
-    "after_admission",
-    "during_materialization",
-    "before_ops",
-    "ops_worker_crash",
-    "ops_worker_hang",
-    "after_ops",
-    "after_domain_effect",
-    "during_result_write",
-    "after_result_write",
-    "after_result_store",
-)
-
-
-def fault(point: str) -> None:
-    """Edge fault injection for qualification: a real, uncleaned process death."""
-    if os.environ.get(FAULT_ENV) == point:
-        sys.stderr.write(f"INJECTED_FAULT {point}\n")
-        sys.stderr.flush()
-        os._exit(FAULT_EXIT)
 
 
 def _now() -> str:
@@ -435,10 +420,7 @@ class ResearchExecutor:
             "--trial-registry",
             str(trial_path),
         ]
-        if os.environ.get(FAULT_ENV) == "ops_worker_crash":
-            command += ["--fault", "crash"]
-        elif os.environ.get(FAULT_ENV) == "ops_worker_hang":
-            command += ["--fault", "hang"]
+        command += worker_flag()
         environment = {FAULT_ENV: ""}
         return JobConfig(
             id="crypto-research-" + logical_hash[:24],
