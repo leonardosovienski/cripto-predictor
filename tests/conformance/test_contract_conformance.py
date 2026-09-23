@@ -245,3 +245,29 @@ def test_invalid_json_and_duplicate_keys_are_rejected(env):
 
 def test_cutoff_constant_is_frozen():
     assert CUTOFF == "2026-08-31T00:00:00Z"
+
+
+def test_duplicate_after_policy_change_returns_the_stored_result(env):
+    """A finished request's authoritative result does not depend on the current policy."""
+    path = write_request(env, "p", request("crypto:REQ-POLICY-001", client_ref="before"))
+    code, lines = cli(env, "process", str(path))
+    original = _only(lines)
+    assert code == 0 and original["status"] == "RESULT"
+    policy = json.loads(env["policy"].read_text(encoding="utf-8"))
+    policy["policy_version"] += 1
+    env["policy"].write_text(json.dumps(policy, indent=1), encoding="utf-8")
+    code, lines = cli(
+        env,
+        "process",
+        str(write_request(env, "p2", request("crypto:REQ-POLICY-001", client_ref="after"))),
+    )
+    duplicate = _only(lines)
+    assert code == 0 and duplicate["status"] == "DUPLICATE"
+    assert duplicate["client_ref"] == "after" and _result(duplicate) == _result(original)
+    # a request admitted under the old policy but not finished must be readmitted (fail closed)
+    pending = write_request(env, "q", request("crypto:REQ-POLICY-002"))
+    policy["policy_version"] += 1
+    assert cli(env, "process", str(pending), fault="after_admission")[0] == 86
+    env["policy"].write_text(json.dumps(policy, indent=1), encoding="utf-8")
+    code, lines = cli(env, "process", str(pending))
+    assert code == 2 and _only(lines)["reason"] == "POLICY_CHANGED"

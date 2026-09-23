@@ -465,9 +465,6 @@ class ResearchExecutor:
         )
 
     def execute(self, request_id: str) -> dict:
-        revalidated = self.admission_store.revalidate(request_id)
-        if revalidated["decision"] != "ACCEPTED":
-            raise ExecutionError("REJECTED", revalidated["reason_code"])
         context = self.admission_store.admitted_context(request_id)
         receipt, request = context["receipt"], context["request"]
         if receipt["admitted_handler"] != HANDLER:
@@ -493,6 +490,11 @@ class ResearchExecutor:
                     experiment_id, "COMPLETED", detail="reconciled from stored result"
                 )
             return {"status": "DUPLICATE", "result": existing, "experiment_id": experiment_id}
+        # No authoritative result yet: the current policy must still admit the request
+        # (a stored result is an immutable fact and is returned above whatever the policy).
+        revalidated = self.admission_store.revalidate(request_id)
+        if revalidated["decision"] != "ACCEPTED":
+            raise ExecutionError("REJECTED", revalidated["reason_code"])
         if row["state"] in {"REFUSED", "RECONCILIATION_REQUIRED"}:
             raise ExecutionError(
                 "TEMPORAL_INTEGRITY_VIOLATION"
