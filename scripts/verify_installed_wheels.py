@@ -17,6 +17,10 @@ EXPECTED = {
         "https://github.com/leonardosovienski/predictor-ops/releases/download/v4.2.1/predictor_ops-4.2.1-py3-none-any.whl",
         "sha256:da4fa540703879669caba919521ec7d3c33734b5d57781122823df8817346f0e",
     ),
+    "predictor-research-protocol": (
+        "https://github.com/leonardosovienski/ecosystem-predictor/releases/download/predictor-research-protocol-v1.0.3rc1/predictor_research_protocol-1.0.3rc1-py3-none-any.whl",
+        "sha256:312ab9742271de9f0efe6912f5828122d546751e559f493bede01c8fc6a24032",
+    ),
 }
 
 

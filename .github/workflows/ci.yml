@@ -39,12 +39,10 @@ jobs:
       - name: Contract test installed wheels outside checkout
         shell: bash
         run: |
+          uv export --locked --no-dev --no-emit-project --format requirements-txt --output-file "$RUNNER_TEMP/lock-requirements.txt"
           python -m venv "$RUNNER_TEMP/wheel-contract"
-          "$RUNNER_TEMP/wheel-contract/bin/pip" install --upgrade pip
-          "$RUNNER_TEMP/wheel-contract/bin/pip" install \
-            "predictor-core @ https://github.com/leonardosovienski/core-predictor/releases/download/v3.2.1/predictor_core-3.2.1-py3-none-any.whl#sha256=10ef42f34ace8bb2df5f83ff7de2ceec79b035a25ea0a690e8942bd60d2fb4e3" \
-            "predictor-ops @ https://github.com/leonardosovienski/predictor-ops/releases/download/v4.2.1/predictor_ops-4.2.1-py3-none-any.whl#sha256=da4fa540703879669caba919521ec7d3c33734b5d57781122823df8817346f0e" \
-            dist/cripto_predictor-1.1.0-py3-none-any.whl
+          "$RUNNER_TEMP/wheel-contract/bin/pip" install --require-hashes -r "$RUNNER_TEMP/lock-requirements.txt"
+          "$RUNNER_TEMP/wheel-contract/bin/pip" install --no-deps dist/cripto_predictor-*.whl
           "$RUNNER_TEMP/wheel-contract/bin/pip" check
           cd "$RUNNER_TEMP"
           "$RUNNER_TEMP/wheel-contract/bin/python" "$GITHUB_WORKSPACE/scripts/verify_installed_wheels.py"

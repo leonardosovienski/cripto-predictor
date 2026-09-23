@@ -13,24 +13,30 @@ import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 SHARED_URL = re.compile(
-    r"https://github\.com/leonardosovienski/(?:core-predictor|predictor-ops)/"
+    r"https://github\.com/leonardosovienski/"
+    r"(?:core-predictor|predictor-ops|ecosystem-predictor)/"
     r'releases/download/[^"\s\\]+'
 )
 
 
-@pytest.mark.parametrize("relative", ["Dockerfile", ".github/workflows/ci.yml"])
-def test_install_paths_require_the_existing_locked_digests(relative):
+def test_lock_pins_stack_wheels_by_release_url_and_sha256():
     lock = tomllib.loads((ROOT / "uv.lock").read_text(encoding="utf-8"))
     packages = {item["name"]: item for item in lock["package"]}
-    expected = set()
-    for name in ("predictor-core", "predictor-ops"):
-        wheel = packages[name]["wheels"][0]
+    for name in ("predictor-core", "predictor-ops", "predictor-research-protocol"):
+        (wheel,) = packages[name]["wheels"]
+        assert SHARED_URL.fullmatch(wheel["url"])
         algorithm, digest = wheel["hash"].split(":", 1)
         assert algorithm == "sha256" and re.fullmatch(r"[0-9a-f]{64}", digest)
-        expected.add(wheel["url"] + "#sha256=" + digest)
-    urls = SHARED_URL.findall((ROOT / relative).read_text(encoding="utf-8"))
-    assert len(urls) == 2
-    assert set(urls) == expected
+
+
+@pytest.mark.parametrize("relative", ["Dockerfile", ".github/workflows/ci.yml"])
+def test_install_paths_require_the_existing_locked_digests(relative):
+    # Pip installs only requirements exported from uv.lock, with every digest
+    # enforced; no stack wheel URL may be installed around the lock.
+    text = (ROOT / relative).read_text(encoding="utf-8")
+    assert "uv export --locked" in text
+    assert "--require-hashes -r" in text
+    assert SHARED_URL.findall(text) == []
 
 
 @pytest.fixture(scope="module")
