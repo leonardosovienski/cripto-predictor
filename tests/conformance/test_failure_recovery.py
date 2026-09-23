@@ -161,7 +161,7 @@ def test_file_exists_but_index_lost_the_result(tmp_path):
     assert cli(env, "reconcile")[0] == 5
 
 
-def test_modified_result_and_modified_effect_fail_closed(tmp_path):
+def test_modified_result_and_modified_effect_fail_closed(tmp_path, tmp_path_factory):
     env, path, work = _completed(tmp_path)
     result = work / "research-result.json"
     result.write_bytes(
@@ -170,7 +170,7 @@ def test_modified_result_and_modified_effect_fail_closed(tmp_path):
         .replace(b'"WATCH_NO_CAPITAL"', b'"NO_EDGE"')
     )
     assert cli(env, "show", "crypto:REQ-CORRUPT-001")[0] == 5
-    env2, path2, work2 = _completed(tmp_path / "effect", "crypto:REQ-CORRUPT-002")
+    env2, path2, work2 = _completed(tmp_path_factory.mktemp("e"), "crypto:REQ-CORRUPT-002")
     effect = work2 / "domain-effect.json"
     effect.write_bytes(effect.read_bytes() + b" ")
     code, lines = cli(env2, "process", str(path2))
