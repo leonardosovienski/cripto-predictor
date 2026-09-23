@@ -1,6 +1,6 @@
 import csv
-import logging
 import io
+import logging
 import uuid
 from datetime import datetime, timezone
 
@@ -21,7 +21,11 @@ _log = logging.getLogger("previsao_cripto.reporter")
 def _literal(value: str) -> str:
     # CSV/XLSX viewers must treat provider/LLM text as text, never a formula.
     value = str(value)
-    return "'" + value if value.lstrip().startswith(("=","+","-","@")) or value.startswith(("\t","\r","\n")) else value
+    return (
+        "'" + value
+        if value.lstrip().startswith(("=", "+", "-", "@")) or value.startswith(("\t", "\r", "\n"))
+        else value
+    )
 
 
 def export_results(resultados: list[dict]):
@@ -132,6 +136,7 @@ def export_results(resultados: list[dict]):
     stream = io.BytesIO()
     wb.save(stream)
     from pathlib import Path
+
     atomic_write(Path(xlsx_filename), stream.getvalue())
     atomic_write(Path(csv_filename), csv_bytes)
 

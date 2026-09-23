@@ -10,6 +10,8 @@ build/
 htmlcov/
 data/
 output/
+# Pacote de código (reporter) versionado: não pode sair da wheel (CR-F005).
+!GarimpoInvestimentos/output/
 cache/
 logs/
 *.db

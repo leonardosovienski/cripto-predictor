@@ -408,7 +408,6 @@ dependencies = [
     { name = "platformdirs" },
     { name = "predictor-core" },
     { name = "predictor-ops" },
-    { name = "predictor-research-protocol" },
     { name = "pydantic" },
     { name = "pydantic-settings" },
     { name = "pyyaml" },
@@ -470,7 +469,6 @@ requires-dist = [
     { name = "pre-commit", marker = "extra == 'test'", specifier = ">=4.3,<5" },
     { name = "predictor-core", url = "https://github.com/leonardosovienski/core-predictor/releases/download/v3.2.1/predictor_core-3.2.1-py3-none-any.whl" },
     { name = "predictor-ops", url = "https://github.com/leonardosovienski/predictor-ops/releases/download/v4.2.1/predictor_ops-4.2.1-py3-none-any.whl" },
-    { name = "predictor-research-protocol", url = "https://github.com/leonardosovienski/ecosystem-predictor/releases/download/predictor-research-protocol-v1.0.3rc1/predictor_research_protocol-1.0.3rc1-py3-none-any.whl" },
     { name = "pydantic", specifier = ">=2.12,<3" },
     { name = "pydantic-settings", specifier = ">=2.10,<3" },
     { name = "pyright", marker = "extra == 'test'", specifier = ">=1.1.403,<2" },
@@ -1144,14 +1142,6 @@ requires-dist = [
     { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.12" },
 ]
 provides-extras = ["dev", "otel"]
-
-[[package]]
-name = "predictor-research-protocol"
-version = "1.0.3rc1"
-source = { url = "https://github.com/leonardosovienski/ecosystem-predictor/releases/download/predictor-research-protocol-v1.0.3rc1/predictor_research_protocol-1.0.3rc1-py3-none-any.whl" }
-wheels = [
-    { url = "https://github.com/leonardosovienski/ecosystem-predictor/releases/download/predictor-research-protocol-v1.0.3rc1/predictor_research_protocol-1.0.3rc1-py3-none-any.whl", hash = "sha256:312ab9742271de9f0efe6912f5828122d546751e559f493bede01c8fc6a24032" },
-]
 
 [[package]]
 name = "propcache"
