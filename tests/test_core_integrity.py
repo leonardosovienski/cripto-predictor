@@ -19,15 +19,15 @@ EXPECTED = {
         "sha256:10ef42f34ace8bb2df5f83ff7de2ceec79b035a25ea0a690e8942bd60d2fb4e3",
     ),
     "predictor-ops": (
-        "https://github.com/leonardosovienski/predictor-ops/releases/download/v4.2.1/predictor_ops-4.2.1-py3-none-any.whl",
-        "sha256:da4fa540703879669caba919521ec7d3c33734b5d57781122823df8817346f0e",
+        "https://github.com/leonardosovienski/predictor-ops/releases/download/v4.2.2rc1/predictor_ops-4.2.2rc1-py3-none-any.whl",
+        "sha256:0be70bfbb2437dfb080baceb9af41043a09d03b15a358903b8bd7007f5f169b3",
     ),
 }
 
 
 def test_shared_versions_are_exactly_compatible():
     assert importlib.metadata.version("predictor-core") == "3.2.1"
-    assert importlib.metadata.version("predictor-ops") == "4.2.1"
+    assert importlib.metadata.version("predictor-ops") == "4.2.2rc1"
 
 
 def test_shared_libraries_resolve_from_site_packages():
