@@ -15,7 +15,16 @@ from pathlib import Path
 
 import pytest
 
-from conformance.fixtures import build, cli, request, write_request
+from conformance.fixtures import (
+    build,
+    child_environment,
+    cli,
+    experiments,
+    ops_runtime,
+    request,
+    work_dir,
+    write_request,
+)
 from GarimpoInvestimentos.research_faults import FAULT_EXIT, FAULT_POINTS, PROCESS_DEATH_POINTS
 
 
@@ -26,9 +35,7 @@ def _only(lines):
 
 def _ops_successes(env) -> int:
     total = 0
-    for events in (env["state"] / "execution" / "ops-runtime").glob(
-        "crypto-research-*/events.jsonl"
-    ):
+    for events in ops_runtime(env).glob("crypto-research-*/events.jsonl"):
         for line in events.read_text(encoding="utf-8").splitlines():
             if line.strip() and json.loads(line).get("run_status") == "SUCCEEDED":
                 total += 1
@@ -41,9 +48,9 @@ def _results(env) -> int:
 
 
 def _single_experiment(env) -> Path:
-    experiments = list((env["state"] / "execution" / "experiments").iterdir())
-    assert len(experiments) == 1
-    return experiments[0]
+    created = list(experiments(env).iterdir())
+    assert len(created) == 1
+    return created[0]
 
 
 @pytest.mark.parametrize("point", PROCESS_DEATH_POINTS)
@@ -61,7 +68,7 @@ def test_process_death_at_each_point_recovers_exactly_once(tmp_path, point):
     assert code == 0 and outcome["status"] in {"RESULT", "DUPLICATE"}
     assert _ops_successes(env) == 1
     assert _results(env) == 1
-    assert len(list((env["state"] / "execution" / "experiments").rglob("domain-effect.json"))) == 1
+    assert len(list((experiments(env)).rglob("domain-effect.json"))) == 1
     code, lines = cli(env, "show", "crypto:REQ-FAULT-001")
     assert code == 0 and _only(lines)["result"]["result_id"] == outcome["result_id"]
     code, lines = cli(env, "process", str(path))
@@ -100,7 +107,7 @@ def test_ops_timeout_kills_worker_and_is_not_a_result(tmp_path):
         failed["scientific_state"] == "NOT_EVALUATED"
         and failed["economic_state"] == "NOT_EVALUATED"
     )
-    assert not list((env["state"] / "execution" / "experiments").rglob("domain-effect.json"))
+    assert not list((experiments(env)).rglob("domain-effect.json"))
     code, lines = cli(env, "process", str(path))
     assert code == 0 and _only(lines)["status"] == "RESULT"
 
@@ -185,7 +192,7 @@ def test_wrong_hash_of_referenced_object_fails_before_ops(tmp_path):
     target.write_bytes(target.read_bytes().replace(b"0.022", b"0.122"))
     code, lines = cli(env, "process", str(write_request(env, "r", request("crypto:REQ-HASH-002"))))
     assert code == 5 and "REFERENCE" in _only(lines)["reason"]
-    assert not (env["state"] / "execution" / "ops-runtime").exists()
+    assert not ops_runtime(env).exists()
 
 
 def test_reference_changed_after_materialization_fails_closed(tmp_path):
@@ -216,7 +223,7 @@ def test_reference_receipt_from_another_request_fails_closed(tmp_path):
         "crypto:REQ-B-001"
     )
     _, logical = ResearchExecutor.logical_identity(context)
-    work = env["state"] / "execution" / "experiments" / ("EXP-" + logical[:32])
+    work = work_dir(env, logical)
     work.mkdir(parents=True)
     (work / "reference-materialization.json").write_bytes(donor.read_bytes())
     code, lines = cli(env, "process", str(path))
@@ -267,7 +274,7 @@ def test_host_process_killed_during_ops_job_recovers_exactly_once(tmp_path):
 
     env = build(tmp_path)
     path = write_request(env, "r", request("crypto:REQ-HOSTKILL-001"))
-    environment = dict(os.environ, CRIPTO_RESEARCH_FAULT="ops_worker_slow")
+    environment = child_environment(CRIPTO_RESEARCH_FAULT="ops_worker_slow")
     host = subprocess.Popen(
         [
             sys.executable,
@@ -286,7 +293,7 @@ def test_host_process_killed_during_ops_job_recovers_exactly_once(tmp_path):
         stdout=subprocess.DEVNULL,
         stderr=subprocess.DEVNULL,
     )
-    ops_root = env["state"] / "execution" / "ops-runtime"
+    ops_root = ops_runtime(env)
     deadline = time.monotonic() + 60
     while not list(ops_root.glob("crypto-research-*/heartbeat.json")):
         assert host.poll() is None and time.monotonic() < deadline, "job never started"
@@ -298,7 +305,7 @@ def test_host_process_killed_during_ops_job_recovers_exactly_once(tmp_path):
     outcome = _only(lines)
     assert code == 0 and outcome["status"] == "RESULT"
     time.sleep(12)  # let a possible orphan worker (Linux) finish its slow run
-    effects = list((env["state"] / "execution" / "experiments").rglob("domain-effect.json"))
+    effects = list((experiments(env)).rglob("domain-effect.json"))
     assert len(effects) == 1
     stored = _only(cli(env, "show", "crypto:REQ-HOSTKILL-001")[1])["result"]
     assert (

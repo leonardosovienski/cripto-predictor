@@ -44,6 +44,13 @@ from GarimpoInvestimentos.research_faults import (
 )
 
 HANDLER = "crypto.handlers.backtest_existing_hypothesis.v1"
+# On-disk layout kept short on purpose: the deepest predictor_ops file under OPS_DIR is
+# idempotency/.economic-<sha256>.json.<uuid>.tmp (~129 chars), so a Windows state root
+# must stay within MAX_STATE_ROOT_CHARS to remain under MAX_PATH (260).
+EXEC_DIR = "x"
+EXPERIMENTS_DIR = "e"
+OPS_DIR = "o"
+MAX_STATE_ROOT_CHARS = 120
 STATES = (
     "PLANNED",
     "MATERIALIZED",
@@ -340,6 +347,10 @@ class ExperimentJournal:
         return cursor.rowcount
 
 
+def experiment_dir(execution_root: Path, logical_hash: str) -> Path:
+    return Path(execution_root) / EXPERIMENTS_DIR / logical_hash[:16]
+
+
 def ops_terminal_records(ops_root: Path, job_id: str) -> list[dict]:
     """Terminal run records written by predictor_ops (events.jsonl), oldest first."""
     events = ops_root / job_id / "events.jsonl"
@@ -372,7 +383,7 @@ class ResearchExecutor:
         self.references = reference_store
         self.python = python_executable or sys.executable
         self.journal = ExperimentJournal(self.root / "journal.sqlite")
-        self.ops_root = self.root / "ops-runtime"
+        self.ops_root = self.root / OPS_DIR
         self.identities = {
             "core": _dist_identity("predictor-core"),
             "ops": _dist_identity("predictor-ops"),
@@ -394,7 +405,7 @@ class ResearchExecutor:
         return "crypto:EXP-" + logical_hash[:32], logical_hash
 
     def _work(self, logical_hash: str) -> Path:
-        return self.root / "experiments" / ("EXP-" + logical_hash[:32])
+        return experiment_dir(self.root, logical_hash)
 
     def _job_config(
         self,
@@ -1031,7 +1042,7 @@ def reconcile_execution(root: str | Path, result_store) -> list[dict]:
         with ExperimentJournal(journal_path).connection() as db:
             rows = [dict(r) for r in db.execute("SELECT * FROM experiments").fetchall()]
     for row in rows:
-        work = root / "experiments" / ("EXP-" + row["logical_hash"][:32])
+        work = experiment_dir(root, row["logical_hash"])
         effect, result = work / "domain-effect.json", work / "research-result.json"
         eid = row["experiment_id"]
         if effect.exists() and row["effect_hash"] and _sha(effect) != row["effect_hash"]:
@@ -1066,6 +1077,11 @@ __all__ = [
     "ResearchExecutor",
     "FAULT_POINTS",
     "reconcile_execution",
+    "experiment_dir",
+    "EXEC_DIR",
+    "EXPERIMENTS_DIR",
+    "OPS_DIR",
+    "MAX_STATE_ROOT_CHARS",
     "FAULT_ENV",
     "FAULT_EXIT",
     "fault",

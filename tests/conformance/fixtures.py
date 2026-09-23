@@ -20,7 +20,13 @@ from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
 from GarimpoInvestimentos.research_contract import canonical
-from GarimpoInvestimentos.research_execution import ReferenceStore
+from GarimpoInvestimentos.research_execution import (
+    EXEC_DIR,
+    EXPERIMENTS_DIR,
+    OPS_DIR,
+    ReferenceStore,
+    experiment_dir,
+)
 
 CUTOFF = "2026-08-31T00:00:00Z"
 CANARY = "FUTURE_CANARY_CRYPTO_001"
@@ -192,7 +198,7 @@ def build(
         "root": root,
         "policy": policy_path,
         "objects": root / "objects",
-        "state": root / "state",
+        "state": root / "s",
         "requests": root / "requests",
     }
 
@@ -233,6 +239,31 @@ def write_request(env: dict, name: str, value: dict | str) -> Path:
     return path
 
 
+def experiments(env: dict) -> Path:
+    return env["state"] / EXEC_DIR / EXPERIMENTS_DIR
+
+
+def ops_runtime(env: dict) -> Path:
+    return env["state"] / EXEC_DIR / OPS_DIR
+
+
+def work_dir(env: dict, logical_hash: str) -> Path:
+    return experiment_dir(env["state"] / EXEC_DIR, logical_hash)
+
+
+def child_environment(**extra: str) -> dict:
+    """Environment of the processes under test: no fault unless asked, and no coverage
+    plumbing inherited from pytest-cov (the circuit is the product, not the test)."""
+    environment = {
+        key: value
+        for key, value in os.environ.items()
+        if not key.startswith("COV_CORE_")
+        and key not in {"COVERAGE_PROCESS_START", "CRIPTO_RESEARCH_FAULT"}
+    }
+    environment.update(extra)
+    return environment
+
+
 def console_script() -> str:
     """The installed `cripto-research` console script next to the running interpreter."""
     folder = Path(sys.executable).parent
@@ -250,10 +281,7 @@ def cli(
     command = [console_script(), "--state", str(env["state"]), *args]
     if args and args[0] in {"process", "run"}:
         command[4:4] = ["--policy", str(env["policy"]), "--objects", str(env["objects"])]
-    environment = dict(os.environ)
-    environment.pop("CRIPTO_RESEARCH_FAULT", None)
-    if fault:
-        environment["CRIPTO_RESEARCH_FAULT"] = fault
+    environment = child_environment(**({"CRIPTO_RESEARCH_FAULT": fault} if fault else {}))
     completed = subprocess.run(
         command,
         capture_output=True,

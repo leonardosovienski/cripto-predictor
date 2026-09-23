@@ -39,6 +39,10 @@ from GarimpoInvestimentos.research_contract import (
     loads_strict,
 )
 from GarimpoInvestimentos.research_execution import (
+    EXEC_DIR,
+    EXPERIMENTS_DIR,
+    MAX_STATE_ROOT_CHARS,
+    OPS_DIR,
     ExecutionError,
     ReferenceStore,
     ResearchExecutor,
@@ -58,13 +62,18 @@ class Circuit:
 
     def __init__(self, state: Path, policy: Path | None = None, objects: Path | None = None):
         self.state = Path(state).resolve()
+        if sys.platform == "win32" and len(str(self.state)) > MAX_STATE_ROOT_CHARS:
+            raise SystemExit(
+                f"STATE_ROOT_TOO_LONG: {len(str(self.state))} > {MAX_STATE_ROOT_CHARS} characters "
+                "(Windows MAX_PATH with the predictor_ops runtime layout)"
+            )
         self.state.mkdir(parents=True, exist_ok=True)
         self.results = ResultStore(self.state / "results.sqlite")
         self.admission = AdmissionStore(self.state / "admission.sqlite", policy) if policy else None
         self.references = ReferenceStore(objects) if objects else None
         self.executor = (
             ResearchExecutor(
-                self.state / "execution",
+                self.state / EXEC_DIR,
                 admission_store=self.admission,
                 result_store=self.results,
                 reference_store=self.references,
@@ -261,16 +270,16 @@ def main(argv: list[str] | None = None) -> int:
             for name, path in (
                 ("admission", "admission.sqlite"),
                 ("results", "results.sqlite"),
-                ("journal", "execution/journal.sqlite"),
+                ("journal", f"{EXEC_DIR}/journal.sqlite"),
             )
             if (state / path).exists()
         }
         roots = {
             name: state / path
             for name, path in (
-                ("experiments", "execution/experiments"),
+                ("experiments", f"{EXEC_DIR}/{EXPERIMENTS_DIR}"),
                 ("outcomes", "outcomes"),
-                ("ops_runtime", "execution/ops-runtime"),
+                ("ops_runtime", f"{EXEC_DIR}/{OPS_DIR}"),
             )
             if (state / path).is_dir()
         }
@@ -289,7 +298,7 @@ def main(argv: list[str] | None = None) -> int:
         from GarimpoInvestimentos.research_execution import reconcile_execution
 
         circuit = Circuit(args.state)
-        findings = reconcile_execution(circuit.state / "execution", circuit.results)
+        findings = reconcile_execution(circuit.state / EXEC_DIR, circuit.results)
         print(json.dumps({"findings": findings}, sort_keys=True, ensure_ascii=False))
         return 5 if findings else 0
 

@@ -11,7 +11,16 @@ from pathlib import Path
 
 import pytest
 
-from conformance.fixtures import CANARY, CUTOFF, build, cli, request, write_request
+from conformance.fixtures import (
+    CANARY,
+    CUTOFF,
+    build,
+    cli,
+    experiments,
+    ops_runtime,
+    request,
+    write_request,
+)
 
 
 @pytest.fixture()
@@ -96,11 +105,9 @@ def test_idempotency_duplicate_retry_and_conflict(env):
     assert code == 2 and _only(lines)["status"] == "CONFLICT"
     code, lines = cli(env, "show", "crypto:REQ-IDEM-001")
     assert _only(lines)["result"] == _result(original)
-    experiments = list((env["state"] / "execution" / "experiments").iterdir())
-    assert len(experiments) == 1
-    ops_events = list(
-        (env["state"] / "execution" / "ops-runtime").glob("crypto-research-*/events.jsonl")
-    )
+    created = list(experiments(env).iterdir())
+    assert len(created) == 1
+    ops_events = list(ops_runtime(env).glob("crypto-research-*/events.jsonl"))
     succeeded = [
         json.loads(line)
         for line in ops_events[0].read_text(encoding="utf-8").splitlines()
@@ -121,15 +128,13 @@ def test_future_canary_fails_closed_and_never_leaks(env):
     assert "LookaheadError" in outcome["reason"]
     code, lines = cli(env, "show", "crypto:REQ-CANARY-001")
     assert code == 3
-    assert not list((env["state"] / "execution" / "experiments").rglob("domain-effect.json"))
-    assert not list((env["state"] / "execution" / "experiments").rglob("trials-v2.json"))
+    assert not list((experiments(env)).rglob("domain-effect.json"))
+    assert not list((experiments(env)).rglob("trials-v2.json"))
     # a legitimate request before the cutoff never carries the canary anywhere downstream
     ok = write_request(env, "ok", request("crypto:REQ-CANARY-OK"))
     assert cli(env, "process", str(ok))[0] == 0
     downstream = [
-        p
-        for p in (env["state"] / "execution" / "experiments").rglob("*")
-        if p.is_file() and "references" not in p.parts
+        p for p in (experiments(env)).rglob("*") if p.is_file() and "references" not in p.parts
     ]
     text = "\n".join(p.read_text(encoding="utf-8", errors="replace") for p in downstream)
     assert CANARY not in text and "0.0987654321" not in text
@@ -229,7 +234,7 @@ def test_admission_rejects_before_any_execution(env, mutate, status, reason):
     assert code == 2 and outcome["status"] == status
     assert outcome["reason"].startswith(reason)
     if reason != "REFUSED":
-        assert not (env["state"] / "execution" / "ops-runtime").exists()
+        assert not ops_runtime(env).exists()
 
 
 def test_invalid_json_and_duplicate_keys_are_rejected(env):

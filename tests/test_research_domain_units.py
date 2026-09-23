@@ -171,3 +171,16 @@ def test_result_validation_keeps_authorities_separate():
     ):
         with pytest.raises(ContractError):
             validate_result(bad)
+
+
+def test_windows_state_root_longer_than_max_path_budget_fails_fast(tmp_path, monkeypatch):
+    import sys
+
+    from GarimpoInvestimentos.research_execution import MAX_STATE_ROOT_CHARS
+    from GarimpoInvestimentos.research_runner import Circuit
+
+    monkeypatch.setattr(sys, "platform", "win32")
+    deep = tmp_path / ("d" * (MAX_STATE_ROOT_CHARS + 5))
+    with pytest.raises(SystemExit, match="STATE_ROOT_TOO_LONG"):
+        Circuit(deep)
+    assert not deep.exists()
