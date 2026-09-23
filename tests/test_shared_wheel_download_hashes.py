@@ -22,11 +22,14 @@ SHARED_URL = re.compile(
 def test_lock_pins_stack_wheels_by_release_url_and_sha256():
     lock = tomllib.loads((ROOT / "uv.lock").read_text(encoding="utf-8"))
     packages = {item["name"]: item for item in lock["package"]}
-    for name in ("predictor-core", "predictor-ops", "predictor-research-protocol"):
+    for name in ("predictor-core", "predictor-ops"):
         (wheel,) = packages[name]["wheels"]
         assert SHARED_URL.fullmatch(wheel["url"])
         algorithm, digest = wheel["hash"].split(":", 1)
         assert algorithm == "sha256" and re.fullmatch(r"[0-9a-f]{64}", digest)
+    # Stage A: the domain has no envelope dependency (prompt §8, D-13).
+    assert "predictor-research-protocol" not in packages
+    assert "cain-research" not in packages
 
 
 @pytest.mark.parametrize("relative", ["Dockerfile", ".github/workflows/ci.yml"])

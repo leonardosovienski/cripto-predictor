@@ -17,11 +17,9 @@ EXPECTED = {
         "https://github.com/leonardosovienski/predictor-ops/releases/download/v4.2.1/predictor_ops-4.2.1-py3-none-any.whl",
         "sha256:da4fa540703879669caba919521ec7d3c33734b5d57781122823df8817346f0e",
     ),
-    "predictor-research-protocol": (
-        "https://github.com/leonardosovienski/ecosystem-predictor/releases/download/predictor-research-protocol-v1.0.3rc1/predictor_research_protocol-1.0.3rc1-py3-none-any.whl",
-        "sha256:312ab9742271de9f0efe6912f5828122d546751e559f493bede01c8fc6a24032",
-    ),
 }
+# Stage A (qualificação): o domínio não depende de envelope; o protocolo V1 saiu do lock.
+ABSENT = ("predictor-research-protocol", "cain-research")
 
 
 def main() -> int:
@@ -35,6 +33,8 @@ def main() -> int:
         wheel = packages[name]["wheels"][0]
         assert wheel["url"] == url
         assert wheel["hash"] == digest
+    for name in ABSENT:
+        assert name not in packages, f"{name} must not be locked in stage A"
     import predictor_core
     import predictor_ops
 
@@ -63,6 +63,22 @@ def main() -> int:
             check=True,
         )
         assert "usage: cripto-predictor" in result.stdout
+        research = subprocess.run(
+            [
+                str(
+                    Path(sys.executable).parent
+                    / ("cripto-research.exe" if os.name == "nt" else "cripto-research")
+                ),
+                "--help",
+            ],
+            cwd=directory,
+            env=env,
+            capture_output=True,
+            text=True,
+            timeout=10,
+            check=True,
+        )
+        assert "usage: cripto-research" in research.stdout
         assert entrypoint.load().health().status in {
             "SUCCEEDED",
             "DEGRADED",

@@ -1,68 +1,57 @@
-"""CRIPTO-owned authenticated ResearchResult outbox.
+"""CRIPTO-owned authoritative result store (no envelope, no signing, no transport).
 
-The outbox composes authority-preserving facts. It does not infer scientific
-support from OPS success and only accepts results correlated to an admitted task.
+Each terminal result is stored once per request, keyed by result_id, together with its
+canonical content hash and the path of the immutable result file. After a restart the
+result is re-read from here and both copies are checked; any divergence fails closed
+(RECONCILIATION_REQUIRED), never repaired silently.
 """
 
 from __future__ import annotations
 
+import hashlib
+import json
 import sqlite3
 from contextlib import contextmanager
-from datetime import datetime
+from datetime import UTC, datetime
 from pathlib import Path
 
-from research_protocol import canonical, digest, loads, payload_hash, sign_result, validate_result
+from GarimpoInvestimentos.research_contract import canonical, content_hash, validate_result
 
 
 class ResultConflict(ValueError):
-    pass
+    """A different payload already exists for the same result/request/experiment."""
 
 
-class ResultOutbox:
-    def __init__(
-        self,
-        path,
-        *,
-        admission_store,
-        publisher_identity: str,
-        key_id: str | None = None,
-        secret: bytes | None = None,
-        key_store=None,
-        scope: str = "crypto.research.result",
-    ):
+class ResultIntegrityError(ValueError):
+    """The authoritative copy and the result file disagree or were altered."""
+
+
+def _now() -> str:
+    return datetime.now(UTC).isoformat(timespec="microseconds").replace("+00:00", "Z")
+
+
+class ResultStore:
+    def __init__(self, path):
         self.path = Path(path)
-        self.admission_store = admission_store
-        self.publisher_identity = publisher_identity
-        self.key_id = key_id
-        self.secret = secret
-        self.key_store = key_store
-        self.scope = scope
-        if key_store is None and (key_id is None or secret is None):
-            raise ValueError("fixed key or operator key store required")
         self.path.parent.mkdir(parents=True, exist_ok=True)
         with self.connection() as db:
             db.execute(
                 """
-                CREATE TABLE IF NOT EXISTS result_outbox(
+                CREATE TABLE IF NOT EXISTS results(
                   result_id TEXT PRIMARY KEY,
-                  task_id TEXT NOT NULL,
-                  admission_id TEXT NOT NULL,
-                  message_id TEXT NOT NULL UNIQUE,
-                  payload_hash TEXT NOT NULL,
-                  envelope BLOB NOT NULL,
-                  status TEXT NOT NULL CHECK(status IN (
-                    'PENDING','PUBLISHED','RETRYABLE','DEAD_LETTER')),
-                  attempt_count INTEGER NOT NULL DEFAULT 0,
-                  created_at TEXT NOT NULL,
-                  processed_at TEXT,
-                  error TEXT
+                  request_id TEXT NOT NULL UNIQUE,
+                  experiment_id TEXT NOT NULL UNIQUE,
+                  content_hash TEXT NOT NULL,
+                  result BLOB NOT NULL,
+                  result_path TEXT NOT NULL,
+                  stored_at TEXT NOT NULL
                 )
                 """
             )
 
     @contextmanager
     def connection(self):
-        db = sqlite3.connect(self.path, timeout=15)
+        db = sqlite3.connect(self.path, timeout=30)
         db.row_factory = sqlite3.Row
         try:
             with db:
@@ -70,167 +59,91 @@ class ResultOutbox:
         finally:
             db.close()
 
-    def _authorize(self, result):
-        context = self.admission_store.admitted_context(result["task_id"])
-        task, receipt = context["task"], context["receipt"]
-        expected = {
-            "admission_id": receipt["admission_id"],
-            "research_id": task["research_id"],
-            "hypothesis_id": task["hypothesis_id"],
-        }
-        for field, value in expected.items():
-            if result[field] != value:
-                raise PermissionError(f"RESULT_NOT_AUTHORIZED: {field} does not match admission")
-        provenance = result["provenance"]
-        if provenance["task_payload_hash"] != context["task_payload_hash"]:
-            raise PermissionError("RESULT_NOT_AUTHORIZED: task payload identity mismatch")
-        if provenance["admission_policy_hash"] != receipt["policy_hash"]:
-            raise PermissionError("RESULT_NOT_AUTHORIZED: admission policy identity mismatch")
-        resolved_hash = digest(canonical(receipt["resolved_references"]))
-        if provenance["resolved_references_hash"] != resolved_hash:
-            raise PermissionError("RESULT_NOT_AUTHORIZED: admitted references identity mismatch")
-
-    def produce(self, result):
+    def store(self, result: dict, result_path: Path) -> dict:
         validate_result(result)
-        self._authorize(result)
-        key_id, secret = (
-            self.key_store.signing_key(self.publisher_identity, self.scope)
-            if self.key_store is not None
-            else (self.key_id, self.secret)
-        )
-        envelope = sign_result(
-            result,
-            producer="CRIPTO",
-            publisher_identity=self.publisher_identity,
-            consumer="CAIN",
-            scope=self.scope,
-            key_id=key_id,
-            secret=secret,
-        )
-        result_hash = payload_hash(result)
+        raw = canonical(result)
+        chash = content_hash(result)
+        if Path(result_path).read_bytes() != raw:
+            raise ResultIntegrityError("result file bytes differ from the result being stored")
         with self.connection() as db:
             db.execute("BEGIN IMMEDIATE")
-            previous = db.execute(
-                "SELECT payload_hash,envelope,status FROM result_outbox WHERE result_id=?",
-                (result["result_id"],),
-            ).fetchone()
-            if previous:
-                if previous["payload_hash"] != result_hash:
+            rows = db.execute(
+                "SELECT result_id,request_id,experiment_id,content_hash FROM results "
+                "WHERE result_id=? OR request_id=? OR experiment_id=?",
+                (result["result_id"], result["request_id"], result["experiment_id"]),
+            ).fetchall()
+            for row in rows:
+                if (
+                    row["result_id"],
+                    row["request_id"],
+                    row["experiment_id"],
+                    row["content_hash"],
+                ) != (result["result_id"], result["request_id"], result["experiment_id"], chash):
                     raise ResultConflict(
-                        "CONFLICT: result_id already has a different canonical payload"
+                        "CONFLICT: a different result already exists for this identity"
                     )
-                return {
-                    "status": "duplicate",
-                    "outbox_status": previous["status"],
-                    "envelope": loads(previous["envelope"]),
-                }
+            if rows:
+                return {"status": "duplicate", "content_hash": chash}
             db.execute(
-                "INSERT INTO result_outbox(result_id,task_id,admission_id,message_id,"
-                "payload_hash,envelope,status,created_at) VALUES(?,?,?,?,?,?,?,?)",
+                "INSERT INTO results(result_id,request_id,experiment_id,content_hash,result,result_path,stored_at) "
+                "VALUES(?,?,?,?,?,?,?)",
                 (
                     result["result_id"],
-                    result["task_id"],
-                    result["admission_id"],
-                    envelope["message_id"],
-                    result_hash,
-                    canonical(envelope),
-                    "PENDING",
-                    result["produced_at"],
+                    result["request_id"],
+                    result["experiment_id"],
+                    chash,
+                    raw,
+                    str(result_path),
+                    _now(),
                 ),
             )
-        return {"status": "produced", "outbox_status": "PENDING", "envelope": envelope}
+        return {"status": "stored", "content_hash": chash}
 
-    def pending(self, limit: int = 100):
-        if type(limit) is not int or not 1 <= limit <= 100:
-            raise ValueError("Invalid outbox limit")
-        with self.connection() as db:
-            rows = db.execute(
-                "SELECT envelope FROM result_outbox WHERE status IN ('PENDING','RETRYABLE') "
-                "ORDER BY created_at,result_id LIMIT ?",
-                (limit,),
-            ).fetchall()
-        return [loads(row["envelope"]) for row in rows]
+    def _verified(self, row) -> dict:
+        raw = bytes(row["result"])
+        if hashlib.sha256(raw).hexdigest() != row["content_hash"]:
+            raise ResultIntegrityError("stored result blob does not match its content hash")
+        result = json.loads(raw)
+        validate_result(result)
+        path = Path(row["result_path"])
+        if not path.exists():
+            raise ResultIntegrityError("result file missing (database says it exists)")
+        if path.read_bytes() != raw:
+            raise ResultIntegrityError("result file altered after storage")
+        if result["request_id"] != row["request_id"] or result["result_id"] != row["result_id"]:
+            raise ResultIntegrityError("result metadata inconsistent with its index")
+        return result
 
-    def record_send(self, result_id, message_id):
-        """Persist an at-least-once delivery attempt before invoking transport."""
+    def read_by_request(self, request_id: str) -> dict | None:
         with self.connection() as db:
-            db.execute("BEGIN IMMEDIATE")
-            row = db.execute(
-                "SELECT envelope,message_id,status FROM result_outbox WHERE result_id=?",
-                (result_id,),
-            ).fetchone()
-            if row is None or row["message_id"] != message_id:
-                raise ValueError("ACK_CONFLICT: unknown result/message identity")
-            if row["status"] == "PUBLISHED":
-                return {"status": "already_published", "envelope": loads(row["envelope"])}
-            if row["status"] == "DEAD_LETTER":
-                raise ValueError("DELIVERY_BLOCKED: result is dead-lettered")
-            db.execute(
-                "UPDATE result_outbox SET attempt_count=attempt_count+1,error=NULL "
-                "WHERE result_id=?",
-                (result_id,),
-            )
-        return {"status": "send_recorded", "envelope": loads(row["envelope"])}
+            row = db.execute("SELECT * FROM results WHERE request_id=?", (request_id,)).fetchone()
+        return None if row is None else self._verified(row)
 
-    def acknowledge(self, result_id, message_id, *, processed_at):
-        parsed = datetime.fromisoformat(processed_at.replace("Z", "+00:00"))
-        if parsed.tzinfo is None or parsed.utcoffset() is None:
-            raise ValueError("Invalid acknowledgement time")
+    def read(self, result_id: str) -> dict | None:
         with self.connection() as db:
-            db.execute("BEGIN IMMEDIATE")
-            row = db.execute(
-                "SELECT message_id,status,attempt_count FROM result_outbox WHERE result_id=?",
-                (result_id,),
-            ).fetchone()
-            if row is None or row["message_id"] != message_id:
-                raise ValueError("ACK_CONFLICT: unknown result/message identity")
-            if row["attempt_count"] < 1:
-                raise ValueError("ACK_CONFLICT: result has no recorded send")
-            if row["status"] != "PUBLISHED":
-                db.execute(
-                    "UPDATE result_outbox SET status='PUBLISHED',processed_at=?,error=NULL "
-                    "WHERE result_id=?",
-                    (processed_at, result_id),
+            row = db.execute("SELECT * FROM results WHERE result_id=?", (result_id,)).fetchone()
+        return None if row is None else self._verified(row)
+
+    def count(self) -> int:
+        with self.connection() as db:
+            return db.execute("SELECT count(*) FROM results").fetchone()[0]
+
+    def reconcile(self) -> list[dict]:
+        findings = []
+        with self.connection() as db:
+            rows = db.execute("SELECT * FROM results").fetchall()
+        for row in rows:
+            try:
+                self._verified(row)
+            except (ResultIntegrityError, ValueError) as exc:
+                findings.append(
+                    {
+                        "result_id": row["result_id"],
+                        "finding": "RESULT_STORE_INTEGRITY",
+                        "error": str(exc),
+                    }
                 )
-        return self.state(result_id)
+        return findings
 
-    def fail_delivery(self, result_id, message_id, error, *, max_attempts=3):
-        if type(max_attempts) is not int or max_attempts < 1 or not error:
-            raise ValueError("Invalid delivery failure")
-        with self.connection() as db:
-            db.execute("BEGIN IMMEDIATE")
-            row = db.execute(
-                "SELECT message_id,status,attempt_count FROM result_outbox WHERE result_id=?",
-                (result_id,),
-            ).fetchone()
-            if row is None or row["message_id"] != message_id:
-                raise ValueError("ACK_CONFLICT: unknown result/message identity")
-            if row["status"] == "PUBLISHED":
-                raise ValueError("ACK_CONFLICT: published result cannot fail delivery")
-            status = "DEAD_LETTER" if row["attempt_count"] >= max_attempts else "RETRYABLE"
-            db.execute(
-                "UPDATE result_outbox SET status=?,error=? WHERE result_id=?",
-                (status, error[:1000], result_id),
-            )
-        return self.state(result_id)
 
-    def reconcile(self):
-        with self.connection() as db:
-            rows = db.execute(
-                "SELECT status,count(*) AS count FROM result_outbox GROUP BY status"
-            ).fetchall()
-        counts = {row["status"]: row["count"] for row in rows}
-        return {
-            "pending": counts.get("PENDING", 0) + counts.get("RETRYABLE", 0),
-            "published": counts.get("PUBLISHED", 0),
-            "dead_letters": counts.get("DEAD_LETTER", 0),
-        }
-
-    def state(self, result_id):
-        with self.connection() as db:
-            row = db.execute(
-                "SELECT result_id,task_id,admission_id,message_id,payload_hash,status,"
-                "attempt_count,created_at,processed_at,error FROM result_outbox WHERE result_id=?",
-                (result_id,),
-            ).fetchone()
-        return dict(row) if row else None
+__all__ = ["ResultConflict", "ResultIntegrityError", "ResultStore"]

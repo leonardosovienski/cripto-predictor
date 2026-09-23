@@ -9,7 +9,8 @@ dist/
 build/
 htmlcov/
 data/
-output/
+# Ancorado na raiz: um `output/` genérico tirava o pacote de código output/ da wheel (CR-F005).
+/output/
 cache/
 logs/
 *.db
