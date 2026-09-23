@@ -1,8 +1,9 @@
+# Aposentado por D-13 (integração V1 extinta, qualificação pré-treinamento, HYG-015).
+# Só roda por workflow_dispatch; fora do escopo de HOSTED_CI. Preservado como
+# referência para os testes da integração (Etapa B).
 name: Installed Crypto CAIN integration
 
 on:
-  push:
-  pull_request:
   workflow_dispatch:
 
 permissions:
