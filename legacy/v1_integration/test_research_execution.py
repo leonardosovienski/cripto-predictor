@@ -71,73 +71,128 @@ def setup_stack(tmp_path, *, timeout_seconds=30):
         "evidence": {"receipt_id": "CAIN-EVIDENCE-001", "classification": "qa-public"},
     }
     names = {
-        "protocol": "backtest-standard", "dataset": "btc-daily-pit",
-        "baseline": "majority-direction", "cost_model": "spot-standard",
+        "protocol": "backtest-standard",
+        "dataset": "btc-daily-pit",
+        "baseline": "majority-direction",
+        "cost_model": "spot-standard",
         "evidence": "cain-receipt-001",
     }
     registry = []
     for kind, value in objects.items():
         content_hash = object_store.put_operator_bytes(encoded(value))
         registry.append(
-            {"kind": kind, "name": names[kind], "version": "v1",
-             "revision_id": f"{kind}:{names[kind]}:fixture-001",
-             "content_hash": content_hash, "scopes": [SCOPE]}
+            {
+                "kind": kind,
+                "name": names[kind],
+                "version": "v1",
+                "revision_id": f"{kind}:{names[kind]}:fixture-001",
+                "content_hash": content_hash,
+                "scopes": [SCOPE],
+            }
         )
     policy = {
         "schema_version": "CryptoResearchAdmissionPolicyV1",
-        "policy_id": "crypto-local-research", "policy_version": 1,
+        "policy_id": "crypto-local-research",
+        "policy_version": 1,
         "owner": "CRIPTO_OPERATOR",
-        "publishers": [{"publisher_identity": "cain-qa", "key_id": "cain-key",
-                        "scopes": [SCOPE], "revoked": False}],
-        "handlers": {"BACKTEST_EXISTING_HYPOTHESIS": "crypto.handlers.backtest_existing_hypothesis.v1"},
+        "publishers": [
+            {
+                "publisher_identity": "cain-qa",
+                "key_id": "cain-key",
+                "scopes": [SCOPE],
+                "revoked": False,
+            }
+        ],
+        "handlers": {
+            "BACKTEST_EXISTING_HYPOTHESIS": "crypto.handlers.backtest_existing_hypothesis.v1"
+        },
         "registry": registry,
-        "limits": {"max_pending_tasks": 10, "max_task_bytes": 16384, "max_refs": 8,
-                   "max_parameter_bytes": 1024, "rate_limit_per_minute": 10,
-                   "max_concurrency": 1, "cpu_seconds": 60, "memory_mb": 512,
-                   "disk_mb": 128, "timeout_seconds": timeout_seconds, "max_retries": 2,
-                   "dead_letter_threshold": 3, "max_age_seconds": 86400,
-                   "per_publisher_pending": 10, "max_priority": "NORMAL"},
+        "limits": {
+            "max_pending_tasks": 10,
+            "max_task_bytes": 16384,
+            "max_refs": 8,
+            "max_parameter_bytes": 1024,
+            "rate_limit_per_minute": 10,
+            "max_concurrency": 1,
+            "cpu_seconds": 60,
+            "memory_mb": 512,
+            "disk_mb": 128,
+            "timeout_seconds": timeout_seconds,
+            "max_retries": 2,
+            "dead_letter_threshold": 3,
+            "max_age_seconds": 86400,
+            "per_publisher_pending": 10,
+            "max_priority": "NORMAL",
+        },
         "allowed_symbols": ["BTCUSDT"],
     }
     policy_path = tmp_path / "policy.json"
     policy_path.write_text(json.dumps(policy), encoding="utf-8")
     admission = AdmissionStore(
-        tmp_path / "admission.sqlite", policy_path,
+        tmp_path / "admission.sqlite",
+        policy_path,
         keys={("cain-qa", "cain-key"): CAIN_SECRET},
     )
     now = datetime.now(UTC)
     ref = lambda kind: {"kind": kind, "name": names[kind], "version": "v1"}
     task = {
-        "schema_version": "ResearchTaskV1", "task_id": "TASK-E2E-001",
-        "research_id": "RESEARCH-E2E-001", "parent_task_id": None,
-        "hypothesis_id": "HYPOTHESIS-FROZEN-001", "domain": "crypto",
+        "schema_version": "ResearchTaskV1",
+        "task_id": "TASK-E2E-001",
+        "research_id": "RESEARCH-E2E-001",
+        "parent_task_id": None,
+        "hypothesis_id": "HYPOTHESIS-FROZEN-001",
+        "domain": "crypto",
         "request_type": "BACKTEST_EXISTING_HYPOTHESIS",
-        "protocol_ref": ref("protocol"), "dataset_constraint_ref": ref("dataset"),
-        "baseline_refs": [ref("baseline")], "cost_model_ref": ref("cost_model"),
+        "protocol_ref": ref("protocol"),
+        "dataset_constraint_ref": ref("dataset"),
+        "baseline_refs": [ref("baseline")],
+        "cost_model_ref": ref("cost_model"),
         "evidence_refs": [ref("evidence")],
-        "bounded_parameters": {"symbol": "BTCUSDT", "horizon_days": 7,
-                               "max_observations": 100, "fee_bps": 10, "slippage_bps": 5},
-        "priority_hint": "HIGH", "created_at": now.isoformat().replace("+00:00", "Z"),
+        "bounded_parameters": {
+            "symbol": "BTCUSDT",
+            "horizon_days": 7,
+            "max_observations": 100,
+            "fee_bps": 10,
+            "slippage_bps": 5,
+        },
+        "priority_hint": "HIGH",
+        "created_at": now.isoformat().replace("+00:00", "Z"),
         "expires_at": (now + timedelta(hours=12)).isoformat().replace("+00:00", "Z"),
-        "requested_by": "cain-e2e", "provenance": {
-            "cain_source_sha": SOURCE, "retrieval_receipt_ids": ["receipt-001"],
+        "requested_by": "cain-e2e",
+        "provenance": {
+            "cain_source_sha": SOURCE,
+            "retrieval_receipt_ids": ["receipt-001"],
             "proposal_model": "deterministic-fixture",
         },
     }
     envelope = sign_task(
-        task, producer="CAIN", publisher_identity="cain-qa", consumer="CRIPTO",
-        scope=SCOPE, key_id="cain-key", secret=CAIN_SECRET,
+        task,
+        producer="CAIN",
+        publisher_identity="cain-qa",
+        consumer="CRIPTO",
+        scope=SCOPE,
+        key_id="cain-key",
+        secret=CAIN_SECRET,
     )
     assert admission.submit(envelope)["decision"] == "ACCEPTED"
     outbox = ResultOutbox(
-        tmp_path / "result.sqlite", admission_store=admission,
-        publisher_identity="crypto-qa", key_id="crypto-key", secret=CRIPTO_SECRET,
+        tmp_path / "result.sqlite",
+        admission_store=admission,
+        publisher_identity="crypto-qa",
+        key_id="crypto-key",
+        secret=CRIPTO_SECRET,
     )
     executor = ResearchExecutor(
-        tmp_path / "execution", admission_store=admission, result_outbox=outbox,
-        reference_store=object_store, crypto_source_sha=SOURCE,
-        artifact_identities={"core": identity("3.2.1"), "ops": identity("4.2.1"),
-                             "crypto": identity("1.1.1rc1")},
+        tmp_path / "execution",
+        admission_store=admission,
+        result_outbox=outbox,
+        reference_store=object_store,
+        crypto_source_sha=SOURCE,
+        artifact_identities={
+            "core": identity("3.2.1"),
+            "ops": identity("4.2.1"),
+            "crypto": identity("1.1.1rc1"),
+        },
     )
     return executor, admission, outbox, object_store
 
@@ -207,7 +262,9 @@ def test_bidirectional_real_loop_survives_restart_and_correlates_in_cain(tmp_pat
     executor, admission, crypto_outbox, _ = setup_stack(tmp_path)
     context = admission.admitted_context("TASK-E2E-001")
     cain_tasks = TaskOutbox(
-        tmp_path / "cain-task.sqlite", publisher_identity="cain-qa", key_id="cain-key",
+        tmp_path / "cain-task.sqlite",
+        publisher_identity="cain-qa",
+        key_id="cain-key",
         secret=CAIN_SECRET,
     )
     task_message = cain_tasks.propose(context["task"])["envelope"]
@@ -223,16 +280,22 @@ def test_bidirectional_real_loop_survives_restart_and_correlates_in_cain(tmp_pat
     result_message = crypto_outbox.pending()[0]
     crypto_outbox.record_send(result_id, result_message["message_id"])
     cain_results = ResultInbox(
-        tmp_path / "cain-result.sqlite", task_outbox=cain_tasks,
-        publisher_identity="crypto-qa", key_id="crypto-key", secret=CRIPTO_SECRET,
+        tmp_path / "cain-result.sqlite",
+        task_outbox=cain_tasks,
+        publisher_identity="crypto-qa",
+        key_id="crypto-key",
+        secret=CRIPTO_SECRET,
     )
     receipt = cain_results.ingest(result_message)
     crypto_outbox.acknowledge(
         result_id, result_message["message_id"], processed_at=receipt["result"]["produced_at"]
     )
     restarted = ResultInbox(
-        tmp_path / "cain-result.sqlite", task_outbox=cain_tasks,
-        publisher_identity="crypto-qa", key_id="crypto-key", secret=CRIPTO_SECRET,
+        tmp_path / "cain-result.sqlite",
+        task_outbox=cain_tasks,
+        publisher_identity="crypto-qa",
+        key_id="crypto-key",
+        secret=CRIPTO_SECRET,
     )
     assert restarted.result(result_id)["task_id"] == "TASK-E2E-001"
     assert restarted.for_task("TASK-E2E-001")[0]["result_id"] == result_id
@@ -244,9 +307,12 @@ def test_real_ops_runner_crash_fails_without_scientific_result_and_can_retry(tmp
     executor, _, outbox, _ = setup_stack(tmp_path)
     with pytest.raises(RuntimeError, match="OPS_EXECUTION_FAILED"):
         executor.execute("TASK-E2E-001", crash_at="runner_crash")
-    assert executor.journal.get(executor.logical_identity(
-        executor.admission_store.admitted_context("TASK-E2E-001")
-    )[0])["state"] == "FAILED"
+    assert (
+        executor.journal.get(
+            executor.logical_identity(executor.admission_store.admitted_context("TASK-E2E-001"))[0]
+        )["state"]
+        == "FAILED"
+    )
     assert outbox.pending() == []
     recovered = executor.execute("TASK-E2E-001")
     assert recovered["experiment"]["state"] == "COMPLETED"
@@ -276,7 +342,10 @@ def test_filesystem_database_split_brain_is_detected_and_not_reexecuted(tmp_path
     assert executor.reconcile()[0]["finding"] == "MISSING_BYTES"
     with pytest.raises(ValueError, match="domain effect bytes missing"):
         executor.execute("TASK-E2E-001")
-    assert executor.journal.get(completed["experiment"]["experiment_id"])["state"] == "RECONCILIATION_REQUIRED"
+    assert (
+        executor.journal.get(completed["experiment"]["experiment_id"])["state"]
+        == "RECONCILIATION_REQUIRED"
+    )
     assert len(outbox.pending()) == 1
 
 
@@ -289,4 +358,7 @@ def test_result_artifact_replacement_is_detected(tmp_path):
     assert {item["finding"] for item in findings} == {"RESULT_HASH_MISMATCH"}
     with pytest.raises(ValueError):
         executor.execute("TASK-E2E-001")
-    assert executor.journal.get(completed["experiment"]["experiment_id"])["state"] == "RECONCILIATION_REQUIRED"
+    assert (
+        executor.journal.get(completed["experiment"]["experiment_id"])["state"]
+        == "RECONCILIATION_REQUIRED"
+    )

@@ -146,10 +146,14 @@ def test_operator_key_rotation_accepts_new_key_and_revocation_fails_closed(tmp_p
     keys.provision("cain-qa", SCOPE, "cain-f3-key", secret=SECRET)
     keys.rotate("cain-qa", SCOPE, "cain-f3-key-2", grace_seconds=3600, secret=b"r" * 32)
     value = policy()
-    value["publishers"].append({
-        "publisher_identity": "cain-qa", "key_id": "cain-f3-key-2",
-        "scopes": [SCOPE], "revoked": False,
-    })
+    value["publishers"].append(
+        {
+            "publisher_identity": "cain-qa",
+            "key_id": "cain-f3-key-2",
+            "scopes": [SCOPE],
+            "revoked": False,
+        }
+    )
     store, _ = setup(tmp_path / "rotated", value, keys)
     rotated = envelope(key_id="cain-f3-key-2", secret=b"r" * 32)
     assert store.submit(rotated, now="2026-09-19T22:31:00Z")["decision"] == "ACCEPTED"
@@ -216,7 +220,10 @@ def test_expiry_unknown_reference_symbol_and_quota_fail_closed(tmp_path):
     limited = policy()
     limited["limits"]["max_pending_tasks"] = 1
     store, _ = setup(tmp_path / "quota", limited)
-    assert store.submit(envelope(task("TASK-Q1")), now="2026-09-19T22:31:00Z")["decision"] == "ACCEPTED"
+    assert (
+        store.submit(envelope(task("TASK-Q1")), now="2026-09-19T22:31:00Z")["decision"]
+        == "ACCEPTED"
+    )
     receipt = store.submit(envelope(task("TASK-Q2")), now="2026-09-19T22:31:01Z")
     assert receipt["reason_code"] == "GLOBAL_PENDING_QUOTA"
 

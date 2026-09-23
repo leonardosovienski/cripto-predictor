@@ -4,15 +4,16 @@ RUN apk upgrade --no-cache && apk add --no-cache build-base
 WORKDIR /build
 RUN python -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
-COPY pyproject.toml README.md ./
+COPY --from=ghcr.io/astral-sh/uv:0.12.1 /uv /usr/local/bin/uv
+COPY pyproject.toml uv.lock README.md ./
 COPY GarimpoInvestimentos ./GarimpoInvestimentos
 COPY charters ./charters
 COPY observation_plans ./observation_plans
-RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir \
-        "predictor-core @ https://github.com/leonardosovienski/core-predictor/releases/download/v3.2.1/predictor_core-3.2.1-py3-none-any.whl#sha256=10ef42f34ace8bb2df5f83ff7de2ceec79b035a25ea0a690e8942bd60d2fb4e3" \
-        "predictor-ops @ https://github.com/leonardosovienski/predictor-ops/releases/download/v4.2.1/predictor_ops-4.2.1-py3-none-any.whl#sha256=da4fa540703879669caba919521ec7d3c33734b5d57781122823df8817346f0e" \
-        ".[llm,excel,v3]" && \
+# Dependências só do uv.lock, com --require-hashes; o próprio pacote entra sem deps.
+RUN uv export --locked --no-dev --no-emit-project --extra llm --extra excel --extra v3 \
+        --format requirements-txt --output-file /tmp/lock-requirements.txt && \
+    pip install --no-cache-dir --require-hashes -r /tmp/lock-requirements.txt && \
+    pip install --no-cache-dir --no-deps . && \
     pip uninstall -y pip
 
 FROM python:3.14-alpine3.24@sha256:016508ba505da24f7139765bc4bb669df4e88eb2f12eeadd571bf2f88d7533df AS runtime

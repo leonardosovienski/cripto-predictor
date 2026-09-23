@@ -23,9 +23,7 @@ DECISIONS = {
     "UNAUTHORIZED",
     "REQUIRES_READMISSION",
 }
-KNOWN_HANDLERS = {
-    "BACKTEST_EXISTING_HYPOTHESIS": "crypto.handlers.backtest_existing_hypothesis.v1"
-}
+KNOWN_HANDLERS = {"BACKTEST_EXISTING_HYPOTHESIS": "crypto.handlers.backtest_existing_hypothesis.v1"}
 
 
 def _keys(value, expected, label):
@@ -241,9 +239,7 @@ class AdmissionStore:
         return levels[min(levels.index(requested), levels.index(maximum))]
 
     def _evaluate(self, envelope, policy, now):
-        publisher = self._publisher(
-            policy, envelope["publisher_identity"], envelope["key_id"]
-        )
+        publisher = self._publisher(policy, envelope["publisher_identity"], envelope["key_id"])
         if (
             envelope["producer"] != "CAIN"
             or envelope["consumer"] != "CRIPTO"
@@ -253,9 +249,10 @@ class AdmissionStore:
         ):
             return "UNAUTHORIZED", "PUBLISHER_OR_SCOPE_DENIED", [], None
         try:
-            verify_task(envelope, lambda identity, key_id: self._resolve_key(
-                identity, key_id, envelope["scope"]
-            ))
+            verify_task(
+                envelope,
+                lambda identity, key_id: self._resolve_key(identity, key_id, envelope["scope"]),
+            )
         except PermissionError:
             return "UNAUTHORIZED", "AUTHENTICATION_FAILED", [], None
         task = envelope["payload"]
@@ -397,8 +394,16 @@ class AdmissionStore:
             )
             if decision == "ACCEPTED" and pending >= policy["limits"]["max_pending_tasks"]:
                 decision, reason, resolved, handler = "REJECTED", "GLOBAL_PENDING_QUOTA", [], None
-            elif decision == "ACCEPTED" and publisher_pending >= policy["limits"]["per_publisher_pending"]:
-                decision, reason, resolved, handler = "REJECTED", "PUBLISHER_PENDING_QUOTA", [], None
+            elif (
+                decision == "ACCEPTED"
+                and publisher_pending >= policy["limits"]["per_publisher_pending"]
+            ):
+                decision, reason, resolved, handler = (
+                    "REJECTED",
+                    "PUBLISHER_PENDING_QUOTA",
+                    [],
+                    None,
+                )
             elif decision == "ACCEPTED" and recent >= policy["limits"]["rate_limit_per_minute"]:
                 decision, reason, resolved, handler = "REJECTED", "RATE_LIMIT", [], None
             receipt = self._receipt(envelope, policy, now, decision, reason, resolved, handler)
@@ -459,7 +464,9 @@ class AdmissionStore:
         now = _now(now)
         current = self.policy()
         with self.connection() as db:
-            inbox = db.execute("SELECT envelope FROM task_inbox WHERE task_id=?", (task_id,)).fetchone()
+            inbox = db.execute(
+                "SELECT envelope FROM task_inbox WHERE task_id=?", (task_id,)
+            ).fetchone()
         if inbox is None:
             raise ValueError("TASK_NOT_FOUND")
         envelope = json.loads(inbox["envelope"])

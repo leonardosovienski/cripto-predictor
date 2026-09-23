@@ -44,10 +44,20 @@ def _utc(value: str) -> datetime:
 
 
 def evaluate(request: dict) -> dict:
-    if set(request) != {
-        "schema", "experiment_id", "trial_id", "task", "references", "identities",
-        "registered_at", "code_version",
-    } or request["schema"] != "crypto-admitted-backtest/1":
+    if (
+        set(request)
+        != {
+            "schema",
+            "experiment_id",
+            "trial_id",
+            "task",
+            "references",
+            "identities",
+            "registered_at",
+            "code_version",
+        }
+        or request["schema"] != "crypto-admitted-backtest/1"
+    ):
         raise ValueError("invalid closed worker request")
     task = request["task"]
     if task["request_type"] != "BACKTEST_EXISTING_HYPOTHESIS":
@@ -60,7 +70,10 @@ def evaluate(request: dict) -> dict:
         raise ValueError("protocol does not authorize this handler")
 
     rows = refs["dataset"].get("rows")
-    if not isinstance(rows, list) or not 4 <= len(rows) <= task["bounded_parameters"]["max_observations"]:
+    if (
+        not isinstance(rows, list)
+        or not 4 <= len(rows) <= task["bounded_parameters"]["max_observations"]
+    ):
         raise ValueError("invalid bounded dataset")
     cutoff = _utc(refs["dataset"]["data_cutoff"])
     gross: list[float] = []
@@ -70,7 +83,11 @@ def evaluate(request: dict) -> dict:
         if set(row) != {"observed_at", "available_at", "gross_return", "funding_rate"}:
             raise ValueError("invalid dataset row")
         observed, available = _utc(row["observed_at"]), _utc(row["available_at"])
-        if available < observed or available > cutoff or (prior_observed and observed <= prior_observed):
+        if (
+            available < observed
+            or available > cutoff
+            or (prior_observed and observed <= prior_observed)
+        ):
             raise ValueError("temporal integrity failure")
         prior_observed = observed
         values = (float(row["gross_return"]), float(row["funding_rate"]))
@@ -82,12 +99,16 @@ def evaluate(request: dict) -> dict:
     params = task["bounded_parameters"]
     cost_ref = refs["cost_model"]
     if (cost_ref.get("fee_bps"), cost_ref.get("slippage_bps")) != (
-        params["fee_bps"], params["slippage_bps"]
+        params["fee_bps"],
+        params["slippage_bps"],
     ):
         raise ValueError("admitted cost model conflicts with bounded parameters")
     costs = CostModel(float(cost_ref["fee_bps"]), float(cost_ref["slippage_bps"]))
     horizon_hours = float(params["horizon_days"] * 24)
-    net = [costs.net_return(value, 1.0, rate, horizon_hours) for value, rate in zip(gross, funding, strict=True)]
+    net = [
+        costs.net_return(value, 1.0, rate, horizon_hours)
+        for value, rate in zip(gross, funding, strict=True)
+    ]
     estimate = estimate_edge(gross, minimum_sample=int(refs["protocol"]["minimum_sample"]))
     decision = decide_cost_aware(
         estimate,
@@ -157,7 +178,11 @@ def evaluate(request: dict) -> dict:
         },
         "baseline_comparison": {
             "baseline_id": refs["baseline"]["baseline_id"],
-            "outcome": "BEATS" if net_bps > baseline_net else "LOSES" if net_bps < baseline_net else "TIES",
+            "outcome": "BEATS"
+            if net_bps > baseline_net
+            else "LOSES"
+            if net_bps < baseline_net
+            else "TIES",
             "gross_delta_bps": gross_bps - int(refs["baseline"]["gross_return_bps"]),
             "net_delta_bps": net_bps - baseline_net,
         },
@@ -197,7 +222,9 @@ def main(argv: list[str] | None = None) -> int:
         registry.register(effect["trial"])
     elif existing != effect["trial"]:
         raise ValueError("existing trial identity conflicts")
-    raw = (json.dumps(effect, sort_keys=True, separators=(",", ":"), allow_nan=False) + "\n").encode()
+    raw = (
+        json.dumps(effect, sort_keys=True, separators=(",", ":"), allow_nan=False) + "\n"
+    ).encode()
     expected = hashlib.sha256(raw).hexdigest()
     if args.effect.exists():
         if hashlib.sha256(args.effect.read_bytes()).hexdigest() != expected:

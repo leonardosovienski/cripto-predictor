@@ -46,40 +46,68 @@ def result():
         "envelope_failure_reason": None,
         "produced_at": "2026-09-19T23:03:00Z",
         "core_facts": {
-            "identity": identity(), "trial_ids": ["TRIAL-001"],
-            "scientific_state": "INCONCLUSIVE", "temporal_integrity": "PASS",
+            "identity": identity(),
+            "trial_ids": ["TRIAL-001"],
+            "scientific_state": "INCONCLUSIVE",
+            "temporal_integrity": "PASS",
             "statistics_receipt_hash": SHA,
         },
         "ops_facts": {
-            "identity": identity(), "ops_run_ids": ["RUN-001"],
+            "identity": identity(),
+            "ops_run_ids": ["RUN-001"],
             "attempt_ids": ["ATTEMPT-001"],
-            "operational_state": "SUCCEEDED", "started_at": "2026-09-19T23:00:00Z",
-            "finished_at": "2026-09-19T23:02:00Z", "exit_code": 0,
+            "operational_state": "SUCCEEDED",
+            "started_at": "2026-09-19T23:00:00Z",
+            "finished_at": "2026-09-19T23:02:00Z",
+            "exit_code": 0,
             "runtime_provenance_hash": SHA,
         },
         "crypto_facts": {
-            "identity": identity(), "dataset_identity": content("dataset"),
-            "model_identity": content("model"), "feature_set_identity": content("features"),
+            "identity": identity(),
+            "dataset_identity": content("dataset"),
+            "model_identity": content("model"),
+            "feature_set_identity": content("features"),
             "data_cutoff": "2026-09-18T00:00:00Z",
-            "metrics": {"sample_size": 100, "gross_return_bps": 10, "net_return_bps": -5,
-                        "max_drawdown_bps": -20, "turnover_bps": 100,
-                        "ci_low_bps": -30, "ci_high_bps": 20},
-            "baseline_comparison": {"baseline_id": "BASE-001", "outcome": "LOSES",
-                                    "gross_delta_bps": 2, "net_delta_bps": -3},
+            "metrics": {
+                "sample_size": 100,
+                "gross_return_bps": 10,
+                "net_return_bps": -5,
+                "max_drawdown_bps": -20,
+                "turnover_bps": 100,
+                "ci_low_bps": -30,
+                "ci_high_bps": 20,
+            },
+            "baseline_comparison": {
+                "baseline_id": "BASE-001",
+                "outcome": "LOSES",
+                "gross_delta_bps": 2,
+                "net_delta_bps": -3,
+            },
             "costs": {"fee_bps": 10, "slippage_bps": 5, "total_cost_bps": 15},
-            "economic_state": "NO_EDGE", "artifacts": [],
+            "economic_state": "NO_EDGE",
+            "artifacts": [],
         },
-        "provenance": {"task_payload_hash": SHA, "admission_policy_hash": SHA,
-                       "resolved_references_hash": resolved, "crypto_source_sha": SOURCE,
-                       "handler_identity": "crypto.handlers.backtest_existing_hypothesis.v1",
-                       "logical_experiment_hash": SHA, "journal_identity": SHA,
-                       "reference_materialization_receipt_hash": SHA},
+        "provenance": {
+            "task_payload_hash": SHA,
+            "admission_policy_hash": SHA,
+            "resolved_references_hash": resolved,
+            "crypto_source_sha": SOURCE,
+            "handler_identity": "crypto.handlers.backtest_existing_hypothesis.v1",
+            "logical_experiment_hash": SHA,
+            "journal_identity": SHA,
+            "reference_materialization_receipt_hash": SHA,
+        },
     }
 
 
 def store(tmp_path):
-    return ResultOutbox(tmp_path / "result.db", admission_store=Admission(),
-                        publisher_identity="crypto-qa", key_id="crypto-f4-key", secret=SECRET)
+    return ResultOutbox(
+        tmp_path / "result.db",
+        admission_store=Admission(),
+        publisher_identity="crypto-qa",
+        key_id="crypto-f4-key",
+        secret=SECRET,
+    )
 
 
 def test_result_outbox_is_durable_idempotent_and_correlated(tmp_path):
@@ -112,9 +140,12 @@ def test_result_delivery_attempt_ack_and_retry_are_durable(tmp_path):
     envelope = path_store.produce(result())["envelope"]
     path_store.record_send("RESULT-001", envelope["message_id"])
     assert store(tmp_path).state("RESULT-001")["attempt_count"] == 1
-    assert store(tmp_path).fail_delivery(
-        "RESULT-001", envelope["message_id"], "CAIN_OFFLINE", max_attempts=2
-    )["status"] == "RETRYABLE"
+    assert (
+        store(tmp_path).fail_delivery(
+            "RESULT-001", envelope["message_id"], "CAIN_OFFLINE", max_attempts=2
+        )["status"]
+        == "RETRYABLE"
+    )
     store(tmp_path).record_send("RESULT-001", envelope["message_id"])
     state = store(tmp_path).acknowledge(
         "RESULT-001", envelope["message_id"], processed_at=result()["produced_at"]
@@ -134,11 +165,16 @@ def test_result_outbox_uses_current_operator_signing_key(tmp_path):
     keys = HmacKeyStore(tmp_path / "keys")
     keys.provision("crypto-qa", "crypto.research.result", "crypto-key-1", secret=b"a" * 32)
     keys.rotate(
-        "crypto-qa", "crypto.research.result", "crypto-key-2",
-        grace_seconds=3600, secret=b"b" * 32,
+        "crypto-qa",
+        "crypto.research.result",
+        "crypto-key-2",
+        grace_seconds=3600,
+        secret=b"b" * 32,
     )
     outbox = ResultOutbox(
-        tmp_path / "rotated-result.db", admission_store=Admission(),
-        publisher_identity="crypto-qa", key_store=keys,
+        tmp_path / "rotated-result.db",
+        admission_store=Admission(),
+        publisher_identity="crypto-qa",
+        key_store=keys,
     )
     assert outbox.produce(result())["envelope"]["key_id"] == "crypto-key-2"

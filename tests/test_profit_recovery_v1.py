@@ -360,6 +360,7 @@ def test_episode_clustering_and_economic_report_use_effective_count() -> None:
     assert report["signal_count"] == len(rows)
     assert report["effective_independent_count"] <= report["signal_count"]
     assert report["strategies"]["PR122-direction"]["cost_expectancy"] is not None
-    assert report["PR122_incremental_vs_best"]["paired_event_count"] == report[
-        "effective_independent_count"
-    ]
+    assert (
+        report["PR122_incremental_vs_best"]["paired_event_count"]
+        == report["effective_independent_count"]
+    )

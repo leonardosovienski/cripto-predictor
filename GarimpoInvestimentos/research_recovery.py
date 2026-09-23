@@ -53,7 +53,9 @@ def create_recovery_bundle(
             target = staging / "sqlite" / f"{name}.sqlite"
             target.parent.mkdir(parents=True, exist_ok=True)
             _sqlite_snapshot(source, target)
-            files.append({"role": "sqlite", "name": name, "path": target.relative_to(staging).as_posix()})
+            files.append(
+                {"role": "sqlite", "name": name, "path": target.relative_to(staging).as_posix()}
+            )
         for name, raw_root in sorted(artifact_roots.items()):
             source_root = Path(raw_root).resolve(strict=True)
             if not source_root.is_dir():
@@ -65,25 +67,30 @@ def create_recovery_bundle(
                 target = staging / "artifacts" / name / relative
                 target.parent.mkdir(parents=True, exist_ok=True)
                 shutil.copyfile(source, target)
-                files.append({
-                    "role": "artifact", "name": name,
-                    "path": target.relative_to(staging).as_posix(),
-                })
+                files.append(
+                    {
+                        "role": "artifact",
+                        "name": name,
+                        "path": target.relative_to(staging).as_posix(),
+                    }
+                )
         for item in files:
             path = staging / item["path"]
             item["size"] = path.stat().st_size
             item["sha256"] = _hash(path)
         manifest = {
             "schema_version": "ResearchRecoveryBundleV1",
-            "created_at": datetime.now(UTC).isoformat(timespec="microseconds").replace("+00:00", "Z"),
+            "created_at": datetime.now(UTC)
+            .isoformat(timespec="microseconds")
+            .replace("+00:00", "Z"),
             "source_mutated": False,
             "restore_policy": "EMPTY_DESTINATION_ONLY",
             "files": files,
         }
         manifest_path = staging / "manifest.json"
-        encoded_manifest = json.dumps(
-            manifest, sort_keys=True, separators=(",", ":")
-        ).encode("utf-8")
+        encoded_manifest = json.dumps(manifest, sort_keys=True, separators=(",", ":")).encode(
+            "utf-8"
+        )
         with manifest_path.open("wb") as handle:
             handle.write(encoded_manifest)
             handle.flush()

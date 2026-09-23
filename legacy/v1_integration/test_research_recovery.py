@@ -7,7 +7,7 @@ from GarimpoInvestimentos.research_recovery import (
     restore_recovery_bundle,
     verify_recovery_bundle,
 )
-from tests.test_research_execution import setup_stack
+from legacy.v1_integration.test_research_execution import setup_stack
 
 
 def tree_hash(root):
@@ -41,7 +41,8 @@ def test_backup_restore_preserves_scientific_history_and_never_overwrites(tmp_pa
     assert verify_recovery_bundle(restored)["files"] == manifest["files"]
     assert completed["result"]["result_id"] in "".join(
         path.read_text(encoding="utf-8", errors="ignore")
-        for path in restored.rglob("*") if path.is_file()
+        for path in restored.rglob("*")
+        if path.is_file()
     )
 
     occupied = tmp_path / "occupied"
