@@ -1,0 +1,81 @@
+{
+  "id": "cripto-fm-zero-shot-chronos-bolt-small-btcusdt-1d-v1",
+  "registered_at_utc": "2026-09-24T20:40:26Z",
+  "note": "Fixado ANTES de qualquer previsão do modelo. Nada aqui muda depois de ver resultados; mudança exige um pré-registro novo (v2) e conta como tentativa nova.",
+  "hypothesis": "O Chronos-Bolt-Small, zero-shot e sem nenhum ajuste, prevê a distribuição do log-retorno diário do BTCUSDT 1 dia à frente melhor que os baselines ingênuos (perda quantílica média), e a regra comprado/fora derivada da mediana dele tem Sharpe líquido maior que o dos baselines de estratégia.",
+  "candidate": {
+    "model_id": "amazon/chronos-bolt-small",
+    "revision": "772f3d25d38aec6d914c8949dab4462e2d46f5d8",
+    "weights_sha256": "06a6a19bbe74bc10a9cd193bd4bf2bf638ae07f7e0d51653ae7ab8ea968a21dd",
+    "config_sha256": "9ca0ebbe049ccebacb0546361e8aa728f0cf104cd18d1838d78d296aa317bd21",
+    "weights_first_published": {
+      "commit": "0e96a1377adca89eebae3bbde4f859dc3b9f4b46",
+      "date_utc": "2024-11-13T13:28:57Z",
+      "evidence": "HF API tree: o oid LFS de model.safetensors é o mesmo no commit inicial e na revisão fixada; os commits seguintes só mudam o README"
+    },
+    "repository_public_created_at_utc": "2024-11-25T09:46:10Z",
+    "license_checkpoint": "apache-2.0 (front matter do model card na revisão fixada e tag license:apache-2.0; verificado em 2026-09-24)",
+    "license_code": "Apache-2.0 (chronos-forecasting 2.3.2 no PyPI; LICENSE do amazon-science/chronos-forecasting)",
+    "origin": "arquivos já presentes em ~/predictors/tools/hf/models/amazon--chronos-bolt-small (SHA256SUMS com revision=772f3d25); sha256 conferido contra o oid LFS publicado",
+    "runtime": {"chronos-forecasting": "2.3.2", "torch": "2.14.0+cpu", "transformers": "5.17.0", "device": "cpu"}
+  },
+  "data": {
+    "archive": "docs/continuity_20260909/data-20260907-altcoins-altcoin-data.zip",
+    "archive_sha256": "cbb341773335cf60816cab15779d2d09d0e6b6251a61cd069b9e65b9ceba9354",
+    "member": "restaurado-20260908/sessoes/20260907-altcoins/work/altcoin-data/pairs/BTCUSDT.json.gz",
+    "member_sha256": "f055de9208fabde2d40e0c957f44934ae1dc1e1df8730d4061904df2fc60aed7",
+    "instrument": "BTCUSDT spot (Binance, REST), candles diários UTC; closes idênticos aos de carry-research-data/BTCUSDT_spot_daily nos 1011 dias em comum",
+    "field": "close",
+    "first_open_utc": "2020-10-01T00:00:00Z",
+    "last_open_utc": "2026-09-06T00:00:00Z",
+    "rows": 2167
+  },
+  "contamination": {
+    "cutoff_utc": "2024-11-25T09:46:10Z",
+    "rule": "Alvo só entra se o dia dele começa em ou depois do corte (open_ms >= corte). O corte é a data pública do repositório, posterior ao commit dos pesos (conservador). O contexto pode ser anterior ao corte.",
+    "if_no_post_cutoff": "POTENTIALLY_CONTAMINATED"
+  },
+  "evaluation_period": {
+    "first_target_open_utc": "2024-11-26T00:00:00Z",
+    "last_target_open_utc": "2026-09-06T00:00:00Z",
+    "rule": "Do primeiro dia inteiro após o corte até o último dia dos dados locais. Fixado antes de qualquer previsão."
+  },
+  "forecast": {
+    "horizon_days": 1,
+    "origin": "close do dia t; alvo = close do dia t+1",
+    "context": "todos os closes até a origem, truncados aos últimos 2048 (context_length do checkpoint)",
+    "quantile_levels": [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9],
+    "target_variable": "log-retorno ln(C_{t+1}/C_t); quantis de preço do modelo convertidos por ln(Q_tau/C_t), transformação monotônica",
+    "determinism": "Chronos-Bolt prevê quantis diretamente (sem amostragem); torch.manual_seed(0); a previsão roda duas vezes e os dois arquivos precisam ser idênticos"
+  },
+  "forecast_baselines": {
+    "historical_quantiles_365": "quantis empíricos (interpolação linear, tipo 7) dos últimos 365 log-retornos até a origem: passeio aleatório com ruído empírico",
+    "gaussian_random_walk_365": "N(0, s^2), s = desvio amostral dos últimos 365 log-retornos até a origem"
+  },
+  "forecast_metrics": {
+    "primary": "mean_quantile_loss: média da perda pinball nos 9 níveis, por dia, média no período",
+    "secondary": ["crps_q9 = 2 x mean_quantile_loss (aproximação do CRPS nos 9 níveis; ignora as caudas além de 0,1 e 0,9)", "wql (Chronos): soma de 2·pinball / (9 · soma de |y|)"],
+    "test": "Diebold-Mariano com correção HLN (predictor_core diebold_mariano, h=1), bilateral, alpha 0,05, contra CADA baseline; a conclusão de superioridade exige vencer os dois (teste de interseção-união, sem correção de multiplicidade)",
+    "relevant_effect": "redução relativa de 5% na mean_quantile_loss contra o melhor baseline",
+    "power": 0.8,
+    "insufficient_sample_rule": "MDE relativo = (z_{0,975} + z_{0,8})·sd(d)/sqrt(n) / perda média do melhor baseline, com d = perda do candidato − perda do melhor baseline; MDE > 5% -> INSUFFICIENT_SAMPLE"
+  },
+  "strategy": {
+    "rule": "posição do dia t+1 = 1 (comprado) se a mediana prevista do log-retorno > 0; senão 0 (fora). Spot, sem short, sem alavancagem",
+    "accounting": "P&L_{t+1} = pos·(C_{t+1}/C_t − 1) − custo_por_perna·|pos_{t+1} − pos_t|, com pos antes do período = 0 e liquidação no fim cobrada",
+    "costs": "CostSpec padrão do projeto: taker 10 bps + slippage 5 bps por perna, spread 0",
+    "baselines": {
+      "random_walk": "sempre fora (P&L 0)",
+      "naive_persistence": "comprado no dia t+1 se o log-retorno do dia t > 0",
+      "always_long": "sempre comprado"
+    },
+    "metrics": "Sharpe líquido por dia (base per_decision_unannualized_sample_std), max drawdown, turnover, PSR",
+    "periods_per_year": 365,
+    "relevant_sharpe_annual": 1.0,
+    "insufficient_sample_rule": "MDE do Sharpe anual = (z_{0,975} + z_{0,8})·sqrt(365/n) (aproximação iid, SR0 = 0); MDE > 1,0 -> INSUFFICIENT_SAMPLE para conclusões de estratégia"
+  },
+  "dsr": "V[SR] só com Sharpes de tentativas na mesma base (strategy_metrics.trial_sharpe_variance). Se não for estimável: DSR N/A e a decisão é NO_DECISION",
+  "pbo": "N/A: uma única configuração pré-registrada, sem seleção entre configurações",
+  "decision_policy": "cripto-decision-policy v1, com o status que tiver no momento da decisão",
+  "ledger": "toda execução (previsão e avaliação), inclusive as que falharem, vai para o ledger de execuções (run_ledger)"
+}
