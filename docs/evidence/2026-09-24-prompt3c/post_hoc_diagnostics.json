@@ -1,0 +1,24 @@
+{
+ "chronos_bolt_small": {
+  "coverage_10_90": 0.9138461538461539,
+  "mean_median": 8.306555557629091e-07,
+  "mean_width_10_90": 0.08116655642126926,
+  "share_median_positive": 0.5323076923076923
+ },
+ "gaussian_random_walk_365": {
+  "coverage_10_90": 0.8676923076923077,
+  "mean_median": 0.0,
+  "mean_width_10_90": 0.06193705743080954,
+  "share_median_positive": 0.0
+ },
+ "historical_quantiles_365": {
+  "coverage_10_90": 0.8246153846153846,
+  "mean_median": 0.0002546822401578489,
+  "mean_width_10_90": 0.055132867377396755,
+  "share_median_positive": 0.56
+ },
+ "realized": {
+  "mean_log_return": -0.00022525648446967882,
+  "stdev_log_return": 0.022853692959716676
+ }
+}
