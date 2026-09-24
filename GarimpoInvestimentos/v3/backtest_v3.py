@@ -1013,7 +1013,7 @@ def _run_wfa_impl(
     all_ic_pairs: list[tuple[float, float]] = []  # (signal_strength, fwd_return)
     baseline_gross: dict[str, list[float]] = {name: [] for name in _PER_DECISION_BASELINES}
     baseline_net: dict[str, list[float]] = {name: [] for name in _PER_DECISION_BASELINES}
-    baseline_unobservable = dict.fromkeys(_PER_DECISION_BASELINES, 0)
+    baseline_unobservable: dict[str, int] = dict.fromkeys(_PER_DECISION_BASELINES, 0)
     buy_and_hold_folds: list[dict] = []
 
     fold_idx = 0
