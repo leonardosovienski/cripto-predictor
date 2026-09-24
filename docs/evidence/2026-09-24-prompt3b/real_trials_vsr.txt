@@ -1,0 +1,4 @@
+trials.json sha256 b43661d5fec21da0c9d0b9d1f2847555688b7bfb1ac436deee12d8fe923f1ece
+entradas 26 | sharpe finito 23 | com sharpe_basis 0
+DeflationNotEstimableError: base de Sharpe não comprovada para 'v1-direct-gemini-h7'; esperado 'per_decision_unannualized_sample_std'
+cenarios de N (politica v1, N=LOWER_BOUND(32), N_upper=42): {'N': 32, '2N': 64, '5N': 160, 'N_upper': 42}
