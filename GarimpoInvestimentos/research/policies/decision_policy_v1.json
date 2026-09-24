@@ -1,0 +1,39 @@
+{
+  "policy_id": "cripto-decision-policy",
+  "version": 1,
+  "status": "PROPOSED",
+  "approval": {
+    "how": "Aprovação humana do dono: num commit revisado por PR, trocar status para APPROVED e preencher approved_by, approved_at_utc e effective_from_utc (>= approved_at_utc). Mudar qualquer limiar exige uma versão nova (v2), com a mesma aprovação; a v1 nunca é editada depois de aprovada.",
+    "approved_by": null,
+    "approved_at_utc": null
+  },
+  "effective_from_utc": null,
+  "applies_to": "Hipóteses com registered_at >= effective_from_utc. Nunca retroativa: hipótese registrada antes recebe NO_DECISION por esta política.",
+  "technical_debt": "Arquivo local: predictor_core 3.2.1 não tem arquivo de política de decisão. Migrar para o core.",
+  "thresholds": {
+    "min_seeds": 5,
+    "dsr_min": 0.95,
+    "pbo_max_exclusive": 0.2,
+    "required_baselines": ["random_walk", "naive_persistence", "always_long", "buy_and_hold"],
+    "require_dataset_sha256": true,
+    "max_missing_fraction": 0.01,
+    "min_oos_observations": 32
+  },
+  "dsr_n_sensitivity": {
+    "multipliers": [1, 2, 5],
+    "include_n_upper_when_estimated": true,
+    "decision_uses": "worst_case"
+  },
+  "pbo_n_splits": 16,
+  "rationale": {
+    "min_seeds": "O RegimeEngine já fixa 5 seeds (42..46). Exigir as 5, avaliadas uma a uma, mostra que o resultado não depende de um ótimo local do EM do HMM. A decisão usa a pior seed.",
+    "dsr_min": "Confiança de 95%: é a regra de rejeição usada por Bailey & López de Prado (2014), com DSR = P(SR verdadeiro > máximo esperado por sorte).",
+    "pbo_max_exclusive": "Corte inferior da faixa de leitura já existente em analyzers/pbo.py (BAIXO < 0,20). Lá o corte era só leitura porque não havia critério pré-registrado; aqui vira gate apenas para hipóteses registradas após a aprovação, então não é escolhido depois de ver o número.",
+    "required_baselines": "Os quatro baselines do Prompt 3a, no mesmo protocolo. O candidato precisa de Sharpe líquido (pior seed) maior que o do melhor baseline. Qualquer baseline ausente leva a NO_DECISION.",
+    "require_dataset_sha256": "Sem hash dos dados, não há identidade do dataset (manifesto do Prompt 3a).",
+    "max_missing_fraction": "Proposta sem derivação empírica: tolera 1% dos timestamps esperados ausentes. Decisão do dono.",
+    "min_oos_observations": "2 x pbo_n_splits: é o mínimo para o PBO por CSCV ser definido, com 2 observações por bloco (analyzers/pbo.py).",
+    "dsr_n_sensitivity": "O N conhecido é LOWER_BOUND(32) (Prompt 2). Um N menor que o real infla o DSR, por isso se calcula N, 2N, 5N e N_upper (quando estimado; aproximadamente 42) e a decisão usa o menor DSR.",
+    "pbo_n_splits": "S = 16, o valor do artigo original (analyzers/pbo.py DEFAULT_N_SPLITS)."
+  }
+}

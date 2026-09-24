@@ -71,6 +71,26 @@ Alphalens panel diagnostics, skfolio split interfaces, Hummingbot order events,
 and MLflow experiment records. No external implementation was copied into this
 package; existing native atomic I/O and Core metrics were reused.
 
+## CPCV, strategy metrics and decision policy
+
+```python
+from GarimpoInvestimentos.research.cpcv import cpcv_splits, backtest_paths, derive_purge_and_embargo
+from GarimpoInvestimentos.research.strategy_metrics import (
+    strategy_metrics,
+    dsr_sensitivity,
+    pbo_cscv,
+)
+from GarimpoInvestimentos.research.decision_policy import load_policy, decide, record_decision
+```
+
+`cpcv_splits` purges every training observation whose `[start, available]` window
+meets a test block and embargoes those starting within `embargo` after it.
+`derive_purge_and_embargo` sets purge = label horizon and embargo = the leading
+significant ACF lags of non-overlapping step returns. PSR/DSR reuse Core, PBO reuses
+`analyzers/pbo.py`. Decision thresholds live only in `policies/decision_policy_v1.json`
+(`PROPOSED` until the owner approves it); missing evidence yields `NO_DECISION`.
+Evidence: `docs/evidence/2026-09-24-prompt3b-cpcv-psr-dsr-pbo-politica.md`.
+
 F03/F04 historical economic gates remain scoped to their data requirements.
 This package makes new engineering experiments possible; it supplies neither
 missing historical specifications nor evidence of profitability.
