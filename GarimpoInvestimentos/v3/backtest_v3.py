@@ -57,9 +57,9 @@ import hashlib
 import json
 import logging
 import math
+import os
 import sys
-import uuid
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
 
@@ -76,10 +76,12 @@ from GarimpoInvestimentos.core.paths import DATA_DIR
 from GarimpoInvestimentos.dpl.macro_calendar import DEFAULT_CALENDAR_PATH
 from GarimpoInvestimentos.durable_io import atomic_write
 from GarimpoInvestimentos.governance import load_scientific_state
+from GarimpoInvestimentos.run_ledger import RunLedger, RunRecord, canonical_sha256, recorded_run
 from GarimpoInvestimentos.v3.collectors.funding_collector import load_funding_csv
 from GarimpoInvestimentos.v3.collectors.oi_collector import load_oi_csv
 from GarimpoInvestimentos.v3.collectors.record_io import validate_observation
 from GarimpoInvestimentos.v3.collectors.spot_collector import load_spot_csv
+from GarimpoInvestimentos.v3.cost_spec import CostSpec
 from GarimpoInvestimentos.v3.costs import CostModel
 from GarimpoInvestimentos.v3.crowding_features import build_oi_volume_ratio
 from GarimpoInvestimentos.v3.economic_gate import decide_cost_aware, estimate_edge
@@ -96,7 +98,12 @@ from GarimpoInvestimentos.v3.macro_features import (
     load_dxy_availability,
     load_dxy_daily_closes,
 )
-from GarimpoInvestimentos.v3.regime_engine import RegimeEngine
+from GarimpoInvestimentos.v3.regime_engine import (
+    _COVARIANCE_TYPE,
+    _MAX_FIT_RETRIES,
+    N_STATES,
+    RegimeEngine,
+)
 from GarimpoInvestimentos.v3.signal_engine import (
     _FR_ZSCORE_THRESHOLD as _SIGNAL_FR_ZSCORE_THRESHOLD,
 )
@@ -139,6 +146,23 @@ DEFAULT_KELLY_FRACTION = 0.50
 
 _DATA_ROOT = DATA_DIR / "v3"
 
+# Sementes que o RegimeEngine tenta, em ordem (regime_engine.fit: 42 + tentativa).
+_HMM_SEEDS = tuple(42 + attempt for attempt in range(_MAX_FIT_RETRIES))
+
+# Baselines avaliados no MESMO protocolo do modelo: mesmos folds aceitos, mesmos pontos de
+# decisão, horizonte, entrada no último close público, barreiras, funding realizado e fricção.
+#   random_walk        previsão de retorno 0 (passeio aleatório) -> nenhuma posição
+#   naive_persistence  sinal do retorno das últimas H horas já públicas -> ±kelly
+#   always_long        +kelly em toda decisão, com o horizonte do modelo
+#   buy_and_hold       +kelly do primeiro ponto de decisão ao fim de cada fold OOS (1 round trip)
+_PER_DECISION_BASELINES = ("random_walk", "naive_persistence", "always_long")
+
+
+def _run_ledger_path() -> Path:
+    """Ledger de execuções: CRIPTO_RUN_LEDGER ou <data>/research_ledger/runs.jsonl."""
+    override = os.environ.get("CRIPTO_RUN_LEDGER")
+    return Path(override) if override else _DATA_ROOT.parent / "research_ledger" / "runs.jsonl"
+
 
 # ------------------------------------------------------------------ #
 # Resultado por fold                                                   #
@@ -167,6 +191,9 @@ class FoldResult:
     n_executed: int = 0
     edge_calibration_n_long: int = 0
     edge_calibration_n_short: int = 0
+    # Separação temporal efetiva: último timestamp usado no ajuste (IS) e primeiro avaliado.
+    is_last_train_ms: int = 0
+    oos_first_test_ms: int = 0
 
 
 @dataclass
@@ -209,6 +236,12 @@ class WFAResult:
     execution_assumption: str = (
         "spot price proxy for perpetual; hourly-close exits; no fill validation"
     )
+    spread_bps: float = 0.0
+    # Baselines no mesmo protocolo (ver _PER_DECISION_BASELINES) e proveniência da execução.
+    baselines: dict = field(default_factory=dict)
+    run_id: str | None = None
+    input_sha256: dict = field(default_factory=dict)
+    data_interval: dict = field(default_factory=dict)
 
 
 @dataclass
@@ -340,6 +373,109 @@ def _realized_funding_pnl(
     return -position * sum(
         record.funding_rate * record.mark_price / entry_price for record in observed.values()
     )
+
+
+def _naive_persistence_direction(
+    ts_ms: int, horizon_hours: int, spot_index: SortedTimeIndex
+) -> int | None:
+    """Sinal do retorno das últimas `horizon_hours` horas já públicas em `ts_ms` (só passado).
+
+    `_find_spot_return` deslocado de H horas cobre [close em ts-H, close em ts]; o close em
+    ts é o último público na decisão, o mesmo preço de entrada do modelo.
+    """
+    past = _find_spot_return(ts_ms - horizon_hours * _SPOT_CANDLE_MS, horizon_hours, spot_index)
+    if past is None:
+        return None
+    return 1 if past > 0 else -1 if past < 0 else 0
+
+
+def _simulate_position(
+    ts_ms: int,
+    position: float,
+    horizon_hours: int,
+    spot_index: SortedTimeIndex,
+    funding_records: list,
+    costs: CostModel,
+    *,
+    stop_loss_bps: float,
+    take_profit_bps: float,
+) -> tuple[float, float] | None:
+    """(bruto, líquido) com a MESMA contabilidade do modelo em run_wfa; None se inobservável."""
+    if position == 0.0:
+        return 0.0, 0.0
+    barrier = _barrier_exit(
+        ts_ms,
+        horizon_hours,
+        1 if position > 0 else -1,
+        spot_index,
+        stop_loss_bps=stop_loss_bps,
+        take_profit_bps=take_profit_bps,
+    )
+    if barrier is None:
+        return None
+    entry_price = spot_index.as_of(ts_ms - _SPOT_CANDLE_MS)
+    if entry_price is None:
+        return None
+    funding = _realized_funding_pnl(
+        position,
+        ts_ms,
+        ts_ms + barrier.elapsed_hours * _SPOT_CANDLE_MS,
+        entry_price,
+        funding_records,
+    )
+    if funding is None:
+        return None
+    gross = position * math.expm1(barrier.log_return)
+    net = gross + funding - costs.friction(position, exit_price_ratio=math.exp(barrier.log_return))
+    return gross, net
+
+
+def _buy_and_hold_fold(
+    first_decision_ms: int,
+    oos_end_ms: int,
+    position: float,
+    spot_index: SortedTimeIndex,
+    funding_records: list,
+    costs: CostModel,
+) -> tuple[float, float] | None:
+    """Comprado do primeiro ponto de decisão do fold ao último close público antes do fim do OOS."""
+    entry_price = spot_index.as_of(first_decision_ms - _SPOT_CANDLE_MS)
+    exit_price = spot_index.as_of(oos_end_ms - _SPOT_CANDLE_MS)
+    if entry_price is None or exit_price is None or entry_price <= 0 or exit_price <= 0:
+        return None
+    funding = _realized_funding_pnl(
+        position, first_decision_ms, oos_end_ms, entry_price, funding_records
+    )
+    if funding is None:
+        return None
+    ratio = exit_price / entry_price
+    gross = position * (ratio - 1.0)
+    net = gross + funding - costs.friction(position, exit_price_ratio=ratio)
+    return gross, net
+
+
+def _finite_or_none(x: float | None) -> float | None:
+    return x if x is not None and math.isfinite(x) else None
+
+
+def _series_metrics(gross: list[float], net: list[float], unobservable: int) -> dict:
+    """Métricas de uma série de P&L por decisão, na mesma base do modelo (sharpe por sinal)."""
+    n = len(net)
+    mean_net = sum(net) / n if n else None
+    sharpe = None
+    if n >= 2 and mean_net is not None:
+        std = math.sqrt(sum((r - mean_net) ** 2 for r in net) / (n - 1))
+        sharpe = mean_net / std if std > 1e-12 else None
+    return {
+        "n": n,
+        "n_unobservable": unobservable,
+        "mean_gross": _finite_or_none(sum(gross) / n) if n else None,
+        "mean_net": _finite_or_none(mean_net),
+        "sum_net": _finite_or_none(sum(net)),
+        "sharpe": _finite_or_none(sharpe),
+        "psr": _finite_or_none(probabilistic_sharpe_ratio(net)) if n >= 3 else None,
+        "sharpe_basis": "per_decision_unannualized_sample_std",
+    }
 
 
 def _ms_to_day_offset(ts_ms: int, origin_ms: int) -> int:
@@ -529,6 +665,135 @@ def run_wfa(
     dxy_closes_path: Path | None = None,
     use_oi_volume_ratio: bool = False,
     macro_calendar_available_at: datetime | None = None,
+    spread_bps: float = 0.0,
+) -> WFAResult:
+    """Walk Forward Analysis com manifesto: TODA execução (boa, ruim ou quebrada) vai para o
+    ledger append-only de execuções (`_run_ledger_path`). Ver `_run_wfa_impl`."""
+    config = {
+        "symbol": symbol,
+        "slippage_bps": slippage_bps,
+        "taker_fee_bps": taker_fee_bps,
+        "spread_bps": spread_bps,
+        "horizon_hours": horizon_hours,
+        "fr_window": fr_window,
+        "kelly_fraction": kelly_fraction,
+        "stop_loss_bps": stop_loss_bps,
+        "take_profit_bps": take_profit_bps,
+        "fr_zscore_threshold": fr_zscore_threshold,
+        "min_regime_confidence": min_regime_confidence,
+        "cost_aware_filter": cost_aware_filter,
+        "minimum_edge_calibration_sample": minimum_edge_calibration_sample,
+        "minimum_net_edge": minimum_net_edge,
+        "use_macro_dxy": use_macro_dxy,
+        "macro_window_days": macro_window_days,
+        "dxy_closes_path": str(dxy_closes_path) if dxy_closes_path else None,
+        "use_oi_volume_ratio": use_oi_volume_ratio,
+        "macro_calendar_available_at": macro_calendar_available_at.isoformat()
+        if macro_calendar_available_at
+        else None,
+    }
+    try:
+        costs: dict | None = CostSpec(taker_fee_bps, spread_bps, slippage_bps).as_dict()
+    except (TypeError, ValueError):
+        costs = None  # config inválida: a execução falha dentro do registro (CRASHED)
+    extra_features = (["macro_event_dummy", "dxy_return_1d"] if use_macro_dxy else []) + (
+        ["oi_volume_ratio"] if use_oi_volume_ratio else []
+    )
+    with recorded_run(
+        RunLedger(_run_ledger_path()),
+        kind="v3_wfa",
+        config=config,
+        costs=costs,
+        validation_protocol={
+            "type": "walk_forward_rolling",
+            "is_days": _IS_DAYS,
+            "purge_days": _PURGE_DAYS,
+            "embargo_days": 0,
+            "embargo_note": "sem embargo: o teste é sempre posterior ao treino (só para frente)",
+            "oos_days": _OOS_DAYS,
+            "step_days": _STEP_DAYS,
+            "label_horizon_hours": horizon_hours,
+            "fit_scope": "HMM e scaler ajustados só no IS de cada fold",
+        },
+        model={
+            "name": "v3_hmm_funding_oi",
+            "family": "funding_oi_hmm_v3",
+            "n_states": N_STATES,
+            "covariance": _COVARIANCE_TYPE,
+            "extra_features": extra_features,
+            "signal": {
+                "fr_zscore_threshold": fr_zscore_threshold,
+                "min_regime_confidence": min_regime_confidence,
+            },
+        },
+        seeds=list(_HMM_SEEDS),
+    ) as run:
+        result = _run_wfa_impl(
+            symbol,
+            slippage_bps=slippage_bps,
+            taker_fee_bps=taker_fee_bps,
+            horizon_hours=horizon_hours,
+            fr_window=fr_window,
+            kelly_fraction=kelly_fraction,
+            stop_loss_bps=stop_loss_bps,
+            take_profit_bps=take_profit_bps,
+            fr_zscore_threshold=fr_zscore_threshold,
+            min_regime_confidence=min_regime_confidence,
+            cost_aware_filter=cost_aware_filter,
+            minimum_edge_calibration_sample=minimum_edge_calibration_sample,
+            minimum_net_edge=minimum_net_edge,
+            use_macro_dxy=use_macro_dxy,
+            macro_window_days=macro_window_days,
+            dxy_closes_path=dxy_closes_path,
+            use_oi_volume_ratio=use_oi_volume_ratio,
+            macro_calendar_available_at=macro_calendar_available_at,
+            spread_bps=spread_bps,
+            run_record=run,
+        )
+        run.metrics = {
+            "n_folds": result.n_folds,
+            "aggregate_psr": result.aggregate_psr,
+            "aggregate_ic": result.aggregate_ic,
+            "aggregate_ic_ci_lower": result.aggregate_ic_ci_lower,
+            "aggregate_max_dd": result.aggregate_max_dd,
+            "aggregate_sharpe": result.aggregate_sharpe,
+            "aggregate_sortino": result.aggregate_sortino,
+            "aggregate_calmar": result.aggregate_calmar,
+            "aggregate_gross_return": result.aggregate_gross_return,
+            "aggregate_net_return": result.aggregate_net_return,
+            "net_ci_lower": result.net_ci_lower,
+            "net_ci_upper": result.net_ci_upper,
+            "sharpe_basis": result.sharpe_basis,
+            "final_verdict": result.final_verdict,
+            "diagnostic_verdict": result.diagnostic_verdict,
+        }
+        run.baselines = result.baselines
+        run.artifacts = {"returns_json": result.returns_artifact}
+    return result
+
+
+def _run_wfa_impl(
+    symbol: str,
+    slippage_bps: float = _DEFAULT_SLIPPAGE_BPS,
+    taker_fee_bps: float = _DEFAULT_TAKER_FEE_BPS,
+    horizon_hours: int = _DEFAULT_HORIZON_HOURS,
+    fr_window: int = 90,
+    kelly_fraction: float = 1.0,
+    stop_loss_bps: float = _DEFAULT_STOP_LOSS_BPS,
+    take_profit_bps: float = _DEFAULT_TAKE_PROFIT_BPS,
+    fr_zscore_threshold: float = _SIGNAL_FR_ZSCORE_THRESHOLD,
+    min_regime_confidence: float = _SIGNAL_MIN_REGIME_CONFIDENCE,
+    cost_aware_filter: bool = False,
+    minimum_edge_calibration_sample: int = _DEFAULT_EDGE_CALIBRATION_SAMPLE,
+    minimum_net_edge: float = _DEFAULT_MINIMUM_NET_EDGE,
+    use_macro_dxy: bool = False,
+    macro_window_days: int = 1,
+    dxy_closes_path: Path | None = None,
+    use_oi_volume_ratio: bool = False,
+    macro_calendar_available_at: datetime | None = None,
+    *,
+    spread_bps: float = 0.0,
+    run_record: RunRecord,
 ) -> WFAResult:
     """
     Executa Walk Forward Analysis sobre os dados locais coletados pelo pipeline.
@@ -565,7 +830,9 @@ def run_wfa(
     if isinstance(horizon_hours, bool) or not isinstance(horizon_hours, int) or horizon_hours < 1:
         raise ValueError("horizon_hours deve ser inteiro positivo")
     validate_observation(symbol, 0, {})
-    CostModel(taker_fee_bps=taker_fee_bps, slippage_bps=slippage_bps)
+    cost_spec = CostSpec(
+        taker_fee_bps=taker_fee_bps, spread_bps=spread_bps, slippage_bps=slippage_bps
+    )
     for value, label in (
         (stop_loss_bps, "stop_loss_bps"),
         (take_profit_bps, "take_profit_bps"),
@@ -594,6 +861,7 @@ def run_wfa(
         "symbol": symbol,
         "slippage_bps": slippage_bps,
         "taker_fee_bps": taker_fee_bps,
+        "spread_bps": spread_bps,
         "horizon_hours": horizon_hours,
         "fr_window": fr_window,
         "kelly_fraction": kelly_fraction,
@@ -619,6 +887,12 @@ def run_wfa(
         "family": "funding_oi_hmm_v3",
         "sharpe_basis": "per_signal_unannualized_sample_std",
     }
+    # Identidade do dataset independente do caminho local: sha256 por nome de arquivo.
+    dataset_files = {Path(path).name: digest for path, digest in sorted(input_hashes.items())}
+    run_record.dataset = {
+        "input_sha256": dataset_files,
+        "dataset_sha256": canonical_sha256(dataset_files),
+    }
 
     funding_records = load_funding_csv(sym_dir / "funding.csv")
     oi_records = load_oi_csv(sym_dir / "oi.csv")
@@ -640,6 +914,11 @@ def run_wfa(
 
     origin_ms = funding_times_ms[0]
     total_days = (funding_times_ms[-1] - origin_ms) // _MS_PER_DAY
+    data_interval = {
+        "funding_first_utc": datetime.fromtimestamp(funding_times_ms[0] / 1000, UTC).isoformat(),
+        "funding_last_utc": datetime.fromtimestamp(funding_times_ms[-1] / 1000, UTC).isoformat(),
+    }
+    run_record.dataset["interval"] = data_interval
 
     logger.info(
         "backtest_v3 [%s]: %d registros de funding, %d dias totais",
@@ -732,6 +1011,10 @@ def run_wfa(
     all_gross_returns: list[float] = []
     all_oos_trades: list[_Trade] = []
     all_ic_pairs: list[tuple[float, float]] = []  # (signal_strength, fwd_return)
+    baseline_gross: dict[str, list[float]] = {name: [] for name in _PER_DECISION_BASELINES}
+    baseline_net: dict[str, list[float]] = {name: [] for name in _PER_DECISION_BASELINES}
+    baseline_unobservable = dict.fromkeys(_PER_DECISION_BASELINES, 0)
+    buy_and_hold_folds: list[dict] = []
 
     fold_idx = 0
     is_start_day = 0
@@ -803,6 +1086,15 @@ def run_wfa(
             is_start_day += _STEP_DAYS
             continue
 
+        # Separação temporal estrita: nenhum ponto avaliado pode ser <= ao último ponto de treino.
+        is_last_train_ms = max(fv.timestamp_exchange_ms for fv in is_features)
+        oos_first_test_ms = min(fv.timestamp_exchange_ms for fv, _ in oos_pairs)
+        if oos_first_test_ms <= is_last_train_ms:
+            raise RuntimeError(
+                f"walk-forward sem separação temporal estrita no fold {fold_idx}: "
+                f"primeiro teste {oos_first_test_ms} <= último treino {is_last_train_ms}"
+            )
+
         # Geração de sinais e cálculo de P&L OOS
         fold_ic_pairs: list[tuple[float, float]] = []
         fold_pnl: list[float] = []
@@ -810,7 +1102,8 @@ def run_wfa(
         fold_trades: list[_Trade] = []
         n_active = 0
         n_executed = 0
-        costs = CostModel(taker_fee_bps=taker_fee_bps, slippage_bps=slippage_bps)
+        costs = cost_spec.to_cost_model()
+        fold_decisions: list[int] = []
 
         # Calibração econômica estritamente IS. O retorno precisa amadurecer
         # antes do fim da janela IS; sinais no purge/OOS nunca entram aqui.
@@ -858,6 +1151,9 @@ def run_wfa(
             fwd = _find_spot_return(fv.timestamp_exchange_ms, horizon_hours, spot_ti)
             if fwd is None:
                 continue
+
+            # Mesmo ponto de decisão avaliável para os baselines (calculados se o fold for aceito).
+            fold_decisions.append(fv.timestamp_exchange_ms)
 
             if signal.active and signal.direction != 0:
                 n_active += 1
@@ -977,8 +1273,51 @@ def run_wfa(
             n_executed=n_executed,
             edge_calibration_n_long=len(calibration_returns[1]),
             edge_calibration_n_short=len(calibration_returns[-1]),
+            is_last_train_ms=is_last_train_ms,
+            oos_first_test_ms=oos_first_test_ms,
         )
         folds.append(fold_result)
+        # Baselines só nos folds que o modelo também aceitou, nos MESMOS pontos de decisão,
+        # horizonte, custos e contabilidade (mesmo período avaliado).
+        for decision_ms in fold_decisions:
+            persistence = _naive_persistence_direction(decision_ms, horizon_hours, spot_ti)
+            for name, baseline_position in (
+                ("random_walk", 0.0),
+                (
+                    "naive_persistence",
+                    None if persistence is None else persistence * kelly_fraction,
+                ),
+                ("always_long", kelly_fraction),
+            ):
+                outcome = (
+                    None
+                    if baseline_position is None
+                    else _simulate_position(
+                        decision_ms,
+                        baseline_position,
+                        horizon_hours,
+                        spot_ti,
+                        funding_records,
+                        costs,
+                        stop_loss_bps=stop_loss_bps,
+                        take_profit_bps=take_profit_bps,
+                    )
+                )
+                if outcome is None:
+                    baseline_unobservable[name] += 1
+                else:
+                    baseline_gross[name].append(outcome[0])
+                    baseline_net[name].append(outcome[1])
+        held = _buy_and_hold_fold(
+            oos_first_test_ms, oos_end_ms, kelly_fraction, spot_ti, funding_records, costs
+        )
+        buy_and_hold_folds.append(
+            {
+                "fold": fold_idx,
+                "gross": _finite_or_none(held[0]) if held else None,
+                "net": _finite_or_none(held[1]) if held else None,
+            }
+        )
         all_oos_returns.extend(fold_pnl)
         all_gross_returns.extend(fold_gross)
         all_oos_trades.extend(fold_trades)
@@ -1060,6 +1399,30 @@ def run_wfa(
             reasons.append(f"MaxDD={agg_dd:.2%} ≥ 20%")
         verdict_reason = "; ".join(reasons)
 
+    baselines: dict = {
+        name: _series_metrics(baseline_gross[name], baseline_net[name], baseline_unobservable[name])
+        for name in _PER_DECISION_BASELINES
+    }
+    held_net = [f["net"] for f in buy_and_hold_folds if f["net"] is not None]
+    held_gross = [f["gross"] for f in buy_and_hold_folds if f["gross"] is not None]
+    baselines["buy_and_hold"] = {
+        "n_folds": len(held_net),
+        "n_unobservable": len(buy_and_hold_folds) - len(held_net),
+        "mean_gross_per_fold": _finite_or_none(sum(held_gross) / len(held_gross))
+        if held_gross
+        else None,
+        "mean_net_per_fold": _finite_or_none(sum(held_net) / len(held_net)) if held_net else None,
+        "sum_net": _finite_or_none(sum(held_net)) if held_net else None,
+        "per_fold": buy_and_hold_folds,
+        "basis": "uma posição por fold OOS (primeira decisão -> fim do fold), um round trip",
+    }
+    baselines["protocol"] = {
+        "folds": "os mesmos folds aceitos pelo modelo",
+        "decisions": "os mesmos pontos de decisão OOS com retorno observável",
+        "position_sizing": "kelly_fraction com strength 1",
+        "costs": cost_spec.as_dict(),
+    }
+
     result = WFAResult(
         symbol=symbol,
         n_folds=len(folds),
@@ -1087,13 +1450,18 @@ def run_wfa(
         cost_aware_filter=cost_aware_filter,
         minimum_edge_calibration_sample=minimum_edge_calibration_sample,
         minimum_net_edge=minimum_net_edge,
+        spread_bps=spread_bps,
+        baselines=baselines,
+        run_id=run_record.run_id,
+        input_sha256=run_record.dataset["input_sha256"],
+        data_interval=data_interval,
     )
 
     # Never overwrite the legacy wfa_returns.json or another run's evidence.
     for source, digest in input_hashes.items():
         if hashlib.sha256(Path(source).read_bytes()).hexdigest() != digest:
             raise RuntimeError(f"Input changed during WFA: {source}")
-    run_id = datetime.now(UTC).strftime("%Y%m%dT%H%M%S%fZ") + "-" + uuid.uuid4().hex[:12]
+    run_id = run_record.run_id
     artifact = sym_dir / "research_runs" / run_id / "returns.json"
     result.returns_artifact = str(artifact)
     atomic_write(
@@ -1541,6 +1909,12 @@ def _main() -> None:
         help="Slippage em basis points por trade (default: 5)",
     )
     parser.add_argument(
+        "--spread-bps",
+        type=float,
+        default=0.0,
+        help="Spread cotado em bps; cada perna taker paga meio spread (default 0 = custo histórico).",
+    )
+    parser.add_argument(
         "--horizon-hours",
         type=int,
         default=_DEFAULT_HORIZON_HOURS,
@@ -1710,6 +2084,7 @@ def _main() -> None:
                     dxy_closes_path=args.dxy_closes,
                     macro_calendar_available_at=args.macro_calendar_available_at,
                     use_oi_volume_ratio=args.use_oi_volume_ratio,
+                    spread_bps=args.spread_bps,
                 )
         except Exception as exc:
             logger.error("backtest_v3 [%s]: ERRO — %s", symbol, exc)
