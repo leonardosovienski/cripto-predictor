@@ -1,0 +1,197 @@
+{
+ "integrity": {
+  "holdout_accessed": "NO",
+  "new_variants_run_on_no_go": 0,
+  "preregistrations_before_new_experiments": "N/A (nenhum experimento novo no Prompt 4); YES para o 3c",
+  "trials_deleted": 0
+ },
+ "n_trials": {
+  "added_by_prompt4": 0,
+  "all_families": "LOWER_BOUND(36)",
+  "all_families_upper_estimate": 46,
+  "dsr_sensitivity": {
+   "reason": "base de Sharpe não comprovada para 'v1-direct-gemini-h7'; esperado 'per_decision_unannualized_sample_std'",
+   "scenarios": {
+    "2N": {
+     "dsr": "N/A",
+     "n_trials": 72
+    },
+    "5N": {
+     "dsr": "N/A",
+     "n_trials": 180
+    },
+    "N": {
+     "dsr": "N/A",
+     "n_trials": 36
+    },
+    "N_upper": {
+     "dsr": "N/A",
+     "n_trials": 46
+    }
+   },
+   "status": "NOT_ESTIMABLE"
+  },
+  "lineage_h1_h6": "LOWER_BOUND(32)",
+  "trials_json_entries": 26
+ },
+ "rows": [
+  {
+   "hypothesis": "H1",
+   "protocol_applied": "custos explícitos (CostSpec), walk-forward estrito/CPCV com purga e embargo, baselines no mesmo protocolo, PSR, DSR com sensibilidade de N (pior caso), PBO via CSCV e política v1 (não aplicável sem o artefato histórico)",
+   "reason": "artefato exigido ausente: série de retornos do WFA registrado (returns.json) ou CSVs de funding, OI e spot 1h do BTCUSDT na janela registrada, com hash. Sem recriar variantes; a régua nova não promove e o status fica como estava",
+   "run_id": "20260925T160714507838Z-802ddaa852be",
+   "status_new": "CLOSED_NO_GO",
+   "status_new_protocol": "NOT_REPRODUCIBLE",
+   "status_previous": "CLOSED_NO_GO",
+   "trial": "v3-hmm-funding-oi-fr90"
+  },
+  {
+   "hypothesis": "H2",
+   "protocol_applied": "custos explícitos (CostSpec), walk-forward estrito/CPCV com purga e embargo, baselines no mesmo protocolo, PSR, DSR com sensibilidade de N (pior caso), PBO via CSCV e política v1 (não aplicável sem o artefato histórico)",
+   "reason": "artefato exigido ausente: série de retornos do WFA registrado (returns.json) ou CSVs de funding, OI e spot 1h do BTCUSDT na janela registrada, com hash. Sem recriar variantes; a régua nova não promove e o status fica como estava",
+   "run_id": "20260925T160714507838Z-802ddaa852be",
+   "status_new": "CLOSED_NO_GO",
+   "status_new_protocol": "NOT_REPRODUCIBLE",
+   "status_previous": "CLOSED_NO_GO",
+   "trial": "v3-hmm-funding-oi-fr21"
+  },
+  {
+   "hypothesis": "H3",
+   "protocol_applied": "custos explícitos (CostSpec), walk-forward estrito/CPCV com purga e embargo, baselines no mesmo protocolo, PSR, DSR com sensibilidade de N (pior caso), PBO via CSCV e política v1 (não aplicável sem o artefato histórico)",
+   "reason": "artefato exigido ausente: série de retornos do WFA registrado (returns.json) ou CSVs de funding, OI e spot 1h do BTCUSDT na janela registrada, com hash. Sem recriar variantes; a régua nova não promove e o status fica como estava",
+   "run_id": "20260925T160714507838Z-802ddaa852be",
+   "status_new": "CLOSED_NO_GO",
+   "status_new_protocol": "NOT_REPRODUCIBLE",
+   "status_previous": "CLOSED_NO_GO",
+   "trial": "v3-hmm-funding-oi-fr90-h48"
+  },
+  {
+   "hypothesis": "H4",
+   "protocol_applied": "custos explícitos (CostSpec), walk-forward estrito/CPCV com purga e embargo, baselines no mesmo protocolo, PSR, DSR com sensibilidade de N (pior caso), PBO via CSCV e política v1 (não aplicável sem o artefato histórico)",
+   "reason": "artefato exigido ausente: pares previsão do LLM × retorno D+7 da coleta registrada (n >= 30). Sem recriar variantes; a régua nova não promove e o status fica como estava",
+   "run_id": "20260925T160714507838Z-802ddaa852be",
+   "status_new": "CLOSED_INSUFFICIENT_SAMPLE",
+   "status_new_protocol": "NOT_REPRODUCIBLE",
+   "status_previous": "CLOSED_INSUFFICIENT_SAMPLE",
+   "trial": "v2-dpl-gemini-h7"
+  },
+  {
+   "hypothesis": "H5",
+   "protocol_applied": "custos explícitos (CostSpec), walk-forward estrito/CPCV com purga e embargo, baselines no mesmo protocolo, PSR, DSR com sensibilidade de N (pior caso), PBO via CSCV e política v1 (não aplicável sem o artefato histórico)",
+   "reason": "artefato exigido ausente: pares previsão do LLM × retorno D+7 da coleta registrada (n >= 30). Sem recriar variantes; a régua nova não promove e o status fica como estava",
+   "run_id": "20260925T160714507838Z-802ddaa852be",
+   "status_new": "CLOSED_NO_GO",
+   "status_new_protocol": "NOT_REPRODUCIBLE",
+   "status_previous": "CLOSED_NO_GO",
+   "trial": "v2-dpl-multi-h7"
+  },
+  {
+   "full_reproduction": "NOT_REPRODUCIBLE (pares brutos previsão × retorno ausentes no PC 2)",
+   "hypothesis": "H6",
+   "mde_rho_fisher_iid": 0.3016077002249292,
+   "powers": {
+    "bootstrap_em_blocos_declarado": 0.233,
+    "fisher_iid_n": 0.4462362679341695,
+    "fisher_n_efetivo": 0.09333701379724141
+   },
+   "protocol_applied": "H6 não é estratégia: relação Spearman (IC95 em blocos) do sinal invertido com o retorno D+7 contra o nulo ρ = 0. Custos, CPCV, PSR, DSR e PBO: N/A. Régua nova aplicada ao artefato agregado versionado (h6_status.json): IC e poder",
+   "reason": "n = 84, ρ = -0.0567, IC95 [-0.2312; 0.1294] cruza zero; poder para ρ = 0.2 ≤ 0.446 < 0.8; o MDE de ρ com n = 84 é 0.302",
+   "run_id": "20260925T160714507838Z-802ddaa852be",
+   "status_new": "CLOSED_INSUFFICIENT_SAMPLE",
+   "status_new_protocol": "REEVALUATED_ON_AGGREGATE",
+   "status_previous": "CLOSED_INSUFFICIENT_SAMPLE",
+   "strategy_metrics": "N/A",
+   "trial": "h6-sinal-invertido-d7"
+  },
+  {
+   "hypothesis": "H7",
+   "protocol_applied": "só a configuração registrada; nenhuma variante",
+   "protocol_incompatibilities": [
+    "metric = psr com o gate legado do backtest_v3 (PSR >= 0,80, IC_lower > 0, DD < 20%, constantes no código); a política v1 exige DSR >= 0,95 no pior N, PBO < 0,20, 5 seeds e 4 baselines",
+    "registrada em 2026-09-04, antes da vigência da v1 (2026-09-25): por ela, qualquer decisão é NO_DECISION; a H7 segue o critério pré-registrado dela",
+    "o protocolo antigo não tinha custos com spread explícito nem manifesto de execução; o novo tem (3a)"
+   ],
+   "reason": "sem execução válida anterior e sem dado local: série de retornos do WFA registrado (returns.json) ou CSVs de funding, OI e spot 1h do BTCUSDT na janela registrada, com hash",
+   "run_id": "20260925T160714507838Z-802ddaa852be",
+   "status_new": "REGISTERED_NOT_ACTIVATED",
+   "status_new_protocol": "NOT_EXECUTABLE",
+   "status_previous": "REGISTERED_NOT_ACTIVATED",
+   "trial": "h7-macro-dxy-hmm-v1"
+  },
+  {
+   "hypothesis": "H8",
+   "protocol_applied": "só a configuração registrada; nenhuma variante",
+   "protocol_incompatibilities": [
+    "metric = spearman_ic: a política v1 é para estratégia (Sharpe/DSR/PBO) e não tem regra para hipótese de correlação; uma decisão sob a v1 seria NO_DECISION. Precisa de regra própria numa v2",
+    "registrada em 2026-09-04, antes da vigência da v1"
+   ],
+   "reason": "sem execução válida anterior e sem dado local: propostas do gerador de hipóteses e seus IC (coleta não iniciada, docs/HYPOTHESES.md H8)",
+   "run_id": "20260925T160714507838Z-802ddaa852be",
+   "status_new": "REGISTERED_NOT_ACTIVATED",
+   "status_new_protocol": "NOT_EXECUTABLE",
+   "status_previous": "REGISTERED_NOT_ACTIVATED",
+   "trial": "h8-llm-hypothesis-generator"
+  },
+  {
+   "hypothesis": "H9",
+   "protocol_applied": "custos explícitos (CostSpec), walk-forward estrito/CPCV com purga e embargo, baselines no mesmo protocolo, PSR, DSR com sensibilidade de N (pior caso), PBO via CSCV e política v1 (não aplicável sem o artefato histórico)",
+   "reason": "artefato exigido ausente: série de retornos do WFA registrado (returns.json) ou CSVs de funding, OI e spot 1h do BTCUSDT na janela registrada, com hash. Sem recriar variantes; a régua nova não promove e o status fica como estava",
+   "run_id": "20260925T160714507838Z-802ddaa852be",
+   "status_new": "CLOSED_INSUFFICIENT_SAMPLE",
+   "status_new_protocol": "NOT_REPRODUCIBLE",
+   "status_previous": "CLOSED_INSUFFICIENT_SAMPLE",
+   "trial": "h9-oi-volume-ratio-hmm-v1"
+  },
+  {
+   "hypothesis": "V3-grid (16)",
+   "protocol_applied": "custos explícitos (CostSpec), walk-forward estrito/CPCV com purga e embargo, baselines no mesmo protocolo, PSR, DSR com sensibilidade de N (pior caso), PBO via CSCV e política v1 (não aplicável sem o artefato histórico)",
+   "reason": "artefato exigido ausente: série de retornos do WFA registrado (returns.json) ou CSVs de funding, OI e spot 1h do BTCUSDT na janela registrada, com hash. Sem recriar variantes; a régua nova não promove e o status fica como estava",
+   "run_id": "20260925T160714507838Z-802ddaa852be",
+   "status_new": "CANDIDATE_ONLY (família funding_oi_hmm_v3 congelada)",
+   "status_new_protocol": "NOT_REPRODUCIBLE",
+   "status_previous": "CANDIDATE_ONLY (família funding_oi_hmm_v3 congelada)",
+   "trial": "v3-grid-btcusdt-* (16 configurações)"
+  },
+  {
+   "hypothesis": "v1-ancestral",
+   "protocol_applied": "custos explícitos (CostSpec), walk-forward estrito/CPCV com purga e embargo, baselines no mesmo protocolo, PSR, DSR com sensibilidade de N (pior caso), PBO via CSCV e política v1 (não aplicável sem o artefato histórico)",
+   "reason": "artefato exigido ausente: pares previsão do LLM × retorno D+7 da coleta registrada (n >= 30). Sem recriar variantes; a régua nova não promove e o status fica como estava",
+   "run_id": "20260925T160714507838Z-802ddaa852be",
+   "status_new": "PRE_PROTOCOL (ancestral da linha LLM, sem rótulo formal)",
+   "status_new_protocol": "NOT_REPRODUCIBLE",
+   "status_previous": "PRE_PROTOCOL (ancestral da linha LLM, sem rótulo formal)",
+   "trial": "v1-direct-gemini-h7"
+  },
+  {
+   "decision": {
+    "decision": "NO_DECISION",
+    "hypothesis_id": "cripto-fm-zero-shot-chronos-bolt-small-btcusdt-1d-v1",
+    "policy": {
+     "id": "cripto-decision-policy",
+     "sha256": "59352bb48a6604c401e3b09efe048c4cdf8d6aacea865b0b48f970ea9286ec60",
+     "status": "APPROVED",
+     "version": 1
+    },
+    "reasons": [
+     "hipótese registrada antes da vigência da política (não retroativa)",
+     "seeds avaliadas 1 < 5",
+     "seed 0: DSR sem os cenários ['N', '2N', '5N']",
+     "seed 0: DSR não computável",
+     "PBO não computado"
+    ],
+    "worst_case": {
+     "net_sharpe": 0.004165577532640295
+    }
+   },
+   "hypothesis": "FM-3c",
+   "protocol_applied": "pré-registrado antes do primeiro backtest (Prompt 3c); nenhuma execução nova",
+   "reason": "previsão CANDIDATE_WORSE, estratégia INSUFFICIENT_SAMPLE; hipótese registrada antes da vigência da política (não retroativa); seeds avaliadas 1 < 5; seed 0: DSR sem os cenários ['N', '2N', '5N']; seed 0: DSR não computável; PBO não computado",
+   "run_id": "20260924T204649356492Z-9b6626234059",
+   "status_new": "NO_DECISION",
+   "status_new_protocol": "EVALUATED_PREREGISTERED",
+   "status_previous": "NO_DECISION (política PROPOSED)",
+   "trial": "cripto-fm-zero-shot-chronos-bolt-small-btcusdt-1d-v1"
+  }
+ ],
+ "run_id": "20260925T160714507838Z-802ddaa852be"
+}

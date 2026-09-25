@@ -17,6 +17,9 @@ logs/
 *.db-wal
 *.db-shm
 *.jsonl
+# Ledgers de evidência são versionados de propósito (execuções registradas, holdouts selados).
+!docs/evidence/**/*.jsonl
+!docs/research_ledger/*.jsonl
 
 # Local research runtimes and regenerated outputs; maintained sources live in scripts/.
 /work/
