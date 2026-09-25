@@ -300,12 +300,18 @@ def test_every_evaluation_is_in_the_ledger_including_crashes(tmp_path):
         )
     ledger = RunLedger(ledger_path)
     statuses = [(r["kind"], r["status"]) for r in ledger.records()]
+    # Desde a revisão de 2026-09-25, a decisão vira evento próprio no ledger (política + run + decisão).
     assert statuses == [
         ("fm_zero_shot_evaluation", "STARTED"),
         ("fm_zero_shot_evaluation", "COMPLETED"),
+        ("decision", "DECISION"),
         ("fm_zero_shot_evaluation", "STARTED"),
         ("fm_zero_shot_evaluation", "CRASHED"),
     ]
+    decision_event = ledger.records()[2]
+    assert decision_event["run_id"] == report["run_id"]
+    assert decision_event["policy"] == report["decision"]["policy"]
+    assert decision_event["decision"] == "NO_DECISION"
     assert ledger.verify_chain() == []
     started = ledger.records()[0]
     assert started["policy"]["id"] == "cripto-decision-policy"
@@ -314,3 +320,36 @@ def test_every_evaluation_is_in_the_ledger_including_crashes(tmp_path):
         == report["decision"]["decision"]
         == "NO_DECISION"
     )
+
+
+def test_evaluation_inside_a_sealed_holdout_is_refused_and_recorded(tmp_path):
+    from GarimpoInvestimentos.research import holdout
+
+    closes = _closes(700)
+    prereg = _synthetic_prereg(tmp_path, closes, cutoff_day=449, first_day=450, last_day=699)
+    series = fz.load_daily_series(prereg["data"], root=tmp_path)
+    idx = fz.target_indices(series, first_ms=START + 450 * DAY, last_ms=START + 699 * DAY)
+    prereg_path = tmp_path / "prereg.json"
+    prereg_path.write_text(json.dumps(prereg), encoding="utf-8")
+    forecasts = tmp_path / "f.json"
+    forecasts.write_text(json.dumps(_forecast_doc(prereg, series, idx)), encoding="utf-8")
+    holdouts = RunLedger(tmp_path / "holdouts.jsonl")
+    holdout.seal_holdout(
+        holdouts,
+        holdout_id="h",
+        universe="BTCUSDT",
+        interval_utc=(_iso(START + 600 * DAY), _iso(START + 800 * DAY)),
+        content_rule="x",
+        opening_conditions=["x"],
+    )
+    ledger_path = tmp_path / "runs.jsonl"
+    with pytest.raises(holdout.HoldoutError):
+        fz.run_evaluation(
+            prereg_path=prereg_path,
+            forecasts_path=forecasts,
+            out_path=tmp_path / "r.json",
+            ledger_path=ledger_path,
+            holdouts_path=tmp_path / "holdouts.jsonl",
+        )
+    assert [r["status"] for r in RunLedger(ledger_path).records()] == ["STARTED", "CRASHED"]
+    assert not (tmp_path / "r.json").exists()
