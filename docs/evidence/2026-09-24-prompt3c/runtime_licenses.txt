@@ -1,0 +1,11 @@
+# licenças dos pacotes do venv-chronos (metadados instalados), 2026-09-24
+chronos-forecasting==2.3.2 | Apache License | ['Apache Software License']
+torch==2.14.0+cpu | Apache-2.0 AND Apache-2.0 WITH LLVM-exception AND BSD-2-Clause AND BSD-3-Clause AND BSL-1.0 AND MIT | []
+transformers==5.17.0 | Apache 2.0 License | []
+accelerate==1.15.0 | Apache | ['Apache Software License']
+einops==0.8.2 | MIT | ['MIT License']
+numpy==2.5.3 | BSD-3-Clause AND 0BSD AND MIT AND Zlib AND CC0-1.0 | []
+pandas==3.0.6 | BSD 3-Clause License | ['BSD License']
+safetensors==0.8.0 |  | ['Apache Software License']
+huggingface-hub==1.33.0 | Apache-2.0 | ['Apache Software License']
+tokenizers==0.23.2 |  | ['Apache Software License']
