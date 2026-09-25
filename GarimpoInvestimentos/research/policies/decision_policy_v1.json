@@ -1,13 +1,14 @@
 {
   "policy_id": "cripto-decision-policy",
   "version": 1,
-  "status": "PROPOSED",
+  "status": "APPROVED",
   "approval": {
     "how": "Aprovação humana do dono: num commit revisado por PR, trocar status para APPROVED e preencher approved_by, approved_at_utc e effective_from_utc (>= approved_at_utc). Mudar qualquer limiar exige uma versão nova (v2), com a mesma aprovação; a v1 nunca é editada depois de aprovada.",
-    "approved_by": null,
-    "approved_at_utc": null
+    "approved_by": "leonardosovienski (dono): aprovação explícita no chat em 2026-09-25 ('aprovado'; confirmada na resposta 'A política v1 como proposta'); vigora pelo merge da PR de aprovação",
+    "approved_at_utc": "2026-09-25T15:56:09Z",
+    "evidence": "docs/evidence/2026-09-25-aprovacao-politica-v1.md"
   },
-  "effective_from_utc": null,
+  "effective_from_utc": "2026-09-25T15:56:09Z",
   "applies_to": "Hipóteses com registered_at >= effective_from_utc. Nunca retroativa: hipótese registrada antes recebe NO_DECISION por esta política.",
   "technical_debt": "Arquivo local: predictor_core 3.2.1 não tem arquivo de política de decisão. Migrar para o core.",
   "thresholds": {

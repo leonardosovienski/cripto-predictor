@@ -279,24 +279,43 @@ def _evidence(**overrides) -> dp.CandidateEvidence:
     return replace(base, **overrides)
 
 
-def test_versioned_policy_file_is_proposed_and_hashed():
+def _proposed() -> dp.DecisionPolicy:
+    document = json.loads(dp.CURRENT_POLICY_PATH.read_text(encoding="utf-8"))
+    document["status"] = "PROPOSED"
+    document["approval"].update(approved_by=None, approved_at_utc=None)
+    document["effective_from_utc"] = None
+    return dp.validate_policy(document)
+
+
+def test_versioned_policy_file_is_approved_by_the_owner_and_hashed():
+    # Aprovada pelo dono em 2026-09-25 (docs/evidence/2026-09-25-aprovacao-politica-v1.md).
     policy = dp.load_policy()
-    assert policy.status == "PROPOSED"
+    assert policy.status == "APPROVED"
     document = json.loads(dp.CURRENT_POLICY_PATH.read_text(encoding="utf-8"))
     assert policy.sha256 == canonical_sha256(document)
     assert policy.reference() == {
         "id": "cripto-decision-policy",
         "version": 1,
         "sha256": policy.sha256,
-        "status": "PROPOSED",
+        "status": "APPROVED",
     }
+    assert document["approval"]["approved_by"].startswith("leonardosovienski")
+    assert document["effective_from_utc"] >= document["approval"]["approved_at_utc"]
     assert policy.dsr_scenario_labels == ["N", "2N", "5N"]
 
 
 def test_unapproved_policy_never_decides():
-    decision = dp.decide(_evidence(), dp.load_policy())
+    decision = dp.decide(_evidence(), _proposed())
     assert decision["decision"] == "NO_DECISION"
     assert any("não aprovada" in r for r in decision["reasons"])
+
+
+def test_approved_policy_is_not_retroactive_for_hypotheses_registered_before_it():
+    policy = dp.load_policy()
+    before = dp.decide(_evidence(registered_at_utc="2026-09-24T20:40:26Z"), policy)
+    assert before["decision"] == "NO_DECISION"
+    assert any("retroativa" in r for r in before["reasons"])
+    assert dp.decide(_evidence(), policy)["decision"] == "GO"
 
 
 def test_strong_evidence_under_approved_policy_is_go_and_records_the_policy():
@@ -392,7 +411,7 @@ def test_thresholds_come_from_the_policy_file_not_from_code():
     "mutate",
     [
         lambda d: d["thresholds"].pop("dsr_min"),
-        lambda d: d.update(status="APPROVED"),
+        lambda d: d.update(status="APPROVED", approval={"approved_by": None}),
         lambda d: d.update(
             status="APPROVED",
             effective_from_utc="2026-09-01T00:00:00Z",
