@@ -94,3 +94,27 @@ Ferramentas: gitleaks e trufflehog não estão instalados em lugar nenhum desta 
 **Conclusão da busca: o gate continua BLOCKED.** A atestação que o prompt exige ("escrita por mim", isto é, pelo dono) não existe em nenhum lugar acessível. Ela não pode ser produzida pelo agente.
 
 **STOP**: SECRET_ROTATION_GATE ≠ CLEARED. Parei aqui: nenhum teste, predictor ou backtest foi rodado nesta etapa.
+
+## Adendo de 2026-09-25: anexos versionados
+
+Na revisão completa, constatei que este relatório citava anexos que só existiam em `~/predictors/runtime/cripto`,
+fora do repositório. Eles agora estão em `docs/evidence/2026-09-24-prompt1/`, copiados byte a byte como foram
+executados em 2026-09-24:
+
+| arquivo | sha256 |
+|---|---|
+| `scan_historico.json` | `4fada449…` |
+| `scan_arquivos_compactados.json` | `55f593ce…` |
+| `redacted_secret_scan.py` | `e1dfd149…` |
+| `redacted_archive_scan.py` | `c1ba8295…` |
+
+As varreduras registram, de cada achado, só regra, arquivo, linha, commit e a "forma": comprimento, classes de
+caractere e entropia. Não há valor nem prefixo; conferi campo a campo antes de versionar.
+
+A pasta foi excluída do ruff (`pyproject.toml`, `extend-exclude`), como os outros artefatos arquivados em
+`docs/`, para os scripts ficarem idênticos ao que rodou.
+
+**Desfecho do gate, posterior a este relatório:** o dono dispensou a atestação em 2026-09-24
+(`WAIVED_BY_OWNER`, **não** `CLEARED`; registrado em `2026-09-24-prompt2-auditoria-tecnica.md`, linha 10).
+`docs/evidence/secret-rotation-attestation.md` continua inexistente, e as 7 classes sem registro de rotação
+continuam pendentes.

@@ -59,7 +59,7 @@ show_missing = true
 [tool.ruff]
 target-version = "py313"
 line-length = 100
-extend-exclude = ["typings", ".venv", "work", "dist", "build", "scripts/forense", "docs/source_archive_20260908/objects", "docs/open_source_research/20260911T0233", "docs/open_source_research/20260911T0525"]
+extend-exclude = ["typings", ".venv", "work", "dist", "build", "scripts/forense", "docs/source_archive_20260908/objects", "docs/open_source_research/20260911T0233", "docs/open_source_research/20260911T0525", "docs/evidence/2026-09-24-prompt1"]
 
 [tool.ruff.format]
 # Bytes congelados: docs/continuity_20260919/BASELINE_V1.json fixa o sha256 deste

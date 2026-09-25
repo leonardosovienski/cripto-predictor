@@ -24,6 +24,7 @@ from typing import Any
 
 from predictor_core.measurement.trials import DeflationNotEstimableError
 
+from GarimpoInvestimentos.research import ledgers
 from GarimpoInvestimentos.research import strategy_metrics as sm
 from GarimpoInvestimentos.research.decision_policy import (
     CandidateEvidence,
@@ -32,6 +33,7 @@ from GarimpoInvestimentos.research.decision_policy import (
     decide,
     load_policy,
 )
+from GarimpoInvestimentos.research.preregistration import count_preregistered
 from GarimpoInvestimentos.run_ledger import RunLedger, recorded_run
 from GarimpoInvestimentos.v3.cost_spec import CostSpec
 
@@ -173,11 +175,17 @@ def fm_row(report: Mapping[str, Any], prereg: Mapping[str, Any], policy: Decisio
 
 
 def n_trials_summary(
-    trials: list[dict], protocol: Mapping[str, Any], policy: DecisionPolicy
+    trials: list[dict],
+    protocol: Mapping[str, Any],
+    policy: DecisionPolicy,
+    *,
+    preregistered_count: int = 0,
 ) -> dict:
     lineage_lower = protocol["n_lineage_h1_h6_lower_bound"]
     registered = len(trials)
-    new_hypotheses = protocol["new_hypotheses_since_prompt2"]
+    # FM-3c é anterior ao ledger de pré-registros (entra pelo protocolo); as hipóteses
+    # pré-registradas no ledger entram sozinhas, sem número digitado.
+    new_hypotheses = protocol["new_hypotheses_since_prompt2"] + preregistered_count
     all_lower = registered + protocol["documented_unregistered"] + new_hypotheses
     all_upper = all_lower + protocol["n_upper_extra"]
     scenarios = sm.n_trials_scenarios(
@@ -200,6 +208,7 @@ def n_trials_summary(
         "all_families": f"LOWER_BOUND({all_lower})",
         "all_families_upper_estimate": all_upper,
         "added_by_prompt4": 0,
+        "preregistered_in_ledger": preregistered_count,
         "dsr_sensitivity": dsr,
     }
 
@@ -214,6 +223,7 @@ def reevaluate(
     fm_prereg: Mapping[str, Any],
     protocol: Mapping[str, Any],
     policy: DecisionPolicy,
+    preregistered_count: int = 0,
 ) -> dict:
     statuses = scientific_state["hypotheses"]
     trial_of = scientific_state["hypothesis_trials"]
@@ -233,7 +243,9 @@ def reevaluate(
     rows.append(fm_row(fm_report, fm_prereg, policy))
     return {
         "rows": rows,
-        "n_trials": n_trials_summary(trials, protocol, policy),
+        "n_trials": n_trials_summary(
+            trials, protocol, policy, preregistered_count=preregistered_count
+        ),
         "integrity": {
             "new_variants_run_on_no_go": 0,
             "holdout_accessed": "NO",
@@ -249,8 +261,10 @@ def run_reevaluation(
     out_path: Path,
     paths: Mapping[str, Path],
     protocol: Mapping[str, Any],
+    preregistrations_path: Path = ledgers.PREREGISTRATIONS,
 ) -> dict:
     policy = load_policy()
+    preregistered = count_preregistered(RunLedger(preregistrations_path))
     loaded = {k: json.loads(p.read_text(encoding="utf-8")) for k, p in paths.items()}
     with recorded_run(
         RunLedger(ledger_path),
@@ -274,6 +288,7 @@ def run_reevaluation(
             fm_prereg=loaded["fm_prereg"],
             protocol=protocol,
             policy=policy,
+            preregistered_count=preregistered,
         )
         for row in report["rows"]:
             row.setdefault("run_id", run.run_id)

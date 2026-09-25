@@ -31,18 +31,21 @@ from predictor_core.measurement.metrics import diebold_mariano
 from predictor_core.measurement.trials import DeflationNotEstimableError
 
 from GarimpoInvestimentos.analyzers.trials import TRIALS_PATH, load_trials
+from GarimpoInvestimentos.research import ledgers
 from GarimpoInvestimentos.research import strategy_metrics as sm
 from GarimpoInvestimentos.research.decision_policy import (
     CandidateEvidence,
     SeedResult,
     decide,
     load_policy,
+    record_decision,
 )
 from GarimpoInvestimentos.research.forecast_metrics import (
     crps_from_quantiles,
     mean_quantile_loss,
     weighted_quantile_loss,
 )
+from GarimpoInvestimentos.research.holdout import assert_outside_holdouts
 from GarimpoInvestimentos.run_ledger import RunLedger, canonical_sha256, recorded_run
 from GarimpoInvestimentos.v3.cost_spec import CostSpec
 
@@ -370,14 +373,20 @@ def _iso(ms: int) -> str:
 
 
 def run_evaluation(
-    *, prereg_path: Path, forecasts_path: Path, out_path: Path, ledger_path: Path
+    *,
+    prereg_path: Path,
+    forecasts_path: Path,
+    out_path: Path,
+    ledger_path: Path,
+    holdouts_path: Path = ledgers.HOLDOUTS,
 ) -> dict[str, Any]:
     prereg, prereg_sha = load_preregistration(prereg_path)
     forecast_raw = forecasts_path.read_bytes()
     forecast_doc = json.loads(forecast_raw)
     policy = load_policy()
+    ledger = RunLedger(ledger_path)
     with recorded_run(
-        RunLedger(ledger_path),
+        ledger,
         kind="fm_zero_shot_evaluation",
         config={
             "preregistration_id": prereg["id"],
@@ -395,6 +404,13 @@ def run_evaluation(
         seeds=[0],
         policy=policy.reference(),
     ) as run:
+        # Avaliar dentro de um holdout selado e não aberto é consumir o holdout: recusa, e o
+        # ledger registra a tentativa como CRASHED.
+        period = prereg["evaluation_period"]
+        last_day_end = parse_utc_ms(period["last_target_open_utc"]) + DAY_MS
+        assert_outside_holdouts(
+            RunLedger(holdouts_path), (period["first_target_open_utc"], _iso(last_day_end))
+        )
         series = load_daily_series(prereg["data"])
         run.dataset = {
             "archive_sha256": prereg["data"]["archive_sha256"],
@@ -419,6 +435,9 @@ def run_evaluation(
             "strategy": ["random_walk", "naive_persistence", "always_long", "buy_and_hold"],
         }
         run.artifacts = {"report": str(out_path), "report_sha256": canonical_sha256(report)}
+    if "decision" in report:
+        # A decisão vira evento próprio: política (id, versão, sha256), execução e decisão juntas.
+        record_decision(ledger, run_id=report["run_id"], decision=report["decision"])
     return report
 
 
@@ -427,7 +446,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--prereg", type=Path, default=PREREGISTRATION_PATH)
     parser.add_argument("--forecasts", type=Path, required=True)
     parser.add_argument("--out", type=Path, required=True)
-    parser.add_argument("--ledger", type=Path, required=True)
+    parser.add_argument("--ledger", type=Path, default=ledgers.RUNS)
     args = parser.parse_args(argv)
     report = run_evaluation(
         prereg_path=args.prereg,

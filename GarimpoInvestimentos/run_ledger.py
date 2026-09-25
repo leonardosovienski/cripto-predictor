@@ -35,8 +35,9 @@ from typing import Any
 from predictor_core.kernel.jsonl_store import JsonlStore
 
 SCHEMA_VERSION = "cripto-run-manifest/1"
-# Execução não governada por política aprovada (a v1 de research/decision_policy.py está
-# PROPOSED). A ausência é registrada, nunca inventada.
+# Execução sem política de decisão versionada: o `run_wfa` emite o veredito legado do charter,
+# e a política v1 (APPROVED, research/decision_policy.py) não é retroativa. A ausência é
+# registrada, nunca inventada.
 POLICY_NOT_DEFINED = {"id": None, "version": None, "sha256": None, "status": "NOT_DEFINED"}
 _PACKAGE_ROOT = Path(__file__).resolve().parent.parent
 

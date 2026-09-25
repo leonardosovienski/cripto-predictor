@@ -87,9 +87,38 @@ from GarimpoInvestimentos.research.decision_policy import load_policy, decide, r
 meets a test block and embargoes those starting within `embargo` after it.
 `derive_purge_and_embargo` sets purge = label horizon and embargo = the leading
 significant ACF lags of non-overlapping step returns. PSR/DSR reuse Core, PBO reuses
-`analyzers/pbo.py`. Decision thresholds live only in `policies/decision_policy_v1.json`
-(`PROPOSED` until the owner approves it); missing evidence yields `NO_DECISION`.
-Evidence: `docs/evidence/2026-09-24-prompt3b-cpcv-psr-dsr-pbo-politica.md`.
+`analyzers/pbo.py`. Decision thresholds live only in `policies/decision_policy_v1.json`,
+`APPROVED` by the owner on 2026-09-25 and effective from 2026-09-25T15:56:09Z, never
+retroactive. Missing evidence yields `NO_DECISION`. A threshold change needs a new
+version approved by the owner. Evidence: `docs/evidence/2026-09-24-prompt3b-cpcv-psr-dsr-pbo-politica.md`
+and `docs/evidence/2026-09-25-aprovacao-politica-v1.md`.
+
+## Pre-registered evaluation, holdouts and re-evaluation
+
+```python
+from GarimpoInvestimentos.research import ledgers  # docs/research_ledger paths
+from GarimpoInvestimentos.research.preregistration import (
+    register_preregistration,
+    require_preregistered_before_run,
+)
+from GarimpoInvestimentos.research.holdout import (
+    seal_holdout,
+    open_holdout,
+    assert_outside_holdouts,
+)
+from GarimpoInvestimentos.research.dedup import redundancy_check
+from GarimpoInvestimentos.research.fm_zero_shot import (
+    run_evaluation,
+)  # Chronos zero-shot (Prompt 3c)
+from GarimpoInvestimentos.research.reevaluation import run_reevaluation  # Prompt 4
+```
+
+New hypotheses are pre-registered in `docs/research_ledger/preregistrations.jsonl`
+before any backtest; a development period touching a sealed holdout is refused, and
+evaluations inside a sealed, unopened holdout are refused and recorded as `CRASHED`.
+`redundancy_check` needs an explicit threshold with its source: policy v1 has none yet.
+These modules read `docs/`, so they need a repository checkout (the wheel has no `docs/`).
+See `docs/research_ledger/README.md` for the ledger rules.
 
 F03/F04 historical economic gates remain scoped to their data requirements.
 This package makes new engineering experiments possible; it supplies neither

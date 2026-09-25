@@ -323,3 +323,73 @@ def test_redundant_candidate_is_rejected_before_any_backtest():
         dedup.redundancy_check("c3", fresh[:10], {"f1": factor}, **kwargs)
     with pytest.raises(dedup.DedupError):
         dedup.redundancy_check("c4", fresh, {"f1": factor}, **{**kwargs, "threshold_source": ""})
+
+
+# ---------------------------------------------------------------- integração (revisão 2026-09-25)
+
+
+def test_development_period_must_be_well_formed():
+    assert preregistration.validate_preregistration(_complete_prereg()) == []
+    for bad in ({"development": ["2026-06-01", "2026-01-01"]}, {"development": "2026"}, {"dev": 1}):
+        problems = preregistration.validate_preregistration(_complete_prereg(period=bad))
+        assert any("period.development" in p for p in problems)
+
+
+def test_preregistration_refuses_development_inside_a_sealed_holdout(tmp_path):
+    holdouts = RunLedger(tmp_path / "holdouts.jsonl")
+    holdout.seal_holdout(
+        holdouts,
+        holdout_id="h",
+        universe="BTCUSDT",
+        interval_utc=("2026-03-01T00:00:00Z", "2026-09-01T00:00:00Z"),
+        content_rule="x",
+        opening_conditions=["x"],
+    )
+    ledger = RunLedger(tmp_path / "prereg.jsonl")
+    with pytest.raises(preregistration.PreregistrationError):
+        preregistration.register_preregistration(ledger, _complete_prereg(), holdouts=holdouts)
+    assert ledger.records() == []
+    outside = _complete_prereg(period={"development": ["2025-01-01", "2026-02-28"]})
+    preregistration.register_preregistration(ledger, outside, holdouts=holdouts)
+    assert preregistration.count_preregistered(ledger) == 1
+
+
+def test_preregistered_hypotheses_enter_the_trial_count(tmp_path):
+    base = _reevaluate()["n_trials"]
+    more = _reevaluate(preregistered_count=2)["n_trials"]
+    assert base["all_families"] == "LOWER_BOUND(36)"
+    assert more["all_families"] == "LOWER_BOUND(38)" and more["preregistered_in_ledger"] == 2
+    ledger = RunLedger(tmp_path / "prereg.jsonl")
+    preregistration.register_preregistration(ledger, _complete_prereg())
+    preregistration.register_preregistration(ledger, _complete_prereg(id="h-teste-v2"))
+    paths = {
+        "scientific_state": ROOT / "charters/scientific_state.json",
+        "trials": TRIALS_PATH,
+        "h6_status": ROOT / "GarimpoInvestimentos/h6_status.json",
+        "inventory": tmp_path / "inventory.json",
+        "fm_report": FM_DIR / "report.json",
+        "fm_prereg": FM_DIR / "preregistro.json",
+    }
+    paths["inventory"].write_text(json.dumps(_inventory()), encoding="utf-8")
+    report = reevaluation.run_reevaluation(
+        ledger_path=tmp_path / "runs.jsonl",
+        out_path=tmp_path / "r.json",
+        paths=paths,
+        protocol=PROTOCOL,
+        preregistrations_path=tmp_path / "prereg.jsonl",
+    )
+    assert report["n_trials"]["all_families"] == "LOWER_BOUND(38)"
+
+
+def test_versioned_research_ledgers_are_intact():
+    from GarimpoInvestimentos.research import ledgers
+
+    runs = RunLedger(ledgers.RUNS)
+    assert runs.verify_chain() == [] and len(runs.records()) >= 8
+    holdouts = RunLedger(ledgers.HOLDOUTS)
+    assert holdouts.verify_chain() == []
+    assert holdout.holdout_state(holdouts, "cripto-holdout-btcusdt-20260926-20270326") in {
+        "SEALED",
+        "OPENED",
+    }
+    assert RunLedger(ledgers.PREREGISTRATIONS).verify_chain() == []

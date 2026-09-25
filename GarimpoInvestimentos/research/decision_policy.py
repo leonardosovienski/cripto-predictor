@@ -223,6 +223,7 @@ def decide(evidence: CandidateEvidence, policy: DecisionPolicy) -> dict[str, Any
 def record_decision(ledger: RunLedger, *, run_id: str, decision: Mapping[str, Any]) -> dict:
     return ledger.append(
         {
+            "kind": "decision",
             "status": "DECISION",
             "run_id": run_id,
             "decided_at_utc": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
