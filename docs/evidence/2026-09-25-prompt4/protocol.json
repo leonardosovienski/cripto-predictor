@@ -1,0 +1,34 @@
+{
+  "alpha": 0.05,
+  "power": 0.8,
+  "h6_relevant_rho": 0.2,
+  "h6_overlap_days": 7,
+  "h6_declared_block_bootstrap_power": 0.233,
+  "n_lineage_h1_h6_lower_bound": 32,
+  "documented_unregistered": 9,
+  "n_upper_extra": 10,
+  "new_hypotheses_since_prompt2": 1,
+  "extra_closed_rows": [
+    {"hypothesis": "V3-grid (16)", "status_previous": "CANDIDATE_ONLY (família funding_oi_hmm_v3 congelada)", "trial": "v3-grid-btcusdt-* (16 configurações)"},
+    {"hypothesis": "v1-ancestral", "status_previous": "PRE_PROTOCOL (ancestral da linha LLM, sem rótulo formal)", "trial": "v1-direct-gemini-h7"}
+  ],
+  "incompatibilities": {
+    "H7": [
+      "metric = psr com o gate legado do backtest_v3 (PSR >= 0,80, IC_lower > 0, DD < 20%, constantes no código); a política v1 exige DSR >= 0,95 no pior N, PBO < 0,20, 5 seeds e 4 baselines",
+      "registrada em 2026-09-04, antes da vigência da v1 (2026-09-25): por ela, qualquer decisão é NO_DECISION; a H7 segue o critério pré-registrado dela",
+      "o protocolo antigo não tinha custos com spread explícito nem manifesto de execução; o novo tem (3a)"
+    ],
+    "H8": [
+      "metric = spearman_ic: a política v1 é para estratégia (Sharpe/DSR/PBO) e não tem regra para hipótese de correlação; uma decisão sob a v1 seria NO_DECISION. Precisa de regra própria numa v2",
+      "registrada em 2026-09-04, antes da vigência da v1"
+    ]
+  },
+  "sources": {
+    "alpha, power": "Prompt 3c/4: alfa 0,05 e poder 0,8, os mesmos do pré-registro do 3c",
+    "h6_relevant_rho": "docs/HYPOTHESES.md, errata de 2026-09-07 e B12: poder avaliado para rho = 0,2",
+    "h6_overlap_days": "docs/HYPOTHESES.md B12: coleta diária e horizonte D+7 compartilham 6 de 7 dias; n efetivo ~ n/7",
+    "h6_declared_block_bootstrap_power": "GarimpoInvestimentos/h6_status.json, poder['0.2'] (tabela B12, n_referencia = 60; a errata cita 23% em n = 84)",
+    "n_lineage_h1_h6_lower_bound, documented_unregistered, n_upper_extra": "docs/evidence/2026-09-24-prompt2-auditoria-tecnica.md: N_observed = 23, LOWER_BOUND(32) = 23 + 9, N_upper ~ 42 = 32 + 9 (grade SL×TP) + 1 (H1-ETH)",
+    "new_hypotheses_since_prompt2": "FM-3c (docs/evidence/2026-09-24-prompt3c/preregistro.json)"
+  }
+}
