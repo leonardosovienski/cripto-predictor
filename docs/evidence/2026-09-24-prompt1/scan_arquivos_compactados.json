@@ -1,0 +1,141 @@
+{
+ "archives_scanned": 96,
+ "sensitive_member_names": [
+  "docs/continuity_20260909/reports-final-review-20260910.zip!operacao/relatorios/REVISAO_FINAL_PUBLICADA_20260910/final02/secrets.log",
+  "docs/continuity_20260909/reports-revisao_completa_20260909.zip!operacao/relatorios/REVISAO_COMPLETA_20260909/baseline/secrets.log",
+  "docs/continuity_20260910/revisao-20260910.zip!revisao-completa-20260909/baseline/secrets.log",
+  "docs/continuity_20260910/revisao-20260910.zip!revisao-completa-20260909/closure_full01/secrets.log",
+  "docs/continuity_20260910/revisao-20260910.zip!revisao-completa-20260909/executors_baseline01/secrets.log",
+  "docs/continuity_20260910/revisao-20260910.zip!revisao-completa-20260909/executors_final01/secrets.log",
+  "docs/continuity_20260910/revisao-20260910.zip!revisao-completa-20260909/executors_final02/secrets.log",
+  "docs/continuity_20260910/revisao-20260910.zip!revisao-completa-20260909/executors_final03/secrets.log",
+  "docs/continuity_20260910/revisao-20260910.zip!revisao-completa-20260909/expansion_baseline01/secrets.log",
+  "docs/continuity_20260910/revisao-20260910.zip!revisao-completa-20260909/expansion_full01/secrets.log",
+  "docs/continuity_20260910/revisao-20260910.zip!revisao-completa-20260909/expansion_full02/secrets.log",
+  "docs/continuity_20260910/revisao-20260910.zip!revisao-completa-20260909/expansion_full03/secrets.log",
+  "docs/continuity_20260910/revisao-20260910.zip!revisao-completa-20260909/final01/secrets.log",
+  "docs/continuity_20260910/revisao-20260910.zip!revisao-completa-20260909/final02/secrets.log",
+  "docs/continuity_20260910/revisao-20260910.zip!revisao-completa-20260909/manual_final01/secrets.log",
+  "docs/continuity_20260910/revisao-20260910.zip!revisao-completa-20260909/manual_final02/secrets.log",
+  "docs/session_archive_20260907/deliverables/CRIPTO_REVISAO_FINAL_REPRODUCAO.zip!project/.env.example",
+  "docs/session_archive_20260907/deliverables/CRIPTO_REVISAO_FINAL_REPRODUCAO.zip!project/dist/cripto_predictor-1.0.0-py3-none-any.whl!GarimpoInvestimentos/.env.example",
+  "docs/session_archive_20260907/deliverables/CRIPTO_REVISAO_FINAL_REPRODUCAO.zip!project/GarimpoInvestimentos/.env.example",
+  "docs/session_archive_20260907/deliverables/CRIPTO_REVISAO_FINAL_REPRODUCAO.zip!wheel/cripto_predictor-1.0.0-py3-none-any.whl!GarimpoInvestimentos/.env.example",
+  "docs/session_archive_20260908/deliverables/CRIPTO_CODIGO_DADOS_REPRODUCAO.zip!code/.env.example",
+  "docs/session_archive_20260908/deliverables/CRIPTO_CODIGO_DADOS_REPRODUCAO.zip!code/GarimpoInvestimentos/.env.example",
+  "docs/session_archive_20260908/deliverables/CRIPTO_CODIGO_DADOS_REPRODUCAO.zip!code/dist/cripto_predictor-1.0.0-py3-none-any.whl!GarimpoInvestimentos/.env.example",
+  "dist/cripto_predictor-1.0.0-py3-none-any.whl!GarimpoInvestimentos/.env.example",
+  "dist/cripto_predictor-1.0.0-py3-none-any.whl!GarimpoInvestimentos/.env.example",
+  "docs/session_archive_20260907/WORKSPACE_RESEARCH.zip(.001+.002)!build-artifacts/cripto_predictor-1.0.0-py3-none-any.whl!GarimpoInvestimentos/.env.example",
+  "docs/session_archive_20260907/WORKSPACE_RESEARCH.zip(.001+.002)!core-wheel/predictor_core-3.2.0-py3-none-any.whl!predictor_core/testing/secrets.py",
+  "docs/session_archive_20260907/WORKSPACE_RESEARCH.zip(.001+.002)!review-build/cripto_predictor-1.0.0-py3-none-any.whl!GarimpoInvestimentos/.env.example",
+  "docs/session_archive_20260907/WORKSPACE_RESEARCH.zip(.001+.002)!review-runtime-wheels/virtualenv-21.7.1-py3-none-any.whl!virtualenv/seed/wheels/embed/pip-26.0.1-py3-none-any.whl!pip/_vendor/certifi/cacert.pem",
+  "docs/session_archive_20260907/WORKSPACE_RESEARCH.zip(.001+.002)!review-runtime-wheels/virtualenv-21.7.1-py3-none-any.whl!virtualenv/seed/wheels/embed/pip-26.2-py3-none-any.whl!pip/_vendor/certifi/cacert.pem"
+ ],
+ "findings": [
+  {
+   "where": "docs/continuity_20260910/revisao-20260910.zip!revisao-completa-20260909/executor_preflight02/sources/7539a8fbed2a45eb92773cb20c334565.json",
+   "line": 1,
+   "rule": "credential_assignment",
+   "shape": "len=51 entropia=5.0",
+   "key_name": "topic_token",
+   "sequential_like": false
+  },
+  {
+   "where": "docs/continuity_20260910/revisao-20260910.zip!revisao-completa-20260909/executor_preflight02/sources/7539a8fbed2a45eb92773cb20c334565.json",
+   "line": 1,
+   "rule": "credential_assignment",
+   "shape": "len=56 entropia=5.1",
+   "key_name": "topic_token",
+   "sequential_like": false
+  },
+  {
+   "where": "docs/continuity_20260910/revisao-20260910.zip!revisao-completa-20260909/executor_preflight02/sources/7539a8fbed2a45eb92773cb20c334565.json",
+   "line": 1,
+   "rule": "credential_assignment",
+   "shape": "len=43 entropia=4.8",
+   "key_name": "topic_token",
+   "sequential_like": false
+  },
+  {
+   "where": "docs/continuity_20260910/revisao-20260910.zip!revisao-completa-20260909/executor_preflight02/sources/7539a8fbed2a45eb92773cb20c334565.json",
+   "line": 1,
+   "rule": "credential_assignment",
+   "shape": "len=56 entropia=5.0",
+   "key_name": "topic_token",
+   "sequential_like": false
+  },
+  {
+   "where": "docs/continuity_20260910/revisao-20260910.zip!revisao-completa-20260909/executor_preflight02/sources/7539a8fbed2a45eb92773cb20c334565.json",
+   "line": 1,
+   "rule": "credential_assignment",
+   "shape": "len=56 entropia=5.0",
+   "key_name": "topic_token",
+   "sequential_like": false
+  },
+  {
+   "where": "docs/continuity_20260910/revisao-20260910.zip!revisao-completa-20260909/executor_preflight02/sources/7539a8fbed2a45eb92773cb20c334565.json",
+   "line": 1,
+   "rule": "credential_assignment",
+   "shape": "len=56 entropia=5.1",
+   "key_name": "topic_token",
+   "sequential_like": false
+  },
+  {
+   "where": "docs/continuity_20260910/revisao-20260910.zip!revisao-completa-20260909/executor_preflight02/sources/7539a8fbed2a45eb92773cb20c334565.json",
+   "line": 1,
+   "rule": "credential_assignment",
+   "shape": "len=56 entropia=5.0",
+   "key_name": "topic_token",
+   "sequential_like": false
+  },
+  {
+   "where": "docs/continuity_20260910/revisao-20260910.zip!revisao-completa-20260909/executor_preflight02/sources/7539a8fbed2a45eb92773cb20c334565.json",
+   "line": 1,
+   "rule": "credential_assignment",
+   "shape": "len=56 entropia=5.0",
+   "key_name": "topic_token",
+   "sequential_like": false
+  },
+  {
+   "where": "docs/continuity_20260910/revisao-20260910.zip!revisao-completa-20260909/executor_preflight02/sources/7539a8fbed2a45eb92773cb20c334565.json",
+   "line": 1,
+   "rule": "credential_assignment",
+   "shape": "len=50 entropia=4.7",
+   "key_name": "topic_token",
+   "sequential_like": false
+  },
+  {
+   "where": "docs/continuity_20260910/revisao-20260910.zip!revisao-completa-20260909/executor_preflight02/sources/7539a8fbed2a45eb92773cb20c334565.json",
+   "line": 1,
+   "rule": "credential_assignment",
+   "shape": "len=78 entropia=5.1",
+   "key_name": "topic_token",
+   "sequential_like": false
+  },
+  {
+   "where": "docs/continuity_20260910/revisao-20260910.zip!revisao-completa-20260909/executor_preflight02/sources/7539a8fbed2a45eb92773cb20c334565.json",
+   "line": 1,
+   "rule": "credential_assignment",
+   "shape": "len=60 entropia=5.1",
+   "key_name": "publication_token",
+   "sequential_like": false
+  },
+  {
+   "where": "docs/continuity_20260910/revisao-20260910.zip!revisao-completa-20260909/executor_preflight02/sources/7539a8fbed2a45eb92773cb20c334565.json",
+   "line": 1,
+   "rule": "credential_assignment",
+   "shape": "len=59 entropia=5.0",
+   "key_name": "topic_token",
+   "sequential_like": false
+  },
+  {
+   "where": "docs/continuity_20260910/revisao-20260910.zip!revisao-completa-20260909/executor_preflight02/sources/7539a8fbed2a45eb92773cb20c334565.json",
+   "line": 1,
+   "rule": "credential_assignment",
+   "shape": "len=59 entropia=5.1",
+   "key_name": "topic_token",
+   "sequential_like": false
+  }
+ ]
+}

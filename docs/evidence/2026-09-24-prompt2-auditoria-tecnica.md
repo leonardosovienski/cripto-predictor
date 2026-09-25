@@ -274,3 +274,19 @@ A origem do fee de 10 bps não está documentada (`v3/costs.py:6-16`, D). A docs
 - H1–H3 exigem os CSVs do V3.
 - Sem esses artefatos, o status é `NOT_REPRODUCIBLE`. O prompt proíbe recriar variantes.
 - Pré-registro e holdout selado precisam de ledger novo (o `trials.json` é protegido). Status de hipótese vive em `charters/scientific_state.json`, que também é protegido: mudança só com decisão do dono.
+
+## Adendo de 2026-09-25: anexos versionados
+
+O log e o junit da suíte isolada (§8), antes citados só em `~/predictors/runtime/cripto/prompt2/`, agora estão
+em `docs/evidence/2026-09-24-prompt2/`, junto do script que os gerou:
+
+| arquivo | sha256 |
+|---|---|
+| `suite_isolated.log` | `bd40de9a…` |
+| `suite_isolated.junit.xml` | `a53fe2c6…` |
+| `run_suite_isolated.sh` | `d2ce1fdb…` |
+
+Um desvio do plano do §9: o 3b implementou o PBO pelo CSCV **padrão** (Bailey et al. 2017), que é o que o
+Prompt 3b pede, reusando o `analyzers/pbo.py` protegido. A menção deste plano a "PBO com purga e embargo" não foi
+implementada. O efeito da adjacência entre blocos IS/OOS com rótulos sobrepostos fica como limitação conhecida,
+hoje sem uso, porque nenhuma avaliação real computou PBO.

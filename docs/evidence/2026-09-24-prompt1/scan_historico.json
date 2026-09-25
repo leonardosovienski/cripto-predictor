@@ -1,0 +1,753 @@
+{
+ "repo_head": "174573df4884b5455f9b38ecc933bf48c67ff4df",
+ "refs_scanned": "all (git rev-list --all)",
+ "blobs_total": 6038,
+ "blobs_scanned_text": 4545,
+ "blobs_binary_skipped": 79,
+ "blobs_over_3MB_skipped": 21,
+ "rules": [
+  "aws_access_key",
+  "cerebras_key",
+  "credential_assignment",
+  "github_token",
+  "google_api_key",
+  "groq_key",
+  "huggingface_token",
+  "openai_like_key",
+  "private_key_block",
+  "slack_token",
+  "telegram_bot_token",
+  "webhook_url"
+ ],
+ "findings": [
+  {
+   "rule": "credential_assignment",
+   "line": 1,
+   "shape": "len=42 classes=a9 entropia=3.9",
+   "placeholder_like": false,
+   "file": "docs/evidence/dependency_execution_20260910/aave/weekly-00.json",
+   "first_commit": "25807a354402",
+   "in_head": true
+  },
+  {
+   "rule": "credential_assignment",
+   "line": 1,
+   "shape": "len=42 classes=a9 entropia=3.9",
+   "placeholder_like": false,
+   "file": "docs/evidence/aave_validation_20260910/history/month-18.json",
+   "first_commit": "3e602118a61e",
+   "in_head": true
+  },
+  {
+   "rule": "credential_assignment",
+   "line": 1,
+   "shape": "len=42 classes=a9 entropia=3.9",
+   "placeholder_like": false,
+   "file": "docs/evidence/aave_validation_20260910/history/month-17.json",
+   "first_commit": "3e602118a61e",
+   "in_head": true
+  },
+  {
+   "rule": "credential_assignment",
+   "line": 1,
+   "shape": "len=42 classes=a9 entropia=3.9",
+   "placeholder_like": false,
+   "file": "docs/evidence/aave_validation_20260910/history/month-04.json",
+   "first_commit": "3e602118a61e",
+   "in_head": true
+  },
+  {
+   "rule": "credential_assignment",
+   "line": 1,
+   "shape": "len=42 classes=a9 entropia=3.9",
+   "placeholder_like": false,
+   "file": "docs/evidence/dependency_execution_20260910/aave/weekly-04.json",
+   "first_commit": "25807a354402",
+   "in_head": true
+  },
+  {
+   "rule": "credential_assignment",
+   "line": 1,
+   "shape": "len=42 classes=a9 entropia=3.9",
+   "placeholder_like": false,
+   "file": "docs/evidence/aave_validation_20260910/history/month-08.json",
+   "first_commit": "3e602118a61e",
+   "in_head": true
+  },
+  {
+   "rule": "credential_assignment",
+   "line": 1,
+   "shape": "len=42 classes=a9 entropia=3.9",
+   "placeholder_like": false,
+   "file": "docs/evidence/dependency_execution_20260910/aave/weekly-10.json",
+   "first_commit": "25807a354402",
+   "in_head": true
+  },
+  {
+   "rule": "credential_assignment",
+   "line": 1,
+   "shape": "len=42 classes=a9 entropia=3.9",
+   "placeholder_like": false,
+   "file": "docs/evidence/aave_validation_20260910/history/month-06.json",
+   "first_commit": "3e602118a61e",
+   "in_head": true
+  },
+  {
+   "rule": "credential_assignment",
+   "line": 1,
+   "shape": "len=42 classes=a9 entropia=3.9",
+   "placeholder_like": false,
+   "file": "docs/evidence/dependency_execution_20260910/aave/weekly-06.json",
+   "first_commit": "25807a354402",
+   "in_head": true
+  },
+  {
+   "rule": "credential_assignment",
+   "line": 1,
+   "shape": "len=42 classes=a9 entropia=3.9",
+   "placeholder_like": false,
+   "file": "docs/evidence/aave_validation_20260910/history/month-02.json",
+   "first_commit": "3e602118a61e",
+   "in_head": true
+  },
+  {
+   "rule": "credential_assignment",
+   "line": 1,
+   "shape": "len=42 classes=a9 entropia=3.9",
+   "placeholder_like": false,
+   "file": "docs/evidence/aave_validation_20260910/history/month-21.json",
+   "first_commit": "3e602118a61e",
+   "in_head": true
+  },
+  {
+   "rule": "credential_assignment",
+   "line": 1,
+   "shape": "len=42 classes=a9 entropia=3.9",
+   "placeholder_like": false,
+   "file": "docs/evidence/dependency_execution_20260910/aave/weekly-05.json",
+   "first_commit": "25807a354402",
+   "in_head": true
+  },
+  {
+   "rule": "credential_assignment",
+   "line": 1,
+   "shape": "len=42 classes=a9 entropia=3.9",
+   "placeholder_like": false,
+   "file": "docs/evidence/dependency_execution_20260910/aave/weekly-07.json",
+   "first_commit": "25807a354402",
+   "in_head": true
+  },
+  {
+   "rule": "credential_assignment",
+   "line": 1,
+   "shape": "len=42 classes=a9 entropia=3.9",
+   "placeholder_like": false,
+   "file": "docs/evidence/aave_validation_20260910/history/protocol.json",
+   "first_commit": "3e602118a61e",
+   "in_head": true
+  },
+  {
+   "rule": "credential_assignment",
+   "line": 1,
+   "shape": "len=42 classes=a9 entropia=3.9",
+   "placeholder_like": false,
+   "file": "docs/evidence/aave_validation_20260910/history/month-01.json",
+   "first_commit": "3e602118a61e",
+   "in_head": true
+  },
+  {
+   "rule": "credential_assignment",
+   "line": 1,
+   "shape": "len=42 classes=a9 entropia=3.9",
+   "placeholder_like": false,
+   "file": "docs/evidence/aave_validation_20260910/history/month-20.json",
+   "first_commit": "3e602118a61e",
+   "in_head": true
+  },
+  {
+   "rule": "credential_assignment",
+   "line": 1,
+   "shape": "len=42 classes=a9 entropia=3.9",
+   "placeholder_like": false,
+   "file": "docs/evidence/aave_validation_20260910/history/month-16.json",
+   "first_commit": "3e602118a61e",
+   "in_head": true
+  },
+  {
+   "rule": "credential_assignment",
+   "line": 1,
+   "shape": "len=42 classes=a9 entropia=3.9",
+   "placeholder_like": false,
+   "file": "docs/evidence/dependency_execution_20260910/aave/weekly-11.json",
+   "first_commit": "25807a354402",
+   "in_head": true
+  },
+  {
+   "rule": "credential_assignment",
+   "line": 1,
+   "shape": "len=42 classes=a9 entropia=3.9",
+   "placeholder_like": false,
+   "file": "docs/evidence/dependency_execution_20260910/aave/current-finalized.json",
+   "first_commit": "25807a354402",
+   "in_head": true
+  },
+  {
+   "rule": "credential_assignment",
+   "line": 1,
+   "shape": "len=42 classes=a9 entropia=3.9",
+   "placeholder_like": false,
+   "file": "docs/evidence/aave_validation_20260910/history/month-23.json",
+   "first_commit": "3e602118a61e",
+   "in_head": true
+  },
+  {
+   "rule": "credential_assignment",
+   "line": 1,
+   "shape": "len=42 classes=a9 entropia=3.9",
+   "placeholder_like": false,
+   "file": "docs/evidence/dependency_execution_20260910/aave/weekly-02.json",
+   "first_commit": "25807a354402",
+   "in_head": true
+  },
+  {
+   "rule": "credential_assignment",
+   "line": 1,
+   "shape": "len=42 classes=a9 entropia=3.9",
+   "placeholder_like": false,
+   "file": "docs/evidence/aave_validation_20260910/history/month-22.json",
+   "first_commit": "3e602118a61e",
+   "in_head": true
+  },
+  {
+   "rule": "credential_assignment",
+   "line": 1,
+   "shape": "len=42 classes=a9 entropia=3.9",
+   "placeholder_like": false,
+   "file": "docs/evidence/dependency_execution_20260910/aave/weekly-09.json",
+   "first_commit": "25807a354402",
+   "in_head": true
+  },
+  {
+   "rule": "credential_assignment",
+   "line": 1,
+   "shape": "len=42 classes=a9 entropia=3.9",
+   "placeholder_like": false,
+   "file": "docs/evidence/dependency_execution_20260910/aave/weekly-12.json",
+   "first_commit": "25807a354402",
+   "in_head": true
+  },
+  {
+   "rule": "credential_assignment",
+   "line": 1,
+   "shape": "len=42 classes=a9 entropia=3.9",
+   "placeholder_like": false,
+   "file": "docs/evidence/aave_validation_20260910/history/month-19.json",
+   "first_commit": "3e602118a61e",
+   "in_head": true
+  },
+  {
+   "rule": "credential_assignment",
+   "line": 1,
+   "shape": "len=42 classes=a9 entropia=3.9",
+   "placeholder_like": false,
+   "file": "docs/evidence/aave_validation_20260910/history/month-00.json",
+   "first_commit": "3e602118a61e",
+   "in_head": true
+  },
+  {
+   "rule": "credential_assignment",
+   "line": 1,
+   "shape": "len=42 classes=a9 entropia=3.9",
+   "placeholder_like": false,
+   "file": "docs/evidence/aave_validation_20260910/history/month-09.json",
+   "first_commit": "3e602118a61e",
+   "in_head": true
+  },
+  {
+   "rule": "openai_like_key",
+   "line": 13,
+   "shape": "len=35 classes=aA9_ entropia=5.1",
+   "placeholder_like": false,
+   "file": "tests/test_secrets_telemetry.py",
+   "first_commit": "0b2fdbaa518a",
+   "in_head": false
+  },
+  {
+   "rule": "credential_assignment",
+   "line": 1,
+   "shape": "len=42 classes=a9 entropia=3.9",
+   "placeholder_like": false,
+   "file": "docs/evidence/aave_validation_20260910/history/month-12.json",
+   "first_commit": "3e602118a61e",
+   "in_head": true
+  },
+  {
+   "rule": "credential_assignment",
+   "line": 1,
+   "shape": "len=42 classes=a9 entropia=3.9",
+   "placeholder_like": false,
+   "file": "docs/evidence/aave_validation_20260910/history/month-07.json",
+   "first_commit": "3e602118a61e",
+   "in_head": true
+  },
+  {
+   "rule": "credential_assignment",
+   "line": 1,
+   "shape": "len=42 classes=a9 entropia=3.9",
+   "placeholder_like": false,
+   "file": "docs/evidence/aave_validation_20260910/history/month-14.json",
+   "first_commit": "3e602118a61e",
+   "in_head": true
+  },
+  {
+   "rule": "credential_assignment",
+   "line": 1,
+   "shape": "len=42 classes=a9 entropia=3.9",
+   "placeholder_like": false,
+   "file": "docs/evidence/dependency_execution_20260910/aave/weekly-03.json",
+   "first_commit": "25807a354402",
+   "in_head": true
+  },
+  {
+   "rule": "credential_assignment",
+   "line": 1,
+   "shape": "len=42 classes=a9 entropia=3.9",
+   "placeholder_like": false,
+   "file": "docs/evidence/dependency_execution_20260910/aave/history.json",
+   "first_commit": "25807a354402",
+   "in_head": true
+  },
+  {
+   "rule": "credential_assignment",
+   "line": 1,
+   "shape": "len=42 classes=a9 entropia=3.9",
+   "placeholder_like": false,
+   "file": "docs/evidence/dependency_execution_20260910/aave/history.json",
+   "first_commit": "25807a354402",
+   "in_head": true
+  },
+  {
+   "rule": "credential_assignment",
+   "line": 1,
+   "shape": "len=42 classes=a9 entropia=3.9",
+   "placeholder_like": false,
+   "file": "docs/evidence/dependency_execution_20260910/aave/history.json",
+   "first_commit": "25807a354402",
+   "in_head": true
+  },
+  {
+   "rule": "credential_assignment",
+   "line": 1,
+   "shape": "len=42 classes=a9 entropia=3.9",
+   "placeholder_like": false,
+   "file": "docs/evidence/dependency_execution_20260910/aave/history.json",
+   "first_commit": "25807a354402",
+   "in_head": true
+  },
+  {
+   "rule": "credential_assignment",
+   "line": 1,
+   "shape": "len=42 classes=a9 entropia=3.9",
+   "placeholder_like": false,
+   "file": "docs/evidence/dependency_execution_20260910/aave/history.json",
+   "first_commit": "25807a354402",
+   "in_head": true
+  },
+  {
+   "rule": "credential_assignment",
+   "line": 1,
+   "shape": "len=42 classes=a9 entropia=3.9",
+   "placeholder_like": false,
+   "file": "docs/evidence/dependency_execution_20260910/aave/history.json",
+   "first_commit": "25807a354402",
+   "in_head": true
+  },
+  {
+   "rule": "credential_assignment",
+   "line": 1,
+   "shape": "len=42 classes=a9 entropia=3.9",
+   "placeholder_like": false,
+   "file": "docs/evidence/dependency_execution_20260910/aave/history.json",
+   "first_commit": "25807a354402",
+   "in_head": true
+  },
+  {
+   "rule": "credential_assignment",
+   "line": 1,
+   "shape": "len=42 classes=a9 entropia=3.9",
+   "placeholder_like": false,
+   "file": "docs/evidence/dependency_execution_20260910/aave/history.json",
+   "first_commit": "25807a354402",
+   "in_head": true
+  },
+  {
+   "rule": "credential_assignment",
+   "line": 1,
+   "shape": "len=42 classes=a9 entropia=3.9",
+   "placeholder_like": false,
+   "file": "docs/evidence/dependency_execution_20260910/aave/history.json",
+   "first_commit": "25807a354402",
+   "in_head": true
+  },
+  {
+   "rule": "credential_assignment",
+   "line": 1,
+   "shape": "len=42 classes=a9 entropia=3.9",
+   "placeholder_like": false,
+   "file": "docs/evidence/dependency_execution_20260910/aave/history.json",
+   "first_commit": "25807a354402",
+   "in_head": true
+  },
+  {
+   "rule": "credential_assignment",
+   "line": 1,
+   "shape": "len=42 classes=a9 entropia=3.9",
+   "placeholder_like": false,
+   "file": "docs/evidence/dependency_execution_20260910/aave/history.json",
+   "first_commit": "25807a354402",
+   "in_head": true
+  },
+  {
+   "rule": "credential_assignment",
+   "line": 1,
+   "shape": "len=42 classes=a9 entropia=3.9",
+   "placeholder_like": false,
+   "file": "docs/evidence/dependency_execution_20260910/aave/history.json",
+   "first_commit": "25807a354402",
+   "in_head": true
+  },
+  {
+   "rule": "credential_assignment",
+   "line": 1,
+   "shape": "len=42 classes=a9 entropia=3.9",
+   "placeholder_like": false,
+   "file": "docs/evidence/dependency_execution_20260910/aave/history.json",
+   "first_commit": "25807a354402",
+   "in_head": true
+  },
+  {
+   "rule": "credential_assignment",
+   "line": 1,
+   "shape": "len=42 classes=a9 entropia=3.9",
+   "placeholder_like": false,
+   "file": "docs/evidence/dependency_execution_20260910/aave/weekly-08.json",
+   "first_commit": "25807a354402",
+   "in_head": true
+  },
+  {
+   "rule": "credential_assignment",
+   "line": 1,
+   "shape": "len=42 classes=a9 entropia=3.9",
+   "placeholder_like": false,
+   "file": "docs/evidence/aave_validation_20260910/history/month-03.json",
+   "first_commit": "3e602118a61e",
+   "in_head": true
+  },
+  {
+   "rule": "credential_assignment",
+   "line": 1,
+   "shape": "len=42 classes=a9 entropia=3.9",
+   "placeholder_like": false,
+   "file": "docs/evidence/aave_validation_20260910/history/month-05.json",
+   "first_commit": "3e602118a61e",
+   "in_head": true
+  },
+  {
+   "rule": "openai_like_key",
+   "line": 13,
+   "shape": "len=35 classes=aA9_ entropia=5.1",
+   "placeholder_like": false,
+   "file": "tests/test_secrets_telemetry.py",
+   "first_commit": "a21331e99f0f",
+   "in_head": false
+  },
+  {
+   "rule": "credential_assignment",
+   "line": 1,
+   "shape": "len=42 classes=a9 entropia=3.9",
+   "placeholder_like": false,
+   "file": "docs/evidence/aave_validation_20260910/history/month-24.json",
+   "first_commit": "3e602118a61e",
+   "in_head": true
+  },
+  {
+   "rule": "credential_assignment",
+   "line": 1,
+   "shape": "len=42 classes=a9 entropia=3.9",
+   "placeholder_like": false,
+   "file": "docs/evidence/aave_validation_20260910/history/month-10.json",
+   "first_commit": "3e602118a61e",
+   "in_head": true
+  },
+  {
+   "rule": "credential_assignment",
+   "line": 1,
+   "shape": "len=42 classes=a9 entropia=3.9",
+   "placeholder_like": false,
+   "file": "docs/evidence/aave_validation_20260910/history/month-15.json",
+   "first_commit": "3e602118a61e",
+   "in_head": true
+  },
+  {
+   "rule": "credential_assignment",
+   "line": 1,
+   "shape": "len=42 classes=a9 entropia=3.9",
+   "placeholder_like": false,
+   "file": "docs/evidence/aave_validation_20260910/history/month-11.json",
+   "first_commit": "3e602118a61e",
+   "in_head": true
+  },
+  {
+   "rule": "credential_assignment",
+   "line": 1,
+   "shape": "len=42 classes=a9 entropia=3.9",
+   "placeholder_like": false,
+   "file": "docs/evidence/dependency_execution_20260910/aave/weekly-01.json",
+   "first_commit": "25807a354402",
+   "in_head": true
+  },
+  {
+   "rule": "credential_assignment",
+   "line": 1,
+   "shape": "len=42 classes=a9 entropia=3.9",
+   "placeholder_like": false,
+   "file": "docs/evidence/aave_validation_20260910/history/current-finalized.json",
+   "first_commit": "3e602118a61e",
+   "in_head": true
+  },
+  {
+   "rule": "credential_assignment",
+   "line": 1,
+   "shape": "len=42 classes=a9 entropia=3.9",
+   "placeholder_like": false,
+   "file": "docs/evidence/aave_validation_20260910/history/history.json",
+   "first_commit": "3e602118a61e",
+   "in_head": true
+  },
+  {
+   "rule": "credential_assignment",
+   "line": 1,
+   "shape": "len=42 classes=a9 entropia=3.9",
+   "placeholder_like": false,
+   "file": "docs/evidence/aave_validation_20260910/history/history.json",
+   "first_commit": "3e602118a61e",
+   "in_head": true
+  },
+  {
+   "rule": "credential_assignment",
+   "line": 1,
+   "shape": "len=42 classes=a9 entropia=3.9",
+   "placeholder_like": false,
+   "file": "docs/evidence/aave_validation_20260910/history/history.json",
+   "first_commit": "3e602118a61e",
+   "in_head": true
+  },
+  {
+   "rule": "credential_assignment",
+   "line": 1,
+   "shape": "len=42 classes=a9 entropia=3.9",
+   "placeholder_like": false,
+   "file": "docs/evidence/aave_validation_20260910/history/history.json",
+   "first_commit": "3e602118a61e",
+   "in_head": true
+  },
+  {
+   "rule": "credential_assignment",
+   "line": 1,
+   "shape": "len=42 classes=a9 entropia=3.9",
+   "placeholder_like": false,
+   "file": "docs/evidence/aave_validation_20260910/history/history.json",
+   "first_commit": "3e602118a61e",
+   "in_head": true
+  },
+  {
+   "rule": "credential_assignment",
+   "line": 1,
+   "shape": "len=42 classes=a9 entropia=3.9",
+   "placeholder_like": false,
+   "file": "docs/evidence/aave_validation_20260910/history/history.json",
+   "first_commit": "3e602118a61e",
+   "in_head": true
+  },
+  {
+   "rule": "credential_assignment",
+   "line": 1,
+   "shape": "len=42 classes=a9 entropia=3.9",
+   "placeholder_like": false,
+   "file": "docs/evidence/aave_validation_20260910/history/history.json",
+   "first_commit": "3e602118a61e",
+   "in_head": true
+  },
+  {
+   "rule": "credential_assignment",
+   "line": 1,
+   "shape": "len=42 classes=a9 entropia=3.9",
+   "placeholder_like": false,
+   "file": "docs/evidence/aave_validation_20260910/history/history.json",
+   "first_commit": "3e602118a61e",
+   "in_head": true
+  },
+  {
+   "rule": "credential_assignment",
+   "line": 1,
+   "shape": "len=42 classes=a9 entropia=3.9",
+   "placeholder_like": false,
+   "file": "docs/evidence/aave_validation_20260910/history/history.json",
+   "first_commit": "3e602118a61e",
+   "in_head": true
+  },
+  {
+   "rule": "credential_assignment",
+   "line": 1,
+   "shape": "len=42 classes=a9 entropia=3.9",
+   "placeholder_like": false,
+   "file": "docs/evidence/aave_validation_20260910/history/history.json",
+   "first_commit": "3e602118a61e",
+   "in_head": true
+  },
+  {
+   "rule": "credential_assignment",
+   "line": 1,
+   "shape": "len=42 classes=a9 entropia=3.9",
+   "placeholder_like": false,
+   "file": "docs/evidence/aave_validation_20260910/history/history.json",
+   "first_commit": "3e602118a61e",
+   "in_head": true
+  },
+  {
+   "rule": "credential_assignment",
+   "line": 1,
+   "shape": "len=42 classes=a9 entropia=3.9",
+   "placeholder_like": false,
+   "file": "docs/evidence/aave_validation_20260910/history/history.json",
+   "first_commit": "3e602118a61e",
+   "in_head": true
+  },
+  {
+   "rule": "credential_assignment",
+   "line": 1,
+   "shape": "len=42 classes=a9 entropia=3.9",
+   "placeholder_like": false,
+   "file": "docs/evidence/aave_validation_20260910/history/history.json",
+   "first_commit": "3e602118a61e",
+   "in_head": true
+  },
+  {
+   "rule": "credential_assignment",
+   "line": 1,
+   "shape": "len=42 classes=a9 entropia=3.9",
+   "placeholder_like": false,
+   "file": "docs/evidence/aave_validation_20260910/history/history.json",
+   "first_commit": "3e602118a61e",
+   "in_head": true
+  },
+  {
+   "rule": "credential_assignment",
+   "line": 1,
+   "shape": "len=42 classes=a9 entropia=3.9",
+   "placeholder_like": false,
+   "file": "docs/evidence/aave_validation_20260910/history/history.json",
+   "first_commit": "3e602118a61e",
+   "in_head": true
+  },
+  {
+   "rule": "credential_assignment",
+   "line": 1,
+   "shape": "len=42 classes=a9 entropia=3.9",
+   "placeholder_like": false,
+   "file": "docs/evidence/aave_validation_20260910/history/history.json",
+   "first_commit": "3e602118a61e",
+   "in_head": true
+  },
+  {
+   "rule": "credential_assignment",
+   "line": 1,
+   "shape": "len=42 classes=a9 entropia=3.9",
+   "placeholder_like": false,
+   "file": "docs/evidence/aave_validation_20260910/history/history.json",
+   "first_commit": "3e602118a61e",
+   "in_head": true
+  },
+  {
+   "rule": "credential_assignment",
+   "line": 1,
+   "shape": "len=42 classes=a9 entropia=3.9",
+   "placeholder_like": false,
+   "file": "docs/evidence/aave_validation_20260910/history/history.json",
+   "first_commit": "3e602118a61e",
+   "in_head": true
+  },
+  {
+   "rule": "credential_assignment",
+   "line": 1,
+   "shape": "len=42 classes=a9 entropia=3.9",
+   "placeholder_like": false,
+   "file": "docs/evidence/aave_validation_20260910/history/history.json",
+   "first_commit": "3e602118a61e",
+   "in_head": true
+  },
+  {
+   "rule": "credential_assignment",
+   "line": 1,
+   "shape": "len=42 classes=a9 entropia=3.9",
+   "placeholder_like": false,
+   "file": "docs/evidence/aave_validation_20260910/history/history.json",
+   "first_commit": "3e602118a61e",
+   "in_head": true
+  },
+  {
+   "rule": "credential_assignment",
+   "line": 1,
+   "shape": "len=42 classes=a9 entropia=3.9",
+   "placeholder_like": false,
+   "file": "docs/evidence/aave_validation_20260910/history/history.json",
+   "first_commit": "3e602118a61e",
+   "in_head": true
+  },
+  {
+   "rule": "credential_assignment",
+   "line": 1,
+   "shape": "len=42 classes=a9 entropia=3.9",
+   "placeholder_like": false,
+   "file": "docs/evidence/aave_validation_20260910/history/history.json",
+   "first_commit": "3e602118a61e",
+   "in_head": true
+  },
+  {
+   "rule": "credential_assignment",
+   "line": 1,
+   "shape": "len=42 classes=a9 entropia=3.9",
+   "placeholder_like": false,
+   "file": "docs/evidence/aave_validation_20260910/history/history.json",
+   "first_commit": "3e602118a61e",
+   "in_head": true
+  },
+  {
+   "rule": "credential_assignment",
+   "line": 1,
+   "shape": "len=42 classes=a9 entropia=3.9",
+   "placeholder_like": false,
+   "file": "docs/evidence/aave_validation_20260910/history/history.json",
+   "first_commit": "3e602118a61e",
+   "in_head": true
+  },
+  {
+   "rule": "credential_assignment",
+   "line": 1,
+   "shape": "len=42 classes=a9 entropia=3.9",
+   "placeholder_like": false,
+   "file": "docs/evidence/aave_validation_20260910/history/history.json",
+   "first_commit": "3e602118a61e",
+   "in_head": true
+  },
+  {
+   "rule": "credential_assignment",
+   "line": 1,
+   "shape": "len=42 classes=a9 entropia=3.9",
+   "placeholder_like": false,
+   "file": "docs/evidence/aave_validation_20260910/history/month-13.json",
+   "first_commit": "3e602118a61e",
+   "in_head": true
+  }
+ ]
+}
