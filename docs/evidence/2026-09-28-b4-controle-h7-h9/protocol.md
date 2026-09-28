@@ -68,3 +68,14 @@ Tudo no default: fee 10 bps, slippage 5 bps, horizonte 24 h, `fr-window` 90. **O
 - A checagem de cadência exata não existia nesse código.
 - Os dois braços passam a rodar com o harness `e3ee0af`: worktree destacado, venv do `uv.lock` daquele commit (Core 3.0.0, o pin da época), mesmos CSVs, mesmos comandos, nenhuma outra flag.
 - Janela, parâmetros, critério de validade e tabela de leitura **não mudam**.
+
+## Emenda 2 (2026-09-28, antes da terceira execução)
+
+**O que aconteceu:** com o harness `e3ee0af`, os dois braços de novo montaram 0 vetores (logs em `logs/h9-e3ee0af-tentativa1/`).
+
+**Causa, confirmada no código e por replicação do laço (6.096 instantes passam o join):**
+- naquele commit, o `backtest_v3` e o `vision_ingest` leem e gravam `data/v3/<símbolo>/spot_1h.csv`;
+- o arquivo só passou a se chamar `spot_binance_1h.csv` em `9d89871` (2026-09-10), com as mesmas colunas;
+- o harness do H9 não achou o arquivo e montou o índice de preços vazio.
+
+**Correção:** o mesmo CSV, **byte a byte**, fica disponível com o nome da época (`spot_1h.csv`, sha256 igual ao de `spot_binance_1h.csv`). Nenhum dado, janela, flag ou parâmetro muda.
