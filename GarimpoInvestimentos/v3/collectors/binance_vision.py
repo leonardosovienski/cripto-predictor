@@ -20,7 +20,10 @@ import httpx
 
 from GarimpoInvestimentos.core.paths import CACHE_DIR
 from GarimpoInvestimentos.durable_io import atomic_write, file_lock
-from GarimpoInvestimentos.v3.collectors.funding_collector import FundingRecord
+from GarimpoInvestimentos.v3.collectors.funding_collector import (
+    FundingRecord,
+    scheduled_funding_time,
+)
 from GarimpoInvestimentos.v3.collectors.oi_collector import OIRecord
 from GarimpoInvestimentos.v3.collectors.record_io import unique_records, validate_observation
 from GarimpoInvestimentos.v3.collectors.spot_collector import KlineRecord
@@ -158,7 +161,8 @@ def load_funding_vision(symbol: str, start_ms: int, end_ms: int) -> list[Funding
                 continue
             for row in _read_csv_rows(zb):
                 # calc_time, funding_interval_hours, last_funding_rate
-                ts = int(row[0])
+                # calc_time vem alguns ms depois da hora programada: a chave é a hora cheia
+                ts = scheduled_funding_time(int(row[0]))
                 if start_ms <= ts <= end_ms:
                     out.append(
                         FundingRecord(

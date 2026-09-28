@@ -13,7 +13,7 @@ NÃO recria retry/backoff do predictor_core.
 
 Contrato de saída (FundingRecord):
     symbol             str
-    funding_time_ms    int   ← timestamp_exchange_ms canônico
+    funding_time_ms    int   ← instante programado do funding (hora cheia UTC; ver scheduled_funding_time)
     funding_rate       float ← decimal (ex.: 0.0001 = 0.01%)
     mark_price         float ← preço mark no momento do funding
 """
@@ -40,6 +40,17 @@ _FUTURES_BASE = "https://fapi.binance.com"
 _FUNDING_PATH = "/fapi/v1/fundingRate"
 _MAX_PER_PAGE = 1000
 _PAGE_SLEEP_S = 0.5  # 500ms entre páginas — Binance free tier (2 400 req/min para dados públicos)
+_MS_PER_HOUR = 3_600_000
+# O fundingRate do data.binance.vision registra calc_time alguns ms depois da hora programada (0–47 ms em BTCUSDT,
+# 2021-01 → 2026-08). Até este desvio (~2× o observado) a chave do evento é a hora cheia; acima dele o instante fica
+# como veio, para que uma anomalia real continue visível na checagem de cadência.
+_FUNDING_TIME_JITTER_MS = 100
+
+
+def scheduled_funding_time(funding_time_ms: int) -> int:
+    """Instante canônico do evento de funding: a hora cheia UTC mais próxima, se o desvio for de até 100 ms."""
+    nearest = (funding_time_ms + _MS_PER_HOUR // 2) // _MS_PER_HOUR * _MS_PER_HOUR
+    return nearest if abs(funding_time_ms - nearest) <= _FUNDING_TIME_JITTER_MS else funding_time_ms
 
 
 # ------------------------------------------------------------------ #
@@ -188,7 +199,7 @@ class FundingCollector:
 def _parse_record(item: dict) -> FundingRecord:
     return FundingRecord(
         symbol=item["symbol"],
-        funding_time_ms=int(item["fundingTime"]),
+        funding_time_ms=scheduled_funding_time(int(item["fundingTime"])),
         funding_rate=float(item["fundingRate"]),
         mark_price=float(item.get("markPrice") or 0.0),
     )
@@ -207,12 +218,13 @@ def save_funding_csv(records: list[FundingRecord], path: Path) -> int:
 
 
 def load_funding_csv(path: Path) -> list[FundingRecord]:
+    """Lê o CSV com o instante canônico do funding (data lakes gravados com o calc_time bruto do Vision)."""
     return load_records(
         path,
         _FIELDNAMES,
         lambda row: FundingRecord(
             row["symbol"],
-            int(row["funding_time_ms"]),
+            scheduled_funding_time(int(row["funding_time_ms"])),
             float(row["funding_rate"]),
             float(row["mark_price"]),
         ),
