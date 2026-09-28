@@ -14,8 +14,12 @@ import sys
 from datetime import UTC, datetime
 from pathlib import Path
 
-TIME_COLUMN = {"funding.csv": "funding_time_ms", "oi.csv": "timestamp_ms", "spot_binance_1h.csv": "open_ms",
-               "spot_1h.csv": "open_ms"}
+TIME_COLUMN = {
+    "funding.csv": "funding_time_ms",
+    "oi.csv": "timestamp_ms",
+    "spot_binance_1h.csv": "open_ms",
+    "spot_1h.csv": "open_ms",
+}
 
 
 def iso(ms: int) -> str:
@@ -29,25 +33,53 @@ def main() -> int:
         path = data / name
         with path.open(encoding="utf-8-sig", newline="") as f:
             times = [int(row[column]) for row in csv.DictReader(f)]
-        csvs[name] = {"rows": len(times), "first": iso(min(times)), "last": iso(max(times)),
-                      "sha256": hashlib.sha256(path.read_bytes()).hexdigest()}
+        csvs[name] = {
+            "rows": len(times),
+            "first": iso(min(times)),
+            "last": iso(max(times)),
+            "sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
+        }
     archives = []
     for path in sorted(cache.rglob("*.zip")):
         raw = path.read_bytes()
         checksum = path.with_suffix(path.suffix + ".CHECKSUM")
-        published = checksum.read_text(encoding="utf-8").split()[0].lower() if checksum.exists() else None
+        published = (
+            checksum.read_text(encoding="utf-8").split()[0].lower() if checksum.exists() else None
+        )
         digest = hashlib.sha256(raw).hexdigest()
-        archives.append({"file": path.relative_to(cache).as_posix(), "bytes": len(raw), "sha256": digest,
-                         "checksum_ok": published == digest})
+        archives.append(
+            {
+                "file": path.relative_to(cache).as_posix(),
+                "bytes": len(raw),
+                "sha256": digest,
+                "checksum_ok": published == digest,
+            }
+        )
     kinds = {}
     for a in archives:
-        kind = "fundingRate" if "fundingRate" in a["file"] else "metrics" if "metrics" in a["file"] else "klines"
+        kind = (
+            "fundingRate"
+            if "fundingRate" in a["file"]
+            else "metrics"
+            if "metrics" in a["file"]
+            else "klines"
+        )
         kinds[kind] = kinds.get(kind, 0) + 1
-    doc = {"schema": "cripto-b4-control-data/1", "source": "data.binance.vision (vision_ingest do domínio)",
-           "csv": csvs, "archives_by_kind": kinds, "archives_checksum_ok": all(a["checksum_ok"] for a in archives),
-           "archives": archives}
+    doc = {
+        "schema": "cripto-b4-control-data/1",
+        "source": "data.binance.vision (vision_ingest do domínio)",
+        "csv": csvs,
+        "archives_by_kind": kinds,
+        "archives_checksum_ok": all(a["checksum_ok"] for a in archives),
+        "archives": archives,
+    }
     dest.write_text(json.dumps(doc, indent=1, ensure_ascii=False) + "\n", encoding="utf-8")
-    print(json.dumps({k: doc[k] for k in ("csv", "archives_by_kind", "archives_checksum_ok")}, ensure_ascii=False))
+    print(
+        json.dumps(
+            {k: doc[k] for k in ("csv", "archives_by_kind", "archives_checksum_ok")},
+            ensure_ascii=False,
+        )
+    )
     return 0
 
 
