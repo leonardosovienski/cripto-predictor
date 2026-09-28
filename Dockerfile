@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1.7
-FROM python:3.14-alpine3.24@sha256:016508ba505da24f7139765bc4bb669df4e88eb2f12eeadd571bf2f88d7533df AS build
+FROM python:3.14-alpine3.24@sha256:9e9fde4d32eedce0b661d9ab91e826b62dddf28e928c230ec55f1866cac66b01 AS build
 RUN apk upgrade --no-cache && apk add --no-cache build-base
 WORKDIR /build
 RUN python -m venv /opt/venv
@@ -16,7 +16,7 @@ RUN uv export --locked --no-dev --no-emit-project --extra llm --extra excel --ex
     pip install --no-cache-dir --no-deps . && \
     pip uninstall -y pip
 
-FROM python:3.14-alpine3.24@sha256:016508ba505da24f7139765bc4bb669df4e88eb2f12eeadd571bf2f88d7533df AS runtime
+FROM python:3.14-alpine3.24@sha256:9e9fde4d32eedce0b661d9ab91e826b62dddf28e928c230ec55f1866cac66b01 AS runtime
 RUN apk upgrade --no-cache && \
     addgroup -S -g 10001 predictor && adduser -S -D -u 10001 -h /nonexistent -G predictor predictor && \
     python -m pip uninstall -y pip setuptools
