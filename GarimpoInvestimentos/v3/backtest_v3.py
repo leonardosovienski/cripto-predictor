@@ -903,6 +903,12 @@ def _run_wfa_impl(
             f"Nenhum dado de funding para {symbol}. "
             f"Execute: python -m GarimpoInvestimentos.v3.pipeline --symbol {symbol} --start-date YYYY-MM-DD"
         )
+    if not kline_records and (sym_dir / "spot_1h.csv").exists():
+        raise FileNotFoundError(
+            f"{sym_dir / 'spot_binance_1h.csv'} ausente, mas existe spot_1h.csv (nome usado até 9d89871, "
+            "2026-09-10, mesmas colunas). O backtest não lê o nome antigo: renomeie o arquivo ou regrave com "
+            "GarimpoInvestimentos.v3.vision_ingest."
+        )
 
     oi_index = build_oi_index(oi_records)
     spot_index = build_spot_index(kline_records)
