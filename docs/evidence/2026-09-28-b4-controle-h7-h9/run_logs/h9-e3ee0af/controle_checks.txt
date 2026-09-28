@@ -1,0 +1,4 @@
+harness=e3ee0afc37f1e42a1a44fcaf95e1e9ced976735b trials antes: 89d55dea90c3ca30 porcelain=0
+A exit=0
+B exit=0
+trials depois: 89d55dea90c3ca30 porcelain=''
