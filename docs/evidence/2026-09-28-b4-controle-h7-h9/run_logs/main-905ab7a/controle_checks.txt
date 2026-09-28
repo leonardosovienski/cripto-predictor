@@ -1,0 +1,4 @@
+trials antes: b43661d5fec21da0 status='' head=b21942f
+A exit=1
+B exit=1
+trials depois: b43661d5fec21da0 status='' tree=''

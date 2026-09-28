@@ -1,0 +1,185 @@
+{
+ "schema": "cripto-b4-control/1",
+ "h9_reference": {
+  "source": "GarimpoInvestimentos/trials.json (h9-oi-volume-ratio-hmm-v1) e docs/HYPOTHESES.md, 2026-09-04",
+  "sharpe": -1.0041,
+  "psr": 0.1621,
+  "ic": 0.0283,
+  "ic_ci_lower": -0.1476,
+  "max_drawdown_pct": 11.49
+ },
+ "runs": {
+  "h9-e3ee0af": {
+   "A_baseline": {
+    "log": "controle_A_baseline.log",
+    "sha256": "8c237434e024293b06b6bc9a189d789f830f7bc2d183061ce0944f42abc6c082",
+    "feature_vectors": 6096,
+    "dropped": 21,
+    "funding_records": 6207,
+    "folds": 45,
+    "folds_go": 0,
+    "folds_no_go": 1,
+    "psr": 0.169,
+    "ic": 0.0683,
+    "ic_ci_lower": -0.1021,
+    "max_drawdown_pct": 9.9,
+    "sharpe": -0.9414,
+    "verdict": "NO-GO",
+    "evaluable_folds": [
+     {
+      "fold": 3,
+      "ic": 0.0242,
+      "ic_lo": -0.4369,
+      "ic_hi": 0.4878,
+      "psr": 0.713,
+      "max_dd_pct": 2.13,
+      "status": "NO-GO"
+     }
+    ],
+    "fold_status_counts": {
+     "INSUFFICIENT_DATA": 44,
+     "NO-GO": 1,
+     "SEM_SINAIS_ATIVOS": 17
+    }
+   },
+   "B_oivol": {
+    "log": "controle_B_oivol.log",
+    "sha256": "88cc2ff987d46d3a5498d227e5f92c7b944cc28a97ab81586ca9aa39831f3ead",
+    "feature_vectors": 6096,
+    "dropped": 21,
+    "funding_records": 6207,
+    "folds": 45,
+    "folds_go": 0,
+    "folds_no_go": 1,
+    "psr": 0.1779,
+    "ic": 0.0644,
+    "ic_ci_lower": -0.1195,
+    "max_drawdown_pct": 14.33,
+    "sharpe": -0.922,
+    "verdict": "NO-GO",
+    "evaluable_folds": [
+     {
+      "fold": 3,
+      "ic": -0.0107,
+      "ic_lo": -0.5714,
+      "ic_hi": 0.3297,
+      "psr": 0.614,
+      "max_dd_pct": 2.73,
+      "status": "NO-GO"
+     }
+    ],
+    "fold_status_counts": {
+     "INSUFFICIENT_DATA": 44,
+     "NO-GO": 1,
+     "SEM_SINAIS_ATIVOS": 17
+    }
+   }
+  },
+  "h9-e3ee0af-repeticao": {
+   "A_baseline": {
+    "log": "controle_A_baseline.log",
+    "sha256": "9d40c435f6cdffeef4813f8a58c8c8c21b72085a01f0a02669ac325453253d19",
+    "feature_vectors": 6096,
+    "dropped": 21,
+    "funding_records": 6207,
+    "folds": 45,
+    "folds_go": 0,
+    "folds_no_go": 1,
+    "psr": 0.169,
+    "ic": 0.0683,
+    "ic_ci_lower": -0.1021,
+    "max_drawdown_pct": 9.9,
+    "sharpe": -0.9414,
+    "verdict": "NO-GO",
+    "evaluable_folds": [
+     {
+      "fold": 3,
+      "ic": 0.0242,
+      "ic_lo": -0.4369,
+      "ic_hi": 0.4878,
+      "psr": 0.713,
+      "max_dd_pct": 2.13,
+      "status": "NO-GO"
+     }
+    ],
+    "fold_status_counts": {
+     "INSUFFICIENT_DATA": 44,
+     "NO-GO": 1,
+     "SEM_SINAIS_ATIVOS": 17
+    }
+   },
+   "B_oivol": {
+    "log": "controle_B_oivol.log",
+    "sha256": "26ee55cfbd830f6270e6ef49aa933bf8537ee0b2bb54a6b85ffad2c531b9a581",
+    "feature_vectors": 6096,
+    "dropped": 21,
+    "funding_records": 6207,
+    "folds": 45,
+    "folds_go": 0,
+    "folds_no_go": 1,
+    "psr": 0.1779,
+    "ic": 0.0644,
+    "ic_ci_lower": -0.1195,
+    "max_drawdown_pct": 14.33,
+    "sharpe": -0.922,
+    "verdict": "NO-GO",
+    "evaluable_folds": [
+     {
+      "fold": 3,
+      "ic": -0.0107,
+      "ic_lo": -0.5714,
+      "ic_hi": 0.3297,
+      "psr": 0.614,
+      "max_dd_pct": 2.73,
+      "status": "NO-GO"
+     }
+    ],
+    "fold_status_counts": {
+     "INSUFFICIENT_DATA": 44,
+     "NO-GO": 1,
+     "SEM_SINAIS_ATIVOS": 17
+    }
+   }
+  },
+  "h9-e3ee0af-tentativa1": {
+   "A_baseline": {
+    "log": "controle_A_baseline.log",
+    "sha256": "19f577fc46bd21ee5ec50126ffc87fdcd92df7057b6eb635ae095d8e7c5ec9ad",
+    "feature_vectors": 0,
+    "dropped": 6117,
+    "funding_records": 6207,
+    "error": "Apenas 0 feature vectors construídos para BTCUSDT. Verifique a cobertura de OI e spot 1h.",
+    "evaluable_folds": []
+   },
+   "B_oivol": {
+    "log": "controle_B_oivol.log",
+    "sha256": "bc557518a3046b46c120a64524d87cd9dbbd1642c1e28353ba57179810f5cdb0",
+    "feature_vectors": 0,
+    "dropped": 6117,
+    "funding_records": 6207,
+    "error": "Apenas 0 feature vectors construídos para BTCUSDT. Verifique a cobertura de OI e spot 1h.",
+    "evaluable_folds": []
+   }
+  },
+  "main-905ab7a": {
+   "A_baseline": {
+    "log": "controle_A_baseline.log",
+    "sha256": "ea207bbc1c2be5705970d7dd8fed24c6db1eb32507aa00115d41a2d25fbcd9fe",
+    "feature_vectors": 0,
+    "dropped": 6118,
+    "funding_records": 6207,
+    "error": "Apenas 0 feature vectors construídos para BTCUSDT. Verifique a cobertura de OI e spot 1h.",
+    "evaluable_folds": []
+   },
+   "B_oivol": {
+    "log": "controle_B_oivol.log",
+    "sha256": "892042f407e007436a551505d6aa5afa7f201f765886579e54c6c9906f8e361f",
+    "feature_vectors": 0,
+    "dropped": 6118,
+    "funding_records": 6207,
+    "error": "Apenas 0 feature vectors construídos para BTCUSDT. Verifique a cobertura de OI e spot 1h.",
+    "evaluable_folds": []
+   }
+  }
+ }
+}

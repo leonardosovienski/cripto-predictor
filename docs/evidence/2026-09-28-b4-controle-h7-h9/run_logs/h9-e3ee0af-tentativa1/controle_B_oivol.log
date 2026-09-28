@@ -1,0 +1,9 @@
+2026-09-27 22:59:15,152 [INFO] __main__: backtest_v3 [BTCUSDT]: 6207 registros de funding, 2068 dias totais
+2026-09-27 23:01:45,006 [WARNING] GarimpoInvestimentos.v3.feature_builder: feature_builder [BTCUSDT]: 6117/6207 timestamps descartados por dados ausentes
+2026-09-27 23:01:45,007 [INFO] GarimpoInvestimentos.v3.feature_builder: feature_builder [BTCUSDT]: 0 FeatureVectors construídos
+2026-09-27 23:01:45,007 [INFO] __main__: backtest_v3 [BTCUSDT]: fr_window=90, kelly=1.00
+2026-09-27 23:01:45,007 [ERROR] __main__: backtest_v3 [BTCUSDT]: ERRO — Apenas 0 feature vectors construídos para BTCUSDT. Verifique a cobertura de OI e spot 1h.
+
+real	2m31.814s
+user	2m36.153s
+sys	0m0.157s
