@@ -52,3 +52,19 @@ Tudo no default: fee 10 bps, slippage 5 bps, horizonte 24 h, `fr-window` 90. **O
 - Não reabre o H9, que segue fechado, nem reparametriza a família congelada.
 - Não registra trial, não consome tentativa do DSR e não toca `trials.json`, `charters/`, `HYPOTHESES.md` nem o holdout.
 - Não autoriza capital.
+
+## Emenda 1 (2026-09-28, antes da segunda execução)
+
+**O que aconteceu na primeira execução**, com o código do `main` `905ab7a` sobre os dados reconstruídos: os dois braços falharam antes do WFA (`CRASHED` no ledger de runtime).
+
+- O `feature_builder` descartou 6.118 dos 6.207 instantes de funding e montou **0** vetores.
+- Causa: desde `9d89871` (2026-09-10, depois do H9), o builder exige cadência **exata** de 8 h em toda a janela de funding.
+- Os instantes do `fundingRate` do Vision trazem milissegundos de ruído (`1609459200002`, `1609488000006`…), então quase toda janela falha.
+- Os logs ficam em `logs/main-905ab7a/`. Não é resultado do controle: é incompatibilidade entre o harness atual e o importador Vision do próprio domínio, e fica registrada como achado.
+
+**Correção de desenho, pelo próprio runbook:** a checagem de validade exige o **mesmo harness do H9** ("se não bater, o harness mudou").
+
+- O H9 rodou em 2026-09-04 com o código de `e3ee0af` (#88, mergeado às 15:20 −03:00, antes do veredito em `8af1e4f`, 15:56).
+- A checagem de cadência exata não existia nesse código.
+- Os dois braços passam a rodar com o harness `e3ee0af`: worktree destacado, venv do `uv.lock` daquele commit (Core 3.0.0, o pin da época), mesmos CSVs, mesmos comandos, nenhuma outra flag.
+- Janela, parâmetros, critério de validade e tabela de leitura **não mudam**.
