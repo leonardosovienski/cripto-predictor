@@ -1,9 +1,28 @@
 import re
+import shutil
+import subprocess
 import tarfile
 import zipfile
 from pathlib import Path
 
+import pytest
+
 ROOT = Path(__file__).resolve().parents[1]
+
+
+@pytest.fixture(scope="module", autouse=True)
+def _built_distributions():
+    """Build wheel+sdist on demand: the CI runs `uv build` before pytest, a local run may not."""
+    dist = ROOT / "dist"
+    if not (any(dist.glob("*.whl")) and any(dist.glob("*.tar.gz"))):
+        uv = shutil.which("uv")
+        if uv is None:
+            pytest.skip("dist/ vazio e `uv` ausente: rode `uv build` antes da suíte")
+        subprocess.run(
+            [uv, "build", "--out-dir", str(dist)], cwd=ROOT, check=True, capture_output=True
+        )
+
+
 SECRET = re.compile(
     rb"(?:sk-[A-Za-z0-9_-]{20,}|AIza[0-9A-Za-z_-]{20,}|SERP_API_KEY\s*=\s*[^\r\n]+)"
 )

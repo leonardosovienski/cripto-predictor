@@ -6,11 +6,25 @@ Sistema de pesquisa em criptoativos: ingestão e procedência de dados, análise
 >
 > **Antes de reutilizar resultados históricos:** leia a [errata de evidências](docs/ERRATA_AUDITORIA_20260915.md). Na H6, a amostra observada é n=84, mas os poderes de 23,3% e 47,3% pertencem à tabela de referência n=60. As fontes congeladas conservam seus bytes e devem ser acompanhadas da errata.
 
-## Engenharia: último corte de código conferido
+## Engenharia: estado atual do pacote
+
+| Componente | Configuração em `main` (2026-09-29) |
+|---|---|
+| Pacote principal | `cripto-predictor 1.2.0rc4`; Python `>=3.13,<3.15` |
+| Core | Wheel `predictor-core 3.2.1`, por URL + sha256 em `pyproject.toml` e `uv.lock` |
+| Ops | Wheel `predictor-ops 4.2.2rc1`, idem |
+| Transporte V2 (opcional, extra `research-v2`) | `predictor-research-transport` + `predictor-research-protocol`, só para o lado consumidor do CAIN |
+
+Uma versão com release publicada é imutável: o CI (`scripts/check_release_identity.py`) compara a wheel
+construída com o asset da tag `v<versão>` e falha se o conteúdo mudou sem bump. O `main` de 2026-09-29
+empacotava `1.2.0rc3` com conteúdo diferente do asset `v1.2.0rc3` (achado HIGH da validação); por isso a
+versão passou a `1.2.0rc4`.
+
+## Engenharia: corte de código conferido em 17/09/2026 (histórico)
 
 Em 17/09/2026, o PR #120 está integrado em `main`, commit `e5997104f9c72f31764acdbdd4d26ec176791b68`. A [CI desse commit](https://github.com/leonardosovienski/cripto-predictor/actions/runs/35274798009) e a [integração instalada desse commit](https://github.com/leonardosovienski/cripto-predictor/actions/runs/35274798091) concluíram com sucesso. Esses resultados pertencem exclusivamente a esse SHA; alterações posteriores precisam de verificações próprias.
 
-| Componente | Configuração no corte conferido |
+| Componente | Configuração no corte conferido (17/09, histórico) |
 |---|---|
 | Pacote principal | Metadados `1.1.0`; Python `>=3.13,<3.15` |
 | Core | Wheel `3.2.1`, selecionado em `pyproject.toml` e `uv.lock` |
