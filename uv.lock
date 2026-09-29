@@ -422,10 +422,6 @@ llm = [
     { name = "google-genai" },
     { name = "openai" },
 ]
-research-v2 = [
-    { name = "predictor-research-protocol" },
-    { name = "predictor-research-transport" },
-]
 science = [
     { name = "numpy" },
     { name = "scikit-learn" },
@@ -473,8 +469,6 @@ requires-dist = [
     { name = "pre-commit", marker = "extra == 'test'", specifier = ">=4.3,<5" },
     { name = "predictor-core", url = "https://github.com/leonardosovienski/core-predictor/releases/download/v3.2.1/predictor_core-3.2.1-py3-none-any.whl" },
     { name = "predictor-ops", url = "https://github.com/leonardosovienski/predictor-ops/releases/download/v4.2.2rc1/predictor_ops-4.2.2rc1-py3-none-any.whl" },
-    { name = "predictor-research-protocol", marker = "extra == 'research-v2'", url = "https://github.com/leonardosovienski/ecosystem-predictor/releases/download/predictor-research-protocol-v2.0.0rc2/predictor_research_protocol-2.0.0rc2-py3-none-any.whl" },
-    { name = "predictor-research-transport", marker = "extra == 'research-v2'", url = "https://github.com/leonardosovienski/ecosystem-predictor/releases/download/predictor-research-transport-v0.1.0rc7/predictor_research_transport-0.1.0rc7-py3-none-any.whl" },
     { name = "pydantic", specifier = ">=2.12,<3" },
     { name = "pydantic-settings", specifier = ">=2.10,<3" },
     { name = "pyright", marker = "extra == 'test'", specifier = ">=1.1.403,<2" },
@@ -486,7 +480,7 @@ requires-dist = [
     { name = "scikit-learn", marker = "extra == 'v3'", specifier = ">=1.6,<2" },
     { name = "websockets", specifier = ">=15,<17" },
 ]
-provides-extras = ["llm", "v3", "excel", "science", "research-v2", "test"]
+provides-extras = ["llm", "v3", "excel", "science", "test"]
 
 [package.metadata.requires-dev]
 dev = [
@@ -1148,28 +1142,6 @@ requires-dist = [
     { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.12" },
 ]
 provides-extras = ["dev", "otel"]
-
-[[package]]
-name = "predictor-research-protocol"
-version = "2.0.0rc2"
-source = { url = "https://github.com/leonardosovienski/ecosystem-predictor/releases/download/predictor-research-protocol-v2.0.0rc2/predictor_research_protocol-2.0.0rc2-py3-none-any.whl" }
-wheels = [
-    { url = "https://github.com/leonardosovienski/ecosystem-predictor/releases/download/predictor-research-protocol-v2.0.0rc2/predictor_research_protocol-2.0.0rc2-py3-none-any.whl", hash = "sha256:34a1e4121e4085b901e3bd96552e2f5b4067c5e6af5e99dc1c26d6276fc7c820" },
-]
-
-[[package]]
-name = "predictor-research-transport"
-version = "0.1.0rc7"
-source = { url = "https://github.com/leonardosovienski/ecosystem-predictor/releases/download/predictor-research-transport-v0.1.0rc7/predictor_research_transport-0.1.0rc7-py3-none-any.whl" }
-dependencies = [
-    { name = "predictor-research-protocol" },
-]
-wheels = [
-    { url = "https://github.com/leonardosovienski/ecosystem-predictor/releases/download/predictor-research-transport-v0.1.0rc7/predictor_research_transport-0.1.0rc7-py3-none-any.whl", hash = "sha256:d3dfbff4b72d717ed4f655b1c97e85ca909140dcd9ebfb17e9a51a8b089c60c2" },
-]
-
-[package.metadata]
-requires-dist = [{ name = "predictor-research-protocol", specifier = "==2.0.0rc2" }]
 
 [[package]]
 name = "propcache"
