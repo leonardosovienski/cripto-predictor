@@ -1,0 +1,101 @@
+# Publica uma release do GitHub a partir de uma tag `v<versão>`, com wheel e sdist construídos de
+# `git archive` com SOURCE_DATE_EPOCH fixo (o procedimento reprodutível das pré-releases da Etapa B).
+# Por workflow_dispatch aceita `tag` + `ref` (sha) e cria a tag quando ela ainda não existe.
+# Nunca sobrescreve asset: se a release já existe, o job falha (C5 do núcleo de qualificação).
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag a publicar (ex.: v1.2.0rc4); criada no `ref` se ainda não existir"
+        required: true
+        type: string
+      ref:
+        description: "Commit (sha completo) que a tag deve apontar quando ela ainda não existe; vazio = a tag já existe"
+        required: false
+        type: string
+        default: ""
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write
+    env:
+      TAG: ${{ inputs.tag || github.ref_name }}
+      SOURCE_DATE_EPOCH: "1758240000"
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref || inputs.tag || github.ref }}
+          fetch-depth: 0
+      - name: Create the tag at the requested commit when it does not exist yet (workflow_dispatch)
+        if: github.event_name == 'workflow_dispatch'
+        shell: bash
+        run: |
+          set -euo pipefail
+          if git ls-remote --exit-code --tags origin "refs/tags/$TAG" >/dev/null; then
+            echo "tag $TAG já existe"; git fetch -q origin "refs/tags/$TAG:refs/tags/$TAG"; git checkout -q "refs/tags/$TAG"
+          else
+            ref="${{ inputs.ref }}"
+            [[ "$ref" =~ ^[0-9a-f]{40}$ ]] || { echo "ref (sha completo) é obrigatório para criar a tag" >&2; exit 1; }
+            gh api --method POST "repos/$GITHUB_REPOSITORY/git/refs" -f ref="refs/tags/$TAG" -f sha="$ref" >/dev/null
+            git fetch -q origin "refs/tags/$TAG:refs/tags/$TAG"; git checkout -q "refs/tags/$TAG"
+          fi
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.12.1"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Tag must match the project version
+        id: meta
+        shell: bash
+        run: |
+          set -euo pipefail
+          [[ "$TAG" =~ ^v([0-9].*)$ ]] || { echo "tag inesperada: $TAG" >&2; exit 1; }
+          version="${BASH_REMATCH[1]}"
+          actual="$(python -c "import tomllib; p=tomllib.load(open('pyproject.toml','rb'))['project']; print(p['name'], p['version'])")"
+          [[ "$actual" == "cripto-predictor $version" ]] || { echo "pyproject ($actual) não bate com a tag ($TAG)" >&2; exit 1; }
+          prerelease=false; [[ "$version" =~ (a|b|rc)[0-9]+$ ]] && prerelease=true
+          echo "version=$version" >> "$GITHUB_OUTPUT"; echo "prerelease=$prerelease" >> "$GITHUB_OUTPUT"
+      - name: Release must not exist yet (assets are never overwritten)
+        run: |
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "release $TAG já existe; nada é sobrescrito" >&2; exit 1
+          fi
+      - name: Lock is current and installs
+        run: |
+          uv lock --check
+          uv sync --locked --all-extras
+      - name: Reproducible build from git archive (twice, same wheel bytes)
+        shell: bash
+        run: |
+          set -euo pipefail
+          for n in 1 2; do
+            work="$RUNNER_TEMP/build$n"; mkdir -p "$work"
+            git archive --format=tar "$TAG" | tar -x -C "$work"
+            (cd "$work" && uv build --out-dir "$RUNNER_TEMP/dist$n")
+          done
+          (cd "$RUNNER_TEMP/dist1" && sha256sum * | tee "$RUNNER_TEMP/SHA256SUMS")
+          (cd "$RUNNER_TEMP/dist2" && grep '\.whl$' "$RUNNER_TEMP/SHA256SUMS" | sha256sum -c -)
+      - name: Create GitHub release with the built distributions
+        working-directory: ${{ runner.temp }}/dist1
+        shell: bash
+        run: |
+          set -euo pipefail
+          notes="$GITHUB_WORKSPACE/RELEASE_NOTES/$TAG.md"
+          args=(--repo "$GITHUB_REPOSITORY" --title "cripto-predictor ${{ steps.meta.outputs.version }}" --verify-tag)
+          if [[ -f "$notes" ]]; then args+=(--notes-file "$notes"); else args+=(--generate-notes); fi
+          [[ "${{ steps.meta.outputs.prerelease }}" == "true" ]] && args+=(--prerelease)
+          gh release create "$TAG" "${args[@]}" -- * "$RUNNER_TEMP/SHA256SUMS"
+          cat "$RUNNER_TEMP/SHA256SUMS" >> "$GITHUB_STEP_SUMMARY"
