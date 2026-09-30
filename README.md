@@ -8,17 +8,17 @@ Sistema de pesquisa em criptoativos: ingestão e procedência de dados, análise
 
 ## Engenharia: estado atual do pacote
 
-| Componente | Configuração em `main` (2026-09-29) |
+| Componente | Configuração em `main` (2026-09-30) |
 |---|---|
-| Pacote principal | `cripto-predictor 1.2.0rc4`; Python `>=3.13,<3.15` |
+| Pacote principal | `cripto-predictor 1.2.0rc5` **não publicada** (só documentação desde a `1.2.0rc4`, que é a wheel publicada, alvo da reabertura V1.2 do qualificador e das integrações); Python `>=3.13,<3.15` |
 | Core | Wheel `predictor-core 3.2.1`, por URL + sha256 em `pyproject.toml` e `uv.lock` |
 | Ops | Wheel `predictor-ops 4.2.2rc1`, idem |
-| Transporte V2 (opcional, extra `research-v2`) | `predictor-research-transport` + `predictor-research-protocol`, só para o lado consumidor do CAIN |
+| Transporte V2 | **não é dependência deste pacote** (D-13/D-28 do predictor-qualification: o extra `research-v2` foi adicionado e revertido). A identidade do transporte fica no `uv.lock` do cain e na lock conjunta `ecosystem-predictor/compat/`; o adapter `GarimpoInvestimentos/adapters/research_v2.py` só usa a `adapter_api` |
 
 Uma versão com release publicada é imutável: o CI (`scripts/check_release_identity.py`) compara a wheel
 construída com o asset da tag `v<versão>` e falha se o conteúdo mudou sem bump. O `main` de 2026-09-29
 empacotava `1.2.0rc3` com conteúdo diferente do asset `v1.2.0rc3` (achado HIGH da validação); por isso a
-versão passou a `1.2.0rc4`.
+versão passou a `1.2.0rc4` (publicada em 2026-09-29). Estado vivo do pacote e da qualificação: [docs/ESTADO_2026-09-30.md](docs/ESTADO_2026-09-30.md).
 
 ## Engenharia: corte de código conferido em 17/09/2026 (histórico)
 
