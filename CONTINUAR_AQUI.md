@@ -1,5 +1,9 @@
 # Continuar o projeto Cripto
 
+> **Atualização 2026-09-30.** A branch `profit-recovery-20260919` citada abaixo foi integrada no `main` (PRs #128–#134) e apagada; o
+> repositório tem só a `main`. Wheel publicada: `1.2.0rc4` (alvo da reabertura V1.2 do qualificador e das integrações); o `main` declara
+> `1.2.0rc5` não publicada (só documentação). Estado vivo do pacote, da qualificação e do estado científico: [docs/ESTADO_2026-09-30.md](docs/ESTADO_2026-09-30.md).
+
 Este é o ponto de entrada de continuidade. O corte econômico mais recente foi conferido em **19/09/2026** na branch `profit-recovery-20260919`; o último corte integrado em `main` descrito abaixo continua sendo o de 17/09. Este documento não é um painel ao vivo do computador, dos provedores ou de commits futuros. Documentos datados descrevem suas próprias etapas.
 
 ## Execução econômica Nível 2/3 — 19/09/2026
