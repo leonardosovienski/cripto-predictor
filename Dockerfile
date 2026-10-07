@@ -5,14 +5,20 @@ WORKDIR /build
 RUN python -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 COPY --from=ghcr.io/astral-sh/uv:0.12.1 /uv /usr/local/bin/uv
-COPY pyproject.toml uv.lock README.md ./
+COPY pyproject.toml uv.lock README.md STACK_WHEELS.json ./
+COPY scripts/stack_wheels.py ./scripts/stack_wheels.py
+# Wheels publicadas do stack (core/ops), já baixadas e conferidas pelo sha256 por `scripts/stack_wheels.py fetch`
+# no contexto de build; a imagem não consulta o GitHub (os produtores são privados).
+COPY .stack-wheels ./.stack-wheels
 COPY GarimpoInvestimentos ./GarimpoInvestimentos
 COPY charters ./charters
 COPY observation_plans ./observation_plans
 # Dependências só do uv.lock, com --require-hashes; o próprio pacote entra sem deps.
 RUN uv export --locked --no-dev --no-emit-project --extra llm --extra excel --extra v3 \
         --format requirements-txt --output-file /tmp/lock-requirements.txt && \
-    pip install --no-cache-dir --require-hashes -r /tmp/lock-requirements.txt && \
+    python scripts/stack_wheels.py check && \
+    python scripts/stack_wheels.py requirements --input /tmp/lock-requirements.txt --output /tmp/lock-requirements.hashed.txt && \
+    pip install --no-cache-dir --require-hashes -r /tmp/lock-requirements.hashed.txt && \
     pip install --no-cache-dir --no-deps . && \
     pip uninstall -y pip
 

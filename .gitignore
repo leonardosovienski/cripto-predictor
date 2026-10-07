@@ -23,3 +23,6 @@ logs/
 
 # Local research runtimes and regenerated outputs; maintained sources live in scripts/.
 /work/
+
+# Flat index of the published stack wheels (scripts/stack_wheels.py fetch), never versioned
+.stack-wheels/

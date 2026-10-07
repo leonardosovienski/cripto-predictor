@@ -73,10 +73,14 @@ jobs:
           if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
             echo "release $TAG já existe; nada é sobrescrito" >&2; exit 1
           fi
-      - name: Lock is current and installs
+      - name: Lock is current and installs (stack wheels from the registry first)
+        env:
+          STACK_READ_TOKEN: ${{ secrets.STACK_READ_TOKEN }}
         run: |
+          uv run --no-project python scripts/stack_wheels.py fetch
           uv lock --check
           uv sync --locked --all-extras
+          uv run --no-project python scripts/stack_wheels.py check
       - name: Reproducible build from git archive (twice, same wheel bytes)
         shell: bash
         run: |
