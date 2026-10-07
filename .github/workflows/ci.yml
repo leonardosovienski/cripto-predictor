@@ -12,7 +12,7 @@ env:
   # predictor-core / predictor-ops are GitHub Release assets of private repositories (STACK_WHEELS.json).
   # STACK_READ_TOKEN: fine-grained token, Contents: read on core-predictor and predictor-ops. Without it the
   # fetch step fails closed with the reason; GITHUB_TOKEN cannot read another repository's releases.
-  STACK_READ_TOKEN: ${{ secrets.STACK_READ_TOKEN }}
+  STACK_READ_TOKEN: ${{ secrets.STACK_READ_TOKEN || github.token }}
 
 jobs:
   quality:
