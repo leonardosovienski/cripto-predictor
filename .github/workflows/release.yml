@@ -88,6 +88,9 @@ jobs:
           for n in 1 2; do
             work="$RUNNER_TEMP/build$n"; mkdir -p "$work"
             git archive --format=tar "$TAG" | tar -x -C "$work"
+            # the flat index .stack-wheels/ is gitignored, so it is absent from the archive; uv refuses a missing
+            # --find-links directory even for the build backend resolution. Copy the fetched, verified index in.
+            cp -r .stack-wheels "$work/"
             (cd "$work" && uv build --out-dir "$RUNNER_TEMP/dist$n")
           done
           (cd "$RUNNER_TEMP/dist1" && sha256sum * | tee "$RUNNER_TEMP/SHA256SUMS")
