@@ -75,7 +75,7 @@ jobs:
           fi
       - name: Lock is current and installs (stack wheels from the registry first)
         env:
-          STACK_READ_TOKEN: ${{ secrets.STACK_READ_TOKEN }}
+          STACK_READ_TOKEN: ${{ secrets.STACK_READ_TOKEN || github.token }}
         run: |
           uv run --no-project python scripts/stack_wheels.py fetch
           uv lock --check
