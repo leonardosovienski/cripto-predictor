@@ -1,6 +1,7 @@
-"""Bind pip download URLs to the lock and exercise rejection before install."""
+"""Bind the stack wheels to the registry and the lock, and exercise pip's digest rejection."""
 
 import hashlib
+import json
 import os
 import re
 import subprocess
@@ -14,19 +15,28 @@ import pytest
 ROOT = Path(__file__).resolve().parents[1]
 SHARED_URL = re.compile(
     r"https://github\.com/leonardosovienski/"
-    r"(?:core-predictor|predictor-ops|ecosystem-predictor)/"
+    r"(?:core-predictor|predictor-ops|ecosystem-predictor(?:-cain)?)/"
     r'releases/download/[^"\s\\]+'
 )
 
 
-def test_lock_pins_stack_wheels_by_release_url_and_sha256():
-    lock = tomllib.loads((ROOT / "uv.lock").read_text(encoding="utf-8"))
+def test_lock_pins_stack_wheels_to_the_registry_index_by_sha256():
+    # Since R01 (2026-10-07) the producers are private and one of them was renamed: the
+    # lock carries no release URL; STACK_WHEELS.json carries repository, tag, asset and
+    # sha256, and scripts/stack_wheels.py verifies the bytes before uv sees them.
+    lock_text = (ROOT / "uv.lock").read_text(encoding="utf-8")
+    assert SHARED_URL.findall(lock_text) == []
+    assert SHARED_URL.findall((ROOT / "pyproject.toml").read_text(encoding="utf-8")) == []
+    lock = tomllib.loads(lock_text)
     packages = {item["name"]: item for item in lock["package"]}
+    registry = json.loads((ROOT / "STACK_WHEELS.json").read_text(encoding="utf-8"))
+    registered = {entry["package"]: entry for entry in registry["wheels"]}
     for name in ("predictor-core", "predictor-ops"):
+        assert re.fullmatch(r"[0-9a-f]{64}", registered[name]["sha256"])
+        assert packages[name]["version"] == registered[name]["version"]
+        assert packages[name]["source"] == {"registry": ".stack-wheels"}
         (wheel,) = packages[name]["wheels"]
-        assert SHARED_URL.fullmatch(wheel["url"])
-        algorithm, digest = wheel["hash"].split(":", 1)
-        assert algorithm == "sha256" and re.fullmatch(r"[0-9a-f]{64}", digest)
+        assert wheel["path"] == registered[name]["asset"]
     # Stage A: the domain has no envelope dependency (prompt §8, D-13).
     assert "predictor-research-protocol" not in packages
     assert "cain-research" not in packages
