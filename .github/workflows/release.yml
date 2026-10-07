@@ -54,7 +54,7 @@ jobs:
       - uses: astral-sh/setup-uv@v6
         with:
           version: "0.12.1"
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.13"
       - name: Tag must match the project version
