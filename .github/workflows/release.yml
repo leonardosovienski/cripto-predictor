@@ -34,7 +34,7 @@ jobs:
       SOURCE_DATE_EPOCH: "1758240000"
       GH_TOKEN: ${{ github.token }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           ref: ${{ inputs.ref || inputs.tag || github.ref }}
           fetch-depth: 0
