@@ -8,6 +8,12 @@ on:
 permissions:
   contents: read
 
+env:
+  # predictor-core / predictor-ops are GitHub Release assets of private repositories (STACK_WHEELS.json).
+  # STACK_READ_TOKEN: fine-grained token, Contents: read on core-predictor and predictor-ops. Without it the
+  # fetch step fails closed with the reason; GITHUB_TOKEN cannot read another repository's releases.
+  STACK_READ_TOKEN: ${{ secrets.STACK_READ_TOKEN }}
+
 jobs:
   quality:
     runs-on: ubuntu-latest
@@ -22,7 +28,10 @@ jobs:
       - uses: actions/setup-python@v7
         with:
           python-version: "3.13"
+      - name: Stack wheels from the registry (GitHub Releases of the private core/ops, sha256-verified)
+        run: uv run --no-project python scripts/stack_wheels.py fetch
       - run: uv sync --locked --all-extras
+      - run: uv run --no-project python scripts/stack_wheels.py check
       - name: Preserve frozen OSS evidence bytes
         run: git diff --exit-code 39b0f57496cee06e6f8841c2476f8428210aaf76 -- docs/open_source_research/20260911T0233 docs/open_source_research/20260911T0525
       - run: uv run --no-sync ruff check .
@@ -44,8 +53,9 @@ jobs:
         shell: bash
         run: |
           uv export --locked --no-dev --no-emit-project --format requirements-txt --output-file "$RUNNER_TEMP/lock-requirements.txt"
+          uv run --no-project python scripts/stack_wheels.py requirements --input "$RUNNER_TEMP/lock-requirements.txt" --output "$RUNNER_TEMP/lock-requirements.hashed.txt"
           python -m venv "$RUNNER_TEMP/wheel-contract"
-          "$RUNNER_TEMP/wheel-contract/bin/pip" install --require-hashes -r "$RUNNER_TEMP/lock-requirements.txt"
+          "$RUNNER_TEMP/wheel-contract/bin/pip" install --require-hashes -r "$RUNNER_TEMP/lock-requirements.hashed.txt"
           "$RUNNER_TEMP/wheel-contract/bin/pip" install --no-deps dist/cripto_predictor-*.whl
           "$RUNNER_TEMP/wheel-contract/bin/pip" check
           cd "$RUNNER_TEMP"
@@ -61,6 +71,8 @@ jobs:
       - uses: actions/setup-python@v7
         with:
           python-version: "3.14"
+      - name: Stack wheels from the registry (GitHub Releases of the private core/ops, sha256-verified)
+        run: uv run --no-project python scripts/stack_wheels.py fetch
       - run: uv sync --locked --extra test --extra science
       - run: uv build
       - run: uv run --no-sync pytest -q
@@ -75,7 +87,10 @@ jobs:
       - uses: actions/setup-python@v7
         with:
           python-version: "3.13"
+      - name: Stack wheels from the registry (GitHub Releases of the private core/ops, sha256-verified)
+        run: uv run --no-project python scripts/stack_wheels.py fetch
       - run: uv sync --locked --all-extras
+      - run: uv run --no-project python scripts/stack_wheels.py check
       - run: uv build
       - run: uv run --no-sync coverage run --rcfile=coverage-runtime.ini -m pytest -q
       - run: uv run --no-sync coverage report --rcfile=coverage-runtime.ini
@@ -90,6 +105,11 @@ jobs:
           path: .
           output-file: sbom.spdx.json
           upload-release-assets: false
+      - uses: astral-sh/setup-uv@v7
+        with:
+          version: "0.12.1"
+      - name: Stack wheels into the build context (the image installs them from .stack-wheels, no network pin)
+        run: uv run --no-project --python 3.13 python scripts/stack_wheels.py fetch
       - run: docker build --tag cripto-predictor:test .
       - run: docker run --rm --read-only --tmpfs /tmp --cap-drop ALL cripto-predictor:test --help
       - name: Empty installed store must fail without network
